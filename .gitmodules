@@ -1,0 +1,6 @@
+[submodule "src/platform/stm32/libs/libopencm3"]
+	path = src/platform/stm32/libs/libopencm3
+	url = https://github.com/libopencm3/libopencm3.git
+[submodule "src/platform/stm32/libs/libusbhost"]
+	path = src/platform/stm32/libs/libusbhost
+	url = https://github.com/libusbhost/libusbhost.git
