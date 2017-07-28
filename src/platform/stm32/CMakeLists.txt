@@ -5,8 +5,9 @@ add_custom_target(libopencm3 make AR=${CMAKE_AR} CC=${CMAKE_C_COMPILER} WORKING_
 
 # platform
 
-set(platform_compiler_flags "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb-interwork -funroll-loops" PARENT_SCOPE)
-set(platform_linker_flags "-T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f429-nucleo.ld -nostartfiles --specs=nano.specs --specs=nosys.specs" PARENT_SCOPE)
+set(TINYPRINTF_FLAGS "-Wl,--wrap,printf -Wl,--wrap,sprintf -Wl,--wrap,snprintf -Wl,--wrap,puts -Wl,--wrap,putchar")
+set(platform_compiler_flags "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb-interwork -funroll-loops -fshort-enums" PARENT_SCOPE)
+set(platform_linker_flags "${TINYPRINTF_FLAGS} -T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f429-nucleo.ld -nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
 
 set(platform_sources
 	# os
@@ -44,7 +45,7 @@ set(platform_sources
 
 set(platform_include_directories
     ${LIBOPENCM3_DIR}/include
-	platform/stm32
+	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/include
 	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/portable
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/include	
@@ -94,6 +95,7 @@ function(add_openocd_targets executable)
 endfunction(add_openocd_targets)
 
 function(platform_postprocess_executable executable)
+	add_dependencies(${executable} libopencm3)
 	# set_target_properties(${executable} PROPERTIES COMPILE_FLAGS "-save-temps")
 	add_custom_target(${executable}.bin ALL ${OBJCOPY} -Obinary ${executable} ${executable}.bin DEPENDS ${executable})
 	add_custom_target(${executable}.hex ALL ${OBJCOPY} -Oihex ${executable} ${executable}.hex DEPENDS ${executable})
