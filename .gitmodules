@@ -4,3 +4,12 @@
 [submodule "src/platform/stm32/libs/libusbhost"]
 	path = src/platform/stm32/libs/libusbhost
 	url = https://github.com/libusbhost/libusbhost.git
+[submodule "src/platform/sim/libs/sdlpp"]
+	path = src/platform/sim/libs/sdlpp
+	url = https://github.com/antonte/sdlpp.git
+[submodule "src/platform/sim/libs/eigen"]
+	path = src/platform/sim/libs/eigen
+	url = https://github.com/RLovelett/eigen.git
+[submodule "src/platform/sim/libs/soloud"]
+	path = src/platform/sim/libs/soloud
+	url = https://github.com/jarikomppa/soloud.git
