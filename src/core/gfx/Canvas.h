@@ -131,7 +131,7 @@ private:
         auto fpart = [] (float x) { return x - std::floor(x); };
         auto rfpart = [] (float x) { return 1.f - (x - std::floor(x)); };
 
-        bool steep = std::abs(y1 - y0) > abs(x1 - x0);
+        bool steep = std::abs(y1 - y0) > std::abs(x1 - x0);
 
         if (steep) {
             std::swap(x0, y0);
