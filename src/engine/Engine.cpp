@@ -4,10 +4,10 @@
 
 #include "core/midi/MIDIMessage.h"
 
-Engine::Engine(ClockTimer &clockTimer, ADC &adc, DAC &dac, Gate &gate, MIDI &midi) :
+Engine::Engine(ClockTimer &clockTimer, ADC &adc, DAC &dac, GateOutput &gateOutput, MIDI &midi) :
     _adc(adc),
     _dac(dac),
-    _gate(gate),
+    _gateOutput(gateOutput),
     _midi(midi),
     _clock(clockTimer)
 {}

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-class Gate {
+class GateOutput {
 public:
     void init();
 

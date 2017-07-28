@@ -6,12 +6,12 @@
 #include "drivers/ClockTimer.h"
 #include "drivers/ADC.h"
 #include "drivers/DAC.h"
-#include "drivers/Gate.h"
+#include "drivers/GateOutput.h"
 #include "drivers/MIDI.h"
 
 class Engine {
 public:
-    Engine(ClockTimer &clockTimer, ADC &adc, DAC &dac, Gate &gate, MIDI &midi);
+    Engine(ClockTimer &clockTimer, ADC &adc, DAC &dac, GateOutput &gateOutput, MIDI &midi);
 
     void init();
     void update();
@@ -36,7 +36,7 @@ public:
 private:
     ADC &_adc;
     DAC &_dac;
-    Gate &_gate;
+    GateOutput &_gateOutput;
     MIDI &_midi;
 
     Clock _clock;
