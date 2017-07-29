@@ -6,6 +6,8 @@ namespace sim {
 
 class Led : public Widget {
 public:
+    typedef std::shared_ptr<Led> Ptr;
+
     Led(const Vector2i &pos, const Vector2i &size, const Color &color = Color(0.f, 1.f)) :
         Widget(pos, size),
         _color(color)

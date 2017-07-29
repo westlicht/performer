@@ -5,7 +5,6 @@
 #include "sim/widgets/Led.h"
 
 #include <vector>
-#include <memory>
 #include <deque>
 
 #include <cstdint>
@@ -49,20 +48,28 @@ public:
             SDLK_9, SDLK_0, SDLK_o, SDLK_p, SDLK_l, SDLK_l, SDLK_l, SDLK_l
         });
 
+        // button & leds
         for (int col = 0; col < ButtonCols; ++col) {
             for (int row = 0; row < Rows; ++row) {
                 sim::Vector2i origin(matrixOrigin.x() + row * spacing.x(), matrixOrigin.y() + col * spacing.y());
-                auto button = std::make_shared<sim::Button>(origin - buttonSize / 2, buttonSize, keys[col * Rows + row]);
+
+                auto button = _simulator.window().createWidget<sim::Button>(
+                    origin - buttonSize / 2,
+                    buttonSize,
+                    keys[col * Rows + row]
+                );
                 int index = col * Rows + row;
                 button->setCallback([this, index] (bool pressed) {
                     _events.emplace_back(pressed ? KeyDown : KeyUp, index);
                 });
                 _buttons.emplace_back(button);
-                _simulator.window().addWidget(button);
+
                 if (col < LedCols) {
-                    auto led = std::make_shared<sim::Led>(origin + ledOffset - ledSize / 2, ledSize);
+                    auto led = _simulator.window().createWidget<sim::Led>(
+                        origin + ledOffset - ledSize / 2,
+                        ledSize
+                    );
                     _leds.emplace_back(led);
-                    _simulator.window().addWidget(led);
                 }
             }
         }
@@ -100,7 +107,7 @@ public:
 
 private:
     sim::Simulator &_simulator;
-    std::vector<std::shared_ptr<sim::Button>> _buttons;
-    std::vector<std::shared_ptr<sim::Led>> _leds;
+    std::vector<sim::Button::Ptr> _buttons;
+    std::vector<sim::Led::Ptr> _leds;
     std::deque<Event> _events;
 };

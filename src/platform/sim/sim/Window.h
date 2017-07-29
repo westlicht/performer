@@ -15,6 +15,13 @@ public:
     void update();
     void render();
 
+    template<typename T, typename... Args>
+    std::shared_ptr<T> createWidget(Args... args) {
+        std::shared_ptr<T> widget = std::make_shared<T>(args...);
+        addWidget(widget);
+        return widget;
+    }
+
     void addWidget(Widget::Ptr widget);
     void removeWidget(Widget::Ptr widget);
 

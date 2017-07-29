@@ -6,6 +6,8 @@ namespace sim {
 
 class Button : public Widget {
 public:
+    typedef std::shared_ptr<Button> Ptr;
+
     Button(const Vector2i &pos, const Vector2i &size, SDL_Keycode keycode = -1) :
         Widget(pos, size),
         _keycode(keycode)

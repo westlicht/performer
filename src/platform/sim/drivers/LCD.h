@@ -13,8 +13,11 @@ public:
         _simulator(simulator)
     {
         sim::Vector2i resolution(LCD_WIDTH, LCD_HEIGHT);
-        _display = std::make_shared<sim::Display>(sim::Vector2i(10, 10), resolution * 2 + sim::Vector2i(2, 2), resolution);
-        _simulator.window().addWidget(_display);
+        _display = _simulator.window().createWidget<sim::Display>(
+            sim::Vector2i(70, 10),
+            resolution * 2 + sim::Vector2i(2, 2),
+            resolution
+        );
     }
 
     void draw(uint8_t *frameBuffer) {
@@ -23,5 +26,5 @@ public:
 
 private:
     sim::Simulator &_simulator;
-    std::shared_ptr<sim::Display> _display;
+    sim::Display::Ptr _display;
 };

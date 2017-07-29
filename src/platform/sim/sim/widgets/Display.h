@@ -6,6 +6,8 @@ namespace sim {
 
 class Display : public Widget {
 public:
+    typedef std::shared_ptr<Display> Ptr;
+
     Display(const Vector2i &pos, const Vector2i &size, const Vector2i &resolution, const Color &color = Color(0.8f, 0.9f, 0.f, 1.f)) :
         Widget(pos, size),
         _resolution(resolution),
