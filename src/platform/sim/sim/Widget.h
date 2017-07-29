@@ -38,6 +38,7 @@ public:
     virtual void onMouseMove(MouseMoveEvent &e) {}
     virtual void onMouseDown(MouseButtonEvent &e) {}
     virtual void onMouseUp(MouseButtonEvent &e) {}
+    virtual void onMouseWheel(MouseWheelEvent &e) {}
 
 protected:
 

@@ -91,4 +91,20 @@ private:
     int _clicks;
 };
 
+class MouseWheelEvent : public Event {
+public:
+    MouseWheelEvent(const Vector2i &scroll) :
+        _scroll(scroll)
+    {}
+
+    const Vector2i &scroll() const { return _scroll; }
+
+    static MouseWheelEvent fromSDL(const SDL_MouseWheelEvent &e) {
+        return MouseWheelEvent(Vector2i(e.x, e.y));
+    }
+
+private:
+    Vector2i _scroll;
+};
+
 } // namespace sim

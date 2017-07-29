@@ -24,6 +24,9 @@ Window::Window(const std::string &title, const Vector2i &size) :
     _eventHandler.mouseButtonUp = [this] (const SDL_MouseButtonEvent &e) {
         handleEvent(MouseButtonEvent::fromSDL(e), [] (Widget &widget, MouseButtonEvent &e) { widget.onMouseUp(e); } );
     };
+    _eventHandler.mouseWheel = [this] (const SDL_MouseWheelEvent &e) {
+        handleEvent(MouseWheelEvent::fromSDL(e), [] (Widget &widget, MouseWheelEvent &e) { widget.onMouseWheel(e); } );
+    };
 }
 
 void Window::update() {
