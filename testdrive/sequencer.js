@@ -183,7 +183,7 @@ Module['FS_createPath']('/assets', 'drumkit', true, true);
   }
 
  }
- loadPackage({"files": [{"audio": 0, "start": 0, "crunched": 0, "end": 6148, "filename": "/assets/.DS_Store"}, {"audio": 1, "start": 6148, "crunched": 0, "end": 28182, "filename": "/assets/drumkit/clap.wav"}, {"audio": 1, "start": 28182, "crunched": 0, "end": 34842, "filename": "/assets/drumkit/hh1.wav"}, {"audio": 1, "start": 34842, "crunched": 0, "end": 95666, "filename": "/assets/drumkit/hh2.wav"}, {"audio": 1, "start": 95666, "crunched": 0, "end": 117762, "filename": "/assets/drumkit/kick.wav"}, {"audio": 1, "start": 117762, "crunched": 0, "end": 119798, "filename": "/assets/drumkit/rim.wav"}, {"audio": 1, "start": 119798, "crunched": 0, "end": 134154, "filename": "/assets/drumkit/snare.wav"}, {"audio": 1, "start": 134154, "crunched": 0, "end": 151690, "filename": "/assets/drumkit/tom1.wav"}, {"audio": 1, "start": 151690, "crunched": 0, "end": 169592, "filename": "/assets/drumkit/tom2.wav"}], "remote_package_size": 169592, "package_uuid": "72d41bab-ddb7-41d8-9118-c34f44e80f78"});
+ loadPackage({"files": [{"audio": 0, "start": 0, "crunched": 0, "end": 6148, "filename": "/assets/.DS_Store"}, {"audio": 1, "start": 6148, "crunched": 0, "end": 28182, "filename": "/assets/drumkit/clap.wav"}, {"audio": 1, "start": 28182, "crunched": 0, "end": 34842, "filename": "/assets/drumkit/hh1.wav"}, {"audio": 1, "start": 34842, "crunched": 0, "end": 95666, "filename": "/assets/drumkit/hh2.wav"}, {"audio": 1, "start": 95666, "crunched": 0, "end": 117762, "filename": "/assets/drumkit/kick.wav"}, {"audio": 1, "start": 117762, "crunched": 0, "end": 119798, "filename": "/assets/drumkit/rim.wav"}, {"audio": 1, "start": 119798, "crunched": 0, "end": 134154, "filename": "/assets/drumkit/snare.wav"}, {"audio": 1, "start": 134154, "crunched": 0, "end": 151690, "filename": "/assets/drumkit/tom1.wav"}, {"audio": 1, "start": 151690, "crunched": 0, "end": 169592, "filename": "/assets/drumkit/tom2.wav"}], "remote_package_size": 169592, "package_uuid": "c5cfdb56-d445-4207-966f-a9109553212c"});
 
 })();
 
@@ -2159,7 +2159,7 @@ function _emscripten_asm_const_iii(code, a0, a1) {
 
 STATIC_BASE = Runtime.GLOBAL_BASE;
 
-STATICTOP = STATIC_BASE + 89728;
+STATICTOP = STATIC_BASE + 91232;
 /* global initializers */  __ATINIT__.push({ func: function() { __GLOBAL__I_000101() } }, { func: function() { __GLOBAL__sub_I_Audio_cpp() } }, { func: function() { __GLOBAL__sub_I_iostream_cpp() } });
 
 
@@ -2168,7 +2168,7 @@ memoryInitializer = Module["wasmJSMethod"].indexOf("asmjs") >= 0 || Module["wasm
 
 
 
-var STATIC_BUMP = 89728;
+var STATIC_BUMP = 91232;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 
