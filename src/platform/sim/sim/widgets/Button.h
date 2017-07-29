@@ -33,16 +33,14 @@ public:
 
     virtual void onKeyDown(KeyEvent &e) override {
         if (!_pressed && e.keycode() == _keycode) {
-            _pressed = true;
-            _callback(_pressed);
+            setPressed(true);
             e.consume();
         }
     }
 
     virtual void onKeyUp(KeyEvent &e) override {
         if (_pressed && e.keycode() == _keycode) {
-            _pressed = false;
-            _callback(_pressed);
+            setPressed(false);
             e.consume();
         }
     }
@@ -53,20 +51,27 @@ public:
 
     virtual void onMouseDown(MouseButtonEvent &e) override {
         if (!_pressed && e.button() == MouseButtonEvent::Left && isInside(e.pos())) {
-            _pressed = true;
-            _callback(_pressed);
+            setPressed(true);
             e.consume();
         }
     }
 
     virtual void onMouseUp(MouseButtonEvent &e) override {
         if (_pressed && e.button() == MouseButtonEvent::Left) {
-            _pressed = false;
-            _callback(_pressed);
+            setPressed(false);
         }
     }
 
 private:
+    void setPressed(bool pressed) {
+        if (pressed != _pressed) {
+            _pressed = pressed;
+            if (_callback) {
+                _callback(_pressed);
+            }
+        }
+    }
+
     SDL_Keycode _keycode;
     bool _pressed = false;
     bool _hovered = false;
