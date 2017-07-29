@@ -2,7 +2,7 @@
 # SDL2
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-	set(SDL_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
+	set(SDL_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s WASM=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
 else()
 	find_package(SDL2 REQUIRED)
 	find_package(SDL2_image REQUIRED)
