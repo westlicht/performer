@@ -11,3 +11,5 @@
 
 #define ENABLE_USBH_DRIVER_FS   1
 #define ENABLE_USBH_DRIVER_HS   1
+
+#define PRINTF_BUFFER   16

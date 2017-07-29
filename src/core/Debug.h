@@ -4,10 +4,11 @@
 
 #include "drivers/DebugPin.h"
 
-#include <cstdio>
+// #define printf error
 
 #if ENABLE_DEBUG
-# define DBG(_fmt_, ...) printf(_fmt_ "\r\n", ##__VA_ARGS__)
+void dbg_printf(char const *fmt, ...) __attribute__((__format__(__printf__, 1, 2)));
+# define DBG(_fmt_, ...) dbg_printf(_fmt_ "\r\n", ##__VA_ARGS__)
 # define DBG_LO() DebugPin::low()
 # define DBG_HI() DebugPin::high()
 #else // ENABLE_DEBUG

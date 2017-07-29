@@ -22,9 +22,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall --std=c++11 -fdata-sections -ff
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${platform_linker_flags}")
 
 set(sources
-	# tinyprintf
-	libs/tinyprintf/printf-c.cc
+	# stb
+	libs/stb/stb_sprintf.c
 	# core
+	core/Debug.cpp
 	core/gfx/Canvas.cpp
 	core/profiler/Profiler.cpp
 	# engine

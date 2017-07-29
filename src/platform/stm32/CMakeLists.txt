@@ -5,9 +5,8 @@ add_custom_target(libopencm3 make AR=${CMAKE_AR} CC=${CMAKE_C_COMPILER} WORKING_
 
 # platform
 
-set(TINYPRINTF_FLAGS "-Wl,--wrap,printf -Wl,--wrap,sprintf -Wl,--wrap,snprintf -Wl,--wrap,puts -Wl,--wrap,putchar")
 set(platform_compiler_flags "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb-interwork -funroll-loops -fshort-enums" PARENT_SCOPE)
-set(platform_linker_flags "${TINYPRINTF_FLAGS} -T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f429-nucleo.ld -nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
+set(platform_linker_flags "-T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f429-nucleo.ld -nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
 
 set(platform_sources
 	# os
