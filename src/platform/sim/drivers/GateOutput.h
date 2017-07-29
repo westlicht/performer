@@ -16,5 +16,4 @@ public:
 
 private:
     sim::Simulator &_simulator;
-    uint8_t _state;
 };
