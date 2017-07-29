@@ -3,6 +3,7 @@
 #include "sim/Simulator.h"
 #include "sim/widgets/Button.h"
 #include "sim/widgets/Led.h"
+#include "sim/widgets/Encoder.h"
 
 #include <vector>
 #include <deque>
@@ -74,6 +75,18 @@ public:
                 }
             }
         }
+
+        // encoder
+        _encoder = _simulator.window().createWidget<sim::Encoder>(
+            sim::Vector2i(10, 10),
+            sim::Vector2i(60, 60)
+        );
+        _encoder->setButtonCallback([this] (bool pressed) {
+            std::cout << "pressed: " << pressed << std::endl;
+        });
+        _encoder->setValueCallback([this] (int value) {
+            _events.emplace_back(Encoder, value);
+        });
     }
 
     void setLed(int index, uint8_t red, uint8_t green) {
@@ -110,5 +123,6 @@ private:
     sim::Simulator &_simulator;
     std::vector<sim::Button::Ptr> _buttons;
     std::vector<sim::Led::Ptr> _leds;
+    sim::Encoder::Ptr _encoder;
     std::deque<Event> _events;
 };
