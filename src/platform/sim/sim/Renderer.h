@@ -27,6 +27,10 @@ public:
         _renderer.fillRect(&rect);
     }
 
+    void drawLine(const Vector2i &p1, const Vector2i &p2) {
+        _renderer.drawLine(p1.x(), p1.y(), p2.x(), p2.y());
+    }
+
     void present() { _renderer.present(); }
 
     sdl::Renderer &sdl() { return _renderer; }

@@ -21,6 +21,12 @@ using Eigen::Vector2i;
 using Eigen::Vector3i;
 using Eigen::Vector4i;
 
+inline Vector2f toFloat(const Vector2i &v) { return Vector2f(float(v.x()), float(v.y())); }
+inline Vector2i toInt(const Vector2f &v) { return Vector2i(int(v.x()), int(v.y())); }
+
+static const float PI = 3.141592653589793f;
+static const float TWO_PI = 6.283185307179586f;
+
 class Color : public Eigen::Vector4f {
     typedef Eigen::Vector4f Base;
 public:
