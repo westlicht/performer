@@ -9,8 +9,6 @@ namespace sim {
 
 class Simulator {
 public:
-    typedef std::function<void()> UpdateCallback;
-
     Simulator();
 
     Window &window() { return _window; }
@@ -23,11 +21,26 @@ public:
 
     double ticks();
 
+    typedef std::function<void()> UpdateCallback;
+
+    void addUpdateCallback(UpdateCallback callback);
+
+    // Hardware IO emulation
     void writeGate(int channel, bool value);
     void writeDAC(int channel, uint16_t value);
     uint16_t readADC(int channel);
 
-    void addUpdateCallback(UpdateCallback callback);
+    // MIDI emulation
+    enum MIDIPort {
+        MIDIHardwarePort,
+        MIDIUSBHostPort,
+    };
+
+    typedef std::function<void(uint8_t)> MIDIRecvCallback;
+
+    void sendMIDI(int port, uint8_t data);
+    void recvMIDI(int port, MIDIRecvCallback callback);
+
 
 private:
     Window _window;

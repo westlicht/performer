@@ -56,6 +56,12 @@ uint16_t Simulator::readADC(int channel) {
     return 0;
 }
 
+void Simulator::sendMIDI(int port, uint8_t data) {
+}
+
+void Simulator::recvMIDI(int port, MIDIRecvCallback callback) {
+}
+
 void Simulator::addUpdateCallback(UpdateCallback callback) {
     _updateCallbacks.emplace_back(callback);
 }
