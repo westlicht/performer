@@ -1,0 +1,41 @@
+dist: trusty
+language: cpp
+compiler: gcc
+notifications:
+  email: false
+env:
+  global:
+    # EM_USE_GLOBAL_CACHE=1 tells emscripten to use precompiled libraries from
+    # the emscripten-libs-asmjs package. This speeds up the build significantly.
+    - EM_USE_GLOBAL_CACHE=1
+jobs:
+  include:
+    - stage: Hardware Platform (STM32)
+      script:
+      - make setup_stm32 && (cd build/stm32/debug && make) && (cd build/stm32/release && make)
+    - stage: Simulation Platform (Linux)
+      script:
+      # Simulation target requires recent versions of SDL2 and SDL2_image not available as packages
+      - wget https://www.libsdl.org/release/SDL2-2.0.5.tar.gz
+      - tar -xf SDL2-2.0.5.tar.gz
+      - (cd SDL2-2.0.5 && ./configure && make && sudo make install)
+      - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.1.tar.gz
+      - tar -xf SDL2_image-2.0.1.tar.gz
+      - (cd SDL2_image-2.0.1 && ./configure && make && sudo make install)
+      - make setup_sim && (cd build/sim/debug && make) && (cd build/sim/release && make)
+    - stage: Simulation Platform (WebAssembly)
+      script:
+      # Download and verify alpine-chroot-install script
+      - wget https://raw.githubusercontent.com/alpinelinux/alpine-chroot-install/v0.6.0/alpine-chroot-install
+          && echo 'a827a4ba3d0817e7c88bae17fe34e50204983d1e  alpine-chroot-install' | sha1sum -c
+      # Install Alpine Linux into /alpine and prepare there a chroot environment;
+      # add testing repository and install packages for Emscripten.
+      - sudo sh alpine-chroot-install -b v3.6
+          -r 'https://nl.alpinelinux.org/alpine/edge/testing'
+          -p 'emscripten emscripten-libs-wasm binaryen closure-compiler make cmake'
+          -k 'CI TRAVIS_.* EM_.*'
+      # Setup a script to run in chroot for emscripten build
+      - printf '#!/bin/sh\nexport EMSCRIPTEN=/usr/share/emscripten\nmake setup_www\n(cd build/sim/www && make)' > build-www.sh
+      - chmod a+x build-www.sh
+      # Build
+      - /alpine/enter-chroot -u $USER ./build-www.sh
