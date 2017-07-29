@@ -14,17 +14,18 @@ public:
     enum Action {
         KeyDown,
         KeyUp,
+        Encoder,
     };
     struct Event {
         Event() = default;
-        Event(Action action, int key) : _action(action), _key(key) {}
+        Event(Action action, int value) : _action(action), _value(value) {}
 
         Action action() const { return Action(_action); }
-        int key() const { return _key; }
+        int value() const { return _value; }
 
     private:
         uint8_t _action;
-        uint8_t _key;
+        int8_t _value;
     };
 
     static const int Rows = 8;

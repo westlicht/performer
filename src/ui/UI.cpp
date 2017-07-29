@@ -74,11 +74,14 @@ void UI::handleKeys() {
         switch (event.action()) {
         case ButtonLedMatrix::KeyDown:
             // DBG("down %d", event.key());
-            keyDown(Key(event.key()));
+            keyDown(Key(event.value()));
             break;
         case ButtonLedMatrix::KeyUp:
             // DBG("up %d", event.key());
-            keyUp(Key(event.key()));
+            keyUp(Key(event.value()));
+            break;
+        case ButtonLedMatrix::Encoder:
+            encoder(event.value());
             break;
         }
     }
@@ -107,7 +110,9 @@ void UI::keyDown(const Key &key) {
 }
 
 void UI::keyUp(const Key &key) {
+}
 
+void UI::encoder(int value) {
 }
 
 void UI::updateLeds() {

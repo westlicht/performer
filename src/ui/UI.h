@@ -23,6 +23,7 @@ private:
     void handleKeys();
     void keyDown(const Key &key);
     void keyUp(const Key &key);
+    void encoder(int value);
 
     void updateLeds();
 
