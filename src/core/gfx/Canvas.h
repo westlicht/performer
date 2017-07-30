@@ -15,6 +15,7 @@ enum class BlendMode {
 
 enum class Font {
     Tiny,
+    Small,
     Default = Tiny,
 };
 
