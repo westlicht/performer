@@ -4,8 +4,6 @@
 
 #include "drivers/DebugPin.h"
 
-// #define printf error
-
 #if ENABLE_DEBUG
 void dbg_printf(char const *fmt, ...) __attribute__((__format__(__printf__, 1, 2)));
 # define DBG(_fmt_, ...) dbg_printf(_fmt_ "\r\n", ##__VA_ARGS__)
