@@ -22,18 +22,13 @@ void ClockTimer::init() {
 
     // set to 1mhz
     uint32_t prescaler = (rcc_apb1_frequency * 2) / 1000000 - 1;
-    // uint32_t prescaler = ((CPU_FREQUENCY / 4) / 1000000) - 1;
-    // uint32_t prescaler = 100000;
-    DBG("prescaler = %d", prescaler);
     timer_set_prescaler(TIMER, prescaler);
 
     timer_enable_update_event(TIMER);
-    // timer_enable_counter(TIMER);
     timer_enable_irq(TIMER, TIM_DIER_UIE);
 }
 
 void ClockTimer::reset() {
-    // timer_reset(TIMER);
 }
 
 void ClockTimer::enable() {
