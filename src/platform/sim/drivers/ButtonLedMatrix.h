@@ -47,12 +47,15 @@ public:
             SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,
             SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,
             SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8,
-            SDLK_9, SDLK_0, SDLK_o, SDLK_p, SDLK_l, SDLK_l, SDLK_l, SDLK_l
+            SDLK_9, SDLK_0, SDLK_o, SDLK_p, SDLK_l
         });
 
         // button & leds
         for (int col = 0; col < ButtonCols; ++col) {
             for (int row = 0; row < Rows; ++row) {
+                if (col == ButtonCols - 1 && row >= 5) {
+                    continue;
+                }
                 sim::Vector2i origin(matrixOrigin.x() + row * spacing.x(), matrixOrigin.y() + col * spacing.y());
 
                 auto button = _simulator.window().createWidget<sim::Button>(
