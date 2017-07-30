@@ -22,6 +22,9 @@ public:
     void resume();
     bool running() const { return _running; }
 
+    float bpm() { return _clock.bpm(); }
+    void setBpm(float bpm) { _clock.setBpm(bpm); }
+
     uint32_t tick() const { return _tick; }
 
     const Clock &clock() const { return _clock; }

@@ -28,6 +28,7 @@ public:
 
     Track() {
         // _data.as<Sequence>() = Sequence();
+        reset();
     }
 
     const Sequence &sequence() const { return _sequence; }
@@ -36,8 +37,30 @@ public:
     // const Sequence &sequence() const { return _data.as<Sequence>(); }
     //       Sequence &sequence()       { return _data.as<Sequence>(); }
 
+    bool gate() const { return _gate; }
+
+    uint32_t currentStep() const { return _currentStep; }
+
+    void reset() {
+        _currentStep = -1;
+        _gate = false;
+    }
+
+    void tick(uint32_t tick) {
+        if (tick % (192 / 4) == 0) {
+            _currentStep = (_currentStep + 1) % 16;
+            _gate = _sequence.step(_currentStep).active;
+        }
+        if (tick % (192 / 4) >= (192 / 8)) {
+            _gate = false;
+        }
+    }
+
 private:
     Sequence _sequence;
+
+    bool _gate = false;
+    uint32_t _currentStep = -1;
 
     // StaticMemory<sizeof(Sequence)> _data;
 };

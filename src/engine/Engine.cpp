@@ -45,11 +45,22 @@ void Engine::update() {
     uint32_t tick;
     while (_clock.checkTick(&tick)) {
         _tick = tick;
+
+        for (size_t i = 0; i < _tracks.size(); ++i) {
+            auto &track = _tracks[i];
+            track.tick(tick);
+            _gateOutput.setGate(i, track.gate());
+            
+        }
     }
 
 }
 
 void Engine::start() {
+    for (auto &track : _tracks) {
+        track.reset();
+    }
+
     _clock.start();
 }
 

@@ -97,12 +97,12 @@ void UI::keyDown(const Key &key) {
     }
 
     if (key.isTrack()) {
-        DBG("select track %d", key.track());
+        // DBG("select track %d", key.track());
         _selectedTrack = key.track();
     }
 
     if (key.isStep()) {
-        DBG("toggle step %d", key.step());
+        // DBG("toggle step %d", key.step());
         auto &sequence = _engine.track(_selectedTrack).sequence();
         sequence.step(key.step()).toggle();
 
@@ -113,18 +113,20 @@ void UI::keyUp(const Key &key) {
 }
 
 void UI::encoder(int value) {
+
+    _engine.setBpm(_engine.bpm() + value * 0.1f);
 }
 
 void UI::updateLeds() {
     _blm.setLed(Key::Start, _engine.running() ? 0xff : 0, 0);
 
     for (int track = 0; track < 8; ++track) {
-        _blm.setLed(KeyCode::Track(track), 0, track == _selectedTrack ? 0xff : 0);
+        _blm.setLed(KeyCode::Track(track), _engine.track(track).gate() ? 0xff : 0, track == _selectedTrack ? 0xff : 0);
     }
 
-    int currentStep = (_engine.clock().tick() / (192 / 4)) % 16;
-    const auto &sequence = _engine.track(_selectedTrack).sequence();
-    for (int step = 0; step < 16; ++step) {
-        _blm.setLed(KeyCode::Step(step), step == currentStep ? 0xff : 0, sequence.step(step).active ? 0xff : 0);
+    const auto &track = _engine.track(_selectedTrack);
+    const auto &sequence = track.sequence();
+    for (uint32_t step = 0; step < 16; ++step) {
+        _blm.setLed(KeyCode::Step(step), step == track.currentStep() ? 0xff : 0, sequence.step(step).active ? 0xff : 0);
     }
 }
