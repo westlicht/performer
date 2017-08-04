@@ -19,4 +19,15 @@ void dbg_printf(char const *fmt, ...) {
     va_end(va);
 }
 
+void dbg_assert(bool cond, const char *fmt, ...) {
+    va_list va;
+    if (!cond) {
+        char buf[PRINTF_BUFFER];
+        va_start(va, fmt);
+        stbsp_vsprintfcb(&dbg_write, buf, buf, fmt, va);
+        va_end(va);
+        while (1) {}
+    }
+}
+
 #endif // ENABLE_DEBUG

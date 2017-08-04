@@ -9,6 +9,7 @@
 #include "drivers/GateOutput.h"
 #include "drivers/MIDI.h"
 
+#include "model/Model.h"
 #include "engine/Engine.h"
 #include "ui/UI.h"
 
@@ -26,6 +27,7 @@ struct Environment {
     GateOutput gateOutput;
     MIDI midi;
 
+    Model model;
     Engine engine;
     UI ui;
 
@@ -38,8 +40,8 @@ struct Environment {
         gateOutput(sim),
         midi(sim),
 
-        engine(clockTimer, adc, dac, gateOutput, midi),
-        ui(engine, lcd, blm)
+        engine(model, clockTimer, adc, dac, gateOutput, midi),
+        ui(model, engine, lcd, blm)
     {
         engine.init();
         ui.init();
@@ -69,7 +71,7 @@ int main(int argc, char *argv[]) {
     sdl::Init init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
     Environment env;
-  
+
 #ifdef __EMSCRIPTEN__
     // 0 fps means to use requestAnimationFrame; non-0 means to use setTimeout.
     g_env = &env;

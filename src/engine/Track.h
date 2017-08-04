@@ -1,66 +1,51 @@
 #pragma once
 
-#include "Sequence.h"
+#include "model/Model.h"
 
-#include <array>
+// template<size_t Size>
+// struct StaticMemory {
+//     uint8_t data[Size];
 
-
-template<size_t Size>
-struct StaticMemory {
-    uint8_t data[Size];
-
-    template<typename T>
-    const T &as() const { 
-        static_assert(sizeof(T) <= Size, "type is too large");
-        return *reinterpret_cast<const T *>(data);
-    }
-    template<typename T>
-    T &as() {
-        static_assert(sizeof(T) <= Size, "type is too large");
-        return *reinterpret_cast<T *>(data);
-    }
-};
+//     template<typename T>
+//     const T &as() const {
+//         static_assert(sizeof(T) <= Size, "type is too large");
+//         return *reinterpret_cast<const T *>(data);
+//     }
+//     template<typename T>
+//     T &as() {
+//         static_assert(sizeof(T) <= Size, "type is too large");
+//         return *reinterpret_cast<T *>(data);
+//     }
+// };
 
 class Track {
 public:
-    static const int Num = 8;
-    typedef std::array<Track, Num> Array;
+    Track();
 
-    Track() {
-        // _data.as<Sequence>() = Sequence();
-        reset();
-    }
+    void setSequence(Sequence &sequence) { _sequence = &sequence; }
 
-    const Sequence &sequence() const { return _sequence; }
-          Sequence &sequence()       { return _sequence; }
+    const Sequence &sequence() const { return *_sequence; }
+          Sequence &sequence()       { return *_sequence; }
 
-    // const Sequence &sequence() const { return _data.as<Sequence>(); }
-    //       Sequence &sequence()       { return _data.as<Sequence>(); }
+    bool muted() const { return _muted; }
+    void setMuted(bool muted) { _muted = muted; }
+    void toggleMuted() { setMuted(!muted()); }
 
     bool gate() const { return _gate; }
 
-    uint32_t currentStep() const { return _currentStep; }
+    int currentStep() const { return _currentStep; }
 
-    void reset() {
-        _currentStep = -1;
-        _gate = false;
-    }
+    void reset();
 
-    void tick(uint32_t tick) {
-        if (tick % (192 / 4) == 0) {
-            _currentStep = (_currentStep + 1) % 16;
-            _gate = _sequence.step(_currentStep).active;
-        }
-        if (tick % (192 / 4) >= (192 / 8)) {
-            _gate = false;
-        }
-    }
+    void tick(uint32_t tick);
 
 private:
-    Sequence _sequence;
+    void advance(const Sequence &sequence);
 
-    bool _gate = false;
-    uint32_t _currentStep = -1;
+    Sequence *_sequence = nullptr;
 
-    // StaticMemory<sizeof(Sequence)> _data;
+    bool _muted = false;
+    bool _gate;
+    int _currentStep;
+    int8_t _direction;
 };

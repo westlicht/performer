@@ -1,10 +1,13 @@
 #include "Engine.h"
 
+#include "Config.h"
+
 #include "core/Debug.h"
 
 #include "core/midi/MIDIMessage.h"
 
-Engine::Engine(ClockTimer &clockTimer, ADC &adc, DAC &dac, GateOutput &gateOutput, MIDI &midi) :
+Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, GateOutput &gateOutput, MIDI &midi) :
+    _model(model),
     _adc(adc),
     _dac(dac),
     _gateOutput(gateOutput),
@@ -24,6 +27,10 @@ void Engine::init() {
             return false;
         }
     });
+
+    for (int i = 0; i < TRACK_COUNT; ++i) {
+        _tracks[i].setSequence(_model.project().pattern(0).sequence(i));
+    }
 }
 
 void Engine::update() {
@@ -42,6 +49,9 @@ void Engine::update() {
         _running = true;
     }
 
+    // update tempo
+    _clock.setBpm(_model.project().bpm());
+
     uint32_t tick;
     while (_clock.checkTick(&tick)) {
         _tick = tick;
@@ -50,7 +60,7 @@ void Engine::update() {
             auto &track = _tracks[i];
             track.tick(tick);
             _gateOutput.setGate(i, track.gate());
-            
+
         }
     }
 

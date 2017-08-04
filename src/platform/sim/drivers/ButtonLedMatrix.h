@@ -46,7 +46,7 @@ public:
             SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA,
             SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,
             SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,
-            SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_8,
+            SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_7, SDLK_LSHIFT,
             SDLK_9, SDLK_0, SDLK_o, SDLK_p, SDLK_l
         });
 
@@ -113,7 +113,7 @@ public:
         return buttonState(col * Rows + row);
     }
 
-    inline bool nextEvent(Event &event) { 
+    inline bool nextEvent(Event &event) {
         if (_events.empty()) {
             return false;
         }

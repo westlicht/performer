@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.h"
+
 #include "os/Atomic.h"
 
 #include <cstdint>
@@ -50,7 +52,7 @@ private:
     ClockTimer &_timer;
     Mode _mode = Auto;
     State _state = Idle;
-    int _ppqn = 192;
+    int _ppqn = PPQN;
     float _bpm = 120.f;
 
     Atomic<uint8_t> _requestStart;

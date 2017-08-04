@@ -15,6 +15,7 @@
 
 #include "core/profiler/Profiler.h"
 
+#include "model/Model.h"
 #include "engine/Engine.h"
 #include "ui/UI.h"
 
@@ -32,8 +33,9 @@ static USBH usbh;
 
 static Profiler profiler;
 
-static Engine engine(clockTimer, adc, dac, gateOutput, midi);
-static UI ui(engine, lcd, blm);
+static Model model;
+static Engine engine(model, clockTimer, adc, dac, gateOutput, midi);
+static UI ui(model, engine, lcd, blm);
 
 static os::Task<256> blickTask([] () {
 	rcc_periph_clock_enable(RCC_GPIOB);

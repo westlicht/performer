@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Config.h"
+#include "Page.h"
+
+#include "pages/Pages.h"
 
 #include "drivers/ButtonLedMatrix.h"
 #include "drivers/LCD.h"
@@ -10,23 +13,21 @@
 
 #include "engine/Engine.h"
 
+#include "model/Model.h"
+
 class Key;
 
 class UI {
 public:
-    UI(Engine &engine, LCD &lcd, ButtonLedMatrix &blm);
+    UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm);
 
     void init();
     void update();
 
 private:
     void handleKeys();
-    void keyDown(const Key &key);
-    void keyUp(const Key &key);
-    void encoder(int value);
 
-    void updateLeds();
-
+    Model &_model;
     Engine &_engine;
 
     LCD &_lcd;
@@ -36,6 +37,6 @@ private:
     FrameBuffer8bit _frameBuffer;
     Canvas _canvas;
 
-    uint8_t _selectedTrack = 0;
-    
+    PageManager _pageManager;
+    Pages _pages;
 };

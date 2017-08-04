@@ -13,3 +13,9 @@
 #define ENABLE_USBH_DRIVER_HS   1
 
 #define PRINTF_BUFFER   16
+
+#define PPQN            192
+
+#define PATTERN_COUNT   64
+#define TRACK_COUNT     8
+#define STEP_COUNT      16

@@ -31,8 +31,14 @@ set(sources
 	# engine
 	engine/Engine.cpp
 	engine/Clock.cpp
+	engine/Track.cpp
 	# ui
 	ui/UI.cpp
+	ui/Page.cpp
+	ui/pages/MainPage.cpp
+	ui/pages/MutePage.cpp
+	ui/pages/TopPage.cpp
+	ui/painters/WindowPainter.cpp
 )
 
 include_directories(${platform_include_directories})

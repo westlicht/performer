@@ -41,13 +41,16 @@ public:
         Step14 = KeyCode::Step(14),
         Step15 = KeyCode::Step(15),
         Start = 24,
-        Stop = 25,
-        Shift = 26,
+        BPM = 25,
+        Mute = 26,
+        Shift = 31,
     };
 
-    Key(int code) : _code(code) {}
+    Key(int code, bool shiftModifier) : _code(code), _shiftModifier(shiftModifier) {}
 
     int code() const { return _code; }
+
+    bool shiftModifier() const { return _shiftModifier; }
 
     bool is(int code) const { return _code == code; }
 
@@ -57,6 +60,9 @@ public:
     bool isStep() const { return _code >= Step8 && _code <= Step7; }
     int step() const { return _code >= Step0 ? _code - Step0 : _code - Step8 + 8; }
 
+    bool isGlobal() const { return _code == Start; };
+
 private:
     int _code;
+    bool _shiftModifier;
 };
