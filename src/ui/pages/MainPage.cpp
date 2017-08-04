@@ -65,11 +65,6 @@ void MainPage::keyDown(KeyEvent &event) {
         sequence.step(key.step()).toggle();
         event.consume();
     }
-
-    if (key.isTrack()) {
-        _engine.setGateDirect(key.track(), true);
-        event.consume();
-    }
 }
 
 void MainPage::keyUp(KeyEvent &event) {
