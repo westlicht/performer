@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Config.h"
+
+#include <array>
+
 namespace KeyCode {
 
     static constexpr int Step(int step) {
@@ -15,6 +19,8 @@ namespace KeyCode {
     }
 
 } // namespace KeyCode
+
+typedef std::array<bool, CONFIG_BLM_ROWS * CONFIG_BLM_COLS_BUTTON> KeyState;
 
 class Key {
 public:
@@ -55,11 +61,13 @@ public:
         F4 = KeyCode::Function(4),
     };
 
-    Key(int code, bool shiftModifier) : _code(code), _shiftModifier(shiftModifier) {}
+    Key(int code, const KeyState &state) : _code(code), _state(state) {}
 
     int code() const { return _code; }
 
-    bool shiftModifier() const { return _shiftModifier; }
+    const KeyState &state() const { return _state; }
+
+    bool shiftModifier() const { return _state[Shift]; }
 
     bool is(int code) const { return _code == code; }
 
@@ -76,5 +84,5 @@ public:
 
 private:
     int _code;
-    bool _shiftModifier;
+    const KeyState &_state;
 };

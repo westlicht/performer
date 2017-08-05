@@ -55,12 +55,14 @@ void UI::handleKeys() {
     while (_blm.nextEvent(event)) {
         switch (event.action()) {
         case ButtonLedMatrix::KeyDown: {
-            KeyEvent keyEvent(Event::KeyDown, Key(event.value(), _blm.buttonState(Key::Shift)));
+            _keyState[event.value()] = true;
+            KeyEvent keyEvent(Event::KeyDown, Key(event.value(), _keyState));
             _pageManager.dispatchEvent(keyEvent);
             break;
         }
         case ButtonLedMatrix::KeyUp: {
-            KeyEvent keyEvent(Event::KeyUp, Key(event.value(), _blm.buttonState(Key::Shift)));
+            _keyState[event.value()] = false;
+            KeyEvent keyEvent(Event::KeyUp, Key(event.value(), _keyState));
             _pageManager.dispatchEvent(keyEvent);
             break;
         }
