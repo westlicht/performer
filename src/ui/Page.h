@@ -33,8 +33,8 @@ public:
     virtual void dispatchEvent(Event &event);
 
 protected:
-    static constexpr int PageWidth = LCD_WIDTH;
-    static constexpr int PageHeight = LCD_HEIGHT;
+    static constexpr int PageWidth = CONFIG_LCD_WIDTH;
+    static constexpr int PageHeight = CONFIG_LCD_HEIGHT;
 
     PageManager &_pageManager;
 };

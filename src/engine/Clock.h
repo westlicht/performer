@@ -52,7 +52,7 @@ private:
     ClockTimer &_timer;
     Mode _mode = Auto;
     State _state = Idle;
-    int _ppqn = PPQN;
+    int _ppqn = CONFIG_PPQN;
     float _bpm = 120.f;
 
     Atomic<uint8_t> _requestStart;

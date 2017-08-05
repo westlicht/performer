@@ -2,7 +2,7 @@
 
 #include "core/Debug.h"
 
-#if ENABLE_PROFILER
+#if CONFIG_ENABLE_PROFILER
 int Profiler::_numIntervals;
 int Profiler::_numCounters;
 Profiler::Interval *Profiler::_intervals[Profiler::MaxIntervals];
@@ -45,4 +45,4 @@ void Profiler::registerCounter(Counter *counter) {
     }
 }
 
-#endif // ENABLE_PROFILER
+#endif // CONFIG_ENABLE_PROFILER

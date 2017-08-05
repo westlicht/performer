@@ -5,7 +5,7 @@
 
 class Pattern {
 public:
-    typedef std::array<Sequence, TRACK_COUNT> SequenceArray;
+    typedef std::array<Sequence, CONFIG_TRACK_COUNT> SequenceArray;
 
     Pattern() {
         for (size_t i = 0; i < _sequences.size(); ++i) {

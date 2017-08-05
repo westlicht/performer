@@ -16,8 +16,8 @@ void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
 #define configUSE_PREEMPTION                    1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
 #define configUSE_TICKLESS_IDLE                 0
-#define configCPU_CLOCK_HZ                      CPU_FREQUENCY
-#define configTICK_RATE_HZ                      TICK_FREQUENCY
+#define configCPU_CLOCK_HZ                      CONFIG_CPU_FREQUENCY
+#define configTICK_RATE_HZ                      CONFIG_TICK_FREQUENCY
 #define configMAX_PRIORITIES                    5
 #define configMINIMAL_STACK_SIZE                128 /* this is in _WORDS_ */
 #define configTOTAL_HEAP_SIZE                   0 //(5 * 1024)

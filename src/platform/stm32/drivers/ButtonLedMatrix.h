@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.h"
+
 #include "core/utils/RingBuffer.h"
 
 #include <array>
@@ -25,9 +27,9 @@ public:
         int8_t _value;
     };
 
-    static const int Rows = 8;
-    static const int ButtonCols = 5;
-    static const int LedCols = 4;
+    static const int Rows = CONFIG_BLM_ROWS;
+    static const int ColsButton = CONFIG_BLM_COLS_BUTTON;
+    static const int ColsLed = CONFIG_BLM_COLS_LED;
 
     ButtonLedMatrix();
 
@@ -48,7 +50,7 @@ public:
         setLed(col * Rows + row, red, green);
     }
 
-    void setLeds(const std::array<std::pair<uint8_t, uint8_t>, Rows * LedCols> &leds) {
+    void setLeds(const std::array<std::pair<uint8_t, uint8_t>, Rows * ColsLed> &leds) {
         for (size_t i = 0; i < leds.size(); ++i) {
             setLed(i, leds[i].first, leds[i].second);
         }
@@ -94,8 +96,8 @@ private:
         // uint8_t counter : 7;
     };
 
-    ButtonState _buttonState[Rows * ButtonCols];
-    LedState _ledState[Rows * LedCols];
+    ButtonState _buttonState[Rows * ColsButton];
+    LedState _ledState[Rows * ColsLed];
 
     RingBuffer<Event, 32> _events;
 

@@ -35,7 +35,7 @@ void ButtonLedMatrix::init() {
     // init spi pins
     gpio_mode_setup(SPI_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI_GPIO);
     gpio_set_af(SPI_PORT, GPIO_AF5, SPI_GPIO);
-    
+
     // init spi
     rcc_periph_clock_enable(RCC_SPI4);
     spi_init_master(SR_SPI, SPI_CR1_BAUDRATE_FPCLK_DIV_8,
@@ -74,7 +74,7 @@ void ButtonLedMatrix::process() {
 
     uint8_t rowData = ~(1 << nextRow);
     uint8_t ledData = 0;
-    for (int col = 0; col < LedCols; ++col) {
+    for (int col = 0; col < ColsLed; ++col) {
         int index = col * Rows + nextRow;
         if (_ledState[index].red.update()) {
             ledData |= (1 << (col * 2));
@@ -100,7 +100,7 @@ void ButtonLedMatrix::process() {
     // wait(10);
     gpio_clear(SR_PORT, SR_LATCH);
 
-    for (int col = 0; col < ButtonCols; ++col) {
+    for (int col = 0; col < ColsButton; ++col) {
         int buttonIndex = col * Rows + _row;
         auto &state = _buttonState[buttonIndex].state;
         bool newState = !(buttonData & (1 << col));
@@ -117,5 +117,5 @@ void ButtonLedMatrix::process() {
     _row = nextRow;
 
     PROFILER_INTERVAL_END(ButtonLedMatrixProcess);
-    
+
 }

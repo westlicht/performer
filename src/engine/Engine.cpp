@@ -28,7 +28,7 @@ void Engine::init() {
         }
     });
 
-    for (int i = 0; i < TRACK_COUNT; ++i) {
+    for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
         _tracks[i].setSequence(_model.project().pattern(0).sequence(i));
     }
 }

@@ -34,7 +34,7 @@ private:
     LCD &_lcd;
     ButtonLedMatrix &_blm;
 
-    uint8_t _frameBufferData[LCD_WIDTH * LCD_HEIGHT];
+    uint8_t _frameBufferData[CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT];
     FrameBuffer8bit _frameBuffer;
     Canvas _canvas;
     Leds _leds;

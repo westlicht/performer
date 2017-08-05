@@ -1,21 +1,35 @@
 #pragma once
 
-#define CPU_FREQUENCY   168000000
-#define TICK_FREQUENCY  1000
+// CPU
+#define CONFIG_CPU_FREQUENCY            168000000
+#define CONFIG_TICK_FREQUENCY           1000
 
-#define LCD_WIDTH       256
-#define LCD_HEIGHT      64
+// printf
+#define CONFIG_PRINTF_BUFFER            16
 
-#define ENABLE_DEBUG    1
-#define ENABLE_PROFILER 0
+// Debugging
+#define CONFIG_ENABLE_DEBUG             1
+#define CONFIG_ENABLE_PROFILER          0
 
-#define ENABLE_USBH_DRIVER_FS   1
-#define ENABLE_USBH_DRIVER_HS   1
+// USB host
+#define CONFIG_ENABLE_USBH_DRIVER_FS    1
+#define CONFIG_ENABLE_USBH_DRIVER_HS    1
 
-#define PRINTF_BUFFER   16
+// Parts per quarter note
+#define CONFIG_PPQN                     192
 
-#define PPQN            192
+// LCD
+#define CONFIG_LCD_WIDTH                256
+#define CONFIG_LCD_HEIGHT               64
 
-#define PATTERN_COUNT   64
-#define TRACK_COUNT     8
-#define STEP_COUNT      16
+// Model
+#define CONFIG_PATTERN_COUNT            64
+#define CONFIG_TRACK_COUNT              8
+#define CONFIG_STEP_COUNT               16
+
+// Button Led Matrix
+#define CONFIG_BLM_ROWS                 8
+#define CONFIG_BLM_COLS_BUTTON          5
+#define CONFIG_BLM_COLS_LED             4
+
+#define CONFIG_FUNCTION_KEY_COUNT       5

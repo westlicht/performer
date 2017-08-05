@@ -12,7 +12,7 @@ public:
     LCD(sim::Simulator &simulator) :
         _simulator(simulator)
     {
-        sim::Vector2i resolution(LCD_WIDTH, LCD_HEIGHT);
+        sim::Vector2i resolution(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT);
         _display = _simulator.window().createWidget<sim::Display>(
             sim::Vector2i(70, 10),
             resolution * 2 + sim::Vector2i(2, 2),

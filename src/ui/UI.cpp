@@ -15,7 +15,7 @@ UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm) :
     _engine(engine),
     _lcd(lcd),
     _blm(blm),
-    _frameBuffer(LCD_WIDTH, LCD_HEIGHT, _frameBufferData),
+    _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
     _canvas(_frameBuffer),
     _pageManager(_pages),
     _pages(_pageManager, _model, _engine)
@@ -34,7 +34,7 @@ void UI::update() {
     handleKeys();
 
     _pageManager.updateLeds(_leds);
-    _blm.setLeds(_leds.data());
+    _blm.setLeds(_leds.array());
 
     static int counter = 0;
     if (counter % 20 == 0) {

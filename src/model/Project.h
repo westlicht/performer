@@ -7,7 +7,7 @@ class Project {
 public:
     // Patterns
 
-    typedef std::array<Pattern, PATTERN_COUNT> PatternArray;
+    typedef std::array<Pattern, CONFIG_PATTERN_COUNT> PatternArray;
 
     const PatternArray &patterns() const { return _patterns; }
           PatternArray &patterns()       { return _patterns; }

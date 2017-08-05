@@ -17,7 +17,7 @@ void MainPage::draw(Canvas &canvas) {
     canvas.setColor(0);
     canvas.fill();
 
-    for (int trackIndex = 0; trackIndex < TRACK_COUNT; ++trackIndex) {
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &track = _engine.track(trackIndex);
         const auto &sequence = track.sequence();
         for (int step = 0; step < 16; ++step) {

@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-#if ENABLE_PROFILER
+#if CONFIG_ENABLE_PROFILER
 
 class Profiler {
 public:
@@ -70,7 +70,7 @@ private:
 # define PROFILER_COUNTER_ADD(_num_) \
     _name_##_profiler_counter.add(_num_);
 
-#else // ENABLE_PROFILER
+#else // CONFIG_ENABLE_PROFILER
 
 class Profiler {
 public:
@@ -85,4 +85,4 @@ public:
 # define PROFILER_COUNTER(_name_, _desc_)
 # define PROFILER_COUNTER_ADD(_num_)
 
-#endif // ENABLE_PROFILER
+#endif // CONFIG_ENABLE_PROFILER

@@ -15,7 +15,7 @@
 
 class Engine {
 public:
-    typedef std::array<Track, TRACK_COUNT> TrackArray;
+    typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
 
     Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, GateOutput &gateOutput, MIDI &midi);
 

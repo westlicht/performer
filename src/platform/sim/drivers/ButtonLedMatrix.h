@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.h"
+
 #include "sim/Simulator.h"
 #include "sim/widgets/Button.h"
 #include "sim/widgets/Led.h"
@@ -29,9 +31,9 @@ public:
         int8_t _value;
     };
 
-    static const int Rows = 8;
-    static const int ButtonCols = 5;
-    static const int LedCols = 4;
+    static const int Rows = CONFIG_BLM_ROWS;
+    static const int ColsButton = CONFIG_BLM_COLS_BUTTON;
+    static const int ColsLed = CONFIG_BLM_COLS_LED;
 
     ButtonLedMatrix(sim::Simulator &simulator) :
         _simulator(simulator)
@@ -51,9 +53,9 @@ public:
         });
 
         // button & leds
-        for (int col = 0; col < ButtonCols; ++col) {
+        for (int col = 0; col < ColsButton; ++col) {
             for (int row = 0; row < Rows; ++row) {
-                if (col == ButtonCols - 1 && row >= 5) {
+                if (col == ColsButton - 1 && row >= 5) {
                     continue;
                 }
                 sim::Vector2i origin(matrixOrigin.x() + row * spacing.x(), matrixOrigin.y() + col * spacing.y());
@@ -69,7 +71,7 @@ public:
                 });
                 _buttons.emplace_back(button);
 
-                if (col < LedCols) {
+                if (col < ColsLed) {
                     auto led = _simulator.window().createWidget<sim::Led>(
                         origin + ledOffset - ledSize / 2,
                         ledSize
@@ -102,7 +104,7 @@ public:
         setLed(col * Rows + row, red, green);
     }
 
-    void setLeds(const std::array<std::pair<uint8_t, uint8_t>, Rows * LedCols> &leds) {
+    void setLeds(const std::array<std::pair<uint8_t, uint8_t>, Rows * ColsLed> &leds) {
         for (size_t i = 0; i < leds.size(); ++i) {
             setLed(i, leds[i].first, leds[i].second);
         }

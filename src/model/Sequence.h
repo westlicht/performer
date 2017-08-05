@@ -18,7 +18,7 @@ public:
     struct Params {
         uint8_t playMode = Forward;
         uint8_t firstStep = 0;
-        uint8_t lastStep = STEP_COUNT - 1;
+        uint8_t lastStep = CONFIG_STEP_COUNT - 1;
     };
 
     struct Step {
@@ -30,7 +30,7 @@ public:
         }
     };
 
-    typedef std::array<Step, STEP_COUNT> StepArray;
+    typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
 
     void setPlayMode(PlayMode playMode) { _params.playMode = playMode; }
     PlayMode playMode() const { return PlayMode(_params.playMode); }
