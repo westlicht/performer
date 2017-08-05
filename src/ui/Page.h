@@ -30,6 +30,8 @@ public:
 
     virtual void show();
     virtual void close();
+    virtual bool isTop();
+
     virtual void dispatchEvent(Event &event);
 
 protected:
@@ -45,10 +47,10 @@ public:
 
     Pages &pages() { return _pages; }
 
-    Page &top();
-    void push(Page &page);
+    Page *top();
+    void push(Page *page);
     void pop();
-    void reset(Page &page);
+    void reset(Page *page);
 
     void draw(Canvas &canvas);
     void updateLeds(Leds &leds);

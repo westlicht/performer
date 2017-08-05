@@ -25,7 +25,7 @@ public:
 
     void show(const Handler &handler) {
         _handler = handler;
-        _pageManager.push(*this);
+        _pageManager.push(this);
     }
 
     virtual void enter() override {

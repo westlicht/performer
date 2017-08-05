@@ -66,6 +66,7 @@ public:
     int code() const { return _code; }
 
     const KeyState &state() const { return _state; }
+    bool state(int code) const { return _state[code]; }
 
     bool shiftModifier() const { return _state[Shift]; }
 

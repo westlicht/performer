@@ -20,8 +20,8 @@ UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm) :
     _pageManager(_pages),
     _pages(_pageManager, _model, _engine)
 {
-    _pageManager.push(_pages.topPage);
-    _pageManager.push(_pages.mainPage);
+    _pageManager.push(&_pages.topPage);
+    _pageManager.push(&_pages.mainPage);
 }
 
 void UI::init() {
