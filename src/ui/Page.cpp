@@ -16,7 +16,7 @@ void Page::close() {
 }
 
 bool Page::isTop() {
-    _pageManager.top() == this;
+    return _pageManager.top() == this;
 }
 
 void Page::dispatchEvent(Event &event) {
