@@ -8,8 +8,8 @@ TopPage::TopPage(PageManager &pageManager, Model &model, Engine &engine) :
     _engine(engine)
 {}
 
-void TopPage::updateLeds(ButtonLedMatrix &blm) {
-    blm.setLed(
+void TopPage::updateLeds(Leds &leds) {
+    leds.set(
         Key::Start,
         _engine.running() && _engine.tick() % (PPQN / 2) < (PPQN / 8) ? 0xff : 0,
         0 // _engine.running() ? 0xff : 0

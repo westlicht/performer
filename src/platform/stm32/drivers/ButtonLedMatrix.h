@@ -2,7 +2,7 @@
 
 #include "core/utils/RingBuffer.h"
 
-#include <functional>
+#include <array>
 
 #include <cstdint>
 
@@ -48,6 +48,12 @@ public:
         setLed(col * Rows + row, red, green);
     }
 
+    void setLeds(const std::array<std::pair<uint8_t, uint8_t>, Rows * LedCols> &leds) {
+        for (size_t i = 0; i < leds.size(); ++i) {
+            setLed(i, leds[i].first, leds[i].second);
+        }
+    }
+
     inline bool buttonState(int index) const {
         return _buttonState[index].state;
     }
@@ -58,7 +64,7 @@ public:
 
     void process();
 
-    inline bool nextEvent(Event &event) { 
+    inline bool nextEvent(Event &event) {
         if (_events.readable() < 1) {
             return false;
         }

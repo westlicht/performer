@@ -44,7 +44,7 @@ public:
         canvas.drawText(50, 36, string);
     }
 
-    virtual void updateLeds(ButtonLedMatrix &blm) override {
+    virtual void updateLeds(Leds &leds) override {
     }
 
     virtual void keyDown(KeyEvent &event) override {

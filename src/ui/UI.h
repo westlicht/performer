@@ -2,6 +2,7 @@
 
 #include "Config.h"
 #include "Page.h"
+#include "Leds.h"
 
 #include "pages/Pages.h"
 
@@ -36,6 +37,7 @@ private:
     uint8_t _frameBufferData[LCD_WIDTH * LCD_HEIGHT];
     FrameBuffer8bit _frameBuffer;
     Canvas _canvas;
+    Leds _leds;
 
     PageManager _pageManager;
     Pages _pages;

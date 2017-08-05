@@ -3,6 +3,7 @@
 #include "Config.h"
 
 #include "Event.h"
+#include "Leds.h"
 
 #include "core/gfx/Canvas.h"
 
@@ -20,7 +21,7 @@ public:
     virtual void exit() {}
 
     virtual void draw(Canvas &canvas) {}
-    virtual void updateLeds(ButtonLedMatrix &blm) {}
+    virtual void updateLeds(Leds &leds) {}
 
     // Event handlers
     virtual void keyDown(KeyEvent &event) {}
@@ -50,7 +51,7 @@ public:
     void reset(Page &page);
 
     void draw(Canvas &canvas);
-    void updateLeds(ButtonLedMatrix &blm);
+    void updateLeds(Leds &leds);
     void dispatchEvent(Event &event);
 
 private:

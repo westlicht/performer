@@ -63,10 +63,10 @@ void PageManager::draw(Canvas &canvas) {
     }
 }
 
-void PageManager::updateLeds(ButtonLedMatrix &blm) {
+void PageManager::updateLeds(Leds &leds) {
     // update bottom to top
     for (int i = 0; i <= _pageStackPos; ++i) {
-        _pageStack[i]->updateLeds(blm);
+        _pageStack[i]->updateLeds(leds);
     }
 }
 

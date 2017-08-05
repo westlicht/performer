@@ -55,7 +55,7 @@ void MutePage::draw(Canvas &canvas) {
     }
 }
 
-void MutePage::updateLeds(ButtonLedMatrix &blm) {
+void MutePage::updateLeds(Leds &leds) {
 }
 
 void MutePage::keyDown(KeyEvent &event) {

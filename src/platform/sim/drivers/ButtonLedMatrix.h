@@ -102,6 +102,12 @@ public:
         setLed(col * Rows + row, red, green);
     }
 
+    void setLeds(const std::array<std::pair<uint8_t, uint8_t>, Rows * LedCols> &leds) {
+        for (size_t i = 0; i < leds.size(); ++i) {
+            setLed(i, leds[i].first, leds[i].second);
+        }
+    }
+
     inline bool buttonState(int index) const {
         if (index < _buttons.size()) {
             return _buttons[index]->pressed();

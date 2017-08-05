@@ -33,7 +33,8 @@ void UI::init() {
 void UI::update() {
     handleKeys();
 
-    _pageManager.updateLeds(_blm);
+    _pageManager.updateLeds(_leds);
+    _blm.setLeds(_leds.data());
 
     static int counter = 0;
     if (counter % 20 == 0) {
