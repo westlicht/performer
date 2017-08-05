@@ -3,7 +3,7 @@
 #include "core/Debug.h"
 #include "core/utils/Random.h"
 
-static Random random;
+static Random rng;
 
 Track::Track() {
     reset();
@@ -34,7 +34,7 @@ void Track::advance(const Sequence &sequence) {
     ASSERT(firstStep <= lastStep, "invalid first/last step");
 
     auto randomStep = [&] () {
-        return random.next() % (lastStep - firstStep + 1) + firstStep;
+        return rng.next() % (lastStep - firstStep + 1) + firstStep;
     };
 
     // first step
