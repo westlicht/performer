@@ -1,5 +1,7 @@
 #include "MainPage.h"
 
+#include "ui/LedPainter.h"
+
 MainPage::MainPage(PageManager &pageManager, Model &model, Engine &engine) :
     Page(pageManager),
     _model(model),
@@ -38,16 +40,11 @@ void MainPage::draw(Canvas &canvas) {
 }
 
 void MainPage::updateLeds(Leds &leds) {
-
-    for (int track = 0; track < 8; ++track) {
-        leds.set(MatrixMap::fromTrack(track), _engine.track(track).gate(), _project.isSelectedTrack(track));
-    }
+    LedPainter::drawTracksGateAndSelected(leds, _engine, _project.selectedTrackIndex());
 
     const auto &track = _engine.track(_project.selectedTrackIndex());
     const auto &sequence = track.sequence();
-    for (int step = 0; step < 16; ++step) {
-        leds.set(MatrixMap::fromStep(step), step == track.currentStep(), sequence.step(step).active);
-    }
+    LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, track.currentStep());
 }
 
 void MainPage::keyDown(KeyEvent &event) {

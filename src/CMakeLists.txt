@@ -33,8 +33,9 @@ set(sources
 	engine/Clock.cpp
 	engine/Track.cpp
 	# ui
-	ui/UI.cpp
+	ui/LedPainter.cpp
 	ui/Page.cpp
+	ui/UI.cpp
 	ui/pages/MainPage.cpp
 	ui/pages/MutePage.cpp
 	ui/pages/TopPage.cpp
