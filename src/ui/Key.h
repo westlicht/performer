@@ -10,6 +10,10 @@ namespace KeyCode {
         return 16 + track;
     }
 
+    static constexpr int Function(int function) {
+        return 32 + function;
+    }
+
 } // namespace KeyCode
 
 class Key {
@@ -44,6 +48,11 @@ public:
         BPM = 25,
         Mute = 26,
         Shift = 31,
+        F0 = KeyCode::Function(0),
+        F1 = KeyCode::Function(1),
+        F2 = KeyCode::Function(2),
+        F3 = KeyCode::Function(3),
+        F4 = KeyCode::Function(4),
     };
 
     Key(int code, bool shiftModifier) : _code(code), _shiftModifier(shiftModifier) {}
@@ -59,6 +68,9 @@ public:
 
     bool isStep() const { return _code >= Step8 && _code <= Step7; }
     int step() const { return _code >= Step0 ? _code - Step0 : _code - Step8 + 8; }
+
+    bool isFunction() const { return _code >= F0 && _code <= F4; }
+    int function() const { return _code - F0; }
 
     bool isGlobal() const { return _code == Start; };
 
