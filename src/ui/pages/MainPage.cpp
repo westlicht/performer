@@ -40,13 +40,13 @@ void MainPage::draw(Canvas &canvas) {
 void MainPage::updateLeds(Leds &leds) {
 
     for (int track = 0; track < 8; ++track) {
-        leds.set(KeyCode::Track(track), _engine.track(track).gate() ? 0xff : 0, _project.isSelectedTrack(track) ? 0xff : 0);
+        leds.set(MatrixMap::fromTrack(track), _engine.track(track).gate() ? 0xff : 0, _project.isSelectedTrack(track) ? 0xff : 0);
     }
 
     const auto &track = _engine.track(_project.selectedTrackIndex());
     const auto &sequence = track.sequence();
     for (int step = 0; step < 16; ++step) {
-        leds.set(KeyCode::Step(step), step == track.currentStep() ? 0xff : 0, sequence.step(step).active ? 0xff : 0);
+        leds.set(MatrixMap::fromStep(step), step == track.currentStep() ? 0xff : 0, sequence.step(step).active ? 0xff : 0);
     }
 }
 
