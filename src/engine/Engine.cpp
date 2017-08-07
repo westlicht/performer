@@ -59,9 +59,10 @@ void Engine::update() {
         for (size_t i = 0; i < _tracks.size(); ++i) {
             auto &track = _tracks[i];
             track.tick(tick);
-            _gateOutput.setGate(i, track.gate());
-
+            _gateOutput.setGate(i, track.gateOutput());
+            _dac.values()[i] = uint16_t(track.cv() * 8192);
         }
+        _dac.write();
     }
 
 }

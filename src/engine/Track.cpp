@@ -13,6 +13,7 @@ void Track::reset() {
     _currentStep = -1;
     _direction = 1;
     _gate = false;
+    _gateOutput = false;
 }
 
 void Track::tick(uint32_t tick) {
@@ -20,10 +21,16 @@ void Track::tick(uint32_t tick) {
 
     if (tick % (192 / 4) == 0) {
         advance(sequence);
-        _gate = !_muted && _sequence->step(_currentStep).active;
+        if (_sequence->step(_currentStep).active) {
+            _gateQueue.push({ tick, true });
+            _gateQueue.push({ tick + CONFIG_PPQN / 8, false });
+        }
+        _cv = _sequence->step(_currentStep).note / 12.f;
     }
-    if (tick % (192 / 4) >= (192 / 8)) {
-        _gate = false;
+    while (!_gateQueue.empty() && tick >= _gateQueue.front().first) {
+        _gate = _gateQueue.front().second;
+        _gateOutput = !_muted && _gate;
+        _gateQueue.pop();
     }
 }
 
@@ -37,8 +44,8 @@ void Track::advance(const Sequence &sequence) {
         return rng.next() % (lastStep - firstStep + 1) + firstStep;
     };
 
-    // first step
     if (_currentStep == -1) {
+        // first step
         switch (playMode) {
         case Sequence::Forward:
         case Sequence::PingPong:
@@ -53,6 +60,7 @@ void Track::advance(const Sequence &sequence) {
             break;
         }
     } else {
+        // advance step
         switch (playMode) {
         case Sequence::Forward:
             _currentStep = _currentStep >= lastStep ? firstStep : _currentStep + 1;
