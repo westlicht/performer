@@ -45,7 +45,7 @@ void Window::render() {
         widget->render(_renderer);
     }
 
-    _renderer.present();    
+    _renderer.present();
 }
 
 void Window::addWidget(Widget::Ptr widget) {

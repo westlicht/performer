@@ -22,7 +22,7 @@ public:
     void send(uint8_t data) {
         _simulator.sendMIDI(sim::Simulator::MIDIHardwarePort, data);
     }
-    
+
     bool recv(uint8_t *data) {
         if (_recvQueue.empty()) {
             return false;

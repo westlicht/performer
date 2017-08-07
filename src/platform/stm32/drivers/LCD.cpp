@@ -34,7 +34,7 @@ void LCD::init() {
     // init spi pins
     gpio_mode_setup(SPI_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI_GPIO);
     gpio_set_af(SPI_PORT, GPIO_AF6, SPI_GPIO);
-    
+
     // init spi
     rcc_periph_clock_enable(RCC_SPI3);
     spi_init_master(LCD_SPI, SPI_CR1_BAUDRATE_FPCLK_DIV_2,
@@ -63,7 +63,7 @@ void LCD::init() {
     sendData(0x12); // = Reset
 
     sendCmd(0xB3); // Set Front Clock Divider / Oscillator Frequency
-    sendData(0xD0); // = reset / 1100b 
+    sendData(0xD0); // = reset / 1100b
 
     sendCmd(0xCA); // Set MUX Ratio
     sendData(0x3F); // = 63d = 64MUX
@@ -230,7 +230,7 @@ void LCD::fill() {
     setWrite();
 
 // #define MIN_SEG 0x1C
-// #define MAX_SEG 0x5B    
+// #define MAX_SEG 0x5B
 
 #if 1
     static int counter;
@@ -273,7 +273,7 @@ void LCD::fill() {
         }
         // for (j = 0; j < Cols / 2; j++) {
             // sendData(0x00);
-            // sendData(0x00);            
+            // sendData(0x00);
             // sendData(c);
             // sendData(c);
         // }

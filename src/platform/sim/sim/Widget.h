@@ -9,7 +9,7 @@ namespace sim {
 class Widget {
 public:
     typedef std::shared_ptr<Widget> Ptr;
-    
+
     Widget(const Vector2i &pos, const Vector2i &size) :
         _pos(pos),
         _size(size)

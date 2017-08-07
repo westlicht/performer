@@ -51,7 +51,7 @@ void ClockTimer::setHandler(std::function<void()> handler) {
     timer_enable_irq(TIMER, TIM_DIER_UIE);
 }
 
-void tim5_isr() {    
+void tim5_isr() {
     if (timer_get_flag(TIM5, TIM_SR_UIF)) {
         timer_clear_flag(TIM5, TIM_SR_UIF);
         g_handler();

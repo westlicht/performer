@@ -122,7 +122,7 @@ void USBH::init() {
 
     gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO6);
     gpio_set(GPIOG, GPIO6);
-    
+
 
 	// /* Set GPIO12-15 (in GPIO port D) to 'output push-pull'. */
 	// gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT,
@@ -149,7 +149,7 @@ void USBH::init() {
 	hid_driver_init(&hid_config);
 	hub_driver_init();
 	midi_driver_init(&midi_config);
-    
+
 
 	// gpio_set(GPIOD,  GPIO13);
 	usbh_init(lld_drivers, device_drivers);
@@ -175,5 +175,5 @@ void USBH::process() {
 
     // approx 1ms interval between usbh_poll()
     // delay_ms_busy_loop(1);
-    
+
 }

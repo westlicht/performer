@@ -38,7 +38,7 @@ void Timer::init() {
     timer_continuous_mode(info.timer);
 
     // timer_enable_update_event(TIMER);
-    
+
 }
 
 void Timer::reset() {
@@ -69,7 +69,7 @@ void Timer::setHandler(std::function<void()> handler) {
     timer_enable_irq(info.timer, TIM_DIER_UIE);
 }
 
-void tim3_isr() {    
+void tim3_isr() {
     if (timer_get_flag(TIM3, TIM_SR_UIF)) {
         timer_clear_flag(TIM3, TIM_SR_UIF);
         g_handlers[Timer::HardwareTimer3]();

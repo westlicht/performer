@@ -18,7 +18,7 @@ public:
     void setButtonCallback(std::function<void(bool)> callback) {
         _buttonCallback = callback;
     }
-    
+
     void setValueCallback(std::function<void(int)> callback) {
         _valueCallback = callback;
     }

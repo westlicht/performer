@@ -161,7 +161,7 @@ private:
             plot(xpxl1, ypxl1 + 1,  fpart(yend) * xgap);
         }
         float intery = yend + gradient;
-        
+
         // second endpoint
         xend = round(x1);
         yend = y1 + gradient * (xend - x1);
@@ -175,7 +175,7 @@ private:
             plot(xpxl2, ypxl2,    rfpart(yend) * xgap);
             plot(xpxl2, ypxl2 + 1, fpart(yend) * xgap);
         }
-        
+
         // main loop
         if (steep) {
             for (int x = xpxl1 + 1; x < xpxl2; ++x) {
