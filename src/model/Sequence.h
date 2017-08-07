@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdint>
+#include <initializer_list>
 
 class Sequence {
 public:
@@ -49,6 +50,25 @@ public:
 
     const Step &step(int index) const { return _steps[index]; }
           Step &step(int index)       { return _steps[index]; }
+
+
+    // utility functions
+    void setGates(std::initializer_list<int> gates) {
+        size_t step = 0;
+        for (auto gate : gates) {
+            if (step < _steps.size()) {
+                _steps[step++].active = gate;
+            }
+        }
+    }
+    void setNotes(std::initializer_list<int> notes) {
+        size_t step = 0;
+        for (auto note : notes) {
+            if (step < _steps.size()) {
+                _steps[step++].note = note;
+            }
+        }
+    }
 
 private:
     Params _params;

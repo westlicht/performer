@@ -59,7 +59,7 @@ public:
     }
 
 private:
-    static constexpr float BaseFrequency = 440.f / 4.f;
+    static constexpr float BaseFrequency = 440.f / 8.f;
 
     Oscillator _osc;
     float _env = 0.f;
