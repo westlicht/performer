@@ -24,6 +24,7 @@ void dbg_assert(bool cond, const char *fmt, ...) {
         va_start(va, fmt);
         stbsp_vsprintfcb(&dbg_write, buf, buf, fmt, va);
         va_end(va);
+        __builtin_trap();
         while (1) {}
     }
 }
