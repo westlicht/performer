@@ -9,45 +9,45 @@ set(platform_compiler_flags "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4
 set(platform_linker_flags "-T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f429-nucleo.ld -nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
 
 set(platform_sources
-	# os
-	${CMAKE_CURRENT_SOURCE_DIR}/os/board.c
-	${CMAKE_CURRENT_SOURCE_DIR}/os/os.cpp
-	# drivers
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/ADC.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/ButtonLedMatrix.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/ClockTimer.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/DAC.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/GateOutput.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/HighResolutionTimer.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/LCD.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/MIDI.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/System.cpp
-	# ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Timer.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drivers/USBH.cpp
-	# FreeRTOS
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/croutine.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/event_groups.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/list.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/queue.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/tasks.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/timers.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/portable/port.c
-	# libusbhost
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_core.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_ac_midi.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_hid.c
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_hub.c
+    # os
+    ${CMAKE_CURRENT_SOURCE_DIR}/os/board.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/os/os.cpp
+    # drivers
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ADC.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ButtonLedMatrix.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ClockTimer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/DAC.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/GateOutput.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/HighResolutionTimer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/LCD.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/MIDI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/System.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Timer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/USBH.cpp
+    # FreeRTOS
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/croutine.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/event_groups.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/list.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/queue.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/tasks.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/timers.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/portable/port.c
+    # libusbhost
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_core.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_ac_midi.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_hid.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_hub.c
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_lld_stm32f4.c
     PARENT_SCOPE
 )
 
 set(platform_include_directories
     ${LIBOPENCM3_DIR}/include
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/include
-	${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/portable
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/include	
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/portable
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/include
     PARENT_SCOPE
 )
 
@@ -62,7 +62,7 @@ set(platform_link_directories
 )
 
 set(platform_defines
-	-DSTM32F4
+    -DSTM32F4
     -DSTM32F429xx
     PARENT_SCOPE
 )
@@ -85,23 +85,23 @@ set(OPENOCD_TARGET stm32f4x PARENT_SCOPE)
 # functions
 
 function(add_openocd_targets executable)
-	add_custom_target(flash_${executable} DEPENDS ${executable} COMMAND ${OPENOCD}
-		-f interface/${OPENOCD_INTERFACE}.cfg
-		-f target/${OPENOCD_TARGET}.cfg
-		-c "program ${executable} verify reset exit"
-		${NULL}
-	)
+    add_custom_target(flash_${executable} DEPENDS ${executable} COMMAND ${OPENOCD}
+        -f interface/${OPENOCD_INTERFACE}.cfg
+        -f target/${OPENOCD_TARGET}.cfg
+        -c "program ${executable} verify reset exit"
+        ${NULL}
+    )
 endfunction(add_openocd_targets)
 
 function(platform_postprocess_executable executable)
-	add_dependencies(${executable} libopencm3)
-	# set_target_properties(${executable} PROPERTIES COMPILE_FLAGS "-save-temps")
-	add_custom_target(${executable}.bin ALL ${OBJCOPY} -Obinary ${executable} ${executable}.bin DEPENDS ${executable})
-	add_custom_target(${executable}.hex ALL ${OBJCOPY} -Oihex ${executable} ${executable}.hex DEPENDS ${executable})
-	add_custom_target(${executable}.srec ALL ${OBJCOPY} -Osrec ${executable} ${executable}.srec DEPENDS ${executable})
-	add_custom_target(${executable}.list ALL ${OBJDUMP} -dhS ${executable} > ${executable}.list DEPENDS ${executable})
-	add_custom_target(${executable}.size ALL ${SIZE} --format=berkeley ${executable} > ${executable}.size DEPENDS ${executable})
-	add_custom_target(${executable}.map ALL ${LINKER} -Map ${executable}.map ${executable} -o ${executable}.tmp && rm ${executable}.tmp DEPENDS ${executable})
+    add_dependencies(${executable} libopencm3)
+    # set_target_properties(${executable} PROPERTIES COMPILE_FLAGS "-save-temps")
+    add_custom_target(${executable}.bin ALL ${OBJCOPY} -Obinary ${executable} ${executable}.bin DEPENDS ${executable})
+    add_custom_target(${executable}.hex ALL ${OBJCOPY} -Oihex ${executable} ${executable}.hex DEPENDS ${executable})
+    add_custom_target(${executable}.srec ALL ${OBJCOPY} -Osrec ${executable} ${executable}.srec DEPENDS ${executable})
+    add_custom_target(${executable}.list ALL ${OBJDUMP} -dhS ${executable} > ${executable}.list DEPENDS ${executable})
+    add_custom_target(${executable}.size ALL ${SIZE} --format=berkeley ${executable} > ${executable}.size DEPENDS ${executable})
+    add_custom_target(${executable}.map ALL ${LINKER} -Map ${executable}.map ${executable} -o ${executable}.tmp && rm ${executable}.tmp DEPENDS ${executable})
     add_custom_command(TARGET ${executable} POST_BUILD COMMAND ${SIZE} --format=berkeley ${executable})
     add_openocd_targets(${executable})
 endfunction(platform_postprocess_executable)
