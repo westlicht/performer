@@ -15,7 +15,7 @@
 #define CONFIG_ENABLE_USBH_DRIVER_FS    1
 #define CONFIG_ENABLE_USBH_DRIVER_HS    1
 
-// Parts per quarter note
+// Pulses per quarter note
 #define CONFIG_PPQN                     192
 
 // LCD
