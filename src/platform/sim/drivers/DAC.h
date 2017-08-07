@@ -2,31 +2,31 @@
 
 #include "sim/Simulator.h"
 
-#include <array>
+#include <cstdint>
 
 class DAC {
 public:
     typedef uint16_t Value;
-    typedef std::array<Value, 8> Values;
 
     DAC(sim::Simulator &simulator) :
         _simulator(simulator)
     {}
 
-    Values &values() { return _values; }
-    inline Value &operator()(int channel) { return _values[channel]; }
+    void setValue(int channel, Value value) {
+        _values[channel] = value;
+    }
 
     void write(int channel) {
         _simulator.writeDAC(channel, _values[channel]);
     }
 
     void write() {
-        for (size_t channel = 0; channel < _values.size(); ++channel) {
+        for (size_t channel = 0; channel < 8; ++channel) {
             write(channel);
         }
     }
 
 private:
     sim::Simulator &_simulator;
-    Values _values;
+    Value _values[8];
 };

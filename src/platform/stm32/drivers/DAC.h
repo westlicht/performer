@@ -1,20 +1,20 @@
 #pragma once
 
-#include <array>
+#include <cstdint>
 
 class DAC {
 public:
     typedef uint16_t Value;
-    typedef std::array<Value, 8> Values;
 
     void init();
 
-    Values &values() { return _values; }
-    inline Value &operator()(int channel) { return _values[channel]; }
+    void setValue(int channel, Value value) {
+        _values[channel] = value;
+    }
 
     void write(int channel);
     void write();
 
 private:
-    Values _values;
+    Value _values[8];
 };
