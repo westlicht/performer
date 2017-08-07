@@ -15,5 +15,5 @@ public:
     }
 
 private:
-    uint8_t _state;
+    uint8_t _state = 0;
 };
