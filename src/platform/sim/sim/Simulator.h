@@ -3,7 +3,7 @@
 #include "Common.h"
 #include "Window.h"
 #include "Audio.h"
-#include "DrumKit.h"
+#include "Instrument.h"
 
 namespace sim {
 
@@ -41,16 +41,18 @@ public:
     void sendMIDI(int port, uint8_t data);
     void recvMIDI(int port, MIDIRecvCallback callback);
 
-
 private:
+    void setupInstruments();
+
     Window _window;
     Audio _audio;
-    DrumKit _drumKit;
+    std::vector<Instrument::Ptr> _instruments;
 
     double _timerFrequency;
     double _timerStart;
 
     std::array<bool, 8> _gate;
+    std::array<uint16_t, 8> _dac;
 
     std::vector<UpdateCallback> _updateCallbacks;
 };

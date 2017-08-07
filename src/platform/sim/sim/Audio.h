@@ -14,6 +14,8 @@ public:
     Audio();
     ~Audio();
 
+    SoLoud::Soloud &engine() { return _engine; }
+
     void play(Sample &sample);
 
 private:
