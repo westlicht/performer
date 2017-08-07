@@ -18,10 +18,11 @@ UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm) :
     _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
     _canvas(_frameBuffer),
     _pageManager(_pages),
-    _pages(_pageManager, _model, _engine)
+    _pageContext({ _keyState, _model, _engine }),
+    _pages(_pageManager, _pageContext)
 {
     _pageManager.push(&_pages.topPage);
-    _pageManager.push(&_pages.mainPage);
+    _pageManager.push(&_pages.trackPage);
 }
 
 void UI::init() {

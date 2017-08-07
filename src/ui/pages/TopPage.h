@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PageContext.h"
+
 #include "ui/Page.h"
 
 #include "model/Model.h"
@@ -8,7 +10,7 @@
 
 class TopPage : public Page {
 public:
-    TopPage(PageManager &pageManager, Model &model, Engine &engine);
+    TopPage(PageManager &pageManager, PageContext &context);
 
     virtual void updateLeds(Leds &leds) override;
 

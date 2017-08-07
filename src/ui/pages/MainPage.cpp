@@ -2,11 +2,11 @@
 
 #include "ui/LedPainter.h"
 
-MainPage::MainPage(PageManager &pageManager, Model &model, Engine &engine) :
+MainPage::MainPage(PageManager &pageManager, PageContext &context) :
     Page(pageManager),
-    _model(model),
-    _engine(engine),
-    _project(model.project())
+    _model(context.model),
+    _engine(context.engine),
+    _project(context.model.project())
 {}
 
 void MainPage::enter() {
@@ -49,6 +49,10 @@ void MainPage::updateLeds(Leds &leds) {
 
 void MainPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
+
+    if (key.shiftModifier() && key.isTrack()) {
+        return;
+    }
 
     if (key.isTrack()) {
         // DBG("select track %d", key.track());

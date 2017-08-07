@@ -8,9 +8,11 @@
 
 #include "engine/Engine.h"
 
-class MainPage : public Page {
+#include <bitset>
+
+class TrackPage : public Page {
 public:
-    MainPage(PageManager &pageManager, PageContext &context);
+    TrackPage(PageManager &pageManager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -23,7 +25,18 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    PageContext &_context;
     Model &_model;
     Engine &_engine;
     Project &_project;
+
+    enum class EditMode {
+        Gate,
+        Length,
+        Note,
+    };
+
+    EditMode _editMode = EditMode::Gate;
+
+    std::bitset<CONFIG_STEP_COUNT> _selectedSteps;
 };

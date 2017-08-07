@@ -5,6 +5,7 @@
 #include "Key.h"
 #include "Leds.h"
 
+#include "pages/PageContext.h"
 #include "pages/Pages.h"
 
 #include "drivers/ButtonLedMatrix.h"
@@ -43,5 +44,6 @@ private:
     Leds _leds;
 
     PageManager _pageManager;
+    PageContext _pageContext;
     Pages _pages;
 };

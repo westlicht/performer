@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PageContext.h"
+
 #include "ui/Page.h"
 
 #include "model/Model.h"
@@ -8,7 +10,7 @@
 
 class MutePage : public Page {
 public:
-    MutePage(PageManager &pageManager, Model &model, Engine &engine);
+    MutePage(PageManager &pageManager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;

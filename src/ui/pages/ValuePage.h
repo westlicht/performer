@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PageContext.h"
+
 #include "ui/Page.h"
 #include "ui/painters/WindowPainter.h"
 
@@ -11,10 +13,10 @@
 
 class ValuePage : public Page {
 public:
-    ValuePage(PageManager &pageManager, Model &model, Engine &engine) :
+    ValuePage(PageManager &pageManager, PageContext &context) :
         Page(pageManager),
-        _model(model),
-        _engine(engine)
+        _model(context.model),
+        _engine(context.engine)
     {}
 
     struct Handler {

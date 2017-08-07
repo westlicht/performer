@@ -2,24 +2,30 @@
 
 #include "TopPage.h"
 #include "MainPage.h"
+#include "TrackPage.h"
 #include "MutePage.h"
 #include "ValuePage.h"
+
+#include "PageContext.h"
 
 #include "model/Model.h"
 
 #include "engine/Engine.h"
 
+
 struct Pages {
     TopPage topPage;
     MainPage mainPage;
+    TrackPage trackPage;
     MutePage mutePage;
     ValuePage valuePage;
 
-    Pages(PageManager &pageManager, Model &model, Engine &engine) :
-        topPage(pageManager, model, engine),
-        mainPage(pageManager, model, engine),
-        mutePage(pageManager, model, engine),
-        valuePage(pageManager, model, engine)
+    Pages(PageManager &pageManager, PageContext &context) :
+        topPage(pageManager, context),
+        mainPage(pageManager, context),
+        trackPage(pageManager, context),
+        mutePage(pageManager, context),
+        valuePage(pageManager, context)
     {}
 };
 

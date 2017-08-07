@@ -2,10 +2,10 @@
 
 #include "Pages.h"
 
-TopPage::TopPage(PageManager &pageManager, Model &model, Engine &engine) :
+TopPage::TopPage(PageManager &pageManager, PageContext &context) :
     Page(pageManager),
-    _model(model),
-    _engine(engine)
+    _model(context.model),
+    _engine(context.engine)
 {}
 
 void TopPage::updateLeds(Leds &leds) {
@@ -18,6 +18,14 @@ void TopPage::updateLeds(Leds &leds) {
 
 void TopPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
+
+    if (key.shiftModifier() && key.isTrack()) {
+        auto &pm = _pageManager;
+        switch (key.track()) {
+        case 0: pm.reset(&pm.pages().topPage); pm.push(&pm.pages().mainPage); break;
+        case 1: pm.reset(&pm.pages().topPage); pm.push(&pm.pages().trackPage); break;
+        }
+    }
 
     if (key.is(Key::Start)) {
         if (key.shiftModifier()) {

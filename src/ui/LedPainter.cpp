@@ -8,7 +8,7 @@
 
 void LedPainter::drawTracksGateAndSelected(Leds &leds, const Engine &engine, int selectedTrack) {
     for (int track = 0; track < 8; ++track) {
-        leds.set(MatrixMap::fromTrack(track), engine.track(track).gate(), track == selectedTrack);
+        leds.set(MatrixMap::fromTrack(track), engine.track(track).gateOutput(), track == selectedTrack);
     }
 }
 
