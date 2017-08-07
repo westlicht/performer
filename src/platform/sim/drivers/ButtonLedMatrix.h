@@ -9,6 +9,8 @@
 
 #include <vector>
 #include <deque>
+#include <array>
+#include <utility>
 
 #include <cstdint>
 
