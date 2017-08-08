@@ -29,8 +29,8 @@ public:
 
     virtual SoLoud::AudioSourceInstance *createInstance() override;
 
-    void setGate(bool gate);
-    void setCV(float cv);
+    virtual void setGate(bool gate) override;
+    virtual void setCV(float cv) override;
 
 private:
     Audio &_audio;
