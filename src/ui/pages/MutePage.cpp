@@ -1,5 +1,7 @@
 #include "MutePage.h"
 
+#include "ui/LedPainter.h"
+
 #include "ui/painters/WindowPainter.h"
 
 #include "ui/layouts/CenterLayout.h"
@@ -56,6 +58,7 @@ void MutePage::draw(Canvas &canvas) {
 }
 
 void MutePage::updateLeds(Leds &leds) {
+    LedPainter::drawTracksGateAndMuted(leds, _engine);
 }
 
 void MutePage::keyDown(KeyEvent &event) {
