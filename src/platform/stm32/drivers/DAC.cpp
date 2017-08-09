@@ -23,10 +23,10 @@ void DAC::init() {
 }
 
 void DAC::write(int channel) {
-    const auto &value = _values[channel];
-    spi_send(DAC_SPI, 0x10 | (channel & 0xf));
-    spi_send(DAC_SPI, value >> 8);
-    spi_send(DAC_SPI, value);
+    // const auto &value = _values[channel];
+    // spi_send(DAC_SPI, 0x10 | (channel & 0xf));
+    // spi_send(DAC_SPI, value >> 8);
+    // spi_send(DAC_SPI, value);
 }
 
 void DAC::write() {
