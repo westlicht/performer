@@ -15,6 +15,7 @@ public:
 
     void reset() {
         _pos = _buf;
+        _buf[0] = 0;
     }
 
     BaseStringBuilder &printf(const char *fmt, ...) {
