@@ -128,7 +128,7 @@ openocd_clean:
 
 .PHONY: setup_stm32
 setup_stm32: arm_sdk_install
-	$(eval export PATH=$(PATH):$(ROOTABS)/$(ARM_SDK_DIR)/bin)
+	$(eval export PATH=$(ROOTABS)/$(ARM_SDK_DIR)/bin:$(ROOTABS)/$(OPENOCD_DIR)/bin:$(PATH))
 	(mkdir -p $(ROOT)/build/stm32/debug && cd $(ROOT)/build/stm32/debug && cmake -DCMAKE_TOOLCHAIN_FILE=./cmake/arm.cmake -DCMAKE_BUILD_TYPE=Debug -DPLATFORM=stm32 ../../..)
 	(mkdir -p $(ROOT)/build/stm32/release && cd $(ROOT)/build/stm32/release && cmake -DCMAKE_TOOLCHAIN_FILE=./cmake/arm.cmake -DCMAKE_BUILD_TYPE=Release -DPLATFORM=stm32 ../../..)
 

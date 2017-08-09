@@ -79,6 +79,8 @@ find_program(KERMIT ckermit)
 
 # OpenOCD configuration
 
+set(OPENOCD_INTERFACE stlink-v2-1)
+set(OPENOCD_TARGET stm32f4x)
 set(OPENOCD_INTERFACE stlink-v2-1 PARENT_SCOPE)
 set(OPENOCD_TARGET stm32f4x PARENT_SCOPE)
 
