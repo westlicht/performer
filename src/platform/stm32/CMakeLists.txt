@@ -10,7 +10,7 @@ set(platform_linker_flags "-T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f429-nucleo.ld -n
 
 set(platform_sources
     # os
-    ${CMAKE_CURRENT_SOURCE_DIR}/os/board.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/os/board.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/os/os.cpp
     # drivers
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ADC.cpp
