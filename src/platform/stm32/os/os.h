@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/Debug.h"
+
 extern "C" {
 #include "FreeRTOS.h"
 #include "task.h"
@@ -18,13 +20,32 @@ namespace os {
     template<size_t StackSize>
     class Task {
     public:
-        Task(std::function<void(void)> func, uint8_t priority) :
+        Task(const char *name, uint8_t priority, std::function<void(void)> func) :
             _func(func)
         {
-            _handle = xTaskCreateStatic(&start, nullptr, StackSize / sizeof(StackType_t), this, priority, _stack, &_task);
+            // TODO not really necessary for release
+            for (size_t i = 0; i < StackSize / sizeof(StackType_t); ++i) {
+                _stack[i] = StackType_t(0xdeadbeef);
+            }
+            _handle = xTaskCreateStatic(&start, name, StackSize / sizeof(StackType_t), this, priority, _stack, &_task);
         }
 
         TaskHandle handle() const { return _handle; }
+
+        const char *name() const { return pcTaskGetName(_handle); }
+
+        size_t stackSize() const {
+            return StackSize;
+        }
+
+        size_t stackUsage() const {
+            for (size_t i = 0; i < StackSize / sizeof(StackType_t); ++i) {
+                if (_stack[i] != StackType_t(0xdeadbeef)) {
+                    return StackSize - i * sizeof(StackType_t);
+                }
+            }
+            return 0;
+        }
 
     private:
         static void start(void *task) {

@@ -37,7 +37,7 @@ static Model model;
 static Engine engine(model, clockTimer, adc, dac, gateOutput, midi);
 static UI ui(model, engine, lcd, blm);
 
-static os::Task<256> blickTask([] () {
+static os::Task<256> blickTask("blink", 0, [] () {
 	rcc_periph_clock_enable(RCC_GPIOB);
 	DebugLed ledRed(GPIOB, GPIO14);
 	bool state = false;
@@ -46,46 +46,63 @@ static os::Task<256> blickTask([] () {
 		state = !state;
 		os::delay(os::time::ms(500));
 	}
-}, 0);
+});
 
-static os::Task<1024> blmTask([] () {
+static os::Task<1024> blmTask("blm", 5, [] () {
     uint32_t lastWakeupTime = os::ticks();
 	while (1) {
 		blm.process();
 		os::delayUntil(lastWakeupTime, 1);
 	}
-}, 5);
+});
 
-static os::Task<1024> usbhTask([] () {
+static os::Task<1024> usbhTask("usbh", 1, [] () {
     uint32_t lastWakeupTime = os::ticks();
 	while (1) {
 		usbh.process();
 		os::delayUntil(lastWakeupTime, 1);
 	}
-}, 5);
+});
 
-static os::Task<1024> profilerTask([] () {
+static os::Task<1024> profilerTask("profiler", 0, [] () {
     while (1) {
         profiler.dump();
         os::delay(os::time::ms(1000));
     }
-}, 0);
+});
 
-static os::Task<1024> engineTask([] () {
+static os::Task<800> engineTask("engine", 4, [] () {
     uint32_t lastWakeupTime = os::ticks();
     while (1) {
         engine.update();
         os::delayUntil(lastWakeupTime, 1);
     }
-}, 4);
+});
 
-static os::Task<1024> uiTask([] () {
+static os::Task<2048> uiTask("ui", 3, [] () {
     uint32_t lastWakeupTime = os::ticks();
     while (1) {
         ui.update();
         os::delayUntil(lastWakeupTime, 1);
     }
-}, 3);
+});
+
+template<typename Task>
+static void dumpStackUsage(const Task &task) {
+    DBG("%s: %d/%d bytes", task.name(), task.stackUsage(), task.stackSize());
+}
+
+static os::Task<256> stackCheckTask(nullptr, 0, [&] () {
+    while (1) {
+        os::delay(os::time::ms(5000));
+        DBG("Stack Usage:");
+        dumpStackUsage(blmTask);
+        dumpStackUsage(usbhTask);
+        dumpStackUsage(profilerTask);
+        dumpStackUsage(engineTask);
+        dumpStackUsage(uiTask);
+    }
+});
 
 int main(void) {
     System::init();
