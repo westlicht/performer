@@ -9,6 +9,10 @@ else()
     set(SDL_FLAGS "")
 endif()
 
+# RtMidi
+
+add_subdirectory(libs/rtmidi)
+
 # platform
 
 set(platform_compiler_flags "-Wno-unknown-pragmas -Wno-unknown-attributes ${SDL_FLAGS}" PARENT_SCOPE)
@@ -40,6 +44,7 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
     # sim
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Audio.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/MIDI.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Simulator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/instruments/DrumSampler.cpp
@@ -57,12 +62,14 @@ set(platform_include_directories
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/sdlpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/rtmidi
     PARENT_SCOPE
 )
 
 set(platform_libraries
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARIES}
+    rtmidi
     PARENT_SCOPE
 )
 
