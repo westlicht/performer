@@ -34,8 +34,8 @@ public:
 
 private:
     Audio &_audio;
-    bool _gate;
-    float _cv;
+    bool _gate = false;
+    float _cv = 0.f;
 
     friend class SynthInstance;
 };
