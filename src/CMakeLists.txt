@@ -27,6 +27,8 @@ set(sources
     # core
     core/Debug.cpp
     core/gfx/Canvas.cpp
+    core/midi/MIDIMessage.cpp
+    core/midi/MIDIParser.cpp
     core/profiler/Profiler.cpp
     # engine
     engine/Engine.cpp
