@@ -32,6 +32,7 @@ void MIDI::recv(const std::string &port, RecvCallback callback) {
             int index = findPort(*input, port);
             if (index >= 0) {
                 input->openPort(index);
+                input->ignoreTypes(false, false, false);
                 _inputCallbacks.emplace_back(new RecvCallback(callback));
                 input->setCallback(recvCallback, _inputCallbacks.back().get());
             } else {
