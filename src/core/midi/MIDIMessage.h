@@ -102,6 +102,7 @@ public:
     uint8_t status() const { return _status; }
     uint8_t data0() const { return _data[0]; }
     uint8_t data1() const { return _data[1]; }
+    uint8_t dataLength() const { return _dataLength; }
 
     // Channel messages
 
@@ -238,12 +239,10 @@ public:
 
     // Constructor
 
-    MIDIMessage(uint8_t status = 0, uint8_t data0 = 0, uint8_t data1 = 0) :
-        _status(status)
-    {
-        _data[0] = data0;
-        _data[1] = data1;
-    }
+    MIDIMessage() = default;
+    MIDIMessage(uint8_t status) : _status(status) {}
+    MIDIMessage(uint8_t status, uint8_t data0) : _status(status), _dataLength(1) { _data[0] = data0; }
+    MIDIMessage(uint8_t status, uint8_t data0, uint8_t data1) : _status(status), _dataLength(2) { _data[0] = data0; _data[1] = data1; }
 
     // Factory
 
@@ -279,6 +278,7 @@ public:
     static void dump(const MIDIMessage &msg);
 
 private:
-    uint8_t _status;
-    uint8_t _data[2];
+    uint8_t _status = 0;
+    uint8_t _data[2] = { 0, 0 };
+    uint8_t _dataLength = 0;
 };
