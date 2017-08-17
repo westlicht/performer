@@ -288,7 +288,4 @@ public:
 private:
     uint8_t _raw[3];
     uint8_t _length = 0;
-    // uint8_t status() = 0;
-    // uint8_t _data[2] = { 0, 0 };
-    // uint8_t _dataLength = 0;
 };
