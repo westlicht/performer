@@ -19,6 +19,12 @@ class Engine {
 public:
     typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
 
+    enum ClockSource {
+        ClockSourceExternal,
+        ClockSourceMIDI,
+        ClockSourceUSBMIDI,
+    };
+
     Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, MIDI &midi, USBMIDI &usbMidi);
 
     void init();
@@ -44,6 +50,8 @@ public:
           Track &track(int index)       { return _tracks[index]; }
 
 private:
+    void setupClockSources();
+
     Model &_model;
     ADC &_adc;
     DAC &_dac;

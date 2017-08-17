@@ -20,15 +20,7 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &di
 void Engine::init() {
     _clock.init();
 
-    // forward MIDI clock events to clock
-    _midi.setRecvFilter([] (uint8_t data) {
-        if (MIDIMessage::isClockMessage(data)) {
-            // _clock.handleMidiMessage()
-            return true;
-        } else {
-            return false;
-        }
-    });
+    setupClockSources();
 
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
         _tracks[i].setSequence(_model.project().pattern(0).sequence(i));
@@ -37,22 +29,25 @@ void Engine::init() {
 
 void Engine::update() {
     if (_clock.checkStart()) {
-        DBG("START");
+        // DBG("START");
+        for (auto &track : _tracks) {
+            track.reset();
+        }
         _running = true;
     }
 
     if (_clock.checkStop()) {
-        DBG("STOP");
+        // DBG("STOP");
         _running = false;
     }
 
     if (_clock.checkResume()) {
-        DBG("RESUME");
+        // DBG("RESUME");
         _running = true;
     }
 
     // update tempo
-    _clock.setBpm(_model.project().bpm());
+    _clock.setMasterBpm(_model.project().bpm());
 
     uint32_t tick;
     while (_clock.checkTick(&tick)) {
@@ -70,17 +65,48 @@ void Engine::update() {
 }
 
 void Engine::start() {
-    for (auto &track : _tracks) {
-        track.reset();
-    }
-
-    _clock.start();
+    _clock.masterStart();
 }
 
 void Engine::stop() {
-    _clock.stop();
+    _clock.masterStop();
 }
 
 void Engine::resume() {
-    _clock.resume();
+    _clock.masterResume();
+}
+
+void Engine::setupClockSources() {
+    // Configure slaves
+    _clock.slaveConfigure(ClockSourceExternal, 16, Clock::SlaveFreeRunning);
+    _clock.slaveConfigure(ClockSourceMIDI, 24);
+    _clock.slaveConfigure(ClockSourceUSBMIDI, 24);
+
+    // Forward external clock signals to clock
+    _dio.clockInput.setHandler([&] (bool value) {
+        if (value) {
+            _clock.slaveTick(ClockSourceExternal);
+        }
+    });
+    _dio.resetInput.setHandler([&] (bool value) {
+        if (value) {
+            _clock.slaveReset(ClockSourceExternal);
+        }
+    });
+
+    // Forward MIDI clock messages to clock
+    _midi.setRecvFilter([this] (uint8_t data) {
+        if (MIDIMessage::isClockMessage(data)) {
+            _clock.slaveHandleMIDI(ClockSourceMIDI, data);
+            return true;
+        }
+        return false;
+    });
+    _usbMidi.setRecvFilter([this] (uint8_t data) {
+        if (MIDIMessage::isClockMessage(data)) {
+            _clock.slaveHandleMIDI(ClockSourceUSBMIDI, data);
+            return true;
+        }
+        return false;
+    });
 }
