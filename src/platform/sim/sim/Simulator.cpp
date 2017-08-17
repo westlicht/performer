@@ -72,6 +72,12 @@ void Simulator::sendMIDI(int port, uint8_t data) {
     _midi.send(_midiPortName[port], data);
 }
 
+void Simulator::sendMIDI(int port, const uint8_t *data, size_t length) {
+    for (size_t i = 0; i < length; ++i) {
+        _midi.send(_midiPortName[port], data[i]);
+    }
+}
+
 void Simulator::recvMIDI(int port, MIDIRecvCallback callback) {
     _midi.recv(_midiPortName[port], [callback] (uint8_t data) { callback(data); });
 }
