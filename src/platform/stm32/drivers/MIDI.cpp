@@ -14,7 +14,7 @@ void MIDI::init() {
 }
 
 void MIDI::setRecvFilter(std::function<bool(uint8_t)> filter) {
-    _recvFilter = filter;
+    _filter = filter;
 }
 
 void MIDI::send(uint8_t data) {
@@ -45,7 +45,7 @@ void MIDI::handleIrq() {
             // overflow
         }
         uint8_t data = usart_recv(MIDI_USART);
-        if (!_recvFilter || !_recvFilter(data)) {
+        if (!_filter || !_filter(data)) {
             _rxBuffer.write(data);
         }
     }
