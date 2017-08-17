@@ -18,6 +18,7 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ClockTimer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/DAC.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/DIO.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/GateOutput.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/HighResolutionTimer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/LCD.cpp

@@ -44,6 +44,7 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ADC.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ButtonLedMatrix.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/DIO.cpp
     # sim
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Audio.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/MIDI.cpp
