@@ -40,6 +40,7 @@ public:
     typedef std::function<void(uint8_t)> MIDIRecvCallback;
 
     void sendMIDI(int port, uint8_t data);
+    void sendMIDI(int port, const uint8_t *data, size_t length);
     void recvMIDI(int port, MIDIRecvCallback callback);
 
 private:
