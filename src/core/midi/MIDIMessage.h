@@ -99,150 +99,158 @@ public:
 
     // Message data
 
-    uint8_t status() const { return _status; }
-    uint8_t data0() const { return _data[0]; }
-    uint8_t data1() const { return _data[1]; }
-    uint8_t dataLength() const { return _dataLength; }
+    inline uint8_t status() const { return _raw[0]; }
+    inline uint8_t data0() const { return _raw[1]; }
+    inline uint8_t data1() const { return _raw[2]; }
+
+    inline uint8_t *raw() const { return _raw; }
+    inline uint8_t length() const { return _length; }
 
     // Channel messages
 
     bool isChannelMessage() const {
-        return isChannelMessage(_status);
+        return isChannelMessage(status());
     }
 
     ChannelMessage channelMessage() const {
-        return MIDIMessage::channelMessage(_status);
+        return MIDIMessage::channelMessage(status());
     }
 
     uint8_t channel() const {
-        return _status & 0xf;
+        return status() & 0xf;
     }
 
     // NoteOff
 
     bool isNoteOff() const {
-        return isChannelMessage<NoteOff>(_status);
+        return isChannelMessage<NoteOff>(status());
     }
 
     // NoteOn
 
     bool isNoteOn() const {
-        return isChannelMessage<NoteOn>(_status);
+        return isChannelMessage<NoteOn>(status());
     }
 
     uint8_t note() const {
-        return _data[0];
+        return data0();
     }
 
     uint8_t velocity() const {
-        return _data[1];
+        return data1();
     }
 
     // KeyPressure
 
     bool isKeyPressure() const {
-        return isChannelMessage<KeyPressure>(_status);
+        return isChannelMessage<KeyPressure>(status());
     }
 
     uint8_t keyPressure() const {
-        return _data[1];
+        return data1();
     }
 
     // ControlChange
 
     bool isControlChange() const {
-        return isChannelMessage<ControlChange>(_status);
+        return isChannelMessage<ControlChange>(status());
     }
 
     uint8_t controllerNumber() const {
-        return _data[0];
+        return data0();
     }
 
     uint8_t controllerValue() const {
-        return _data[1];
+        return data1();
     }
 
     // ProgramChange
 
     bool isProgramChange() const {
-        return isChannelMessage<ProgramChange>(_status);
+        return isChannelMessage<ProgramChange>(status());
     }
 
     uint8_t programNumber() const {
-        return _data[0];
+        return data0();
     }
 
     // ChannelPressure
 
     bool isChannelPressure() const {
-        return isChannelMessage<ChannelPressure>(_status);
+        return isChannelMessage<ChannelPressure>(status());
     }
 
     uint8_t channelPressure() const {
-        return _data[0];
+        return data0();
     }
 
     // PitchBend
 
     bool isPitchBend() const {
-        return isChannelMessage<PitchBend>(_status);
+        return isChannelMessage<PitchBend>(status());
     }
 
     int pitchBend() const {
-        return (int(_data[1]) << 7 | int(_data[0])) - int(0x2000);
+        return (int(data1()) << 7 | int(data0())) - int(0x2000);
     }
 
     // System messages
 
     bool isSystemMessage() const {
-        return MIDIMessage::isSystemMessage(_status);
+        return MIDIMessage::isSystemMessage(status());
     }
 
     SystemMessage systemMessage() const {
-        return MIDIMessage::systemMessage(_status);
+        return MIDIMessage::systemMessage(status());
     }
 
-    bool isSystemExclusive() const { return isSystemMessage<SystemExclusive>(_status); }
-    bool isTimeCode() const { return isSystemMessage<TimeCode>(_status); }
-    bool isSongPosition() const { return isSystemMessage<SongPosition>(_status); }
-    bool isSongSelect() const { return isSystemMessage<SongSelect>(_status); }
-    bool isTuneRequest() const { return isSystemMessage<TuneRequest>(_status); }
+    bool isSystemExclusive() const { return isSystemMessage<SystemExclusive>(status()); }
+    bool isTimeCode() const { return isSystemMessage<TimeCode>(status()); }
+    bool isSongPosition() const { return isSystemMessage<SongPosition>(status()); }
+    bool isSongSelect() const { return isSystemMessage<SongSelect>(status()); }
+    bool isTuneRequest() const { return isSystemMessage<TuneRequest>(status()); }
 
     int songPosition() const {
-        return (int(_data[1]) << 7 | int(_data[0]));
+        return (int(data1()) << 7 | int(data0()));
     }
 
     uint8_t songNumber() const {
-        return _data[0];
+        return data0();
     }
 
     // Real-time messages
 
     bool isRealTimeMessage() const {
-        return MIDIMessage::isRealTimeMessage(_status);
+        return MIDIMessage::isRealTimeMessage(status());
     }
 
     RealTimeMessage realTimeMessage() const {
-        return MIDIMessage::realTimeMessage(_status);
+        return MIDIMessage::realTimeMessage(status());
     }
 
     bool isClockMessage() const {
-        return MIDIMessage::isClockMessage(_status);
+        return MIDIMessage::isClockMessage(status());
     }
 
-    bool isTick() const { return isRealTimeMessage<Tick>(_status); }
-    bool isStart() const { return isRealTimeMessage<Start>(_status); }
-    bool isContinue() const { return isRealTimeMessage<Continue>(_status); }
-    bool isStop() const { return isRealTimeMessage<Stop>(_status); }
-    bool isActiveSensing() const { return isRealTimeMessage<ActiveSensing>(_status); }
-    bool isReset() const { return isRealTimeMessage<Reset>(_status); }
+    bool isTick() const { return isRealTimeMessage<Tick>(status()); }
+    bool isStart() const { return isRealTimeMessage<Start>(status()); }
+    bool isContinue() const { return isRealTimeMessage<Continue>(status()); }
+    bool isStop() const { return isRealTimeMessage<Stop>(status()); }
+    bool isActiveSensing() const { return isRealTimeMessage<ActiveSensing>(status()); }
+    bool isReset() const { return isRealTimeMessage<Reset>(status()); }
 
     // Constructor
 
     MIDIMessage() = default;
-    MIDIMessage(uint8_t status) : _status(status) {}
-    MIDIMessage(uint8_t status, uint8_t data0) : _status(status), _dataLength(1) { _data[0] = data0; }
-    MIDIMessage(uint8_t status, uint8_t data0, uint8_t data1) : _status(status), _dataLength(2) { _data[0] = data0; _data[1] = data1; }
+    MIDIMessage(uint8_t status) :
+        _raw { status }, _length(1)
+    {}
+    MIDIMessage(uint8_t status, uint8_t data0) :
+        _raw { status, data0 }, _length(2)
+    {}
+    MIDIMessage(uint8_t status, uint8_t data0, uint8_t data1) :
+        _raw { status, data0, data1 }, _length(3)
+    {}
 
     // Factory
 
@@ -278,7 +286,9 @@ public:
     static void dump(const MIDIMessage &msg);
 
 private:
-    uint8_t _status = 0;
-    uint8_t _data[2] = { 0, 0 };
-    uint8_t _dataLength = 0;
+    uint8_t _raw[3];
+    uint8_t _length = 0;
+    // uint8_t status() = 0;
+    // uint8_t _data[2] = { 0, 0 };
+    // uint8_t _dataLength = 0;
 };
