@@ -103,7 +103,7 @@ public:
     inline uint8_t data0() const { return _raw[1]; }
     inline uint8_t data1() const { return _raw[2]; }
 
-    inline uint8_t *raw() const { return _raw; }
+    inline const uint8_t *raw() const { return _raw; }
     inline uint8_t length() const { return _length; }
 
     // Channel messages
