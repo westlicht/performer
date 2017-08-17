@@ -8,8 +8,10 @@
 #include "drivers/ClockTimer.h"
 #include "drivers/ADC.h"
 #include "drivers/DAC.h"
+#include "drivers/DIO.h"
 #include "drivers/GateOutput.h"
 #include "drivers/MIDI.h"
+#include "drivers/USBMIDI.h"
 
 #include <array>
 
@@ -17,7 +19,7 @@ class Engine {
 public:
     typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
 
-    Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, GateOutput &gateOutput, MIDI &midi);
+    Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, MIDI &midi, USBMIDI &usbMidi);
 
     void init();
     void update();
@@ -45,8 +47,10 @@ private:
     Model &_model;
     ADC &_adc;
     DAC &_dac;
+    DIO &_dio;
     GateOutput &_gateOutput;
     MIDI &_midi;
+    USBMIDI &_usbMidi;
 
     Clock _clock;
     TrackArray _tracks;

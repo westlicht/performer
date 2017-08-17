@@ -6,12 +6,14 @@
 
 #include "core/midi/MIDIMessage.h"
 
-Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, GateOutput &gateOutput, MIDI &midi) :
+Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, MIDI &midi, USBMIDI &usbMidi) :
     _model(model),
     _adc(adc),
     _dac(dac),
+    _dio(dio),
     _gateOutput(gateOutput),
     _midi(midi),
+    _usbMidi(usbMidi),
     _clock(clockTimer)
 {}
 

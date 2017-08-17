@@ -6,8 +6,10 @@
 #include "drivers/LCD.h"
 #include "drivers/ADC.h"
 #include "drivers/DAC.h"
+#include "drivers/DIO.h"
 #include "drivers/GateOutput.h"
 #include "drivers/MIDI.h"
+#include "drivers/USBMIDI.h"
 
 #include "model/Model.h"
 #include "engine/Engine.h"
@@ -24,8 +26,10 @@ struct Environment {
     LCD lcd;
     ADC adc;
     DAC dac;
+    DIO dio;
     GateOutput gateOutput;
     MIDI midi;
+    USBMIDI usbMidi;
 
     Model model;
     Engine engine;
@@ -37,10 +41,12 @@ struct Environment {
         lcd(sim),
         adc(sim),
         dac(sim),
+        dio(sim),
         gateOutput(sim),
         midi(sim),
+        usbMidi(sim),
 
-        engine(model, clockTimer, adc, dac, gateOutput, midi),
+        engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
         ui(model, engine, lcd, blm)
     {
         engine.init();

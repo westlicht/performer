@@ -2,6 +2,7 @@
 #include "drivers/ButtonLedMatrix.h"
 #include "drivers/Console.h"
 #include "drivers/DAC.h"
+#include "drivers/DIO.h"
 #include "drivers/GateOutput.h"
 #include "drivers/LCD.h"
 #include "drivers/MIDI.h"
@@ -9,6 +10,7 @@
 #include "drivers/DebugLed.h"
 #include "drivers/HighResolutionTimer.h"
 #include "drivers/USBH.h"
+#include "drivers/USBMIDI.h"
 #include "drivers/ClockTimer.h"
 
 #include "os/os.h"
@@ -27,14 +29,16 @@ static ButtonLedMatrix blm;
 static LCD lcd;
 static ADC adc;
 static DAC dac;
+static DIO dio;
 static GateOutput gateOutput;
 static MIDI midi;
+static USBMIDI usbMidi;
 static USBH usbh;
 
 static Profiler profiler;
 
 static Model model;
-static Engine engine(model, clockTimer, adc, dac, gateOutput, midi);
+static Engine engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi);
 static UI ui(model, engine, lcd, blm);
 
 static os::Task<256> blickTask("blink", 0, [] () {
@@ -116,8 +120,10 @@ int main(void) {
     lcd.init();
     adc.init();
     dac.init();
+    dio.init();
     gateOutput.init();
     midi.init();
+    usbMidi.init();
     usbh.init();
 
     engine.init();
