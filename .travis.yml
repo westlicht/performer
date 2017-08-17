@@ -8,6 +8,8 @@ env:
     # EM_USE_GLOBAL_CACHE=1 tells emscripten to use precompiled libraries from
     # the emscripten-libs-asmjs package. This speeds up the build significantly.
     - EM_USE_GLOBAL_CACHE=1
+before_install:
+ - sudo apt-get install libasound2-dev
 jobs:
   include:
     - stage: Hardware Platform (STM32)
