@@ -1,5 +1,7 @@
 #include "MIDI.h"
 
+#include <algorithm>
+
 namespace sim {
 
 template<typename T>
