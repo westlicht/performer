@@ -13,6 +13,22 @@ void MIDI::init() {
     g_midi = this;
 }
 
+void MIDI::send(const MIDIMessage &message) {
+    for (uint8_t i = 0; i < message.length(); ++i) {
+        send(message.raw()[i]);
+    }
+}
+
+bool MIDI::recv(MIDIMessage *message) {
+    while (!_rxBuffer.empty()) {
+        if (_midiParser.feed(_rxBuffer.read())) {
+            *message = _midiParser.message();
+            return true;
+        }
+    }
+    return false;
+}
+
 void MIDI::setRecvFilter(std::function<bool(uint8_t)> filter) {
     _filter = filter;
 }
@@ -50,7 +66,6 @@ void MIDI::handleIrq() {
         }
     }
 }
-
 
 void usart2_isr() {
     g_midi->handleIrq();
