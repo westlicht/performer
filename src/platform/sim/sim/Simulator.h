@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "Audio.h"
 #include "Instrument.h"
+#include "MIDI.h"
 
 namespace sim {
 
@@ -55,6 +56,9 @@ private:
     std::array<uint16_t, 8> _dac;
 
     std::vector<UpdateCallback> _updateCallbacks;
+
+    static const std::vector<std::string> _midiPortName;
+    MIDI _midi;
 };
 
 } // namespace sim
