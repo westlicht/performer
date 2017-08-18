@@ -1,7 +1,11 @@
 #pragma once
 
+#include "USBMIDI.h"
+
 class USBH {
 public:
+    USBH(USBMIDI &usbMidi);
+
     void init();
 
     void process();
@@ -12,6 +16,8 @@ public:
     void setMousePos(int x, int y) { _mouseX = x; _mouseY = y; }
 
 private:
+    USBMIDI &_usbMidi;
+
     int _mouseX = 0;
     int _mouseY = 0;
 };

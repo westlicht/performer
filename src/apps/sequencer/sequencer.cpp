@@ -33,7 +33,7 @@ static DIO dio;
 static GateOutput gateOutput;
 static MIDI midi;
 static USBMIDI usbMidi;
-static USBH usbh;
+static USBH usbh(usbMidi);
 
 static Profiler profiler;
 

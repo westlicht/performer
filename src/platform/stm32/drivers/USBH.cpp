@@ -126,6 +126,9 @@ const midi_config_t midi_config = {
 	.notify_disconnected = &midi_disconnected_handler,
 };
 
+USBH::USBH(USBMIDI &usbMidi) :
+    _usbMidi(usbMidi)
+{}
 
 void USBH::init() {
     g_usbh = this;
