@@ -4,7 +4,7 @@
 #include "Config.h"
 
 #include "core/Debug.h"
-
+#include "core/midi/MIDIMessage.h"
 
 #include "usbh_core.h"				/// provides usbh_init() and usbh_poll()
 #include "usbh_lld_stm32f4.h"		/// provides low level usb host driver for stm32f4 platform
@@ -73,21 +73,43 @@ static const hid_config_t hid_config = {
 	.hid_in_message_handler = &hid_in_message_handler
 };
 
-static void midi_in_message_handler(int device_id, uint8_t *data)
-{
-	(void)device_id;
-	switch (data[1]>>4) {
-	case 8:
-		DBG("Note Off");
-		break;
+static void midi_in_message_handler(int device_id, uint8_t *data) {
+    // uint8_t cable = data[0] >> 4;
+    uint8_t code = data[0] & 0xf;
+    MIDIMessage message;
 
-	case 9:
-		DBG("Note On");
-		break;
+    switch (code) {
+    case 0x0: // (1, 2 or 3 bytes) Miscellaneous function codes. Reserved for future extensions.
+    case 0x1: // (1, 2 or 3 bytes) Cable events. Reserved for future expansion.
+    case 0x4: // (3 bytes) SysEx starts or continues
+    case 0x6: // (2 bytes) SysEx ends with following two bytes.
+    case 0x7: // (3 bytes) SysEx ends with following three bytes.
+        // ignore for now
+        return;
+    case 0x5: // (1 bytes) Single-byte System Common Message or SysEx ends with following single byte.
+        message = MIDIMessage(data[1]);
+        break;
+    case 0x2: // (2 bytes) Two-byte System Common messages like MTC, SongSelect, etc.
+    case 0xC: // (2 bytes) Program Change
+    case 0xD: // (2 bytes) Channel Pressure
+        message = MIDIMessage(data[1], data[2]);
+        break;
+    case 0x3: // (3 bytes) Three-byte System Common messages like SPP, etc.
+    case 0x8: // (3 bytes) Note-off
+    case 0x9: // (3 bytes) Note-on
+    case 0xA: // (3 bytes) Poly-KeyPress
+    case 0xB: // (3 bytes) Control Change
+    case 0xE: // (3 bytes) PitchBend Change
+        message = MIDIMessage(data[1], data[2], data[3]);
+        break;
+    case 0xF: // (1 bytes) Single Byte
+        // needs parsing
+        DBG("usb midi data (raw)");
+        return;
+    }
 
-	default:
-		break;
-	}
+    DBG("usb midi event");
+    MIDIMessage::dump(message);
 }
 
 static void midi_connected_handler(int device_id) {
