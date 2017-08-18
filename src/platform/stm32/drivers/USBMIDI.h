@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/midi/MIDIMessage.h"
+
 #include <functional>
 
 #include <cstdint>
