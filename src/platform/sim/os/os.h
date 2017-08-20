@@ -1,6 +1,9 @@
 #pragma once
 
+#include "core/Debug.h"
+
 #include <functional>
+#include <mutex>
 
 namespace os {
 
@@ -36,10 +39,12 @@ namespace os {
 
     class SemaphoreGeneric {
     public:
-        void take(uint32_t timeToWait = -1) {
+        bool take(uint32_t timeToWait = -1) {
+            return false;
         }
 
-        void give() {
+        bool give() {
+            return false;
         }
 
     protected:
@@ -49,24 +54,38 @@ namespace os {
     class Semaphore : public SemaphoreGeneric {
     public:
         Semaphore() {
+            ASSERT(false, "not implemented");
         }
     };
 
-    class CountingSemaphore : SemaphoreGeneric {
+    class CountingSemaphore : public SemaphoreGeneric {
     public:
         CountingSemaphore(uint32_t maxCount = -1, uint32_t initialCount = 0) {
+            ASSERT(false, "not implemented");
         }
     };
 
-    class Mutex : SemaphoreGeneric {
+    class Mutex {
     public:
-        Mutex() {
+        bool take(uint32_t timeToWait = -1) {
+            ASSERT(timeToWait == -1, "cannot wait for mutex");
+            _mutex.lock();
+            return true;
         }
+
+        bool give() {
+            _mutex.unlock();
+            return true;
+        }
+
+    private:
+        std::mutex _mutex;
     };
 
-    class RecursiveMutex : SemaphoreGeneric {
+    class RecursiveMutex : public SemaphoreGeneric {
     public:
         RecursiveMutex() {
+            ASSERT(false, "not implemented");
         }
     };
 
@@ -74,6 +93,7 @@ namespace os {
     class Queue {
     public:
         Queue() {
+            ASSERT(false, "not implemented");
         }
 
         void send(const T& element, uint32_t timeToWait = -1) {

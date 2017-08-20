@@ -83,8 +83,8 @@ namespace os {
 
     class SemaphoreGeneric {
     public:
-        void take(uint32_t timeToWait = portMAX_DELAY) {
-            xSemaphoreTake(_handle, timeToWait);
+        bool take(uint32_t timeToWait = portMAX_DELAY) {
+            return xSemaphoreTake(_handle, timeToWait) == pdTRUE;
         }
 
         TaskWoken takeFromISR() {
@@ -93,8 +93,8 @@ namespace os {
             return taskWoken;
         }
 
-        void give() {
-            xSemaphoreGive(_handle);
+        bool give() {
+            return xSemaphoreGive(_handle) == pdTRUE;
         }
 
         TaskWoken giveFromISR() {
@@ -120,21 +120,21 @@ namespace os {
         }
     };
 
-    class CountingSemaphore : SemaphoreGeneric {
+    class CountingSemaphore : public SemaphoreGeneric {
     public:
         CountingSemaphore(uint32_t maxCount = portMAX_DELAY, uint32_t initialCount = 0) {
             _handle = xSemaphoreCreateCountingStatic(maxCount, initialCount, &_semaphore);
         }
     };
 
-    class Mutex : SemaphoreGeneric {
+    class Mutex : public SemaphoreGeneric {
     public:
         Mutex() {
             _handle = xSemaphoreCreateMutexStatic(&_semaphore);
         }
     };
 
-    class RecursiveMutex : SemaphoreGeneric {
+    class RecursiveMutex : public SemaphoreGeneric {
     public:
         RecursiveMutex() {
             _handle = xSemaphoreCreateRecursiveMutexStatic(&_semaphore);
