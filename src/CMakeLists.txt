@@ -72,3 +72,14 @@ if(${PLATFORM} MATCHES "sim")
     platform_postprocess_executable(sequencer)
     add_custom_command(TARGET sequencer COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/platform/sim/assets assets)
 endif()
+
+
+# tests
+
+function(register_test test file)
+    add_executable(${test} ${file})
+    target_link_libraries(${test} core platform)
+    platform_postprocess_executable(${test})
+endfunction(register_test)
+
+add_subdirectory(tests)
