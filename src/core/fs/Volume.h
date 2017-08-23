@@ -4,6 +4,7 @@
 
 #include "drivers/SDCard.h"
 
+#include <cstddef>
 #include <cstdint>
 
 namespace fs {

@@ -4,6 +4,7 @@
 
 #include "ff/ff.h"
 
+#include <cstddef>
 #include <cstdint>
 
 namespace fs {

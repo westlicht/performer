@@ -4,6 +4,7 @@
 #include "Volume.h"
 #include "File.h"
 
+#include <cstddef>
 #include <cstdint>
 
 namespace fs {

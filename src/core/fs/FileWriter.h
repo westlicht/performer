@@ -3,6 +3,7 @@
 #include "File.h"
 
 #include <cstring>
+#include <cstddef>
 #include <cstdint>
 
 namespace fs {
