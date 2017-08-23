@@ -9,8 +9,8 @@
 
 class LCD {
 public:
-    LCD(sim::Simulator &simulator) :
-        _simulator(simulator)
+    LCD() :
+        _simulator(sim::Simulator::instance())
     {
         sim::Vector2i resolution(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT);
         _display = _simulator.window().createWidget<sim::Display>(

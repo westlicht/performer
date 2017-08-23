@@ -6,6 +6,8 @@
 #include "instruments/DrumSampler.h"
 #include "instruments/Synth.h"
 
+#include <memory>
+
 namespace sim {
 
 const std::vector<std::string> Simulator::_midiPortName = {
@@ -80,6 +82,14 @@ void Simulator::sendMIDI(int port, const uint8_t *data, size_t length) {
 
 void Simulator::recvMIDI(int port, MIDIRecvCallback callback) {
     _midi.recv(_midiPortName[port], [callback] (uint8_t data) { callback(data); });
+}
+
+Simulator &Simulator::instance() {
+    static std::unique_ptr<Simulator> simulator;
+    if (!simulator) {
+        simulator.reset(new Simulator());
+    }
+    return *simulator;
 }
 
 void Simulator::addUpdateCallback(UpdateCallback callback) {

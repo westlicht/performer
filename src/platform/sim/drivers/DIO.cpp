@@ -50,8 +50,8 @@ private:
     double _lastTicks;
 };
 
-DIO::DIO(sim::Simulator &simulator) :
-    _simulator(simulator)
+DIO::DIO() :
+    _simulator(sim::Simulator::instance())
 {
     _clockSource.reset(new ClockSource(_simulator, [this] () {
         clockInput.set(true);

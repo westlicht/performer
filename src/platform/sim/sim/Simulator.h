@@ -43,6 +43,8 @@ public:
     void sendMIDI(int port, const uint8_t *data, size_t length);
     void recvMIDI(int port, MIDIRecvCallback callback);
 
+    static Simulator &instance();
+
 private:
     void setupInstruments();
 

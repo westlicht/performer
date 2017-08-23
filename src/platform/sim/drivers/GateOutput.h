@@ -6,8 +6,8 @@
 
 class GateOutput {
 public:
-    GateOutput(sim::Simulator &simulator) :
-        _simulator(simulator)
+    GateOutput() :
+        _simulator(sim::Simulator::instance())
     {}
 
     inline void setGate(int index, bool value) {

@@ -1,7 +1,7 @@
 #include "ButtonLedMatrix.h"
 
-ButtonLedMatrix::ButtonLedMatrix(sim::Simulator &simulator) :
-    _simulator(simulator)
+ButtonLedMatrix::ButtonLedMatrix() :
+    _simulator(sim::Simulator::instance())
 {
     const sim::Vector2i matrixOrigin(40, 350);
     const sim::Vector2i buttonSize(20, 20);

@@ -8,8 +8,8 @@ class DAC {
 public:
     typedef uint16_t Value;
 
-    DAC(sim::Simulator &simulator) :
-        _simulator(simulator)
+    DAC() :
+        _simulator(sim::Simulator::instance())
     {}
 
     void setValue(int channel, Value value) {

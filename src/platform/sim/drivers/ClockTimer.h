@@ -8,8 +8,8 @@
 
 class ClockTimer {
 public:
-    ClockTimer(sim::Simulator &simulator) :
-        _simulator(simulator)
+    ClockTimer() :
+        _simulator(sim::Simulator::instance())
     {
         _simulator.addUpdateCallback([this] () { update(); });
     }

@@ -33,7 +33,7 @@ public:
         void set(bool value) {}
     };
 
-    DIO(sim::Simulator &simulator);
+    DIO();
     ~DIO();
 
     void init();

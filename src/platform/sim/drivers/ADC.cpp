@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-ADC::ADC(sim::Simulator &simulator) :
-    _simulator(simulator)
+ADC::ADC() :
+    _simulator(sim::Simulator::instance())
 {
 }

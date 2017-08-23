@@ -20,7 +20,7 @@
 #endif
 
 struct Environment {
-    sim::Simulator sim;
+    sim::Simulator &simulator;
     ClockTimer clockTimer;
     ButtonLedMatrix blm;
     LCD lcd;
@@ -36,15 +36,7 @@ struct Environment {
     UI ui;
 
     Environment() :
-        clockTimer(sim),
-        blm(sim),
-        lcd(sim),
-        adc(sim),
-        dac(sim),
-        dio(sim),
-        gateOutput(sim),
-        midi(sim),
-        usbMidi(sim),
+        simulator(sim::Simulator::instance()),
 
         engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
         ui(model, engine, lcd, blm)
@@ -54,14 +46,14 @@ struct Environment {
     }
 
     bool terminate() {
-        return sim.terminate();
+        return simulator.terminate();
     }
 
     void update() {
-        sim.update();
+        simulator.update();
         engine.update();
         ui.update();
-        sim.render();
+        simulator.render();
     }
 
 };

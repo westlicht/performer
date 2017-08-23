@@ -8,7 +8,7 @@ class ADC {
 public:
     static const int Channels = 4;
 
-    ADC(sim::Simulator &simulator);
+    ADC();
 
     uint16_t channel(int index) const {
         return _simulator.readADC(index);

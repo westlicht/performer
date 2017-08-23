@@ -12,8 +12,8 @@
 
 class USBMIDI {
 public:
-    USBMIDI(sim::Simulator &simulator) :
-        _simulator(simulator)
+    USBMIDI() :
+        _simulator(sim::Simulator::instance())
     {
         _simulator.recvMIDI(sim::Simulator::MIDIUSBHostPort, [this] (uint8_t data) {
             if (!_filter || !_filter(data)) {

@@ -13,8 +13,8 @@
 
 class MIDI {
 public:
-    MIDI(sim::Simulator &simulator) :
-        _simulator(simulator)
+    MIDI() :
+        _simulator(sim::Simulator::instance())
     {
         _simulator.recvMIDI(sim::Simulator::MIDIHardwarePort, [this] (uint8_t data) {
             if (!_filter || !_filter(data)) {

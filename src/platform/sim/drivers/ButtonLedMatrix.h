@@ -37,7 +37,7 @@ public:
     static const int ColsButton = CONFIG_BLM_COLS_BUTTON;
     static const int ColsLed = CONFIG_BLM_COLS_LED;
 
-    ButtonLedMatrix(sim::Simulator &simulator);
+    ButtonLedMatrix();
 
     void setLed(int index, uint8_t red, uint8_t green);
 
