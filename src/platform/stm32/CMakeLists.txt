@@ -5,6 +5,7 @@ add_custom_target(libopencm3 make AR=${CMAKE_AR} CC=${CMAKE_C_COMPILER} WORKING_
 
 # platform
 
+set(platform_dependencies libopencm3 PARENT_SCOPE)
 set(platform_compiler_flags "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb-interwork -funroll-loops -fshort-enums" PARENT_SCOPE)
 set(platform_linker_flags "-T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f429-nucleo.ld -nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
 
@@ -97,7 +98,6 @@ function(add_openocd_targets executable)
 endfunction(add_openocd_targets)
 
 function(platform_postprocess_executable executable)
-    add_dependencies(${executable} libopencm3)
     # set_target_properties(${executable} PROPERTIES COMPILE_FLAGS "-save-temps")
     add_custom_target(${executable}.bin ALL ${OBJCOPY} -Obinary ${executable} ${executable}.bin DEPENDS ${executable})
     add_custom_target(${executable}.hex ALL ${OBJCOPY} -Oihex ${executable} ${executable}.hex DEPENDS ${executable})

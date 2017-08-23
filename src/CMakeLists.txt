@@ -3,6 +3,7 @@ message(STATUS "Building for platform ${PLATFORM} ...")
 
 # include platform
 # defines the following variables:
+# - platform_dependencies
 # - platform_compiler_flags
 # - platform_linker_flags
 # - platform_sources
@@ -55,6 +56,7 @@ include_directories(${platform_include_directories})
 link_directories(${platform_link_directories})
 
 add_library(platform STATIC ${platform_sources})
+add_dependencies(platform ${platform_dependencies})
 target_link_libraries(platform ${platform_libraries})
 
 add_library(core STATIC ${core_sources})
