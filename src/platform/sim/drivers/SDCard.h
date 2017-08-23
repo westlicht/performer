@@ -5,6 +5,7 @@
 #include <memory>
 #include <fstream>
 
+#include <cstring>
 #include <cstddef>
 #include <cstdint>
 
