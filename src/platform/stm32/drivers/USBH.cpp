@@ -109,7 +109,7 @@ static void midi_in_message_handler(int device_id, uint8_t *data) {
     }
 
     DBG("usb midi event");
-    MIDIMessage::dump(message);
+    // MIDIMessage::dump(message);
 }
 
 static void midi_connected_handler(int device_id) {
