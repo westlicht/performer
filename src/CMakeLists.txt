@@ -21,7 +21,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -fdata-sections -ffunction-sections
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall --std=c++11 -fdata-sections -ffunction-sections ${platform_compiler_flags}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${platform_linker_flags}")
 
-set(sources
+set(core_sources
     # stb
     libs/stb/stb_sprintf.c
     # core
@@ -30,6 +30,9 @@ set(sources
     core/midi/MIDIMessage.cpp
     core/midi/MIDIParser.cpp
     core/profiler/Profiler.cpp
+)
+
+set(sources
     # engine
     engine/Engine.cpp
     engine/Clock.cpp
@@ -51,15 +54,21 @@ link_directories(${platform_link_directories})
 include_directories(.)
 include_directories(libs)
 
+add_library(core STATIC ${core_sources})
+# target_link_libraries(platform ${platform_libraries})
+
+add_library(platform STATIC ${platform_sources})
+target_link_libraries(platform ${platform_libraries})
+
 if(${PLATFORM} MATCHES "stm32")
-    add_executable(sequencer apps/sequencer/sequencer.cpp ${sources} ${platform_sources})
-    target_link_libraries(sequencer ${platform_libraries})
+    add_executable(sequencer apps/sequencer/sequencer.cpp ${sources})
+    target_link_libraries(sequencer core platform)
     platform_postprocess_executable(sequencer)
 endif()
 
 if(${PLATFORM} MATCHES "sim")
-    add_executable(sequencer apps/sequencer/SequencerSim.cpp ${sources} ${platform_sources})
-    target_link_libraries(sequencer ${platform_libraries})
+    add_executable(sequencer apps/sequencer/SequencerSim.cpp ${sources})
+    target_link_libraries(sequencer core platform)
     platform_postprocess_executable(sequencer)
     add_custom_command(TARGET sequencer COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/platform/sim/assets assets)
 endif()
