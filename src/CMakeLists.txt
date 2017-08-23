@@ -54,21 +54,21 @@ link_directories(${platform_link_directories})
 include_directories(.)
 include_directories(libs)
 
-add_library(core STATIC ${core_sources})
-# target_link_libraries(platform ${platform_libraries})
-
 add_library(platform STATIC ${platform_sources})
 target_link_libraries(platform ${platform_libraries})
 
+add_library(core STATIC ${core_sources})
+target_link_libraries(core platform)
+
 if(${PLATFORM} MATCHES "stm32")
     add_executable(sequencer apps/sequencer/sequencer.cpp ${sources})
-    target_link_libraries(sequencer core platform)
+    target_link_libraries(sequencer core)
     platform_postprocess_executable(sequencer)
 endif()
 
 if(${PLATFORM} MATCHES "sim")
     add_executable(sequencer apps/sequencer/SequencerSim.cpp ${sources})
-    target_link_libraries(sequencer core platform)
+    target_link_libraries(sequencer core)
     platform_postprocess_executable(sequencer)
     add_custom_command(TARGET sequencer COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/platform/sim/assets assets)
 endif()
@@ -78,7 +78,7 @@ endif()
 
 function(register_test test file)
     add_executable(${test} ${file})
-    target_link_libraries(${test} core platform)
+    target_link_libraries(${test} core)
     platform_postprocess_executable(${test})
 endfunction(register_test)
 
