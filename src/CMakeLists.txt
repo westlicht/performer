@@ -25,8 +25,13 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${platform_linker_flags}")
 set(core_sources
     # stb
     libs/stb/stb_sprintf.c
+    # ff
+    libs/ff/ff.c
     # core
     core/Debug.cpp
+    core/fs/Error.cpp
+    core/fs/Filesystem.cpp
+    core/fs/Volume.cpp
     core/gfx/Canvas.cpp
     core/midi/MIDIMessage.cpp
     core/midi/MIDIParser.cpp
