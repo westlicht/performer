@@ -1,6 +1,8 @@
 
 #include "core/Debug.h"
 
+#include "os/os.h"
+
 #include "drivers/System.h"
 #include "drivers/Console.h"
 #include "drivers/HighResolutionTimer.h"
@@ -12,6 +14,11 @@ public:
         while (true) {
             func();
         }
+    }
+
+    static void sleep(uint32_t ms) {
+        auto end = os::ticks() + os::time::ms(ms);
+        while (os::ticks() < end) {}
     }
 };
 

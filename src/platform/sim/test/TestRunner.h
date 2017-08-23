@@ -1,6 +1,9 @@
 
 #include "sim/Simulator.h"
+
 #include "core/Debug.h"
+
+#include "os/os.h"
 
 #include <memory>
 
@@ -12,6 +15,15 @@ public:
         while (!simulator.terminate()) {
             simulator.update();
             func();
+            simulator.render();
+        }
+    }
+
+    static void sleep(uint32_t ms) {
+        auto &simulator = sim::Simulator::instance();
+        auto end = os::ticks() + os::time::ms(ms);
+        while (!simulator.terminate() && os::ticks() < end) {
+            simulator.update();
             simulator.render();
         }
     }
