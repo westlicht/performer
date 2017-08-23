@@ -48,14 +48,14 @@ set(sources
     ui/painters/WindowPainter.cpp
 )
 
+include_directories(.)
+include_directories(libs)
+
 include_directories(${platform_include_directories})
 link_directories(${platform_link_directories})
 
 add_library(platform STATIC ${platform_sources})
 target_link_libraries(platform ${platform_libraries})
-
-include_directories(.)
-include_directories(libs)
 
 add_library(core STATIC ${core_sources})
 target_link_libraries(core platform)
