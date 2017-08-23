@@ -1,5 +1,6 @@
 .DS_Store
 
 build/
+host/
 downloads/
 tools/
