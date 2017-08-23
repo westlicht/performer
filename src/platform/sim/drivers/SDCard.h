@@ -5,6 +5,7 @@
 #include <memory>
 #include <fstream>
 
+#include <cstddef>
 #include <cstdint>
 
 class SDCard {

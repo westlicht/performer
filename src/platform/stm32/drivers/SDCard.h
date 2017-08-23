@@ -2,6 +2,7 @@
 
 #include "core/Debug.h"
 
+#include <cstddef>
 #include <cstdint>
 
 class SDCard {
