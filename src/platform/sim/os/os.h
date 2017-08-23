@@ -2,6 +2,8 @@
 
 #include "core/Debug.h"
 
+#include "sim/Simulator.h"
+
 #include <functional>
 #include <mutex>
 
@@ -127,16 +129,14 @@ namespace os {
     namespace time {
         inline uint32_t us(uint32_t us) {
             return us / 1000;
-            // return (us * configTICK_RATE_HZ) / 1000000;
         }
         inline uint32_t ms(uint32_t ms) {
             return ms;
-            // return (ms * configTICK_RATE_HZ) / 1000;
         }
     };
 
     inline uint32_t ticks() {
-        return 0;
+        return sim::Simulator::instance().ticks();
     }
 
     inline void delay(uint32_t ticks) {
