@@ -56,7 +56,9 @@ include_directories(${platform_include_directories})
 link_directories(${platform_link_directories})
 
 add_library(platform STATIC ${platform_sources})
-add_dependencies(platform ${platform_dependencies})
+if(NOT ${platform_dependencies} STREQUAL "")
+    add_dependencies(platform ${platform_dependencies})
+endif()
 target_link_libraries(platform ${platform_libraries})
 
 add_library(core STATIC ${core_sources})
