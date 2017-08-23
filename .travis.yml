@@ -14,7 +14,7 @@ jobs:
   include:
     - stage: Hardware Platform (STM32)
       script:
-      - make setup_stm32 && (cd build/stm32/debug && VERBOSE=1 make) && (cd build/stm32/release && make)
+      - make setup_stm32 && (cd build/stm32/debug && make) && (cd build/stm32/release && make)
     - stage: Simulation Platform (Linux)
       script:
       # Simulation target requires recent versions of SDL2 and SDL2_image not available as packages
