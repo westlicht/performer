@@ -10,6 +10,8 @@ public:
         _simulator(sim::Simulator::instance())
     {}
 
+    void init() {}
+
     inline void setGate(int index, bool value) {
         _simulator.writeGate(index, value);
     }

@@ -24,6 +24,8 @@ public:
         });
     }
 
+    void init() {}
+
     void send(const MIDIMessage &message) {
         _simulator.sendMIDI(sim::Simulator::MIDIHardwarePort, message.raw(), message.length());
     }

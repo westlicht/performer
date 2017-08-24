@@ -20,6 +20,8 @@ public:
         );
     }
 
+    void init() {}
+
     void draw(uint8_t *frameBuffer) {
         _display->draw(frameBuffer);
     }

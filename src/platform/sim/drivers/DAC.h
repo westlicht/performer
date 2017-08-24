@@ -12,6 +12,8 @@ public:
         _simulator(sim::Simulator::instance())
     {}
 
+    void init() {}
+
     void setValue(int channel, Value value) {
         _values[channel] = value;
     }

@@ -10,6 +10,8 @@ public:
 
     ADC();
 
+    void init() {}
+
     uint16_t channel(int index) const {
         return _simulator.readADC(index);
     }

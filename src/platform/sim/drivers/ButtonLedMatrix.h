@@ -39,6 +39,8 @@ public:
 
     ButtonLedMatrix();
 
+    void init() {}
+
     void setLed(int index, uint8_t red, uint8_t green);
 
     void setLed(int row, int col, uint8_t red, uint8_t green) {

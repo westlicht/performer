@@ -14,6 +14,9 @@ public:
         _simulator.addUpdateCallback([this] () { update(); });
     }
 
+    void init() {
+    }
+
     void reset() {
         disable();
     }
