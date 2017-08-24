@@ -75,7 +75,7 @@ static os::Task<1024> profilerTask("profiler", 0, [] () {
     }
 });
 
-static os::Task<800> engineTask("engine", 4, [] () {
+static os::Task<4096> engineTask("engine", 4, [] () {
     uint32_t lastWakeupTime = os::ticks();
     while (1) {
         engine.update();
@@ -83,7 +83,7 @@ static os::Task<800> engineTask("engine", 4, [] () {
     }
 });
 
-static os::Task<2048> uiTask("ui", 3, [] () {
+static os::Task<4096> uiTask("ui", 3, [] () {
     uint32_t lastWakeupTime = os::ticks();
     while (1) {
         ui.update();
