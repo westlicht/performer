@@ -44,13 +44,16 @@ private:
 
 class EncoderEvent : public Event {
 public:
-    EncoderEvent(Type type, int value) :
+    EncoderEvent(Type type, int value, bool pressed) :
         Event(type),
-        _value(value)
+        _value(value),
+        _pressed(pressed)
     {}
 
     int value() const { return _value; }
+    bool pressed() const { return _pressed; }
 
 private:
     int _value;
+    bool _pressed;
 };

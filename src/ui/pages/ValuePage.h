@@ -22,7 +22,7 @@ public:
     struct Handler {
         Key::Code exitKey;
         std::function<void(StringBuilder<32> &)> value;
-        std::function<void(int)> encoder;
+        std::function<void(int, bool)> encoder;
     };
 
     void show(const Handler &handler) {
@@ -70,7 +70,7 @@ public:
     }
 
     virtual void encoder(EncoderEvent &event) override {
-        _handler.encoder(event.value());
+        _handler.encoder(event.value(), event.pressed());
         event.consume();
     }
 

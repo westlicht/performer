@@ -68,7 +68,7 @@ void UI::handleKeys() {
             break;
         }
         case ButtonLedMatrix::Encoder: {
-            EncoderEvent encoderEvent(Event::Encoder, event.value());
+            EncoderEvent encoderEvent(Event::Encoder, event.value(), _keyState[Key::Encoder]);
             _pageManager.dispatchEvent(encoderEvent);
             break;
         }

@@ -6,7 +6,7 @@
 
 #include <array>
 
-typedef std::array<bool, CONFIG_BLM_ROWS * CONFIG_BLM_COLS_BUTTON> KeyState;
+typedef std::array<bool, CONFIG_BLM_ROWS * CONFIG_BLM_COLS_BUTTON + 1> KeyState;
 
 class Key {
 public:
@@ -45,6 +45,7 @@ public:
         F2 = MatrixMap::fromFunction(2),
         F3 = MatrixMap::fromFunction(3),
         F4 = MatrixMap::fromFunction(4),
+        Encoder = 40,
     };
 
     Key(int code, const KeyState &state) : _code(code), _state(state) {}

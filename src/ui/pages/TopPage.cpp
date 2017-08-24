@@ -44,7 +44,7 @@ void TopPage::keyDown(KeyEvent &event) {
         _pageManager.pages().valuePage.show({
             Key::BPM,
             [this] (StringBuilder<32> &string) { string("BPM: %.1f", _model.project().bpm()); },
-            [this] (int value) { _model.project().setBpm(_model.project().bpm() + value * 0.1f); }
+            [this] (int value, bool shift) { _model.project().setBpm(_model.project().bpm() + value * (shift ? 1.f : 0.1f)); }
         });
     }
 
