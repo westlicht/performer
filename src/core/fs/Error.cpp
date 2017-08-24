@@ -24,6 +24,7 @@ const char *errorToString(Error error) {
     case NOT_ENOUGH_CORE:       return "NOT_ENOUGH_CORE";
     case TOO_MANY_OPEN_FILES:   return "TOO_MANY_OPEN_FILES";
     case INVALID_PARAMETER:     return "INVALID_PARAMETER";
+    default:                    return "unknown"
     }
 }
 
