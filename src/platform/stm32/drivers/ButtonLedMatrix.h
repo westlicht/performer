@@ -76,6 +76,8 @@ public:
     }
 
 private:
+    void processEncoder();
+
     struct Led {
         uint8_t intensity : 4;
         uint8_t counter : 4;
@@ -103,4 +105,7 @@ private:
     RingBuffer<Event, 32> _events;
 
     uint8_t _row;
+
+    bool _encoderSwitch = false;
+    bool _encoderState[2] = { false, false };
 };

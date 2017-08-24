@@ -21,6 +21,12 @@
 #define SPI_MOSI GPIO6
 #define SPI_GPIO (SPI_SCK | SPI_MISO | SPI_MOSI)
 
+#define ENC_PORT GPIOD
+#define ENC_SWITCH GPIO13
+#define ENC_A GPIO12
+#define ENC_B GPIO11
+#define ENC_GPIO (ENC_SWITCH | ENC_A | ENC_B)
+
 PROFILER_INTERVAL(ButtonLedMatrixProcess, "ButtonLedMatrix.process")
 PROFILER_INTERVAL(ButtonLedMatrixInterval, "ButtonLedMatrix.interval")
 
@@ -30,14 +36,16 @@ ButtonLedMatrix::ButtonLedMatrix() :
 }
 
 void ButtonLedMatrix::init() {
+    // enable clocks
     rcc_periph_clock_enable(RCC_GPIOE);
+    rcc_periph_clock_enable(RCC_GPIOD);
+    rcc_periph_clock_enable(RCC_SPI4);
 
     // init spi pins
     gpio_mode_setup(SPI_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI_GPIO);
     gpio_set_af(SPI_PORT, GPIO_AF5, SPI_GPIO);
 
     // init spi
-    rcc_periph_clock_enable(RCC_SPI4);
     spi_init_master(SR_SPI, SPI_CR1_BAUDRATE_FPCLK_DIV_8,
                     SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
                     SPI_CR1_CPHA_CLK_TRANSITION_1,
@@ -48,6 +56,9 @@ void ButtonLedMatrix::init() {
     // init control pins
     gpio_mode_setup(SR_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, SR_GPIO);
     gpio_clear(SR_PORT, SR_GPIO);
+
+    // init encoder pins
+    gpio_mode_setup(ENC_PORT, GPIO_MODE_INPUT, GPIO_PUPD_PULLUP, ENC_GPIO);
 
     // init state
     std::memset(_buttonState, 0, sizeof(_buttonState));
@@ -69,6 +80,8 @@ void ButtonLedMatrix::process() {
     PROFILER_INTERVAL_BEGIN(ButtonLedMatrixInterval);
 
     PROFILER_INTERVAL_BEGIN(ButtonLedMatrixProcess);
+
+    processEncoder();
 
     uint8_t nextRow = (_row + 1) % Rows;
 
@@ -106,16 +119,30 @@ void ButtonLedMatrix::process() {
         bool newState = !(buttonData & (1 << col));
         if (newState != state) {
             state = newState;
-            if (state) {
-                _events.write(Event(KeyDown, buttonIndex));
-            } else {
-                _events.write(Event(KeyUp, buttonIndex));
-            }
+            _events.write(Event(state ? KeyDown : KeyUp, buttonIndex));
         }
     }
 
     _row = nextRow;
 
     PROFILER_INTERVAL_END(ButtonLedMatrixProcess);
+}
 
+void ButtonLedMatrix::processEncoder() {
+    auto updateEncoder = [this] (int pin, bool state) {
+        if (state != _encoderState[pin]) {
+            _encoderState[pin] = state;
+            if (!_encoderState[0] && !_encoderState[1]) {
+                _events.write(Event(Encoder, pin ? -1 : 1));
+            }
+        }
+    };
+
+    bool state = !gpio_get(ENC_PORT, ENC_SWITCH);
+    if (state != _encoderSwitch) {
+        _encoderSwitch = state;
+        _events.write(Event(state ? KeyDown : KeyUp, Rows * ColsButton));
+    }
+    updateEncoder(0, !gpio_get(ENC_PORT, ENC_A));
+    updateEncoder(1, !gpio_get(ENC_PORT, ENC_B));
 }
