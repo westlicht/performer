@@ -5,6 +5,8 @@
 void test() {
     ADC adc;
 
+    adc.init();
+
     TestRunner::loop([&] () {
         DBG("");
         for (int c = 0; c < ADC::Channels; ++c) {

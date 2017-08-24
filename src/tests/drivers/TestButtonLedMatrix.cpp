@@ -7,6 +7,8 @@
 void test() {
     ButtonLedMatrix blm;
 
+    blm.init();
+
     std::array<int, ButtonLedMatrix::Rows * ButtonLedMatrix::ColsLed> leds;
 
     TestRunner::loop([&] () {
