@@ -60,14 +60,12 @@ include_directories(libs)
 include_directories(${platform_include_directories})
 link_directories(${platform_link_directories})
 
-add_library(platform STATIC ${platform_sources})
+# for now platform and core are built together because core is also used by platform
+add_library(core STATIC ${core_sources} ${platform_sources})
+target_link_libraries(core ${platform_libraries})
 if(NOT ${platform_dependencies} STREQUAL "")
-    add_dependencies(platform ${platform_dependencies})
+add_dependencies(core ${platform_dependencies})
 endif()
-target_link_libraries(platform ${platform_libraries})
-
-add_library(core STATIC ${core_sources})
-target_link_libraries(core platform)
 
 if(${PLATFORM} MATCHES "stm32")
     add_executable(sequencer apps/sequencer/sequencer.cpp ${sources})
