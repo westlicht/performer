@@ -8,54 +8,65 @@
 
 #include <cstring>
 
-void test() {
-    SDCard sdcard;
-    fs::Volume volume(sdcard);
+class TestFileSystem : public Test {
+public:
+    TestFileSystem() :
+        volume(sdcard)
+    {}
 
-    DBG("Formatting volume ...");
-    volume.format();
+    void init() {
+        sdcard.init();
 
-    DBG("Mounting volume ...");
-    volume.mount();
-    DBG("Total size = %zd kB, Free size = %zd kB", volume.sizeTotal(), volume.sizeFree());
+        DBG("Formatting volume ...");
+        volume.format();
 
-    static constexpr size_t DataLength = 4096;
+        DBG("Mounting volume ...");
+        volume.mount();
+        DBG("Total size = %zd kB, Free size = %zd kB", volume.sizeTotal(), volume.sizeFree());
 
-    static uint8_t data[DataLength];
-    static uint8_t buf[DataLength];
+        static constexpr size_t DataLength = 4096;
 
-    Random rng;
+        static uint8_t data[DataLength];
+        static uint8_t buf[DataLength];
 
-    // create random data
-    for (size_t i = 0; i < DataLength; ++i) {
-        data[i] = rng.next() >> (i % 24) & 0xff;
-    }
+        Random rng;
 
-    // write data
-    DBG("Writing file ...");
-    fs::File file("test.dat", fs::File::Write);
-    file.write(data, DataLength);
-    file.close();
-
-    // read data
-    DBG("Reading file ...");
-    file.open("test.dat", fs::File::Read);
-    file.read(buf, DataLength);
-    file.close();
-
-    // verify data
-    bool success = true;
-    for (size_t i = 0; i < DataLength; ++i) {
-        if (buf[i] != data[i]) {
-            DBG("Verify failed: buf[%zd] = %02x, data[%zd] = %02x", i, buf[i], i, data[i]);
-            success = false;
-            break;
+        // create random data
+        for (size_t i = 0; i < DataLength; ++i) {
+            data[i] = rng.next() >> (i % 24) & 0xff;
         }
+
+        // write data
+        DBG("Writing file ...");
+        fs::File file("test.dat", fs::File::Write);
+        file.write(data, DataLength);
+        file.close();
+
+        // read data
+        DBG("Reading file ...");
+        file.open("test.dat", fs::File::Read);
+        file.read(buf, DataLength);
+        file.close();
+
+        // verify data
+        bool success = true;
+        for (size_t i = 0; i < DataLength; ++i) {
+            if (buf[i] != data[i]) {
+                DBG("Verify failed: buf[%zd] = %02x, data[%zd] = %02x", i, buf[i], i, data[i]);
+                success = false;
+                break;
+            }
+        }
+
+        DBG("Total size = %zd kB, Free size = %zd kB", volume.sizeTotal(), volume.sizeFree());
+
+        DBG("Unmounting volume ...");
+        volume.unmount();
     }
 
-    DBG("Total size = %zd kB, Free size = %zd kB", volume.sizeTotal(), volume.sizeFree());
+private:
+    SDCard sdcard;
+    fs::Volume volume;
+};
 
-    DBG("Unmounting volume ...");
-    volume.unmount();
-
-}
+TEST(TestFileSystem)

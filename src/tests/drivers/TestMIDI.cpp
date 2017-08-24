@@ -2,16 +2,25 @@
 
 #include "drivers/MIDI.h"
 
-void test() {
-    MIDI midi;
+class TestMIDI : public Test {
+public:
+    TestMIDI() {
+    }
 
-    midi.init();
+    void init() {
+        midi.init();
+    }
 
-    TestRunner::loop([&] () {
+    void update() {
         MIDIMessage message;
         while (midi.recv(&message)) {
             MIDIMessage::dump(message);
             midi.send(message);
         }
-    });
-}
+    }
+
+private:
+    MIDI midi;
+};
+
+TEST(TestMIDI)

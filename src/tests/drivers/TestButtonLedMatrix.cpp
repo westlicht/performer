@@ -2,16 +2,29 @@
 
 #include "drivers/ButtonLedMatrix.h"
 
+#include "os/os.h"
+
 #include <array>
 
-void test() {
-    ButtonLedMatrix blm;
+class TestButtonLedMatrix : public Test {
+public:
+    TestButtonLedMatrix() :
+        blmTask("blm", 0, [&] () {
+            uint32_t lastWakeupTime = os::ticks();
+            while (1) {
+                blm.process();
+                os::delayUntil(lastWakeupTime, 1);
+            }
+        })
+    {
+        leds.fill(0);
+    }
 
-    blm.init();
+    void init() {
+        blm.init();
+    }
 
-    std::array<int, ButtonLedMatrix::Rows * ButtonLedMatrix::ColsLed> leds;
-
-    TestRunner::loop([&] () {
+    void update() {
         ButtonLedMatrix::Event event;
         while (blm.nextEvent(event)) {
             switch (event.action()) {
@@ -32,5 +45,12 @@ void test() {
                 break;
             }
         }
-    });
-}
+    }
+
+private:
+    ButtonLedMatrix blm;
+    os::Task<1024> blmTask;
+    std::array<int, ButtonLedMatrix::Rows * ButtonLedMatrix::ColsLed> leds;
+};
+
+TEST(TestButtonLedMatrix)

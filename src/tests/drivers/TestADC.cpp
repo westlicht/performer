@@ -2,16 +2,23 @@
 
 #include "drivers/ADC.h"
 
-void test() {
-    ADC adc;
+class TestADC : public Test {
+public:
+    TestADC() {
+    }
 
-    adc.init();
+    void init() {
+        adc.init();
+    }
 
-    TestRunner::loop([&] () {
-        DBG("");
+    void update() {
         for (int c = 0; c < ADC::Channels; ++c) {
             DBG("adc%d: %d", c, adc.channel(c));
         }
-        TestRunner::sleep(100);
-    });
-}
+    }
+
+private:
+    ADC adc;
+};
+
+TEST(TestADC)

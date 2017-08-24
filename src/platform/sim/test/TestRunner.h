@@ -7,34 +7,31 @@
 
 #include <memory>
 
-class TestRunner {
+class Test {
 public:
-    template<typename Func>
-    static void loop(Func func) {
-        auto &simulator = sim::Simulator::instance();
-        while (!simulator.terminate()) {
-            simulator.update();
-            func();
-            simulator.render();
-        }
-    }
-
-    static void sleep(uint32_t ms) {
-        auto &simulator = sim::Simulator::instance();
-        auto end = os::ticks() + os::time::ms(ms);
-        while (!simulator.terminate() && os::ticks() < end) {
-            simulator.update();
-            simulator.render();
-        }
-    }
+    virtual void init() {}
+    virtual void update() {}
 };
 
-extern void test();
-
-int main() {
+template<typename T>
+int runTest() {
     sdl::Init init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
-    test();
+    T test;
+
+    test.init();
+
+    auto &simulator = sim::Simulator::instance();
+    while (!simulator.terminate()) {
+        simulator.update();
+        test.update();
+        simulator.render();
+    }
 
     return 0;
+}
+
+#define TEST(_test_)            \
+int main() {                    \
+    return runTest<_test_>();   \
 }

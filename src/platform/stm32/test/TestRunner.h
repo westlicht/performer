@@ -7,29 +7,35 @@
 #include "drivers/Console.h"
 #include "drivers/HighResolutionTimer.h"
 
-class TestRunner {
+class Test {
 public:
-    template<typename Func>
-    static void loop(Func func) {
-        while (true) {
-            func();
-        }
-    }
-
-    static void sleep(uint32_t ms) {
-        auto end = os::ticks() + os::time::ms(ms);
-        while (os::ticks() < end) {}
-    }
+    virtual void init() {}
+    virtual void update() {}
 };
 
-extern void test();
-
-int main() {
+template<typename T>
+int runTest() {
     System::init();
     Console::init();
     HighResolutionTimer::init();
 
-    test();
+    static T test;
+
+    static os::Task<16*1024> testTask("test", 0, [] () {
+        while (true) {
+            test.update();
+            os::delay(0);
+        }
+    });
+
+    test.init();
+
+    os::startScheduler();
 
     return 0;
+}
+
+#define TEST(_test_)            \
+int main() {                    \
+    return runTest<_test_>();   \
 }
