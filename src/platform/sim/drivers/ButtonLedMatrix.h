@@ -59,6 +59,8 @@ public:
         return buttonState(col * Rows + row);
     }
 
+    void process() {}
+
     bool nextEvent(Event &event);
 
 private:
