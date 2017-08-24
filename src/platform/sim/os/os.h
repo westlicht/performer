@@ -14,7 +14,7 @@ namespace os {
     template<size_t StackSize>
     class Task {
     public:
-        Task(std::function<void(void)> func, uint8_t priority) :
+        Task(const char *name, uint8_t priority, std::function<void(void)> func) :
             _func(func)
         {
         }
