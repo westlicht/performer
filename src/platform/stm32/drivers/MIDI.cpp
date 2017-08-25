@@ -14,11 +14,10 @@ static MIDI *g_midi = nullptr;
 void MIDI::init() {
     g_midi = this;
 
-#if 0
     // setup GPIO pins
     rcc_periph_clock_enable(RCC_GPIOD);
-    gpio_mode_setup(GPIOD, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO8 | GPIO9);
-    gpio_set_af(GPIOD, GPIO_AF7, GPIO8 | GPIO9);
+    gpio_mode_setup(GPIOD, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO5 | GPIO6);
+    gpio_set_af(GPIOD, GPIO_AF7, GPIO5 | GPIO6);
 
     // setup usart
     rcc_periph_clock_enable(MIDI_RCC);
@@ -30,9 +29,10 @@ void MIDI::init() {
     usart_set_flow_control(MIDI_USART, USART_FLOWCONTROL_NONE);
     usart_enable(MIDI_USART);
 
+    usart_enable_rx_interrupt(MIDI_USART);
+
     // nvic_set_priority(CONSOLE_NVIC_IRQ, configMAX_SYSCALL_INTERRUPT_PRIORITY);
     nvic_enable_irq(MIDI_NVIC_IRQ);
-#endif
 }
 
 void MIDI::send(const MIDIMessage &message) {
@@ -79,11 +79,11 @@ void MIDI::handleIrq() {
         }
     }
     if (usart_get_flag(MIDI_USART, USART_SR_RXNE)) {
-        if (_rxBuffer.writable() == 0) {
-            // overflow
-        }
         uint8_t data = usart_recv(MIDI_USART);
         if (!_filter || !_filter(data)) {
+            if (_rxBuffer.writable() == 0) {
+                // overflow
+            }
             _rxBuffer.write(data);
         }
     }
