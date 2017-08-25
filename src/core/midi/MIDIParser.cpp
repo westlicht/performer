@@ -60,7 +60,7 @@ bool MIDIParser::feed(uint8_t data) {
             if (_dataIndex == _dataLength) {
                 _dataIndex = 0;
                 // emit message
-                _message = MIDIMessage(_status, _data[0], _dataLength > 1 ? _data[1] : 0);
+                _message = (_dataLength == 1) ? MIDIMessage(_status, _data[0]) : MIDIMessage(_status, _data[0], _data[1]);
                 return true;
             }
         }
