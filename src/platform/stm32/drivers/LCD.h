@@ -19,8 +19,5 @@ private:
     void setRowAddr(uint8_t a, uint8_t b);
     void setWrite();
 
-    void clear();
-    void fill();
-
     uint32_t _frameBuffer[Rows * Cols / 8];
 };

@@ -11,8 +11,7 @@
 #define LCD_CS GPIO8
 #define LCD_RES GPIO9
 #define LCD_DC GPIO11
-#define LCD_DEBUG GPIO13
-#define LCD_GPIO (LCD_CS | LCD_RES | LCD_DC | LCD_DEBUG)
+#define LCD_GPIO (LCD_CS | LCD_RES | LCD_DC)
 
 #define LCD_SPI SPI3
 
@@ -118,40 +117,11 @@ void LCD::init() {
     sendCmd(0xA9); // Exit Partial Display
 
     sendCmd(0xAF); // Set Sleep mode OFF (Display ON)
-
-    // for (int y = 0; y < Rows; ++y) {
-    //     for (int x = 0; x < Cols; ++x) {
-    //         float dx = std::abs(float(x) / Cols - 0.5f) * 2.f;
-    //         float dy = std::abs(float(y) / Rows - 0.5f) * 2.f;
-    //         float c = 1.f - std::max(dx, dy);
-    //         _framebuffer[y * Cols + x] = uint8_t(c * 255);
-    //     }
-    // }
-
-    // for (int y = 0; y < Rows; ++y) {
-    //     for (int x = 0; x < Cols; ++x) {
-    //         uint8_t c = 0xff;
-    //         _framebuffer[y * Cols + x] = c;
-    //     }
-    // }
-
-
-
-
-
-    // fill screen
-    clear();
-    // while (true) {
-    //     gpio_set(LCD_PORT, LCD_DEBUG);
-    //     wait(100);
-    //     gpio_clear(LCD_PORT, LCD_DEBUG);
-    //     fill();
-    // }
 }
 
 void LCD::draw(uint8_t *frameBuffer) {
     uint8_t *src = frameBuffer;
-    uint8_t *dst = _frameBuffer;
+    uint8_t *dst = reinterpret_cast<uint8_t *>(_frameBuffer);
     for (int i = 0; i < Cols * Rows / 2; ++i) {
         uint8_t a = *src++;
         uint8_t b = *src++;
@@ -163,7 +133,7 @@ void LCD::draw(uint8_t *frameBuffer) {
     setRowAddr(0x00,0x3f);
     setWrite();
 
-    src = _frameBuffer;
+    src = reinterpret_cast<uint8_t *>(_frameBuffer);
     for (int y = 0; y < Rows; y++) {
         for (int x = 0; x < Cols/2; x++) {
             sendData(*src++);
@@ -182,7 +152,6 @@ void LCD::sendData(uint8_t data) {
     spi_xfer(LCD_SPI, data);
 }
 
-
 void LCD::setColAddr(uint8_t a, uint8_t b) {
     sendCmd(0x15);
     sendData(a);
@@ -198,85 +167,3 @@ void LCD::setRowAddr(uint8_t a, uint8_t b) {
 void LCD::setWrite() {
     sendCmd(0x5C);
 }
-
-void LCD::clear() {
-    int i, j;
-
-    setColAddr(0x00,0x77);
-    setRowAddr(0x00,0x7F);
-    setWrite();
-
-    for (i = 0; i < Rows; i++) {
-        uint8_t c = 0x00;
-        for (j = 0; j < Cols / 2; j++) {
-            sendData(c);
-            sendData(c);
-        }
-        for (j = 0; j < Cols / 2; j++) {
-            sendData(c);
-            sendData(c);
-        }
-    }
-
-}
-
-#if 0
-void LCD::fill() {
-    // int i, j;
-
-    // setColAddr(0x00,0x7f);
-    setColAddr(0x1c,0x5b);
-    setRowAddr(0x00,0x3f);
-    setWrite();
-
-// #define MIN_SEG 0x1C
-// #define MAX_SEG 0x5B
-
-#if 1
-    static int counter;
-
-    for (int y = 0; y < Rows; ++y) {
-        for (int x = 0; x < Cols; ++x) {
-            uint8_t c = 0;
-            int row = x / 16;
-            int col = y / 8;
-            int length = 16 - col;
-            if ((x % 16) < 14 && (y % 8 < 6)) {
-                if (row < length) {
-                    c = 0x4f;
-                } else {
-                    c = 0x2f;
-                }
-                if (row == ((counter / 1) % length)) {
-                    c = 0xff;
-                }
-            }
-            _framebuffer[y * Cols + x] = c;
-        }
-    }
-    ++counter;
-#endif
-
-    for (int y = 0; y < Rows; y++) {
-        // uint8_t c = i % 2 == 0 ? 0xff : 0x00;
-        // uint8_t c = 0xff;
-        for (int x = 0; x < Cols/2; x++) {
-            // uint8_t c = float(j) / Cols * 255;
-            // uint8_t cc = (c >> 4) | ((c >> 4) << 4);
-            uint8_t a = _framebuffer[y * Cols + x*2];
-            uint8_t b = _framebuffer[y * Cols + x*2 + 1];
-            uint8_t c = (b >> 4) | ((a >> 4) << 4);
-            sendData(c);
-            // sendData(0xff);
-            // sendData(c);
-            // sendData(c);
-        }
-        // for (j = 0; j < Cols / 2; j++) {
-            // sendData(0x00);
-            // sendData(0x00);
-            // sendData(c);
-            // sendData(c);
-        // }
-    }
-}
-#endif
