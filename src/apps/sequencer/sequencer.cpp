@@ -117,6 +117,7 @@ int main(void) {
 
     clockTimer.init();
     blm.init();
+    blm.setGates(&gateOutput.gates());
     lcd.init();
     adc.init();
     dac.init();

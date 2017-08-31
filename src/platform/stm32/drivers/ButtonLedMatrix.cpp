@@ -30,8 +30,7 @@
 PROFILER_INTERVAL(ButtonLedMatrixProcess, "ButtonLedMatrix.process")
 PROFILER_INTERVAL(ButtonLedMatrixInterval, "ButtonLedMatrix.interval")
 
-ButtonLedMatrix::ButtonLedMatrix() :
-    _row(0)
+ButtonLedMatrix::ButtonLedMatrix()
 {
 }
 
@@ -102,8 +101,12 @@ void ButtonLedMatrix::process() {
     // wait(10);
     gpio_set(SR_PORT, SR_LOAD);
 
-    // write row & leds
-    uint8_t buttonData = spi_xfer(SR_SPI, ledData);
+    // gate outputs
+    uint8_t gates = _gates ? *_gates : 0;
+
+    // transfer data
+    uint8_t buttonData = spi_xfer(SR_SPI, gates);
+    spi_xfer(SR_SPI, ledData);
     spi_xfer(SR_SPI, rowData);
 
     // wait(10000);

@@ -36,6 +36,10 @@ public:
 
     void init();
 
+    void setGates(uint8_t *gates) {
+        _gates = gates;
+    }
+
     void setLed(int index, uint8_t red, uint8_t green) {
         _ledState[index].red.intensity = red >> 4;
         _ledState[index].green.intensity = green >> 4;
@@ -104,8 +108,10 @@ private:
 
     RingBuffer<Event, 32> _events;
 
-    uint8_t _row;
+    uint8_t _row = 0;
 
     bool _encoderSwitch = false;
     bool _encoderState[2] = { false, false };
+
+    uint8_t *_gates = nullptr;
 };
