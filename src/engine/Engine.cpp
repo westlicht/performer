@@ -21,6 +21,7 @@ void Engine::init() {
     _clock.init();
 
     setupClockSources();
+    setupClockOutputs();
 
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
         _tracks[i].setSequence(_model.project().pattern(0).sequence(i));
@@ -108,5 +109,12 @@ void Engine::setupClockSources() {
             return true;
         }
         return false;
+    });
+}
+
+void Engine::setupClockOutputs() {
+    _clock.outputMIDI([this] (uint8_t msg) {
+        // TODO we should send a single byte with priority
+        _midi.send(MIDIMessage(msg));
     });
 }

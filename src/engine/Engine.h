@@ -51,6 +51,7 @@ public:
 
 private:
     void setupClockSources();
+    void setupClockOutputs();
 
     Model &_model;
     ADC &_adc;
