@@ -34,9 +34,9 @@ NUCLEO-F429ZI
 | LCD_RES       | GPIO      | PC9   |       |       | 1     |
 | LCD_DC        | GPIO      | PC11  |       | 2     |       |
 | **DAC**       |           |       |       |       |       |
-| DAC_SCK       | SPI5      | PF7   |       | 11    |       |
-| DAC_MISO      | SPI5      | PF8   |       | 54    |       |
-| DAC_MOSI      | SPI5      | PF9   |       | 56    |       |
+| DAC_SCK       | SPI5      | PF7   | AF5   | 11    |       |
+| DAC_MISO      | SPI5      | PF8   | AF5   | 54    |       |
+| DAC_MOSI      | SPI5      | PF9   | AF5   | 56    |       |
 | **ADC**       |           |       |       |       |       |
 | ADC_0         | ADC0      | PD3   |       | 40    |       |
 | ADC_1         | ADC0      | PD4   |       | 39    |       |
