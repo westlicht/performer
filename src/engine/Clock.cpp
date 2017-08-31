@@ -12,6 +12,7 @@ Clock::Clock(ClockTimer &timer) :
 }
 
 void Clock::init() {
+    _timer.disable();
 }
 
 void Clock::setMode(Mode mode) {
@@ -58,13 +59,14 @@ void Clock::masterStop() {
 void Clock::masterResume() {
     os::InterruptLock lock;
 
-    if (_state == SlaveRunning || _mode == ModeSlave) {
+    if (_state != Idle || _mode == ModeSlave) {
         return;
     }
 
     _state = MasterRunning;
     requestResume();
 
+    _timer.disable();
     setupMasterTimer();
     _timer.enable();
 }
@@ -140,7 +142,7 @@ void Clock::slaveStop(int slave) {
 void Clock::slaveResume(int slave) {
     os::InterruptLock lock;
 
-    if (_state == SlaveRunning || _mode == ModeMaster) {
+    if (_state != Idle || _mode == ModeMaster) {
         return;
     }
 
@@ -166,7 +168,6 @@ void Clock::slaveReset(int slave) {
 
     _timer.disable();
 }
-
 
 void Clock::slaveHandleMIDI(int slave, uint8_t msg) {
     switch (MIDIMessage::realTimeMessage(msg)) {
