@@ -56,9 +56,9 @@ public:
 
 private:
     void resetTicks();
-    void requestStart() { _requestStart = 1; }
-    void requestStop() { _requestStop = 1; }
-    void requestResume() { _requestResume = 1; }
+    void requestStart();
+    void requestStop();
+    void requestResume();
 
     void setupMasterTimer();
     void setupSlaveTimer();
@@ -78,9 +78,9 @@ private:
     };
     std::array<Slave, SlaveCount> _slaves;
 
-    uint8_t _requestStart;
-    uint8_t _requestStop;
-    uint8_t _requestResume;
+    uint8_t _requestStart = 0;
+    uint8_t _requestStop = 0;
+    uint8_t _requestResume = 0;
 
     enum State {
         Idle,

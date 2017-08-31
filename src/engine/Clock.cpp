@@ -213,6 +213,18 @@ void Clock::resetTicks() {
     _tickProcessed = 0;
 }
 
+void Clock::requestStart() {
+    _requestStart = 1;
+}
+
+void Clock::requestStop() {
+    _requestStop = 1;
+}
+
+void Clock::requestResume() {
+    _requestResume = 1;
+}
+
 void Clock::setupMasterTimer() {
     uint32_t us = (60 * 1000000) / (_masterBpm * _ppqn);
     _timer.setPeriod(us);
