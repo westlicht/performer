@@ -22,5 +22,5 @@ private:
     void clear();
     void fill();
 
-    uint8_t _frameBuffer[Rows*Cols/2];
+    uint32_t _frameBuffer[Rows * Cols / 8];
 };
