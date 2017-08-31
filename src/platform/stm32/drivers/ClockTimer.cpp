@@ -54,6 +54,8 @@ void ClockTimer::setHandler(std::function<void()> handler) {
 void tim5_isr() {
     if (timer_get_flag(TIM5, TIM_SR_UIF)) {
         timer_clear_flag(TIM5, TIM_SR_UIF);
-        g_handler();
+        if (g_handler) {
+            g_handler();
+        }
     }
 }
