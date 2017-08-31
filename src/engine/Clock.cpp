@@ -178,6 +178,12 @@ void Clock::slaveHandleMIDI(int slave, uint8_t msg) {
     }
 }
 
+// void outputConfigure(int ppqn);
+// void outputClock(std::function<void()> tick, std::function<void()> reset);
+void Clock::outputMIDI(std::function<void(uint8_t)> midi) {
+    _output.midi = midi;
+}
+
 bool Clock::checkStart() {
     os::InterruptLock lock;
     bool result = _requestStart;
@@ -215,20 +221,23 @@ void Clock::resetTicks() {
 
 void Clock::requestStart() {
     _requestStart = 1;
+    outputMIDIMessage(MIDIMessage::Start);
 }
 
 void Clock::requestStop() {
     _requestStop = 1;
+    outputMIDIMessage(MIDIMessage::Stop);
 }
 
 void Clock::requestResume() {
     _requestResume = 1;
+    outputMIDIMessage(MIDIMessage::Continue);
 }
 
 void Clock::setupMasterTimer() {
     uint32_t us = (60 * 1000000) / (_masterBpm * _ppqn);
     _timer.setPeriod(us);
-    _timer.setHandler([&] () { ++_tick; });
+    _timer.setHandler([&] () { outputTick(_tick); ++_tick; });
 }
 
 void Clock::setupSlaveTimer() {
@@ -237,4 +246,16 @@ void Clock::setupSlaveTimer() {
 
     _timer.setPeriod(250);
     _timer.setHandler([&] () { _elapsedUs += 250; });
+}
+
+void Clock::outputMIDIMessage(uint8_t msg) {
+    if (_output.midi) {
+        _output.midi(msg);
+    }
+}
+
+void Clock::outputTick(uint32_t tick) {
+    if (tick % (_ppqn / 24) == 0) {
+        outputMIDIMessage(MIDIMessage::Tick);
+    }
 }

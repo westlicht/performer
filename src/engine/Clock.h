@@ -3,6 +3,7 @@
 #include "Config.h"
 
 #include <array>
+#include <functional>
 
 #include <cstdint>
 
@@ -48,6 +49,11 @@ public:
     void slaveReset(int slave);
     void slaveHandleMIDI(int slave, uint8_t msg);
 
+    // Clock output
+    void outputConfigure(int ppqn);
+    void outputClock(std::function<void()> tick, std::function<void()> reset);
+    void outputMIDI(std::function<void(uint8_t)> midi);
+
     // Sequencer interface
     bool checkStart();
     bool checkStop();
@@ -63,6 +69,9 @@ private:
     void setupMasterTimer();
     void setupSlaveTimer();
 
+    void outputMIDIMessage(uint8_t msg);
+    void outputTick(uint32_t tick);
+
     static constexpr size_t SlaveCount = 4;
 
     ClockTimer &_timer;
@@ -77,6 +86,12 @@ private:
         int flags;
     };
     std::array<Slave, SlaveCount> _slaves;
+
+    struct Output {
+        int ppqn;
+        std::function<void(uint8_t)> midi;
+    };
+    Output _output;
 
     uint8_t _requestStart = 0;
     uint8_t _requestStop = 0;
