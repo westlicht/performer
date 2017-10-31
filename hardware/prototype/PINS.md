@@ -1,4 +1,4 @@
-# Prototype Pin Mappings
+# Early Prototype Pin Mappings
 
 NUCLEO-F429ZI
 
@@ -52,3 +52,58 @@ NUCLEO-F429ZI
 | SD_CK         | SDIO      | PC12  |       | 3     |       | LCD
 | SD_CMD        | SDIO      | PD2   |       | 4     |       |
 
+# Hardware Prototype Pin Mapping
+
+STM32F405RGT6
+
+| Function      | Peripheral| Pin   | AF    | LQFP64 |
+| :---          | :---:     | :---: | :---: | :---:  |
+| **POWER**     |           |       |       |        |
+| 3.3V          |           |       |       |        |
+| 5V            |           |       |       |        |
+| GND           |           |       |       |        |
+| **CONSOLE**   |           |       |       |        |
+| CONSOLE_TX    | USART1    | PA9   | ?     | 42     |
+| CONSOLE_RX    | USART1    | PA10  | ?     | 43     |
+| **MIDI**      |           |       |       |        |
+| MIDI_TX       | USART6    | PC6   | ?     | 37     |
+| MIDI_RX       | USART6    | PC7   | ?     | 38     |
+| **BLM/GATE**  |           |       |       |        |
+| SR_SCK        | SPI1      | PA5   | ?     | 21     |
+| SR_MISO       | SPI1      | PA6   | ?     | 22     |
+| SR_MOSI       | SPI1      | PA7   | ?     | 23     |
+| SR_LATCH      | GPIO      | PC5   |       | 25     |
+| SR_LOAD       | GPIO      | PC4   |       | 24     |
+| **Encoder**   |           |       |       |        |
+| ENC_SWITCH    | GPIO      | PC15  |       | 4      |
+| ENC_A         | GPIO      | PC13  |       | 2      |
+| ENC_B         | GPIO      | PC14  |       | 3      |
+| **LCD**       |           |       |       |        |
+| LCD_SCK       | SPI2      | PB13  | ?     | 34     |
+| LCD_MOSI      | SPI2      | PC3   | ?     | 11     |
+| LCD_CS        | GPIO      | PB12  |       | 33     |
+| LCD_RES       | GPIO      | PB14  |       | 35     |
+| LCD_DC        | GPIO      | PB15  |       | 36     |
+| **DAC**       |           |       |       |        |
+| DAC_SCK       | SPI3      | PC10  | ?     | 51     |
+| DAC_MOSI      | SPI3      | PB5   | ?     | 57     |
+| DAC_SYNC      | SPI3      | PB0   |       | 26     |
+| **ADC**       |           |       |       |        |
+| ADC_0         | ADC1      | PA0   |       | 14     |
+| ADC_1         | ADC1      | PA1   |       | 15     |
+| ADC_2         | ADC1      | PA2   |       | 16     |
+| ADC_3         | ADC1      | PA3   |       | 17     |
+| **DIO**       |           |       |       |        |
+| CLK_IN        | GPIO      | PB11  |       | 30     |
+| RST_IN        | GPIO      | PB10  |       | 29     |
+| CLK_OUT       | GPIO      | PB2   |       | 28     |
+| RST_OUT       | GPIO      | PB1   |       | 27     |
+| **SDCARD**    |           |       |       |        |
+| SD_D0         | SDIO      | PC8   |       | 39     |
+| SD_CK         | SDIO      | PC12  |       | 53     |
+| SD_CMD        | SDIO      | PD2   |       | 54     |
+| **USB**       |           |       |       |        |
+| USB_PWR_EN    | GPIO      | PC9   |       | 40     |
+| USB_PWR_FAULT | GPIO      | PA8   |       | 41     |
+| USB_D-        | USB       | PA11  | ?     | 44     |
+| USB_D+        | USB       | PA12  | ?     | 45     |
