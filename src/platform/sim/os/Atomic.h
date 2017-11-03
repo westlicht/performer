@@ -8,6 +8,11 @@ public:
     Atomic() = default;
     Atomic(const T &value) : _value(value) {}
 
+    inline T get() const {
+        os::InterruptLock lcok;
+        return _value;
+    }
+
     inline T set(const T &value) {
         os::InterruptLock lock;
         T old = _value;
