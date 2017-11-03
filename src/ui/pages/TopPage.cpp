@@ -24,6 +24,7 @@ void TopPage::keyDown(KeyEvent &event) {
         switch (key.track()) {
         case 0: pm.reset(&pm.pages().topPage); pm.push(&pm.pages().mainPage); break;
         case 1: pm.reset(&pm.pages().topPage); pm.push(&pm.pages().trackPage); break;
+        case 2: pm.reset(&pm.pages().topPage); pm.push(&pm.pages().sequenceSetupPage); break;
         }
     }
 

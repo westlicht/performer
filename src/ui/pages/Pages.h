@@ -3,6 +3,7 @@
 #include "TopPage.h"
 #include "MainPage.h"
 #include "TrackPage.h"
+#include "SequenceSetupPage.h"
 #include "MutePage.h"
 #include "ValuePage.h"
 
@@ -17,6 +18,7 @@ struct Pages {
     TopPage topPage;
     MainPage mainPage;
     TrackPage trackPage;
+    SequenceSetupPage sequenceSetupPage;
     MutePage mutePage;
     ValuePage valuePage;
 
@@ -24,6 +26,7 @@ struct Pages {
         topPage(pageManager, context),
         mainPage(pageManager, context),
         trackPage(pageManager, context),
+        sequenceSetupPage(pageManager, context),
         mutePage(pageManager, context),
         valuePage(pageManager, context)
     {}

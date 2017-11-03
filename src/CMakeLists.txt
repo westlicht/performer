@@ -49,6 +49,7 @@ set(sources
     ui/UI.cpp
     ui/pages/MainPage.cpp
     ui/pages/MutePage.cpp
+    ui/pages/SequenceSetupPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp
     ui/painters/WindowPainter.cpp
