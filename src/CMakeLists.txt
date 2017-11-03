@@ -42,7 +42,9 @@ set(sources
     # engine
     engine/Engine.cpp
     engine/Clock.cpp
+    engine/Controller.cpp
     engine/Track.cpp
+    engine/controllers/LaunchpadController.cpp
     # ui
     ui/LedPainter.cpp
     ui/Page.cpp

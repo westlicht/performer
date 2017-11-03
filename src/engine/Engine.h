@@ -2,6 +2,7 @@
 
 #include "Clock.h"
 #include "Track.h"
+#include "Controller.h"
 
 #include "model/Model.h"
 
@@ -63,6 +64,8 @@ private:
 
     Clock _clock;
     TrackArray _tracks;
+
+    ControllerManager _controllerManager;
 
     bool _running = false;
     uint32_t _tick = 0;

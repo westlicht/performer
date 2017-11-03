@@ -14,7 +14,8 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &di
     _gateOutput(gateOutput),
     _midi(midi),
     _usbMidi(usbMidi),
-    _clock(clockTimer)
+    _clock(clockTimer),
+    _controllerManager(usbMidi)
 {}
 
 void Engine::init() {
@@ -62,6 +63,9 @@ void Engine::update() {
         }
         _dac.write();
     }
+
+    // update midi controller
+    // _controllerManager.update();
 
 }
 
