@@ -21,7 +21,7 @@ ui/painters/WindowPainter.cpp
 include_directories(.)
 
 if(${PLATFORM} MATCHES "stm32")
-add_executable(sequencer sequencer.cpp ${sources})
+add_executable(sequencer Sequencer.cpp ${sources})
 target_link_libraries(sequencer core)
 platform_postprocess_executable(sequencer)
 endif()
