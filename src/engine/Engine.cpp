@@ -30,7 +30,7 @@ void Engine::init() {
 
 void Engine::update() {
     if (_clock.checkStart()) {
-        // DBG("START");
+        DBG("START");
         for (auto &track : _tracks) {
             track.reset();
         }
@@ -38,12 +38,12 @@ void Engine::update() {
     }
 
     if (_clock.checkStop()) {
-        // DBG("STOP");
+        DBG("STOP");
         _running = false;
     }
 
     if (_clock.checkResume()) {
-        // DBG("RESUME");
+        DBG("RESUME");
         _running = true;
     }
 
