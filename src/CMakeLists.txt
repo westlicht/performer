@@ -38,25 +38,6 @@ set(core_sources
     core/profiler/Profiler.cpp
 )
 
-set(sources
-    # engine
-    engine/Engine.cpp
-    engine/Clock.cpp
-    engine/Controller.cpp
-    engine/Track.cpp
-    engine/controllers/LaunchpadController.cpp
-    # ui
-    ui/LedPainter.cpp
-    ui/Page.cpp
-    ui/UI.cpp
-    ui/pages/MainPage.cpp
-    ui/pages/MutePage.cpp
-    ui/pages/SequenceSetupPage.cpp
-    ui/pages/TopPage.cpp
-    ui/pages/TrackPage.cpp
-    ui/painters/WindowPainter.cpp
-)
-
 include_directories(.)
 include_directories(libs)
 
@@ -70,22 +51,11 @@ if(NOT ${platform_dependencies} STREQUAL "")
 add_dependencies(core ${platform_dependencies})
 endif()
 
-if(${PLATFORM} MATCHES "stm32")
-    add_executable(sequencer apps/sequencer/sequencer.cpp ${sources})
-    target_link_libraries(sequencer core)
-    platform_postprocess_executable(sequencer)
-endif()
 
-if(${PLATFORM} MATCHES "sim")
-    add_executable(sequencer apps/sequencer/SequencerSim.cpp ${sources})
-    target_link_libraries(sequencer core)
-    platform_postprocess_executable(sequencer)
-    add_custom_command(TARGET sequencer COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/platform/sim/assets assets)
-endif()
-
+# applications
+add_subdirectory(apps)
 
 # tests
-
 function(register_test test file)
     add_executable(${test} ${file})
     target_link_libraries(${test} core)
