@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Config.h"
+#include "Serialize.h"
 
 #include <array>
 #include <cstdint>
@@ -23,6 +24,19 @@ public:
         void toggle() {
             active = active ? 0 : 1;
         }
+
+        // Serialization
+
+        void write(ModelWriter &writer) const {
+            writer.write(active);
+            writer.write(note);
+        }
+
+        void read(ModelReader &reader) {
+            reader.read(active);
+            reader.read(note);
+        }
+
     };
 
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
@@ -64,6 +78,26 @@ public:
             if (step < _steps.size()) {
                 _steps[step++].note = note;
             }
+        }
+    }
+
+    // Serialization
+
+    void write(ModelWriter &writer) const {
+        writer.write(_playMode);
+        writer.write(_firstStep);
+        writer.write(_lastStep);
+        for (const auto &step : _steps) {
+            step.write(writer);
+        }
+    }
+
+    void read(ModelReader &reader) {
+        reader.read(_playMode);
+        reader.read(_firstStep);
+        reader.read(_lastStep);
+        for (auto &step : _steps) {
+            step.read(reader);
         }
     }
 

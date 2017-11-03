@@ -2,6 +2,7 @@
 
 #include "Config.h"
 #include "Sequence.h"
+#include "Serialize.h"
 
 class Pattern {
 public:
@@ -30,6 +31,20 @@ public:
 
     const Sequence &sequence(int index) const { return _sequences[index]; }
           Sequence &sequence(int index)       { return _sequences[index]; }
+
+    // Serialization
+
+    void write(ModelWriter &writer) const {
+        for (const auto &sequence : _sequences) {
+            sequence.write(writer);
+        }
+    }
+
+    void read(ModelReader &reader) {
+        for (auto &sequence : _sequences) {
+            sequence.read(reader);
+        }
+    }
 
 private:
     SequenceArray _sequences;

@@ -2,6 +2,7 @@
 
 #include "Config.h"
 #include "Pattern.h"
+#include "Serialize.h"
 
 class Project {
 public:
@@ -42,6 +43,24 @@ public:
 
     const Sequence &selectedSequence() const { return selectedPattern().sequence(_selectedTrackIndex); }
           Sequence &selectedSequence()       { return selectedPattern().sequence(_selectedTrackIndex); }
+
+    // Serialization
+
+    void write(ModelWriter &writer) const {
+        writer.write(_bpm);
+        writer.write(_swing);
+        for (const auto &pattern : _patterns) {
+            pattern.write(writer);
+        }
+    }
+
+    void read(ModelReader &reader) {
+        reader.read(_bpm);
+        reader.read(_swing);
+        for (auto &pattern : _patterns) {
+            pattern.read(reader);
+        }
+    }
 
 private:
     PatternArray _patterns;
