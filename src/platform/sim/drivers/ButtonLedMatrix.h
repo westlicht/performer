@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Config.h"
+#include "SystemConfig.h"
 
 #include "sim/Simulator.h"
 #include "sim/widgets/Button.h"

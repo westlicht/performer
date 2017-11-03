@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Config.h"
+#include "SystemConfig.h"
 
 #include "drivers/HighResolutionTimer.h"
 

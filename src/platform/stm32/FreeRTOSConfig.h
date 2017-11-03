@@ -1,7 +1,7 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#include "Config.h"
+#include "SystemConfig.h"
 
 /*
  * Source: http://www.freertos.org/a00110.html

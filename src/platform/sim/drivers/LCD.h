@@ -3,7 +3,7 @@
 #include "sim/Simulator.h"
 #include "sim/widgets/Display.h"
 
-#include "Config.h"
+#include "SystemConfig.h"
 
 #include <cstdint>
 

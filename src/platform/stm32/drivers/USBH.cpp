@@ -1,7 +1,7 @@
 #include "USBH.h"
 #include "HighResolutionTimer.h"
 
-#include "Config.h"
+#include "SystemConfig.h"
 
 #include "core/Debug.h"
 #include "core/midi/MIDIMessage.h"
