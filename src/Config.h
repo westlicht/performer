@@ -22,6 +22,9 @@
 #define CONFIG_LCD_WIDTH                256
 #define CONFIG_LCD_HEIGHT               64
 
+// CV/Gate channels
+#define CONFIG_CHANNEL_COUNT            8
+
 // Model
 #define CONFIG_PATTERN_COUNT            64
 #define CONFIG_TRACK_COUNT              8
