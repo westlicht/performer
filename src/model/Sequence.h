@@ -16,12 +16,6 @@ public:
         Random,
     };
 
-    struct Params {
-        uint8_t playMode = Forward;
-        uint8_t firstStep = 0;
-        uint8_t lastStep = CONFIG_STEP_COUNT - 1;
-    };
-
     struct Step {
         uint8_t active = 0;
         uint8_t note = 0;
@@ -33,17 +27,20 @@ public:
 
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
 
-    void setPlayMode(PlayMode playMode) { _params.playMode = playMode; }
-    PlayMode playMode() const { return PlayMode(_params.playMode); }
+    void setPlayMode(PlayMode playMode) {
+        _playMode = PlayMode(std::max(0, std::min(int(Random), int(playMode))));
+    }
+    PlayMode playMode() const { return PlayMode(_playMode); }
 
-    void setFirstStep(uint8_t firstStep) { _params.firstStep = firstStep; }
-    uint8_t firstStep() const { return _params.firstStep; }
+    void setFirstStep(int firstStep) {
+        _firstStep = uint8_t(std::max(0, std::min(firstStep, int(_lastStep))));
+    }
+    int firstStep() const { return _firstStep; }
 
-    void setLastStep(uint8_t lastStep) { _params.lastStep = lastStep; }
-    uint8_t lastStep() const { return _params.lastStep; }
-
-    const Params &params() const { return _params; }
-          Params &params()       { return _params; }
+    void setLastStep(int lastStep) {
+        _lastStep = uint8_t(std::min(CONFIG_STEP_COUNT - 1, std::max(lastStep, int(_firstStep))));
+    }
+    int lastStep() const { return _lastStep; }
 
     const StepArray &steps() const { return _steps; }
           StepArray &steps()       { return _steps; }
@@ -71,6 +68,8 @@ public:
     }
 
 private:
-    Params _params;
+    uint8_t _playMode = Forward;
+    uint8_t _firstStep = 0;
+    uint8_t _lastStep = CONFIG_STEP_COUNT - 1;
     StepArray _steps;
 };
