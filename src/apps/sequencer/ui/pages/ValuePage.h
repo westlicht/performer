@@ -21,7 +21,7 @@ public:
 
     struct Handler {
         Key::Code exitKey;
-        std::function<void(StringBuilder<32> &)> value;
+        std::function<void(StringBuilder &)> value;
         std::function<void(int, bool)> encoder;
     };
 
@@ -41,7 +41,7 @@ public:
 
         canvas.setBlendMode(BlendMode::Set);
         canvas.setFont(Font::Small);
-        StringBuilder<32> string;
+        FixedStringBuilder<32> string;
         _handler.value(string);
         canvas.drawText(50, 36, string);
     }

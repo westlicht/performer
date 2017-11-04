@@ -27,8 +27,8 @@ void TrackPage::draw(Canvas &canvas) {
 
     canvas.setFont(Font::Tiny);
     canvas.setColor(0xf);
-    canvas.drawText(2, 8 - 2, StringBuilder<16>("BPM:%.1f", _engine.bpm()));
-    canvas.drawText(64, 8 - 2, StringBuilder<16>("TRACK%d", _project.selectedTrackIndex() + 1));
+    canvas.drawText(2, 8 - 2, FixedStringBuilder<16>("BPM:%.1f", _engine.bpm()));
+    canvas.drawText(64, 8 - 2, FixedStringBuilder<16>("TRACK%d", _project.selectedTrackIndex() + 1));
 
     const char *editModeLabels[] = { "GATE", "LENGTH", "NOTE" };
     canvas.drawText(128, 8 - 2, editModeLabels[int(_editMode)]);
@@ -57,7 +57,7 @@ void TrackPage::draw(Canvas &canvas) {
         }
 
         if (_editMode == EditMode::Note) {
-            StringBuilder<8> note("%d", sequence.step(step).note);
+            FixedStringBuilder<8> note("%d", sequence.step(step).note);
             canvas.drawText(x + 8 - canvas.textWidth(note) / 2, y + 24, note);
         }
 

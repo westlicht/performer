@@ -47,19 +47,19 @@ static const char *playModeToStr(Sequence::PlayMode playMode) {
 struct ParameterHandler {
     const char *shortName;
     const char *longName;
-    std::function<void(const Sequence &, StringBuilder<32> &)> formatter;
+    std::function<void(const Sequence &, StringBuilder &)> formatter;
     std::function<void(Sequence &, EncoderEvent &)> encoder;
 };
 
 static const ParameterHandler ParameterHandlers[] = {
     {
         "DIV", "Divider",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {},
+        [] (const Sequence &sequence, StringBuilder &str) {},
         [] (Sequence &sequence, EncoderEvent &event) {},
     },
     {
         "MODE", "Play Mode",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {
+        [] (const Sequence &sequence, StringBuilder &str) {
             str("%s", playModeToStr(sequence.playMode()));
         },
         [] (Sequence &sequence, EncoderEvent &event) {
@@ -68,7 +68,7 @@ static const ParameterHandler ParameterHandlers[] = {
     },
     {
         "FIRST", "First Step",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {
+        [] (const Sequence &sequence, StringBuilder &str) {
             str("%d", sequence.firstStep() + 1);
         },
         [] (Sequence &sequence, EncoderEvent &event) {
@@ -77,7 +77,7 @@ static const ParameterHandler ParameterHandlers[] = {
     },
     {
         "LAST", "Last Step",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {
+        [] (const Sequence &sequence, StringBuilder &str) {
             str("%d", sequence.lastStep() + 1);
         },
         [] (Sequence &sequence, EncoderEvent &event) {
@@ -86,32 +86,32 @@ static const ParameterHandler ParameterHandlers[] = {
     },
     {
         "RESET", "Reset Measure",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {},
+        [] (const Sequence &sequence, StringBuilder &str) {},
         [] (Sequence &sequence, EncoderEvent &event) {},
     },
     {
         "SCALE", "Scale",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {},
+        [] (const Sequence &sequence, StringBuilder &str) {},
         [] (Sequence &sequence, EncoderEvent &event) {},
     },
     {
         "SHIFT", "Shift",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {},
+        [] (const Sequence &sequence, StringBuilder &str) {},
         [] (Sequence &sequence, EncoderEvent &event) {},
     },
     {
         "TRANS", "Transpose",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {},
+        [] (const Sequence &sequence, StringBuilder &str) {},
         [] (Sequence &sequence, EncoderEvent &event) {},
     },
     {
         "", "",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {},
+        [] (const Sequence &sequence, StringBuilder &str) {},
         [] (Sequence &sequence, EncoderEvent &event) {},
     },
     {
         "", "",
-        [] (const Sequence &sequence, StringBuilder<32> &str) {},
+        [] (const Sequence &sequence, StringBuilder &str) {},
         [] (Sequence &sequence, EncoderEvent &event) {},
     },
 
@@ -139,8 +139,8 @@ void SequenceSetupPage::draw(Canvas &canvas) {
 
     canvas.setFont(Font::Tiny);
     canvas.setColor(0xf);
-    canvas.drawText(2, 8 - 2, StringBuilder<16>("BPM:%.1f", _engine.bpm()));
-    canvas.drawText(64, 8 - 2, StringBuilder<16>("TRACK%d", _project.selectedTrackIndex() + 1));
+    canvas.drawText(2, 8 - 2, FixedStringBuilder<16>("BPM:%.1f", _engine.bpm()));
+    canvas.drawText(64, 8 - 2, FixedStringBuilder<16>("TRACK%d", _project.selectedTrackIndex() + 1));
 
     canvas.drawText(128, 8 - 2, ParameterHandlers[_parameter].shortName);
 
@@ -157,7 +157,7 @@ void SequenceSetupPage::draw(Canvas &canvas) {
     canvas.setFont(Font::Small);
     canvas.drawText(8, 32, ParameterHandlers[_parameter].longName);
 
-    StringBuilder<32> sb;
+    FixedStringBuilder<32> sb;
     ParameterHandlers[_parameter].formatter(_project.selectedSequence(), sb);
     canvas.drawText(128, 32, sb);
 

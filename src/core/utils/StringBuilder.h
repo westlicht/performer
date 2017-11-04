@@ -4,9 +4,9 @@
 
 #include <cstdarg>
 
-class BaseStringBuilder {
+class StringBuilder {
 public:
-    BaseStringBuilder(char *buf, size_t len) :
+    StringBuilder(char *buf, size_t len) :
         _buf(buf),
         _len(len)
     {
@@ -18,7 +18,7 @@ public:
         _buf[0] = 0;
     }
 
-    BaseStringBuilder &printf(const char *fmt, ...) {
+    StringBuilder &printf(const char *fmt, ...) {
         va_list va;
         va_start(va, fmt);
         _pos += stbsp_vsnprintf(_pos, _len - (_pos - _buf), fmt, va);
@@ -27,7 +27,7 @@ public:
     }
 
     template<typename ...Args>
-    BaseStringBuilder &operator()(char const *fmt, Args... args) {
+    StringBuilder &operator()(char const *fmt, Args... args) {
         return printf(fmt, args...);
     }
 
@@ -41,18 +41,18 @@ private:
 
 /**
  * Class to generate strings with fixed buffer on stack.
- * example: StringBuilder<32>("item %d", 1)(" ")("item %d", 2)
+ * example: FixedStringBuilder<32>("item %d", 1)(" ")("item %d", 2)
  */
 template<size_t Length>
-class StringBuilder : public BaseStringBuilder {
+class FixedStringBuilder : public StringBuilder {
 public:
-    StringBuilder() :
-        BaseStringBuilder(_buf, Length)
+    FixedStringBuilder() :
+        StringBuilder(_buf, Length)
     {}
 
     template<typename ...Args>
-    StringBuilder(const char *fmt, Args... args) :
-        BaseStringBuilder(_buf, Length)
+    FixedStringBuilder(const char *fmt, Args... args) :
+        StringBuilder(_buf, Length)
     {
         printf(fmt, args...);
     }
