@@ -21,11 +21,11 @@ void Track::tick(uint32_t tick) {
 
     if (tick % (192 / 4) == 0) {
         advance(sequence);
-        if (_sequence->step(_currentStep).active) {
+        if (_sequence->step(_currentStep).active()) {
             _gateQueue.push({ tick, true });
             _gateQueue.push({ tick + CONFIG_PPQN / 8, false });
         }
-        _cv = _sequence->step(_currentStep).note / 12.f;
+        _cv = _sequence->step(_currentStep).note() / 12.f;
     }
     while (!_gateQueue.empty() && tick >= _gateQueue.front().first) {
         _gate = _gateQueue.front().second;
@@ -41,7 +41,7 @@ void Track::advance(const Sequence &sequence) {
     ASSERT(firstStep <= lastStep, "invalid first/last step");
 
     auto randomStep = [&] () {
-        return rng.next() % (lastStep - firstStep + 1) + firstStep;
+        return rng.nextRange(lastStep - firstStep + 1) + firstStep;
     };
 
     if (_currentStep == -1) {

@@ -13,6 +13,14 @@ public:
         return _state;
     }
 
+    inline bool nextBinary() {
+        return next() < 0x80000000;
+    }
+
+    inline uint32_t nextRange(uint32_t range) {
+        return next() / (0xffffffff / range);
+    }
+
 private:
     uint32_t _state;
 };

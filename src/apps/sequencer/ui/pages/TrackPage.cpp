@@ -57,11 +57,11 @@ void TrackPage::draw(Canvas &canvas) {
         }
 
         if (_editMode == EditMode::Note) {
-            FixedStringBuilder<8> note("%d", sequence.step(step).note);
+            FixedStringBuilder<8> note("%d", sequence.step(step).note());
             canvas.drawText(x + 8 - canvas.textWidth(note) / 2, y + 24, note);
         }
 
-        if (sequence.step(step).active) {
+        if (sequence.step(step).active()) {
             canvas.setColor(0xf);
             canvas.fillRect(x + 4, y + 4, 16 - 8, 16 - 8);
         }
@@ -148,7 +148,8 @@ void TrackPage::encoder(EncoderEvent &event) {
     case EditMode::Note: {
         for (int i = 0; i < CONFIG_STEP_COUNT; ++i) {
             if (_selectedSteps[i]) {
-                _project.selectedSequence().step(i).note += event.value();
+                auto &step = _project.selectedSequence().step(i);
+                step.setNote(step.note() + event.value());
             }
         }
         break;

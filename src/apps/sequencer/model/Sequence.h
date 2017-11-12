@@ -17,26 +17,37 @@ public:
         Random,
     };
 
-    struct Step {
-        uint8_t active = 0;
-        uint8_t note = 0;
+    class Step {
+    public:
+        void setActive(bool active) {
+            _active = active;
+        }
+        bool active() const { return _active; }
+
+        void setNote(uint8_t note) {
+            _note = note;
+        }
+        uint8_t note() const { return _note; }
 
         void toggle() {
-            active = active ? 0 : 1;
+            setActive(!active());
         }
 
         // Serialization
 
         void write(ModelWriter &writer) const {
-            writer.write(active);
-            writer.write(note);
+            writer.write(_active);
+            writer.write(_note);
         }
 
         void read(ModelReader &reader) {
-            reader.read(active);
-            reader.read(note);
+            reader.read(_active);
+            reader.read(_note);
         }
 
+    private:
+        uint8_t _active = 0;
+        uint8_t _note = 0;
     };
 
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
@@ -68,7 +79,7 @@ public:
         size_t step = 0;
         for (auto gate : gates) {
             if (step < _steps.size()) {
-                _steps[step++].active = gate;
+                _steps[step++].setActive(gate);
             }
         }
     }
@@ -76,7 +87,7 @@ public:
         size_t step = 0;
         for (auto note : notes) {
             if (step < _steps.size()) {
-                _steps[step++].note = note;
+                _steps[step++].setNote(note);
             }
         }
     }
