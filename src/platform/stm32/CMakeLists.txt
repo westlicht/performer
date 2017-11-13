@@ -7,7 +7,7 @@ add_custom_target(libopencm3 make AR=${CMAKE_AR} CC=${CMAKE_C_COMPILER} WORKING_
 
 set(platform_dependencies libopencm3 PARENT_SCOPE)
 set(platform_compiler_flags "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb-interwork -funroll-loops -fshort-enums" PARENT_SCOPE)
-set(platform_linker_flags "-T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f429-nucleo.ld -nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
+set(platform_linker_flags "-T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f405.ld -nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
 
 set(platform_sources
     # os
@@ -65,7 +65,7 @@ set(platform_link_directories
 
 set(platform_defines
     -DSTM32F4
-    -DSTM32F429xx
+    -DSTM32F405xx
     PARENT_SCOPE
 )
 
@@ -81,9 +81,9 @@ find_program(KERMIT ckermit)
 
 # OpenOCD configuration
 
-set(OPENOCD_INTERFACE stlink-v2-1)
+set(OPENOCD_INTERFACE ftdi/olimex-arm-usb-ocd-h)
 set(OPENOCD_TARGET stm32f4x)
-set(OPENOCD_INTERFACE stlink-v2-1 PARENT_SCOPE)
+set(OPENOCD_INTERFACE ftdi/olimex-arm-usb-ocd-h PARENT_SCOPE)
 set(OPENOCD_TARGET stm32f4x PARENT_SCOPE)
 
 # functions
