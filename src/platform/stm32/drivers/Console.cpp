@@ -8,16 +8,16 @@
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/cm3/nvic.h>
 
-#define CONSOLE_USART USART3
-#define CONSOLE_RCC RCC_USART3
-#define CONSOLE_NVIC_IRQ NVIC_USART3_IRQ
+#define CONSOLE_USART USART1
+#define CONSOLE_RCC RCC_USART1
+#define CONSOLE_NVIC_IRQ NVIC_USART1_IRQ
 
 
 void Console::init() {
     // setup GPIO pins
-    rcc_periph_clock_enable(RCC_GPIOD);
-    gpio_mode_setup(GPIOD, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO8 | GPIO9);
-    gpio_set_af(GPIOD, GPIO_AF7, GPIO8 | GPIO9);
+    rcc_periph_clock_enable(RCC_GPIOA);
+    gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9 | GPIO10);
+    gpio_set_af(GPIOA, GPIO_AF7, GPIO9 | GPIO10);
 
     // setup usart
     rcc_periph_clock_enable(CONSOLE_RCC);
@@ -71,7 +71,7 @@ void Console::send(char c) {
     }
 }
 
-void usart3_isr() {
+void usart1_isr() {
     if (usart_get_flag(CONSOLE_USART, USART_SR_TXE)) {
         usart_disable_tx_interrupt(CONSOLE_USART);
         if (txBuffer.readable() > 0) {
