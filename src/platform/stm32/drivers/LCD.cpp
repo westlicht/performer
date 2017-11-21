@@ -9,23 +9,18 @@
 #include <cmath>
 #include <algorithm>
 
-#define LCD_PORT GPIOC
-#define LCD_CS GPIO8
-#define LCD_RES GPIO9
-#define LCD_DC GPIO11
+#define LCD_PORT GPIOB
+#define LCD_CS GPIO12
+#define LCD_RES GPIO14
+#define LCD_DC GPIO15
 #define LCD_GPIO (LCD_CS | LCD_RES | LCD_DC)
 
-#define LCD_SPI SPI3
-#define LCD_SPI_DR SPI3_DR
+#define LCD_SPI SPI2
+#define LCD_SPI_DR SPI2_DR
 
 #define LCD_DMA DMA1
 #define LCD_DMA_CHANNEL DMA_SxCR_CHSEL_0
 #define LCD_DMA_STREAM DMA_STREAM5
-
-#define SPI_PORT GPIOC
-#define SPI_SCK GPIO10
-#define SPI_MOSI GPIO12
-#define SPI_GPIO (SPI_SCK | SPI_MOSI)
 
 // #define USE_DMA
 
@@ -36,14 +31,16 @@ static void wait(int n) {
 }
 
 void LCD::init() {
-    rcc_periph_clock_enable(RCC_GPIOC);
-
     // init spi pins
-    gpio_mode_setup(SPI_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI_GPIO);
-    gpio_set_af(SPI_PORT, GPIO_AF6, SPI_GPIO);
+    rcc_periph_clock_enable(RCC_GPIOB);
+    rcc_periph_clock_enable(RCC_GPIOC);
+    gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO13);   // SCK
+    gpio_set_af(GPIOB, GPIO_AF5, GPIO13);
+    gpio_mode_setup(GPIOC, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO3);    // MOSI
+    gpio_set_af(GPIOC, GPIO_AF5, GPIO3);
 
     // init spi
-    rcc_periph_clock_enable(RCC_SPI3);
+    rcc_periph_clock_enable(RCC_SPI2);
     spi_init_master(LCD_SPI, SPI_CR1_BAUDRATE_FPCLK_DIV_2,
                     SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
                     SPI_CR1_CPHA_CLK_TRANSITION_1,
