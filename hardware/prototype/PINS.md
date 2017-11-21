@@ -63,15 +63,15 @@ STM32F405RGT6
 | 5V            |           |       |       |        |
 | GND           |           |       |       |        |
 | **CONSOLE**   |           |       |       |        |
-| CONSOLE_TX    | USART1    | PA9   | ?     | 42     |
-| CONSOLE_RX    | USART1    | PA10  | ?     | 43     |
+| CONSOLE_TX    | USART1    | PA9   | AF7   | 42     |
+| CONSOLE_RX    | USART1    | PA10  | AF7   | 43     |
 | **MIDI**      |           |       |       |        |
-| MIDI_TX       | USART6    | PC6   | ?     | 37     |
-| MIDI_RX       | USART6    | PC7   | ?     | 38     |
+| MIDI_TX       | USART6    | PC6   | AF8   | 37     |
+| MIDI_RX       | USART6    | PC7   | AF8   | 38     |
 | **BLM/GATE**  |           |       |       |        |
-| SR_SCK        | SPI1      | PA5   | ?     | 21     |
-| SR_MISO       | SPI1      | PA6   | ?     | 22     |
-| SR_MOSI       | SPI1      | PA7   | ?     | 23     |
+| SR_SCK        | SPI1      | PA5   | AF5   | 21     |
+| SR_MISO       | SPI1      | PA6   | AF5   | 22     |
+| SR_MOSI       | SPI1      | PA7   | AF5   | 23     |
 | SR_LATCH      | GPIO      | PC5   |       | 25     |
 | SR_LOAD       | GPIO      | PC4   |       | 24     |
 | **Encoder**   |           |       |       |        |
@@ -79,15 +79,15 @@ STM32F405RGT6
 | ENC_A         | GPIO      | PC13  |       | 2      |
 | ENC_B         | GPIO      | PC14  |       | 3      |
 | **LCD**       |           |       |       |        |
-| LCD_SCK       | SPI2      | PB13  | ?     | 34     |
-| LCD_MOSI      | SPI2      | PC3   | ?     | 11     |
+| LCD_SCK       | SPI2      | PB13  | AF5   | 34     |
+| LCD_MOSI      | SPI2      | PC3   | AF5   | 11     |
 | LCD_CS        | GPIO      | PB12  |       | 33     |
 | LCD_RES       | GPIO      | PB14  |       | 35     |
 | LCD_DC        | GPIO      | PB15  |       | 36     |
 | **DAC**       |           |       |       |        |
-| DAC_SCK       | SPI3      | PC10  | ?     | 51     |
-| DAC_MOSI      | SPI3      | PB5   | ?     | 57     |
-| DAC_SYNC      | SPI3      | PB0   |       | 26     |
+| DAC_SCK       | SPI3      | PC10  | AF6   | 51     |
+| DAC_MOSI      | SPI3      | PB5   | AF6   | 57     |
+| DAC_SYNC      | GPIO      | PB0   |       | 26     |
 | **ADC**       |           |       |       |        |
 | ADC_0         | ADC1      | PA0   |       | 14     |
 | ADC_1         | ADC1      | PA1   |       | 15     |
@@ -105,5 +105,5 @@ STM32F405RGT6
 | **USB**       |           |       |       |        |
 | USB_PWR_EN    | GPIO      | PC9   |       | 40     |
 | USB_PWR_FAULT | GPIO      | PA8   |       | 41     |
-| USB_D-        | USB       | PA11  | ?     | 44     |
-| USB_D+        | USB       | PA12  | ?     | 45     |
+| USB_D-        | USB       | PA11  | AF10  | 44     |
+| USB_D+        | USB       | PA12  | AF10  | 45     |
