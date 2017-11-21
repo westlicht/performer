@@ -31,5 +31,12 @@ static void delay_ns() {
     nop<ns_to_cycles(ns)>();
 }
 
+// microsecond delay
+static void delay_us(uint32_t us) {
+    for (volatile uint32_t i = 0; i < us * 10; ++i) {
+        delay_ns<100>();
+    }
+}
+
 } // namespace Delay
 } // namespace hal
