@@ -14,10 +14,11 @@ public:
     void update() {
         DBG("value = %d", value);
         for (int channel = 0; channel < 8; ++channel) {
-            dac.setValue(channel, (channel * 8192 + value) & 0xffff);
+            dac.setValue(channel, (value + channel * 0x1000) % 0x8000);
         }
         dac.write();
-        value += 1000;
+        value = (value + 0x1000) % 0x8000;
+        os::delay(os::time::ms(50));
     }
 
 private:

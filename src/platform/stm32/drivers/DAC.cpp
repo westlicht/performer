@@ -2,19 +2,16 @@
 
 #include "hal/Delay.h"
 
+#include "core/Debug.h"
+
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/spi.h>
 
-#define DAC_SPI SPI5
+#define DAC_SPI SPI3
 
-#define DAC_PORT GPIOF
-#define DAC_SYNC GPIO8
-
-#define SPI_PORT GPIOF
-#define SPI_SCK GPIO7
-#define SPI_MOSI GPIO9
-#define SPI_GPIO (SPI_SCK | SPI_MOSI)
+#define DAC_PORT GPIOB
+#define DAC_SYNC GPIO0
 
 #define WRITE_INPUT_REGISTER            0
 #define UPDATE_OUTPUT_REGISTER          1
@@ -27,16 +24,19 @@
 #define SETUP_INTERNAL_REF              8
 
 void DAC::init() {
-    rcc_periph_clock_enable(RCC_GPIOF);
 
     // init spi pins
-    gpio_mode_setup(SPI_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI_GPIO);
-    gpio_set_af(SPI_PORT, GPIO_AF5, SPI_GPIO);
+    rcc_periph_clock_enable(RCC_GPIOB);
+    rcc_periph_clock_enable(RCC_GPIOC);
+    gpio_mode_setup(GPIOC, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO10);   // SCK
+    gpio_set_af(GPIOC, GPIO_AF6, GPIO10);
+    gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO5);    // MOSI
+    gpio_set_af(GPIOB, GPIO_AF6, GPIO5);
 
     // init spi
-    rcc_periph_clock_enable(RCC_SPI5);
+    rcc_periph_clock_enable(RCC_SPI3);
     spi_init_master(DAC_SPI,
-                    SPI_CR1_BAUDRATE_FPCLK_DIV_4, // TODO should DIV_2 still work?
+                    SPI_CR1_BAUDRATE_FPCLK_DIV_2,
                     SPI_CR1_CPOL_CLK_TO_1_WHEN_IDLE,
                     SPI_CR1_CPHA_CLK_TRANSITION_1,
                     SPI_CR1_DFF_8BIT,
@@ -44,17 +44,20 @@ void DAC::init() {
     spi_set_unidirectional_mode(DAC_SPI);
     spi_disable_crc(DAC_SPI);
 
-    // spi_enable_ss_output(DAC_SPI);
+    spi_enable_ss_output(DAC_SPI);
     spi_enable(DAC_SPI);
 
     // init gpio
+    rcc_periph_clock_enable(RCC_GPIOB);
     gpio_mode_setup(DAC_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, DAC_SYNC);
     gpio_set(DAC_PORT, DAC_SYNC);
+    hal::Delay::delay_ns<80>(); // t4 in timing diagram
 
     // initialize DAC8568
     reset();
     setClearCode(ClearIgnore);
     setInternalRef(true);
+    writeDAC(POWER_DOWN_UP_DAC, 0, 0, 0xff);
 }
 
 void DAC::write(int channel) {
@@ -62,18 +65,19 @@ void DAC::write(int channel) {
 }
 
 void DAC::write() {
-    for (int i = 0; i < 7; ++i) {
-        write(i);
+    for (int channel = 0; channel < 8; ++channel) {
+        writeDAC(channel == 7 ? WRITE_INPUT_REGISTER_UPDATE_ALL : WRITE_INPUT_REGISTER, channel, _values[channel], 0);
     }
 }
 
 void DAC::writeDAC(uint8_t command, uint8_t address, uint16_t data, uint8_t function) {
     uint8_t b1 = command;
-    uint8_t b2 = address << 4 | data >> 12;
+    uint8_t b2 = (address << 4) | (data >> 12);
     uint8_t b3 = data >> 4;
-    uint8_t b4 = 0xf0 & (data << 4) >> 8 | function;
+    uint8_t b4 = (data & 0xf) << 4 | function;
 
     gpio_clear(DAC_PORT, DAC_SYNC);
+
     hal::Delay::delay_ns<13>(); // t5 in timing diagram
 
     spi_send(DAC_SPI, b1);
@@ -83,13 +87,16 @@ void DAC::writeDAC(uint8_t command, uint8_t address, uint16_t data, uint8_t func
 
     while (!(SPI_SR(DAC_SPI) & SPI_SR_TXE));
 
-    hal::Delay::delay_ns<10>(); // t8 in timing diagram
+    // hal::Delay::delay_ns<10>(); // t8 in timing diagram
+    hal::Delay::delay_ns<200>(); // TODO not sure why we need 200ns instead of the 10ns in the datasheet
+
     gpio_set(DAC_PORT, DAC_SYNC);
     hal::Delay::delay_ns<80>(); // t4 in timing diagram
 }
 
 void DAC::reset() {
     writeDAC(RESET_POWER_ON, 0, 0, 0);
+    hal::Delay::delay_us(50);
 }
 
 void DAC::setInternalRef(bool enabled) {
