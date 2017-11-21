@@ -9,9 +9,6 @@
 #include <libopencm3/cm3/nvic.h>
 
 #define CONSOLE_USART USART1
-#define CONSOLE_RCC RCC_USART1
-#define CONSOLE_NVIC_IRQ NVIC_USART1_IRQ
-
 
 void Console::init() {
     // setup GPIO pins
@@ -20,8 +17,8 @@ void Console::init() {
     gpio_set_af(GPIOA, GPIO_AF7, GPIO9 | GPIO10);
 
     // setup usart
-    rcc_periph_clock_enable(CONSOLE_RCC);
-    usart_set_baudrate(CONSOLE_USART, 9600);
+    rcc_periph_clock_enable(RCC_USART1);
+    usart_set_baudrate(CONSOLE_USART, 115200);
     usart_set_databits(CONSOLE_USART, 8);
     usart_set_stopbits(CONSOLE_USART, USART_STOPBITS_1);
     usart_set_mode(CONSOLE_USART, USART_MODE_TX_RX);
@@ -30,28 +27,31 @@ void Console::init() {
     usart_enable(CONSOLE_USART);
 
     // nvic_set_priority(CONSOLE_NVIC_IRQ, configMAX_SYSCALL_INTERRUPT_PRIORITY);
-    nvic_enable_irq(CONSOLE_NVIC_IRQ);
+    nvic_enable_irq(NVIC_USART1_IRQ);
 }
 
 void Console::write(char c) {
+    if (c == '\n') {
+        send('\r');
+    }
     send(c);
 }
 
 void Console::write(const char *s) {
     while (*s != '\0') {
-        send(*s++);
+        write(*s++);
     }
 }
 
 void Console::write(const char *s, size_t length) {
     for (size_t i = 0; i < length; ++i) {
-        send(s[i]);
+        write(s[i]);
     }
 }
 
 void Console::write(const std::string &s) {
     for (const auto c : s) {
-        send(char(c));
+        write(char(c));
     }
 }
 
