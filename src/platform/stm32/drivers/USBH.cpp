@@ -20,6 +20,11 @@
 #include <libopencm3/stm32/otg_hs.h>
 #include <libopencm3/stm32/otg_fs.h>
 
+#define USB_PWR_EN_PORT GPIOC
+#define USB_PWR_EN_PIN GPIO9
+#define USB_PWR_FAULT_PORT GPIOA
+#define USB_PWR_FAULT_PIN GPIO8
+
 static USBH *g_usbh;
 
 static const usbh_dev_driver_t *device_drivers[] = {
@@ -65,7 +70,7 @@ static void hid_in_message_handler(uint8_t device_id, const uint8_t *data, uint3
         x += (int8_t) data[1];
         y += (int8_t) data[2];
         g_usbh->setMousePos(x, y);
-        // DBG("x = %d, y = %d", x, y);
+        DBG("mouse x = %d, y = %d", x, y);
     }
 }
 
@@ -133,20 +138,31 @@ USBH::USBH(USBMIDI &usbMidi) :
 void USBH::init() {
     g_usbh = this;
 
-	rcc_periph_clock_enable(RCC_GPIOA); // OTG_FS + button
-	rcc_periph_clock_enable(RCC_GPIOB); // OTG_HS
-	rcc_periph_clock_enable(RCC_GPIOG); // USB OTG Power Up
+	rcc_periph_clock_enable(RCC_GPIOA); // OTG_FS + USB_PWR_FAULT
+	rcc_periph_clock_enable(RCC_GPIOC); // USB_PWR_EN
+
+    // USB_PWR_EN
+	gpio_mode_setup(USB_PWR_EN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, USB_PWR_EN_PIN);
+    gpio_clear(USB_PWR_EN_PORT, USB_PWR_EN_PIN);
+
+    // USB_PWR_FAULT
+	gpio_mode_setup(USB_PWR_FAULT_PORT, GPIO_MODE_INPUT, GPIO_PUPD_NONE, USB_PWR_FAULT_PIN);
+
+
+
+	// rcc_periph_clock_enable(RCC_GPIOB); // OTG_HS
+	// rcc_periph_clock_enable(RCC_GPIOG); // USB OTG Power Up
 	// rcc_periph_clock_enable(RCC_GPIOC); // USART + OTG_FS charge pump
 	// rcc_periph_clock_enable(RCC_GPIOD); // LEDS
 
 	// periphery
 	// rcc_periph_clock_enable(RCC_USART6); // USART
 	rcc_periph_clock_enable(RCC_OTGFS); // OTG_FS
-	rcc_periph_clock_enable(RCC_OTGHS); // OTG_HS
+	// rcc_periph_clock_enable(RCC_OTGHS); // OTG_HS
 	// rcc_periph_clock_enable(RCC_TIM6); // TIM6
 
-    gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO6);
-    gpio_set(GPIOG, GPIO6);
+    // gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO6);
+    // gpio_set(GPIOG, GPIO6);
 
 
 	// /* Set GPIO12-15 (in GPIO port D) to 'output push-pull'. */
@@ -154,13 +170,12 @@ void USBH::init() {
 	// 		GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
 
 	/* Set	 */
-	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO0);
-	gpio_clear(GPIOC, GPIO0);
+	// gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO0);
+	// gpio_clear(GPIOC, GPIO0);
 
 	// gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE,
 	// 		GPIO13 | GPIO14 | GPIO15);
 	// gpio_set_af(GPIOB, GPIO_AF12, GPIO13 | GPIO14 | GPIO15);
-
 
 
 	// OTG_FS
@@ -168,8 +183,8 @@ void USBH::init() {
 	gpio_set_af(GPIOA, GPIO_AF10, GPIO11 | GPIO12);
 
 	// OTG_HS
-	gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO15 | GPIO14);
-	gpio_set_af(GPIOB, GPIO_AF12, GPIO14 | GPIO15);
+	// gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO15 | GPIO14);
+	// gpio_set_af(GPIOB, GPIO_AF12, GPIO14 | GPIO15);
 
 	hid_driver_init(&hid_config);
 	hub_driver_init();
@@ -201,4 +216,16 @@ void USBH::process() {
     // approx 1ms interval between usbh_poll()
     // delay_ms_busy_loop(1);
 
+}
+
+void USBH::powerOn() {
+    gpio_set(USB_PWR_EN_PORT, USB_PWR_EN_PIN);
+}
+
+void USBH::powerOff() {
+    gpio_clear(USB_PWR_EN_PORT, USB_PWR_EN_PIN);
+}
+
+bool USBH::powerFault() {
+    return !gpio_get(USB_PWR_FAULT_PORT, USB_PWR_FAULT_PIN);
 }

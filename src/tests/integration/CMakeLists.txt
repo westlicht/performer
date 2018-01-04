@@ -13,5 +13,6 @@ register_test(TestEncoder drivers/TestEncoder.cpp)
 register_test(TestLCD drivers/TestLCD.cpp)
 register_test(TestMIDI drivers/TestMIDI.cpp)
 register_test(TestSDCard drivers/TestSDCard.cpp)
+register_test(TestUSBMIDI drivers/TestUSBMIDI.cpp)
 
 register_test(TestFileSystem fs/TestFileSystem.cpp)

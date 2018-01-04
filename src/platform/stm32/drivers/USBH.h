@@ -10,6 +10,10 @@ public:
 
     void process();
 
+    void powerOn();
+    void powerOff();
+    bool powerFault();
+
     int mouseX() const { return _mouseX; }
     int mouseY() const { return _mouseY; }
 
