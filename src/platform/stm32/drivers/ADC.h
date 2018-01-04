@@ -9,9 +9,9 @@ public:
     void init();
 
     uint16_t channel(int index) const {
-        return _channel[index];
+        return _channels[index];
     }
 
 private:
-    uint16_t _channel[Channels];
+    uint16_t _channels[Channels];
 };
