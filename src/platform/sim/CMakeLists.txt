@@ -83,6 +83,7 @@ set(platform_link_directories
 )
 
 set(platform_defines
+    -D PLATFORM_SIM
     -D WITH_SDL2_STATIC
     PARENT_SCOPE
 )

@@ -66,8 +66,9 @@ set(platform_link_directories
 )
 
 set(platform_defines
-    -DSTM32F4
-    -DSTM32F405xx
+    -D PLATFORM_STM32
+    -D STM32F4
+    -D STM32F405xx
     PARENT_SCOPE
 )
 

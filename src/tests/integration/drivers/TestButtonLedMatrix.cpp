@@ -1,6 +1,9 @@
 #include "test/TestRunner.h"
 
+#ifdef PLATFORM_STM32
 #include "drivers/ShiftRegister.h"
+#endif
+
 #include "drivers/ButtonLedMatrix.h"
 
 #include "os/os.h"
@@ -10,9 +13,13 @@
 class TestButtonLedMatrix : public Test {
 public:
     TestButtonLedMatrix() :
+#ifdef PLATFORM_STM32
         _blm(_shiftRegister),
+#endif
         _driverTask("driver", 0, 1, [&] () {
+#ifdef PLATFORM_STM32
             _shiftRegister.process();
+#endif
             _blm.process();
         })
     {
@@ -20,7 +27,9 @@ public:
     }
 
     void init() {
+#ifdef PLATFORM_STM32
         _shiftRegister.init();
+#endif
         _blm.init();
     }
 
@@ -45,7 +54,9 @@ public:
     }
 
 private:
+#ifdef PLATFORM_STM32
     ShiftRegister _shiftRegister;
+#endif
     ButtonLedMatrix _blm;
     os::PeriodicTask<1024> _driverTask;
     std::array<int, ButtonLedMatrix::Rows * ButtonLedMatrix::ColsLed> _leds;
