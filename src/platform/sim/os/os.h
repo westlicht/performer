@@ -25,6 +25,16 @@ namespace os {
         std::function<void(void)> _func;
     };
 
+    template<size_t StackSize>
+    class PeriodicTask {
+    public:
+        PeriodicTask(const char *name, uint8_t priority, uint32_t interval, std::function<void(void)> func) {
+            sim::Simulator::instance().addUpdateCallback([func] {
+                func();
+            });
+        }
+    };
+
     inline void suspend(TaskHandle handle) {}
     inline void resume(TaskHandle handle) {}
     inline void resumeFromISR(TaskHandle handle) {}

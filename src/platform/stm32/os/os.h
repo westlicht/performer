@@ -211,4 +211,20 @@ namespace os {
         vTaskStartScheduler();
     }
 
+
+    template<size_t StackSize>
+    class PeriodicTask : public Task<StackSize> {
+    public:
+        PeriodicTask(const char *name, uint8_t priority, uint32_t interval, std::function<void(void)> func) :
+            Task<StackSize>(name, priority, [interval, func] () {
+                uint32_t lastWakeupTime = os::ticks();
+                while (true) {
+                    func();
+                    os::delayUntil(lastWakeupTime, interval);
+                }
+            })
+        {
+        }
+    };
+
 } // namespace os
