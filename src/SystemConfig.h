@@ -10,6 +10,7 @@
 // Debugging
 #define CONFIG_ENABLE_DEBUG             1
 #define CONFIG_ENABLE_PROFILER          0
+#define CONFIG_ENABLE_STACK_USAGE       1
 
 // USB host
 #define CONFIG_ENABLE_USBH_DRIVER_FS    1
@@ -18,6 +19,9 @@
 // LCD
 #define CONFIG_LCD_WIDTH                256
 #define CONFIG_LCD_HEIGHT               64
+
+// Shift registers
+#define CONFIG_NUM_SR                   3
 
 // Button Led Matrix
 #define CONFIG_BLM_ROWS                 8

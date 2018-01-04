@@ -7,6 +7,7 @@
 #include "drivers/ADC.h"
 #include "drivers/DAC.h"
 #include "drivers/DIO.h"
+#include "drivers/Encoder.h"
 #include "drivers/GateOutput.h"
 #include "drivers/MIDI.h"
 #include "drivers/USBMIDI.h"
@@ -27,6 +28,7 @@ struct Environment {
     ADC adc;
     DAC dac;
     DIO dio;
+    Encoder encoder;
     GateOutput gateOutput;
     MIDI midi;
     USBMIDI usbMidi;
@@ -39,7 +41,7 @@ struct Environment {
         simulator(sim::Simulator::instance()),
 
         engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
-        ui(model, engine, lcd, blm)
+        ui(model, engine, lcd, blm, encoder)
     {
         engine.init();
         ui.init();

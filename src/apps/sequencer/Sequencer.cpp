@@ -1,3 +1,5 @@
+#include "SystemConfig.h"
+
 #include "drivers/ADC.h"
 #include "drivers/ButtonLedMatrix.h"
 #include "drivers/Console.h"
@@ -7,6 +9,7 @@
 #include "drivers/LCD.h"
 #include "drivers/MIDI.h"
 #include "drivers/System.h"
+#include "drivers/ShiftRegister.h"
 #include "drivers/DebugLed.h"
 #include "drivers/HighResolutionTimer.h"
 #include "drivers/USBH.h"
@@ -25,7 +28,9 @@
 #include <libopencm3/stm32/gpio.h>
 
 static ClockTimer clockTimer;
-static ButtonLedMatrix blm;
+static ShiftRegister shiftRegister;
+static ButtonLedMatrix blm(shiftRegister);
+static Encoder encoder;
 static LCD lcd;
 static ADC adc;
 static DAC dac;
@@ -39,74 +44,48 @@ static Profiler profiler;
 
 static Model model;
 static Engine engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi);
-static UI ui(model, engine, lcd, blm);
+static UI ui(model, engine, lcd, blm, encoder);
 
-static os::Task<256> blickTask("blink", 0, [] () {
-	rcc_periph_clock_enable(RCC_GPIOB);
-	DebugLed ledRed(GPIOB, GPIO14);
-	bool state = false;
-	while (1) {
-		ledRed.set(state);
-		state = !state;
-		os::delay(os::time::ms(500));
-	}
+static os::PeriodicTask<1024> driverTask("driver", 5, os::time::ms(1), [] () {
+    shiftRegister.process();
+    blm.process();
+    encoder.process();
 });
 
-static os::Task<1024> blmTask("blm", 5, [] () {
-    uint32_t lastWakeupTime = os::ticks();
-	while (1) {
-		blm.process();
-		os::delayUntil(lastWakeupTime, 1);
-	}
+static os::PeriodicTask<2048> usbhTask("usbh", 1, os::time::ms(1), [] () {
+    usbh.process();
 });
 
-static os::Task<1024> usbhTask("usbh", 1, [] () {
-    uint32_t lastWakeupTime = os::ticks();
-	while (1) {
-		usbh.process();
-		os::delayUntil(lastWakeupTime, 1);
-	}
+static os::PeriodicTask<1024> profilerTask("profiler", 0, os::time::ms(1000), [] () {
+    profiler.dump();
 });
 
-static os::Task<1024> profilerTask("profiler", 0, [] () {
-    while (1) {
-        profiler.dump();
-        os::delay(os::time::ms(1000));
-    }
+static os::PeriodicTask<4096> engineTask("engine", 4, os::time::ms(1), [] () {
+    engine.update();
 });
 
-static os::Task<4096> engineTask("engine", 4, [] () {
-    uint32_t lastWakeupTime = os::ticks();
-    while (1) {
-        engine.update();
-        os::delayUntil(lastWakeupTime, 1);
-    }
+static os::PeriodicTask<4096> uiTask("ui", 3, os::time::ms(1), [] () {
+    ui.update();
 });
 
-static os::Task<4096> uiTask("ui", 3, [] () {
-    uint32_t lastWakeupTime = os::ticks();
-    while (1) {
-        ui.update();
-        os::delayUntil(lastWakeupTime, 1);
-    }
-});
-
+#if CONFIG_ENABLE_STACK_USAGE
 template<typename Task>
 static void dumpStackUsage(const Task &task) {
     DBG("%s: %d/%d bytes", task.name(), task.stackUsage(), task.stackSize());
 }
 
-static os::Task<256> stackCheckTask(nullptr, 0, [&] () {
-    while (1) {
-        os::delay(os::time::ms(5000));
-        DBG("Stack Usage:");
-        dumpStackUsage(blmTask);
-        dumpStackUsage(usbhTask);
-        dumpStackUsage(profilerTask);
-        dumpStackUsage(engineTask);
-        dumpStackUsage(uiTask);
-    }
+static os::PeriodicTask<1024> stackCheckTask("stack", 0, os::time::ms(5000), [&] () {
+    DBG("----------------------------------------");
+    DBG("Stack Usage:");
+    dumpStackUsage(driverTask);
+    dumpStackUsage(usbhTask);
+    dumpStackUsage(profilerTask);
+    dumpStackUsage(engineTask);
+    dumpStackUsage(uiTask);
+    dumpStackUsage(stackCheckTask);
+    DBG("----------------------------------------");
 });
+#endif // CONFIG_ENABLE_STACK_USAGE
 
 int main(void) {
     System::init();
@@ -115,9 +94,10 @@ int main(void) {
 
     profiler.init();
 
+    shiftRegister.init();
     clockTimer.init();
     blm.init();
-    blm.setGates(&gateOutput.gates());
+    encoder.init();
     lcd.init();
     adc.init();
     dac.init();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SystemConfig.h"
+
 #include "core/Debug.h"
 
 extern "C" {
@@ -23,10 +25,11 @@ namespace os {
         Task(const char *name, uint8_t priority, std::function<void(void)> func) :
             _func(func)
         {
-            // TODO not really necessary for release
+#if CONFIG_ENABLE_STACK_USAGE
             for (size_t i = 0; i < StackSize / sizeof(StackType_t); ++i) {
                 _stack[i] = StackType_t(0xdeadbeef);
             }
+#endif // CONFIG_ENABLE_STACK_USAGE
             _handle = xTaskCreateStatic(&start, name, StackSize / sizeof(StackType_t), this, priority, _stack, &_task);
         }
 
@@ -38,6 +41,7 @@ namespace os {
             return StackSize;
         }
 
+#if CONFIG_ENABLE_STACK_USAGE
         size_t stackUsage() const {
             for (size_t i = 0; i < StackSize / sizeof(StackType_t); ++i) {
                 if (_stack[i] != StackType_t(0xdeadbeef)) {
@@ -46,6 +50,7 @@ namespace os {
             }
             return 0;
         }
+#endif // CONFIG_ENABLE_STACK_USAGE
 
     private:
         static void start(void *task) {
