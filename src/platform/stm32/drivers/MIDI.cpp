@@ -5,9 +5,7 @@
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/cm3/nvic.h>
 
-#define MIDI_USART USART2
-#define MIDI_RCC RCC_USART2
-#define MIDI_NVIC_IRQ NVIC_USART2_IRQ
+#define MIDI_USART USART6
 
 static MIDI *g_midi = nullptr;
 
@@ -15,12 +13,12 @@ void MIDI::init() {
     g_midi = this;
 
     // setup GPIO pins
-    rcc_periph_clock_enable(RCC_GPIOD);
-    gpio_mode_setup(GPIOD, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO5 | GPIO6);
-    gpio_set_af(GPIOD, GPIO_AF7, GPIO5 | GPIO6);
+    rcc_periph_clock_enable(RCC_GPIOC);
+    gpio_mode_setup(GPIOC, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6 | GPIO7);
+    gpio_set_af(GPIOC, GPIO_AF8, GPIO6 | GPIO7);
 
     // setup usart
-    rcc_periph_clock_enable(MIDI_RCC);
+    rcc_periph_clock_enable(RCC_USART6);
     usart_set_baudrate(MIDI_USART, 31250);
     usart_set_databits(MIDI_USART, 8);
     usart_set_stopbits(MIDI_USART, USART_STOPBITS_1);
@@ -32,7 +30,7 @@ void MIDI::init() {
     usart_enable_rx_interrupt(MIDI_USART);
 
     // nvic_set_priority(CONSOLE_NVIC_IRQ, configMAX_SYSCALL_INTERRUPT_PRIORITY);
-    nvic_enable_irq(MIDI_NVIC_IRQ);
+    nvic_enable_irq(NVIC_USART2_IRQ);
 }
 
 void MIDI::send(const MIDIMessage &message) {
