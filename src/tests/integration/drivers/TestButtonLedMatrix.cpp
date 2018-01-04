@@ -1,5 +1,6 @@
 #include "test/TestRunner.h"
 
+#include "drivers/ShiftRegister.h"
 #include "drivers/ButtonLedMatrix.h"
 
 #include "os/os.h"
@@ -9,48 +10,46 @@
 class TestButtonLedMatrix : public Test {
 public:
     TestButtonLedMatrix() :
-        blmTask("blm", 0, [&] () {
-            uint32_t lastWakeupTime = os::ticks();
-            while (1) {
-                blm.process();
-                os::delayUntil(lastWakeupTime, 1);
-            }
+        _blm(_shiftRegister),
+        _driverTask("driver", 0, 1, [&] () {
+            _shiftRegister.process();
+            _blm.process();
         })
     {
-        leds.fill(0);
+        _leds.fill(0);
     }
 
     void init() {
-        blm.init();
+        _shiftRegister.init();
+        _blm.init();
     }
 
     void update() {
         ButtonLedMatrix::Event event;
-        while (blm.nextEvent(event)) {
+        while (_blm.nextEvent(event)) {
             switch (event.action()) {
-            case ButtonLedMatrix::KeyDown:
+            case ButtonLedMatrix::Event::KeyDown:
                 DBG("KeyDown(key=%d)", event.value());
-                if (event.value() < int(leds.size())) {
-                    int state = leds[event.value()];
+                if (event.value() < int(_leds.size())) {
+                    int state = _leds[event.value()];
                     state = (state + 1) % 4;
-                    leds[event.value()] = state;
-                    blm.setLed(event.value(), (state == 1 || state == 3) ? 0xff : 0, (state == 2 || state == 3) ? 0xff : 0);
+                    _leds[event.value()] = state;
+                    _blm.setLed(event.value(), (state == 1 || state == 3) ? 0xff : 0, (state == 2 || state == 3) ? 0xff : 0);
                 }
                 break;
-            case ButtonLedMatrix::KeyUp:
+            case ButtonLedMatrix::Event::KeyUp:
                 DBG("KeyUp(key=%d)", event.value());
-                break;
-            case ButtonLedMatrix::Encoder:
-                DBG("Encoder(value=%d)", event.value());
                 break;
             }
         }
     }
 
 private:
-    ButtonLedMatrix blm;
-    os::Task<1024> blmTask;
-    std::array<int, ButtonLedMatrix::Rows * ButtonLedMatrix::ColsLed> leds;
+    ShiftRegister _shiftRegister;
+    ButtonLedMatrix _blm;
+    os::PeriodicTask<1024> _driverTask;
+    std::array<int, ButtonLedMatrix::Rows * ButtonLedMatrix::ColsLed> _leds;
+    int _led = 0;
 };
 
 TEST(TestButtonLedMatrix)

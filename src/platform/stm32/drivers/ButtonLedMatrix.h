@@ -3,6 +3,9 @@
 #include "SystemConfig.h"
 
 #include "core/utils/RingBuffer.h"
+#include "core/utils/Debouncer.h"
+
+#include "drivers/ShiftRegister.h"
 
 #include <array>
 #include <utility>
@@ -11,12 +14,12 @@
 
 class ButtonLedMatrix {
 public:
-    enum Action {
-        KeyDown,
-        KeyUp,
-        Encoder,
-    };
     struct Event {
+        enum Action {
+            KeyDown,
+            KeyUp,
+        };
+
         Event() = default;
         Event(Action action, int value) : _action(action), _value(value) {}
 
@@ -32,13 +35,9 @@ public:
     static const int ColsButton = CONFIG_BLM_COLS_BUTTON;
     static const int ColsLed = CONFIG_BLM_COLS_LED;
 
-    ButtonLedMatrix();
+    ButtonLedMatrix(ShiftRegister &shiftRegister);
 
     void init();
-
-    void setGates(uint8_t *gates) {
-        _gates = gates;
-    }
 
     void setLed(int index, uint8_t red, uint8_t green) {
         _ledState[index].red.intensity = red >> 4;
@@ -80,12 +79,11 @@ public:
     }
 
 private:
-    void processEncoder();
-
     struct Led {
         uint8_t intensity : 4;
         uint8_t counter : 4;
         inline bool update() {
+            // return true;
             uint8_t sum = counter + intensity;
             bool active = sum >= 0x0f;
             counter = sum & 0x0f;
@@ -103,15 +101,12 @@ private:
         // uint8_t counter : 7;
     };
 
+    ShiftRegister &_shiftRegister;
+
     ButtonState _buttonState[Rows * ColsButton];
     LedState _ledState[Rows * ColsLed];
 
-    RingBuffer<Event, 32> _events;
+    RingBuffer<Event, 16> _events;
 
     uint8_t _row = 0;
-
-    bool _encoderSwitch = false;
-    bool _encoderState[2] = { false, false };
-
-    uint8_t *_gates = nullptr;
 };

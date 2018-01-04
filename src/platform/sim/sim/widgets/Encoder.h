@@ -75,6 +75,7 @@ public:
     virtual void onMouseUp(MouseButtonEvent &e) override {
         if (_pressed && e.button() == MouseButtonEvent::Left) {
             setPressed(false);
+            e.consume();
         }
     }
 

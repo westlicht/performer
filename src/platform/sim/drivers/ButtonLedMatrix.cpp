@@ -32,7 +32,7 @@ ButtonLedMatrix::ButtonLedMatrix() :
             );
             int index = col * Rows + row;
             button->setCallback([this, index] (bool pressed) {
-                _events.emplace_back(pressed ? KeyDown : KeyUp, index);
+                _events.emplace_back(pressed ? Event::KeyDown : Event::KeyUp, index);
             });
             _buttons.emplace_back(button);
 
@@ -45,18 +45,6 @@ ButtonLedMatrix::ButtonLedMatrix() :
             }
         }
     }
-
-    // encoder
-    _encoder = _simulator.window().createWidget<sim::Encoder>(
-        sim::Vector2i(10, 10),
-        sim::Vector2i(60, 60)
-    );
-    _encoder->setButtonCallback([this] (bool pressed) {
-        std::cout << "pressed: " << pressed << std::endl;
-    });
-    _encoder->setValueCallback([this] (int value) {
-        _events.emplace_back(Encoder, value);
-    });
 }
 
 void ButtonLedMatrix::setLed(int index, uint8_t red, uint8_t green) {

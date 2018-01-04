@@ -5,7 +5,6 @@
 #include "sim/Simulator.h"
 #include "sim/widgets/Button.h"
 #include "sim/widgets/Led.h"
-#include "sim/widgets/Encoder.h"
 
 #include <vector>
 #include <deque>
@@ -16,12 +15,12 @@
 
 class ButtonLedMatrix {
 public:
-    enum Action {
-        KeyDown,
-        KeyUp,
-        Encoder,
-    };
     struct Event {
+        enum Action {
+            KeyDown,
+            KeyUp,
+        };
+
         Event() = default;
         Event(Action action, int value) : _action(action), _value(value) {}
 
@@ -67,6 +66,5 @@ private:
     sim::Simulator &_simulator;
     std::vector<sim::Button::Ptr> _buttons;
     std::vector<sim::Led::Ptr> _leds;
-    sim::Encoder::Ptr _encoder;
     std::deque<Event> _events;
 };
