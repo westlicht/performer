@@ -1,9 +1,13 @@
 #pragma once
 
+#include "ShiftRegister.h"
+
 #include <cstdint>
 
 class GateOutput {
 public:
+    GateOutput(ShiftRegister &shiftRegister);
+
     void init();
 
     inline void setGate(int index, bool value) {
@@ -12,10 +16,11 @@ public:
         } else {
             _gates &= ~(1 << index);
         }
+
+        _shiftRegister.write(2, _gates);
     }
 
-    uint8_t &gates() { return _gates; }
-
 private:
+    ShiftRegister &_shiftRegister;
     uint8_t _gates = 0;
 };

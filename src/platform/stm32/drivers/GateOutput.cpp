@@ -1,5 +1,8 @@
 #include "GateOutput.h"
 
-void GateOutput::init() {
+GateOutput::GateOutput(ShiftRegister &shiftRegister) :
+    _shiftRegister(shiftRegister)
+{}
 
+void GateOutput::init() {
 }

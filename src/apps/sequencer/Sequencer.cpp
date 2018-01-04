@@ -35,7 +35,7 @@ static LCD lcd;
 static ADC adc;
 static DAC dac;
 static DIO dio;
-static GateOutput gateOutput;
+static GateOutput gateOutput(shiftRegister);
 static MIDI midi;
 static USBMIDI usbMidi;
 static USBH usbh(usbMidi);
