@@ -46,7 +46,7 @@ void ADC::init() {
     dma_set_priority(DMA2, DMA_STREAM0, DMA_SxCR_PL_LOW);
     dma_set_number_of_data(DMA2, DMA_STREAM0, Channels);
     dma_enable_circular_mode(DMA2, DMA_STREAM0);
-    dma_set_transfer_mode(DMA2, DMA_STREAM0,DMA_SxCR_DIR_PERIPHERAL_TO_MEM);
+    dma_set_transfer_mode(DMA2, DMA_STREAM0, DMA_SxCR_DIR_PERIPHERAL_TO_MEM);
     dma_channel_select(DMA2, DMA_STREAM0, DMA_SxCR_CHSEL_0);
     dma_enable_stream(DMA2, DMA_STREAM0);
 

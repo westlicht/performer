@@ -171,11 +171,20 @@ void Clock::slaveReset(int slave) {
 
 void Clock::slaveHandleMIDI(int slave, uint8_t msg) {
     switch (MIDIMessage::realTimeMessage(msg)) {
-    case MIDIMessage::Tick:     slaveTick(slave); break;
-    case MIDIMessage::Start:    slaveStart(slave); break;
-    case MIDIMessage::Stop:     slaveStop(slave); break;
-    case MIDIMessage::Continue: slaveResume(slave); break;
-    default: break;
+    case MIDIMessage::Tick:
+        slaveTick(slave);
+        break;
+    case MIDIMessage::Start:
+        slaveStart(slave);
+        break;
+    case MIDIMessage::Stop:
+        slaveStop(slave);
+        break;
+    case MIDIMessage::Continue:
+        slaveResume(slave);
+        break;
+    default:
+        break;
     }
 }
 
