@@ -4,8 +4,9 @@
 
 class TestADC : public IntegrationTest {
 public:
-    TestADC() {
-    }
+    TestADC() :
+        IntegrationTest("ADC", true)
+    {}
 
     void init() {
         adc.init();
@@ -21,4 +22,4 @@ private:
     ADC adc;
 };
 
-INTEGRATION_TEST("ADC", TestADC)
+INTEGRATION_TEST(TestADC)

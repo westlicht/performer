@@ -7,11 +7,11 @@
 class TestEncoder : public IntegrationTest {
 public:
     TestEncoder() :
+        IntegrationTest("Encoder", true),
         _encoderTask("encoder", 0, 1, [&] () {
             _encoder.process();
         })
-    {
-    }
+    {}
 
     void init() {
         _encoder.init();
@@ -34,4 +34,4 @@ private:
     os::PeriodicTask<1024> _encoderTask;
 };
 
-INTEGRATION_TEST("Encoder", TestEncoder)
+INTEGRATION_TEST(TestEncoder)

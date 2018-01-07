@@ -4,8 +4,9 @@
 
 class TestDAC : public IntegrationTest {
 public:
-    TestDAC() {
-    }
+    TestDAC() :
+        IntegrationTest("DAC", true)
+    {}
 
     void init() {
         dac.init();
@@ -26,4 +27,4 @@ private:
     uint16_t value = 0;
 };
 
-INTEGRATION_TEST("DAC", TestDAC)
+INTEGRATION_TEST(TestDAC)

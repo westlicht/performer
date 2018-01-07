@@ -6,8 +6,9 @@
 
 class TestSDCard : public IntegrationTest {
 public:
-    TestSDCard() {
-    }
+    TestSDCard() :
+        IntegrationTest("SDCard", false)
+    {}
 
     void init() {
         sdcard.init();
@@ -88,4 +89,4 @@ private:
     SDCard sdcard;
 };
 
-INTEGRATION_TEST("SDCard", TestSDCard)
+INTEGRATION_TEST(TestSDCard)

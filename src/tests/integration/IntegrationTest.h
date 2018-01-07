@@ -2,17 +2,24 @@
 
 class IntegrationTest {
 public:
-    virtual void init() {}
-    virtual void update() { _terminate = true; }
+    IntegrationTest(const char *name, bool interactive) :
+        _name(name),
+        _interactive(interactive)
+    {}
 
-    bool terminate() const { return _terminate; }
+    const char *name() const { return _name; }
+    bool interactive() const { return _interactive; }
+
+    virtual void init() {}
+    virtual void update() {}
 
 private:
-    bool _terminate = false;
+    const char *_name;
+    bool _interactive;
 };
 
-#define EXPECT(_cond_, _fmt_, ...) \
+#define EXPECT(_cond_, _fmt_, ...)  \
     INTEGRATION_TEST_RUNNER_EXPECT(_cond_, _fmt_, ##__VA_ARGS__)
 
-#define INTEGRATION_TEST(_name_, _class_)   \
-    INTEGRATION_TEST_RUNNER(_name_, _class_)
+#define INTEGRATION_TEST(_class_)   \
+    INTEGRATION_TEST_RUNNER(_class_)

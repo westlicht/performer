@@ -4,8 +4,9 @@
 
 class TestDIO : public IntegrationTest {
 public:
-    TestDIO() {
-    }
+    TestDIO() :
+        IntegrationTest("DIO", true)
+    {}
 
     void init() {
         dio.init();
@@ -31,4 +32,4 @@ private:
     DIO dio;
 };
 
-INTEGRATION_TEST("DIO", TestDIO)
+INTEGRATION_TEST(TestDIO)

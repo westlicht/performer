@@ -6,9 +6,9 @@
 class TestUSBMIDI : public IntegrationTest {
 public:
     TestUSBMIDI() :
+        IntegrationTest("USBMIDI", true),
         usbh(usbMidi)
-    {
-    }
+    {}
 
     void init() {
         usbMidi.init();
@@ -26,4 +26,4 @@ private:
     USBH usbh;
 };
 
-INTEGRATION_TEST("USBMIDI", TestUSBMIDI)
+INTEGRATION_TEST(TestUSBMIDI)

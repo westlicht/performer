@@ -8,14 +8,20 @@
 #include "drivers/HighResolutionTimer.h"
 
 template<typename T>
-int integrationTest(const char *name) {
+int integrationTest() {
     System::init();
     Console::init();
     HighResolutionTimer::init();
 
-    DBG("Running test '%s' ...", name);
-
     static T test;
+
+    DBG("Running test '%s' ...", test.name());
+
+    test.init();
+
+    if (!test.interactive()) {
+        while(1) {}
+    }
 
     static os::Task<16*1024> testTask("test", 0, [] () {
         while (true) {
@@ -24,16 +30,14 @@ int integrationTest(const char *name) {
         }
     });
 
-    test.init();
-
     os::startScheduler();
 
     return 0;
 }
 
-#define INTEGRATION_TEST_RUNNER(_name_, _class_)    \
-int main() {                                        \
-    return integrationTest<_class_>(_name_);        \
+#define INTEGRATION_TEST_RUNNER(_class_)    \
+int main() {                                \
+    return integrationTest<_class_>();      \
 }
 
 #define INTEGRATION_TEST_RUNNER_EXPECT(_cond_, _fmt_, ...)  \

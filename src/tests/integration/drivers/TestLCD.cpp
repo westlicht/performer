@@ -10,10 +10,10 @@
 class TestLCD : public IntegrationTest {
 public:
     TestLCD() :
+        IntegrationTest("LCD", true),
         frameBuffer(256, 64, frameBufferData),
         canvas(frameBuffer)
-    {
-    }
+    {}
 
     void init() {
         lcd.init();
@@ -39,4 +39,4 @@ private:
     LCD lcd;
 };
 
-INTEGRATION_TEST("LCD", TestLCD)
+INTEGRATION_TEST(TestLCD)

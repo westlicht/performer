@@ -4,8 +4,9 @@
 
 class TestMIDI : public IntegrationTest {
 public:
-    TestMIDI() {
-    }
+    TestMIDI() :
+        IntegrationTest("MIDI", true)
+    {}
 
     void init() {
         midi.init();
@@ -23,4 +24,4 @@ private:
     MIDI midi;
 };
 
-INTEGRATION_TEST("MIDI", TestMIDI)
+INTEGRATION_TEST(TestMIDI)

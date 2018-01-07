@@ -14,6 +14,7 @@ Random rng;
 class FileSystemTest : public IntegrationTest {
 public:
     FileSystemTest() :
+        IntegrationTest("FileSystem", false),
         volume(sdcard)
     {}
 
@@ -114,4 +115,4 @@ private:
     fs::Volume volume;
 };
 
-INTEGRATION_TEST("FileSystem", FileSystemTest);
+INTEGRATION_TEST(FileSystemTest);

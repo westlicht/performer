@@ -8,23 +8,24 @@
 #include <memory>
 #include <stdexcept>
 
-class ExpectError : public std::exception {
-public:
-    // ExpectError() = default;
-};
+class ExpectError : public std::exception {};
 
 template<typename T>
-int integrationTestRunner(const char *name) {
-    DBG("Running test '%s' ...", name);
-
+int integrationTestRunner() {
     sdl::Init init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
     T test;
+
+    DBG("Running test '%s' ...", test.name());
 
     try {
         test.init();
     } catch (ExpectError &e) {
         return 1;
+    }
+
+    if (!test.interactive()) {
+        return 0;
     }
 
     auto &simulator = sim::Simulator::instance();
@@ -34,10 +35,8 @@ int integrationTestRunner(const char *name) {
         try {
             test.update();
         } catch (ExpectError &e) {
-            result = 1;
-        }
-        if (test.terminate()) {
             simulator.close();
+            result = 1;
         }
         simulator.render();
     }
@@ -45,9 +44,9 @@ int integrationTestRunner(const char *name) {
     return result;
 }
 
-#define INTEGRATION_TEST_RUNNER(_name_, _class_)    \
-int main() {                                        \
-    return integrationTestRunner<_class_>(_name_);  \
+#define INTEGRATION_TEST_RUNNER(_class_)        \
+int main() {                                    \
+    return integrationTestRunner<_class_>();    \
 }
 
 #define INTEGRATION_TEST_RUNNER_EXPECT(_cond_, _fmt_, ...)  \
