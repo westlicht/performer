@@ -11,8 +11,11 @@
 
 class SDCard {
 public:
+    SDCard() :
+        _data(new uint8_t[SectorCount * SectorSize])
+    {}
+
     void init() {
-        _data.reset(new uint8_t[SectorCount * SectorSize]);
     }
 
     bool available() {

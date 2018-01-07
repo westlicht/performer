@@ -1,6 +1,12 @@
 #include "Volume.h"
 #include "FileSystem.h"
 
+extern "C" {
+    PARTITION VolToPart[] = {
+        {0, 1} // "0:" ==> Physical drive 0, 1st partition
+    };
+}
+
 namespace fs {
 
 Volume::Volume(SDCard &sdcard) :
@@ -14,8 +20,14 @@ bool Volume::available() {
 }
 
 Error Volume::format() {
-    uint8_t workArea[512];
-    return Error(f_mkfs("", FM_FAT, 0, workArea, sizeof(workArea)));
+    uint8_t workArea[FF_MAX_SS];
+
+    DWORD plist[] = { 100, 0, 0, 0 };
+    Error result = Error(f_fdisk(0, plist, workArea));
+    if (result != OK) {
+        return result;
+    }
+    return Error(f_mkfs("", FM_ANY, 0, workArea, sizeof(workArea)));
 }
 
 Error Volume::mount() {
@@ -23,7 +35,7 @@ Error Volume::mount() {
 }
 
 Error Volume::unmount() {
-    return Error(f_unmount(""));
+    return Error(f_mount(nullptr, "", 0));
 }
 
 Error Volume::stats(size_t *total, size_t *free) const {

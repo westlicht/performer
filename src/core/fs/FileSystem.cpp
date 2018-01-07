@@ -5,11 +5,11 @@
 
 #include "os/os.h"
 
-static SDCard *g_sdcard;
 
 namespace fs {
 
 static Volume *g_volume;
+static SDCard *g_sdcard;
 
 void setVolume(Volume &volume) {
     ASSERT(g_volume == nullptr, "only one volume allowed");
@@ -21,6 +21,31 @@ Volume &volume() {
     return *g_volume;
 }
 
+Error mkdir(const char *path) {
+    return Error(f_mkdir(path));
+}
+
+Error rmdir(const char *path) {
+    return Error(f_unlink(path));
+}
+
+Error remove(const char *path) {
+    return Error(f_unlink(path));
+}
+
+Error rename(const char *oldPath, const char *newPath) {
+    return Error(f_rename(oldPath, newPath));
+}
+
+Error stat(const char *path, FileInfo &info) {
+    return Error(f_stat(path, &info._info));
+}
+
+bool exists(const char *path) {
+    FileInfo info;
+    return stat(path, info) == OK;
+}
+
 } // namespace fs
 
 
@@ -28,16 +53,16 @@ extern "C" {
 
 DSTATUS disk_initialize(BYTE pdrv) {
     ASSERT(pdrv == 0, "only one physical drive available");
-    g_sdcard->init();
+    // DBG("disk_initialize(pdrv=%d)", pdrv);
     return 0;
 }
 
 DSTATUS disk_status(BYTE pdrv) {
     ASSERT(pdrv == 0, "only one physical drive available");
-    if (!g_sdcard->available()) {
+    if (!fs::g_sdcard->available()) {
         return STA_NODISK;
     }
-    if (g_sdcard->writeProtected()) {
+    if (fs::g_sdcard->writeProtected()) {
         return STA_PROTECT;
     }
     return 0;
@@ -45,25 +70,31 @@ DSTATUS disk_status(BYTE pdrv) {
 
 DRESULT disk_read(BYTE pdrv, BYTE *buf, DWORD sector, UINT count) {
     ASSERT(pdrv == 0, "only one physical drive available");
-    return g_sdcard->read(buf, sector, count) ? RES_OK : RES_ERROR;
+    // DBG("disk_read(pdrv=%d,sector=%d,count=%d)", pdrv, sector, count);
+    return fs::g_sdcard->read(buf, sector, count) ? RES_OK : RES_ERROR;
 }
 
 DRESULT disk_write(BYTE pdrv, const BYTE *buf, DWORD sector, UINT count) {
     ASSERT(pdrv == 0, "only one physical drive available");
-    return g_sdcard->write(buf, sector, count) ? RES_OK : RES_ERROR;
+    // DBG("disk_write(pdrv=%d,sector=%d,count=%d)", pdrv, sector, count);
+    return fs::g_sdcard->write(buf, sector, count) ? RES_OK : RES_ERROR;
 }
 
 DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buf) {
     ASSERT(pdrv == 0, "only one physical drive available");
+    // DBG("disk_ioctl(pdrv=%d,cmd=%d)", pdrv, cmd);
     switch (cmd) {
     case CTRL_SYNC:
-        g_sdcard->sync();
+        fs::g_sdcard->sync();
         return RES_OK;
     case GET_SECTOR_COUNT:
-        *static_cast<DWORD *>(buf) = g_sdcard->sectorCount();
+        *static_cast<DWORD *>(buf) = fs::g_sdcard->sectorCount();
         return RES_OK;
     case GET_SECTOR_SIZE:
-        *static_cast<WORD *>(buf) = g_sdcard->sectorSize();
+        *static_cast<WORD *>(buf) = fs::g_sdcard->sectorSize();
+        return RES_OK;
+    case GET_BLOCK_SIZE:
+        *static_cast<DWORD *>(buf) = 1;
         return RES_OK;
     }
 	return RES_PARERR;

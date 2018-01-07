@@ -3,6 +3,7 @@
 #include "Error.h"
 #include "Volume.h"
 #include "File.h"
+#include "Directory.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -12,16 +13,11 @@ namespace fs {
 void setVolume(Volume &volume);
 Volume &volume();
 
-// Error mkdir(const char *path);
-// Error rmdir(const char *path);
-// Error remove(const char *path);
+Error mkdir(const char *path);
+Error rmdir(const char *path);
+Error remove(const char *path);
+Error rename(const char *oldPath, const char *newPath);
 
-// struct FileInfo {
-//     uint32_t size;  // file size
-//     uint16_t date;  // last modified date
-//     uint16_t time;  // last modified time
-//     uint8_t attrib; // aatribute
-//     char name[13];  // short file name (8.3 format)
-// };
+bool exists(const char *path);
 
 } // namespace fs
