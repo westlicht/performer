@@ -27,6 +27,10 @@ Simulator::Simulator() :
     std::fill(_gate.begin(), _gate.end(), 0);
 }
 
+void Simulator::close() {
+    _window.close();
+}
+
 bool Simulator::terminate() const {
     return _window.terminate();
 }

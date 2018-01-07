@@ -1,8 +1,8 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #include "drivers/DIO.h"
 
-class TestDIO : public Test {
+class TestDIO : public IntegrationTest {
 public:
     TestDIO() {
     }
@@ -31,4 +31,4 @@ private:
     DIO dio;
 };
 
-TEST(TestDIO)
+INTEGRATION_TEST("DIO", TestDIO)

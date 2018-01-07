@@ -1,8 +1,8 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #include "drivers/ADC.h"
 
-class TestADC : public Test {
+class TestADC : public IntegrationTest {
 public:
     TestADC() {
     }
@@ -21,4 +21,4 @@ private:
     ADC adc;
 };
 
-TEST(TestADC)
+INTEGRATION_TEST("ADC", TestADC)

@@ -1,4 +1,4 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #include "drivers/LCD.h"
 
@@ -7,7 +7,7 @@
 
 #include "os/os.h"
 
-class TestLCD : public Test {
+class TestLCD : public IntegrationTest {
 public:
     TestLCD() :
         frameBuffer(256, 64, frameBufferData),
@@ -39,4 +39,4 @@ private:
     LCD lcd;
 };
 
-TEST(TestLCD)
+INTEGRATION_TEST("LCD", TestLCD)

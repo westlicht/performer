@@ -1,8 +1,8 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #include "drivers/DAC.h"
 
-class TestDAC : public Test {
+class TestDAC : public IntegrationTest {
 public:
     TestDAC() {
     }
@@ -26,4 +26,4 @@ private:
     uint16_t value = 0;
 };
 
-TEST(TestDAC)
+INTEGRATION_TEST("DAC", TestDAC)

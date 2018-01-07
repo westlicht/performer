@@ -1,8 +1,8 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #include "drivers/MIDI.h"
 
-class TestMIDI : public Test {
+class TestMIDI : public IntegrationTest {
 public:
     TestMIDI() {
     }
@@ -23,4 +23,4 @@ private:
     MIDI midi;
 };
 
-TEST(TestMIDI)
+INTEGRATION_TEST("MIDI", TestMIDI)

@@ -1,9 +1,9 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #include "drivers/USBH.h"
 #include "drivers/USBMIDI.h"
 
-class TestUSBMIDI : public Test {
+class TestUSBMIDI : public IntegrationTest {
 public:
     TestUSBMIDI() :
         usbh(usbMidi)
@@ -26,4 +26,4 @@ private:
     USBH usbh;
 };
 
-TEST(TestUSBMIDI)
+INTEGRATION_TEST("USBMIDI", TestUSBMIDI)

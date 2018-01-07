@@ -15,6 +15,8 @@ public:
     Window &window() { return _window; }
     Audio &audio() { return _audio; }
 
+    void close();
+
     bool terminate() const;
 
     void update();

@@ -1,10 +1,10 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #include "drivers/Encoder.h"
 
 #include "os/os.h"
 
-class TestEncoder : public Test {
+class TestEncoder : public IntegrationTest {
 public:
     TestEncoder() :
         _encoderTask("encoder", 0, 1, [&] () {
@@ -34,4 +34,4 @@ private:
     os::PeriodicTask<1024> _encoderTask;
 };
 
-TEST(TestEncoder)
+INTEGRATION_TEST("Encoder", TestEncoder)

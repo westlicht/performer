@@ -1,4 +1,6 @@
 
+include_directories(.)
+
 function(register_test test file)
     add_executable(${test} ${file})
     target_link_libraries(${test} core)

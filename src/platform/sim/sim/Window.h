@@ -10,6 +10,8 @@ class Window {
 public:
     Window(const std::string &title, const Vector2i &size);
 
+    void close() { _terminate = true; }
+
     bool terminate() const { return _terminate; }
 
     void update();

@@ -1,4 +1,4 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #ifdef PLATFORM_STM32
 #include "drivers/ShiftRegister.h"
@@ -10,7 +10,7 @@
 
 #include <array>
 
-class TestButtonLedMatrix : public Test {
+class TestButtonLedMatrix : public IntegrationTest {
 public:
     TestButtonLedMatrix() :
 #ifdef PLATFORM_STM32
@@ -63,4 +63,4 @@ private:
     int _led = 0;
 };
 
-TEST(TestButtonLedMatrix)
+INTEGRATION_TEST("ButtonLedMatrix", TestButtonLedMatrix)

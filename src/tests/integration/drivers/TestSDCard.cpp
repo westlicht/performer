@@ -1,10 +1,10 @@
-#include "test/TestRunner.h"
+#include "IntegrationTest.h"
 
 #include "core/utils/Random.h"
 
 #include "drivers/SDCard.h"
 
-class TestSDCard : public Test {
+class TestSDCard : public IntegrationTest {
 public:
     TestSDCard() {
     }
@@ -15,6 +15,12 @@ public:
         while (!sdcard.available()) {
             DBG("Waiting for SDCard ...");
         }
+
+        // DBG("SDCard init");
+        // auto result = sdcard.available();
+        // DBG("SDCard %s", result ? "found" : "not found");
+        // return;
+
 
         if (sdcard.writeProtected()) {
             DBG("SDCard is write protected -> aborting");
@@ -30,7 +36,7 @@ public:
         }
 
         static constexpr uint32_t Runs = 32;
-        static constexpr uint32_t SectorCount = 8;
+        static constexpr uint32_t SectorCount = 1;
         static constexpr uint32_t DataLength = SectorCount * 512;
 
         static uint8_t data[DataLength];
@@ -49,13 +55,17 @@ public:
 
             // write data
             uint32_t start = os::ticks();
-            sdcard.write(data, 0, SectorCount);
+            if (!sdcard.write(data, 0, SectorCount)) {
+                DBG("write failed");
+            }
             sdcard.sync();
             writeTime += (os::ticks() - start) / os::time::ms(1);
 
             // read data
             start = os::ticks();
-            sdcard.read(buf, 0, SectorCount);
+            if (!sdcard.read(buf, 0, SectorCount)) {
+                DBG("read failed");
+            }
             readTime += (os::ticks() - start) / os::time::ms(1);
 
             // verify data
@@ -78,4 +88,4 @@ private:
     SDCard sdcard;
 };
 
-TEST(TestSDCard)
+INTEGRATION_TEST("SDCard", TestSDCard)
