@@ -7,6 +7,13 @@
 #include "drivers/Console.h"
 #include "drivers/HighResolutionTimer.h"
 
+static int terminate(bool success) {
+    DBG("----------------------------------------");
+    DBG("Finished %s", success ? "successful" : "with failures");
+    DBG("========================================\n");
+    while (1) {}
+}
+
 template<typename T>
 int integrationTest() {
     System::init();
@@ -22,12 +29,12 @@ int integrationTest() {
     test.init();
 
     static os::Task<16*1024> testTask("test", 0, [] () {
+        test.once();
+
         if (!test.interactive()) {
-            DBG("----------------------------------------");
-            DBG("Finished");
-            DBG("========================================\n");
-            while (1) {}
+            terminate(true);
         }
+
         while (true) {
             test.update();
             os::delay(0);
@@ -47,5 +54,5 @@ int main() {                                \
 #define INTEGRATION_TEST_RUNNER_EXPECT(_cond_, _fmt_, ...)  \
 if (!(_cond_)) {                                            \
     DBG(_fmt_, ##__VA_ARGS__);                              \
-    while (1) {}                                            \
+    terminate(false);                                       \
 }

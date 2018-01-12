@@ -16,37 +16,40 @@ int integrationTestRunner() {
 
     T test;
 
+    bool success = true;
+
     DBG("\n========================================");
     DBG("Integration Test: %s", test.name());
     DBG("----------------------------------------");
 
     try {
         test.init();
-    } catch (ExpectError &e) {
-        return 1;
-    }
+        test.once();
 
-    if (!test.interactive()) {
-        DBG("----------------------------------------");
-        DBG("Finished");
-        DBG("========================================\n");
-        return 0;
-    }
+        if (test.interactive()) {
+            auto &simulator = sim::Simulator::instance();
+            while (!simulator.terminate()) {
+                simulator.update();
 
-    auto &simulator = sim::Simulator::instance();
-    int result = 0;
-    while (!simulator.terminate()) {
-        simulator.update();
-        try {
-            test.update();
-        } catch (ExpectError &e) {
-            simulator.close();
-            result = 1;
+                try {
+                    test.update();
+                } catch (ExpectError &e) {
+                    simulator.close();
+                    success = false;
+                }
+
+                simulator.render();
+            }
         }
-        simulator.render();
+    } catch (ExpectError &e) {
+        success = false;
     }
 
-    return result;
+    DBG("----------------------------------------");
+    DBG("Finished %s", success ? "successful" : "with failures");
+    DBG("========================================\n");
+
+    return success ? 0 : 1;
 }
 
 #define INTEGRATION_TEST_RUNNER(_class_)        \

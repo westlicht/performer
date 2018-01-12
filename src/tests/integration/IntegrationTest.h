@@ -11,6 +11,7 @@ public:
     bool interactive() const { return _interactive; }
 
     virtual void init() {}
+    virtual void once() {}
     virtual void update() {}
 
 private:

@@ -18,9 +18,11 @@ public:
         volume(sdcard)
     {}
 
-    void init() {
+    void init() override {
         sdcard.init();
+    }
 
+    void once() override {
         testFileWriteRead();
         testDirectoryList();
     }
