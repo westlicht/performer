@@ -3,6 +3,8 @@
 #include "core/utils/Random.h"
 
 #include <array>
+
+#include <cmath>
 #include <cstdint>
 
 template<uint64_t Range, uint64_t Bins>
