@@ -1,6 +1,6 @@
-#include "core/Debug.h"
+#include "drivers/HighResolutionTimer.h"
 
-#include "HighResolutionClock.h"
+#include "core/Debug.h"
 
 namespace test {
 
@@ -13,8 +13,8 @@ namespace test {
 
 #define UNIT_TEST_RUNNER(_name_)        \
 int main() {                            \
-    HighResolutionClock::init();        \
+    HighResolutionTimer::init();        \
     return test::run(_name_) ? 0 : 1;   \
 }                                       \
 
-#define CURRENT_TIME() HighResolutionClock::us()
+#define CURRENT_TIME() HighResolutionTimer::us()

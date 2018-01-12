@@ -1,6 +1,6 @@
-#include "HighResolutionClock.h"
-
 #include "sim/Simulator.h"
+
+#include "drivers/HighResolutionTimer.h"
 
 #include "core/Debug.h"
 
@@ -13,7 +13,7 @@ class ExpectError : public std::exception {};
 
 template<typename T>
 int integrationTestRunner() {
-    HighResolutionClock::init();
+    HighResolutionTimer::init();
 
     sdl::Init init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
@@ -66,4 +66,4 @@ if (!(_cond_)) {                                            \
     throw ExpectError();                                    \
 }
 
-#define CURRENT_TIME() HighResolutionClock::us()
+#define CURRENT_TIME() HighResolutionTimer::us()
