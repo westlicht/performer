@@ -1,1 +1,1 @@
-register_test(Random Random.cpp)
+register_test(TestRandom TestRandom.cpp)

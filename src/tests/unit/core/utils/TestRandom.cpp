@@ -1,6 +1,6 @@
-#include "core/utils/Random.h"
+#include "UnitTest.h"
 
-#include "lest.hpp"
+#include "core/utils/Random.h"
 
 #include <array>
 #include <cstdint>
@@ -17,7 +17,7 @@ struct Histogram {
     }
 };
 
-const lest::test specification[] = {
+UNIT_TEST("Random") {
 
     CASE("next() returns uniform distribution") {
         Random rng;
@@ -26,9 +26,9 @@ const lest::test specification[] = {
             histogram.push(rng.next());
         }
         for (const auto &count : histogram.counts) {
-            EXPECT(std::abs(100000 - int(count)) < 1000);
+            expect(std::abs(100000 - int(count)) < 1000);
         }
-    },
+    }
 
     CASE("nextBinary() returns uniform distribution") {
         Random rng;
@@ -37,9 +37,9 @@ const lest::test specification[] = {
             histogram.push(rng.nextBinary());
         }
         for (const auto &count : histogram.counts) {
-            EXPECT(std::abs(100000 - int(count)) < 1000);
+            expect(std::abs(100000 - int(count)) < 1000);
         }
-    },
+    }
 
     CASE("nextRange() returns uniform distribution") {
         Random rng;
@@ -48,12 +48,8 @@ const lest::test specification[] = {
             histogram.push(rng.nextRange(16));
         }
         for (const auto &count : histogram.counts) {
-            EXPECT(std::abs(100000 - int(count)) < 1000);
+            expect(std::abs(100000 - int(count)) < 1000);
         }
-    },
+    }
 
-};
-
-int main(int argc, char *argv[]) {
-    return lest::run(specification, argc, argv);
 }
