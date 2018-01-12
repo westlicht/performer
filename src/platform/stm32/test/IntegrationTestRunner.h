@@ -56,3 +56,5 @@ if (!(_cond_)) {                                            \
     DBG(_fmt_, ##__VA_ARGS__);                              \
     terminate(false);                                       \
 }
+
+#define CURRENT_TIME() HighResolutionTimer::us()

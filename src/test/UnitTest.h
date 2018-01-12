@@ -1,4 +1,7 @@
+#pragma once
+
 #include "test/UnitTestRunner.h"
+#include "Timer.h"
 
 #include <cstddef>
 #include <csetjmp>

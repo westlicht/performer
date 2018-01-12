@@ -1,4 +1,7 @@
+#pragma once
+
 #include "test/IntegrationTestRunner.h"
+#include "Timer.h"
 
 class IntegrationTest {
 public:

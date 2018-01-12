@@ -36,3 +36,5 @@ int runWrapper(const char *name) {
     int main() {                        \
         return runWrapper(_name_);      \
     }                                   \
+
+#define CURRENT_TIME() HighResolutionTimer::us()

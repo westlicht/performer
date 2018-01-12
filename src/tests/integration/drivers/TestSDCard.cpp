@@ -44,6 +44,8 @@ public:
         uint32_t writeTime = 0;
         uint32_t readTime = 0;
 
+        Timer timer;
+
         for (size_t run = 0; run < Runs; ++run) {
             // create random data
             for (size_t i = 0; i < DataLength; ++i) {
@@ -51,19 +53,20 @@ public:
             }
 
             // write data
-            uint32_t start = os::ticks();
+            timer.reset();
             if (!sdcard.write(data, 0, SectorCount)) {
                 DBG("write failed");
             }
+            writeTime += timer.elapsed();
+
             sdcard.sync();
-            writeTime += (os::ticks() - start) / os::time::ms(1);
 
             // read data
-            start = os::ticks();
+            timer.reset();
             if (!sdcard.read(buf, 0, SectorCount)) {
                 DBG("read failed");
             }
-            readTime += (os::ticks() - start) / os::time::ms(1);
+            readTime += timer.elapsed();
 
             // verify data
             bool success = true;
@@ -77,8 +80,8 @@ public:
         }
 
         // report throughput
-        DBG("Write throughput: %.1f kB/s", (DataLength / 1024.f) / writeTime);
-        DBG("Read throughput: %.1f kB/s", (DataLength / 1024.f) / readTime);
+        DBG("Write throughput: %.1f kB/s", (DataLength / 1024.0) * 1000000.0 / writeTime);
+        DBG("Read throughput: %.1f kB/s", (DataLength / 1024.0) * 1000000.0 / readTime);
     }
 
 private:
