@@ -1,5 +1,5 @@
 
-include_directories(.)
+include_directories(../../test)
 
 function(register_test test file)
     add_executable(${test} ${file})

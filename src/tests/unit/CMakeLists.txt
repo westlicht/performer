@@ -1,6 +1,6 @@
 
 include_directories(../../libs/lest/include/lest)
-include_directories(.)
+include_directories(../../test)
 
 function(register_test test file)
     add_executable(${test} ${file})
