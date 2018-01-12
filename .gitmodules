@@ -13,6 +13,3 @@
 [submodule "src/platform/sim/libs/soloud"]
 	path = src/platform/sim/libs/soloud
 	url = https://github.com/jarikomppa/soloud.git
-[submodule "src/libs/lest"]
-	path = src/libs/lest
-	url = https://github.com/martinmoene/lest.git
