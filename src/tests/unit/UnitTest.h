@@ -70,8 +70,8 @@ namespace test {
     }
 
     bool run(const char *name) {
-        UNIT_TEST_PRINTF("========================================\n");
-        UNIT_TEST_PRINTF("Test: %s\n", name);
+        UNIT_TEST_PRINTF("\n========================================\n");
+        UNIT_TEST_PRINTF("Unit Test: %s\n", name);
         size_t count = countCases();
         bool result = true;
 
@@ -86,7 +86,7 @@ namespace test {
 
         UNIT_TEST_PRINTF("----------------------------------------\n");
         UNIT_TEST_PRINTF("Finished %s\n", result ? "successful" : "with failures");
-        UNIT_TEST_PRINTF("========================================\n");
+        UNIT_TEST_PRINTF("========================================\n\n");
 
         return result;
     }

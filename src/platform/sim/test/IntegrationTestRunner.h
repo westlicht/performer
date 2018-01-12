@@ -16,7 +16,9 @@ int integrationTestRunner() {
 
     T test;
 
-    DBG("Running test '%s' ...", test.name());
+    DBG("\n========================================");
+    DBG("Integration Test: %s", test.name());
+    DBG("----------------------------------------");
 
     try {
         test.init();
@@ -25,6 +27,9 @@ int integrationTestRunner() {
     }
 
     if (!test.interactive()) {
+        DBG("----------------------------------------");
+        DBG("Finished");
+        DBG("========================================\n");
         return 0;
     }
 
