@@ -8,11 +8,11 @@ public:
         IntegrationTest("ADC", true)
     {}
 
-    void init() {
+    void init() override {
         adc.init();
     }
 
-    void update() {
+    void update() override {
         for (int c = 0; c < ADC::Channels; ++c) {
             DBG("adc%d: %d", c, adc.channel(c));
         }

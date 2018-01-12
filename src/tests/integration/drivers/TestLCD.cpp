@@ -15,11 +15,11 @@ public:
         canvas(frameBuffer)
     {}
 
-    void init() {
+    void init() override {
         lcd.init();
     }
 
-    void update() {
+    void update() override {
         int frame = os::ticks() / os::time::ms(33); // around 30 fps
 
         canvas.setColor(0);

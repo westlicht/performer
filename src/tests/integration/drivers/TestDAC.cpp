@@ -8,11 +8,11 @@ public:
         IntegrationTest("DAC", true)
     {}
 
-    void init() {
+    void init() override {
         dac.init();
     }
 
-    void update() {
+    void update() override {
         DBG("value = %d", value);
         for (int channel = 0; channel < 8; ++channel) {
             dac.setValue(channel, (value + channel * 0x1000) % 0x8000);

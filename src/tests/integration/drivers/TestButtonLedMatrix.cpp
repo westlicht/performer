@@ -13,7 +13,7 @@
 class TestButtonLedMatrix : public IntegrationTest {
 public:
     TestButtonLedMatrix() :
-        IntegrationTest("ButtenLedMatrix", true),
+        IntegrationTest("ButtonLedMatrix", true),
 #ifdef PLATFORM_STM32
         _blm(_shiftRegister),
 #endif
@@ -27,14 +27,14 @@ public:
         _leds.fill(0);
     }
 
-    void init() {
+    void init() override {
 #ifdef PLATFORM_STM32
         _shiftRegister.init();
 #endif
         _blm.init();
     }
 
-    void update() {
+    void update() override {
         ButtonLedMatrix::Event event;
         while (_blm.nextEvent(event)) {
             switch (event.action()) {

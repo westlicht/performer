@@ -8,11 +8,11 @@ public:
         IntegrationTest("MIDI", true)
     {}
 
-    void init() {
+    void init() override {
         midi.init();
     }
 
-    void update() {
+    void update() override {
         MIDIMessage message;
         while (midi.recv(&message)) {
             MIDIMessage::dump(message);

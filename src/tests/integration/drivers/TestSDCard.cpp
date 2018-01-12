@@ -10,18 +10,14 @@ public:
         IntegrationTest("SDCard", false)
     {}
 
-    void init() {
+    void init() override {
         sdcard.init();
+    }
 
+    void once() override {
         while (!sdcard.available()) {
             DBG("Waiting for SDCard ...");
         }
-
-        // DBG("SDCard init");
-        // auto result = sdcard.available();
-        // DBG("SDCard %s", result ? "found" : "not found");
-        // return;
-
 
         if (sdcard.writeProtected()) {
             DBG("SDCard is write protected -> aborting");

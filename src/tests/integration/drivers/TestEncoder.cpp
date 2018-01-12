@@ -13,11 +13,11 @@ public:
         })
     {}
 
-    void init() {
+    void init() override {
         _encoder.init();
     }
 
-    void update() {
+    void update() override {
         Encoder::Event event;
         while (_encoder.nextEvent(event)) {
             switch (event) {

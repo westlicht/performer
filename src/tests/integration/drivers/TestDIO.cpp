@@ -8,11 +8,11 @@ public:
         IntegrationTest("DIO", true)
     {}
 
-    void init() {
+    void init() override {
         dio.init();
     }
 
-    void update() {
+    void update() override {
         bool clockOutput = false;
         bool resetOutput = true;
         while (true) {
