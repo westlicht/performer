@@ -2,10 +2,8 @@
 
 #include "Pages.h"
 
-TopPage::TopPage(PageManager &pageManager, PageContext &context) :
-    Page(pageManager),
-    _model(context.model),
-    _engine(context.engine)
+TopPage::TopPage(PageManager &manager, PageContext &context) :
+    BasePage(manager, context)
 {}
 
 void TopPage::updateLeds(Leds &leds) {
@@ -20,11 +18,10 @@ void TopPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
     if (key.shiftModifier() && key.isTrack()) {
-        auto &pm = _pageManager;
         switch (key.track()) {
-        case 0: pm.reset(&pm.pages().topPage); pm.push(&pm.pages().mainPage); break;
-        case 1: pm.reset(&pm.pages().topPage); pm.push(&pm.pages().trackPage); break;
-        case 2: pm.reset(&pm.pages().topPage); pm.push(&pm.pages().sequenceSetupPage); break;
+        case 0: _manager.reset(&_manager.pages().topPage); _manager.push(&_manager.pages().mainPage); break;
+        case 1: _manager.reset(&_manager.pages().topPage); _manager.push(&_manager.pages().trackPage); break;
+        case 2: _manager.reset(&_manager.pages().topPage); _manager.push(&_manager.pages().sequenceSetupPage); break;
         }
     }
 
@@ -42,15 +39,19 @@ void TopPage::keyDown(KeyEvent &event) {
     }
 
     if (key.is(Key::BPM)) {
-        _pageManager.pages().valuePage.show({
+        _manager.pages().valuePage.show({
             Key::BPM,
-            [this] (StringBuilder &string) { string("BPM: %.1f", _model.project().bpm()); },
-            [this] (int value, bool shift) { _model.project().setBpm(_model.project().bpm() + value * (shift ? 1.f : 0.1f)); }
+            [this] (StringBuilder &string) {
+                string("BPM: %.1f", _model.project().bpm());
+            },
+            [this] (int encoderValue, bool encoderShift, bool keyShift) {
+                _model.project().setBpm(_model.project().bpm() + encoderValue * (encoderShift ? 1.f : 0.1f) * (keyShift ? 10.f : 1.f));
+            }
         });
     }
 
     if (key.is(Key::Mute)) {
-        _pageManager.pages().mutePage.show();
+        _manager.pages().mutePage.show();
     }
 
     event.consume();

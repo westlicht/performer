@@ -2,21 +2,21 @@
 
 #include "core/Debug.h"
 
-Page::Page(PageManager &pageManager) :
-    _pageManager(pageManager)
+Page::Page(PageManager &manager) :
+    _manager(manager)
 {
 }
 
 void Page::show() {
-    _pageManager.push(this);
+    _manager.push(this);
 }
 
 void Page::close() {
-    _pageManager.pop();
+    _manager.pop();
 }
 
 bool Page::isTop() {
-    return _pageManager.top() == this;
+    return _manager.top() == this;
 }
 
 void Page::dispatchEvent(Event &event) {

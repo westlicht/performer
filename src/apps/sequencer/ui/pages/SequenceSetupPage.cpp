@@ -117,12 +117,8 @@ static const ParameterHandler ParameterHandlers[] = {
 
 };
 
-SequenceSetupPage::SequenceSetupPage(PageManager &pageManager, PageContext &context) :
-    Page(pageManager),
-    _context(context),
-    _model(context.model),
-    _engine(context.engine),
-    _project(context.model.project())
+SequenceSetupPage::SequenceSetupPage(PageManager &manager, PageContext &context) :
+    BasePage(manager, context)
 {}
 
 void SequenceSetupPage::enter() {

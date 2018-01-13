@@ -1,16 +1,10 @@
 #pragma once
 
-#include "PageContext.h"
+#include "BasePage.h"
 
-#include "ui/Page.h"
-
-#include "model/Model.h"
-
-#include "engine/Engine.h"
-
-class MutePage : public Page {
+class MutePage : public BasePage {
 public:
-    MutePage(PageManager &pageManager, PageContext &context);
+    MutePage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -23,6 +17,4 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    Model &_model;
-    Engine &_engine;
 };

@@ -1,81 +1,33 @@
 #pragma once
 
-#include "PageContext.h"
+#include "BasePage.h"
 
-#include "ui/Page.h"
 #include "ui/painters/WindowPainter.h"
-
-#include "model/Model.h"
-
-#include "engine/Engine.h"
 
 #include "core/utils/StringBuilder.h"
 
-class ValuePage : public Page {
+class ValuePage : public BasePage {
 public:
-    ValuePage(PageManager &pageManager, PageContext &context) :
-        Page(pageManager),
-        _model(context.model),
-        _engine(context.engine)
-    {}
-
     struct Handler {
         Key::Code exitKey;
         std::function<void(StringBuilder &)> value;
-        std::function<void(int, bool)> encoder;
+        std::function<void(int, bool, bool)> encoder;
     };
 
-    void show(const Handler &handler) {
-        _handler = handler;
-        _pageManager.push(this);
-    }
+    ValuePage(PageManager &manager, PageContext &context);
 
-    virtual void enter() override {
-    }
+    void show(const Handler &handler);
 
-    virtual void exit() override {
-    }
+    virtual void enter() override;
+    virtual void exit() override;
 
-    virtual void draw(Canvas &canvas) override {
-        WindowPainter::drawFrame(canvas, 10, 16, 256 - 20, 32);
+    virtual void draw(Canvas &canvas) override;
+    virtual void updateLeds(Leds &leds) override;
 
-        canvas.setBlendMode(BlendMode::Set);
-        canvas.setFont(Font::Small);
-        FixedStringBuilder<32> string;
-        _handler.value(string);
-        canvas.drawText(50, 36, string);
-    }
-
-    virtual void updateLeds(Leds &leds) override {
-    }
-
-    virtual void keyDown(KeyEvent &event) override {
-        if (event.key().isGlobal()) {
-            return;
-        }
-
-        event.consume();
-    }
-
-    virtual void keyUp(KeyEvent &event) override {
-        if (event.key().isGlobal()) {
-            return;
-        }
-
-        if (event.key().is(_handler.exitKey)) {
-            close();
-        }
-
-        event.consume();
-    }
-
-    virtual void encoder(EncoderEvent &event) override {
-        _handler.encoder(event.value(), event.pressed());
-        event.consume();
-    }
+    virtual void keyDown(KeyEvent &event) override;
+    virtual void keyUp(KeyEvent &event) override;
+    virtual void encoder(EncoderEvent &event) override;
 
 private:
-    Model &_model;
-    Engine &_engine;
     Handler _handler;
 };

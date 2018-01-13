@@ -5,12 +5,8 @@
 
 #include "core/utils/StringBuilder.h"
 
-TrackPage::TrackPage(PageManager &pageManager, PageContext &context) :
-    Page(pageManager),
-    _context(context),
-    _model(context.model),
-    _engine(context.engine),
-    _project(context.model.project())
+TrackPage::TrackPage(PageManager &manager, PageContext &context) :
+    BasePage(manager, context)
 {}
 
 void TrackPage::enter() {

@@ -1,20 +1,10 @@
 #pragma once
 
-#include "PageContext.h"
+#include "BasePage.h"
 
-#include "ui/Page.h"
-
-#include "model/Model.h"
-
-#include "engine/Engine.h"
-
-#include "core/utils/StringBuilder.h"
-
-#include <bitset>
-
-class SequenceSetupPage : public Page {
+class SequenceSetupPage : public BasePage {
 public:
-    SequenceSetupPage(PageManager &pageManager, PageContext &context);
+    SequenceSetupPage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -27,10 +17,5 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    PageContext &_context;
-    Model &_model;
-    Engine &_engine;
-    Project &_project;
-
     int _parameter = 0;
 };

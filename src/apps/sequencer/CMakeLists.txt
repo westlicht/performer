@@ -15,6 +15,7 @@ set(sources
     ui/pages/SequenceSetupPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp
+    ui/pages/ValuePage.cpp
     ui/painters/WindowPainter.cpp
 )
 

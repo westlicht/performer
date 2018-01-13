@@ -7,13 +7,6 @@
 #include "MutePage.h"
 #include "ValuePage.h"
 
-#include "PageContext.h"
-
-#include "model/Model.h"
-
-#include "engine/Engine.h"
-
-
 struct Pages {
     TopPage topPage;
     MainPage mainPage;
@@ -22,13 +15,13 @@ struct Pages {
     MutePage mutePage;
     ValuePage valuePage;
 
-    Pages(PageManager &pageManager, PageContext &context) :
-        topPage(pageManager, context),
-        mainPage(pageManager, context),
-        trackPage(pageManager, context),
-        sequenceSetupPage(pageManager, context),
-        mutePage(pageManager, context),
-        valuePage(pageManager, context)
+    Pages(PageManager &manager, PageContext &context) :
+        topPage(manager, context),
+        mainPage(manager, context),
+        trackPage(manager, context),
+        sequenceSetupPage(manager, context),
+        mutePage(manager, context),
+        valuePage(manager, context)
     {}
 };
 

@@ -1,18 +1,12 @@
 #pragma once
 
-#include "PageContext.h"
-
-#include "ui/Page.h"
-
-#include "model/Model.h"
-
-#include "engine/Engine.h"
+#include "BasePage.h"
 
 #include <bitset>
 
-class TrackPage : public Page {
+class TrackPage : public BasePage {
 public:
-    TrackPage(PageManager &pageManager, PageContext &context);
+    TrackPage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -25,11 +19,6 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    PageContext &_context;
-    Model &_model;
-    Engine &_engine;
-    Project &_project;
-
     enum class EditMode {
         Gate,
         Length,

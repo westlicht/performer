@@ -15,7 +15,7 @@ class PageManager;
 
 class Page {
 public:
-    Page(PageManager &pageManager);
+    Page(PageManager &manager);
 
     virtual void enter() {}
     virtual void exit() {}
@@ -38,7 +38,7 @@ protected:
     static constexpr int PageWidth = CONFIG_LCD_WIDTH;
     static constexpr int PageHeight = CONFIG_LCD_HEIGHT;
 
-    PageManager &_pageManager;
+    PageManager &_manager;
 };
 
 class PageManager {

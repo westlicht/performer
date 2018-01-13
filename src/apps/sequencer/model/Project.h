@@ -39,7 +39,7 @@ public:
     int selectedTrackIndex() const { return _selectedTrackIndex; }
     void setSelectedTrackIndex(int index) { _selectedTrackIndex = index; }
 
-    bool isSelectedTrack(int index) { return _selectedTrackIndex == index; }
+    bool isSelectedTrack(int index) const { return _selectedTrackIndex == index; }
 
     const Sequence &selectedSequence() const { return selectedPattern().sequence(_selectedTrackIndex); }
           Sequence &selectedSequence()       { return selectedPattern().sequence(_selectedTrackIndex); }

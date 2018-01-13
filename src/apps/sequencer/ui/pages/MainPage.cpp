@@ -2,11 +2,8 @@
 
 #include "ui/LedPainter.h"
 
-MainPage::MainPage(PageManager &pageManager, PageContext &context) :
-    Page(pageManager),
-    _model(context.model),
-    _engine(context.engine),
-    _project(context.model.project())
+MainPage::MainPage(PageManager &manager, PageContext &context) :
+    BasePage(manager, context)
 {}
 
 void MainPage::enter() {

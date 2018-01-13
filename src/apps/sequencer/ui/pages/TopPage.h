@@ -1,16 +1,10 @@
 #pragma once
 
-#include "PageContext.h"
+#include "BasePage.h"
 
-#include "ui/Page.h"
-
-#include "model/Model.h"
-
-#include "engine/Engine.h"
-
-class TopPage : public Page {
+class TopPage : public BasePage {
 public:
-    TopPage(PageManager &pageManager, PageContext &context);
+    TopPage(PageManager &manager, PageContext &context);
 
     virtual void updateLeds(Leds &leds) override;
 
@@ -19,6 +13,4 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    Model &_model;
-    Engine &_engine;
 };

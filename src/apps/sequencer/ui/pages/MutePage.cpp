@@ -7,10 +7,8 @@
 #include "ui/layouts/CenterLayout.h"
 #include "ui/layouts/GridLayout.h"
 
-MutePage::MutePage(PageManager &pageManager, PageContext &context) :
-    Page(pageManager),
-    _model(context.model),
-    _engine(context.engine)
+MutePage::MutePage(PageManager &manager, PageContext &context) :
+    BasePage(manager, context)
 {}
 
 void MutePage::enter() {
