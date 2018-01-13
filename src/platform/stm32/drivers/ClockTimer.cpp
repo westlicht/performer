@@ -43,6 +43,7 @@ void ClockTimer::disable() {
 
 void ClockTimer::setPeriod(uint32_t us) {
     timer_set_period(TIMER, us - 1);
+    timer_set_counter(TIMER, std::min(timer_get_counter(TIMER), us - 1));
 }
 
 void ClockTimer::setHandler(std::function<void()> handler) {
