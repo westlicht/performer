@@ -113,13 +113,18 @@ namespace test {
     }
 
     template<typename T>
-    static void expectEqual(const T &a, const T &b, const Location &location, const char *msg) {
+    static void expectEqual(const T &a, const T &b, const Location &location, const char *msg = nullptr) {
         assert(a == b, location, msg, [] () {});
     }
 
     template<>
     void expectEqual<int>(const int &a, const int &b, const Location &location, const char *msg) {
         assert(a == b, location, msg, [&] () { UNIT_TEST_PRINTF("%d is not %d\n", a, b); });
+    }
+
+    template<>
+    void expectEqual<float>(const float &a, const float &b, const Location &location, const char *msg) {
+        assert(a == b, location, msg, [&] () { UNIT_TEST_PRINTF("%f is not %f\n", a, b); });
     }
 
 } // namespace test
