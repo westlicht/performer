@@ -150,9 +150,13 @@ namespace os {
     }
 
     inline void delay(uint32_t ticks) {
+        uint32_t wakeupTick = os::ticks() + ticks;
+        while (os::ticks() < wakeupTick) {}
     }
 
     inline void delayUntil(uint32_t &lastWakeupTime, uint32_t ticks) {
+        uint32_t wakeupTick = os::ticks() + ticks;
+        while (os::ticks() < wakeupTick) {}
     }
 
     inline void startScheduler() {

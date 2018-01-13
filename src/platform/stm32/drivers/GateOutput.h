@@ -10,6 +10,11 @@ public:
 
     void init();
 
+    inline void setGates(uint8_t gates) {
+        _gates = gates;
+        _shiftRegister.write(2, _gates);
+    }
+
     inline void setGate(int index, bool value) {
         if (value) {
             _gates |= (1 << index);

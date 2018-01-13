@@ -12,6 +12,12 @@ public:
 
     void init() {}
 
+    inline void setGates(uint8_t gates) {
+        for (int i = 0; i < 8; ++i) {
+            _simulator.writeGate(i, (gates >> i) & 1);
+        }
+    }
+
     inline void setGate(int index, bool value) {
         _simulator.writeGate(index, value);
     }
