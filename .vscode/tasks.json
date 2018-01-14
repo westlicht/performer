@@ -1,0 +1,49 @@
+{
+    "version": "0.1.0",
+    "tasks": [
+        {
+            "isBuildCommand": true,
+            "taskName": "build",
+            "command": "make",
+            "args": ["-C", "build/stm32/release", "-j", "8"],
+            "isShellCommand": true,
+            "showOutput": "always",
+            "problemMatcher": {
+                // "owner": "cpp",
+                "fileLocation": ["absolute"],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }      
+        },
+        {
+            "taskName": "clean",
+            "command": "make",
+            "args": ["-C", "build/stm32/release", "clean"],
+            "isShellCommand": true,
+            "showOutput": "always"
+        },
+        {
+            "isTestCommand": true,
+            "taskName": "flash",
+            "command": "make",
+            "args": ["-C", "build/stm32/release", "flash_testapp"],
+            "isShellCommand": true,
+            "showOutput": "always"
+        },
+        {
+            "taskName": "openocd",
+            "command": "make",
+            "args": ["-C", "build/stm32/release", "openocd"],
+            "isShellCommand": true,
+            "isBackground": true,
+            "showOutput": "always"
+        }
+        
+    ]
+}

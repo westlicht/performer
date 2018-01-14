@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/stm32/release/src/apps/sequencer/sequencer",
+            "targetArchitecture": "arm",
+            // "MIMode": "gdb",
+            "miDebuggerPath": "${workspaceRoot}/host/bin/arm-none-eabi-gdb",
+            // "miDebuggerServerAddress": "localhost:3333",
+            "cwd": "${workspaceRoot}",
+            "setupCommands": [
+                // { "text": "-exec -gdb-set target-async off" },
+                // { "text": "-enable-pretty-printing" },
+                { "text": "file ${workspaceRoot}/build/stm32/release/src/apps/sequencer/sequencer" },
+                { "text": "target remote localhost:3333"},
+                { "text": "monitor reset halt" },
+                { "text": "load" },
+                { "text": "break main" }
+            ],
+            "preLaunchTask": "build",
+            "externalConsole": false
+            // "logging": { "trace": true, "traceResponse": true, "engineLogging": true }
+        }
+    ]
+}
