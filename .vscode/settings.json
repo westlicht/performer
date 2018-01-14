@@ -1,0 +1,12 @@
+{
+    "C_Cpp.intelliSenseEngine": "Tag Parser",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/*.o": true,
+        "**/*.d": true,
+        "**/*.a": true,
+        "**/*.obj": true
+    },
+    "git.ignoreLimitWarning": true
+}
