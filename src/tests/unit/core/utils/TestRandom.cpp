@@ -4,8 +4,9 @@
 
 #include <array>
 
-#include <cmath>
+#include <cstdlib>
 #include <cstdint>
+#include <cmath>
 
 template<uint64_t Range, uint64_t Bins>
 struct Histogram {
