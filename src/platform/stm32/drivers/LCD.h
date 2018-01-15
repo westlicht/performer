@@ -15,6 +15,8 @@ private:
     void sendCmd(uint8_t cmd);
     void sendData(uint8_t data);
 
+    void initialize();
+
     void setColAddr(uint8_t a, uint8_t b);
     void setRowAddr(uint8_t a, uint8_t b);
     void setWrite();

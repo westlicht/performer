@@ -4,6 +4,7 @@
 
 #include "core/gfx/FrameBuffer.h"
 #include "core/gfx/Canvas.h"
+#include "core/utils/MovingAverage.h"
 
 #include "os/os.h"
 
@@ -17,10 +18,20 @@ public:
 
     void init() override {
         lcd.init();
+        timer.reset();
     }
 
     void update() override {
         int frame = os::ticks() / os::time::ms(33); // around 30 fps
+
+        frameInterval.push(timer.elapsed());
+
+        if (frame % 30 == 0 && frame != lastFrame) {
+            DBG("Refresh rate = %.1f fps", 1000000.f / frameInterval());
+        }
+        lastFrame = frame;
+
+        timer.reset();
 
         canvas.setColor(0);
         canvas.fill();
@@ -37,6 +48,9 @@ private:
     FrameBuffer8bit frameBuffer;
     Canvas canvas;
     LCD lcd;
+    Timer timer;
+    MovingAverage<uint32_t, 10> frameInterval;
+    int lastFrame = -1;
 };
 
 INTEGRATION_TEST(TestLCD)
