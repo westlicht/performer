@@ -37,8 +37,8 @@ public:
 
 private:
     DIO dio;
-    int clockInputCount;
-    int resetInputCount;
+    int clockInputCount = 0;
+    int resetInputCount = 0;
 };
 
 INTEGRATION_TEST(TestDIO)
