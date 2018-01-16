@@ -12,15 +12,28 @@ public:
 
         void init() {
             gpio_mode_setup(Port, GPIO_MODE_INPUT, GPIO_PUPD_NONE, Pin);
+            update();
         }
 
         bool get() const {
-            return !gpio_get(Port, Pin);
+            return _state;
         }
 
         void setHandler(Handler handler) { _handler = handler; }
 
+        void interrupt() {
+            update();
+            if (_handler) {
+                _handler(_state);
+            }
+        }
+
     private:
+        void update() {
+            _state = !gpio_get(Port, Pin);
+        }
+
+        bool _state = false;
         Handler _handler;
     };
 
@@ -38,6 +51,8 @@ public:
             }
         }
     };
+
+    DIO();
 
     void init();
 
