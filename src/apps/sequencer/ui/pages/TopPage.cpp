@@ -19,9 +19,9 @@ void TopPage::keyDown(KeyEvent &event) {
 
     if (key.shiftModifier() && key.isTrack()) {
         switch (key.track()) {
-        case 0: _manager.reset(&_manager.pages().topPage); _manager.push(&_manager.pages().mainPage); break;
-        case 1: _manager.reset(&_manager.pages().topPage); _manager.push(&_manager.pages().trackPage); break;
-        case 2: _manager.reset(&_manager.pages().topPage); _manager.push(&_manager.pages().sequenceSetupPage); break;
+        case 0: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().main); break;
+        case 1: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().track); break;
+        case 2: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().sequenceSetup); break;
         }
     }
 
@@ -51,7 +51,7 @@ void TopPage::keyDown(KeyEvent &event) {
     }
 
     if (key.is(Key::Mute)) {
-        _manager.pages().mutePage.show();
+        _manager.pages().mute.show();
     }
 
     event.consume();

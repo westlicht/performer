@@ -8,20 +8,20 @@
 #include "ValuePage.h"
 
 struct Pages {
-    TopPage topPage;
-    MainPage mainPage;
-    TrackPage trackPage;
-    SequenceSetupPage sequenceSetupPage;
-    MutePage mutePage;
-    ValuePage valuePage;
+    TopPage top;
+    MainPage main;
+    TrackPage track;
+    SequenceSetupPage sequenceSetup;
+    MutePage mute;
+    ValuePage value;
 
     Pages(PageManager &manager, PageContext &context) :
-        topPage(manager, context),
-        mainPage(manager, context),
-        trackPage(manager, context),
-        sequenceSetupPage(manager, context),
-        mutePage(manager, context),
-        valuePage(manager, context)
+        top(manager, context),
+        main(manager, context),
+        track(manager, context),
+        sequenceSetup(manager, context),
+        mute(manager, context),
+        value(manager, context),
     {}
 };
 

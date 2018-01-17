@@ -22,8 +22,8 @@ UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &en
     _pageContext({ _keyState, _model, _engine }),
     _pages(_pageManager, _pageContext)
 {
-    _pageManager.push(&_pages.topPage);
-    _pageManager.push(&_pages.trackPage);
+    _pageManager.push(&_pages.top);
+    _pageManager.push(&_pages.track);
 }
 
 void UI::init() {
