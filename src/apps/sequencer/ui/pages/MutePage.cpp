@@ -28,8 +28,8 @@ void MutePage::draw(Canvas &canvas) {
     > gridLayout;
 
     CenterLayout<
-        PageWidth,          // ContainerWidth
-        PageHeight,         // ContainerHeight
+        Width,              // ContainerWidth
+        Height,             // ContainerHeight
         gridLayout.width(), // Width
         gridLayout.height() // Height
     > centerLayout;
