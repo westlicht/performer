@@ -112,18 +112,26 @@ namespace test {
         assert(condition, location, msg, [] () {});
     }
 
+    static void expectTrue(bool condition, const Location &location, const char *msg = nullptr) {
+        assert(condition, location, msg, [&] () { UNIT_TEST_PRINTF("is not true\n"); });
+    }
+
+    static void expectFalse(bool condition, const Location &location, const char *msg = nullptr) {
+        assert(!condition, location, msg, [&] () { UNIT_TEST_PRINTF("is not false\n"); });
+    }
+
     template<typename T>
-    static void expectEqual(const T &a, const T &b, const Location &location, const char *msg = nullptr) {
+    static void expectEqual(T a, T b, const Location &location, const char *msg = nullptr) {
         assert(a == b, location, msg, [] () {});
     }
 
     template<>
-    void expectEqual<int>(const int &a, const int &b, const Location &location, const char *msg) {
+    void expectEqual<int>(int a, int b, const Location &location, const char *msg) {
         assert(a == b, location, msg, [&] () { UNIT_TEST_PRINTF("%d is not %d\n", a, b); });
     }
 
     template<>
-    void expectEqual<float>(const float &a, const float &b, const Location &location, const char *msg) {
+    void expectEqual<float>(float a, float b, const Location &location, const char *msg) {
         assert(a == b, location, msg, [&] () { UNIT_TEST_PRINTF("%f is not %f\n", a, b); });
     }
 
@@ -133,6 +141,8 @@ namespace test {
 #define UNIT_TEST_LOCATION { __FILE__, __LINE__ }
 
 #define expect(_condition_, ...) test::expect(_condition_, UNIT_TEST_LOCATION, ##__VA_ARGS__)
+#define expectTrue(_condition_, ...) test::expectTrue(_condition_, UNIT_TEST_LOCATION, ##__VA_ARGS__)
+#define expectFalse(_condition_, ...) test::expectFalse(_condition_, UNIT_TEST_LOCATION, ##__VA_ARGS__)
 #define expectEqual(_a_, _b_, ...) test::expectEqual(_a_, _b_, UNIT_TEST_LOCATION, ##__VA_ARGS__)
 
 #define print(_fmt_, ...) UNIT_TEST_PRINTF(_fmt_, ##__VA_ARGS__)
