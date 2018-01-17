@@ -48,9 +48,8 @@ void ValuePage::keyUp(KeyEvent &event) {
 
     if (event.key().is(_handler.exitKey)) {
         close();
+        event.consume();
     }
-
-    event.consume();
 }
 
 void ValuePage::encoder(EncoderEvent &event) {

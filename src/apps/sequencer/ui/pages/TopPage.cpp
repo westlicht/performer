@@ -39,15 +39,19 @@ void TopPage::keyDown(KeyEvent &event) {
     }
 
     if (key.is(Key::BPM)) {
-        _manager.pages().valuePage.show({
-            Key::BPM,
-            [this] (StringBuilder &string) {
-                string("BPM: %.1f", _model.project().bpm());
-            },
-            [this] (int encoderValue, bool encoderShift, bool keyShift) {
-                _model.project().setBpm(_model.project().bpm() + encoderValue * (encoderShift ? 1.f : 0.1f) * (keyShift ? 10.f : 1.f));
-            }
-        });
+        if (key.shiftModifier()) {
+            _manager.pages().clockSetup.show();
+        } else {
+            _manager.pages().value.show({
+                Key::None,
+                [this] (StringBuilder &string) {
+                    string("BPM: %.1f", _model.project().bpm());
+                },
+                [this] (int encoderValue, bool encoderShift, bool keyShift) {
+                    _model.project().setBpm(_model.project().bpm() + encoderValue * (encoderShift ? 1.f : 0.1f) * (keyShift ? 10.f : 1.f));
+                }
+            });
+        }
     }
 
     if (key.is(Key::Mute)) {
@@ -58,6 +62,12 @@ void TopPage::keyDown(KeyEvent &event) {
 }
 
 void TopPage::keyUp(KeyEvent &event) {
+    const auto &key = event.key();
+
+    if (key.is(Key::BPM)) {
+        _manager.pages().value.close();
+    }
+
     event.consume();
 }
 

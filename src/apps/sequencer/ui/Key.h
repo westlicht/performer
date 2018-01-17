@@ -12,6 +12,7 @@ class Key {
 public:
     // key codes
     enum Code {
+        None = -1,
         Track0 = MatrixMap::fromTrack(0),
         Track1 = MatrixMap::fromTrack(1),
         Track2 = MatrixMap::fromTrack(2),
