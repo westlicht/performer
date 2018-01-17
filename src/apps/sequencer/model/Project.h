@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Config.h"
+#include "ClockSetup.h"
 #include "Pattern.h"
 #include "Serialize.h"
 
@@ -23,6 +24,9 @@ public:
 
     uint8_t swing() const { return _swing; }
     void setSwing(uint8_t swing) { _swing = swing; }
+
+    const ClockSetup &clockSetup() const { return _clockSetup; }
+          ClockSetup &clockSetup()       { return _clockSetup; }
 
     // Pattern selection
 
@@ -67,6 +71,8 @@ private:
 
     float _bpm = 120.f;
     uint8_t _swing = 0;
+
+    ClockSetup _clockSetup;
 
     int _selectedPatternIndex = 0;
     int _selectedTrackIndex = 0;
