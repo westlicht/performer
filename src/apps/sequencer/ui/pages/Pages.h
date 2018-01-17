@@ -6,6 +6,7 @@
 #include "SequenceSetupPage.h"
 #include "MutePage.h"
 #include "ValuePage.h"
+#include "ClockSetupPage.h"
 
 struct Pages {
     TopPage top;
@@ -14,6 +15,7 @@ struct Pages {
     SequenceSetupPage sequenceSetup;
     MutePage mute;
     ValuePage value;
+    ClockSetupPage clockSetup;
 
     Pages(PageManager &manager, PageContext &context) :
         top(manager, context),
@@ -22,6 +24,7 @@ struct Pages {
         sequenceSetup(manager, context),
         mute(manager, context),
         value(manager, context),
+        clockSetup(manager, context)
     {}
 };
 

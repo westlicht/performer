@@ -10,7 +10,9 @@ set(sources
     ui/LedPainter.cpp
     ui/Page.cpp
     ui/UI.cpp
+    ui/pages/ClockSetupPage.cpp
     ui/pages/MainPage.cpp
+    ui/pages/MenuPage.cpp
     ui/pages/MutePage.cpp
     ui/pages/SequenceSetupPage.cpp
     ui/pages/TopPage.cpp
