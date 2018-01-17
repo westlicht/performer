@@ -37,5 +37,5 @@ void WindowPainter::drawFunctionKey(Canvas &canvas, int index, const char *text,
     // canvas.setColor(pressed ? 0x7 : 0xf);
     canvas.setBlendMode(pressed ? BlendMode::Sub : BlendMode::Set);
     canvas.setFont(Font::Tiny);
-    canvas.drawText(x + (w - canvas.textWidth(text)) / 2 - 1, PageHeight - 2, text);
+    canvas.drawText(x + (w - canvas.textWidth(text)) / 2, PageHeight - 2, text);
 }

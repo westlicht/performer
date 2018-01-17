@@ -119,7 +119,7 @@ int Canvas::textWidth(const char *str) {
             continue;
         }
         const auto &g = font.glyphs[c - font.first];
-        width += g.width;
+        width += g.xAdvance;
     }
 
     return width;
