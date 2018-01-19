@@ -21,8 +21,8 @@ public:
 private:
     void send(uint8_t data);
 
-    RingBuffer<uint8_t, 128> _txBuffer;
-    RingBuffer<uint8_t, 128> _rxBuffer;
+    RingBuffer<uint8_t, 64> _txBuffer;
+    RingBuffer<uint8_t, 64> _rxBuffer;
     volatile uint32_t _txActive = 0;
 
     std::function<bool(uint8_t)> _filter;

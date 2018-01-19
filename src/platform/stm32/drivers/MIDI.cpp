@@ -30,7 +30,7 @@ void MIDI::init() {
     usart_enable_rx_interrupt(MIDI_USART);
 
     // nvic_set_priority(CONSOLE_NVIC_IRQ, configMAX_SYSCALL_INTERRUPT_PRIORITY);
-    nvic_enable_irq(NVIC_USART2_IRQ);
+    nvic_enable_irq(NVIC_USART6_IRQ);
 }
 
 void MIDI::send(const MIDIMessage &message) {
@@ -54,7 +54,7 @@ void MIDI::setRecvFilter(std::function<bool(uint8_t)> filter) {
 }
 
 void MIDI::send(uint8_t data) {
-    while (_txBuffer.writable() == 0) {}
+    while (_txBuffer.full()) {}
 
     _txBuffer.write(data);
 
@@ -87,6 +87,6 @@ void MIDI::handleIrq() {
     }
 }
 
-void usart2_isr() {
+void usart6_isr() {
     g_midi->handleIrq();
 }
