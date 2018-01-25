@@ -2,6 +2,8 @@
 
 #include "USBMIDI.h"
 
+#include <cstdint>
+
 class USBH {
 public:
     USBH(USBMIDI &usbMidi);
@@ -14,14 +16,35 @@ public:
     void powerOff();
     bool powerFault();
 
-    int mouseX() const { return _mouseX; }
-    int mouseY() const { return _mouseY; }
-
-    void setMousePos(int x, int y) { _mouseX = x; _mouseY = y; }
-
 private:
+    void midiConnectDevice(uint8_t device) {
+        _midiDevices |= (1 << device);
+    }
+
+    void midiDisconnectDevice(uint8_t device) {
+        _midiDevices &= ~(1 << device);
+    }
+
+    bool midiDeviceConnected(uint8_t device) {
+        return _midiDevices & (1 << device);
+    }
+
+    void midiEnqueueMessage(uint8_t device, MIDIMessage &message) {
+        _usbMidi.enqueueMessage(message);
+    }
+
+    void midiEnqueueData(uint8_t device, uint8_t data) {
+        _usbMidi.enqueueData(data);
+    }
+
+    bool midiDequeueMessage(uint8_t *device, MIDIMessage *message) {
+        *device = 0;
+        return _usbMidi.dequeueMessage(message);
+    }
+
     USBMIDI &_usbMidi;
 
-    int _mouseX = 0;
-    int _mouseY = 0;
+    uint8_t _midiDevices = 0;
+
+    friend struct MIDIDriverHandler;
 };

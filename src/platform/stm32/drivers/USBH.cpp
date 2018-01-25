@@ -8,9 +8,8 @@
 
 #include "usbh_core.h"				/// provides usbh_init() and usbh_poll()
 #include "usbh_lld_stm32f4.h"		/// provides low level usb host driver for stm32f4 platform
-#include "usbh_driver_hid.h"		/// provides generic usb device driver for Human Interface Device (HID)
+// #include "usbh_driver_hid.h"		/// provides generic usb device driver for Human Interface Device (HID)
 #include "usbh_driver_hub.h"		/// provides usb full speed hub driver (Low speed devices on hub are not supported)
-// #include "usbh_driver_gp_xbox.h"	/// provides usb device driver for Gamepad: Microsoft XBOX compatible Controller
 #include "usbh_driver_ac_midi.h"	/// provides usb device driver for midi class devices
 
 #include <libopencm3/stm32/rcc.h>
@@ -29,8 +28,7 @@ static USBH *g_usbh;
 
 static const usbh_dev_driver_t *device_drivers[] = {
 	&usbh_hub_driver,
-	&usbh_hid_driver,
-	// &usbh_gp_xbox_driver,
+	// &usbh_hid_driver,
 	&usbh_midi_driver,
 	nullptr
 };
@@ -46,90 +44,118 @@ static const usbh_low_level_driver_t * const lld_drivers[] = {
 	nullptr
 };
 
-static void hid_in_message_handler(uint8_t device_id, const uint8_t *data, uint32_t length)
-{
-	(void)device_id;
-	(void)data;
-	if (length < 4) {
-		DBG("data too short, type=%d", hid_get_type(device_id));
-		return;
-	}
+// static void hid_in_message_handler(uint8_t device_id, const uint8_t *data, uint32_t length)
+// {
+// 	(void)device_id;
+// 	(void)data;
+// 	if (length < 4) {
+// 		DBG("data too short, type=%d", hid_get_type(device_id));
+// 		return;
+// 	}
 
-	// print only first 4 bytes, since every mouse should have at least these four set.
-	// Report descriptors are not read by driver for now, so we do not know what each byte means
-	// DBG("HID EVENT %02X %02X %02X %02X", data[0], data[1], data[2], data[3]);
-	if (hid_get_type(device_id) == HID_TYPE_KEYBOARD) {
-		static int x = 0;
-		if (x != data[2]) {
-			x = data[2];
-			hid_set_report(device_id, x);
-		}
-	}
-    if (hid_get_type(device_id) == HID_TYPE_MOUSE) {
-        static int x, y;
-        x += (int8_t) data[1];
-        y += (int8_t) data[2];
-        g_usbh->setMousePos(x, y);
-        DBG("mouse x = %d, y = %d", x, y);
-    }
-}
+// 	// print only first 4 bytes, since every mouse should have at least these four set.
+// 	// Report descriptors are not read by driver for now, so we do not know what each byte means
+// 	// DBG("HID EVENT %02X %02X %02X %02X", data[0], data[1], data[2], data[3]);
+// 	if (hid_get_type(device_id) == HID_TYPE_KEYBOARD) {
+// 		static int x = 0;
+// 		if (x != data[2]) {
+// 			x = data[2];
+// 			hid_set_report(device_id, x);
+// 		}
+// 	}
+//     if (hid_get_type(device_id) == HID_TYPE_MOUSE) {
+//         static int x, y;
+//         x += (int8_t) data[1];
+//         y += (int8_t) data[2];
+//         g_usbh->setMousePos(x, y);
+//         DBG("mouse x = %d, y = %d", x, y);
+//     }
+// }
 
-static const hid_config_t hid_config = {
-	.hid_in_message_handler = &hid_in_message_handler
-};
+// static const hid_config_t hid_config = {
+// 	.hid_in_message_handler = &hid_in_message_handler
+// };
 
-static void midi_in_message_handler(int device_id, uint8_t *data) {
-    // uint8_t cable = data[0] >> 4;
-    uint8_t code = data[0] & 0xf;
-    MIDIMessage message;
+struct MIDIDriverHandler {
 
-    switch (code) {
-    case 0x0: // (1, 2 or 3 bytes) Miscellaneous function codes. Reserved for future extensions.
-    case 0x1: // (1, 2 or 3 bytes) Cable events. Reserved for future expansion.
-    case 0x4: // (3 bytes) SysEx starts or continues
-    case 0x6: // (2 bytes) SysEx ends with following two bytes.
-    case 0x7: // (3 bytes) SysEx ends with following three bytes.
-        // ignore for now
-        return;
-    case 0x5: // (1 bytes) Single-byte System Common Message or SysEx ends with following single byte.
-        message = MIDIMessage(data[1]);
-        break;
-    case 0x2: // (2 bytes) Two-byte System Common messages like MTC, SongSelect, etc.
-    case 0xC: // (2 bytes) Program Change
-    case 0xD: // (2 bytes) Channel Pressure
-        message = MIDIMessage(data[1], data[2]);
-        break;
-    case 0x3: // (3 bytes) Three-byte System Common messages like SPP, etc.
-    case 0x8: // (3 bytes) Note-off
-    case 0x9: // (3 bytes) Note-on
-    case 0xA: // (3 bytes) Poly-KeyPress
-    case 0xB: // (3 bytes) Control Change
-    case 0xE: // (3 bytes) PitchBend Change
-        message = MIDIMessage(data[1], data[2], data[3]);
-        break;
-    case 0xF: // (1 bytes) Single Byte
-        // needs parsing
-        DBG("usb midi data (raw)");
-        return;
+    static void connectHandler(int device) {
+        DBG("MIDI device connected (id=%d)", device);
+        g_usbh->midiConnectDevice(device);
     }
 
-    DBG("usb midi event");
-    // MIDIMessage::dump(message);
-}
+    static void disconnectHandler(int device) {
+        DBG("MIDI device disconnected (id=%d)", device);
+        g_usbh->midiDisconnectDevice(device);
+    }
 
-static void midi_connected_handler(int device_id) {
-    DBG("MIDI device connected (id=%d)", device_id);
-}
+    static void recvHandler(int device_id, uint8_t *data) {
+        // uint8_t cable = data[0] >> 4;
+        uint8_t code = data[0] & 0xf;
+        MIDIMessage message;
 
-static void midi_disconnected_handler(int device_id) {
-    DBG("MIDI device disconnected (id=%d)", device_id);
-}
+        switch (code) {
+        case 0x0: // (1, 2 or 3 bytes) Miscellaneous function codes. Reserved for future extensions.
+        case 0x1: // (1, 2 or 3 bytes) Cable events. Reserved for future expansion.
+        case 0x4: // (3 bytes) SysEx starts or continues
+        case 0x6: // (2 bytes) SysEx ends with following two bytes.
+        case 0x7: // (3 bytes) SysEx ends with following three bytes.
+            // ignore for now
+            return;
+        case 0x5: // (1 bytes) Single-byte System Common Message or SysEx ends with following single byte.
+            message = MIDIMessage(data[1]);
+            g_usbh->midiEnqueueMessage(device_id, message);
+            break;
+        case 0x2: // (2 bytes) Two-byte System Common messages like MTC, SongSelect, etc.
+        case 0xC: // (2 bytes) Program Change
+        case 0xD: // (2 bytes) Channel Pressure
+            message = MIDIMessage(data[1], data[2]);
+            g_usbh->midiEnqueueMessage(device_id, message);
+            break;
+        case 0x3: // (3 bytes) Three-byte System Common messages like SPP, etc.
+        case 0x8: // (3 bytes) Note-off
+        case 0x9: // (3 bytes) Note-on
+        case 0xA: // (3 bytes) Poly-KeyPress
+        case 0xB: // (3 bytes) Control Change
+        case 0xE: // (3 bytes) PitchBend Change
+            message = MIDIMessage(data[1], data[2], data[3]);
+            g_usbh->midiEnqueueMessage(device_id, message);
+            break;
+        case 0xF: // (1 bytes) Single Byte
+            g_usbh->midiEnqueueData(device_id, data[1]);
+            return;
+        }
+    }
 
-const midi_config_t midi_config = {
-	.read_callback = &midi_in_message_handler,
-	.notify_connected = &midi_connected_handler,
-	.notify_disconnected = &midi_disconnected_handler,
+    static void write(uint8_t device, MIDIMessage &message) {
+        uint8_t data[4];
+
+        data[0] = message.status() >> 4;
+        data[1] = message.status();
+        data[2] = message.data0();
+        data[3] = message.data1();
+
+        usbh_midi_write(device, data, 4, &writeCallback);
+    }
+
+    static void writeCallback(uint8_t bytes_written) {
+        uint8_t device;
+        MIDIMessage message;
+        if (g_usbh->midiDequeueMessage(&device, &message)) {
+            if (g_usbh->midiDeviceConnected(device)) {
+                write(device, message);
+            }
+        }
+    }
 };
+
+static const midi_config_t midi_config = {
+    .read_callback = &MIDIDriverHandler::recvHandler,
+    .notify_connected = &MIDIDriverHandler::connectHandler,
+    .notify_disconnected = &MIDIDriverHandler::disconnectHandler,
+};
+
+
+
 
 USBH::USBH(USBMIDI &usbMidi) :
     _usbMidi(usbMidi)
@@ -186,7 +212,7 @@ void USBH::init() {
 	// gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO15 | GPIO14);
 	// gpio_set_af(GPIOB, GPIO_AF12, GPIO14 | GPIO15);
 
-	hid_driver_init(&hid_config);
+	// hid_driver_init(&hid_config);
 	hub_driver_init();
 	midi_driver_init(&midi_config);
 
@@ -194,28 +220,21 @@ void USBH::init() {
 	// gpio_set(GPIOD,  GPIO13);
 	usbh_init(lld_drivers, device_drivers);
 	// gpio_clear(GPIOD,  GPIO13);
-
-	DBG("USBH init complete");
-
 }
 
 void USBH::process() {
-    // set busy led
-    // gpio_set(GPIOD,  GPIO14);
-
-    // uint32_t time_curr_us = tim6_get_time_us();
     uint32_t time_us = HighResolutionTimer::us();
 
     usbh_poll(time_us);
 
-    // clear busy led
-    // gpio_clear(GPIOD,  GPIO14);
-
-    // LOG_FLUSH();
-
-    // approx 1ms interval between usbh_poll()
-    // delay_ms_busy_loop(1);
-
+    // Start sending MIDI messages
+    uint8_t device;
+    MIDIMessage message;
+    if (midiDequeueMessage(&device, &message)) {
+        if (midiDeviceConnected(device)) {
+            MIDIDriverHandler::write(device, message);
+        }
+    }
 }
 
 void USBH::powerOn() {

@@ -6,6 +6,8 @@
 
 #include "drivers/USBMIDI.h"
 
+#include "core/midi/MIDIMessage.h"
+
 class TestUSBMIDI : public IntegrationTest {
 public:
     TestUSBMIDI() :
@@ -27,6 +29,18 @@ public:
 #ifdef PLATFORM_STM32
         usbh.process();
 #endif
+        MIDIMessage msg;
+        while (usbMidi.recv(&msg)) {
+            MIDIMessage::dump(msg);
+        }
+
+        if (sendInterval++ % 200 == 0) {
+            const uint8_t pattern[] = { 0, 12, 0, 12, 3, 9, 12, 3 };
+            usbMidi.send(MIDIMessage::makeNoteOff(0, 36 + pattern[sendPosition]));
+            sendPosition = (sendPosition + 1) % sizeof(pattern);
+            usbMidi.send(MIDIMessage::makeNoteOn(0, 36 + pattern[sendPosition]));
+        }
+
         os::delay(1);
     }
 
@@ -35,6 +49,8 @@ private:
 #ifdef PLATFORM_STM32
     USBH usbh;
 #endif
+    uint32_t sendInterval = 0;
+    uint8_t sendPosition = 0;
 };
 
 INTEGRATION_TEST(TestUSBMIDI)

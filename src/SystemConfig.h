@@ -14,7 +14,6 @@
 
 // USB host
 #define CONFIG_ENABLE_USBH_DRIVER_FS    1
-#define CONFIG_ENABLE_USBH_DRIVER_HS    1
 
 // LCD
 #define CONFIG_LCD_WIDTH                256

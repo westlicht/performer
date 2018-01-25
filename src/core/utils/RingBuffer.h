@@ -9,6 +9,8 @@ public:
 
     inline bool empty() const { return _read == _write; }
 
+    inline bool full() const { return writable() == 0; }
+
     inline size_t entries() const { return (_write - _read) % _size; }
 
     inline size_t writable() const {
