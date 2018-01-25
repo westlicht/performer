@@ -21,9 +21,11 @@ void TrackPage::draw(Canvas &canvas) {
     canvas.setColor(0);
     canvas.fill();
 
+    WindowPainter::drawClock(canvas, _engine);
+
     canvas.setFont(Font::Tiny);
     canvas.setColor(0xf);
-    canvas.drawText(2, 8 - 2, FixedStringBuilder<16>("BPM:%.1f", _engine.bpm()));
+    // canvas.drawText(2, 8 - 2, FixedStringBuilder<16>("BPM:%.1f", _engine.bpm()));
     canvas.drawText(64, 8 - 2, FixedStringBuilder<16>("TRACK%d", _project.selectedTrackIndex() + 1));
 
     const char *editModeLabels[] = { "GATE", "LENGTH", "NOTE" };

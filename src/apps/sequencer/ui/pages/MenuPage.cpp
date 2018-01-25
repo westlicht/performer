@@ -91,8 +91,12 @@ void MenuPage::drawItemValue(Canvas &canvas, const char *value) {
     canvas.drawText(128, 36, value);
 }
 
-void MenuPage::drawItemValue(Canvas &canvas, int value) {
-    drawItemValue(canvas, FixedStringBuilder<16>("%d", value));
+void MenuPage::drawItemValue(Canvas &canvas, int value, const char *unit) {
+    if (unit) {
+        drawItemValue(canvas, FixedStringBuilder<16>("%d%s", value, unit));
+    } else {
+        drawItemValue(canvas, FixedStringBuilder<16>("%d", value));
+    }
 }
 
 void MenuPage::drawItemValue(Canvas &canvas, bool value) {

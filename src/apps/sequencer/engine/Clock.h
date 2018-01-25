@@ -2,6 +2,8 @@
 
 #include "Config.h"
 
+#include "core/utils/MovingAverage.h"
+
 #include <array>
 #include <functional>
 
@@ -28,6 +30,8 @@ public:
     Mode mode() const { return _mode; }
     void setMode(Mode mode);
 
+    Mode activeMode();
+
     int ppqn() const { return _ppqn; }
     float bpm() const { return _state == SlaveRunning ? _slaveBpm : _masterBpm; }
     uint32_t tick() const { return _tick; }
@@ -51,7 +55,7 @@ public:
 
     // Clock output
     void outputConfigure(int ppqn);
-    void outputClock(std::function<void()> tick, std::function<void()> reset);
+    void outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset);
     void outputMIDI(std::function<void(uint8_t)> midi);
 
     // Sequencer interface
@@ -89,6 +93,8 @@ private:
 
     struct Output {
         int ppqn;
+        std::function<void(bool)> clock;
+        std::function<void(bool)> reset;
         std::function<void(uint8_t)> midi;
     };
     Output _output;
@@ -99,7 +105,7 @@ private:
 
     enum State {
         Idle,
-        Running,
+        // Running,
         MasterRunning,
         SlaveRunning,
     };
@@ -114,5 +120,7 @@ private:
     volatile uint32_t _elapsedUs;
     volatile uint32_t _lastTickUs;
 
+    float _slaveBpmFiltered = 0.f;
+    MovingAverage<float, 4> _slaveBpmAvg;
     float _slaveBpm = 0.f;
 };

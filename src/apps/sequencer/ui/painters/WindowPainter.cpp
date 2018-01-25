@@ -2,6 +2,8 @@
 
 #include "Config.h"
 
+#include "core/utils/StringBuilder.h"
+
 #include "ui/layouts/PartitionLayout.h"
 
 void WindowPainter::drawFrame(Canvas &canvas, int x, int y, int w, int h) {
@@ -38,4 +40,20 @@ void WindowPainter::drawFunctionKey(Canvas &canvas, int index, const char *text,
     canvas.setBlendMode(pressed ? BlendMode::Sub : BlendMode::Set);
     canvas.setFont(Font::Tiny);
     canvas.drawText(x + (w - canvas.textWidth(text)) / 2, PageHeight - 2, text);
+}
+
+void WindowPainter::drawClock(Canvas &canvas, Engine &engine) {
+    canvas.setFont(Font::Tiny);
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+    canvas.fillRect(0, 1, 7, 7);
+
+    canvas.setBlendMode(BlendMode::Sub);
+    canvas.setColor(0xf);
+    static const char *clockModeName[] = { "A", "M", "S" };
+    canvas.drawText(1, 8 - 2, clockModeName[engine.clockMode()]);
+
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+    canvas.drawText(10, 8 - 2, FixedStringBuilder<16>("%.1f", engine.bpm()));
 }

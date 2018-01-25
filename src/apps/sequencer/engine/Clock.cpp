@@ -5,6 +5,8 @@
 #include "core/midi/MIDIMessage.h"
 #include "drivers/ClockTimer.h"
 
+#include <cmath>
+
 Clock::Clock(ClockTimer &timer) :
     _timer(timer)
 {
@@ -24,6 +26,14 @@ void Clock::setMode(Mode mode) {
             masterStop();
         }
         _mode = mode;
+    }
+}
+
+Clock::Mode Clock::activeMode() {
+    switch (_state) {
+    case Idle:          return _mode;
+    case MasterRunning: return ModeMaster;
+    case SlaveRunning:  return ModeSlave;
     }
 }
 
@@ -93,16 +103,26 @@ void Clock::slaveTick(int slave) {
     {
         os::InterruptLock lock;
         if (_state == SlaveRunning && _activeSlave == slave) {
-            _tick += _ppqn / _slaves[slave].ppqn;
+            // _tick += _ppqn / _slaves[slave].ppqn;
+            for (int i = 0; i < _ppqn / _slaves[slave].ppqn; ++i) {
+                outputTick(_tick);
+                ++_tick;
+            }
 
             // estimate BPM
             uint32_t tickUs = _elapsedUs - _lastTickUs;
-            _lastTickUs = _elapsedUs;
 
-            if (tickUs > 0) {
+            if (tickUs > 0 && _lastTickUs > 0) {
                 float bpm = (60.f * 1000000) / (tickUs * _slaves[slave].ppqn);
-                _slaveBpm = 0.9f * _slaveBpm + 0.1f * bpm;
+                _slaveBpmFiltered = 0.9f * _slaveBpmFiltered + 0.1f * bpm;
+                // if (std::abs(bpm - _slaveBpm) > 5.f) {
+                //     _slaveBpm = 0.5f * _slaveBpm + 0.5f * bpm;
+                // }
+                _slaveBpmAvg.push(_slaveBpmFiltered);
+                _slaveBpm = _slaveBpmAvg();
             }
+
+            _lastTickUs = _elapsedUs;
         }
     }
 }
@@ -188,8 +208,15 @@ void Clock::slaveHandleMIDI(int slave, uint8_t msg) {
     }
 }
 
-// void outputConfigure(int ppqn);
-// void outputClock(std::function<void()> tick, std::function<void()> reset);
+void Clock::outputConfigure(int ppqn) {
+    _output.ppqn = ppqn;
+}
+
+void Clock::outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset) {
+    _output.clock = clock;
+    _output.reset = reset;
+}
+
 void Clock::outputMIDI(std::function<void(uint8_t)> midi) {
     _output.midi = midi;
 }
@@ -267,5 +294,8 @@ void Clock::outputMIDIMessage(uint8_t msg) {
 void Clock::outputTick(uint32_t tick) {
     if (tick % (_ppqn / 24) == 0) {
         outputMIDIMessage(MIDIMessage::Tick);
+    }
+    if (_output.clock) {
+        _output.clock((tick % 2) < 1);
     }
 }

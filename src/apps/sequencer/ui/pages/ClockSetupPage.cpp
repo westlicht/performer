@@ -32,6 +32,9 @@ void ClockSetupPage::draw(Canvas &canvas) {
     case ClockOutputPPQN:
         drawItemValue(canvas, clockSetup.clockOutputPPQN());
         break;
+    case ClockOutputPulse:
+        drawItemValue(canvas, clockSetup.clockOutputPulse(), "ms");
+        break;
     case ClockOutputMode:
         drawItemValue(canvas, ClockSetup::clockModeName(clockSetup.clockOutputMode()));
         break;
@@ -50,6 +53,7 @@ void ClockSetupPage::draw(Canvas &canvas) {
     }
 }
 
+// TODO move those
 int adjusted(int value, int offset, int min, int max) {
     return std::max(min, std::min(max, value + offset));
 }
@@ -74,6 +78,9 @@ void ClockSetupPage::encoder(EncoderEvent &event) {
         break;
     case ClockOutputPPQN:
         clockSetup.setClockOutputPPQN(adjusted(clockSetup.clockOutputPPQN(), event.value(), 1, 128));
+        break;
+    case ClockOutputPulse:
+        clockSetup.setClockOutputPulse(adjusted(clockSetup.clockOutputPulse(), event.value(), 1, 5));
         break;
     case ClockOutputMode:
         clockSetup.setClockOutputMode(adjustedEnum(clockSetup.clockOutputMode(), event.value()));

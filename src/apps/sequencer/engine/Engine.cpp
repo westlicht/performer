@@ -121,4 +121,14 @@ void Engine::setupClockOutputs() {
         // TODO we should send a single byte with priority
         _midi.send(MIDIMessage(msg));
     });
+
+    _clock.outputClock(
+        [this] (bool value) {
+            _dio.clockOutput.set(value);
+        },
+        [this] (bool value) {
+            _dio.resetOutput.set(value);
+        }
+    );
+
 }

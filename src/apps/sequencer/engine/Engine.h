@@ -39,6 +39,8 @@ public:
 
     float bpm() { return _clock.bpm(); }
 
+    Clock::Mode clockMode() { return _clock.activeMode(); }
+
     uint32_t tick() const { return _tick; }
 
     const Clock &clock() const { return _clock; }

@@ -24,7 +24,7 @@ public:
 protected:
     void drawItemName(Canvas &canvas, const char *name);
     void drawItemValue(Canvas &canvas, const char *value);
-    void drawItemValue(Canvas &canvas, int value);
+    void drawItemValue(Canvas &canvas, int value, const char *unit = nullptr);
     void drawItemValue(Canvas &canvas, bool value);
 
     Options &_options;

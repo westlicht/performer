@@ -9,6 +9,7 @@ public:
         ClockInputPPQN,
         ClockInputMode,
         ClockOutputPPQN,
+        ClockOutputPulse,
         ClockOutputMode,
         MidiRx,
         MidiTx,
@@ -23,6 +24,7 @@ public:
         case ClockInputPPQN:    return "Input PPQN";
         case ClockInputMode:    return "Input Mode";
         case ClockOutputPPQN:   return "Output PPQN";
+        case ClockOutputPulse:  return "Output Pulse";
         case ClockOutputMode:   return "Output Mode";
         case MidiRx:            return "MIDI RX";
         case MidiTx:            return "MIDI TX";

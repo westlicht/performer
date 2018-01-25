@@ -48,6 +48,9 @@ public:
     uint8_t clockOutputPPQN() const { return _clockOutputPPQN; }
     void setClockOutputPPQN(uint8_t clockOutputPPQN) { _clockOutputPPQN = clockOutputPPQN; }
 
+    uint8_t clockOutputPulse() const { return _clockOutputPulse; }
+    void setClockOutputPulse(uint8_t clockOutputPulse) { _clockOutputPulse = clockOutputPulse; }
+
     ClockMode clockOutputMode() const { return _clockOutputMode; }
     void setClockOutputMode(ClockMode mode) { _clockOutputMode = mode; }
 
@@ -68,6 +71,7 @@ private:
     uint8_t _clockInputPPQN = 16;
     ClockMode _clockInputMode = ClockMode::Reset;
     uint8_t _clockOutputPPQN = 16;
+    uint8_t _clockOutputPulse = 1;
     ClockMode _clockOutputMode = ClockMode::Reset;
     bool _midiRx = true;
     bool _midiTx = true;
