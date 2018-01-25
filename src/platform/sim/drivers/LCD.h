@@ -14,7 +14,7 @@ public:
     {
         sim::Vector2i resolution(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT);
         _display = _simulator.window().createWidget<sim::Display>(
-            sim::Vector2i(70, 10),
+            sim::Vector2i(64 + 16, 8),
             resolution * 2 + sim::Vector2i(2, 2),
             resolution
         );
