@@ -9,7 +9,7 @@ env:
     # the emscripten-libs-asmjs package. This speeds up the build significantly.
     - EM_USE_GLOBAL_CACHE=1
 before_install:
- - sudo apt-get install libasound2-dev libpng-dev
+ - sudo apt-get install libasound2-dev
 jobs:
   include:
     - stage: Hardware Platform (STM32)
@@ -23,7 +23,7 @@ jobs:
       - (cd SDL2-2.0.7 && ./configure && make && sudo make install)
       - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.2.tar.gz
       - tar -xf SDL2_image-2.0.2.tar.gz
-      - (cd SDL2_image-2.0.2 && ./configure && make && sudo make install)
+      - (cd SDL2_image-2.0.2 && ./configure --disable-png && make && sudo make install)
       - wget https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-2.0.14.tar.gz
       - tar -xf SDL2_ttf-2.0.14.tar.gz
       - (cd SDL2_ttf-2.0.14 && ./configure && make && sudo make install)
