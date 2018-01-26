@@ -2,10 +2,11 @@
 # SDL2
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-    set(SDL_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s WASM=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
+    set(SDL_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_SDL_TTF=2 -s WASM=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
 else()
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)
+    find_package(SDL2_ttf REQUIRED)
     set(SDL_FLAGS "")
 endif()
 
@@ -51,6 +52,7 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Audio.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/MIDI.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Simulator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/Text.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/instruments/DrumSampler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/instruments/Synth.cpp
@@ -62,6 +64,7 @@ set(platform_include_directories
     ${SDL2_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIR}/..
     ${SDL2_IMAGE_INCLUDE_DIRS}
+    ${SDL2_TTF_INCLUDE_DIRS}
 
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/sdlpp
@@ -74,6 +77,7 @@ set(platform_include_directories
 set(platform_libraries
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARIES}
+    ${SDL2_TTF_LIBRARIES}
     rtmidi
     PARENT_SCOPE
 )

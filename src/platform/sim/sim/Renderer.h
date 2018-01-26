@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "Renderer.h"
+#include "Text.h"
 
 namespace sim {
 
@@ -29,6 +30,11 @@ public:
 
     void drawLine(const Vector2i &p1, const Vector2i &p2) {
         _renderer.drawLine(p1.x(), p1.y(), p2.x(), p2.y());
+    }
+
+    void drawText(const Vector2i &pos, Text &text) {
+        SDL_Rect rect = { pos.x(), pos.y(), text.size().x(), text.size().y() };
+        _renderer.copy(&text.texture(), nullptr, &rect);
     }
 
     void present() { _renderer.present(); }

@@ -77,6 +77,15 @@ public:
         );
     }
 
+    SDL_Color sdl() const {
+        return {
+            uint8_t(std::min(255, int(std::floor(x() * 255)))),
+            uint8_t(std::min(255, int(std::floor(y() * 255)))),
+            uint8_t(std::min(255, int(std::floor(z() * 255)))),
+            uint8_t(std::min(255, int(std::floor(w() * 255))))
+        };
+    }
+
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

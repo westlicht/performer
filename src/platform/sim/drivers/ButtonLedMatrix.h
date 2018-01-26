@@ -5,6 +5,7 @@
 #include "sim/Simulator.h"
 #include "sim/widgets/Button.h"
 #include "sim/widgets/Led.h"
+#include "sim/widgets/Label.h"
 
 #include <vector>
 #include <deque>
@@ -66,5 +67,6 @@ private:
     sim::Simulator &_simulator;
     std::vector<sim::Button::Ptr> _buttons;
     std::vector<sim::Led::Ptr> _leds;
+    std::vector<sim::Label::Ptr> _labels;
     std::deque<Event> _events;
 };

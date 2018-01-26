@@ -7,7 +7,9 @@ struct ColSettings {
         int stride = 8,
         const sim::Vector2i &buttonSize = sim::Vector2i(20, 20),
         const sim::Vector2i &ledSize = sim::Vector2i(10, 10),
-        const sim::Vector2i &ledOffset = sim::Vector2i(0, -20)
+        const sim::Vector2i &ledOffset = sim::Vector2i(0, -20),
+        const sim::Vector2i &labelSize = sim::Vector2i(50, 10),
+        const sim::Vector2i &labelOffset = sim::Vector2i(0, 22)
     ) {
         this->origin = origin;
         this->spacing = spacing;
@@ -15,6 +17,8 @@ struct ColSettings {
         this->buttonSize = buttonSize;
         this->ledSize = ledSize;
         this->ledOffset = ledOffset;
+        this->labelSize = labelSize;
+        this->labelOffset = labelOffset;
     }
     sim::Vector2i origin;
     sim::Vector2i spacing;
@@ -22,14 +26,16 @@ struct ColSettings {
     sim::Vector2i buttonSize;
     sim::Vector2i ledSize;
     sim::Vector2i ledOffset;
+    sim::Vector2i labelSize;
+    sim::Vector2i labelOffset;
 };
 
 static ColSettings colSettings[5] = {
 //    origin                                    spacing                 stride  buttonSize
-    { sim::Vector2i(64 + 16 + 32, 350)                                                                  },
-    { sim::Vector2i(64 + 16 + 32, 300)                                                                  },
-    { sim::Vector2i(64 + 16 + 32, 250)                                                                  },
-    { sim::Vector2i(64 + 16 + 512 + 64, 200),   sim::Vector2i(64, 50),  2                               },
+    { sim::Vector2i(64 + 16 + 32, 380)                                                                  },
+    { sim::Vector2i(64 + 16 + 32, 320)                                                                  },
+    { sim::Vector2i(64 + 16 + 32, 260)                                                                  },
+    { sim::Vector2i(64 + 16 + 512 + 64, 200),   sim::Vector2i(64, 60),  2                               },
     { sim::Vector2i(64 + 16 + 51, 200),         sim::Vector2i(102, 0),  8,      sim::Vector2i(40, 20)   },
 };
 
@@ -44,6 +50,14 @@ ButtonLedMatrix::ButtonLedMatrix() :
         SDLK_F1, SDLK_F2, SDLK_F3, SDLK_F4, SDLK_F5
     });
 
+    const std::vector<std::string> labels({
+        "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16",
+        "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8",
+        "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8",
+        "PLAY", "TEMPO", "MUTE", "-", "-", "-", "-", "-",
+        "", "", "", "", ""
+    });
+
     // button & leds
     for (int col = 0; col < ColsButton; ++col) {
         const auto &settings = colSettings[col];
@@ -52,22 +66,35 @@ ButtonLedMatrix::ButtonLedMatrix() :
                 continue;
             }
 
+            int index = col * Rows + row;
+
             sim::Vector2i origin(
                 settings.origin.x() + (row % settings.stride) * settings.spacing.x(),
                 settings.origin.y() + (row / settings.stride) * settings.spacing.y()
             );
 
+            // button
             auto button = _simulator.window().createWidget<sim::Button>(
                 origin - settings.buttonSize / 2,
                 settings.buttonSize,
-                keys[col * Rows + row]
+                keys[index]
             );
-            int index = col * Rows + row;
             button->setCallback([this, index] (bool pressed) {
                 _events.emplace_back(pressed ? Event::KeyDown : Event::KeyUp, index);
             });
             _buttons.emplace_back(button);
 
+            // button label
+            auto buttonLabel = _simulator.window().createWidget<sim::Label>(
+                origin - settings.buttonSize / 2,
+                settings.buttonSize,
+                SDL_GetKeyName(keys[index]),
+                sim::Font("inconsolata", 12),
+                sim::Color(0.5f, 1.f)
+            );
+            _labels.emplace_back(buttonLabel);
+
+            // led
             if (col < ColsLed) {
                 auto led = _simulator.window().createWidget<sim::Led>(
                     origin + settings.ledOffset - settings.ledSize / 2,
@@ -75,6 +102,15 @@ ButtonLedMatrix::ButtonLedMatrix() :
                 );
                 _leds.emplace_back(led);
             }
+
+            auto label = _simulator.window().createWidget<sim::Label>(
+                origin + settings.labelOffset - settings.labelSize / 2,
+                settings.labelSize,
+                labels[index],
+                sim::Font("inconsolata", 16),
+                sim::Color(1.f, 1.f)
+            );
+            _labels.emplace_back(label);
         }
     }
 }

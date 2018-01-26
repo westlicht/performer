@@ -16,7 +16,7 @@ const std::vector<std::string> Simulator::_midiPortName = {
 };
 
 Simulator::Simulator() :
-    _window("Sequencer", Vector2i(800, 400))
+    _window("Sequencer", Vector2i(800, 450))
 {
     _timerFrequency = SDL_GetPerformanceFrequency();
     _timerStart = SDL_GetPerformanceCounter();
