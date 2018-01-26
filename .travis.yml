@@ -17,13 +17,16 @@ jobs:
       - make setup_stm32 && (cd build/stm32/debug && make) && (cd build/stm32/release && make)
     - stage: Simulation Platform (Linux)
       script:
-      # Simulation target requires recent versions of SDL2 and SDL2_image not available as packages
-      - wget https://www.libsdl.org/release/SDL2-2.0.5.tar.gz
-      - tar -xf SDL2-2.0.5.tar.gz
-      - (cd SDL2-2.0.5 && ./configure && make && sudo make install)
-      - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.1.tar.gz
-      - tar -xf SDL2_image-2.0.1.tar.gz
-      - (cd SDL2_image-2.0.1 && ./configure && make && sudo make install)
+      # Simulation target requires recent versions of SDL2, SDL2_image and SDL2_ttf not available as packages
+      - wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz
+      - tar -xf SDL2-2.0.7.tar.gz
+      - (cd SDL2-2.0.7 && ./configure && make && sudo make install)
+      - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.2.tar.gz
+      - tar -xf SDL2_image-2.0.2.tar.gz
+      - (cd SDL2_image-2.0.2 && ./configure && make && sudo make install)
+      - wget https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-2.0.14.tar.gz
+      - tar -xf SDL2_ttf-2.0.14.tar.gz
+      - (cd SDL2_ttf-2.0.14 && ./configure && make && sudo make install)
       - make setup_sim && (cd build/sim/debug && make) && (cd build/sim/release && make)
     - stage: Simulation Platform (WebAssembly)
       script:
