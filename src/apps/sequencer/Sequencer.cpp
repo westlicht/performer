@@ -56,10 +56,6 @@ static os::PeriodicTask<2048> usbhTask("usbh", 1, os::time::ms(1), [] () {
     usbh.process();
 });
 
-static os::PeriodicTask<1024> profilerTask("profiler", 0, os::time::ms(1000), [] () {
-    profiler.dump();
-});
-
 static os::PeriodicTask<4096> engineTask("engine", 4, os::time::ms(1), [] () {
     engine.update();
 });
@@ -68,11 +64,16 @@ static os::PeriodicTask<4096> uiTask("ui", 3, os::time::ms(1), [] () {
     ui.update();
 });
 
+#if CONFIG_ENABLE_PROFILER || CONFIG_ENABLE_TASK_PROFILER
+static os::PeriodicTask<2048> profilerTask("profiler", 0, os::time::ms(5000), [&] () {
+#if CONFIG_ENABLE_PROFILER
+    profiler.dump();
+#endif // CONFIG_ENABLE_PROFILE
 #if CONFIG_ENABLE_TASK_PROFILER
-static os::PeriodicTask<2048> taskProfilerTask("taskProfiler", 0, os::time::ms(5000), [&] () {
     os::TaskProfiler::dump();
-});
 #endif // CONFIG_ENABLE_TASK_PROFILER
+});
+#endif // CONFIG_ENABLE_PROFILER || CONFIG_ENABLE_TASK_PROFILER
 
 int main(void) {
     System::init();

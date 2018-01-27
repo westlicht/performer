@@ -28,6 +28,7 @@ void TaskProfiler::dump() {
     totalRunTime = std::max(1ul, totalRunTime / 100);
     totalRelativeRunTime = std::max(1ul, totalRelativeRunTime / 100);
 
+    DBG("Task Profiler:");
     DBG("---------------------------------------------");
     DBG("id name            bp cp stck free ttot trel");
 

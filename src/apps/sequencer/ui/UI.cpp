@@ -7,9 +7,6 @@
 
 #include "model/Model.h"
 
-PROFILER_INTERVAL(UIDraw, "UI.draw")
-PROFILER_INTERVAL(UIInterval, "UI.interval")
-
 UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &encoder) :
     _model(model),
     _engine(engine),
@@ -41,14 +38,8 @@ void UI::update() {
 
     static int counter = 0;
     if (counter % 20 == 0) {
-        PROFILER_INTERVAL_END(UIInterval);
-        PROFILER_INTERVAL_BEGIN(UIInterval);
-        PROFILER_INTERVAL_BEGIN(UIDraw);
-
         _pageManager.draw(_canvas);
         _lcd.draw(_frameBuffer.data());
-
-        PROFILER_INTERVAL_END(UIDraw);
     }
     ++counter;
 }
