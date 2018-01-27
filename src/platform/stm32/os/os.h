@@ -19,18 +19,56 @@ namespace os {
 
     typedef TaskHandle_t TaskHandle;
 
+    class TaskProfiler {
+    public:
+        struct TaskInfo {
+            struct TaskInfo *next = nullptr;
+            TaskHandle handle;
+            uint16_t stackSize;
+            uint32_t lastRunTimeCounter;
+            uint32_t runTime;
+            uint32_t relativeRunTime;
+        };
+
+        static void registerTask(TaskInfo *taskInfo) {
+            TaskInfo **tail = &_taskInfos;
+            while (*tail != nullptr) {
+                tail = &(*tail)->next;
+            }
+            *tail = taskInfo;
+        }
+
+        static void dump();
+
+    private:
+        template<typename Func>
+        static void enumerate(Func func) {
+            TaskInfo *info = _taskInfos;
+            while (info) {
+                func(*info);
+                info = info->next;
+            }
+            _idleTaskInfo.handle = xTaskGetIdleTaskHandle();
+            func(_idleTaskInfo);
+        }
+
+        static TaskInfo *_taskInfos;
+        static TaskInfo _idleTaskInfo;
+    };
+
     template<size_t StackSize>
     class Task {
     public:
         Task(const char *name, uint8_t priority, std::function<void(void)> func) :
             _func(func)
         {
-#if CONFIG_ENABLE_STACK_USAGE
-            for (size_t i = 0; i < StackSize / sizeof(StackType_t); ++i) {
-                _stack[i] = StackType_t(0xdeadbeef);
-            }
-#endif // CONFIG_ENABLE_STACK_USAGE
             _handle = xTaskCreateStatic(&start, name, StackSize / sizeof(StackType_t), this, priority, _stack, &_task);
+
+#if CONFIG_ENABLE_TASK_PROFILER
+            _taskInfo.handle = _handle;
+            _taskInfo.stackSize = StackSize;
+            TaskProfiler::registerTask(&_taskInfo);
+#endif // CONFIG_ENABLE_TASK_PROFILER
         }
 
         TaskHandle handle() const { return _handle; }
@@ -41,17 +79,6 @@ namespace os {
             return StackSize;
         }
 
-#if CONFIG_ENABLE_STACK_USAGE
-        size_t stackUsage() const {
-            for (size_t i = 0; i < StackSize / sizeof(StackType_t); ++i) {
-                if (_stack[i] != StackType_t(0xdeadbeef)) {
-                    return StackSize - i * sizeof(StackType_t);
-                }
-            }
-            return 0;
-        }
-#endif // CONFIG_ENABLE_STACK_USAGE
-
     private:
         static void start(void *task) {
             reinterpret_cast<Task<StackSize> *>(task)->_func();
@@ -61,6 +88,11 @@ namespace os {
         TaskHandle_t _handle;
         StaticTask_t _task;
         StackType_t _stack[StackSize / sizeof(StackType_t)];
+
+#if CONFIG_ENABLE_TASK_PROFILER
+        TaskProfiler::TaskInfo _taskInfo;
+#endif // CONFIG_ENABLE_TASK_PROFILER
+
     };
 
     inline void suspend(TaskHandle handle) { vTaskSuspend(handle); }

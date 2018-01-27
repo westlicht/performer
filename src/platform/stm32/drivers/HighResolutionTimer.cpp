@@ -34,3 +34,11 @@ void tim2_isr() {
         HighResolutionTimer::tick();
     }
 }
+
+extern "C" {
+
+uint32_t highResolutionTimerTicks() {
+    return HighResolutionTimer::us();
+}
+
+}

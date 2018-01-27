@@ -10,7 +10,7 @@
 // Debugging
 #define CONFIG_ENABLE_DEBUG             1
 #define CONFIG_ENABLE_PROFILER          0
-#define CONFIG_ENABLE_STACK_USAGE       1
+#define CONFIG_ENABLE_TASK_PROFILER     1
 
 // USB host
 #define CONFIG_ENABLE_USBH_DRIVER_FS    1

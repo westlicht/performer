@@ -68,24 +68,11 @@ static os::PeriodicTask<4096> uiTask("ui", 3, os::time::ms(1), [] () {
     ui.update();
 });
 
-#if CONFIG_ENABLE_STACK_USAGE
-template<typename Task>
-static void dumpStackUsage(const Task &task) {
-    DBG("%s: %d/%d bytes", task.name(), task.stackUsage(), task.stackSize());
-}
-
-static os::PeriodicTask<1024> stackCheckTask("stack", 0, os::time::ms(5000), [&] () {
-    DBG("----------------------------------------");
-    DBG("Stack Usage:");
-    dumpStackUsage(driverTask);
-    dumpStackUsage(usbhTask);
-    dumpStackUsage(profilerTask);
-    dumpStackUsage(engineTask);
-    dumpStackUsage(uiTask);
-    dumpStackUsage(stackCheckTask);
-    DBG("----------------------------------------");
+#if CONFIG_ENABLE_TASK_PROFILER
+static os::PeriodicTask<2048> taskProfilerTask("taskProfiler", 0, os::time::ms(5000), [&] () {
+    os::TaskProfiler::dump();
 });
-#endif // CONFIG_ENABLE_STACK_USAGE
+#endif // CONFIG_ENABLE_TASK_PROFILER
 
 int main(void) {
     System::init();

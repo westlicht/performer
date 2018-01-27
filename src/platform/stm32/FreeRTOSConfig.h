@@ -45,8 +45,8 @@ void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
 #define configUSE_MALLOC_FAILED_HOOK            0
 
 /* Run time and task stats gathering related definitions. */
-#define configGENERATE_RUN_TIME_STATS           0
-#define configUSE_TRACE_FACILITY                0
+#define configGENERATE_RUN_TIME_STATS           CONFIG_ENABLE_TASK_PROFILER
+#define configUSE_TRACE_FACILITY                CONFIG_ENABLE_TASK_PROFILER
 #define configUSE_STATS_FORMATTING_FUNCTIONS    0
 
 /* Co-routine related definitions. */
@@ -81,7 +81,7 @@ void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
 #define INCLUDE_xTaskGetSchedulerState          1
 #define INCLUDE_xTaskGetCurrentTaskHandle       1
 #define INCLUDE_uxTaskGetStackHighWaterMark     0
-#define INCLUDE_xTaskGetIdleTaskHandle          0
+#define INCLUDE_xTaskGetIdleTaskHandle          CONFIG_ENABLE_TASK_PROFILER
 #define INCLUDE_xTimerGetTimerDaemonTaskHandle  0
 #define INCLUDE_pcTaskGetTaskName               0
 #define INCLUDE_eTaskGetState                   0
@@ -95,5 +95,12 @@ void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
 #define vPortSVCHandler sv_call_handler
 #define xPortPendSVHandler pend_sv_handler
 #define xPortSysTickHandler sys_tick_handler
+
+
+#if configGENERATE_RUN_TIME_STATS
+extern uint32_t highResolutionTimerTicks();
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() ( {} )
+#define portGET_RUN_TIME_COUNTER_VALUE() highResolutionTimerTicks()
+#endif // configGENERATE_RUN_TIME_STATS
 
 #endif /* FREERTOS_CONFIG_H */
