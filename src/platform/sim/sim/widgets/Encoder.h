@@ -30,6 +30,10 @@ public:
         renderer.setColor(Color(_hovered ? 0.75f : 0.5f, 1.f));
         renderer.drawRect(_pos, _size);
 
+        if (_pressed) {
+            renderer.setColor(Color(1.f, 1.f));
+        }
+
         Vector2f center = toFloat(_pos) + 0.5f * toFloat(_size);
         float radius = 0.5f * std::max(_size.x(), _size.y()) - 2.f;
 

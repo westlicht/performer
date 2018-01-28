@@ -5,7 +5,8 @@ Encoder::Encoder() :
 {
     _encoder = _simulator.window().createWidget<sim::Encoder>(
         sim::Vector2i(8, 8 + 32),
-        sim::Vector2i(64, 64)
+        sim::Vector2i(64, 64),
+        SDLK_SPACE
     );
     _encoder->setButtonCallback([this] (bool pressed) {
         _events.emplace_back(pressed ? Event::Down : Event::Up);
