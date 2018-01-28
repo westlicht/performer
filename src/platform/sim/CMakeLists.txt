@@ -3,6 +3,7 @@
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
     set(SDL_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_SDL_TTF=2 -s WASM=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
+    set(CMAKE_EXECUTABLE_SUFFIX ".html" PARENT_SCOPE)
 else()
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)
@@ -96,6 +97,6 @@ set(platform_defines
 
 function(platform_postprocess_executable executable)
     if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-        set_target_properties(${executable} PROPERTIES LINK_FLAGS "-o ${executable}.html")
+        # nothing for now
     endif()
 endfunction(platform_postprocess_executable)
