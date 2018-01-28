@@ -36,7 +36,7 @@ void TaskProfiler::dump() {
         TaskStatus_t taskStatus;
         vTaskGetInfo(info.handle, &taskStatus, pdTRUE, eRunning);
 
-        DBG("%2d %-15s %2d %2d %4d %4d %3d%% %3d%%",
+        DBG("%2ld %-15s %2ld %2ld %4zd %4hd %3ld%% %3ld%%",
             taskStatus.xTaskNumber,
             taskStatus.pcTaskName,
             taskStatus.uxBasePriority,

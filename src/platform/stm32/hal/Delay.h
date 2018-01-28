@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
 
 #include "SystemConfig.h"
 
@@ -40,3 +42,5 @@ static void delay_us(uint32_t us) {
 
 } // namespace Delay
 } // namespace hal
+
+#pragma GCC diagnostic pop

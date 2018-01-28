@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
 
 #include "test/UnitTestRunner.h"
 #include "Timer.h"
@@ -153,3 +155,5 @@ namespace test {
 
 #define CASE(_name_)                \
     if (test::isCaseActive(_name_, UNIT_TEST_LOCATION))
+
+#pragma GCC diagnostic pop
