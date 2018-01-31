@@ -22,8 +22,8 @@ public:
         _sequences[4].setGates({ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 });
         _sequences[5].setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0 });
 
-        _sequences[7].setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,1,1,0 });
-        _sequences[7].setNotes({ 0,0,12,0,0,0,0,0,0,0,12,0,0,9,11,0 });
+        _sequences[7].setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
+        _sequences[7].setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
     }
 
     const SequenceArray &sequences() const { return _sequences; }
