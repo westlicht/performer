@@ -6,9 +6,16 @@ template<typename T, size_t History>
 class MovingAverage {
 public:
     MovingAverage() {
+        reset();
+    }
+
+    void reset() {
         for (size_t i = 0; i < History; ++i) {
             _history[i] = T(0);
         }
+        _sum = T(0);
+        _index = 0;
+        _count = 0;
     }
 
     void push(T sample) {

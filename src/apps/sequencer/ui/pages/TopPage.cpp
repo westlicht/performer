@@ -26,9 +26,14 @@ void TopPage::keyDown(KeyEvent &event) {
     }
 
     if (key.is(Key::Start)) {
-        if (key.shiftModifier()) {
+        if (_keyState[Key::BPM]) {
+            // tap tempo
+            _engine.tapTempoTap();
+        } else if (key.shiftModifier()) {
+            // restart
             _engine.start();
         } else {
+            // start/stop
             if (!_engine.running()) {
                 _engine.resume();
             } else {
@@ -40,8 +45,11 @@ void TopPage::keyDown(KeyEvent &event) {
 
     if (key.is(Key::BPM)) {
         if (key.shiftModifier()) {
+            // clock setup page
             _manager.pages().clockSetup.show();
         } else {
+            // bpm value
+            _engine.tapTempoReset();
             _manager.pages().value.show({
                 Key::None,
                 [this] (StringBuilder &string) {

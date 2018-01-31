@@ -99,6 +99,16 @@ void Engine::resume() {
     _clock.masterResume();
 }
 
+void Engine::tapTempoReset() {
+    _tapTempo.reset();
+}
+
+void Engine::tapTempoTap() {
+    if (_tapTempo.tap()) {
+        _model.project().setBpm(_tapTempo.bpm());
+    }
+}
+
 void Engine::showMessage(const char *text, uint32_t duration) {
     if (_messageHandler) {
         _messageHandler(text, duration);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clock.h"
+#include "TapTempo.h"
 #include "Track.h"
 #include "Controller.h"
 #include "CVInput.h"
@@ -46,6 +47,9 @@ public:
     // tempo
     float bpm() { return _clock.bpm(); }
 
+    // tap tempo
+    void tapTempoReset();
+    void tapTempoTap();
 
     // time base
     uint32_t tick() const { return _tick; }
@@ -88,6 +92,8 @@ private:
     CVOutput _cvOutput;
 
     Clock _clock;
+    TapTempo _tapTempo;
+
     TrackArray _tracks;
 
     ControllerManager _controllerManager;
