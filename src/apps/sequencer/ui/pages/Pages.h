@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.h"
+
 #include "TopPage.h"
 #include "MainPage.h"
 #include "TrackPage.h"
@@ -7,6 +9,10 @@
 #include "MutePage.h"
 #include "ValuePage.h"
 #include "ClockSetupPage.h"
+
+#ifdef CONFIG_ENABLE_ASTEROIDS
+#include "AsteroidsPage.h"
+#endif
 
 struct Pages {
     TopPage top;
@@ -17,6 +23,10 @@ struct Pages {
     ValuePage value;
     ClockSetupPage clockSetup;
 
+#ifdef CONFIG_ENABLE_ASTEROIDS
+    AsteroidsPage asteroids;
+#endif
+
     Pages(PageManager &manager, PageContext &context) :
         top(manager, context),
         main(manager, context),
@@ -25,6 +35,9 @@ struct Pages {
         mute(manager, context),
         value(manager, context),
         clockSetup(manager, context)
+#ifdef CONFIG_ENABLE_ASTEROIDS
+        ,asteroids(manager, context)
+#endif
     {}
 };
 

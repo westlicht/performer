@@ -18,3 +18,6 @@
 #define CONFIG_PATTERN_COUNT            64
 #define CONFIG_TRACK_COUNT              8
 #define CONFIG_STEP_COUNT               16
+
+
+// #define CONFIG_ENABLE_ASTEROIDS

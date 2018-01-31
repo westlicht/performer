@@ -1,3 +1,5 @@
+#include "Config.h"
+
 #include "UI.h"
 #include "Key.h"
 
@@ -19,14 +21,16 @@ UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &en
     _pageContext({ _messageManager, _keyState, _model, _engine }),
     _pages(_pageManager, _pageContext)
 {
-    _pageManager.push(&_pages.top);
-    _pageManager.push(&_pages.track);
 }
 
 void UI::init() {
-    _canvas.setColor(0xf);
-    _canvas.drawText(10, 30, "Hello World!");
-    _lcd.draw(_frameBuffer.data());
+    _pageManager.push(&_pages.top);
+#ifdef CONFIG_ENABLE_ASTEROIDS
+    _pageManager.push(&_pages.asteroids);
+#else
+    _pageManager.push(&_pages.track);
+#endif
+
     _engine.setMessageHandler([this] (const char *text, uint32_t duration) {
         _messageManager.showMessage(text, duration);
     });

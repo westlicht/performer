@@ -1,5 +1,7 @@
 
 set(sources
+    # asteroids
+    asteroids/Asteroids.cpp
     # engine
     engine/Engine.cpp
     engine/Clock.cpp
@@ -16,6 +18,7 @@ set(sources
     ui/PageManager.cpp
     ui/UI.cpp
     # ui/pages
+    ui/pages/AsteroidsPage.cpp
     ui/pages/ClockSetupPage.cpp
     ui/pages/MainPage.cpp
     ui/pages/MenuPage.cpp
