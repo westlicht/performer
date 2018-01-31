@@ -16,7 +16,7 @@ UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &en
     _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
     _canvas(_frameBuffer),
     _pageManager(_pages),
-    _pageContext({ _keyState, _model, _engine }),
+    _pageContext({ _messageManager, _keyState, _model, _engine }),
     _pages(_pageManager, _pageContext)
 {
     _pageManager.push(&_pages.top);
@@ -27,6 +27,9 @@ void UI::init() {
     _canvas.setColor(0xf);
     _canvas.drawText(10, 30, "Hello World!");
     _lcd.draw(_frameBuffer.data());
+    _engine.setMessageHandler([this] (const char *text, uint32_t duration) {
+        _messageManager.showMessage(text, duration);
+    });
 }
 
 void UI::update() {
@@ -39,6 +42,8 @@ void UI::update() {
     static int counter = 0;
     if (counter % 20 == 0) {
         _pageManager.draw(_canvas);
+        _messageManager.update();
+        _messageManager.draw(_canvas);
         _lcd.draw(_frameBuffer.data());
     }
     ++counter;

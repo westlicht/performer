@@ -8,6 +8,7 @@ set(sources
     engine/controllers/LaunchpadController.cpp
     # ui
     ui/LedPainter.cpp
+    ui/MessageManager.cpp
     ui/Page.cpp
     ui/PageManager.cpp
     ui/UI.cpp

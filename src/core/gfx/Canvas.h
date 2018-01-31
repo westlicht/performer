@@ -53,8 +53,10 @@ public:
     void drawBitmap4bit(int x, int y, int w, int h, const uint8_t *bitmap);
 
     void drawText(int x, int y, const char *str);
+    void drawTextCentered(int x, int y, int w, int h, const char *str);
 
     int textWidth(const char *str);
+    int textHeight(const char *str);
 
 
 private:

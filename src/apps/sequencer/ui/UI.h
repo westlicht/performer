@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Config.h"
+#include "MessageManager.h"
 #include "Page.h"
 #include "PageManager.h"
 #include "Key.h"
@@ -45,6 +46,8 @@ private:
 
     KeyState _keyState;
     Leds _leds;
+
+    MessageManager _messageManager;
 
     PageManager _pageManager;
     PageContext _pageContext;

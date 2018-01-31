@@ -81,6 +81,16 @@ void Engine::resume() {
     _clock.masterResume();
 }
 
+void Engine::showMessage(const char *text, uint32_t duration) {
+    if (_messageHandler) {
+        _messageHandler(text, duration);
+    }
+}
+
+void Engine::setMessageHandler(MessageHandler handler) {
+    _messageHandler = handler;
+}
+
 void Engine::setupClockSources() {
     // Configure slaves
     _clock.slaveConfigure(ClockSourceExternal, 16, Clock::SlaveFreeRunning);

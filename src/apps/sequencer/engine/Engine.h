@@ -20,6 +20,8 @@ class Engine {
 public:
     typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
 
+    typedef std::function<void(const char *text, uint32_t duration)> MessageHandler;
+
     enum ClockSource {
         ClockSourceExternal,
         ClockSourceMIDI,
@@ -51,6 +53,10 @@ public:
 
     const Track &track(int index) const { return _tracks[index]; }
           Track &track(int index)       { return _tracks[index]; }
+
+    // message handling
+    void showMessage(const char *text, uint32_t duration = 1000);
+    void setMessageHandler(MessageHandler handler);
 
 private:
     void setupClockSources();

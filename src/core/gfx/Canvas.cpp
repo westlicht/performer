@@ -109,6 +109,14 @@ void Canvas::drawText(int x, int y, const char *str) {
     }
 }
 
+void Canvas::drawTextCentered(int x, int y, int w, int h, const char *str) {
+    // const auto &font = bitmapFont(_font);
+    x += (w - textWidth(str)) / 2;
+    y += (h - textHeight(str)) / 2;
+    // y += font.yAdvance - 3;
+    drawText(x, y, str);
+}
+
 int Canvas::textWidth(const char *str) {
     const auto &font = bitmapFont(_font);
     int width = 0;
@@ -124,3 +132,18 @@ int Canvas::textWidth(const char *str) {
 
     return width;
 }
+
+int Canvas::textHeight(const char *str) {
+    const auto &font = bitmapFont(_font);
+    int lines = 1;
+
+    while (*str != '\0') {
+        auto c = *str++;
+        if (c == '\n') {
+            ++lines;
+        }
+    }
+
+    return lines * font.yAdvance;
+}
+

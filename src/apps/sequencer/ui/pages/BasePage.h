@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ui/MessageManager.h"
 #include "ui/Page.h"
 #include "ui/PageManager.h"
 #include "ui/Key.h"
@@ -8,7 +9,10 @@
 
 #include "engine/Engine.h"
 
+#include <cstdint>
+
 struct PageContext {
+    MessageManager &messageManager;
     KeyState &keyState;
     Model &model;
     Engine &engine;
@@ -26,6 +30,10 @@ public:
     {}
 
 protected:
+    void showMessage(const char *text, uint32_t duration = 1000) {
+        _context.messageManager.showMessage(text, duration);
+    }
+
     PageContext &_context;
     KeyState &_keyState;
     Model &_model;
