@@ -31,9 +31,9 @@ void Clock::setMode(Mode mode) {
 
 Clock::Mode Clock::activeMode() {
     switch (_state) {
-    case Idle:          return _mode;
     case MasterRunning: return ModeMaster;
     case SlaveRunning:  return ModeSlave;
+    default:            return _mode;
     }
 }
 

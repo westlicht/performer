@@ -51,7 +51,7 @@ void WindowPainter::drawClock(Canvas &canvas, Engine &engine) {
     canvas.setBlendMode(BlendMode::Sub);
     canvas.setColor(0xf);
     static const char *clockModeName[] = { "A", "M", "S" };
-    canvas.drawText(1, 8 - 2, clockModeName[engine.clockMode()]);
+    canvas.drawText(1, 8 - 2, clockModeName[engine.clock().activeMode()]);
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);

@@ -30,8 +30,9 @@ public:
         case MidiTx:            return "MIDI TX";
         case UsbRx:             return "USB RX";
         case UsbTx:             return "USB TX";
-        case Last: return nullptr;
+        case Last:              break;
         }
+        return nullptr;
     }
 
     ClockSetupPage(PageManager &manager, PageContext &context);

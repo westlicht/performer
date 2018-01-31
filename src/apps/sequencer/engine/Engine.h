@@ -43,10 +43,11 @@ public:
     void resume();
     bool running() const { return _running; }
 
+    // tempo
     float bpm() { return _clock.bpm(); }
 
-    Clock::Mode clockMode() { return _clock.activeMode(); }
 
+    // time base
     uint32_t tick() const { return _tick; }
 
     // gate overrides
