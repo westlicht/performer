@@ -4,7 +4,10 @@ set(sources
     engine/Engine.cpp
     engine/Clock.cpp
     engine/Controller.cpp
+    engine/CVInput.cpp
+    engine/CVOutput.cpp
     engine/Track.cpp
+    # engine/controllers
     engine/controllers/LaunchpadController.cpp
     # ui
     ui/LedPainter.cpp

@@ -137,6 +137,23 @@ namespace test {
         assert(a == b, location, msg, [&] () { UNIT_TEST_PRINTF("%f is not %f\n", a, b); });
     }
 
+    template<>
+    void expectEqual<const char *>(const char *a, const char *b, const Location &location, const char *msg) {
+        while (*a == *b && *a != '\0') {
+            ++a;
+            ++b;
+        }
+        assert(*b == '\0', location, msg, [&] () { UNIT_TEST_PRINTF("'%s' is not '%s'\n", a, b); });
+    }
+
+    static void expectEqual(char *a, const char *b, const Location &location, const char *msg = nullptr) {
+        expectEqual(const_cast<const char *>(a), b, location, msg);
+    }
+
+    static void expectEqual(const char *a, char *b, const Location &location, const char *msg = nullptr) {
+        expectEqual(a, const_cast<const char *>(b), location, msg);
+    }
+
 } // namespace test
 
 

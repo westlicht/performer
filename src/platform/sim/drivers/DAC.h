@@ -1,11 +1,16 @@
 #pragma once
 
+#include "SystemConfig.h"
+
 #include "sim/Simulator.h"
 
 #include <cstdint>
+#include <cstdlib>
 
 class DAC {
 public:
+    static constexpr size_t Channels = CONFIG_DAC_CHANNELS;
+
     typedef uint16_t Value;
 
     DAC() :
@@ -30,5 +35,5 @@ public:
 
 private:
     sim::Simulator &_simulator;
-    Value _values[8];
+    Value _values[Channels];
 };

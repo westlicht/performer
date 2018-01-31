@@ -173,7 +173,7 @@ public:
     }
 
 private:
-    static constexpr float BaseFrequency = 440.f / 8.f;
+    static constexpr float BaseFrequency = 440.f / 32.f;
 
     Oscillator _osc;
     ADSR _envVolume;

@@ -11,6 +11,7 @@
 #include <utility>
 
 #include <cstdint>
+#include <cstdlib>
 
 class ButtonLedMatrix {
 public:
@@ -31,9 +32,9 @@ public:
         int8_t _value;
     };
 
-    static const int Rows = CONFIG_BLM_ROWS;
-    static const int ColsButton = CONFIG_BLM_COLS_BUTTON;
-    static const int ColsLed = CONFIG_BLM_COLS_LED;
+    static constexpr size_t Rows = CONFIG_BLM_ROWS;
+    static constexpr size_t ColsButton = CONFIG_BLM_COLS_BUTTON;
+    static constexpr size_t ColsLed = CONFIG_BLM_COLS_LED;
 
     ButtonLedMatrix(ShiftRegister &shiftRegister);
 

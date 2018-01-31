@@ -14,11 +14,17 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &di
     _gateOutput(gateOutput),
     _midi(midi),
     _usbMidi(usbMidi),
+    _cvInput(adc),
+    _cvOutput(dac),
     _clock(clockTimer),
     _controllerManager(usbMidi)
-{}
+{
+    _cvOutputOverrideValues.fill(0.f);
+}
 
 void Engine::init() {
+    _cvInput.init();
+    _cvOutput.init();
     _clock.init();
 
     setupClockSources();
@@ -51,6 +57,8 @@ void Engine::update() {
     // update tempo
     _clock.setMasterBpm(_model.project().bpm());
 
+    _cvInput.update();
+
     uint32_t tick;
     while (_clock.checkTick(&tick)) {
         _tick = tick;
@@ -59,14 +67,24 @@ void Engine::update() {
             auto &track = _tracks[i];
             track.tick(tick);
             _gateOutput.setGate(i, track.gateOutput());
-            _dac.setValue(i, uint16_t(track.cv() * 8192));
+            _cvOutput.setChannel(i, track.cv());
         }
-        _dac.write();
     }
+
+    // overrides
+    if (_gateOutputOverride) {
+        _gateOutput.setGates(_gateOutputOverrideValue);
+    }
+    if (_cvOutputOverride) {
+        for (size_t i = 0; i < _cvOutputOverrideValues.size(); ++i) {
+            _cvOutput.setChannel(i, _cvOutputOverrideValues[i]);
+        }
+    }
+
+    _cvOutput.update();
 
     // update midi controller
     // _controllerManager.update();
-
 }
 
 void Engine::start() {

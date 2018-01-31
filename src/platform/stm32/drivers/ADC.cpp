@@ -28,7 +28,8 @@ void ADC::init() {
     adc_set_left_aligned(ADC1);
 
     uint8_t channels[] = { 0, 1, 2, 3 };
-    adc_set_regular_sequence(ADC1, 4, channels);
+    static_assert(sizeof(channels) == Channels, "invalid channel count");
+    adc_set_regular_sequence(ADC1, Channels, channels);
     adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_480CYC);
 
     adc_enable_scan_mode(ADC1);

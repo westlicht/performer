@@ -1,14 +1,19 @@
 #pragma once
 
+#include "SystemConfig.h"
+
 #include "sim/Simulator.h"
 
 #include <cstdint>
+#include <cstdlib>
 
 class ADC {
 public:
-    static const int Channels = 4;
+    static constexpr size_t Channels = CONFIG_ADC_CHANNELS;
 
-    ADC();
+    ADC() :
+        _simulator(sim::Simulator::instance())
+    {}
 
     void init() {}
 

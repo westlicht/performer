@@ -1,10 +1,13 @@
 #pragma once
 
+#include "SystemConfig.h"
+
 #include <cstdint>
+#include <cstdlib>
 
 class ADC {
 public:
-    static const int Channels = 4;
+    static constexpr size_t Channels = CONFIG_ADC_CHANNELS;
 
     void init();
 

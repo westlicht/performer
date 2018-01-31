@@ -134,7 +134,7 @@ void LCD::draw(uint8_t *frameBuffer) {
     // copy buffer
     uint8_t *src = frameBuffer;
     uint8_t *dst = reinterpret_cast<uint8_t *>(_frameBuffer);
-    for (int i = 0; i < Cols * Rows / 2; ++i) {
+    for (int i = 0; i < Width * Height / 2; ++i) {
         uint8_t a = *src++;
         uint8_t b = *src++;
         *dst++ = std::min(b, uint8_t(15)) | (std::min(a, uint8_t(15)) << 4);
@@ -178,8 +178,8 @@ void LCD::draw(uint8_t *frameBuffer) {
     setWrite();
 
     src = reinterpret_cast<uint8_t *>(_frameBuffer);
-    for (int y = 0; y < Rows; y++) {
-        for (int x = 0; x < Cols/2; x++) {
+    for (int y = 0; y < Height; y++) {
+        for (int x = 0; x < Width/2; x++) {
             sendData(*src++);
         }
     }

@@ -28,3 +28,9 @@
 #define CONFIG_BLM_COLS_LED             4
 
 #define CONFIG_FUNCTION_KEY_COUNT       5
+
+// ADC
+#define CONFIG_ADC_CHANNELS             4
+
+// DAC
+#define CONFIG_DAC_CHANNELS             8

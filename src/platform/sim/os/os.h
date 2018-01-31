@@ -118,12 +118,15 @@ namespace os {
         }
 
         bool peek(T * element, uint32_t timeToWait = -1) {
+            return false;
         }
 
         bool receive(T * element, uint32_t timeToWait = -1) {
+            return false;
         }
 
         T receive() {
+            return T(0);
         }
 
     private:

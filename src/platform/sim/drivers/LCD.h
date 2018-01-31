@@ -9,6 +9,9 @@
 
 class LCD {
 public:
+    static constexpr size_t Width = CONFIG_LCD_WIDTH;
+    static constexpr size_t Height = CONFIG_LCD_HEIGHT;
+
     LCD() :
         _simulator(sim::Simulator::instance())
     {

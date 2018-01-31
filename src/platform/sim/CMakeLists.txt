@@ -44,7 +44,6 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/core/soloud_thread.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/core/soloud.cpp
     # drivers
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ADC.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ButtonLedMatrix.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/DIO.cpp

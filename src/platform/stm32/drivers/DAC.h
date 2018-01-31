@@ -1,9 +1,14 @@
 #pragma once
 
+#include "SystemConfig.h"
+
 #include <cstdint>
+#include <cstdlib>
 
 class DAC {
 public:
+    static constexpr size_t Channels = CONFIG_DAC_CHANNELS;
+
     typedef uint16_t Value;
 
     void init();
@@ -30,5 +35,5 @@ private:
 
     void setClearCode(ClearCode code);
 
-    Value _values[8];
+    Value _values[Channels];
 };

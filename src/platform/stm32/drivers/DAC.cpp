@@ -65,7 +65,7 @@ void DAC::write(int channel) {
 }
 
 void DAC::write() {
-    for (int channel = 0; channel < 8; ++channel) {
+    for (int channel = 0; channel < Channels; ++channel) {
         writeDAC(channel == 7 ? WRITE_INPUT_REGISTER_UPDATE_ALL : WRITE_INPUT_REGISTER, channel, _values[channel], 0);
     }
 }

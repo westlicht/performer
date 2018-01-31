@@ -66,7 +66,7 @@ void Simulator::writeDAC(int channel, uint16_t value) {
         _dac[channel] = value;
     }
     if (channel >= 0 && channel < _instruments.size()) {
-        _instruments[channel]->setCV(value / float(8192));
+        _instruments[channel]->setCV(10.f - value / 3276.75f);
     }
 }
 

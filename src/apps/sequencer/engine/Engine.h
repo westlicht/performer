@@ -3,6 +3,8 @@
 #include "Clock.h"
 #include "Track.h"
 #include "Controller.h"
+#include "CVInput.h"
+#include "CVOutput.h"
 
 #include "model/Model.h"
 
@@ -15,6 +17,8 @@
 #include "drivers/USBMIDI.h"
 
 #include <array>
+
+#include <cstdint>
 
 class Engine {
 public:
@@ -45,6 +49,15 @@ public:
 
     uint32_t tick() const { return _tick; }
 
+    // gate overrides
+    bool gateOutputOverride() const { return _gateOutputOverride; }
+    void setGateOutputOverride(bool enabled) { _gateOutputOverride = enabled; }
+    void setGateOutput(uint8_t gates) { _gateOutputOverrideValue = gates; }
+
+    bool cvOutputOverride() const { return _cvOutputOverride; }
+    void setCvOutputOverride(bool enabled) { _cvOutputOverride = enabled; }
+    void setCvOutput(int channel, float value) { _cvOutputOverrideValues[channel] = value; }
+
     const Clock &clock() const { return _clock; }
           Clock &clock()       { return _clock; }
 
@@ -70,6 +83,9 @@ private:
     MIDI &_midi;
     USBMIDI &_usbMidi;
 
+    CVInput _cvInput;
+    CVOutput _cvOutput;
+
     Clock _clock;
     TrackArray _tracks;
 
@@ -77,4 +93,14 @@ private:
 
     bool _running = false;
     uint32_t _tick = 0;
+
+    // gate output overrides
+    bool _gateOutputOverride = false;
+    uint8_t _gateOutputOverrideValue = 0;
+
+    // cv output overrides
+    bool _cvOutputOverride = false;
+    std::array<float, CVOutput::Channels> _cvOutputOverrideValues;
+
+    MessageHandler _messageHandler;
 };
