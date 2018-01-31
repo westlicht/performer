@@ -9,6 +9,7 @@ set(sources
     # ui
     ui/LedPainter.cpp
     ui/Page.cpp
+    ui/PageManager.cpp
     ui/UI.cpp
     # ui/pages
     ui/pages/ClockSetupPage.cpp

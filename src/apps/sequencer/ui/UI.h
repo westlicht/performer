@@ -2,6 +2,7 @@
 
 #include "Config.h"
 #include "Page.h"
+#include "PageManager.h"
 #include "Key.h"
 #include "Leds.h"
 

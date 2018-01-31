@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ui/Page.h"
+#include "ui/PageManager.h"
 #include "ui/Key.h"
 
 #include "model/Model.h"
