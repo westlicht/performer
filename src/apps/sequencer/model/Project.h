@@ -5,6 +5,8 @@
 #include "Pattern.h"
 #include "Serialize.h"
 
+#include "core/math/Math.h"
+
 class Project {
 public:
     // Patterns
@@ -20,7 +22,7 @@ public:
     // Parameters
 
     float bpm() const { return _bpm; }
-    void setBpm(float bpm) { _bpm = bpm; }
+    void setBpm(float bpm) { _bpm = clamp(bpm, 1.f, 1000.f); }
 
     uint8_t swing() const { return _swing; }
     void setSwing(uint8_t swing) { _swing = swing; }
