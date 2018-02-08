@@ -3,6 +3,7 @@
 #include "libs/stb/stb_sprintf.h"
 
 #include <cstdarg>
+#include <cstdlib>
 
 class StringBuilder {
 public:
