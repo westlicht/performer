@@ -28,9 +28,10 @@ MIDI::MIDI() {
 void MIDI::recv(const std::string &port, RecvCallback callback) {
     // open port and assign callback
     if (_inputPorts.find(port) == _inputPorts.end()) {
+        std::unique_ptr<RtMidiIn> input(new RtMidiIn());
         try {
             std::cout << "Opening MIDI input port '" << port << "'" << std::endl;
-            std::unique_ptr<RtMidiIn> input(new RtMidiIn());
+            input.reset(new RtMidiIn());
             int index = findPort(*input, port);
             if (index >= 0) {
                 input->openPort(index);
@@ -41,11 +42,12 @@ void MIDI::recv(const std::string &port, RecvCallback callback) {
                 std::cout << "MIDI input port '" << port << "' not found!" << std::endl;
                 input.reset();
             }
-            _inputPorts[port] = std::move(input);
         } catch (RtMidiError &error) {
             std::cout << "Failed to open MIDI input port '" << port << "'" << std::endl;
             error.printMessage();
+            input.reset();
         }
+        _inputPorts[port] = std::move(input);
     } else {
         std::cout << "MIDI input port '" << port << "' is already opened!" << std::endl;
     }
@@ -54,9 +56,10 @@ void MIDI::recv(const std::string &port, RecvCallback callback) {
 void MIDI::send(const std::string &port, uint8_t data) {
     // open port on first send
     if (_outputPorts.find(port) == _outputPorts.end()) {
+        std::unique_ptr<RtMidiOut> output;
         try {
             std::cout << "Opening MIDI output port '" << port << "'" << std::endl;
-            std::unique_ptr<RtMidiOut> output(new RtMidiOut());
+            output.reset(new RtMidiOut());
             int index = findPort(*output, port);
             if (index >= 0) {
                 output->openPort(index);
@@ -64,11 +67,12 @@ void MIDI::send(const std::string &port, uint8_t data) {
                 std::cout << "MIDI output port '" << port << "' not found!" << std::endl;
                 output.reset();
             }
-            _outputPorts[port] = std::move(output);
         } catch (RtMidiError &error) {
             std::cout << "Failed to open MIDI output port '" << port << "'" << std::endl;
             error.printMessage();
+            output.reset();
         }
+        _outputPorts[port] = std::move(output);
     }
 
     const auto &output = _outputPorts.at(port);
