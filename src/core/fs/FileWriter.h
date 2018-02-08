@@ -2,6 +2,8 @@
 
 #include "File.h"
 
+#include <algorithm>
+
 #include <cstring>
 #include <cstddef>
 #include <cstdint>
