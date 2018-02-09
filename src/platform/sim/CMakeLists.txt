@@ -43,6 +43,8 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/core/soloud_filter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/core/soloud_thread.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/core/soloud.cpp
+    # stb
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/stb/stb_image_write.cpp
     # drivers
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ButtonLedMatrix.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
