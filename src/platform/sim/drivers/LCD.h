@@ -5,6 +5,8 @@
 
 #include "SystemConfig.h"
 
+#include <string>
+
 #include <cstdint>
 
 class LCD {
@@ -21,6 +23,10 @@ public:
             resolution * 2 + sim::Vector2i(2, 2),
             resolution
         );
+
+        _simulator.setScreenshotCallback([&] (const std::string &filename) {
+            _display->screenshot(filename);
+        });
     }
 
     void init() {}

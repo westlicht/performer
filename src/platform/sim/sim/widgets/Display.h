@@ -2,6 +2,10 @@
 
 #include "../Widget.h"
 
+#include "libs/stb/stb_image_write.h"
+
+#include <string>
+
 namespace sim {
 
 class Display : public Widget {
@@ -47,6 +51,19 @@ public:
         renderer.drawRect(_pos, _size);
         SDL_Rect rect = { _pos.x() + 1, _pos.y() + 1, _size.x() - 2, _size.y() - 2 };
         renderer.sdl().copy(&texture, nullptr, &rect);
+    }
+
+    void screenshot(const std::string &filename) const {
+        std::unique_ptr<uint8_t[]> pixels(new uint8_t[_resolution.x() * _resolution.y() * 3]);
+        const uint32_t *src = reinterpret_cast<uint32_t *>((&_surface)->pixels);
+        uint8_t *dst = pixels.get();
+        for (int i = 0; i < _resolution.prod(); ++i) {
+            uint32_t c = *src++;
+            *dst++ = c & 0xff;
+            *dst++ = (c >> 8) & 0xff;
+            *dst++ = (c >> 16) & 0xff;
+        }
+        stbi_write_png(filename.c_str(), _resolution.x(), _resolution.y(), 3, pixels.get(), _resolution.x() * 3);
     }
 
 private:

@@ -6,6 +6,10 @@
 #include "Instrument.h"
 #include "MIDI.h"
 
+#include "widgets/Button.h"
+
+#include <string>
+
 namespace sim {
 
 class Simulator {
@@ -27,6 +31,11 @@ public:
     typedef std::function<void()> UpdateCallback;
 
     void addUpdateCallback(UpdateCallback callback);
+
+    typedef std::function<void(const std::string &filename)> ScreenshotCallback;
+
+    void setScreenshotCallback(ScreenshotCallback callback);
+    void screenshot(const std::string &filename = "");
 
     // Hardware IO emulation
     void writeGate(int channel, bool value);
@@ -61,6 +70,9 @@ private:
     std::array<uint16_t, 8> _dac;
 
     std::vector<UpdateCallback> _updateCallbacks;
+
+    ScreenshotCallback _screenshotCallback;
+    std::shared_ptr<Button> _screenshotButton;
 
     static const std::vector<std::string> _midiPortName;
     MIDI _midi;

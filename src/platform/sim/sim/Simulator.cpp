@@ -7,6 +7,8 @@
 #include "instruments/Synth.h"
 
 #include <memory>
+#include <sstream>
+#include <iomanip>
 
 namespace sim {
 
@@ -25,6 +27,18 @@ Simulator::Simulator() :
 
     std::fill(_gate.begin(), _gate.end(), false);
     std::fill(_gate.begin(), _gate.end(), 0);
+
+    // button to take screenshots
+    _screenshotButton = _window.createWidget<Button>(
+        Vector2i(8, 8),
+        Vector2i(8, 8),
+        SDLK_F10
+    );
+    _screenshotButton->setCallback([&] (bool pressed) {
+        if (pressed) {
+            screenshot();
+        }
+    });
 }
 
 void Simulator::close() {
@@ -50,6 +64,24 @@ void Simulator::render() {
 double Simulator::ticks() {
     double delta = SDL_GetPerformanceCounter() - _timerStart;
     return delta / _timerFrequency * 1000.0;
+}
+
+void Simulator::setScreenshotCallback(ScreenshotCallback callback) {
+    _screenshotCallback = callback;
+}
+
+void Simulator::screenshot(const std::string &filename) {
+    if (_screenshotCallback) {
+        std::stringstream ss;
+        if (filename.empty()) {
+            static int counter = 0;
+            ss << "screenshot-" << std::setfill('0') << std::setw(3) << counter << ".png";
+            ++counter;
+        } else {
+            ss << filename;
+        }
+        _screenshotCallback(ss.str());
+    }
 }
 
 void Simulator::writeGate(int channel, bool value) {
