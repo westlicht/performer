@@ -45,28 +45,23 @@ The user interface is based on the following inputs/outputs:
 
 Global buttons are `PLAY`, `CLOCK`, `<`, `>`, `SNAPSHOT`, `FILL`, `GLOBAL`, `SHIFT`
 
-### Sequencer Control
+### Clock Control
 
 - [x] press `PLAY` to resume/stop the sequencer
 - [x] press `SHIFT` + `PLAY` to reset and restart the sequencer
-
-### Clock Control
-
-- [x] hold `CLOCK` and turn `ENCODER` to set the tempo (press/hold and turn `ENCODER` to adjust in smaller steps)
+- [x] hold `CLOCK` and turn `ENCODER` to set the tempo (press/hold and turn `ENCODER` to adjust in smaller steps, hold `SHIFT` and turn `ENCODER` to adjust in larger steps)
 - [x] hold `CLOCK` and tap `PLAY` multiple times to set tempo by tapping
-- [ ] hold `CLOCK` and hold `<` or `>` to nudge track (temporary decrease/increase tempo)
+- [ ] hold `CLOCK` and hold `<` or `>` to nudge playhead (temporary decrease/increase tempo)
 - [x] press `SHIFT` + `CLOCK` to open the _clock setup_ page
 
 ### Snapshot Control
 
-- press `SNAPSHOT` + `>` to move to next snapshot
-- press `SNAPSHOT` + `<` to move to previous snapshot
-- press and hold `SNAPSHOT` + `>` to create new top snapshot
-- press and hold `SNAPSHOT` + `<` to remove current snapshot and make previous snapshot the top
-- press `SHIFT` + `SNAPSHOT` + `<` to remove all snapshots
-- press `SHIFT` + `SNAPSHOT` + `>` to commit current snapshot and remove all snapshots
+Snapshots are used to modify patterns in a non-destructive manner. This is useful in a live performance situation to quickly create variations of the active pattern without loosing the original state. It can also help to develop new ideas from a given pattern and store the results in a new pattern.
 
-- **IDEA**: use step buttons to select snapshots
+- [ ] press `SNAPSHOT` + `>` to copy the _pattern state_ to a new _snapshot_ on top of the _snapshot queue_ and activate it
+- [ ] press `SNAPSHOT` + `<` to discard the _snapshot queue_ and revert to the _pattern state_
+- [ ] press `SNAPSHOT` + `STEP[1-8]` to activate a _snapshot_ in the _snapshot queue_
+- [ ] press `SHIFT` + `SNAPSHOT` to commit the current _snapshot_ to the _pattern state_ and discard the _snapshot queue_
 
 ### Fill Control
 
@@ -92,8 +87,7 @@ Mode/track buttons are `MODE/TRACK[1-8]`.
     - configure track outputs (gate, cv, midi)
 - [x] press `SHIFT` + `MODE2` to show _sequence_ page
 - [x] press `SHIFT` + `MODE3` to show _sequence parameter_ page  (first step, last step, division, shuffle, direction etc)
-- press `SHIFT` + `MODE4` to show _sequence modifier_ page (transpose, shift, etc.)
-
+- [ ] press `SHIFT` + `MODE4` to show _sequence modifier_ page (transpose, shift, etc.)
 - [x] press `SHIFT` + `MODE6` to show _project_ page
 - [x] press `SHIFT` + `MODE7` to show _pattern_ page
 - [x] press `SHIFT` + `MODE8` to show _performer_ page
@@ -189,6 +183,7 @@ Variations are defined by a _range_ and a _probability_. The _range_ defines the
 
 ## Additional Features
 
+- clear project/sequence/steps
 - copy/paste
 - song mode
 - calibration
