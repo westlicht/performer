@@ -19,6 +19,18 @@ enum class Font {
     Default = Tiny,
 };
 
+enum class HorizontalAlign {
+    Left,
+    Right,
+    Center,
+};
+
+enum class VerticalAlign {
+    Top,
+    Bottom,
+    Center,
+};
+
 class Canvas {
 public:
     Canvas(FrameBuffer8bit &frameBuffer) :
@@ -54,6 +66,7 @@ public:
 
     void drawText(int x, int y, const char *str);
     void drawTextCentered(int x, int y, int w, int h, const char *str);
+    void drawTextAligned(int x, int y, int w, int h, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign, const char *str);
 
     int textWidth(const char *str);
     int textHeight(const char *str);
