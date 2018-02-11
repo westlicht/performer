@@ -19,6 +19,7 @@ set(sources
     model/Model.cpp
     model/NoteSequence.cpp
     model/Pattern.cpp
+    model/Project.cpp
     model/Sequence.cpp
     model/Settings.cpp
     model/Track.cpp

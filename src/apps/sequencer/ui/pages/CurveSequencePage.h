@@ -30,11 +30,6 @@ private:
         case Mode::Shape:           return "SHAPE"; break;
         case Mode::Min:             return "MIN"; break;
         case Mode::Max:             return "MAX"; break;
-        // case Mode::GateVariation:   return "GATE VAR"; break;
-        // case Mode::Length:          return "LENGTH"; break;
-        // case Mode::LengthVariation: return "LENGTH VAR"; break;
-        // case Mode::Note:            return "NOTE"; break;
-        // case Mode::NoteVariation:   return "NOTE VAR"; break;
         }
         return nullptr;
     }
