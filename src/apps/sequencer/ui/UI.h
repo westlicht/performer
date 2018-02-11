@@ -43,6 +43,7 @@ private:
     uint8_t _frameBufferData[CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT];
     FrameBuffer8bit _frameBuffer;
     Canvas _canvas;
+    uint32_t _lastUpdateTicks;
 
     KeyState _keyState;
     Leds _leds;

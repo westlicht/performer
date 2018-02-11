@@ -17,8 +17,7 @@ void MenuPage::exit() {
 }
 
 void MenuPage::draw(Canvas &canvas) {
-    canvas.setColor(0);
-    canvas.fill();
+    WindowPainter::clear(canvas);
 
     canvas.setColor(0xf);
     canvas.hline(0, 16, Width);

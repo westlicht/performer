@@ -15,6 +15,23 @@ static const BitmapFont &bitmapFont(Font font) {
     }
 }
 
+static const int bitmapFontHeight(Font font) {
+    switch (font) {
+    case Font::Tiny: return 6;
+    case Font::Small: return 10;
+    default: return 0;
+    }
+}
+
+static const int bitmapFontOffset(Font font) {
+    switch (font) {
+    case Font::Tiny: return 5;
+    case Font::Small: return 13;
+    default: return 0;
+    }
+}
+
+
 void Canvas::fill() {
     _frameBuffer.fill(_color);
 }
@@ -110,11 +127,18 @@ void Canvas::drawText(int x, int y, const char *str) {
 }
 
 void Canvas::drawTextCentered(int x, int y, int w, int h, const char *str) {
+
+    // drawRect(x, y, w, h);
+
     // const auto &font = bitmapFont(_font);
     x += (w - textWidth(str)) / 2;
-    y += (h - textHeight(str)) / 2;
+    y += (h - textHeight(str)) / 2 + bitmapFontOffset(_font);
     // y += font.yAdvance - 3;
     drawText(x, y, str);
+}
+
+void Canvas::drawTextAligned(int x, int y, int w, int h, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign, const char *str) {
+
 }
 
 int Canvas::textWidth(const char *str) {
@@ -135,15 +159,15 @@ int Canvas::textWidth(const char *str) {
 
 int Canvas::textHeight(const char *str) {
     const auto &font = bitmapFont(_font);
-    int lines = 1;
+    int height = bitmapFontHeight(_font);
 
     while (*str != '\0') {
         auto c = *str++;
         if (c == '\n') {
-            ++lines;
+            height += font.yAdvance;
         }
     }
 
-    return lines * font.yAdvance;
+    return height;
 }
 

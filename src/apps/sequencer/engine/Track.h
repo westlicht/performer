@@ -5,25 +5,9 @@
 #include "model/Model.h"
 
 
-// template<size_t Size>
-// struct StaticMemory {
-//     uint8_t data[Size];
-
-//     template<typename T>
-//     const T &as() const {
-//         static_assert(sizeof(T) <= Size, "type is too large");
-//         return *reinterpret_cast<const T *>(data);
-//     }
-//     template<typename T>
-//     T &as() {
-//         static_assert(sizeof(T) <= Size, "type is too large");
-//         return *reinterpret_cast<T *>(data);
-//     }
-// };
-
-class Track {
+class TrackEngine {
 public:
-    Track();
+    TrackEngine();
 
     void setSequence(Sequence &sequence) { _sequence = &sequence; }
 

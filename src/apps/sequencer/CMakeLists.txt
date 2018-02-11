@@ -3,14 +3,25 @@ set(sources
     # asteroids
     asteroids/Asteroids.cpp
     # engine
-    engine/Engine.cpp
     engine/Clock.cpp
     engine/Controller.cpp
+    engine/Curve.cpp
     engine/CVInput.cpp
     engine/CVOutput.cpp
+    engine/Engine.cpp
+    engine/Scale.cpp
     engine/Track.cpp
     # engine/controllers
     engine/controllers/LaunchpadController.cpp
+    # model
+    model/ClockSetup.cpp
+    model/CurveSequence.cpp
+    model/Model.cpp
+    model/NoteSequence.cpp
+    model/Pattern.cpp
+    model/Sequence.cpp
+    model/Settings.cpp
+    model/Track.cpp
     # ui
     ui/LedPainter.cpp
     ui/MessageManager.cpp
@@ -20,13 +31,22 @@ set(sources
     # ui/pages
     ui/pages/AsteroidsPage.cpp
     ui/pages/ClockSetupPage.cpp
+    ui/pages/CurveSequencePage.cpp
     ui/pages/MainPage.cpp
     ui/pages/MenuPage.cpp
     ui/pages/MutePage.cpp
+    ui/pages/NoteSequencePage.cpp
+    ui/pages/PatternPage.cpp
+    ui/pages/PerformerPage.cpp
+    ui/pages/ProjectPage.cpp
     ui/pages/SequenceSetupPage.cpp
+    ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp
+    ui/pages/TrackSetupPage.cpp
     ui/pages/ValuePage.cpp
+    # ui/painters
+    ui/painters/SequencePainter.cpp
     ui/painters/WindowPainter.cpp
 )
 

@@ -1,31 +1,66 @@
 #include "Track.h"
 
+#include "Scale.h"
+
 #include "core/Debug.h"
 #include "core/utils/Random.h"
+#include "core/math/Math.h"
 
 static Random rng;
 
-Track::Track() {
+// evaluate if step gate is active
+static bool evalStepGate(const NoteSequence::Step &step) {
+    return step.gate() &&
+        (step.gateProbability() == NoteSequence::GateProbability::Max ||
+         int(rng.nextRange(NoteSequence::GateProbability::Range)) <= step.gateProbability());
+}
+
+// evaluate step length
+static int evalStepLength(const NoteSequence::Step &step) {
+    int length = step.length() + 1;
+    if (step.lengthVariationProbability() > 0) {
+        if (int(rng.nextRange(NoteSequence::LengthVariationProbability::Range)) < step.lengthVariationProbability()) {
+            int offset = step.lengthVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.lengthVariationRange()));
+            if (step.lengthVariationRange() < 0) {
+                offset = -offset;
+            }
+            length = clamp(length + offset, 0, NoteSequence::Length::Range);
+        }
+    }
+    return length;
+}
+
+static float evalStepNote(const NoteSequence::Step &step, const Scale &scale) {
+    return scale.noteVolts(step.note());
+}
+
+TrackEngine::TrackEngine() {
     reset();
 }
 
-void Track::reset() {
+void TrackEngine::reset() {
     _currentStep = -1;
     _direction = 1;
     _gate = false;
     _gateOutput = false;
 }
 
-void Track::tick(uint32_t tick) {
+void TrackEngine::tick(uint32_t tick) {
     const auto &sequence = *_sequence;
+    const auto &noteSequence = sequence.noteSequence();
 
-    if (tick % (192 / 4) == 0) {
+    const uint32_t divisor = (CONFIG_PPQN / 4);
+
+    if (tick % divisor == 0) {
         advance(sequence);
-        if (_sequence->step(_currentStep).active()) {
+        const auto &step = noteSequence.step(_currentStep);
+        if (evalStepGate(step)) {
             _gateQueue.push({ tick, true });
-            _gateQueue.push({ tick + CONFIG_PPQN / 8, false });
+            _gateQueue.push({ tick + (divisor * evalStepLength(step)) / NoteSequence::Length::Range, false });
         }
-        _cv = _sequence->step(_currentStep).note() / 12.f;
+
+        const auto &scale = Scale::scale(noteSequence.scale());
+        _cv = evalStepNote(step, scale);
     }
     while (!_gateQueue.empty() && tick >= _gateQueue.front().first) {
         _gate = _gateQueue.front().second;
@@ -34,7 +69,7 @@ void Track::tick(uint32_t tick) {
     }
 }
 
-void Track::advance(const Sequence &sequence) {
+void TrackEngine::advance(const Sequence &sequence) {
     auto playMode = sequence.playMode();
     int firstStep = sequence.firstStep();
     int lastStep = sequence.lastStep();

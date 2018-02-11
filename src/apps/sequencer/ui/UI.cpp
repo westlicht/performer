@@ -28,12 +28,14 @@ void UI::init() {
 #ifdef CONFIG_ENABLE_ASTEROIDS
     _pageManager.push(&_pages.asteroids);
 #else
-    _pageManager.push(&_pages.track);
+    _pageManager.push(&_pages.noteSequence);
 #endif
 
     _engine.setMessageHandler([this] (const char *text, uint32_t duration) {
         _messageManager.showMessage(text, duration);
     });
+
+    _lastUpdateTicks = os::ticks();
 }
 
 void UI::update() {
@@ -43,14 +45,16 @@ void UI::update() {
     _pageManager.updateLeds(_leds);
     _blm.setLeds(_leds.array());
 
-    static int counter = 0;
-    if (counter % 20 == 0) {
+    // update display at target fps
+    uint32_t currentTicks = os::ticks();
+    uint32_t intervalTicks = os::time::ms(1000 / _pageManager.fps());
+    if (currentTicks - _lastUpdateTicks >= intervalTicks) {
         _pageManager.draw(_canvas);
         _messageManager.update();
         _messageManager.draw(_canvas);
         _lcd.draw(_frameBuffer.data());
+        _lastUpdateTicks += intervalTicks;
     }
-    ++counter;
 }
 
 void UI::handleKeys() {
@@ -78,6 +82,7 @@ void UI::handleEncoder() {
             bool isDown = event == Encoder::Down;
             _keyState[Key::Encoder] = isDown ? 1 : 0;
             KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, Key(Key::Code::Encoder, _keyState));
+            _pageManager.dispatchEvent(keyEvent);
             break;
         }
         }

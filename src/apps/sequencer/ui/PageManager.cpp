@@ -42,6 +42,15 @@ void PageManager::updateLeds(Leds &leds) {
     }
 }
 
+int PageManager::fps() const {
+    int fps = 100;
+    for (int i = 0; i <= _pageStackPos; ++i) {
+        fps = std::min(fps, _pageStack[i]->fps());
+    }
+    return fps;
+}
+
+
 void PageManager::dispatchEvent(Event &event) {
     // handle top to bottom
     for (int i = _pageStackPos; i >= 0; --i) {

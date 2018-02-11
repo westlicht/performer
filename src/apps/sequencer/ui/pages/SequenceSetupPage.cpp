@@ -129,9 +129,7 @@ void SequenceSetupPage::exit() {
 
 void SequenceSetupPage::draw(Canvas &canvas) {
 
-    canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0);
-    canvas.fill();
+    WindowPainter::clear(canvas);
 
     canvas.setFont(Font::Tiny);
     canvas.setColor(0xf);

@@ -23,7 +23,7 @@
 
 class Engine {
 public:
-    typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
+    typedef std::array<TrackEngine, CONFIG_TRACK_COUNT> TrackEngineArray;
 
     typedef std::function<void(const char *text, uint32_t duration)> MessageHandler;
 
@@ -66,11 +66,11 @@ public:
     const Clock &clock() const { return _clock; }
           Clock &clock()       { return _clock; }
 
-    const TrackArray &tracks() const { return _tracks; }
-          TrackArray &tracks()       { return _tracks; }
+    const TrackEngineArray &tracks() const { return _tracks; }
+          TrackEngineArray &tracks()       { return _tracks; }
 
-    const Track &track(int index) const { return _tracks[index]; }
-          Track &track(int index)       { return _tracks[index]; }
+    const TrackEngine &track(int index) const { return _tracks[index]; }
+          TrackEngine &track(int index)       { return _tracks[index]; }
 
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
@@ -94,7 +94,7 @@ private:
     Clock _clock;
     TapTempo _tapTempo;
 
-    TrackArray _tracks;
+    TrackEngineArray _tracks;
 
     ControllerManager _controllerManager;
 

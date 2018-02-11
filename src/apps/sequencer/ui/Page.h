@@ -19,6 +19,10 @@ public:
     virtual void draw(Canvas &canvas) {}
     virtual void updateLeds(Leds &leds) {}
 
+    virtual int fps() const { return CONFIG_DEFAULT_UI_FPS; }
+
+    virtual bool isModal() const { return false; }
+
     // Event handlers
     virtual void keyDown(KeyEvent &event) {}
     virtual void keyUp(KeyEvent &event) {}

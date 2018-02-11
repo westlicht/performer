@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Serialize.h"
+
 #include <cstdint>
 
 class ClockSetup {
@@ -65,6 +67,11 @@ public:
 
     bool usbTx() const { return _usbTx; }
     void setUsbTx(bool usbTx) { _usbTx = usbTx; }
+
+    // Serialization
+
+    void write(WriteContext &context) const;
+    void read(ReadContext &context);
 
 private:
     Mode _mode = Mode::Auto;

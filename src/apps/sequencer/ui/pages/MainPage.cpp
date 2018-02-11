@@ -22,7 +22,7 @@ void MainPage::draw(Canvas &canvas) {
         for (int step = 0; step < 16; ++step) {
             int x = step * 16;
             int y = trackIndex * 7 + 0;
-            auto active = sequence.step(step).active();
+            auto active = sequence.noteSequence().step(step).gate();
             canvas.setColor(step == track.currentStep() ? (active ? 0xf : 0x7) : (active ? 0x7 : 0x3));
             if (_project.isSelectedTrack(trackIndex)) {
                 canvas.setColor(15);
@@ -59,8 +59,7 @@ void MainPage::keyDown(KeyEvent &event) {
 
     if (key.isStep()) {
         // DBG("toggle step %d", key.step());
-        auto &sequence = _project.selectedSequence();
-        sequence.step(key.step()).toggle();
+        _project.selectedSequence().noteSequence().step(key.step()).toggleGate();
         event.consume();
     }
 }

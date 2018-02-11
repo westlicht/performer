@@ -94,6 +94,7 @@ int main(void) {
     midi.init();
     usbMidi.init();
     usbh.init();
+    usbh.powerOn();
 
     engine.init();
     ui.init();

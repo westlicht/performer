@@ -3,7 +3,6 @@
 #include "Config.h"
 
 #include "core/Debug.h"
-
 #include "core/midi/MIDIMessage.h"
 
 Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, MIDI &midi, USBMIDI &usbMidi) :
@@ -100,13 +99,12 @@ void Engine::resume() {
 }
 
 void Engine::tapTempoReset() {
-    _tapTempo.reset();
+    _tapTempo.reset(_model.project().bpm());
 }
 
 void Engine::tapTempoTap() {
-    if (_tapTempo.tap()) {
-        _model.project().setBpm(_tapTempo.bpm());
-    }
+    _tapTempo.tap();
+    _model.project().setBpm(_tapTempo.bpm());
 }
 
 void Engine::showMessage(const char *text, uint32_t duration) {

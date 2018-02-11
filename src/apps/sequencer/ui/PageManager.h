@@ -24,6 +24,9 @@ public:
 
     void draw(Canvas &canvas);
     void updateLeds(Leds &leds);
+
+    int fps() const;
+
     void dispatchEvent(Event &event);
 
 private:

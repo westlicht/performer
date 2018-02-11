@@ -7,19 +7,19 @@
 class TapTempo {
 public:
     TapTempo() {
-        reset();
+        reset(120.f);
     }
 
     float bpm() const { return _bpm; }
 
-    void reset() {
-        _bpm = 0.f;
+    void reset(float bpm) {
+        _bpm = bpm;
         _lastTime = 0;
         _intervalAverage.reset();
+        _intervalAverage.push(uint32_t(60000000 / bpm));
     }
 
-    bool tap() {
-        bool result = false;
+    void tap() {
         uint32_t currentTime = HighResolutionTimer::us();
 
         if (_lastTime) {
@@ -27,12 +27,9 @@ public:
             _lastTime = currentTime;
 
             _bpm = 60.f / (_intervalAverage() / 1000000.f);
-            result = true;
         }
 
         _lastTime = currentTime;
-
-        return result;
     }
 
 private:

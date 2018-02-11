@@ -17,10 +17,7 @@ void TrackPage::exit() {
 
 void TrackPage::draw(Canvas &canvas) {
 
-    canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0);
-    canvas.fill();
-
+    WindowPainter::clear(canvas);
     WindowPainter::drawClock(canvas, _engine);
 
     canvas.setFont(Font::Tiny);
@@ -55,11 +52,11 @@ void TrackPage::draw(Canvas &canvas) {
         }
 
         if (_editMode == EditMode::Note) {
-            FixedStringBuilder<8> note("%d", sequence.step(step).note());
+            FixedStringBuilder<8> note("%d", sequence.noteSequence().step(step).note());
             canvas.drawText(x + 8 - canvas.textWidth(note) / 2, y + 24, note);
         }
 
-        if (sequence.step(step).active()) {
+        if (sequence.noteSequence().step(step).gate()) {
             canvas.setColor(0xf);
             canvas.fillRect(x + 4, y + 4, 16 - 8, 16 - 8);
         }
@@ -94,7 +91,8 @@ void TrackPage::keyDown(KeyEvent &event) {
     if (key.isStep()) {
         _selectedSteps[key.step()] = true;
         if (_editMode == EditMode::Gate) {
-            _project.selectedSequence().step(key.step()).toggle();
+            auto &stepData = _project.selectedSequence().noteSequence();
+            stepData.step(key.step()).toggleGate();
         }
         event.consume();
     }
@@ -146,7 +144,8 @@ void TrackPage::encoder(EncoderEvent &event) {
     case EditMode::Note: {
         for (int i = 0; i < CONFIG_STEP_COUNT; ++i) {
             if (_selectedSteps[i]) {
-                auto &step = _project.selectedSequence().step(i);
+                auto stepData = _project.selectedSequence().noteSequence();
+                auto &step = stepData.step(i);
                 step.setNote(step.note() + event.value());
             }
         }

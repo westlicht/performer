@@ -61,7 +61,7 @@ public:
         setAttack(0.01f);
         setDecay(0.f);
         setSustain(1.f);
-        setRelease(0.5f);
+        setRelease(0.1f);
     }
 
     float attack() const { return _attack; }
@@ -131,10 +131,10 @@ public:
 
 private:
     float _invSampleRate;
-    float _attack = 0.01f;
-    float _decay = 0.f;
-    float _sustain = 1.f;
-    float _release = 0.5f;
+    float _attack;
+    float _decay;
+    float _sustain;
+    float _release;
     float _attackIncrement;
     float _decayIncrement;
     float _releaseIncrement;

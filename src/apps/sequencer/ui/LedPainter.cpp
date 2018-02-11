@@ -20,6 +20,6 @@ void LedPainter::drawTracksGateAndMuted(Leds &leds, const Engine &engine) {
 
 void LedPainter::drawSequenceGateAndCurrentStep(Leds &leds, const Sequence &sequence, int currentStep) {
     for (int step = 0; step < 16; ++step) {
-        leds.set(MatrixMap::fromStep(step), step == currentStep, sequence.step(step).active());
+        leds.set(MatrixMap::fromStep(step), step == currentStep, sequence.noteSequence().step(step).gate());
     }
 }

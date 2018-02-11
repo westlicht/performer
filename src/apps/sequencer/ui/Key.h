@@ -40,6 +40,8 @@ public:
         Start = 24,
         BPM = 25,
         Mute = 26,
+        Left = 28,
+        Right = 29,
         Shift = 31,
         F0 = MatrixMap::fromFunction(0),
         F1 = MatrixMap::fromFunction(1),
@@ -70,6 +72,12 @@ public:
     int function() const { return MatrixMap::toFunction(_code); }
 
     bool isGlobal() const { return _code == Start; };
+
+    bool isTrackSelect() const { return !shiftModifier() && isTrack(); }
+    int trackSelect() const { return track(); }
+
+    bool isModeSelect() const { return shiftModifier() && isTrack(); }
+    int modeSelect() const{ return track(); }
 
 private:
     int _code;

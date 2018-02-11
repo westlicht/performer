@@ -2,6 +2,7 @@
 
 #include "Config.h"
 #include "ClockSetup.h"
+#include "Track.h"
 #include "Pattern.h"
 #include "Serialize.h"
 
@@ -9,6 +10,36 @@
 
 class Project {
 public:
+    // Parameters
+
+    // bpm
+
+    float bpm() const { return _bpm; }
+    void setBpm(float bpm) { _bpm = clamp(bpm, 1.f, 1000.f); }
+
+    // swing
+
+    uint8_t swing() const { return _swing; }
+    void setSwing(uint8_t swing) { _swing = swing; }
+
+    // clockSetup
+
+    const ClockSetup &clockSetup() const { return _clockSetup; }
+          ClockSetup &clockSetup()       { return _clockSetup; }
+
+    // Tracks
+
+    typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
+
+    const TrackArray &tracks() const { return _tracks; }
+          TrackArray &tracks()       { return _tracks; }
+
+    const Track &track(int index) const { return _tracks[index]; }
+          Track &track(int index)       { return _tracks[index]; }
+
+    const Track &selectedTrack() const { return _tracks[_selectedTrackIndex]; }
+          Track &selectedTrack()       { return _tracks[_selectedTrackIndex]; }
+
     // Patterns
 
     typedef std::array<Pattern, CONFIG_PATTERN_COUNT> PatternArray;
@@ -18,27 +49,6 @@ public:
 
     const Pattern &pattern(int index) const { return _patterns[index]; }
           Pattern &pattern(int index)       { return _patterns[index]; }
-
-    // Parameters
-
-    float bpm() const { return _bpm; }
-    void setBpm(float bpm) { _bpm = clamp(bpm, 1.f, 1000.f); }
-
-    uint8_t swing() const { return _swing; }
-    void setSwing(uint8_t swing) { _swing = swing; }
-
-    const ClockSetup &clockSetup() const { return _clockSetup; }
-          ClockSetup &clockSetup()       { return _clockSetup; }
-
-    // Pattern selection
-
-    int selectedPatternIndex() const { return _selectedPatternIndex; }
-    void setSelectedPatternIndex(int index) { _selectedPatternIndex = index; }
-
-    bool isSelectedPattern(int index) const { return _selectedPatternIndex == index; }
-
-    const Pattern &selectedPattern() const { return _patterns[_selectedPatternIndex]; }
-          Pattern &selectedPattern()       { return _patterns[_selectedPatternIndex]; }
 
     // Track selection
 
@@ -50,32 +60,44 @@ public:
     const Sequence &selectedSequence() const { return selectedPattern().sequence(_selectedTrackIndex); }
           Sequence &selectedSequence()       { return selectedPattern().sequence(_selectedTrackIndex); }
 
+    // Pattern selection
+
+    int selectedPatternIndex() const { return _selectedPatternIndex; }
+    void setSelectedPatternIndex(int index) { _selectedPatternIndex = index; }
+
+    bool isSelectedPattern(int index) const { return _selectedPatternIndex == index; }
+
+    const Pattern &selectedPattern() const { return _patterns[_selectedPatternIndex]; }
+          Pattern &selectedPattern()       { return _patterns[_selectedPatternIndex]; }
+
+    // helpers
+
+    void changeTrackMode(int trackIndex, Track::Mode mode) {
+        // TODO reset snapshots
+        _tracks[trackIndex].setMode(mode);
+        for (auto &pattern : _patterns) {
+            auto &sequence = pattern.sequence(trackIndex);
+            switch (mode) {
+            case Track::Mode::Note:     sequence.noteSequence().setDefault(); break;
+            case Track::Mode::Curve:    sequence.curveSequence().setDefault(); break;
+            }
+        }
+    }
+
     // Serialization
 
-    void write(ModelWriter &writer) const {
-        writer.write(_bpm);
-        writer.write(_swing);
-        for (const auto &pattern : _patterns) {
-            pattern.write(writer);
-        }
-    }
-
-    void read(ModelReader &reader) {
-        reader.read(_bpm);
-        reader.read(_swing);
-        for (auto &pattern : _patterns) {
-            pattern.read(reader);
-        }
-    }
+    void write(WriteContext &context) const;
+    void read(ReadContext &context);
 
 private:
-    PatternArray _patterns;
-
     float _bpm = 120.f;
     uint8_t _swing = 0;
 
     ClockSetup _clockSetup;
 
-    int _selectedPatternIndex = 0;
+    TrackArray _tracks;
+    PatternArray _patterns;
+
     int _selectedTrackIndex = 0;
+    int _selectedPatternIndex = 0;
 };
