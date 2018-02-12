@@ -2,7 +2,9 @@
 
 #include "Config.h"
 
+#include "BusyPage.h"
 #include "ClockSetupPage.h"
+#include "ConfirmationPage.h"
 #include "CurveSequencePage.h"
 #include "MainPage.h"
 #include "MutePage.h"
@@ -35,7 +37,11 @@ struct Pages {
     PatternPage pattern;
     ProjectPage project;
     PerformerPage performer;
+
+    // helper pages
     TextInputPage textInput;
+    ConfirmationPage confirmation;
+    BusyPage busy;
 
 #ifdef CONFIG_ENABLE_ASTEROIDS
     AsteroidsPage asteroids;
@@ -55,7 +61,9 @@ struct Pages {
         pattern(manager, context),
         project(manager, context),
         performer(manager, context),
-        textInput(manager, context)
+        textInput(manager, context),
+        confirmation(manager, context),
+        busy(manager, context)
 #ifdef CONFIG_ENABLE_ASTEROIDS
         ,asteroids(manager, context)
 #endif

@@ -2,10 +2,11 @@
 
 #include "BasePage.h"
 
-
-class TextInputPage : public BasePage {
+class BusyPage : public BasePage {
 public:
-    TextInputPage(PageManager &manager, PageContext &context);
+    BusyPage(PageManager &manager, PageContext &context);
+
+    void show(const char *text);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -20,19 +21,5 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    void close(bool result);
-
-    void clear();
-    void insert(char c);
-    void backspace();
-    void del();
-    void moveLeft();
-    void moveRight();
-
-    const char *_title = "PROJECT NAME:";
-    char _text[5];
-    int _maxTextLength = 4;;
-
-    int _selectedIndex;
-    int _cursorIndex;
+    const char *_text;
 };

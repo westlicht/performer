@@ -17,4 +17,7 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    void loadProject();
+    void saveProject();
+    void formatSDCard();
 };

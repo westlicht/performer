@@ -2,10 +2,15 @@
 
 #include "BasePage.h"
 
+#include <functional>
 
-class TextInputPage : public BasePage {
+class ConfirmationPage : public BasePage {
 public:
-    TextInputPage(PageManager &manager, PageContext &context);
+    ConfirmationPage(PageManager &manager, PageContext &context);
+
+    typedef std::function<void(bool)> ResultCallback;
+
+    void show(const char *text, ResultCallback callback);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -22,17 +27,6 @@ public:
 private:
     void close(bool result);
 
-    void clear();
-    void insert(char c);
-    void backspace();
-    void del();
-    void moveLeft();
-    void moveRight();
-
-    const char *_title = "PROJECT NAME:";
-    char _text[5];
-    int _maxTextLength = 4;;
-
-    int _selectedIndex;
-    int _cursorIndex;
+    const char *_text;
+    ResultCallback _callback;
 };

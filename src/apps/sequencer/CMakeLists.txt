@@ -31,7 +31,9 @@ set(sources
     ui/UI.cpp
     # ui/pages
     ui/pages/AsteroidsPage.cpp
+    ui/pages/BusyPage.cpp
     ui/pages/ClockSetupPage.cpp
+    ui/pages/ConfirmationPage.cpp
     ui/pages/CurveSequencePage.cpp
     ui/pages/MainPage.cpp
     ui/pages/MenuPage.cpp
