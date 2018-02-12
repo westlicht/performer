@@ -4,6 +4,8 @@
 #include "Settings.h"
 #include "Serialize.h"
 
+#include "core/fs/FileSystem.h"
+
 class Model {
 public:
     Model() {
@@ -17,8 +19,8 @@ public:
 
     // Serialization
 
-    bool write(const char *path);
-    bool read(const char *path);
+    fs::Error write(const char *path);
+    fs::Error read(const char *path);
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);

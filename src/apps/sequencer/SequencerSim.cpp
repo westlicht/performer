@@ -1,16 +1,19 @@
 
 #include "sim/Simulator.h"
 
-#include "drivers/ClockTimer.h"
-#include "drivers/ButtonLedMatrix.h"
-#include "drivers/LCD.h"
 #include "drivers/ADC.h"
+#include "drivers/ButtonLedMatrix.h"
+#include "drivers/ClockTimer.h"
 #include "drivers/DAC.h"
 #include "drivers/DIO.h"
 #include "drivers/Encoder.h"
 #include "drivers/GateOutput.h"
+#include "drivers/LCD.h"
 #include "drivers/MIDI.h"
+#include "drivers/SDCard.h"
 #include "drivers/USBMIDI.h"
+
+#include "core/fs/Volume.h"
 
 #include "model/Model.h"
 #include "engine/Engine.h"
@@ -22,6 +25,8 @@
 
 struct Environment {
     sim::Simulator &simulator;
+
+    // drivers
     ClockTimer clockTimer;
     ButtonLedMatrix blm;
     LCD lcd;
@@ -32,13 +37,20 @@ struct Environment {
     GateOutput gateOutput;
     MIDI midi;
     USBMIDI usbMidi;
+    SDCard sdcard;
 
+    // filesystem
+    fs::Volume volume;
+
+    // application
     Model model;
     Engine engine;
     UI ui;
 
     Environment() :
         simulator(sim::Simulator::instance()),
+
+        volume(sdcard),
 
         engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
         ui(model, engine, lcd, blm, encoder)

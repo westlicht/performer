@@ -4,6 +4,7 @@
 #include "ui/pages/Pages.h"
 #include "ui/painters/WindowPainter.h"
 
+#include "core/fs/FileSystem.h"
 #include "core/utils/StringBuilder.h"
 
 ProjectPage::ProjectPage(PageManager &manager, PageContext &context) :
@@ -47,17 +48,40 @@ void ProjectPage::encoder(EncoderEvent &event) {
 }
 
 void ProjectPage::loadProject() {
+    auto result = fs::volume().mount();
+    if (result != fs::OK) {
+        showMessage(FixedStringBuilder<32>("MOUNT FAILED (%s)", fs::errorToString(result)));
+        return;
+    }
 
+    result = _model.read("test.pro");
+    if (result != fs::OK) {
+        showMessage(FixedStringBuilder<32>("LOAD FAILED (%s)", fs::errorToString(result)));
+    }
 }
 
 void ProjectPage::saveProject() {
+    auto result = fs::volume().mount();
+    if (result != fs::OK) {
+        showMessage(FixedStringBuilder<32>("MOUNT FAILED (%s)", fs::errorToString(result)));
+        return;
+    }
 
+    result = _model.write("test.pro");
+    if (result != fs::OK) {
+        showMessage(FixedStringBuilder<32>("SAVE FAILED (%s)", fs::errorToString(result)));
+    }
 }
 
 void ProjectPage::formatSDCard() {
     _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
         if (result) {
             _manager.pages().busy.show("FORMATTING ...");
+            auto result = fs::volume().format();
+            if (result != fs::OK) {
+                showMessage(FixedStringBuilder<32>("FORMAT FAILED (%s)", fs::errorToString(result)));
+            }
+            _manager.pages().busy.close();
         }
     });
 }

@@ -51,6 +51,6 @@ private:
     static constexpr size_t SectorCount = 1024;
     static constexpr size_t SectorSize = 512;
 
-    std::unique_ptr<uint8_t []> _data;
+    std::unique_ptr<uint8_t[]> _data;
 
 };
