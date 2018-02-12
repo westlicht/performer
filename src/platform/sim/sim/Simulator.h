@@ -40,7 +40,6 @@ public:
     // Hardware IO emulation
     void writeGate(int channel, bool value);
     void writeDAC(int channel, uint16_t value);
-    uint16_t readADC(int channel);
 
     // MIDI emulation
     enum MIDIPort {

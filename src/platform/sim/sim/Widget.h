@@ -41,7 +41,6 @@ public:
     virtual void onMouseWheel(MouseWheelEvent &e) {}
 
 protected:
-
     Vector2i _pos;
     Vector2i _size;
 };

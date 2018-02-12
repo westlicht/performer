@@ -18,7 +18,7 @@ const std::vector<std::string> Simulator::_midiPortName = {
 };
 
 Simulator::Simulator() :
-    _window("Sequencer", Vector2i(800, 450))
+    _window("Sequencer", Vector2i(800, 500))
 {
     _timerFrequency = SDL_GetPerformanceFrequency();
     _timerStart = SDL_GetPerformanceCounter();
@@ -100,10 +100,6 @@ void Simulator::writeDAC(int channel, uint16_t value) {
     if (channel >= 0 && channel < _instruments.size()) {
         _instruments[channel]->setCV(10.f - value / 3276.75f);
     }
-}
-
-uint16_t Simulator::readADC(int channel) {
-    return 0;
 }
 
 void Simulator::sendMIDI(int port, uint8_t data) {
