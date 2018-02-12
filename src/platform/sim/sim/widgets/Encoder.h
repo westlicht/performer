@@ -67,10 +67,19 @@ public:
 
     virtual void onMouseMove(MouseMoveEvent &e) override {
         _hovered = isInside(e.pos());
+        if (_pressed) {
+            int delta = e.pos().x() - _lastPos.x();
+            if (delta / 10 != 0) {
+                setValue(_value + delta / 10);
+                _lastPos = e.pos();
+            }
+        }
     }
 
     virtual void onMouseDown(MouseButtonEvent &e) override {
         if (!_pressed && e.button() == MouseButtonEvent::Left && isInside(e.pos())) {
+            SDL_CaptureMouse(SDL_TRUE);
+            _lastPos = e.pos();
             setPressed(true);
             e.consume();
         }
@@ -78,6 +87,7 @@ public:
 
     virtual void onMouseUp(MouseButtonEvent &e) override {
         if (_pressed && e.button() == MouseButtonEvent::Left) {
+            SDL_CaptureMouse(SDL_FALSE);
             setPressed(false);
             e.consume();
         }
@@ -117,6 +127,7 @@ private:
     bool _hovered = false;
     int _value = 0;
     int _deltaValue = 0;
+    Vector2i _lastPos;
 
     std::function<void(bool)> _buttonCallback;
     std::function<void(int)> _valueCallback;
