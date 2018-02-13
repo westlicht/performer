@@ -79,6 +79,8 @@ public:
     bool isModeSelect() const { return shiftModifier() && isTrack(); }
     int modeSelect() const{ return track(); }
 
+    bool isEncoder() const { return is(Encoder); }
+
 private:
     int _code;
     const KeyState &_state;

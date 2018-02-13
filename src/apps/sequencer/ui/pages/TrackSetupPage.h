@@ -1,8 +1,10 @@
 #pragma once
 
-#include "BasePage.h"
+#include "ListPage.h"
 
-class TrackSetupPage : public BasePage {
+#include "ui/model/TrackSetupListModel.h"
+
+class TrackSetupPage : public ListPage {
 public:
     TrackSetupPage(PageManager &manager, PageContext &context);
 
@@ -17,4 +19,5 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    TrackSetupListModel _listModel;
 };

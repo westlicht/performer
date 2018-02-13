@@ -35,6 +35,7 @@ set(sources
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
     ui/pages/CurveSequencePage.cpp
+    ui/pages/ListPage.cpp
     ui/pages/MainPage.cpp
     ui/pages/MenuPage.cpp
     ui/pages/MutePage.cpp
