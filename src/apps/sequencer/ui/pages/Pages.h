@@ -7,7 +7,6 @@
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
 #include "CurveSequencePage.h"
-#include "MainPage.h"
 #include "MutePage.h"
 #include "NoteSequencePage.h"
 #include "PatternPage.h"
@@ -16,7 +15,6 @@
 #include "SequenceSetupPage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
-#include "TrackPage.h"
 #include "TrackSetupPage.h"
 
 #ifdef CONFIG_ENABLE_ASTEROIDS
@@ -37,8 +35,6 @@ struct Pages {
     BpmPage bpm;
     ClockSetupPage clockSetup;
     // obsolete pages
-    MainPage main;
-    TrackPage track;
     MutePage mute;
     // helper pages
     TextInputPage textInput;
@@ -63,8 +59,6 @@ struct Pages {
         bpm(manager, context),
         clockSetup(manager, context),
         // obsolete pages
-        main(manager, context),
-        track(manager, context),
         mute(manager, context),
         // helper pages
         textInput(manager, context),
