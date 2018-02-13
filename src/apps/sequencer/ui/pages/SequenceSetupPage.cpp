@@ -171,10 +171,6 @@ void SequenceSetupPage::updateLeds(Leds &leds) {
 void SequenceSetupPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
-    // if (key.isGlobal()) {
-    //     return;
-    // }
-
     if (key.shiftModifier() && key.isTrack()) {
         return;
     }
@@ -205,10 +201,6 @@ void SequenceSetupPage::keyDown(KeyEvent &event) {
 
 void SequenceSetupPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
-
-    // if (key.isGlobal()) {
-    //     return;
-    // }
 
     // if (key.isStep()) {
     //     _selectedSteps[key.step()] = false;

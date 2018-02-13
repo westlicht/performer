@@ -62,10 +62,6 @@ void MutePage::updateLeds(Leds &leds) {
 void MutePage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.isGlobal()) {
-        return;
-    }
-
     if (key.isTrack()) {
         _engine.track(key.track()).toggleMuted();
     }
@@ -75,10 +71,6 @@ void MutePage::keyDown(KeyEvent &event) {
 
 void MutePage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
-
-    if (key.isGlobal()) {
-        return;
-    }
 
     if (key.is(Key::Mute)) {
         close();

@@ -42,6 +42,7 @@ public:
         Mute = 26,
         Left = 28,
         Right = 29,
+        Global = 30,
         Shift = 31,
         F0 = MatrixMap::fromFunction(0),
         F1 = MatrixMap::fromFunction(1),
@@ -71,7 +72,7 @@ public:
     bool isFunction() const { return MatrixMap::isFunction(_code); }
     int function() const { return MatrixMap::toFunction(_code); }
 
-    bool isGlobal() const { return _code == Start; };
+    bool isGlobal() const { return _code == Global; };
 
     bool isTrackSelect() const { return !shiftModifier() && isTrack(); }
     int trackSelect() const { return track(); }
