@@ -82,23 +82,33 @@ Mode/track buttons are `MODE/TRACK[1-8]`.
 
 ### Mode Selection
 
-- [x] press `SHIFT` + `MODE1` to show _track setup_ page
+- [x] press `SHIFT` + `MODE0` to show _project_ page
+- [x] press `SHIFT` + `MODE1` to show _pattern_ page
+- [x] press `SHIFT` + `MODE2` to show _track setup_ page
     - configure track mode (trigger, note, chord, function, etc.)
     - configure track outputs (gate, cv, midi)
-- [x] press `SHIFT` + `MODE2` to show _sequence_ page
-- [x] press `SHIFT` + `MODE3` to show _sequence parameter_ page  (first step, last step, division, shuffle, direction etc)
-- [ ] press `SHIFT` + `MODE4` to show _sequence modifier_ page (transpose, shift, etc.)
-- [x] press `SHIFT` + `MODE6` to show _project_ page
-- [x] press `SHIFT` + `MODE7` to show _pattern_ page
-- [x] press `SHIFT` + `MODE8` to show _performer_ page
+- [x] press `SHIFT` + `MODE3` to show _sequence_ page
+- [x] press `SHIFT` + `MODE4` to show _sequence parameter_ page  (first step, last step, division, shuffle, direction etc)
+- [ ] press `SHIFT` + `MODE5` to show _sequence modifier_ page (transpose, shift, etc.)
+- [x] press `SHIFT` + `MODE7` to show _performer_ page
 
+## Project Page (`MODE0`)
 
+- [ ] press `F1` to load project from SD card
+- [ ] press `F2` to save project to SD card
+- [x] press `F3` to format SD card
 
-## Track Setup Page (`MODE1`)
+## Pattern Page (`MODE1`)
+
+- [ ] press `STEP[1-16]` to switch _pattern_ immediately
+- [ ] press `SHIFT` + `STEP[1-16]` to schedule switch of _pattern_ on next _global measure_
+- [ ] press `F5` to cancel scheduled switch
+
+## Track Setup Page (`MODE2`)
 
 **Note** Changing track setup deletes the current snapshots.
 
-## Sequence Page (`MODE2`)
+## Sequence Page (`MODE3`)
 
 ### Note Sequencer
 
@@ -139,26 +149,14 @@ Mode/track buttons are `MODE/TRACK[1-8]`.
     - repeats
     - arpeggio?
 
-## Sequence Parameter Page (`MODE3`)
+## Sequence Parameter Page (`MODE4`)
 
 - **IDEA**: use `SHIFT` + `STEP[1-16]` as shortcuts to sequence parameters
 
-## Sequence Modifier Page (`MODE4`)
+## Sequence Modifier Page (`MODE5`)
 
 
-## Project Page (`MODE6`)
-
-- [ ] press `F1` to load project from SD card
-- [ ] press `F2` to save project to SD card
-- [x] press `F3` to format SD card
-
-## Pattern Page (`MODE7`)
-
-- [ ] press `STEP[1-16]` to switch _pattern_ immediately
-- [ ] press `SHIFT` + `STEP[1-16]` to schedule switch of _pattern_ on next _global measure_
-- [ ] press `F5` to cancel scheduled switch
-
-## Performer Page (`MODE8`)
+## Performer Page (`MODE7`)
 
 ### Buttons
 
