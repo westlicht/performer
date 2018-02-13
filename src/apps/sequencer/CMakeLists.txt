@@ -37,7 +37,6 @@ set(sources
     ui/pages/ConfirmationPage.cpp
     ui/pages/CurveSequencePage.cpp
     ui/pages/ListPage.cpp
-    ui/pages/MenuPage.cpp
     ui/pages/MutePage.cpp
     ui/pages/NoteSequencePage.cpp
     ui/pages/PatternPage.cpp
