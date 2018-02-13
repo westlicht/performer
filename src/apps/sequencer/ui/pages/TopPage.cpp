@@ -39,10 +39,7 @@ void TopPage::keyDown(KeyEvent &event) {
     }
 
     if (key.is(Key::Start)) {
-        if (_keyState[Key::BPM]) {
-            // tap tempo
-            _engine.tapTempoTap();
-        } else if (key.shiftModifier()) {
+        if (key.shiftModifier()) {
             // restart
             _engine.start();
         } else {
@@ -61,17 +58,8 @@ void TopPage::keyDown(KeyEvent &event) {
             // clock setup page
             _manager.pages().clockSetup.show();
         } else {
-            // bpm value
-            _engine.tapTempoReset();
-            _manager.pages().value.show({
-                Key::None,
-                [this] (StringBuilder &string) {
-                    string("BPM: %.1f", _model.project().bpm());
-                },
-                [this] (int encoderValue, bool encoderShift, bool keyShift) {
-                    _model.project().setBpm(_model.project().bpm() + encoderValue * (encoderShift ? 0.1f : 1.f) * (keyShift ? 10.f : 1.f));
-                }
-            });
+            // bpm page
+            _manager.pages().bpm.show();
         }
     }
 
@@ -83,12 +71,6 @@ void TopPage::keyDown(KeyEvent &event) {
 }
 
 void TopPage::keyUp(KeyEvent &event) {
-    const auto &key = event.key();
-
-    if (key.is(Key::BPM)) {
-        _manager.pages().value.close();
-    }
-
     event.consume();
 }
 

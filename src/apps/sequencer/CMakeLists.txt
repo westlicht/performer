@@ -31,6 +31,7 @@ set(sources
     ui/UI.cpp
     # ui/pages
     ui/pages/AsteroidsPage.cpp
+    ui/pages/BpmPage.cpp
     ui/pages/BusyPage.cpp
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
@@ -48,7 +49,6 @@ set(sources
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp
     ui/pages/TrackSetupPage.cpp
-    ui/pages/ValuePage.cpp
     # ui/painters
     ui/painters/SequencePainter.cpp
     ui/painters/WindowPainter.cpp

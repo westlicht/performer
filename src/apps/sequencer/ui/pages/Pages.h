@@ -2,6 +2,7 @@
 
 #include "Config.h"
 
+#include "BpmPage.h"
 #include "BusyPage.h"
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
@@ -17,7 +18,6 @@
 #include "TopPage.h"
 #include "TrackPage.h"
 #include "TrackSetupPage.h"
-#include "ValuePage.h"
 
 #ifdef CONFIG_ENABLE_ASTEROIDS
 #include "AsteroidsPage.h"
@@ -34,13 +34,13 @@ struct Pages {
     SequenceSetupPage sequenceSetup;
     PerformerPage performer;
     // modal pages
+    BpmPage bpm;
     ClockSetupPage clockSetup;
     // obsolete pages
     MainPage main;
     TrackPage track;
     MutePage mute;
     // helper pages
-    ValuePage value;
     TextInputPage textInput;
     ConfirmationPage confirmation;
     BusyPage busy;
@@ -60,13 +60,13 @@ struct Pages {
         sequenceSetup(manager, context),
         performer(manager, context),
         // modal pages
+        bpm(manager, context),
         clockSetup(manager, context),
         // obsolete pages
         main(manager, context),
         track(manager, context),
         mute(manager, context),
         // helper pages
-        value(manager, context),
         textInput(manager, context),
         confirmation(manager, context),
         busy(manager, context)
