@@ -67,6 +67,10 @@ void TopPage::keyDown(KeyEvent &event) {
         _manager.pages().mute.show();
     }
 
+    if (key.is(Key::Global)) {
+        _manager.pages().monitor.show();
+    }
+
     event.consume();
 }
 

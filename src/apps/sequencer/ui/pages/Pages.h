@@ -7,6 +7,7 @@
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
 #include "CurveSequencePage.h"
+#include "MonitorPage.h"
 #include "MutePage.h"
 #include "NoteSequencePage.h"
 #include "PatternPage.h"
@@ -34,6 +35,7 @@ struct Pages {
     // modal pages
     BpmPage bpm;
     ClockSetupPage clockSetup;
+    MonitorPage monitor;
     // obsolete pages
     MutePage mute;
     // helper pages
@@ -58,6 +60,7 @@ struct Pages {
         // modal pages
         bpm(manager, context),
         clockSetup(manager, context),
+        monitor(manager, context),
         // obsolete pages
         mute(manager, context),
         // helper pages

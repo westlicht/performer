@@ -59,6 +59,9 @@ public:
     // time base
     uint32_t tick() const { return _tick; }
 
+    const CVInput &cvInput() const { return _cvInput; }
+    const CVOutput &cvOutput() const { return _cvOutput; }
+
     // gate overrides
     bool gateOutputOverride() const { return _gateOutputOverride; }
     void setGateOutputOverride(bool enabled) { _gateOutputOverride = enabled; }
