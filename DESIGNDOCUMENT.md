@@ -1,6 +1,6 @@
 # DESIGN DOCUMENT
 
-This is a preliminary design document for the PER|FORMER eurorack sequencer. Planned features are marked with [ ] while implemented features are marked with [x].
+This is a preliminary design document for the **PER|FORMER** eurorack sequencer.
 
 # Hardware
 
@@ -119,15 +119,25 @@ Mode/track buttons are `MODE/TRACK[1-8]`.
 - press `<` / `>` to move to previous/next page in sequence
 - press `SHIFT` + `<` / `>` to move to first/last page in sequence
 
+- probably should call this mode just step sequencer
+
 - **IDEA**: use `SHIFT` to select all notes, but if a `STEP[1-16]` is pressed while `SHIFT` is hold, enter mode where selected steps can be toggled on the step buttons without holding shift
 
-### Control Sequencer
+### Curve Sequencer
 
 - [ ] press `F1` to edit shapes
 - [ ] press `SHIFT` + `F1` to edit shape variations
 - [ ] press `F2` to edit amplitudes
 - [ ] press `F3` to edit offsets
 
+### List Sequencer
+
+- entering sequence as a sequential list of events with:
+    - note
+    - duration
+    - gate length
+    - repeats
+    - arpeggio?
 
 ## Sequence Parameter Page (`MODE3`)
 
@@ -140,6 +150,7 @@ Mode/track buttons are `MODE/TRACK[1-8]`.
 
 - [ ] press `F1` to load project from SD card
 - [ ] press `F2` to save project to SD card
+- [x] press `F3` to format SD card
 
 ## Pattern Page (`MODE7`)
 
