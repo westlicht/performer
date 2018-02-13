@@ -2,6 +2,7 @@
 
 #include "Clock.h"
 #include "TapTempo.h"
+#include "NudgeTempo.h"
 #include "Track.h"
 #include "Controller.h"
 #include "CVInput.h"
@@ -51,6 +52,10 @@ public:
     void tapTempoReset();
     void tapTempoTap();
 
+    // nudge tempo
+    void nudgeTempoSetDirection(int direction);
+    float nudgeTempoStrength() const;
+
     // time base
     uint32_t tick() const { return _tick; }
 
@@ -93,6 +98,7 @@ private:
 
     Clock _clock;
     TapTempo _tapTempo;
+    NudgeTempo _nudgeTempo;
 
     TrackEngineArray _tracks;
 
@@ -100,6 +106,8 @@ private:
 
     bool _running = false;
     uint32_t _tick = 0;
+
+    uint32_t _lastSystemTicks = 0;
 
     // gate output overrides
     bool _gateOutputOverride = false;

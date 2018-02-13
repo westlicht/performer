@@ -5,6 +5,8 @@
 #include "core/Debug.h"
 #include "core/midi/MIDIMessage.h"
 
+#include "os/os.h"
+
 Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, MIDI &midi, USBMIDI &usbMidi) :
     _model(model),
     _adc(adc),
@@ -32,9 +34,15 @@ void Engine::init() {
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
         _tracks[i].setSequence(_model.project().pattern(0).sequence(i));
     }
+
+    _lastSystemTicks = os::ticks();
 }
 
 void Engine::update() {
+    uint32_t systemTicks = os::ticks();
+    float dt = (0.001f * (systemTicks - _lastSystemTicks)) / os::time::ms(1);
+    _lastSystemTicks = systemTicks;
+
     if (_clock.checkStart()) {
         DBG("START");
         for (auto &track : _tracks) {
@@ -53,8 +61,10 @@ void Engine::update() {
         _running = true;
     }
 
+    _nudgeTempo.update(dt);
+
     // update tempo
-    _clock.setMasterBpm(_model.project().bpm());
+    _clock.setMasterBpm(_model.project().bpm() + _nudgeTempo.strength() * 10.f);
 
     _cvInput.update();
 
@@ -105,6 +115,14 @@ void Engine::tapTempoReset() {
 void Engine::tapTempoTap() {
     _tapTempo.tap();
     _model.project().setBpm(_tapTempo.bpm());
+}
+
+void Engine::nudgeTempoSetDirection(int direction) {
+    _nudgeTempo.setDirection(direction);
+}
+
+float Engine::nudgeTempoStrength() const {
+    return _nudgeTempo.strength();
 }
 
 void Engine::showMessage(const char *text, uint32_t duration) {

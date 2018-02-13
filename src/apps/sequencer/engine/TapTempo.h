@@ -1,7 +1,5 @@
 #pragma once
 
-#include "core/Debug.h"
-
 #include "drivers/HighResolutionTimer.h"
 
 class TapTempo {

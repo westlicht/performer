@@ -51,7 +51,7 @@ Global buttons are `PLAY`, `CLOCK`, `<`, `>`, `SNAPSHOT`, `FILL`, `GLOBAL`, `SHI
 - [x] press `SHIFT` + `PLAY` to reset and restart the sequencer
 - [x] hold `CLOCK` and turn `ENCODER` to set the tempo (press/hold and turn `ENCODER` to adjust in smaller steps, hold `SHIFT` and turn `ENCODER` to adjust in larger steps)
 - [x] hold `CLOCK` and tap `PLAY` multiple times to set tempo by tapping
-- [ ] hold `CLOCK` and hold `<` or `>` to nudge playhead (temporary decrease/increase tempo)
+- [x] hold `CLOCK` and hold `<` or `>` to nudge playhead (temporary decrease/increase tempo)
 - [x] press `SHIFT` + `CLOCK` to open the _clock setup_ page
 
 ### Snapshot Control

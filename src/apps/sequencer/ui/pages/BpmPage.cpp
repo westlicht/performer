@@ -21,9 +21,19 @@ void BpmPage::draw(Canvas &canvas) {
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setFont(Font::Small);
+    canvas.setColor(0xf);
 
     FixedStringBuilder<16> string("BPM: %.1f", _project.bpm());
     canvas.drawText(50, 36, string);
+
+    float nudgeTempoStrength = _engine.nudgeTempoStrength();
+    if (nudgeTempoStrength > 0.f) {
+        int w = nudgeTempoStrength * 10;
+        canvas.fillRect(180, 32 - 2, w, 4);
+    } else if (nudgeTempoStrength < 0.f) {
+        int w = std::abs(nudgeTempoStrength * 10);
+        canvas.fillRect(180 - w, 32 - 2, w, 4);
+    }
 }
 
 void BpmPage::updateLeds(Leds &leds) {
@@ -36,9 +46,11 @@ void BpmPage::keyDown(KeyEvent &event) {
         // tap tempo
         _engine.tapTempoTap();
     } else if (key.is(Key::Left)) {
-        // notch tempo down
+        // nudge tempo down
+        _engine.nudgeTempoSetDirection(-1);
     } else if (key.is(Key::Right)) {
-        // notch tempo up
+        // nudge tempo up
+        _engine.nudgeTempoSetDirection(1);
     }
 
     event.consume();
@@ -50,7 +62,8 @@ void BpmPage::keyUp(KeyEvent &event) {
     if (key.is(Key::BPM)) {
         close();
     } else if (key.is(Key::Left) || key.is(Key::Right)) {
-        // reset notch
+        // reset nudge
+        _engine.nudgeTempoSetDirection(0);
     }
 
     event.consume();
