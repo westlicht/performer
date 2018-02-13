@@ -25,20 +25,22 @@
 
 struct Pages {
     TopPage top;
-    MainPage main;
+    // main pages
+    ProjectPage project;
+    PatternPage pattern;
     TrackSetupPage trackSetup;
-    TrackPage track;
     NoteSequencePage noteSequence;
     CurveSequencePage curveSequence;
     SequenceSetupPage sequenceSetup;
-    MutePage mute;
-    ValuePage value;
-    ClockSetupPage clockSetup;
-    PatternPage pattern;
-    ProjectPage project;
     PerformerPage performer;
-
+    // modal pages
+    ClockSetupPage clockSetup;
+    // obsolete pages
+    MainPage main;
+    TrackPage track;
+    MutePage mute;
     // helper pages
+    ValuePage value;
     TextInputPage textInput;
     ConfirmationPage confirmation;
     BusyPage busy;
@@ -49,18 +51,22 @@ struct Pages {
 
     Pages(PageManager &manager, PageContext &context) :
         top(manager, context),
-        main(manager, context),
+        // main pages
+        project(manager, context),
+        pattern(manager, context),
         trackSetup(manager, context),
-        track(manager, context),
         noteSequence(manager, context),
         curveSequence(manager, context),
         sequenceSetup(manager, context),
-        mute(manager, context),
-        value(manager, context),
-        clockSetup(manager, context),
-        pattern(manager, context),
-        project(manager, context),
         performer(manager, context),
+        // modal pages
+        clockSetup(manager, context),
+        // obsolete pages
+        main(manager, context),
+        track(manager, context),
+        mute(manager, context),
+        // helper pages
+        value(manager, context),
         textInput(manager, context),
         confirmation(manager, context),
         busy(manager, context)

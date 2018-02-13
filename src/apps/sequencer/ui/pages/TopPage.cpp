@@ -27,14 +27,14 @@ void TopPage::keyDown(KeyEvent &event) {
 
     if (key.isModeSelect()) {
         switch (key.modeSelect()) {
-        case 0: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().trackSetup); break;
-        case 1: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().noteSequence); break;
-        case 2: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().sequenceSetup); break;
-        case 3: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().curveSequence); break;
-        case 4: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().textInput); break;
-        case 5: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().pattern); break;
-        case 6: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().project); break;
-        case 7: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().performer); break;
+        case 0: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().project); break;
+        case 1: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().pattern); break;
+        case 2: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().trackSetup); break;
+        case 3: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().noteSequence); break;
+        case 4: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().curveSequence); break;
+        case 5: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().sequenceSetup); break;
+        case 6: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().performer); break;
+        case 7: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().textInput); break;
         }
     }
 
