@@ -72,14 +72,15 @@ public:
 
     // helpers
 
-    void changeTrackMode(int trackIndex, Track::Mode mode) {
+    void setTrack(int trackIndex, const Track &track) {
         // TODO reset snapshots
-        _tracks[trackIndex].setMode(mode);
+        _tracks[trackIndex] = track;
         for (auto &pattern : _patterns) {
             auto &sequence = pattern.sequence(trackIndex);
-            switch (mode) {
+            switch (track.mode()) {
             case Track::Mode::Note:     sequence.noteSequence().setDefault(); break;
             case Track::Mode::Curve:    sequence.curveSequence().setDefault(); break;
+            case Track::Mode::Last:     break;
             }
         }
     }

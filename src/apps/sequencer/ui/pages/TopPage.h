@@ -13,4 +13,6 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    void setMainPage(Page &page);
+    void setSequencePage();
 };

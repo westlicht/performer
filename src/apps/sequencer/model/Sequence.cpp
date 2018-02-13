@@ -11,6 +11,7 @@ void Sequence::write(WriteContext &context, int index) const {
     switch (context.model.project().track(index).mode()) {
     case Track::Mode::Note:     _sequence.noteSequence.write(context, index); break;
     case Track::Mode::Curve:    _sequence.curveSequence.write(context, index); break;
+    case Track::Mode::Last:     break;
     }
 }
 
@@ -23,5 +24,6 @@ void Sequence::read(ReadContext &context, int index) {
     switch (context.model.project().track(index).mode()) {
     case Track::Mode::Note:     _sequence.noteSequence.read(context, index); break;
     case Track::Mode::Curve:    _sequence.curveSequence.read(context, index); break;
+    case Track::Mode::Last:     break;
     }
 }

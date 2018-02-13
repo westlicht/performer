@@ -23,18 +23,18 @@ void TopPage::keyDown(KeyEvent &event) {
 
     if (key.isTrackSelect()) {
         _project.setSelectedTrackIndex(key.trackSelect());
+        setSequencePage();
     }
 
     if (key.isModeSelect()) {
         switch (key.modeSelect()) {
-        case 0: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().project); break;
-        case 1: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().pattern); break;
-        case 2: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().trackSetup); break;
-        case 3: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().noteSequence); break;
-        case 4: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().curveSequence); break;
-        case 5: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().sequenceSetup); break;
-        case 6: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().performer); break;
-        case 7: _manager.reset(&_manager.pages().top); _manager.push(&_manager.pages().textInput); break;
+        case 0: setMainPage(_manager.pages().project); break;
+        case 1: setMainPage(_manager.pages().pattern); break;
+        case 2: setMainPage(_manager.pages().trackSetup); break;
+        case 3: setSequencePage(); break;
+        case 5: setMainPage(_manager.pages().sequenceSetup); break;
+        case 6: setMainPage(_manager.pages().performer); break;
+        case 7: setMainPage(_manager.pages().textInput); break;
         }
     }
 
@@ -80,4 +80,22 @@ void TopPage::keyUp(KeyEvent &event) {
 
 void TopPage::encoder(EncoderEvent &event) {
     event.consume();
+}
+
+void TopPage::setMainPage(Page &page) {
+    _manager.reset(&_manager.pages().top);
+    _manager.push(&page);
+}
+
+void TopPage::setSequencePage() {
+    switch (_project.selectedTrack().mode()) {
+    case Track::Mode::Note:
+        setMainPage(_manager.pages().noteSequence);
+        break;
+    case Track::Mode::Curve:
+        setMainPage(_manager.pages().curveSequence);
+        break;
+    case Track::Mode::Last:
+        break;
+    }
 }
