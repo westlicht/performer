@@ -13,7 +13,7 @@ ClockSetupPage::ClockSetupPage(PageManager &manager, PageContext &context) :
 
 void ClockSetupPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "TRACK SETUP");
+    WindowPainter::drawHeader(canvas, _model, _engine, "CLOCK SETUP");
 
     const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, "EXIT" };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);

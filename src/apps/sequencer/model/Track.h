@@ -16,6 +16,8 @@ public:
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }
 
+    // fillMode
+
     // Serialization
 
     void write(WriteContext &context, int index) const;

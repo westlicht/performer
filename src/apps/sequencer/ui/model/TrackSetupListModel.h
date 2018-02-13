@@ -6,6 +6,9 @@
 
 class TrackSetupListModel : public ListModel {
 public:
+    const Track &track() const { return _track; }
+    void setTrack(const Track &track) { _track = track; }
+
     virtual int rows() const override { return 10; }
     virtual int columns() const override { return 2; }
 
@@ -23,5 +26,5 @@ public:
     }
 
 private:
-    Track *_track = nullptr;
+    Track _track;
 };
