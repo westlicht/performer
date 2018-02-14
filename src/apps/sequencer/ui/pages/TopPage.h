@@ -14,5 +14,7 @@ public:
 
 private:
     void setMainPage(Page &page);
+
+    bool isSequencePage();
     void setSequencePage();
 };

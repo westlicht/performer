@@ -23,7 +23,9 @@ void TopPage::keyDown(KeyEvent &event) {
 
     if (key.isTrackSelect()) {
         _project.setSelectedTrackIndex(key.trackSelect());
-        setSequencePage();
+        if (isSequencePage()) {
+            setSequencePage();
+        }
     }
 
     if (key.isModeSelect()) {
@@ -85,6 +87,12 @@ void TopPage::encoder(EncoderEvent &event) {
 void TopPage::setMainPage(Page &page) {
     _manager.reset(&_manager.pages().top);
     _manager.push(&page);
+}
+
+bool TopPage::isSequencePage() {
+    return
+        _manager.top() == &_manager.pages().noteSequence ||
+        _manager.top() == &_manager.pages().curveSequence;
 }
 
 void TopPage::setSequencePage() {
