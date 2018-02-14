@@ -89,8 +89,6 @@ private:
     void setupClockOutputs();
 
     Model &_model;
-    ADC &_adc;
-    DAC &_dac;
     DIO &_dio;
     GateOutput &_gateOutput;
     MIDI &_midi;
