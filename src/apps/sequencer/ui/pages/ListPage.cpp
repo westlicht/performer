@@ -61,9 +61,19 @@ void ListPage::updateLeds(Leds &leds) {
 void ListPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.isEncoder()) {
+    switch (key.code()) {
+    case Key::Left:
+        _edit = false;
+        event.consume();
+        break;
+    case Key::Right:
+        _edit = true;
+        event.consume();
+        break;
+    case Key::Encoder:
         _edit = !_edit;
         event.consume();
+        break;
     }
 }
 
