@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.h"
+
 #include "ListModel.h"
 
 #include "ui/utils/AdjustUtils.h"
@@ -12,7 +14,7 @@ public:
     void setTrack(const Track &track) { _track = track; }
 
     virtual int rows() const override {
-        return 1;
+        return Last;
     }
 
     virtual int columns() const override {
@@ -36,12 +38,18 @@ public:
 private:
     enum Item {
         Mode,
+        PlayMode,
+        FillMode,
+        LinkTrack,
         Last,
     };
 
     static const char *itemName(Item item) {
         switch (item) {
         case Mode:              return "Mode";
+        case PlayMode:          return "Play Mode";
+        case FillMode:          return "Fill Mode";
+        case LinkTrack:         return "Link Track";
         case Last:              break;
         }
         return nullptr;
@@ -56,6 +64,19 @@ private:
         case Mode:
             str(Track::modeName(_track.mode()));
             break;
+        case PlayMode:
+            str(Track::playModeName(_track.playMode()));
+            break;
+        case FillMode:
+            str(Track::fillModeName(_track.fillMode()));
+            break;
+        case LinkTrack:
+            if (_track.linkTrack() == -1) {
+                str("None");
+            } else {
+                str("Track%d", _track.linkTrack() + 1);
+            }
+            break;
         case Last:
             break;
         }
@@ -65,6 +86,15 @@ private:
         switch (item) {
         case Mode:
             _track.setMode(adjustedEnum(_track.mode(), value));
+            break;
+        case PlayMode:
+            _track.setPlayMode(adjustedEnum(_track.playMode(), value));
+            break;
+        case FillMode:
+            _track.setFillMode(adjustedEnum(_track.fillMode(), value));
+            break;
+        case LinkTrack:
+            _track.setLinkTrack(clamp(_track.linkTrack() + value, -1, CONFIG_TRACK_COUNT - 1));
             break;
         case Last:
             break;

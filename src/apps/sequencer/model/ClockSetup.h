@@ -26,7 +26,7 @@ public:
     enum class ClockMode : uint8_t {
         Reset = 0,
         StartStop,
-        Last,
+        Last
     };
 
     static const char *clockModeName(ClockMode mode) {
