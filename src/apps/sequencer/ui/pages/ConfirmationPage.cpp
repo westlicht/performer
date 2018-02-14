@@ -40,8 +40,8 @@ void ConfirmationPage::keyDown(KeyEvent &event) {
 
     if (key.isFunction()) {
         switch (key.function()) {
-        case 3: close(false); break;
-        case 4: close(true); break;
+        case 3: closeWithResult(false); break;
+        case 4: closeWithResult(true); break;
         }
     }
 }
@@ -52,7 +52,7 @@ void ConfirmationPage::keyUp(KeyEvent &event) {
 void ConfirmationPage::encoder(EncoderEvent &event) {
 }
 
-void ConfirmationPage::close(bool result) {
+void ConfirmationPage::closeWithResult(bool result) {
     Page::close();
     if (_callback) {
         _callback(result);

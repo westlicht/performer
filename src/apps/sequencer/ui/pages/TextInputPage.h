@@ -20,7 +20,7 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    void close(bool result);
+    void closeWithResult(bool result);
 
     void clear();
     void insert(char c);

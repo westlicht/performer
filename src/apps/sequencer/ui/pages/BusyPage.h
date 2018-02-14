@@ -6,6 +6,7 @@ class BusyPage : public BasePage {
 public:
     BusyPage(PageManager &manager, PageContext &context);
 
+    using BasePage::show;
     void show(const char *text);
 
     virtual void enter() override;

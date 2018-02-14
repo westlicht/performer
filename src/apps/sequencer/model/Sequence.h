@@ -11,13 +11,26 @@
 
 class Sequence {
 public:
-    enum PlayMode {
+    enum class PlayMode : uint8_t {
         Forward,
         Backward,
         PingPong,
         Pendulum,
         Random,
+        Last
     };
+
+    static const char *playModeName(PlayMode playMode) {
+        switch (playMode) {
+        case PlayMode::Forward:     return "Forward";
+        case PlayMode::Backward:    return "Backward";
+        case PlayMode::PingPong:    return "PingPong";
+        case PlayMode::Pendulum:    return "Pendulum";
+        case PlayMode::Random:      return "Random";
+        case PlayMode::Last:        break;
+        }
+        return nullptr;
+    }
 
     Sequence() {
         _sequence.noteSequence.setDefault();
@@ -25,10 +38,8 @@ public:
 
     // playMode
 
-    PlayMode playMode() const { return PlayMode(_playMode); }
-    void setPlayMode(PlayMode playMode) {
-        _playMode = PlayMode(std::max(0, std::min(int(Random), int(playMode))));
-    }
+    PlayMode playMode() const { return _playMode; }
+    void setPlayMode(PlayMode playMode) { _playMode = playMode; }
 
     // firstStep
 
@@ -58,7 +69,7 @@ public:
     void read(ReadContext &context, int index);
 
 private:
-    uint8_t _playMode = Forward;
+    PlayMode _playMode = PlayMode::Forward;
     uint8_t _firstStep = 0;
     uint8_t _lastStep = CONFIG_STEP_COUNT - 1;
 

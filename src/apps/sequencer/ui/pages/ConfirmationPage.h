@@ -10,6 +10,7 @@ public:
 
     typedef std::function<void(bool)> ResultCallback;
 
+    using BasePage::show;
     void show(const char *text, ResultCallback callback);
 
     virtual void enter() override;
@@ -25,7 +26,7 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    void close(bool result);
+    void closeWithResult(bool result);
 
     const char *_text;
     ResultCallback _callback;

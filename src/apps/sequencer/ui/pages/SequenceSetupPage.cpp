@@ -2,47 +2,9 @@
 
 #include "ui/LedPainter.h"
 #include "ui/painters/WindowPainter.h"
+#include "ui/utils/AdjustUtils.h"
 
 #include "core/utils/StringBuilder.h"
-
-#if 0
-static const char *ParameterNameShort[] = {
-    "DIV",
-    "MODE",
-    "FIRST",
-    "LAST",
-    "RST",
-    "SCALE",
-    "SHIFT",
-    "",
-    "",
-    "",
-};
-
-static const char *ParameterNameLong[] = {
-    "Divider",
-    "Play Mode",
-    "First Step",
-    "Last Step",
-    "Reset Measure",
-    "Scale",
-    "Shift",
-    "",
-    "",
-    "",
-};
-#endif
-
-static const char *playModeToStr(Sequence::PlayMode playMode) {
-    switch (playMode) {
-    case Sequence::Forward:     return "Forward";
-    case Sequence::Backward:    return "Backward";
-    case Sequence::PingPong:    return "Ping Pong";
-    case Sequence::Pendulum:    return "Pendulum";
-    case Sequence::Random:      return "Random";
-    default:                    return "INVALID";
-    };
-}
 
 struct ParameterHandler {
     const char *shortName;
@@ -60,10 +22,10 @@ static const ParameterHandler ParameterHandlers[] = {
     {
         "MODE", "Play Mode",
         [] (const Sequence &sequence, StringBuilder &str) {
-            str("%s", playModeToStr(sequence.playMode()));
+            str("%s", Sequence::playModeName(sequence.playMode()));
         },
         [] (Sequence &sequence, EncoderEvent &event) {
-            sequence.setPlayMode(Sequence::PlayMode(int(sequence.playMode()) + event.value()));
+            sequence.setPlayMode(adjustedEnum(sequence.playMode(), event.value()));
         },
     },
     {

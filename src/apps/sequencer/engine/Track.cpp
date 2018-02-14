@@ -82,44 +82,48 @@ void TrackEngine::advance(const Sequence &sequence) {
     if (_currentStep == -1) {
         // first step
         switch (playMode) {
-        case Sequence::Forward:
-        case Sequence::PingPong:
-        case Sequence::Pendulum:
+        case Sequence::PlayMode::Forward:
+        case Sequence::PlayMode::PingPong:
+        case Sequence::PlayMode::Pendulum:
             _currentStep = firstStep;
             break;
-        case Sequence::Backward:
+        case Sequence::PlayMode::Backward:
             _currentStep = lastStep;
             break;
-        case Sequence::Random:
+        case Sequence::PlayMode::Random:
             _currentStep = randomStep();
+            break;
+        case Sequence::PlayMode::Last:
             break;
         }
     } else {
         // advance step
         switch (playMode) {
-        case Sequence::Forward:
+        case Sequence::PlayMode::Forward:
             _currentStep = _currentStep >= lastStep ? firstStep : _currentStep + 1;
             break;
-        case Sequence::Backward:
+        case Sequence::PlayMode::Backward:
             _currentStep = _currentStep <= firstStep ? lastStep : _currentStep - 1;
             break;
-        case Sequence::PingPong:
-        case Sequence::Pendulum:
+        case Sequence::PlayMode::PingPong:
+        case Sequence::PlayMode::Pendulum:
             if (_direction > 0 && _currentStep >= lastStep) {
                 _direction = -1;
             } else if (_direction < 0 && _currentStep <= firstStep) {
                 _direction = 1;
             } else {
-                if (playMode == Sequence::Pendulum) {
+                if (playMode == Sequence::PlayMode::Pendulum) {
                     _currentStep += _direction;
                 }
             }
-            if (playMode == Sequence::PingPong) {
+            if (playMode == Sequence::PlayMode::PingPong) {
                 _currentStep += _direction;
             }
             break;
-        case Sequence::Random:
+        case Sequence::PlayMode::Random:
             _currentStep = randomStep();
+            break;
+        case Sequence::PlayMode::Last:
             break;
         }
     }

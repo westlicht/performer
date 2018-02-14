@@ -93,8 +93,8 @@ void TextInputPage::keyDown(KeyEvent &event) {
         case 0: backspace(); break;
         case 1: del(); break;
         case 2: clear(); break;
-        case 3: close(false); break;
-        case 4: close(true); break;
+        case 3: closeWithResult(false); break;
+        case 4: closeWithResult(true); break;
         }
     }
 
@@ -120,7 +120,7 @@ void TextInputPage::encoder(EncoderEvent &event) {
     _selectedIndex = (_selectedIndex + event.value() + sizeof(characterSet)) % sizeof(characterSet);
 }
 
-void TextInputPage::close(bool result) {
+void TextInputPage::closeWithResult(bool result) {
     Page::close();
     // TODO callback
 }
