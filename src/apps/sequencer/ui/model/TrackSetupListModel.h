@@ -6,12 +6,12 @@
 
 #include "ui/utils/AdjustUtils.h"
 
-#include "model/Track.h"
+#include "model/TrackSetup.h"
 
 class TrackSetupListModel : public ListModel {
 public:
-    const Track &track() const { return _track; }
-    void setTrack(const Track &track) { _track = track; }
+    const TrackSetup &trackSetup() const { return _trackSetup; }
+    void setTrackSetup(const TrackSetup &trackSetup) { _trackSetup = trackSetup; }
 
     virtual int rows() const override {
         return Last;
@@ -62,19 +62,19 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case Mode:
-            str(Track::modeName(_track.mode()));
+            str(TrackSetup::modeName(_trackSetup.mode()));
             break;
         case PlayMode:
-            str(Track::playModeName(_track.playMode()));
+            str(TrackSetup::playModeName(_trackSetup.playMode()));
             break;
         case FillMode:
-            str(Track::fillModeName(_track.fillMode()));
+            str(TrackSetup::fillModeName(_trackSetup.fillMode()));
             break;
         case LinkTrack:
-            if (_track.linkTrack() == -1) {
+            if (_trackSetup.linkTrack() == -1) {
                 str("None");
             } else {
-                str("Track%d", _track.linkTrack() + 1);
+                str("Track%d", _trackSetup.linkTrack() + 1);
             }
             break;
         case Last:
@@ -85,21 +85,21 @@ private:
     void editValue(Item item, int value) {
         switch (item) {
         case Mode:
-            _track.setMode(adjustedEnum(_track.mode(), value));
+            _trackSetup.setMode(adjustedEnum(_trackSetup.mode(), value));
             break;
         case PlayMode:
-            _track.setPlayMode(adjustedEnum(_track.playMode(), value));
+            _trackSetup.setPlayMode(adjustedEnum(_trackSetup.playMode(), value));
             break;
         case FillMode:
-            _track.setFillMode(adjustedEnum(_track.fillMode(), value));
+            _trackSetup.setFillMode(adjustedEnum(_trackSetup.fillMode(), value));
             break;
         case LinkTrack:
-            _track.setLinkTrack(clamp(_track.linkTrack() + value, -1, CONFIG_TRACK_COUNT - 1));
+            _trackSetup.setLinkTrack(clamp(_trackSetup.linkTrack() + value, -1, CONFIG_TRACK_COUNT - 1));
             break;
         case Last:
             break;
         }
     }
 
-    Track _track;
+    TrackSetup _trackSetup;
 };

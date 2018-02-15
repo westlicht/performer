@@ -22,7 +22,7 @@ set(sources
     model/Project.cpp
     model/Sequence.cpp
     model/Settings.cpp
-    model/Track.cpp
+    model/TrackSetup.cpp
     # ui
     ui/LedPainter.cpp
     ui/MessageManager.cpp

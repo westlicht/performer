@@ -1,6 +1,6 @@
-#include "Track.h"
+#include "TrackSetup.h"
 
-void Track::write(WriteContext &context, int index) const {
+void TrackSetup::write(WriteContext &context, int index) const {
     auto &writer = context.writer;
     writer.write(_mode);
     writer.write(_playMode);
@@ -8,7 +8,7 @@ void Track::write(WriteContext &context, int index) const {
     writer.write(_linkTrack);
 }
 
-void Track::read(ReadContext &context, int index) {
+void TrackSetup::read(ReadContext &context, int index) {
     auto &reader = context.reader;
     reader.read(_mode);
     reader.read(_playMode);

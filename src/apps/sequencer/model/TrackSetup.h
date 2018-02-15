@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstring>
 
-class Track {
+class TrackSetup {
 public:
     enum class Mode : uint8_t {
         Note,
@@ -75,10 +75,10 @@ public:
     void write(WriteContext &context, int index) const;
     void read(ReadContext &context, int index);
 
-    bool operator==(const Track &other) const {
-        return std::memcmp(this, &other, sizeof(Track)) == 0;
+    bool operator==(const TrackSetup &other) const {
+        return std::memcmp(this, &other, sizeof(TrackSetup)) == 0;
     }
-    bool operator!=(const Track &other) const {
+    bool operator!=(const TrackSetup &other) const {
         return !(*this == other);
     }
 

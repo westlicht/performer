@@ -1,6 +1,6 @@
 #include "Sequence.h"
 #include "Model.h"
-#include "Track.h"
+#include "TrackSetup.h"
 
 void Sequence::write(WriteContext &context, int index) const {
     auto &writer = context.writer;
@@ -8,10 +8,10 @@ void Sequence::write(WriteContext &context, int index) const {
     writer.write(_firstStep);
     writer.write(_lastStep);
 
-    switch (context.model.project().track(index).mode()) {
-    case Track::Mode::Note:     _sequence.noteSequence.write(context, index); break;
-    case Track::Mode::Curve:    _sequence.curveSequence.write(context, index); break;
-    case Track::Mode::Last:     break;
+    switch (context.model.project().trackSetup(index).mode()) {
+    case TrackSetup::Mode::Note:    _sequence.noteSequence.write(context, index); break;
+    case TrackSetup::Mode::Curve:   _sequence.curveSequence.write(context, index); break;
+    case TrackSetup::Mode::Last:    break;
     }
 }
 
@@ -21,9 +21,9 @@ void Sequence::read(ReadContext &context, int index) {
     reader.read(_firstStep);
     reader.read(_lastStep);
 
-    switch (context.model.project().track(index).mode()) {
-    case Track::Mode::Note:     _sequence.noteSequence.read(context, index); break;
-    case Track::Mode::Curve:    _sequence.curveSequence.read(context, index); break;
-    case Track::Mode::Last:     break;
+    switch (context.model.project().trackSetup(index).mode()) {
+    case TrackSetup::Mode::Note:    _sequence.noteSequence.read(context, index); break;
+    case TrackSetup::Mode::Curve:   _sequence.curveSequence.read(context, index); break;
+    case TrackSetup::Mode::Last:    break;
     }
 }

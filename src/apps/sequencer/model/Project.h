@@ -2,7 +2,7 @@
 
 #include "Config.h"
 #include "ClockSetup.h"
-#include "Track.h"
+#include "TrackSetup.h"
 #include "Pattern.h"
 #include "Serialize.h"
 
@@ -27,18 +27,20 @@ public:
     const ClockSetup &clockSetup() const { return _clockSetup; }
           ClockSetup &clockSetup()       { return _clockSetup; }
 
-    // Tracks
+    // trackSetups
 
-    typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
+    typedef std::array<TrackSetup, CONFIG_TRACK_COUNT> TrackSetupArray;
 
-    const TrackArray &tracks() const { return _tracks; }
-          TrackArray &tracks()       { return _tracks; }
+    const TrackSetupArray &tracksSetups() const { return _trackSetups; }
+          TrackSetupArray &tracksSetups()       { return _trackSetups; }
 
-    const Track &track(int index) const { return _tracks[index]; }
-          Track &track(int index)       { return _tracks[index]; }
+    const TrackSetup &trackSetup(int index) const { return _trackSetups[index]; }
+          TrackSetup &trackSetup(int index)       { return _trackSetups[index]; }
 
-    const Track &selectedTrack() const { return _tracks[_selectedTrackIndex]; }
-          Track &selectedTrack()       { return _tracks[_selectedTrackIndex]; }
+    void setTrackSetup(int index, const TrackSetup &trackSetup);
+
+    const TrackSetup &selectedTrackSetup() const { return _trackSetups[_selectedTrackIndex]; }
+          TrackSetup &selectedTrackSetup()       { return _trackSetups[_selectedTrackIndex]; }
 
     // Patterns
 
@@ -70,23 +72,7 @@ public:
     const Pattern &selectedPattern() const { return _patterns[_selectedPatternIndex]; }
           Pattern &selectedPattern()       { return _patterns[_selectedPatternIndex]; }
 
-    // helpers
 
-    void setTrack(int trackIndex, const Track &track) {
-        bool modeChanged = track.mode() != _tracks[trackIndex].mode();
-        _tracks[trackIndex] = track;
-        if (modeChanged) {
-            // TODO reset snapshots
-            for (auto &pattern : _patterns) {
-                auto &sequence = pattern.sequence(trackIndex);
-                switch (track.mode()) {
-                case Track::Mode::Note:     sequence.noteSequence().setDefault(); break;
-                case Track::Mode::Curve:    sequence.curveSequence().setDefault(); break;
-                case Track::Mode::Last:     break;
-                }
-            }
-        }
-    }
 
     // Serialization
 
@@ -99,7 +85,7 @@ private:
 
     ClockSetup _clockSetup;
 
-    TrackArray _tracks;
+    TrackSetupArray _trackSetups;
     PatternArray _patterns;
 
     int _selectedTrackIndex = 0;

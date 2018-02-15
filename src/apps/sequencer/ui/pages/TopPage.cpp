@@ -96,14 +96,14 @@ bool TopPage::isSequencePage() {
 }
 
 void TopPage::setSequencePage() {
-    switch (_project.selectedTrack().mode()) {
-    case Track::Mode::Note:
+    switch (_project.selectedTrackSetup().mode()) {
+    case TrackSetup::Mode::Note:
         setMainPage(_manager.pages().noteSequence);
         break;
-    case Track::Mode::Curve:
+    case TrackSetup::Mode::Curve:
         setMainPage(_manager.pages().curveSequence);
         break;
-    case Track::Mode::Last:
+    case TrackSetup::Mode::Last:
         break;
     }
 }
