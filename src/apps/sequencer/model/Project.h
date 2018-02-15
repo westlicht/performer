@@ -4,6 +4,7 @@
 #include "ClockSetup.h"
 #include "TrackSetup.h"
 #include "Pattern.h"
+#include "PlayState.h"
 #include "Serialize.h"
 
 #include "core/math/Math.h"
@@ -42,7 +43,12 @@ public:
     const TrackSetup &selectedTrackSetup() const { return _trackSetups[_selectedTrackIndex]; }
           TrackSetup &selectedTrackSetup()       { return _trackSetups[_selectedTrackIndex]; }
 
-    // Patterns
+    // playState
+
+    const PlayState &playState() const { return _playState; }
+          PlayState &playState()       { return _playState; }
+
+    // patterns
 
     typedef std::array<Pattern, CONFIG_PATTERN_COUNT> PatternArray;
 
@@ -72,8 +78,6 @@ public:
     const Pattern &selectedPattern() const { return _patterns[_selectedPatternIndex]; }
           Pattern &selectedPattern()       { return _patterns[_selectedPatternIndex]; }
 
-
-
     // Serialization
 
     void write(WriteContext &context) const;
@@ -84,8 +88,8 @@ private:
     uint8_t _swing = 0;
 
     ClockSetup _clockSetup;
-
     TrackSetupArray _trackSetups;
+    PlayState _playState;
     PatternArray _patterns;
 
     int _selectedTrackIndex = 0;
