@@ -1,5 +1,18 @@
 #include "PlayState.h"
 
+void PlayState::TrackState::write(WriteContext &context, int index) const {
+    auto &writer = context.writer;
+    uint8_t muteValue = mute();
+    writer.write(muteValue);
+}
+
+void PlayState::TrackState::read(ReadContext &context, int index) {
+    auto &reader = context.reader;
+    uint8_t muteValue;
+    reader.read(muteValue);
+    setMute(muteValue);
+}
+
 
 void PlayState::muteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
@@ -73,4 +86,13 @@ void PlayState::selectPattern(int pattern, ExecuteType executeType) {
     for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
         selectTrackPattern(track, executeType);
     }
+}
+
+void PlayState::write(WriteContext &context) const {
+    writeArray(context, _trackStates);
+}
+
+void PlayState::read(ReadContext &context) {
+    readArray(context, _trackStates);
+    _dirty = true;
 }

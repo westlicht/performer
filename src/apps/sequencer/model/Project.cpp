@@ -22,8 +22,8 @@ void Project::write(WriteContext &context) const {
     writer.write(_swing);
 
     _clockSetup.write(context);
-
     writeArray(context, _trackSetups);
+    _playState.write(context);
     writeArray(context, _patterns);
 
     writer.write(_selectedTrackIndex);
@@ -36,8 +36,8 @@ void Project::read(ReadContext &context) {
     reader.read(_swing);
 
     _clockSetup.read(context);
-
     readArray(context, _trackSetups);
+    _playState.read(context);
     readArray(context, _patterns);
 
     reader.read(_selectedTrackIndex);

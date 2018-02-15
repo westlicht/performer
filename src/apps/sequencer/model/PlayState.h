@@ -2,7 +2,7 @@
 
 #include "Config.h"
 
-#include "Bitfield.h"
+#include "Serialize.h"
 
 #include <array>
 
@@ -24,6 +24,11 @@ public:
 
         int pattern() const { return _pattern; }
         int requestedPattern() const { return _requestedPattern; }
+
+        // Serialization
+
+        void write(WriteContext &context, int index) const;
+        void read(ReadContext &context, int index);
 
     private:
         enum State {
@@ -50,6 +55,14 @@ public:
 
         bool hasRequests(int requests) const {
             return _state & uint8_t(requests);
+        }
+
+        void setMute(bool mute) {
+            if (mute) {
+                _state |= Mute;
+            } else {
+                _state &= ~Mute;
+            }
         }
 
         void setRequestedMute(bool mute) {
@@ -109,6 +122,11 @@ public:
 
     void selectTrackPattern(int track, int pattern, ExecuteType executeType = Immediate);
     void selectPattern(int pattern, ExecuteType executeType = Immediate);
+
+    // Serialization
+
+    void write(WriteContext &context) const;
+    void read(ReadContext &context);
 
 private:
     bool isDirty() const { return _dirty; }
