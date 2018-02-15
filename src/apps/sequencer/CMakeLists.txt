@@ -39,7 +39,6 @@ set(sources
     ui/pages/CurveSequencePage.cpp
     ui/pages/ListPage.cpp
     ui/pages/MonitorPage.cpp
-    ui/pages/MutePage.cpp
     ui/pages/NoteSequencePage.cpp
     ui/pages/PatternPage.cpp
     ui/pages/PerformerPage.cpp

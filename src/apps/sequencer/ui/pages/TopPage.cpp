@@ -65,9 +65,9 @@ void TopPage::keyDown(KeyEvent &event) {
         }
     }
 
-    if (key.is(Key::Mute)) {
-        _manager.pages().mute.show();
-    }
+    // if (key.is(Key::Mute)) {
+    //     _manager.pages().mute.show();
+    // }
 
     if (key.is(Key::Global)) {
         _manager.pages().monitor.show();
