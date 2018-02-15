@@ -74,6 +74,9 @@ void Engine::update() {
     while (_clock.checkTick(&tick)) {
         _tick = tick;
 
+        // update play state
+        updatePlayState();
+
         for (size_t i = 0; i < _tracks.size(); ++i) {
             auto &track = _tracks[i];
             track.tick(tick);
@@ -128,6 +131,11 @@ float Engine::nudgeTempoStrength() const {
     return _nudgeTempo.strength();
 }
 
+float Engine::globalMeasureFraction() const {
+    uint32_t measureDivisor = (_model.project().globalMeasure() * CONFIG_PPQN * 4);
+    return float(_tick % measureDivisor) / measureDivisor;
+}
+
 void Engine::showMessage(const char *text, uint32_t duration) {
     if (_messageHandler) {
         _messageHandler(text, duration);
@@ -148,7 +156,7 @@ void Engine::updatePlayState() {
         return;
     }
 
-    uint32_t measureDivisor = (CONFIG_PPQN * 4);
+    uint32_t measureDivisor = (_model.project().globalMeasure() * CONFIG_PPQN * 4);
     bool handleScheduledRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
 
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {

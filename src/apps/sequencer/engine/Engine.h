@@ -58,6 +58,7 @@ public:
 
     // time base
     uint32_t tick() const { return _tick; }
+    float globalMeasureFraction() const;
 
     const CVInput &cvInput() const { return _cvInput; }
     const CVOutput &cvOutput() const { return _cvOutput; }
@@ -109,6 +110,7 @@ private:
 
     bool _running = false;
     uint32_t _tick = 0;
+    uint32_t _lastTick = 0;
 
     uint32_t _lastSystemTicks = 0;
 

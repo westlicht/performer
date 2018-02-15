@@ -20,8 +20,13 @@ public:
 
     // swing
 
-    uint8_t swing() const { return _swing; }
-    void setSwing(uint8_t swing) { _swing = swing; }
+    int swing() const { return _swing; }
+    void setSwing(int swing) { _swing = swing; }
+
+    // globalMeasure
+
+    int globalMeasure() const { return _globalMeasure; }
+    void setGlobalMeasure(int globalMeasure) { _globalMeasure = globalMeasure; }
 
     // clockSetup
 
@@ -86,6 +91,7 @@ public:
 private:
     float _bpm = 120.f;
     uint8_t _swing = 0;
+    uint8_t _globalMeasure = 1;
 
     ClockSetup _clockSetup;
     TrackSetupArray _trackSetups;

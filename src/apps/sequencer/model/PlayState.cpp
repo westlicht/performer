@@ -50,17 +50,19 @@ void PlayState::unmuteAll(ExecuteType executeType) {
 }
 
 void PlayState::soloTrack(int track, ExecuteType executeType) {
-    for (int otherTrack = 0; otherTrack < CONFIG_TRACK_COUNT; ++otherTrack) {
-        if (track != otherTrack) {
-            muteTrack(otherTrack, executeType);
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        if (track == trackIndex) {
+            unmuteTrack(trackIndex, executeType);
+        } else {
+            muteTrack(trackIndex, executeType);
         }
     }
 }
 
 void PlayState::unsoloTrack(int track, ExecuteType executeType) {
-    for (int otherTrack = 0; otherTrack < CONFIG_TRACK_COUNT; ++otherTrack) {
-        if (track != otherTrack) {
-            unmuteTrack(otherTrack, executeType);
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        if (track != trackIndex) {
+            unmuteTrack(trackIndex, executeType);
         }
     }
 }
