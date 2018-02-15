@@ -20,14 +20,21 @@ void PlayState::muteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
     trackState.setRequests(executeType == Immediate ? TrackState::ImmediateMuteRequest : TrackState::ScheduledMuteRequest);
     trackState.setRequestedMute(true);
-    _dirty = true;
+    notify(executeType);
 }
 
 void PlayState::unmuteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
     trackState.setRequests(executeType == Immediate ? TrackState::ImmediateMuteRequest : TrackState::ScheduledMuteRequest);
     trackState.setRequestedMute(false);
-    _dirty = true;
+    notify(executeType);
+}
+
+void PlayState::toggleMuteTrack(int track, ExecuteType executeType) {
+    auto &trackState = _trackStates[track];
+    trackState.setRequests(executeType == Immediate ? TrackState::ImmediateMuteRequest : TrackState::ScheduledMuteRequest);
+    trackState.setRequestedMute(!trackState.mute());
+    notify(executeType);
 }
 
 void PlayState::muteAll(ExecuteType executeType) {
@@ -64,7 +71,6 @@ void PlayState::cancelScheduledMutesAndSolos() {
         trackState.clearRequests(TrackState::MuteRequests);
         trackState.setRequestedMute(trackState.mute());
     }
-    _dirty = true;
 }
 
 void PlayState::fillTrack(int track, bool fill) {
@@ -81,7 +87,7 @@ void PlayState::selectTrackPattern(int track, int pattern, ExecuteType executeTy
     auto &trackState = _trackStates[track];
     trackState.setRequests(executeType == Immediate ? TrackState::ImmediatePatternRequest : TrackState::ScheduledPatternRequest);
     trackState.setRequestedPattern(pattern);
-    _dirty = true;
+    notify(executeType);
 }
 
 void PlayState::selectPattern(int pattern, ExecuteType executeType) {
@@ -96,5 +102,5 @@ void PlayState::write(WriteContext &context) const {
 
 void PlayState::read(ReadContext &context) {
     readArray(context, _trackStates);
-    _dirty = true;
+    notify(Immediate);
 }

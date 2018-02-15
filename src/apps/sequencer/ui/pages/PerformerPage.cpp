@@ -22,7 +22,7 @@ void PerformerPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PERFORMER");
 
-    const char *functionNames[] = { "M.ALL", "U.ALL", "CANCEL", nullptr, nullptr };
+    const char *functionNames[] = { "MUTE", "UNMUTE", "CANCEL", nullptr, nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     GridLayout<
@@ -41,8 +41,6 @@ void PerformerPage::draw(Canvas &canvas) {
     > centerLayout;
 
     constexpr int Border = 4;
-
-    WindowPainter::drawFrame(canvas, centerLayout.originX(), centerLayout.originY(), centerLayout.width(), centerLayout.height());
 
     canvas.setBlendMode(BlendMode::Set);
 
@@ -65,6 +63,24 @@ void PerformerPage::updateLeds(Leds &leds) {
 }
 
 void PerformerPage::keyDown(KeyEvent &event) {
+    const auto &key = event.key();
+    auto &playState = _project.playState();
+
+    if (key.isFunction()) {
+        switch (key.function()) {
+        case 0: playState.muteAll(key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate); break;
+        case 1: playState.unmuteAll(key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate); break;
+        case 2: playState.cancelScheduledMutesAndSolos(); break;
+        }
+    }
+
+    if (key.isStep()) {
+        if (key.step() < 8) {
+            playState.toggleMuteTrack(key.step(), key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate);
+        } else {
+            // playState.toggleSoloTrack(key.step() - 8, key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate); break;
+        }
+    }
 }
 
 void PerformerPage::keyUp(KeyEvent &event) {

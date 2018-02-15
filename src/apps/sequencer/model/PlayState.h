@@ -43,6 +43,8 @@ public:
 
             MuteRequests = ImmediateMuteRequest | ScheduledMuteRequest,
             PatternRequests = ImmediatePatternRequest | ScheduledPatternRequest,
+            ImmediateRequests = ImmediateMuteRequest | ImmediatePatternRequest,
+            ScheduledRequests = ScheduledMuteRequest | ScheduledPatternRequest,
         };
 
         void setRequests(int requests) {
@@ -81,6 +83,10 @@ public:
             }
         }
 
+        void setPattern(int pattern) {
+            _pattern = pattern;
+        }
+
         void setRequestedPattern(int pattern) {
             _requestedPattern = pattern;
         }
@@ -96,12 +102,13 @@ public:
     // track states
 
     const TrackState &trackState(int track) const { return _trackStates[track]; }
-          TrackState &trackState(int track)        { return _trackStates[track]; }
+          TrackState &trackState(int track)       { return _trackStates[track]; }
 
     // mutes
 
     void muteTrack(int track, ExecuteType executeType = Immediate);
     void unmuteTrack(int track, ExecuteType executeType = Immediate);
+    void toggleMuteTrack(int track, ExecuteType executeType = Immediate);
 
     void muteAll(ExecuteType executeType = Immediate);
     void unmuteAll(ExecuteType executeType = Immediate);
@@ -129,11 +136,20 @@ public:
     void read(ReadContext &context);
 
 private:
-    bool isDirty() const { return _dirty; }
-    void resetDirty() { _dirty = false; }
+    void notify(ExecuteType executeType) {
+        _hasImmediateRequests |= (executeType == Immediate);
+        _hasScheduledRequests |= (executeType == Scheduled);
+    }
+
+    bool hasImmediateRequests() const { return _hasImmediateRequests; }
+    bool hasScheduledRequests() const { return _hasScheduledRequests; }
+
+    void clearImmediateRequests() { _hasImmediateRequests = false; }
+    void clearScheduledRequests() { _hasScheduledRequests = false; }
 
     std::array<TrackState, CONFIG_TRACK_COUNT> _trackStates;
-    bool _dirty = false;
+    bool _hasImmediateRequests = false;
+    bool _hasScheduledRequests = false;
 
     friend class Engine;
 };

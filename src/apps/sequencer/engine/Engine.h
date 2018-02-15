@@ -85,6 +85,8 @@ public:
     void setMessageHandler(MessageHandler handler);
 
 private:
+    void updatePlayState();
+
     void setupClockSources();
     void setupClockOutputs();
 

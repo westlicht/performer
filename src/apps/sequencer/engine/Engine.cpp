@@ -41,6 +41,7 @@ void Engine::update() {
     float dt = (0.001f * (systemTicks - _lastSystemTicks)) / os::time::ms(1);
     _lastSystemTicks = systemTicks;
 
+    // process clock requests
     if (_clock.checkStart()) {
         DBG("START");
         for (auto &track : _tracks) {
@@ -59,11 +60,14 @@ void Engine::update() {
         _running = true;
     }
 
-    _nudgeTempo.update(dt);
-
     // update tempo
+    _nudgeTempo.update(dt);
     _clock.setMasterBpm(_model.project().bpm() + _nudgeTempo.strength() * 10.f);
 
+    // update play state
+    updatePlayState();
+
+    // update cv inputs
     _cvInput.update();
 
     uint32_t tick;
@@ -88,6 +92,7 @@ void Engine::update() {
         }
     }
 
+    // update cv outputs
     _cvOutput.update();
 
     // update midi controller
@@ -131,6 +136,55 @@ void Engine::showMessage(const char *text, uint32_t duration) {
 
 void Engine::setMessageHandler(MessageHandler handler) {
     _messageHandler = handler;
+}
+
+void Engine::updatePlayState() {
+    auto &playState = _model.project().playState();
+
+    bool hasImmediateRequests = playState.hasImmediateRequests();
+    bool hasScheduledRequests = playState.hasScheduledRequests();
+
+    if (!(hasImmediateRequests || hasScheduledRequests)) {
+        return;
+    }
+
+    uint32_t measureDivisor = (CONFIG_PPQN * 4);
+    bool handleScheduledRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
+
+    for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
+        auto &trackState = playState.trackState(i);
+        auto &track = _tracks[i];
+
+        // handle mute requests
+        if (
+            (trackState.hasRequests(PlayState::TrackState::ImmediateMuteRequest)) ||
+            (handleScheduledRequests && trackState.hasRequests(PlayState::TrackState::ScheduledMuteRequest))
+        ) {
+            trackState.setMute(trackState.requestedMute());
+        }
+
+        // handle pattern requests
+        if (
+            (trackState.hasRequests(PlayState::TrackState::ImmediatePatternRequest)) ||
+            (handleScheduledRequests && trackState.hasRequests(PlayState::TrackState::ScheduledPatternRequest))
+        ) {
+            trackState.setPattern(trackState.requestedPattern());
+        }
+
+        // clear requests
+        trackState.clearRequests(PlayState::TrackState::ImmediateRequests);
+        if (handleScheduledRequests) {
+            trackState.clearRequests(PlayState::TrackState::ScheduledRequests);
+        }
+
+        // update track engine
+        track.setMuted(trackState.mute());
+    }
+
+    playState.clearImmediateRequests();
+    if (handleScheduledRequests) {
+        playState.clearScheduledRequests();
+    }
 }
 
 void Engine::setupClockSources() {
