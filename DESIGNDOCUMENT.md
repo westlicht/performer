@@ -69,8 +69,8 @@ TBD
 
 ### Global Control
 
-- press `GLOBAL` to enable/disable global mode
-- press `SHIFT` + `CONTROL` to open _global setup_ page
+- [ ] press `GLOBAL` to enable/disable global mode
+- [x] press `SHIFT` + `GLOBAL` to open _monitor_ page
 
 ## Mode/Track Control
 
@@ -105,6 +105,10 @@ Mode/track buttons are `MODE/TRACK[1-8]`.
 - [ ] press `F5` to cancel scheduled switch
 
 ## Track Setup Page (`MODE2`)
+
+- [x] shows a menu page
+    - [x] _mode_ selects the sequence mode (_step_, _curve_, _list_)
+    - [ ] _link track_ selects a master track to link to
 
 **Note** Changing track setup deletes the current snapshots.
 
@@ -160,15 +164,15 @@ Mode/track buttons are `MODE/TRACK[1-8]`.
 
 ### Buttons
 
-- [ ] press `F1` to mute all
-- [ ] press `SHIFT` + `F1` to schedule mute all for next _global measure_
-- [ ] press `F2` to unmute all
-- [ ] press `SHIFT` + `F2` to schedule unmute all for next _global measure_
-- [ ] press `F5` to cancel all scheduled actions
-- [ ] press `STEP[1-8]` to mute/unmute track
-- [ ] press `SHIFT` + `STEP[1-8]` to schedule mute/unmute track for next _global measure_
-- [ ] press `STEP[9-16]` to solo/unsolo track
-- [ ] press `SHIFT` + `STEP[9-16]` to schedule solo/unsolo track for  next _global measure_
+- [x] press `F1` to mute all
+- [x] press `SHIFT` + `F1` to schedule mute all for next _global measure_
+- [x] press `F2` to unmute all
+- [x] press `SHIFT` + `F2` to schedule unmute all for next _global measure_
+- [x] press `F5` to cancel all scheduled actions
+- [x] press `STEP[1-8]` to mute/unmute track
+- [x] press `SHIFT` + `STEP[1-8]` to schedule mute/unmute track for next _global measure_
+- [x] press `STEP[9-16]` to solo/unsolo track
+- [x] press `SHIFT` + `STEP[9-16]` to schedule solo/unsolo track for  next _global measure_
 
 **IDEA**: would be nice to add some way to trigger fills on this page as well (track keys)!
 
@@ -176,6 +180,11 @@ Mode/track buttons are `MODE/TRACK[1-8]`.
 
 TBD
 
+## Menu Pages
+
+- [x] press `ENCODER` to switch between item/value columns
+- [x] press `<<` / `>>` to switch between item/value columns
+- [x] turn `ENCODER` to select item/value
 
 ## Generators
 
