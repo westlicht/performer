@@ -1,8 +1,10 @@
 #pragma once
 
-#include "BasePage.h"
+#include "ListPage.h"
 
-class ProjectPage : public BasePage {
+#include "ui/model/ProjectListModel.h"
+
+class ProjectPage : public ListPage {
 public:
     ProjectPage(PageManager &manager, PageContext &context);
 
@@ -20,4 +22,6 @@ private:
     void loadProject();
     void saveProject();
     void formatSDCard();
+
+    ProjectListModel _listModel;
 };

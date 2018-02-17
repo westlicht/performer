@@ -34,9 +34,8 @@ void TopPage::keyDown(KeyEvent &event) {
         case 1: setMainPage(_manager.pages().pattern); break;
         case 2: setMainPage(_manager.pages().trackSetup); break;
         case 3: setSequencePage(); break;
-        case 5: setMainPage(_manager.pages().sequenceSetup); break;
-        case 6: setMainPage(_manager.pages().performer); break;
-        case 7: setMainPage(_manager.pages().textInput); break;
+        case 4: setMainPage(_manager.pages().sequenceSetup); break;
+        case 7: setMainPage(_manager.pages().performer); break;
         }
     }
 

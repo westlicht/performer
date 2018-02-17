@@ -8,25 +8,41 @@
 #include "Serialize.h"
 
 #include "core/math/Math.h"
+#include "core/utils/StringUtils.h"
 
 class Project {
 public:
+    static constexpr size_t NameLength = 16;
+
     // Parameters
+
+    // name
+
+    const char *name() const { return _name; }
+    void setName(const char *name) {
+        StringUtils::copy(_name, name, sizeof(_name));
+    }
 
     // bpm
 
     float bpm() const { return _bpm; }
-    void setBpm(float bpm) { _bpm = clamp(bpm, 1.f, 1000.f); }
+    void setBpm(float bpm) {
+        _bpm = clamp(bpm, 1.f, 1000.f);
+    }
 
     // swing
 
     int swing() const { return _swing; }
-    void setSwing(int swing) { _swing = swing; }
+    void setSwing(int swing) {
+        _swing = clamp(swing, 50, 99);
+    }
 
     // globalMeasure
 
     int globalMeasure() const { return _globalMeasure; }
-    void setGlobalMeasure(int globalMeasure) { _globalMeasure = globalMeasure; }
+    void setGlobalMeasure(int globalMeasure) {
+        _globalMeasure = clamp(globalMeasure, 1, 128);
+    }
 
     // clockSetup
 
@@ -89,8 +105,9 @@ public:
     void read(ReadContext &context);
 
 private:
+    char _name[NameLength + 1] = "UNTITLED";
     float _bpm = 120.f;
-    uint8_t _swing = 0;
+    uint8_t _swing = 50;
     uint8_t _globalMeasure = 1;
 
     ClockSetup _clockSetup;

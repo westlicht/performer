@@ -8,7 +8,8 @@
 #include "core/utils/StringBuilder.h"
 
 ProjectPage::ProjectPage(PageManager &manager, PageContext &context) :
-    BasePage(manager, context)
+    ListPage(manager, context, _listModel),
+    _listModel(context.model.project())
 {}
 
 void ProjectPage::enter() {
@@ -24,6 +25,8 @@ void ProjectPage::draw(Canvas &canvas) {
 
     const char *functionNames[] = { "LOAD", "SAVE", "FORMAT", nullptr, nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+
+    ListPage::draw(canvas);
 }
 
 void ProjectPage::updateLeds(Leds &leds) {
@@ -38,13 +41,28 @@ void ProjectPage::keyDown(KeyEvent &event) {
         case 1: saveProject(); break;
         case 2: formatSDCard(); break;
         }
+        return;
     }
+
+    if (key.is(Key::Encoder) && _selectedRow == 0) {
+        _manager.pages().textInput.show("NAME:", _project.name(), Project::NameLength, [this] (bool result, const char *text) {
+            if (result) {
+                _project.setName(text);
+            }
+        });
+
+        return;
+    }
+
+    ListPage::keyDown(event);
 }
 
 void ProjectPage::keyUp(KeyEvent &event) {
+    ListPage::keyUp(event);
 }
 
 void ProjectPage::encoder(EncoderEvent &event) {
+    ListPage::encoder(event);
 }
 
 void ProjectPage::loadProject() {

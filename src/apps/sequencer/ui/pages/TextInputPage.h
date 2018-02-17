@@ -7,6 +7,11 @@ class TextInputPage : public BasePage {
 public:
     TextInputPage(PageManager &manager, PageContext &context);
 
+    typedef std::function<void(bool, const char *)> ResultCallback;
+
+    using BasePage::show;
+    void show(const char *title, const char *text, size_t maxTextLength, ResultCallback callback);
+
     virtual void enter() override;
     virtual void exit() override;
 
@@ -29,10 +34,12 @@ private:
     void moveLeft();
     void moveRight();
 
-    const char *_title = "PROJECT NAME:";
-    char _text[5];
-    int _maxTextLength = 4;;
+    const char *_title = nullptr;
+    char _text[17];
+    int _maxTextLength = 0;
 
     int _selectedIndex;
     int _cursorIndex;
+
+    ResultCallback _callback;
 };

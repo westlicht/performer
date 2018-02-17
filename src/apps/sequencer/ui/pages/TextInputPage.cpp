@@ -4,6 +4,7 @@
 #include "ui/painters/WindowPainter.h"
 
 #include "core/utils/StringBuilder.h"
+#include "core/utils/StringUtils.h"
 
 #include <cstring>
 
@@ -18,10 +19,19 @@ TextInputPage::TextInputPage(PageManager &manager, PageContext &context) :
 {
 }
 
-void TextInputPage::enter() {
+void TextInputPage::show(const char *title, const char *text, size_t maxTextLength, ResultCallback callback) {
+    _title = title;
+    StringUtils::copy(_text, text, sizeof(_text));
+    _maxTextLength = std::min(sizeof(_text) - 1, maxTextLength);
+    _callback = callback;
+
     _selectedIndex = 0;
-    _cursorIndex = 0;
-    _text[0] = '\0';
+    _cursorIndex = std::strlen(_text);
+
+    BasePage::show();
+}
+
+void TextInputPage::enter() {
 }
 
 void TextInputPage::exit() {
@@ -60,9 +70,6 @@ void TextInputPage::draw(Canvas &canvas) {
         canvas.drawText(28 + titleWidth + offset, 8, str);
         canvas.setBlendMode(BlendMode::Set);
     }
-
-
-
 
     int ix = 0;
     int iy = 0;
@@ -122,7 +129,9 @@ void TextInputPage::encoder(EncoderEvent &event) {
 
 void TextInputPage::closeWithResult(bool result) {
     Page::close();
-    // TODO callback
+    if (_callback) {
+        _callback(result, _text);
+    }
 }
 
 void TextInputPage::clear() {
