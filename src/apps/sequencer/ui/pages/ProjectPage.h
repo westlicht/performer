@@ -21,6 +21,7 @@ public:
 private:
     void loadProject();
     void saveProject();
+    void saveAsProject();
     void formatSDCard();
 
     ProjectListModel _listModel;

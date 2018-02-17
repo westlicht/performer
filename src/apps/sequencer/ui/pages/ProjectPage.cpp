@@ -4,6 +4,8 @@
 #include "ui/pages/Pages.h"
 #include "ui/painters/WindowPainter.h"
 
+#include "model/ProjectManager.h"
+
 #include "core/fs/FileSystem.h"
 #include "core/utils/StringBuilder.h"
 
@@ -23,7 +25,7 @@ void ProjectPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PROJECT");
 
-    const char *functionNames[] = { "LOAD", "SAVE", "FORMAT", nullptr, nullptr };
+    const char *functionNames[] = { "LOAD", "SAVE", "SAVEAS", "FORMAT", nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
@@ -39,7 +41,8 @@ void ProjectPage::keyDown(KeyEvent &event) {
         switch (key.function()) {
         case 0: loadProject(); break;
         case 1: saveProject(); break;
-        case 2: formatSDCard(); break;
+        case 2: saveAsProject(); break;
+        case 3: formatSDCard(); break;
         }
         return;
     }
@@ -66,29 +69,43 @@ void ProjectPage::encoder(EncoderEvent &event) {
 }
 
 void ProjectPage::loadProject() {
-    auto result = fs::volume().mount();
-    if (result != fs::OK) {
-        showMessage(FixedStringBuilder<32>("MOUNT FAILED (%s)", fs::errorToString(result)));
-        return;
-    }
-
-    result = _model.read("test.pro");
-    if (result != fs::OK) {
-        showMessage(FixedStringBuilder<32>("LOAD FAILED (%s)", fs::errorToString(result)));
-    }
+    _manager.pages().projectSelect.show("LOAD PROJECT", 0, false, [this] (bool result, int index) {
+        if (result) {
+            auto result = ProjectManager::loadProject(_project, index);
+            if (result == fs::OK) {
+                showMessage(FixedStringBuilder<32>("Loaded project"));
+            } else {
+                showMessage(FixedStringBuilder<32>("Loading project failed (%s)", fs::errorToString(result)));
+            }
+        }
+    });
 }
 
 void ProjectPage::saveProject() {
-    auto result = fs::volume().mount();
-    if (result != fs::OK) {
-        showMessage(FixedStringBuilder<32>("MOUNT FAILED (%s)", fs::errorToString(result)));
+    if (!_project.slotAssigned()) {
+        saveAsProject();
         return;
     }
 
-    result = _model.write("test.pro");
-    if (result != fs::OK) {
-        showMessage(FixedStringBuilder<32>("SAVE FAILED (%s)", fs::errorToString(result)));
+    auto result = ProjectManager::saveProject(_project, _project.slot());
+    if (result == fs::OK) {
+        showMessage(FixedStringBuilder<32>("Saved project"));
+    } else {
+        showMessage(FixedStringBuilder<32>("Saving project failed (%s)", fs::errorToString(result)));
     }
+}
+
+void ProjectPage::saveAsProject() {
+    _manager.pages().projectSelect.show("SAVE PROJECT", 0, true, [this] (bool result, int index) {
+        if (result) {
+            auto result = ProjectManager::saveProject(_project, index);
+            if (result == fs::OK) {
+                showMessage(FixedStringBuilder<32>("Saved project"));
+            } else {
+                showMessage(FixedStringBuilder<32>("Saving project failed (%s)", fs::errorToString(result)));
+            }
+        }
+    });
 }
 
 void ProjectPage::formatSDCard() {

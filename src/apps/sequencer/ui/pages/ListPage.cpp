@@ -24,6 +24,11 @@ ListPage::ListPage(PageManager &manager, PageContext &context, ListModel &listMo
     _listModel(listModel)
 {}
 
+void ListPage::show() {
+    scrollTo(_selectedRow);
+    BasePage::show();
+}
+
 void ListPage::enter() {
 }
 
@@ -92,10 +97,14 @@ void ListPage::encoder(EncoderEvent &event) {
 void ListPage::setSelectedRow(int selectedRow) {
     if (selectedRow != _selectedRow) {
         _selectedRow = clamp(selectedRow, 0, _listModel.rows() - 1);;
-        if (_selectedRow < _displayRow) {
-            _displayRow = _selectedRow;
-        } else if (_selectedRow >= _displayRow + 3) {
-            _displayRow = _selectedRow - 2;
-        }
+        scrollTo(_selectedRow);
+    }
+}
+
+void ListPage::scrollTo(int row) {
+    if (row < _displayRow) {
+        _displayRow = row;
+    } else if (row >= _displayRow + 3) {
+        _displayRow = row - 2;
     }
 }

@@ -8,6 +8,8 @@ class ListPage : public BasePage {
 public:
     ListPage(PageManager &manager, PageContext &context, ListModel &listModel);
 
+    virtual void show() override;
+
     virtual void enter() override;
     virtual void exit() override;
 
@@ -22,6 +24,8 @@ public:
     void setSelectedRow(int selectedRow);
 
 protected:
+    void scrollTo(int row);
+
     ListModel &_listModel;
     int _selectedRow = 0;
     int _displayRow = 0;

@@ -17,14 +17,6 @@ public:
     const Settings &settings() const { return _settings; }
           Settings &settings()       { return _settings; }
 
-    // Serialization
-
-    fs::Error write(const char *path);
-    fs::Error read(const char *path);
-
-    void write(WriteContext &context) const;
-    void read(ReadContext &context);
-
 private:
     Project _project;
     Settings _settings;

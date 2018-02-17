@@ -8,7 +8,7 @@ void Sequence::write(WriteContext &context, int index) const {
     writer.write(_firstStep);
     writer.write(_lastStep);
 
-    switch (context.model.project().trackSetup(index).mode()) {
+    switch (context.project.trackSetup(index).mode()) {
     case TrackSetup::Mode::Note:    _sequence.noteSequence.write(context, index); break;
     case TrackSetup::Mode::Curve:   _sequence.curveSequence.write(context, index); break;
     case TrackSetup::Mode::Last:    break;
@@ -21,7 +21,7 @@ void Sequence::read(ReadContext &context, int index) {
     reader.read(_firstStep);
     reader.read(_lastStep);
 
-    switch (context.model.project().trackSetup(index).mode()) {
+    switch (context.project.trackSetup(index).mode()) {
     case TrackSetup::Mode::Note:    _sequence.noteSequence.read(context, index); break;
     case TrackSetup::Mode::Curve:   _sequence.curveSequence.read(context, index); break;
     case TrackSetup::Mode::Last:    break;

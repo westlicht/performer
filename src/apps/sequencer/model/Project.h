@@ -16,6 +16,16 @@ public:
 
     // Parameters
 
+    // slot
+
+    int slot() const { return _slot; }
+    void setSlot(int slot) {
+        _slot = slot;
+    }
+    bool slotAssigned() const {
+        return _slot != uint8_t(-1);
+    }
+
     // name
 
     const char *name() const { return _name; }
@@ -104,8 +114,12 @@ public:
     void write(WriteContext &context) const;
     void read(ReadContext &context);
 
+    fs::Error write(const char *path) const;
+    fs::Error read(const char *path);
+
 private:
-    char _name[NameLength + 1] = "UNTITLED";
+    uint8_t _slot = uint8_t(-1);
+    char _name[NameLength + 1] = "INIT";
     float _bpm = 120.f;
     uint8_t _swing = 50;
     uint8_t _globalMeasure = 1;

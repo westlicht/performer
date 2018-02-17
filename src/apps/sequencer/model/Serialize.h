@@ -9,19 +9,19 @@
 
 #include <cstdlib>
 
-typedef SerializedWriter<fs::FileWriter> ModelWriter;
-typedef SerializedReader<fs::FileReader> ModelReader;
+typedef SerializedWriter<fs::FileWriter> ProjectWriter;
+typedef SerializedReader<fs::FileReader> ProjectReader;
 
-class Model;
+class Project;
 
 struct WriteContext {
-    Model &model;
-    ModelWriter &writer;
+    const Project &project;
+    ProjectWriter &writer;
 };
 
 struct ReadContext {
-    Model &model;
-    ModelReader &reader;
+    Project &project;
+    ProjectReader &reader;
 };
 
 template<typename T, size_t N>

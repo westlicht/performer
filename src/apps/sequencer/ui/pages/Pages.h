@@ -12,6 +12,7 @@
 #include "PatternPage.h"
 #include "PerformerPage.h"
 #include "ProjectPage.h"
+#include "ProjectSelectPage.h"
 #include "SequenceSetupPage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
@@ -35,6 +36,7 @@ struct Pages {
     BpmPage bpm;
     ClockSetupPage clockSetup;
     MonitorPage monitor;
+    ProjectSelectPage projectSelect;
     // helper pages
     TextInputPage textInput;
     ConfirmationPage confirmation;
@@ -58,6 +60,7 @@ struct Pages {
         bpm(manager, context),
         clockSetup(manager, context),
         monitor(manager, context),
+        projectSelect(manager, context),
         // helper pages
         textInput(manager, context),
         confirmation(manager, context),

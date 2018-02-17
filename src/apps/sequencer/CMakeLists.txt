@@ -21,6 +21,7 @@ set(sources
     model/Pattern.cpp
     model/PlayState.cpp
     model/Project.cpp
+    model/ProjectManager.cpp
     model/Sequence.cpp
     model/Settings.cpp
     model/TrackSetup.cpp
@@ -43,6 +44,7 @@ set(sources
     ui/pages/PatternPage.cpp
     ui/pages/PerformerPage.cpp
     ui/pages/ProjectPage.cpp
+    ui/pages/ProjectSelectPage.cpp
     ui/pages/SequenceSetupPage.cpp
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
