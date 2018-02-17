@@ -46,7 +46,7 @@ private:
         MidiTx,
         UsbRx,
         UsbTx,
-        Last,
+        Last
     };
 
     static const char *itemName(Item item) {

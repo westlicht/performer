@@ -41,7 +41,7 @@ private:
         PlayMode,
         FillMode,
         LinkTrack,
-        Last,
+        Last
     };
 
     static const char *itemName(Item item) {

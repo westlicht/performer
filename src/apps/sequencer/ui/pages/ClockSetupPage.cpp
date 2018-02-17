@@ -1,6 +1,5 @@
 #include "ClockSetupPage.h"
 
-#include "ui/model/ListModel.h"
 #include "ui/painters/WindowPainter.h"
 
 #include "core/utils/StringBuilder.h"

@@ -21,7 +21,7 @@ public:
     int selectedRow() const { return _selectedRow; }
     void setSelectedRow(int selectedRow);
 
-private:
+protected:
     ListModel &_listModel;
     int _selectedRow = 0;
     int _displayRow = 0;
