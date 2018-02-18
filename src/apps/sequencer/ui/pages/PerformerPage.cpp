@@ -53,7 +53,7 @@ void PerformerPage::draw(Canvas &canvas) {
     canvas.setBlendMode(BlendMode::Set);
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        const auto &track = _engine.track(trackIndex);
+        const auto &trackEngine = _engine.trackEngine(trackIndex);
         const auto &trackState = playState.trackState(trackIndex);
 
         int x = centerLayout.originX() + gridLayout.cellX(trackIndex);
@@ -61,7 +61,7 @@ void PerformerPage::draw(Canvas &canvas) {
         int w = gridLayout.cellWidth();
         int h = gridLayout.cellHeight();
 
-        canvas.setColor(track.gate() ? 0xf : 0x7);
+        canvas.setColor(trackEngine.gate() ? 0xf : 0x7);
         canvas.drawRect(x, y, w, h);
         canvas.setColor(0xf);
         if (trackState.mute() != trackState.requestedMute()) {

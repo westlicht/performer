@@ -31,7 +31,7 @@ void Engine::init() {
     updateClockSetup();
 
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-        _tracks[i].setSequence(_model.project().pattern(0).sequence(i));
+        _trackEngines[i].setSequence(_model.project().pattern(0).sequence(i));
     }
 
     _lastSystemTicks = os::ticks();
@@ -45,8 +45,8 @@ void Engine::update() {
     // process clock requests
     if (_clock.checkStart()) {
         DBG("START");
-        for (auto &track : _tracks) {
-            track.reset();
+        for (auto &trackEngine : _trackEngines) {
+            trackEngine.reset();
         }
         _running = true;
     }
@@ -81,11 +81,11 @@ void Engine::update() {
         // update play state
         updatePlayState();
 
-        for (size_t i = 0; i < _tracks.size(); ++i) {
-            auto &track = _tracks[i];
-            track.tick(tick);
-            _gateOutput.setGate(i, track.gateOutput());
-            _cvOutput.setChannel(i, track.cv());
+        for (size_t i = 0; i < _trackEngines.size(); ++i) {
+            auto &trackEngine = _trackEngines[i];
+            trackEngine.tick(tick);
+            _gateOutput.setGate(i, trackEngine.gateOutput());
+            _cvOutput.setChannel(i, trackEngine.cv());
         }
     }
 
@@ -180,7 +180,7 @@ void Engine::updatePlayState() {
 
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
         auto &trackState = playState.trackState(i);
-        auto &track = _tracks[i];
+        auto &trackEngine = _trackEngines[i];
 
         // handle mute requests
         if (
@@ -205,7 +205,7 @@ void Engine::updatePlayState() {
         }
 
         // update track engine
-        track.setMuted(trackState.mute());
+        trackEngine.setMuted(trackState.mute());
     }
 
     playState.clearImmediateRequests();

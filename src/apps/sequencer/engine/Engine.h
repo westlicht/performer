@@ -75,11 +75,11 @@ public:
     const Clock &clock() const { return _clock; }
           Clock &clock()       { return _clock; }
 
-    const TrackEngineArray &tracks() const { return _tracks; }
-          TrackEngineArray &tracks()       { return _tracks; }
+    const TrackEngineArray &tracksEngines() const { return _trackEngines; }
+          TrackEngineArray &tracksEngines()       { return _trackEngines; }
 
-    const TrackEngine &track(int index) const { return _tracks[index]; }
-          TrackEngine &track(int index)       { return _tracks[index]; }
+    const TrackEngine &trackEngine(int index) const { return _trackEngines[index]; }
+          TrackEngine &trackEngine(int index)       { return _trackEngines[index]; }
 
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
@@ -105,7 +105,7 @@ private:
     TapTempo _tapTempo;
     NudgeTempo _nudgeTempo;
 
-    TrackEngineArray _tracks;
+    TrackEngineArray _trackEngines;
 
     ControllerManager _controllerManager;
 

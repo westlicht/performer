@@ -27,7 +27,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
     const char *functionNames[] = { "GATE", "LENGTH", "INDEX", nullptr, nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
-    const auto &track = _engine.track(_project.selectedTrackIndex());
+    const auto &trackEngine = _engine.trackEngine(_project.selectedTrackIndex());
     const auto &sequence = _project.selectedSequence();
     const auto &noteSequence = sequence.noteSequence();
     const auto &scale = Scale::scale(noteSequence.scale());
@@ -57,7 +57,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
             canvas.drawText(x + (16 - canvas.textWidth(str)) / 2, y - 2, str);
         }
 
-        canvas.setColor(stepIndex == track.currentStep() ? 0xf : 0x7);
+        canvas.setColor(stepIndex == trackEngine.currentStep() ? 0xf : 0x7);
         canvas.drawRect(x + 2, y + 2, 16 - 4, 16 - 4);
         if (step.gate()) {
             canvas.setColor(0xf);
@@ -113,9 +113,9 @@ void NoteSequencePage::draw(Canvas &canvas) {
 void NoteSequencePage::updateLeds(Leds &leds) {
     // LedPainter::drawTracksGateAndSelected(leds, _engine, _project.selectedTrackIndex());
 
-    const auto &track = _engine.track(_project.selectedTrackIndex());
-    const auto &sequence = track.sequence();
-    LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, track.currentStep());
+    const auto &trackEngine = _engine.trackEngine(_project.selectedTrackIndex());
+    const auto &sequence = trackEngine.sequence();
+    LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, trackEngine.currentStep());
 }
 
 void NoteSequencePage::keyDown(KeyEvent &event) {

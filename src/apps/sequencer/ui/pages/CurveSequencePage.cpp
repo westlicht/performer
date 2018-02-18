@@ -42,8 +42,8 @@ void CurveSequencePage::draw(Canvas &canvas) {
     const char *functionNames[] = { "SHAPE", "MIN", "MAX", nullptr, nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
-    const auto &track = _engine.track(_project.selectedTrackIndex());
-    const auto &sequence = track.sequence();
+    const auto &trackEngine = _engine.trackEngine(_project.selectedTrackIndex());
+    const auto &sequence = trackEngine.sequence();
     const auto &curveSequence = sequence.curveSequence();
 
     canvas.setBlendMode(BlendMode::Add);
@@ -67,10 +67,10 @@ void CurveSequencePage::draw(Canvas &canvas) {
 }
 
 void CurveSequencePage::updateLeds(Leds &leds) {
-    const auto &track = _engine.track(_project.selectedTrackIndex());
-    const auto &sequence = track.sequence();
+    const auto &trackEngine = _engine.trackEngine(_project.selectedTrackIndex());
+    const auto &sequence = trackEngine.sequence();
 
-    LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, track.currentStep());
+    LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, trackEngine.currentStep());
 }
 
 void CurveSequencePage::keyDown(KeyEvent &event) {

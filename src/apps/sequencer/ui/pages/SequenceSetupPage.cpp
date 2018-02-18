@@ -122,9 +122,9 @@ void SequenceSetupPage::draw(Canvas &canvas) {
 void SequenceSetupPage::updateLeds(Leds &leds) {
     LedPainter::drawTracksGateAndSelected(leds, _engine, _project.selectedTrackIndex());
 
-    const auto &track = _engine.track(_project.selectedTrackIndex());
-    const auto &sequence = track.sequence();
-    LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, track.currentStep());
+    const auto &trackEngine = _engine.trackEngine(_project.selectedTrackIndex());
+    const auto &sequence = trackEngine.sequence();
+    LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, trackEngine.currentStep());
     // const auto &track = _engine.track(_project.selectedTrackIndex());
     // const auto &sequence = track.sequence();
     // LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, track.currentStep());
