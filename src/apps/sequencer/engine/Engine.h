@@ -86,10 +86,11 @@ public:
     void setMessageHandler(MessageHandler handler);
 
 private:
+    void updateClockSetup();
     void updatePlayState();
 
-    void setupClockSources();
-    void setupClockOutputs();
+    void initClockSources();
+    void initClockOutputs();
 
     Model &_model;
     DIO &_dio;

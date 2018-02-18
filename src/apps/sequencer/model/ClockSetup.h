@@ -2,6 +2,8 @@
 
 #include "Serialize.h"
 
+#include "core/math/Math.h"
+
 #include <cstdint>
 
 class ClockSetup {
@@ -38,35 +40,113 @@ public:
         return nullptr;
     }
 
-    Mode mode() const { return _mode; }
-    void setMode(Mode mode) { _mode = mode; }
+    // mode
 
-    uint8_t clockInputPPQN() const { return _clockInputPPQN; }
-    void setClockInputPPQN(uint8_t clockInputPPQN) { _clockInputPPQN = clockInputPPQN; }
+    Mode mode() const { return _mode; }
+    void setMode(Mode mode) {
+        if (mode != _mode) {
+            _mode = mode;
+            _dirty = true;
+        }
+    }
+
+    // clockInputPPQN
+
+    int clockInputPPQN() const { return _clockInputPPQN; }
+    void setClockInputPPQN(int clockInputPPQN) {
+        clockInputPPQN = clamp(clockInputPPQN, 1, 48);
+        if (clockInputPPQN != _clockInputPPQN) {
+            _clockInputPPQN = clockInputPPQN;
+            _dirty = true;
+        }
+    }
+
+    // clockInputMode
 
     ClockMode clockInputMode() const { return _clockInputMode; }
-    void setClockInputMode(ClockMode mode) { _clockInputMode = mode; }
+    void setClockInputMode(ClockMode mode) {
+        if (mode != _clockInputMode) {
+            _clockInputMode = mode;
+            _dirty = true;
+        }
+    }
 
-    uint8_t clockOutputPPQN() const { return _clockOutputPPQN; }
-    void setClockOutputPPQN(uint8_t clockOutputPPQN) { _clockOutputPPQN = clockOutputPPQN; }
+    // clockOutputPPQN
 
-    uint8_t clockOutputPulse() const { return _clockOutputPulse; }
-    void setClockOutputPulse(uint8_t clockOutputPulse) { _clockOutputPulse = clockOutputPulse; }
+    int clockOutputPPQN() const { return _clockOutputPPQN; }
+    void setClockOutputPPQN(int clockOutputPPQN) {
+        clockOutputPPQN = clamp(clockOutputPPQN, 1, 48);
+        if (clockOutputPPQN != _clockOutputPPQN) {
+            _clockOutputPPQN = clockOutputPPQN;
+            _dirty = true;
+        }
+    }
+
+    // clockOutputPulse
+
+    int clockOutputPulse() const { return _clockOutputPulse; }
+    void setClockOutputPulse(int clockOutputPulse) {
+        clockOutputPulse = clamp(clockOutputPulse, 1, 5);
+        if (clockOutputPulse != _clockOutputPulse) {
+            _clockOutputPulse = clockOutputPulse;
+            _dirty = true;
+        }
+    }
+
+    // clockOutputMode
 
     ClockMode clockOutputMode() const { return _clockOutputMode; }
-    void setClockOutputMode(ClockMode mode) { _clockOutputMode = mode; }
+    void setClockOutputMode(ClockMode mode) {
+        if (mode != _clockOutputMode) {
+            _clockOutputMode = mode;
+            _dirty = true;
+        }
+    }
+
+    // midiRx
 
     bool midiRx() const { return _midiRx; }
-    void setMidiRx(bool midiRx) { _midiRx = midiRx; }
+    void setMidiRx(bool midiRx) {
+        if (midiRx != _midiRx) {
+            _midiRx = midiRx;
+            _dirty = true;
+        }
+    }
+
+    // midiTx
 
     bool midiTx() const { return _midiTx; }
-    void setMidiTx(bool midiTx) { _midiTx = midiTx; }
+    void setMidiTx(bool midiTx) {
+        if (midiTx != _midiTx) {
+            _midiTx = midiTx;
+            _dirty = true;
+        }
+    }
+
+    // usbRx
 
     bool usbRx() const { return _usbRx; }
-    void setUsbRx(bool usbRx) { _usbRx = usbRx; }
+    void setUsbRx(bool usbRx) {
+        if (usbRx != _usbRx) {
+            _usbRx = usbRx;
+            _dirty = true;
+        }
+    }
+
+    // usbTx
 
     bool usbTx() const { return _usbTx; }
-    void setUsbTx(bool usbTx) { _usbTx = usbTx; }
+    void setUsbTx(bool usbTx) {
+        if (usbTx != _usbTx) {
+            _usbTx = usbTx;
+            _dirty = true;
+        }
+    }
+
+    // dirty
+
+    bool isDirty() const { return _dirty; }
+    void clearDirty() { _dirty = false; }
 
     // Serialization
 
@@ -84,4 +164,5 @@ private:
     bool _midiTx = true;
     bool _usbRx = false;
     bool _usbTx = false;
+    bool _dirty = true;
 };

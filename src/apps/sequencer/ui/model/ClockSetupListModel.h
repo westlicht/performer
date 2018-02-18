@@ -113,16 +113,16 @@ private:
             _clockSetup.setMode(adjustedEnum(_clockSetup.mode(), value));
             break;
         case ClockInputPPQN:
-            _clockSetup.setClockInputPPQN(adjusted(_clockSetup.clockInputPPQN(), value, 1, 128));
+            _clockSetup.setClockInputPPQN(_clockSetup.clockInputPPQN() + value);
             break;
         case ClockInputMode:
             _clockSetup.setClockInputMode(adjustedEnum(_clockSetup.clockInputMode(), value));
             break;
         case ClockOutputPPQN:
-            _clockSetup.setClockOutputPPQN(adjusted(_clockSetup.clockOutputPPQN(), value, 1, 128));
+            _clockSetup.setClockOutputPPQN(_clockSetup.clockOutputPPQN() + value);
             break;
         case ClockOutputPulse:
-            _clockSetup.setClockOutputPulse(adjusted(_clockSetup.clockOutputPulse(), value, 1, 5));
+            _clockSetup.setClockOutputPulse(_clockSetup.clockOutputPulse() + value);
             break;
         case ClockOutputMode:
             _clockSetup.setClockOutputMode(adjustedEnum(_clockSetup.clockOutputMode(), value));

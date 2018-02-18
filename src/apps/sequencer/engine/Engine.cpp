@@ -26,8 +26,9 @@ void Engine::init() {
     _cvOutput.init();
     _clock.init();
 
-    setupClockSources();
-    setupClockOutputs();
+    initClockSources();
+    initClockOutputs();
+    updateClockSetup();
 
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
         _tracks[i].setSequence(_model.project().pattern(0).sequence(i));
@@ -63,6 +64,9 @@ void Engine::update() {
     // update tempo
     _nudgeTempo.update(dt);
     _clock.setMasterBpm(_model.project().bpm() + _nudgeTempo.strength() * 10.f);
+
+    // update clock setup
+    updateClockSetup();
 
     // update play state
     updatePlayState();
@@ -146,6 +150,21 @@ void Engine::setMessageHandler(MessageHandler handler) {
     _messageHandler = handler;
 }
 
+void Engine::updateClockSetup() {
+    auto &clockSetup = _model.project().clockSetup();
+
+    if (!clockSetup.isDirty()) {
+        return;
+    }
+
+    DBG("update clock setup");
+
+    _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputPPQN(), Clock::SlaveFreeRunning);
+    _clock.outputConfigure(clockSetup.clockOutputPPQN());
+
+    clockSetup.clearDirty();
+}
+
 void Engine::updatePlayState() {
     auto &playState = _model.project().playState();
 
@@ -195,7 +214,7 @@ void Engine::updatePlayState() {
     }
 }
 
-void Engine::setupClockSources() {
+void Engine::initClockSources() {
     // Configure slaves
     _clock.slaveConfigure(ClockSourceExternal, 16, Clock::SlaveFreeRunning);
     _clock.slaveConfigure(ClockSourceMIDI, 24);
@@ -230,7 +249,7 @@ void Engine::setupClockSources() {
     });
 }
 
-void Engine::setupClockOutputs() {
+void Engine::initClockOutputs() {
     _clock.outputMIDI([this] (uint8_t msg) {
         // TODO we should send a single byte with priority
         _midi.send(MIDIMessage(msg));
