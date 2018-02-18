@@ -2,6 +2,11 @@
 
 #include "core/utils/StringBuilder.h"
 
+#include <algorithm>
+
+std::array<ProjectManager::CachedSlotInfo, 4> ProjectManager::_cachedSlotInfos;
+uint32_t ProjectManager::_cachedSlotInfoTicket = 0;
+
 static void projectFilename(StringBuilder &str, int slot) {
     str("%03d.pro", slot + 1);
 }
@@ -18,6 +23,7 @@ fs::Error ProjectManager::saveProject(Project &project, int slot) {
     result = project.write(filename);
     if (result == fs::OK) {
         project.setSlot(slot);
+        invalidateSlot(slot);
     }
 
     return result;
@@ -41,6 +47,10 @@ fs::Error ProjectManager::loadProject(Project &project, int slot) {
 }
 
 void ProjectManager::slotInfo(int slot, SlotInfo &info) {
+    if (cachedSlot(slot, info)) {
+        return;
+    }
+
     info.used = false;
 
     if (fs::volume().mount() != fs::OK) {
@@ -57,4 +67,38 @@ void ProjectManager::slotInfo(int slot, SlotInfo &info) {
             info.used = true;
         }
     }
+
+    cacheSlot(slot, info);
 }
+
+bool ProjectManager::cachedSlot(int slot, SlotInfo &info) {
+    for (auto &cachedSlotInfo : _cachedSlotInfos) {
+        if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.slot == slot) {
+            info = cachedSlotInfo.info;
+            cachedSlotInfo.ticket = nextCachedSlotTicket();
+            return true;
+        }
+    }
+    return false;
+}
+
+void ProjectManager::cacheSlot(int slot, const SlotInfo &info) {
+    auto cachedSlotInfo = std::min_element(_cachedSlotInfos.begin(), _cachedSlotInfos.end());
+    cachedSlotInfo->slot = slot;
+    cachedSlotInfo->info = info;
+    cachedSlotInfo->ticket = nextCachedSlotTicket();
+}
+
+void ProjectManager::invalidateSlot(int slot) {
+    for (auto &cachedSlotInfo : _cachedSlotInfos) {
+        if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.slot == slot) {
+            cachedSlotInfo.ticket = 0;
+        }
+    }
+}
+
+uint32_t ProjectManager::nextCachedSlotTicket() {
+    _cachedSlotInfoTicket = std::max(uint32_t(1), _cachedSlotInfoTicket + 1);
+    return _cachedSlotInfoTicket;
+}
+
