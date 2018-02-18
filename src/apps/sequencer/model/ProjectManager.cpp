@@ -11,6 +11,11 @@ static void projectFilename(StringBuilder &str, int slot) {
     str("%03d.pro", slot + 1);
 }
 
+fs::Error ProjectManager::format() {
+    invalidateAllSlots();
+    return fs::volume().format();
+}
+
 fs::Error ProjectManager::saveProject(Project &project, int slot) {
     auto result = fs::volume().mount();
     if (result != fs::OK) {
@@ -94,6 +99,12 @@ void ProjectManager::invalidateSlot(int slot) {
         if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.slot == slot) {
             cachedSlotInfo.ticket = 0;
         }
+    }
+}
+
+void ProjectManager::invalidateAllSlots() {
+    for (auto &cachedSlotInfo : _cachedSlotInfos) {
+        cachedSlotInfo.ticket = 0;
     }
 }
 

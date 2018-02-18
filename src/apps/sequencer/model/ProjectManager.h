@@ -8,6 +8,8 @@
 
 class ProjectManager {
 public:
+    static fs::Error format();
+
     static fs::Error saveProject(Project &project, int slot);
     static fs::Error loadProject(Project &project, int slot);
 
@@ -22,6 +24,7 @@ private:
     static bool cachedSlot(int slot, SlotInfo &info);
     static void cacheSlot(int slot, const SlotInfo &info);
     static void invalidateSlot(int slot);
+    static void invalidateAllSlots();
     static uint32_t nextCachedSlotTicket();
 
     struct CachedSlotInfo {

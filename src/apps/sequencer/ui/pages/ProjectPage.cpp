@@ -112,7 +112,7 @@ void ProjectPage::formatSDCard() {
     _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
         if (result) {
             _manager.pages().busy.show("FORMATTING ...");
-            auto result = fs::volume().format();
+            auto result = ProjectManager::format();
             if (result != fs::OK) {
                 showMessage(FixedStringBuilder<32>("FORMAT FAILED (%s)", fs::errorToString(result)));
             }
