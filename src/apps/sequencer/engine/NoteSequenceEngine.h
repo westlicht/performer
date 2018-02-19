@@ -16,6 +16,9 @@ public:
 
     void tick(uint32_t tick);
 
+    void setMute(bool mute);
+
+    bool gate() const { return _gate; }
     bool gateOutput() const { return _gateOutput; }
     float cvOutput() const { return _cvOutput; }
 
@@ -26,7 +29,8 @@ private:
 
     const NoteSequence *_sequence;
 
-    // bool _muted = false;
+    bool _mute;
+    bool _gate;
     bool _gateOutput;
     float _cvOutput;
     int _currentStep;

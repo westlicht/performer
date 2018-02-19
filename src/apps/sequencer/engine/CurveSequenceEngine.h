@@ -14,12 +14,14 @@ public:
 
     void tick(uint32_t tick);
 
-    bool gateOutput() const { return _gateOutput; }
+    void setMute(bool mute);
+
+    bool gate() const { return false; }
+    bool gateOutput() const { return false; }
     float cvOutput() const { return _cvOutput; }
 
 private:
     const CurveSequence *_sequence;
 
-    bool _gateOutput;
     float _cvOutput;
 };

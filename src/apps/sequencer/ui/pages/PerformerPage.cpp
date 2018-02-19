@@ -61,8 +61,7 @@ void PerformerPage::draw(Canvas &canvas) {
         int w = gridLayout.cellWidth();
         int h = gridLayout.cellHeight();
 
-        // TODO show muted gates as well
-        canvas.setColor(trackEngine.gateOutput() ? 0xf : 0x7);
+        canvas.setColor(trackEngine.gate() ? 0xf : 0x7);
         canvas.drawRect(x, y, w, h);
         canvas.setColor(0xf);
         if (trackState.mute() != trackState.requestedMute()) {

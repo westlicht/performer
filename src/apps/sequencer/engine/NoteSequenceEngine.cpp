@@ -41,7 +41,7 @@ void NoteSequenceEngine::setup(const TrackSetup &trackSetup) {
 void NoteSequenceEngine::reset() {
     _currentStep = -1;
     _direction = 1;
-    // _gate = false;
+    _gate = false;
     _gateOutput = false;
     _gateQueue.clear();
 }
@@ -63,11 +63,16 @@ void NoteSequenceEngine::tick(uint32_t tick) {
         const auto &scale = Scale::scale(sequence.scale());
         _cvOutput = evalStepNote(step, scale);
     }
+
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
-        _gateOutput = _gateQueue.front().gate;
-        // _gateOutput = !_muted && _gate;
+        _gate = _gateQueue.front().gate;
+        _gateOutput = !_mute && _gate;
         _gateQueue.pop();
     }
+}
+
+void NoteSequenceEngine::setMute(bool mute) {
+    _mute = mute;
 }
 
 void NoteSequenceEngine::advance() {

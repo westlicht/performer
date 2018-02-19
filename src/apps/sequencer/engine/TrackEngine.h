@@ -20,10 +20,10 @@ public:
 
     void tick(uint32_t tick);
 
-    bool muted() const { return _muted; }
-    void setMuted(bool muted) { _muted = muted; }
+    bool mute() const { return _mute; }
+    void setMute(bool mute);
 
-    // bool gate() const { return _gate; }
+    bool gate() const;
     bool gateOutput() const;
     float cvOutput() const;
 
@@ -32,7 +32,7 @@ public:
 
 private:
     uint8_t _trackIndex;
-    bool _muted;
+    bool _mute;
 
     TrackSetup::Mode _mode;
 

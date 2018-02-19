@@ -208,7 +208,7 @@ void Engine::updatePlayState() {
         }
 
         // update track engine
-        trackEngine.setMuted(trackState.mute());
+        trackEngine.setMute(trackState.mute());
     }
 
     playState.clearImmediateRequests();

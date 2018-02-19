@@ -14,8 +14,7 @@ void LedPainter::drawTracksGateAndSelected(Leds &leds, const Engine &engine, int
 
 void LedPainter::drawTracksGateAndMuted(Leds &leds, const Engine &engine) {
     for (int track = 0; track < 8; ++track) {
-        // TODO show muted gates as well
-        leds.set(MatrixMap::fromTrack(track), engine.trackEngine(track).gateOutput(), engine.trackEngine(track).muted());
+        leds.set(MatrixMap::fromTrack(track), engine.trackEngine(track).gate(), engine.trackEngine(track).mute());
     }
 }
 
