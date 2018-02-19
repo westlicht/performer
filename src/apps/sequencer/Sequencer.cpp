@@ -96,6 +96,7 @@ int main(void) {
     usbh.init();
     usbh.powerOn();
 
+    model.init();
     engine.init();
     ui.init();
 

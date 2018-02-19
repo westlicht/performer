@@ -55,6 +55,7 @@ struct Environment {
         engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
         ui(model, engine, lcd, blm, encoder)
     {
+        model.init();
         engine.init();
         ui.init();
     }

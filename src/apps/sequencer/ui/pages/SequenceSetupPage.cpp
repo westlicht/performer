@@ -22,28 +22,28 @@ static const ParameterHandler ParameterHandlers[] = {
     {
         "MODE", "Play Mode",
         [] (const Sequence &sequence, StringBuilder &str) {
-            str("%s", Sequence::playModeName(sequence.playMode()));
+            // str("%s", Sequence::playModeName(sequence.playMode()));
         },
         [] (Sequence &sequence, EncoderEvent &event) {
-            sequence.setPlayMode(adjustedEnum(sequence.playMode(), event.value()));
+            // sequence.setPlayMode(adjustedEnum(sequence.playMode(), event.value()));
         },
     },
     {
         "FIRST", "First Step",
         [] (const Sequence &sequence, StringBuilder &str) {
-            str("%d", sequence.firstStep() + 1);
+            // str("%d", sequence.firstStep() + 1);
         },
         [] (Sequence &sequence, EncoderEvent &event) {
-            sequence.setFirstStep(sequence.firstStep() + event.value());
+            // sequence.setFirstStep(sequence.firstStep() + event.value());
         },
     },
     {
         "LAST", "Last Step",
         [] (const Sequence &sequence, StringBuilder &str) {
-            str("%d", sequence.lastStep() + 1);
+            // str("%d", sequence.lastStep() + 1);
         },
         [] (Sequence &sequence, EncoderEvent &event) {
-            sequence.setLastStep(sequence.lastStep() + event.value());
+            // sequence.setLastStep(sequence.lastStep() + event.value());
         },
     },
     {
@@ -122,9 +122,9 @@ void SequenceSetupPage::draw(Canvas &canvas) {
 void SequenceSetupPage::updateLeds(Leds &leds) {
     LedPainter::drawTracksGateAndSelected(leds, _engine, _project.selectedTrackIndex());
 
-    const auto &trackEngine = _engine.trackEngine(_project.selectedTrackIndex());
-    const auto &sequence = trackEngine.sequence();
-    LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, trackEngine.currentStep());
+    // const auto &trackEngine = _engine.trackEngine(_project.selectedTrackIndex());
+    // const auto &sequence = trackEngine.sequence();
+    // LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, trackEngine.currentStep());
     // const auto &track = _engine.track(_project.selectedTrackIndex());
     // const auto &sequence = track.sequence();
     // LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, track.currentStep());

@@ -10,6 +10,10 @@
 
 class NoteSequence {
 public:
+    //----------------------------------------
+    // Types
+    //----------------------------------------
+
     typedef UnsignedValue<3> GateProbability;
     typedef UnsignedValue<3> Length;
     typedef SignedValue<4> LengthVariationRange;
@@ -20,7 +24,6 @@ public:
 
     class Step {
     public:
-
         // gate
 
         bool gate() const { return _data0.gate ? true : false; }
@@ -62,18 +65,8 @@ public:
         int noteVariationProbability() const { return _data0.noteVariationProbability; }
         void setNoteVariationProbability(int noteVariationProbability) { _data0.noteVariationProbability = noteVariationProbability; }
 
-        // defaults
 
-        void setDefault() {
-            setGate(false);
-            setGateProbability(GateProbability::Max);
-            setLength(Length::Max / 2);
-            setLengthVariationRange(0);
-            setLengthVariationProbability(0);
-            setNote(0);
-        }
-
-        // Serialization
+        void clear();
 
         void write(WriteContext &context, int index) const;
         void read(ReadContext &context, int index);
@@ -91,16 +84,61 @@ public:
             BitField<28, NoteVariationProbability::Bits> noteVariationProbability;
             // 1 bit left
         } _data0;
+        uint16_t _data1;
     };
 
-    // parameters
+    typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
+
+    enum class PlayMode : uint8_t {
+        Forward,
+        Backward,
+        PingPong,
+        Pendulum,
+        Random,
+        Last
+    };
+
+    static const char *playModeName(PlayMode playMode) {
+        switch (playMode) {
+        case PlayMode::Forward:     return "Forward";
+        case PlayMode::Backward:    return "Backward";
+        case PlayMode::PingPong:    return "PingPong";
+        case PlayMode::Pendulum:    return "Pendulum";
+        case PlayMode::Random:      return "Random";
+        case PlayMode::Last:        break;
+        }
+        return nullptr;
+    }
+
+    //----------------------------------------
+    // Properties
+    //----------------------------------------
+
+    // scale
 
     int scale() const { return _scale; }
     void setScale(int scale) { _scale = scale; }
 
-    // steps
+    // playMode
 
-    typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
+    PlayMode playMode() const { return _playMode; }
+    void setPlayMode(PlayMode playMode) { _playMode = playMode; }
+
+    // firstStep
+
+    int firstStep() const { return _firstStep; }
+    void setFirstStep(int firstStep) {
+        _firstStep = uint8_t(std::max(0, std::min(firstStep, int(_lastStep))));
+    }
+
+    // lastStep
+
+    int lastStep() const { return _lastStep; }
+    void setLastStep(int lastStep) {
+        _lastStep = uint8_t(std::min(CONFIG_STEP_COUNT - 1, std::max(lastStep, int(_firstStep))));
+    }
+
+    // steps
 
     const StepArray &steps() const { return _steps; }
           StepArray &steps()       { return _steps; }
@@ -108,39 +146,22 @@ public:
     const Step &step(int index) const { return _steps[index]; }
           Step &step(int index)       { return _steps[index]; }
 
-    // utility functions
+    //----------------------------------------
+    // Methods
+    //----------------------------------------
 
-    void setDefault() {
-        setScale(3);
-        for (auto &step : _steps) {
-            step.setDefault();
-        }
-    }
+    void clear();
 
-    void setGates(std::initializer_list<int> gates) {
-        size_t step = 0;
-        for (auto gate : gates) {
-            if (step < _steps.size()) {
-                _steps[step++].setGate(gate);
-            }
-        }
-    }
-
-    void setNotes(std::initializer_list<int> notes) {
-        size_t step = 0;
-        for (auto note : notes) {
-            if (step < _steps.size()) {
-                _steps[step++].setNote(note);
-            }
-        }
-    }
-
-    // Serialization
+    void setGates(std::initializer_list<int> gates);
+    void setNotes(std::initializer_list<int> notes);
 
     void write(WriteContext &context, int index) const;
     void read(ReadContext &context, int index);
 
 private:
     uint8_t _scale;
+    PlayMode _playMode;
+    uint8_t _firstStep;
+    uint8_t _lastStep;
     StepArray _steps;
 };

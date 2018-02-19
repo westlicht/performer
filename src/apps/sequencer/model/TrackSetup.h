@@ -7,6 +7,10 @@
 
 class TrackSetup {
 public:
+    //----------------------------------------
+    // Types
+    //----------------------------------------
+
     enum class Mode : uint8_t {
         Note,
         Curve,
@@ -39,6 +43,8 @@ public:
 
     enum class FillMode : uint8_t {
         None,
+        // all gates
+        // max gate probability
         Last
     };
 
@@ -49,6 +55,10 @@ public:
         }
         return nullptr;
     }
+
+    //----------------------------------------
+    // Properties
+    //----------------------------------------
 
     // mode
 
@@ -70,7 +80,11 @@ public:
     int linkTrack() const { return _linkTrack; }
     void setLinkTrack(int linkTrack) { _linkTrack = linkTrack; }
 
-    // Serialization
+    //----------------------------------------
+    // Methods
+    //----------------------------------------
+
+    void clear();
 
     void write(WriteContext &context, int index) const;
     void read(ReadContext &context, int index);
@@ -83,8 +97,8 @@ public:
     }
 
 private:
-    Mode _mode = Mode::Note;
-    PlayMode _playMode = PlayMode::Loose;
-    FillMode _fillMode = FillMode::None;
-    int8_t _linkTrack = -1;
+    Mode _mode;
+    PlayMode _playMode;
+    FillMode _fillMode;
+    int8_t _linkTrack;
 };

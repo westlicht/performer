@@ -1,5 +1,11 @@
 #include "CurveSequence.h"
 
+void CurveSequence::Step::clear() {
+    setShape(0);
+    setMin(0);
+    setMax(Max::Max);
+}
+
 void CurveSequence::Step::write(WriteContext &context, int index) const {
     auto &writer = context.writer;
     writer.write(_shape);
@@ -14,6 +20,20 @@ void CurveSequence::Step::read(ReadContext &context, int index) {
     reader.read(_max);
 }
 
+void CurveSequence::clear() {
+    for (auto &step : _steps) {
+        step.clear();
+    }
+}
+
+void CurveSequence::setShapes(std::initializer_list<int> shapes) {
+    size_t step = 0;
+    for (auto shape : shapes) {
+        if (step < _steps.size()) {
+            _steps[step++].setShape(shape);
+        }
+    }
+}
 
 void CurveSequence::write(WriteContext &context, int index) const {
     writeArray(context, _steps);

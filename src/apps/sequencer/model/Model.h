@@ -8,14 +8,21 @@
 
 class Model {
 public:
-    Model() {
-    }
+    //----------------------------------------
+    // Properties
+    //----------------------------------------
 
     const Project &project() const { return _project; }
           Project &project()       { return _project; }
 
     const Settings &settings() const { return _settings; }
           Settings &settings()       { return _settings; }
+
+    //----------------------------------------
+    // Methods
+    //----------------------------------------
+
+    void init();
 
 private:
     Project _project;

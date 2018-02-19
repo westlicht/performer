@@ -3,7 +3,7 @@
 #include "Clock.h"
 #include "TapTempo.h"
 #include "NudgeTempo.h"
-#include "Track.h"
+#include "TrackEngine.h"
 #include "Controller.h"
 #include "CVInput.h"
 #include "CVOutput.h"
@@ -80,6 +80,9 @@ public:
 
     const TrackEngine &trackEngine(int index) const { return _trackEngines[index]; }
           TrackEngine &trackEngine(int index)       { return _trackEngines[index]; }
+
+    const TrackEngine &selectedTrackEngine() const { return _trackEngines[_model.project().selectedTrackIndex()]; }
+          TrackEngine &selectedTrackEngine()       { return _trackEngines[_model.project().selectedTrackIndex()]; }
 
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);

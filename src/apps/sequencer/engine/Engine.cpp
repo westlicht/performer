@@ -30,8 +30,11 @@ void Engine::init() {
     initClockOutputs();
     updateClockSetup();
 
-    for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-        _trackEngines[i].setSequence(_model.project().pattern(0).sequence(i));
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        _trackEngines[trackIndex].init(trackIndex);
+        _trackEngines[trackIndex].setup(_model.project().trackSetup(trackIndex));
+        _trackEngines[trackIndex].setPattern(_model.project().pattern(0));
+        _trackEngines[trackIndex].reset();
     }
 
     _lastSystemTicks = os::ticks();
@@ -85,7 +88,7 @@ void Engine::update() {
             auto &trackEngine = _trackEngines[i];
             trackEngine.tick(tick);
             _gateOutput.setGate(i, trackEngine.gateOutput());
-            _cvOutput.setChannel(i, trackEngine.cv());
+            _cvOutput.setChannel(i, trackEngine.cvOutput());
         }
     }
 

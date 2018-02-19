@@ -1,4 +1,4 @@
-#include "Track.h"
+#include "NoteSequenceEngine.h"
 
 #include "Scale.h"
 
@@ -34,42 +34,45 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale) {
     return scale.noteVolts(step.note());
 }
 
-TrackEngine::TrackEngine() {
+void NoteSequenceEngine::setup(const TrackSetup &trackSetup) {
     reset();
 }
 
-void TrackEngine::reset() {
+void NoteSequenceEngine::reset() {
     _currentStep = -1;
     _direction = 1;
-    _gate = false;
+    // _gate = false;
     _gateOutput = false;
+    _gateQueue.clear();
 }
 
-void TrackEngine::tick(uint32_t tick) {
+void NoteSequenceEngine::tick(uint32_t tick) {
+    ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
-    const auto &noteSequence = sequence.noteSequence();
 
     const uint32_t divisor = (CONFIG_PPQN / 4);
 
     if (tick % divisor == 0) {
-        advance(sequence);
-        const auto &step = noteSequence.step(_currentStep);
+        advance();
+        const auto &step = sequence.step(_currentStep);
         if (evalStepGate(step)) {
             _gateQueue.push({ tick, true });
             _gateQueue.push({ tick + (divisor * evalStepLength(step)) / NoteSequence::Length::Range, false });
         }
 
-        const auto &scale = Scale::scale(noteSequence.scale());
-        _cv = evalStepNote(step, scale);
+        const auto &scale = Scale::scale(sequence.scale());
+        _cvOutput = evalStepNote(step, scale);
     }
-    while (!_gateQueue.empty() && tick >= _gateQueue.front().first) {
-        _gate = _gateQueue.front().second;
-        _gateOutput = !_muted && _gate;
+    while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
+        _gateOutput = _gateQueue.front().gate;
+        // _gateOutput = !_muted && _gate;
         _gateQueue.pop();
     }
 }
 
-void TrackEngine::advance(const Sequence &sequence) {
+void NoteSequenceEngine::advance() {
+    const auto &sequence = *_sequence;
+
     auto playMode = sequence.playMode();
     int firstStep = sequence.firstStep();
     int lastStep = sequence.lastStep();
@@ -82,48 +85,48 @@ void TrackEngine::advance(const Sequence &sequence) {
     if (_currentStep == -1) {
         // first step
         switch (playMode) {
-        case Sequence::PlayMode::Forward:
-        case Sequence::PlayMode::PingPong:
-        case Sequence::PlayMode::Pendulum:
+        case NoteSequence::PlayMode::Forward:
+        case NoteSequence::PlayMode::PingPong:
+        case NoteSequence::PlayMode::Pendulum:
             _currentStep = firstStep;
             break;
-        case Sequence::PlayMode::Backward:
+        case NoteSequence::PlayMode::Backward:
             _currentStep = lastStep;
             break;
-        case Sequence::PlayMode::Random:
+        case NoteSequence::PlayMode::Random:
             _currentStep = randomStep();
             break;
-        case Sequence::PlayMode::Last:
+        case NoteSequence::PlayMode::Last:
             break;
         }
     } else {
         // advance step
         switch (playMode) {
-        case Sequence::PlayMode::Forward:
+        case NoteSequence::PlayMode::Forward:
             _currentStep = _currentStep >= lastStep ? firstStep : _currentStep + 1;
             break;
-        case Sequence::PlayMode::Backward:
+        case NoteSequence::PlayMode::Backward:
             _currentStep = _currentStep <= firstStep ? lastStep : _currentStep - 1;
             break;
-        case Sequence::PlayMode::PingPong:
-        case Sequence::PlayMode::Pendulum:
+        case NoteSequence::PlayMode::PingPong:
+        case NoteSequence::PlayMode::Pendulum:
             if (_direction > 0 && _currentStep >= lastStep) {
                 _direction = -1;
             } else if (_direction < 0 && _currentStep <= firstStep) {
                 _direction = 1;
             } else {
-                if (playMode == Sequence::PlayMode::Pendulum) {
+                if (playMode == NoteSequence::PlayMode::Pendulum) {
                     _currentStep += _direction;
                 }
             }
-            if (playMode == Sequence::PlayMode::PingPong) {
+            if (playMode == NoteSequence::PlayMode::PingPong) {
                 _currentStep += _direction;
             }
             break;
-        case Sequence::PlayMode::Random:
+        case NoteSequence::PlayMode::Random:
             _currentStep = randomStep();
             break;
-        case Sequence::PlayMode::Last:
+        case NoteSequence::PlayMode::Last:
             break;
         }
     }

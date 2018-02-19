@@ -1,5 +1,19 @@
 #include "ClockSetup.h"
 
+void ClockSetup::clear() {
+    _mode = Mode::Auto;
+    _clockInputPPQN = 16;
+    _clockInputMode = ClockMode::Reset;
+    _clockOutputPPQN = 16;
+    _clockOutputPulse = 1;
+    _clockOutputMode = ClockMode::Reset;
+    _midiRx = true;
+    _midiTx = true;
+    _usbRx = false;
+    _usbTx = false;
+    _dirty = true;
+}
+
 void ClockSetup::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_mode);

@@ -1,5 +1,12 @@
 #include "TrackSetup.h"
 
+void TrackSetup::clear() {
+    _mode = Mode::Note;
+    _playMode = PlayMode::Loose;
+    _fillMode = FillMode::None;
+    _linkTrack = -1;
+}
+
 void TrackSetup::write(WriteContext &context, int index) const {
     auto &writer = context.writer;
     writer.write(_mode);

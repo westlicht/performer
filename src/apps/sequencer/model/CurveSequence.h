@@ -10,13 +10,16 @@
 
 class CurveSequence {
 public:
+    //----------------------------------------
+    // Types
+    //----------------------------------------
+
     typedef UnsignedValue<4> Shape;
     typedef UnsignedValue<8> Min;
     typedef UnsignedValue<8> Max;
 
     class Step {
     public:
-
         // shape
 
         int shape() const { return _shape; }
@@ -32,15 +35,8 @@ public:
         int max() const { return _max; }
         void setMax(int max) { _max = max; }
 
-        // defaults
 
-        void setDefault() {
-            setShape(0);
-            setMin(0);
-            setMax(Max::Max);
-        }
-
-        // Serialization
+        void clear();
 
         void write(WriteContext &context, int index) const;
         void read(ReadContext &context, int index);
@@ -51,9 +47,13 @@ public:
         uint8_t _max;
     };
 
-    // steps
-
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
+
+    //----------------------------------------
+    // Properties
+    //----------------------------------------
+
+    // steps
 
     const StepArray &steps() const { return _steps; }
           StepArray &steps()       { return _steps; }
@@ -61,24 +61,13 @@ public:
     const Step &step(int index) const { return _steps[index]; }
           Step &step(int index)       { return _steps[index]; }
 
-    // utility functions
+    //----------------------------------------
+    // Methods
+    //----------------------------------------
 
-    void setDefault() {
-        for (auto &step : _steps) {
-            step.setDefault();
-        }
-    }
+    void clear();
 
-    void setShapes(std::initializer_list<int> shapes) {
-        size_t step = 0;
-        for (auto shape : shapes) {
-            if (step < _steps.size()) {
-                _steps[step++].setShape(shape);
-            }
-        }
-    }
-
-    // Serialization
+    void setShapes(std::initializer_list<int> shapes);
 
     void write(WriteContext &context, int index) const;
     void read(ReadContext &context, int index);

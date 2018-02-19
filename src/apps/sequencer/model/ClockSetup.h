@@ -8,6 +8,10 @@
 
 class ClockSetup {
 public:
+    //----------------------------------------
+    // Types
+    //----------------------------------------
+
     enum class Mode : uint8_t {
         Auto = 0,
         Master,
@@ -39,6 +43,10 @@ public:
         }
         return nullptr;
     }
+
+    //----------------------------------------
+    // Properties
+    //----------------------------------------
 
     // mode
 
@@ -143,26 +151,28 @@ public:
         }
     }
 
-    // dirty
+    //----------------------------------------
+    // Methods
+    //----------------------------------------
 
-    bool isDirty() const { return _dirty; }
-    void clearDirty() { _dirty = false; }
-
-    // Serialization
+    void clear();
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
 
+    bool isDirty() const { return _dirty; }
+    void clearDirty() { _dirty = false; }
+
 private:
-    Mode _mode = Mode::Auto;
-    uint8_t _clockInputPPQN = 16;
-    ClockMode _clockInputMode = ClockMode::Reset;
-    uint8_t _clockOutputPPQN = 16;
-    uint8_t _clockOutputPulse = 1;
-    ClockMode _clockOutputMode = ClockMode::Reset;
-    bool _midiRx = true;
-    bool _midiTx = true;
-    bool _usbRx = false;
-    bool _usbTx = false;
-    bool _dirty = true;
+    Mode _mode;
+    uint8_t _clockInputPPQN;
+    ClockMode _clockInputMode;
+    uint8_t _clockOutputPPQN;
+    uint8_t _clockOutputPulse;
+    ClockMode _clockOutputMode;
+    bool _midiRx;
+    bool _midiTx;
+    bool _usbRx;
+    bool _usbTx;
+    bool _dirty;
 };

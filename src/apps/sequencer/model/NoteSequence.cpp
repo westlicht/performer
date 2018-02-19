@@ -1,5 +1,14 @@
 #include "NoteSequence.h"
 
+void NoteSequence::Step::clear() {
+    setGate(false);
+    setGateProbability(GateProbability::Max);
+    setLength(Length::Max / 2);
+    setLengthVariationRange(0);
+    setLengthVariationProbability(0);
+    setNote(0);
+}
+
 void NoteSequence::Step::write(WriteContext &context, int index) const {
     auto &writer = context.writer;
     writer.write(_data0.raw);
@@ -70,6 +79,33 @@ void NoteSequence::Step::read(ReadContext &context, int index) {
 #endif
 }
 
+void NoteSequence::clear() {
+    setScale(3);
+    setPlayMode(PlayMode::Forward);
+    setFirstStep(0);
+    setLastStep(CONFIG_STEP_COUNT - 1);
+    for (auto &step : _steps) {
+        step.clear();
+    }
+}
+
+void NoteSequence::setGates(std::initializer_list<int> gates) {
+    size_t step = 0;
+    for (auto gate : gates) {
+        if (step < _steps.size()) {
+            _steps[step++].setGate(gate);
+        }
+    }
+}
+
+void NoteSequence::setNotes(std::initializer_list<int> notes) {
+    size_t step = 0;
+    for (auto note : notes) {
+        if (step < _steps.size()) {
+            _steps[step++].setNote(note);
+        }
+    }
+}
 
 void NoteSequence::write(WriteContext &context, int index) const {
     writeArray(context, _steps);

@@ -7,10 +7,6 @@
 template<typename T, size_t Capacity, typename Compare = std::less<T>>
 class SortedQueue {
 public:
-    SortedQueue() {
-        clear();
-    }
-
     void clear() {
         _read = 0;
         _write = 0;
@@ -62,7 +58,7 @@ private:
         return (pos - 1) % Capacity;
     }
 
-    T _queue[Capacity];
+    std::array<T, Capacity> _queue;
     size_t _read;
     size_t _write;
 };

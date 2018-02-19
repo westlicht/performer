@@ -12,9 +12,18 @@
 
 class Project {
 public:
+    //----------------------------------------
+    // Types
+    //----------------------------------------
+
     static constexpr size_t NameLength = 16;
 
-    // Parameters
+    typedef std::array<TrackSetup, CONFIG_TRACK_COUNT> TrackSetupArray;
+    typedef std::array<Pattern, CONFIG_PATTERN_COUNT> PatternArray;
+
+    //----------------------------------------
+    // Properties
+    //----------------------------------------
 
     // slot
 
@@ -61,18 +70,11 @@ public:
 
     // trackSetups
 
-    typedef std::array<TrackSetup, CONFIG_TRACK_COUNT> TrackSetupArray;
-
     const TrackSetupArray &tracksSetups() const { return _trackSetups; }
           TrackSetupArray &tracksSetups()       { return _trackSetups; }
 
     const TrackSetup &trackSetup(int index) const { return _trackSetups[index]; }
           TrackSetup &trackSetup(int index)       { return _trackSetups[index]; }
-
-    void setTrackSetup(int index, const TrackSetup &trackSetup);
-
-    const TrackSetup &selectedTrackSetup() const { return _trackSetups[_selectedTrackIndex]; }
-          TrackSetup &selectedTrackSetup()       { return _trackSetups[_selectedTrackIndex]; }
 
     // playState
 
@@ -81,35 +83,48 @@ public:
 
     // patterns
 
-    typedef std::array<Pattern, CONFIG_PATTERN_COUNT> PatternArray;
-
     const PatternArray &patterns() const { return _patterns; }
           PatternArray &patterns()       { return _patterns; }
 
     const Pattern &pattern(int index) const { return _patterns[index]; }
           Pattern &pattern(int index)       { return _patterns[index]; }
 
-    // Track selection
+    // selectedTrackIndex
 
     int selectedTrackIndex() const { return _selectedTrackIndex; }
     void setSelectedTrackIndex(int index) { _selectedTrackIndex = index; }
-
     bool isSelectedTrack(int index) const { return _selectedTrackIndex == index; }
+
+    // selectedPatternIndex
+
+    int selectedPatternIndex() const { return _selectedPatternIndex; }
+    void setSelectedPatternIndex(int index) { _selectedPatternIndex = index; }
+    bool isSelectedPattern(int index) const { return _selectedPatternIndex == index; }
+
+    //----------------------------------------
+    // Methods
+    //----------------------------------------
+
+    void setTrackSetup(int index, const TrackSetup &trackSetup);
+
+    const TrackSetup &selectedTrackSetup() const { return _trackSetups[_selectedTrackIndex]; }
+          TrackSetup &selectedTrackSetup()       { return _trackSetups[_selectedTrackIndex]; }
 
     const Sequence &selectedSequence() const { return selectedPattern().sequence(_selectedTrackIndex); }
           Sequence &selectedSequence()       { return selectedPattern().sequence(_selectedTrackIndex); }
 
-    // Pattern selection
-
-    int selectedPatternIndex() const { return _selectedPatternIndex; }
-    void setSelectedPatternIndex(int index) { _selectedPatternIndex = index; }
-
-    bool isSelectedPattern(int index) const { return _selectedPatternIndex == index; }
-
     const Pattern &selectedPattern() const { return _patterns[_selectedPatternIndex]; }
           Pattern &selectedPattern()       { return _patterns[_selectedPatternIndex]; }
 
-    // Serialization
+    const Sequence &selectedTrackSequence() const { return _patterns[_selectedPatternIndex].sequence(_selectedTrackIndex); }
+          Sequence &selectedTrackSequence()       { return _patterns[_selectedPatternIndex].sequence(_selectedTrackIndex); }
+
+    const Sequence &activeTrackSequence(int index) const { return _patterns[_selectedPatternIndex].sequence(index); }
+          Sequence &activeTrackSequence(int index)       { return _patterns[_selectedPatternIndex].sequence(index); }
+
+    void clear();
+
+    void demoProject();
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);

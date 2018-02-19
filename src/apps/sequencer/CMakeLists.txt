@@ -7,10 +7,12 @@ set(sources
     engine/Controller.cpp
     engine/Curve.cpp
     engine/CVInput.cpp
+    engine/CurveSequenceEngine.cpp
     engine/CVOutput.cpp
     engine/Engine.cpp
+    engine/NoteSequenceEngine.cpp
     engine/Scale.cpp
-    engine/Track.cpp
+    engine/TrackEngine.cpp
     # engine/controllers
     engine/controllers/LaunchpadController.cpp
     # model

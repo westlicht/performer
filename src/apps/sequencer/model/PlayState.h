@@ -10,6 +10,10 @@
 
 class PlayState {
 public:
+    //----------------------------------------
+    // Types
+    //----------------------------------------
+
     enum ExecuteType {
         Immediate,
         Scheduled,
@@ -25,7 +29,7 @@ public:
         int pattern() const { return _pattern; }
         int requestedPattern() const { return _requestedPattern; }
 
-        // Serialization
+        void clear();
 
         void write(WriteContext &context, int index) const;
         void read(ReadContext &context, int index);
@@ -91,18 +95,26 @@ public:
             _requestedPattern = pattern;
         }
 
-        uint8_t _state = 0;
-        uint8_t _pattern = 0;
-        uint8_t _requestedPattern = 0;
+        uint8_t _state;
+        uint8_t _pattern;
+        uint8_t _requestedPattern;
 
         friend class PlayState;
         friend class Engine;
     };
 
+    //----------------------------------------
+    // Properties
+    //----------------------------------------
+
     // track states
 
     const TrackState &trackState(int track) const { return _trackStates[track]; }
           TrackState &trackState(int track)       { return _trackStates[track]; }
+
+    //----------------------------------------
+    // Methods
+    //----------------------------------------
 
     // mutes
 
@@ -130,7 +142,7 @@ public:
     void selectTrackPattern(int track, int pattern, ExecuteType executeType = Immediate);
     void selectPattern(int pattern, ExecuteType executeType = Immediate);
 
-    // Serialization
+    void clear();
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
@@ -148,8 +160,8 @@ private:
     void clearScheduledRequests() { _hasScheduledRequests = false; }
 
     std::array<TrackState, CONFIG_TRACK_COUNT> _trackStates;
-    bool _hasImmediateRequests = false;
-    bool _hasScheduledRequests = false;
+    bool _hasImmediateRequests;
+    bool _hasScheduledRequests;
 
     friend class Engine;
 };

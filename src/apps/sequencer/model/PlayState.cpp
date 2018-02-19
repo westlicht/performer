@@ -1,5 +1,11 @@
 #include "PlayState.h"
 
+void PlayState::TrackState::clear() {
+    _state = 0;
+    _pattern = 0;
+    _requestedPattern = 0;
+}
+
 void PlayState::TrackState::write(WriteContext &context, int index) const {
     auto &writer = context.writer;
     uint8_t muteValue = mute();
@@ -14,7 +20,6 @@ void PlayState::TrackState::read(ReadContext &context, int index) {
     setMute(muteValue);
     reader.read(_pattern);
 }
-
 
 void PlayState::muteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
@@ -96,6 +101,14 @@ void PlayState::selectPattern(int pattern, ExecuteType executeType) {
     for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
         selectTrackPattern(track, executeType);
     }
+}
+
+void PlayState::clear() {
+    for (auto trackState : _trackStates) {
+        trackState.clear();
+    }
+    _hasImmediateRequests = false;
+    _hasScheduledRequests = false;
 }
 
 void PlayState::write(WriteContext &context) const {
