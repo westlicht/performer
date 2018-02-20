@@ -80,7 +80,7 @@ namespace os {
     class Mutex {
     public:
         bool take(uint32_t timeToWait = -1) {
-            ASSERT(timeToWait == -1, "cannot wait for mutex");
+            ASSERT(timeToWait == uint32_t(-1), "cannot wait for mutex");
             _mutex.lock();
             return true;
         }
