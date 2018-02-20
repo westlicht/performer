@@ -104,7 +104,7 @@ void PlayState::selectPattern(int pattern, ExecuteType executeType) {
 }
 
 void PlayState::clear() {
-    for (auto trackState : _trackStates) {
+    for (auto &trackState : _trackStates) {
         trackState.clear();
     }
     _hasImmediateRequests = false;
