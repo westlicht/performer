@@ -6,7 +6,7 @@
 
 class CVOutput {
 public:
-    static constexpr size_t Channels = CONFIG_CV_OUTPUT_CHANNELS;
+    static constexpr int Channels = CONFIG_CV_OUTPUT_CHANNELS;
 
     CVOutput(DAC &dac);
 

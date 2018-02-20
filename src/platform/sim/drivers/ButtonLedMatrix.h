@@ -34,9 +34,9 @@ public:
         int8_t _value;
     };
 
-    static constexpr size_t Rows = CONFIG_BLM_ROWS;
-    static constexpr size_t ColsButton = CONFIG_BLM_COLS_BUTTON;
-    static constexpr size_t ColsLed = CONFIG_BLM_COLS_LED;
+    static constexpr int Rows = CONFIG_BLM_ROWS;
+    static constexpr int ColsButton = CONFIG_BLM_COLS_BUTTON;
+    static constexpr int ColsLed = CONFIG_BLM_COLS_LED;
 
     ButtonLedMatrix();
 

@@ -7,7 +7,7 @@
 
 class DAC {
 public:
-    static constexpr size_t Channels = CONFIG_DAC_CHANNELS;
+    static constexpr int Channels = CONFIG_DAC_CHANNELS;
 
     typedef uint16_t Value;
 

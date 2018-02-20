@@ -8,7 +8,7 @@
 
 class ShiftRegister {
 public:
-    static constexpr size_t NumRegisters = CONFIG_NUM_SR;
+    static constexpr int NumRegisters = CONFIG_NUM_SR;
 
     ShiftRegister();
 
@@ -16,8 +16,8 @@ public:
 
     void process();
 
-    uint8_t read(size_t index) const { return _inputs[index]; }
-    void write(size_t index, uint8_t value) { _outputs[index] = value; }
+    uint8_t read(int index) const { return _inputs[index]; }
+    void write(int index, uint8_t value) { _outputs[index] = value; }
 
 private:
     std::array<uint8_t, NumRegisters> _outputs;

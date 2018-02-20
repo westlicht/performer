@@ -6,7 +6,7 @@
 
 class CVInput {
 public:
-    static constexpr size_t Channels = CONFIG_CV_INPUT_CHANNELS;
+    static constexpr int Channels = CONFIG_CV_INPUT_CHANNELS;
 
     CVInput(ADC &adc);
 

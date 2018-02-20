@@ -7,8 +7,8 @@
 
 class LCD {
 public:
-    static constexpr size_t Width = CONFIG_LCD_WIDTH;
-    static constexpr size_t Height = CONFIG_LCD_HEIGHT;
+    static constexpr int Width = CONFIG_LCD_WIDTH;
+    static constexpr int Height = CONFIG_LCD_HEIGHT;
 
     void init();
 

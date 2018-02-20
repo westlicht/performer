@@ -106,7 +106,7 @@ public:
 
             fs::Directory dir("");
             while (dir.next()) {
-                DBG("%s (%d bytes)", dir.info().name(), dir.info().size());
+                DBG("%s (%zd bytes)", dir.info().name(), dir.info().size());
             }
         });
     }

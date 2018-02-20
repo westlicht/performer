@@ -7,7 +7,7 @@
 
 class ADC {
 public:
-    static constexpr size_t Channels = CONFIG_ADC_CHANNELS;
+    static constexpr int Channels = CONFIG_ADC_CHANNELS;
 
     void init();
 

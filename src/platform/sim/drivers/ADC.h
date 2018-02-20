@@ -10,12 +10,12 @@
 
 class ADC {
 public:
-    static constexpr size_t Channels = CONFIG_ADC_CHANNELS;
+    static constexpr int Channels = CONFIG_ADC_CHANNELS;
 
     ADC() :
         _simulator(sim::Simulator::instance())
     {
-        for (size_t i = 0; i < Channels; ++i) {
+        for (int i = 0; i < Channels; ++i) {
             auto rotary = _simulator.window().createWidget<sim::Rotary>(sim::Vector2i(50 + i * 50, 450), sim::Vector2i(40, 40));
             rotary->setValueCallback([this, i] (float value) {
                 setChannel(i, value);
