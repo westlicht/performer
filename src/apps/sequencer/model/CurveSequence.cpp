@@ -21,6 +21,12 @@ void CurveSequence::Step::read(ReadContext &context, int index) {
 }
 
 void CurveSequence::clear() {
+    setRange(Range::Bipolar5V);
+    setDivisor(4);
+    setResetMeasure(0);
+    setPlayMode(PlayMode::Forward);
+    setFirstStep(0);
+    setLastStep(CONFIG_STEP_COUNT - 1);
     for (auto &step : _steps) {
         step.clear();
     }
@@ -36,9 +42,25 @@ void CurveSequence::setShapes(std::initializer_list<int> shapes) {
 }
 
 void CurveSequence::write(WriteContext &context, int index) const {
+    auto &writer = context.writer;
+    writer.write(_range);
+    writer.write(_divisor);
+    writer.write(_resetMeasure);
+    writer.write(_playMode);
+    writer.write(_firstStep);
+    writer.write(_lastStep);
+
     writeArray(context, _steps);
 }
 
 void CurveSequence::read(ReadContext &context, int index) {
+    auto &reader = context.reader;
+    reader.read(_range);
+    reader.read(_divisor);
+    reader.read(_resetMeasure);
+    reader.read(_playMode);
+    reader.read(_firstStep);
+    reader.read(_lastStep);
+
     readArray(context, _steps);
 }
