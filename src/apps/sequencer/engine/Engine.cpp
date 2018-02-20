@@ -71,6 +71,9 @@ void Engine::update() {
     // update clock setup
     updateClockSetup();
 
+    // update track setups
+    updateTrackSetups();
+
     // update play state
     updatePlayState();
 
@@ -160,12 +163,16 @@ void Engine::updateClockSetup() {
         return;
     }
 
-    DBG("update clock setup");
-
     _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputPPQN(), Clock::SlaveFreeRunning);
     _clock.outputConfigure(clockSetup.clockOutputPPQN());
 
     clockSetup.clearDirty();
+}
+
+void Engine::updateTrackSetups() {
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        trackEngine(trackIndex).setup(_model.project().trackSetup(trackIndex));
+    }
 }
 
 void Engine::updatePlayState() {

@@ -6,6 +6,9 @@
 #include "model/TrackSetup.h"
 #include "model/Pattern.h"
 
+#include "core/Debug.h"
+#include "core/utils/Container.h"
+
 #include <cstdint>
 
 class TrackEngine {
@@ -27,17 +30,22 @@ public:
     bool gateOutput() const;
     float cvOutput() const;
 
-    const NoteSequenceEngine &noteSequenceEngine() const { return _sequenceEngine.note; }
-    const CurveSequenceEngine &curveSequenceEngine() const { return _sequenceEngine.curve; }
+    const NoteSequenceEngine &noteSequenceEngine() const {
+        ASSERT(_mode == TrackSetup::Mode::Note, "invalid mode");
+        return *static_cast<const NoteSequenceEngine *>(_sequenceEngine);
+    }
+    const CurveSequenceEngine &curveSequenceEngine() const {
+        ASSERT(_mode == TrackSetup::Mode::Curve, "invalid mode");
+        return *static_cast<const CurveSequenceEngine *>(_sequenceEngine);
+    }
 
 private:
     uint8_t _trackIndex;
     bool _mute;
+    const Pattern *_pattern;
 
     TrackSetup::Mode _mode;
 
-    union {
-        NoteSequenceEngine note;
-        CurveSequenceEngine curve;
-    } _sequenceEngine;
+    Container<NoteSequenceEngine, CurveSequenceEngine> _sequenceEngineContainer;
+    SequenceEngine *_sequenceEngine;
 };

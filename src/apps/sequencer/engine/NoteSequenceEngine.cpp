@@ -71,6 +71,10 @@ void NoteSequenceEngine::tick(uint32_t tick) {
     }
 }
 
+void NoteSequenceEngine::setSequence(const Sequence &sequence) {
+    _sequence = &sequence.noteSequence();
+}
+
 void NoteSequenceEngine::setMute(bool mute) {
     _mute = mute;
 }

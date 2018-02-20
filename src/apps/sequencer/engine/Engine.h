@@ -90,6 +90,7 @@ public:
 
 private:
     void updateClockSetup();
+    void updateTrackSetups();
     void updatePlayState();
 
     void initClockSources();

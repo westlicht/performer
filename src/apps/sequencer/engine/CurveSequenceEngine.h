@@ -1,24 +1,25 @@
 #pragma once
 
-#include "model/TrackSetup.h"
-#include "model/CurveSequence.h"
+#include "SequenceEngine.h"
 
-class CurveSequenceEngine {
+#include "model/TrackSetup.h"
+#include "model/Sequence.h"
+
+class CurveSequenceEngine : public SequenceEngine {
 public:
-    void setup(const TrackSetup &trackSetup);
+    virtual void setup(const TrackSetup &trackSetup) override;
+
+    virtual void reset() override;
+    virtual void tick(uint32_t tick) override;
+
+    virtual void setSequence(const Sequence &sequence) override;
+    virtual void setMute(bool mute) override;
+
+    virtual bool gate() const override { return false; }
+    virtual bool gateOutput() const override { return false; }
+    virtual float cvOutput() const override { return _cvOutput; }
 
     const CurveSequence &sequence() const { return *_sequence; }
-    void setSequence(const CurveSequence &sequence) { _sequence = &sequence; }
-
-    void reset();
-
-    void tick(uint32_t tick);
-
-    void setMute(bool mute);
-
-    bool gate() const { return false; }
-    bool gateOutput() const { return false; }
-    float cvOutput() const { return _cvOutput; }
 
 private:
     const CurveSequence *_sequence;

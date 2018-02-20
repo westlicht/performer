@@ -3,119 +3,62 @@
 #include "core/Debug.h"
 
 void TrackEngine::init(int trackIndex) {
+    _mode = TrackSetup::Mode::Last;
     _trackIndex = trackIndex;
     _mute = false;
+    _pattern = nullptr;
+    _sequenceEngine = nullptr;
 }
 
 void TrackEngine::setup(const TrackSetup &trackSetup) {
+    if (trackSetup.mode() == _mode) {
+        return;
+    }
     _mode = trackSetup.mode();
+    _sequenceEngineContainer.destroy(_sequenceEngine);
     ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
     switch (_mode) {
     case TrackSetup::Mode::Note:
-        _sequenceEngine.note.setup(trackSetup);
-        _sequenceEngine.note.setMute(_mute);
+        _sequenceEngine = _sequenceEngineContainer.create<NoteSequenceEngine>();
         break;
     case TrackSetup::Mode::Curve:
-        _sequenceEngine.curve.setup(trackSetup);
-        _sequenceEngine.curve.setMute(_mute);
+        _sequenceEngine = _sequenceEngineContainer.create<CurveSequenceEngine>();
         break;
     case TrackSetup::Mode::Last:
         break;
     }
+
+    _sequenceEngine->setup(trackSetup);
+    _sequenceEngine->setMute(_mute);
+    _sequenceEngine->setSequence(_pattern->sequence(_trackIndex));
 }
 
 void TrackEngine::setPattern(const Pattern &pattern) {
-    ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
-    switch (_mode) {
-    case TrackSetup::Mode::Note:
-        _sequenceEngine.note.setSequence(pattern.sequence(_trackIndex).noteSequence());
-        break;
-    case TrackSetup::Mode::Curve:
-        _sequenceEngine.curve.setSequence(pattern.sequence(_trackIndex).curveSequence());
-        break;
-    case TrackSetup::Mode::Last:
-        break;
-    }
+    _pattern = &pattern;
+    _sequenceEngine->setSequence(_pattern->sequence(_trackIndex));
 }
 
 void TrackEngine::reset() {
-    ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
-    switch (_mode) {
-    case TrackSetup::Mode::Note:
-        _sequenceEngine.note.reset();
-        break;
-    case TrackSetup::Mode::Curve:
-        _sequenceEngine.curve.reset();
-        break;
-    case TrackSetup::Mode::Last:
-        break;
-    }
+    _sequenceEngine->reset();
 }
 
 void TrackEngine::tick(uint32_t tick) {
-    ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
-    switch (_mode) {
-    case TrackSetup::Mode::Note:
-        _sequenceEngine.note.tick(tick);
-        break;
-    case TrackSetup::Mode::Curve:
-        _sequenceEngine.curve.tick(tick);
-        break;
-    case TrackSetup::Mode::Last:
-        break;
-    }
+    _sequenceEngine->tick(tick);
 }
 
 void TrackEngine::setMute(bool mute) {
     _mute = mute;
-    ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
-    switch (_mode) {
-    case TrackSetup::Mode::Note:
-        _sequenceEngine.note.setMute(mute);
-        break;
-    case TrackSetup::Mode::Curve:
-        _sequenceEngine.curve.setMute(mute);
-        break;
-    case TrackSetup::Mode::Last:
-        break;
-    }
+    _sequenceEngine->setMute(mute);
 }
 
 bool TrackEngine::gate() const {
-    ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
-    switch (_mode) {
-    case TrackSetup::Mode::Note:
-        return _sequenceEngine.note.gate();
-    case TrackSetup::Mode::Curve:
-        return _sequenceEngine.curve.gate();
-    case TrackSetup::Mode::Last:
-        break;
-    }
-    return false;
+    return _sequenceEngine->gate();
 }
 
 bool TrackEngine::gateOutput() const {
-    ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
-    switch (_mode) {
-    case TrackSetup::Mode::Note:
-        return _sequenceEngine.note.gateOutput();
-    case TrackSetup::Mode::Curve:
-        return _sequenceEngine.curve.gateOutput();
-    case TrackSetup::Mode::Last:
-        break;
-    }
-    return false;
+    return _sequenceEngine->gateOutput();
 }
 
 float TrackEngine::cvOutput() const {
-    ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
-    switch (_mode) {
-    case TrackSetup::Mode::Note:
-        return _sequenceEngine.note.cvOutput();
-    case TrackSetup::Mode::Curve:
-        return _sequenceEngine.curve.cvOutput();
-    case TrackSetup::Mode::Last:
-        break;
-    }
-    return 0.f;
+    return _sequenceEngine->cvOutput();
 }

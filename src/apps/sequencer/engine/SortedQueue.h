@@ -7,6 +7,10 @@
 template<typename T, size_t Capacity, typename Compare = std::less<T>>
 class SortedQueue {
 public:
+    SortedQueue() {
+        clear();
+    }
+
     void clear() {
         _read = 0;
         _write = 0;
