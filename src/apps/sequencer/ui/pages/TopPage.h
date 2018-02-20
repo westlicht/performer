@@ -17,4 +17,7 @@ private:
 
     bool isSequencePage();
     void setSequencePage();
+
+    bool isSequenceSetupPage();
+    void setSequenceSetupPage();
 };

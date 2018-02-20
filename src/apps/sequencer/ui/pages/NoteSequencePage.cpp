@@ -29,7 +29,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
 
     const auto &sequenceEngine = _engine.selectedTrackEngine().noteSequenceEngine();
     const auto &sequence = sequenceEngine.sequence();
-    const auto &scale = Scale::scale(sequence.scale());
+    const auto &scale = Scale::get(sequence.scale());
 
     bool drawStepIndices = true;
     bool drawSelectedSteps = _mode != Mode::Gate;
@@ -160,7 +160,7 @@ void NoteSequencePage::keyUp(KeyEvent &event) {
 
 void NoteSequencePage::encoder(EncoderEvent &event) {
     auto &noteSequence = _project.selectedSequence().noteSequence();
-    const auto &scale = Scale::scale(noteSequence.scale());
+    const auto &scale = Scale::get(noteSequence.scale());
 
     for (size_t i = 0; i < noteSequence.steps().size(); ++i) {
         if (_selectedSteps[i] || _keyState[Key::Shift]) {
@@ -195,7 +195,7 @@ void NoteSequencePage::encoder(EncoderEvent &event) {
 
 void NoteSequencePage::drawDetail(Canvas &canvas, const NoteSequence::Step &step) {
 
-    const auto &scale = Scale::scale(_project.selectedSequence().noteSequence().scale());
+    const auto &scale = Scale::get(_project.selectedSequence().noteSequence().scale());
 
     FixedStringBuilder<16> str;
 

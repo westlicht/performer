@@ -25,6 +25,8 @@ void TopPage::keyDown(KeyEvent &event) {
         _project.setSelectedTrackIndex(key.trackSelect());
         if (isSequencePage()) {
             setSequencePage();
+        } else if (isSequenceSetupPage()) {
+            setSequenceSetupPage();
         }
     }
 
@@ -34,7 +36,7 @@ void TopPage::keyDown(KeyEvent &event) {
         case 1: setMainPage(_manager.pages().pattern); break;
         case 2: setMainPage(_manager.pages().trackSetup); break;
         case 3: setSequencePage(); break;
-        case 4: setMainPage(_manager.pages().sequenceSetup); break;
+        case 4: setSequenceSetupPage(); break;
         case 7: setMainPage(_manager.pages().performer); break;
         }
     }
@@ -101,6 +103,25 @@ void TopPage::setSequencePage() {
         break;
     case TrackSetup::Mode::Curve:
         setMainPage(_manager.pages().curveSequence);
+        break;
+    case TrackSetup::Mode::Last:
+        break;
+    }
+}
+
+bool TopPage::isSequenceSetupPage() {
+    return
+        _manager.top() == &_manager.pages().noteSequenceSetup ||
+        _manager.top() == &_manager.pages().curveSequenceSetup;
+}
+
+void TopPage::setSequenceSetupPage() {
+    switch (_project.selectedTrackSetup().mode()) {
+    case TrackSetup::Mode::Note:
+        setMainPage(_manager.pages().noteSequenceSetup);
+        break;
+    case TrackSetup::Mode::Curve:
+        setMainPage(_manager.pages().curveSequenceSetup);
         break;
     case TrackSetup::Mode::Last:
         break;

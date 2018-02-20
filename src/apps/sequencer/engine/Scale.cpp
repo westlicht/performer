@@ -26,6 +26,8 @@ static const Scale *scales[] = {
     &Scale1V
 };
 
-const Scale &Scale::scale(int index) {
+int Scale::Count = sizeof(scales) / sizeof(Scale *);
+
+const Scale &Scale::get(int index) {
     return *scales[index];
 }

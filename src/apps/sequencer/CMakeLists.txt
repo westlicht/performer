@@ -40,14 +40,15 @@ set(sources
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
     ui/pages/CurveSequencePage.cpp
+    ui/pages/CurveSequenceSetupPage.cpp
     ui/pages/ListPage.cpp
     ui/pages/MonitorPage.cpp
     ui/pages/NoteSequencePage.cpp
+    ui/pages/NoteSequenceSetupPage.cpp
     ui/pages/PatternPage.cpp
     ui/pages/PerformerPage.cpp
     ui/pages/ProjectPage.cpp
     ui/pages/ProjectSelectPage.cpp
-    ui/pages/SequenceSetupPage.cpp
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackSetupPage.cpp

@@ -60,7 +60,7 @@ void NoteSequenceEngine::tick(uint32_t tick) {
             _gateQueue.push({ tick + (divisor * evalStepLength(step)) / NoteSequence::Length::Range, false });
         }
 
-        const auto &scale = Scale::scale(sequence.scale());
+        const auto &scale = Scale::get(sequence.scale());
         _cvOutput = evalStepNote(step, scale);
     }
 

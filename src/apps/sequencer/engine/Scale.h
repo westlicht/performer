@@ -21,7 +21,8 @@ public:
 
     virtual int octave() const = 0;
 
-    static const Scale &scale(int index);
+    static int Count;
+    static const Scale &get(int index);
 
 private:
     const char *_name;

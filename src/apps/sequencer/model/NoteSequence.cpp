@@ -81,6 +81,8 @@ void NoteSequence::Step::read(ReadContext &context, int index) {
 
 void NoteSequence::clear() {
     setScale(3);
+    setDivisor(4);
+    setResetMeasure(0);
     setPlayMode(PlayMode::Forward);
     setFirstStep(0);
     setLastStep(CONFIG_STEP_COUNT - 1);
@@ -108,9 +110,25 @@ void NoteSequence::setNotes(std::initializer_list<int> notes) {
 }
 
 void NoteSequence::write(WriteContext &context, int index) const {
+    auto &writer = context.writer;
+    writer.write(_scale);
+    writer.write(_divisor);
+    writer.write(_resetMeasure);
+    writer.write(_playMode);
+    writer.write(_firstStep);
+    writer.write(_lastStep);
+
     writeArray(context, _steps);
 }
 
 void NoteSequence::read(ReadContext &context, int index) {
+    auto &reader = context.reader;
+    reader.read(_scale);
+    reader.read(_divisor);
+    reader.read(_resetMeasure);
+    reader.read(_playMode);
+    reader.read(_firstStep);
+    reader.read(_lastStep);
+
     readArray(context, _steps);
 }

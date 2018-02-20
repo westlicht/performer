@@ -1,10 +1,12 @@
 #pragma once
 
-#include "BasePage.h"
+#include "ListPage.h"
 
-class SequenceSetupPage : public BasePage {
+#include "ui/model/NoteSequenceSetupListModel.h"
+
+class NoteSequenceSetupPage : public ListPage {
 public:
-    SequenceSetupPage(PageManager &manager, PageContext &context);
+    NoteSequenceSetupPage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -17,5 +19,5 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    int _parameter = 0;
+    NoteSequenceSetupListModel _listModel;
 };

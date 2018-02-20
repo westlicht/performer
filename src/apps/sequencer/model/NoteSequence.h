@@ -4,6 +4,10 @@
 #include "Bitfield.h"
 #include "Serialize.h"
 
+#include "engine/Scale.h"
+
+#include "core/math/Math.h"
+
 #include <array>
 #include <cstdint>
 #include <initializer_list>
@@ -117,25 +121,43 @@ public:
     // scale
 
     int scale() const { return _scale; }
-    void setScale(int scale) { _scale = scale; }
+    void setScale(int scale) {
+        _scale = clamp(scale, 0, Scale::Count - 1);
+    }
+
+    // divisor
+
+    int divisor() const { return _divisor; }
+    void setDivisor(int divisor) {
+        _divisor = clamp(divisor, 1, 128);
+    }
+
+    // resetMeasure
+
+    int resetMeasure() const { return _resetMeasure; }
+    void setResetMeasure(int resetMeasure) {
+        _resetMeasure = clamp(resetMeasure, 0, 128);
+    }
 
     // playMode
 
     PlayMode playMode() const { return _playMode; }
-    void setPlayMode(PlayMode playMode) { _playMode = playMode; }
+    void setPlayMode(PlayMode playMode) {
+        _playMode = playMode;
+    }
 
     // firstStep
 
     int firstStep() const { return _firstStep; }
     void setFirstStep(int firstStep) {
-        _firstStep = uint8_t(std::max(0, std::min(firstStep, int(_lastStep))));
+        _firstStep = clamp(firstStep, 0, lastStep());
     }
 
     // lastStep
 
     int lastStep() const { return _lastStep; }
     void setLastStep(int lastStep) {
-        _lastStep = uint8_t(std::min(CONFIG_STEP_COUNT - 1, std::max(lastStep, int(_firstStep))));
+        _lastStep = clamp(lastStep, firstStep(), CONFIG_STEP_COUNT - 1);
     }
 
     // steps
@@ -160,6 +182,8 @@ public:
 
 private:
     uint8_t _scale;
+    uint8_t _divisor;
+    uint8_t _resetMeasure;
     PlayMode _playMode;
     uint8_t _firstStep;
     uint8_t _lastStep;

@@ -7,13 +7,14 @@
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
 #include "CurveSequencePage.h"
+#include "CurveSequenceSetupPage.h"
 #include "MonitorPage.h"
 #include "NoteSequencePage.h"
+#include "NoteSequenceSetupPage.h"
 #include "PatternPage.h"
 #include "PerformerPage.h"
 #include "ProjectPage.h"
 #include "ProjectSelectPage.h"
-#include "SequenceSetupPage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
 #include "TrackSetupPage.h"
@@ -30,7 +31,8 @@ struct Pages {
     TrackSetupPage trackSetup;
     NoteSequencePage noteSequence;
     CurveSequencePage curveSequence;
-    SequenceSetupPage sequenceSetup;
+    NoteSequenceSetupPage noteSequenceSetup;
+    CurveSequenceSetupPage curveSequenceSetup;
     PerformerPage performer;
     // modal pages
     BpmPage bpm;
@@ -54,7 +56,8 @@ struct Pages {
         trackSetup(manager, context),
         noteSequence(manager, context),
         curveSequence(manager, context),
-        sequenceSetup(manager, context),
+        noteSequenceSetup(manager, context),
+        curveSequenceSetup(manager, context),
         performer(manager, context),
         // modal pages
         bpm(manager, context),
