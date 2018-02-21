@@ -82,6 +82,23 @@ public:
         return nullptr;
     }
 
+    static std::array<float, 2> rangeValues(Range range) {
+        switch (range) {
+        case Range::Unipolar1V: return {{ 0.f, 1.f }};
+        case Range::Unipolar2V: return {{ 0.f, 2.f }};
+        case Range::Unipolar3V: return {{ 0.f, 3.f }};
+        case Range::Unipolar4V: return {{ 0.f, 4.f }};
+        case Range::Unipolar5V: return {{ 0.f, 5.f }};
+        case Range::Bipolar1V:  return {{ -1.f, 1.f }};
+        case Range::Bipolar2V:  return {{ -2.f, 2.f }};
+        case Range::Bipolar3V:  return {{ -3.f, 3.f }};
+        case Range::Bipolar4V:  return {{ -4.f, 4.f }};
+        case Range::Bipolar5V:  return {{ -5.f, 5.f }};
+        case Range::Last:       break;
+        }
+        return {{ 0.f, 0.f }};
+    }
+
     enum class PlayMode : uint8_t {
         Forward,
         Backward,

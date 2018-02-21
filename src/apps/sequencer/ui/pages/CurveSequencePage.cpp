@@ -48,7 +48,17 @@ void CurveSequencePage::draw(Canvas &canvas) {
     canvas.setBlendMode(BlendMode::Add);
 
     const int stepWidth = 32;
+    const int stepCount = Width / stepWidth;
 
+    // draw grid
+    canvas.setColor(0x3);
+    for (int stepIndex = 1; stepIndex < stepCount; ++stepIndex) {
+        int x = stepIndex * stepWidth;
+        canvas.vline(x, 16, 32);
+    }
+
+    // draw curve
+    canvas.setColor(0xf);
     for (int stepIndex = 0; stepIndex < 16; ++stepIndex) {
         const auto &step = sequence.step(stepIndex);
 
@@ -59,9 +69,16 @@ void CurveSequencePage::draw(Canvas &canvas) {
         float max = float(step.max()) / CurveSequence::Max::Max;
         const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
 
-        canvas.setColor(selected ? 0xf : 0x7);
+        // canvas.setColor(selected ? 0xf : 0x7);
 
         drawCurve(canvas, x, 16, stepWidth, 32, function, min, max);
+    }
+
+    // draw cursor
+    {
+        canvas.setColor(0xf);
+        int x = (sequenceEngine.currentStep() + sequenceEngine.currentStepFraction()) * stepWidth;
+        canvas.vline(x, 16, 32);
     }
 }
 
