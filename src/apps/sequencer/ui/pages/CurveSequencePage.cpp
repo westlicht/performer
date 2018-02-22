@@ -8,7 +8,7 @@
 
 #include "core/utils/StringBuilder.h"
 
-static void drawCurve(Canvas &canvas, int x, int y, int w, int h, int &lastY, const Curve::Function function, float min, float max) {
+static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, const Curve::Function function, float min, float max) {
     const int Step = 2;
 
     auto eval = [=] (float x) {
@@ -17,7 +17,9 @@ static void drawCurve(Canvas &canvas, int x, int y, int w, int h, int &lastY, co
 
     float fy0 = y + eval(0.f);
 
-    canvas.vline(x, lastY, fy0 - lastY);
+    if (lastY != 0.f) {
+        canvas.line(x, lastY, x, fy0);
+    }
 
     for (int i = 0; i < w; i += Step) {
         float fy1 = y + eval((float(i) + Step) / w);
@@ -64,7 +66,7 @@ void CurveSequencePage::draw(Canvas &canvas) {
 
     // draw curve
     canvas.setColor(0xf);
-    int lastY;
+    float lastY = 0.f;
     for (int stepIndex = 0; stepIndex < 16; ++stepIndex) {
         const auto &step = sequence.step(stepIndex);
 
@@ -77,7 +79,7 @@ void CurveSequencePage::draw(Canvas &canvas) {
 
         if (selected) {
             canvas.setColor(0x3);
-            canvas.fillRect(x, 16 - 2, stepWidth, 32 + 4);
+            canvas.fillRect(x + 2, 16 - 2, stepWidth - 3, 32 + 4);
             canvas.setColor(0xf);
             // canvas.setBlendMode(BlendMode::Sub);
         } else {
