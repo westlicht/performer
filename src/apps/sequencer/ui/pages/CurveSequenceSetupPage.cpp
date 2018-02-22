@@ -6,15 +6,15 @@
 #include "core/utils/StringBuilder.h"
 
 CurveSequenceSetupPage::CurveSequenceSetupPage(PageManager &manager, PageContext &context) :
-    ListPage(manager, context, _listModel),
-    _listModel(_project.selectedSequence().curveSequence())
+    ListPage(manager, context, _listModel)
 {}
 
 void CurveSequenceSetupPage::enter() {
-    // _listModel.setTrackSetup(_project.selectedTrackSetup());
+    _listModel.setSequence(&_project.selectedSequence().curveSequence());
 }
 
 void CurveSequenceSetupPage::exit() {
+    _listModel.setSequence(nullptr);
 }
 
 void CurveSequenceSetupPage::draw(Canvas &canvas) {

@@ -12,12 +12,15 @@
 
 class NoteSequenceSetupListModel : public ListModel {
 public:
-    NoteSequenceSetupListModel(NoteSequence &sequence) :
-        _sequence(sequence)
+    NoteSequenceSetupListModel()
     {}
 
+    void setSequence(NoteSequence *sequence) {
+        _sequence = sequence;
+    }
+
     virtual int rows() const override {
-        return Last;
+        return _sequence ? Last : 0;
     }
 
     virtual int columns() const override {
@@ -69,26 +72,26 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case Scale:
-            str(Scale::get(_sequence.scale()).name());
+            str(Scale::get(_sequence->scale()).name());
             break;
         case Divisor:
-            str("%d", _sequence.divisor());
+            str("%d", _sequence->divisor());
             break;
         case ResetMeasure:
-            if (_sequence.resetMeasure() == 0) {
+            if (_sequence->resetMeasure() == 0) {
                 str("off");
             } else {
-                str("%d", _sequence.resetMeasure());
+                str("%d", _sequence->resetMeasure());
             }
             break;
         case PlayMode:
-            str(NoteSequence::playModeName(_sequence.playMode()));
+            str(NoteSequence::playModeName(_sequence->playMode()));
             break;
         case FirstStep:
-            str("%d", _sequence.firstStep() + 1);
+            str("%d", _sequence->firstStep() + 1);
             break;
         case LastStep:
-            str("%d", _sequence.lastStep() + 1);
+            str("%d", _sequence->lastStep() + 1);
             break;
         case Last:
             break;
@@ -98,27 +101,27 @@ private:
     void editValue(Item item, int value) {
         switch (item) {
         case Scale:
-            _sequence.setScale(_sequence.scale() + value);
+            _sequence->setScale(_sequence->scale() + value);
             break;
         case Divisor:
-            _sequence.setDivisor(_sequence.divisor() + value);
+            _sequence->setDivisor(_sequence->divisor() + value);
             break;
         case ResetMeasure:
-            _sequence.setResetMeasure(_sequence.resetMeasure() + value);
+            _sequence->setResetMeasure(_sequence->resetMeasure() + value);
             break;
         case PlayMode:
-            _sequence.setPlayMode(adjustedEnum(_sequence.playMode(), value));
+            _sequence->setPlayMode(adjustedEnum(_sequence->playMode(), value));
             break;
         case FirstStep:
-            _sequence.setFirstStep(_sequence.firstStep() + value);
+            _sequence->setFirstStep(_sequence->firstStep() + value);
             break;
         case LastStep:
-            _sequence.setLastStep(_sequence.lastStep() + value);
+            _sequence->setLastStep(_sequence->lastStep() + value);
             break;
         case Last:
             break;
         }
     }
 
-    NoteSequence &_sequence;
+    NoteSequence *_sequence;
 };

@@ -6,15 +6,15 @@
 #include "core/utils/StringBuilder.h"
 
 NoteSequenceSetupPage::NoteSequenceSetupPage(PageManager &manager, PageContext &context) :
-    ListPage(manager, context, _listModel),
-    _listModel(_project.selectedSequence().noteSequence())
+    ListPage(manager, context, _listModel)
 {}
 
 void NoteSequenceSetupPage::enter() {
-    // _listModel.setTrackSetup(_project.selectedTrackSetup());
+    _listModel.setSequence(&_project.selectedSequence().noteSequence());
 }
 
 void NoteSequenceSetupPage::exit() {
+    _listModel.setSequence(nullptr);
 }
 
 void NoteSequenceSetupPage::draw(Canvas &canvas) {

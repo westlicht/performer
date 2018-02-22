@@ -12,12 +12,15 @@
 
 class CurveSequenceSetupListModel : public ListModel {
 public:
-    CurveSequenceSetupListModel(CurveSequence &sequence) :
-        _sequence(sequence)
+    CurveSequenceSetupListModel()
     {}
 
+    void setSequence(CurveSequence *sequence) {
+        _sequence = sequence;
+    }
+
     virtual int rows() const override {
-        return Last;
+        return _sequence ? Last : 0;
     }
 
     virtual int columns() const override {
@@ -69,22 +72,22 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case Range:
-            str(CurveSequence::rangeName(_sequence.range()));
+            str(CurveSequence::rangeName(_sequence->range()));
             break;
         case Divisor:
-            str("%d", _sequence.divisor());
+            str("%d", _sequence->divisor());
             break;
         case ResetMeasure:
-            str("%d", _sequence.resetMeasure());
+            str("%d", _sequence->resetMeasure());
             break;
         case PlayMode:
-            str(CurveSequence::playModeName(_sequence.playMode()));
+            str(CurveSequence::playModeName(_sequence->playMode()));
             break;
         case FirstStep:
-            str("%d", _sequence.firstStep());
+            str("%d", _sequence->firstStep());
             break;
         case LastStep:
-            str("%d", _sequence.lastStep());
+            str("%d", _sequence->lastStep());
             break;
         case Last:
             break;
@@ -94,27 +97,27 @@ private:
     void editValue(Item item, int value) {
         switch (item) {
         case Range:
-            _sequence.setRange(adjustedEnum(_sequence.range(), value));
+            _sequence->setRange(adjustedEnum(_sequence->range(), value));
             break;
         case Divisor:
-            _sequence.setDivisor(_sequence.divisor() + value);
+            _sequence->setDivisor(_sequence->divisor() + value);
             break;
         case ResetMeasure:
-            _sequence.setResetMeasure(_sequence.resetMeasure() + value);
+            _sequence->setResetMeasure(_sequence->resetMeasure() + value);
             break;
         case PlayMode:
-            _sequence.setPlayMode(adjustedEnum(_sequence.playMode(), value));
+            _sequence->setPlayMode(adjustedEnum(_sequence->playMode(), value));
             break;
         case FirstStep:
-            _sequence.setFirstStep(_sequence.firstStep() + value);
+            _sequence->setFirstStep(_sequence->firstStep() + value);
             break;
         case LastStep:
-            _sequence.setLastStep(_sequence.lastStep() + value);
+            _sequence->setLastStep(_sequence->lastStep() + value);
             break;
         case Last:
             break;
         }
     }
 
-    CurveSequence &_sequence;
+    CurveSequence *_sequence = nullptr;
 };
