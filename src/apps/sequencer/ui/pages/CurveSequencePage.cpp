@@ -8,19 +8,24 @@
 
 #include "core/utils/StringBuilder.h"
 
-static void drawCurve(Canvas &canvas, int x, int y, int w, int h, const Curve::Function function, float min, float max) {
-    const int Step = 1;
+static void drawCurve(Canvas &canvas, int x, int y, int w, int h, int &lastY, const Curve::Function function, float min, float max) {
+    const int Step = 2;
 
     auto eval = [=] (float x) {
         return (1.f - (function(x) * (max - min) + min)) * h;
     };
 
     float fy0 = y + eval(0.f);
+
+    canvas.vline(x, lastY, fy0 - lastY);
+
     for (int i = 0; i < w; i += Step) {
         float fy1 = y + eval((float(i) + Step) / w);
         canvas.line(x + i, fy0, x + i + Step, fy1);
         fy0 = fy1;
     }
+
+    lastY = fy0;
 }
 
 CurveSequencePage::CurveSequencePage(PageManager &manager, PageContext &context) :
@@ -59,19 +64,28 @@ void CurveSequencePage::draw(Canvas &canvas) {
 
     // draw curve
     canvas.setColor(0xf);
+    int lastY;
     for (int stepIndex = 0; stepIndex < 16; ++stepIndex) {
         const auto &step = sequence.step(stepIndex);
 
         int x = stepIndex * stepWidth;
 
         bool selected = _selectedSteps[stepIndex] || _keyState[Key::Shift];
-        float min = float(step.min()) / CurveSequence::Min::Max;
-        float max = float(step.max()) / CurveSequence::Max::Max;
+        float min = step.minNormalized();
+        float max = step.maxNormalized();
         const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
 
+        if (selected) {
+            canvas.setColor(0x3);
+            canvas.fillRect(x, 16 - 2, stepWidth, 32 + 4);
+            canvas.setColor(0xf);
+            // canvas.setBlendMode(BlendMode::Sub);
+        } else {
+            canvas.setBlendMode(BlendMode::Add);
+        }
         // canvas.setColor(selected ? 0xf : 0x7);
 
-        drawCurve(canvas, x, 16, stepWidth, 32, function, min, max);
+        drawCurve(canvas, x, 16, stepWidth, 32, lastY, function, min, max);
     }
 
     // draw cursor

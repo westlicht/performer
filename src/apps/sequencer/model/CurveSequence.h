@@ -31,11 +31,13 @@ public:
 
         int min() const { return _min; }
         void setMin(int min) { _min = min; }
+        float minNormalized() const { return float(_min) / CurveSequence::Min::Max; }
 
         // max
 
         int max() const { return _max; }
         void setMax(int max) { _max = max; }
+        float maxNormalized() const { return float(_max) / CurveSequence::Max::Max; }
 
 
         void clear();

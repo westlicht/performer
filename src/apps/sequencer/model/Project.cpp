@@ -38,6 +38,10 @@ void Project::demoProject() {
     pattern(0).sequence(5).noteSequence().setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0 });
     pattern(0).sequence(7).noteSequence().setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
     pattern(0).sequence(7).noteSequence().setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
+
+    trackSetup(0).setMode(TrackSetup::Mode::Curve);
+    pattern(0).sequence(0).curveSequence().clear();
+    pattern(0).sequence(0).curveSequence().setLastStep(7);
 }
 
 void Project::setTrackSetup(int index, const TrackSetup &trackSetup) {
