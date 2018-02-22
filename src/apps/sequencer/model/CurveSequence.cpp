@@ -1,5 +1,7 @@
 #include "CurveSequence.h"
 
+#include "ModelUtils.h"
+
 void CurveSequence::Step::clear() {
     setShape(0);
     setMin(0);
@@ -39,6 +41,10 @@ void CurveSequence::setShapes(std::initializer_list<int> shapes) {
             _steps[step++].setShape(shape);
         }
     }
+}
+
+void CurveSequence::shift(int direction) {
+    ModelUtils::shiftSteps(_steps, direction);
 }
 
 void CurveSequence::write(WriteContext &context, int index) const {

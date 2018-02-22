@@ -1,5 +1,7 @@
 #include "NoteSequence.h"
 
+#include "ModelUtils.h"
+
 void NoteSequence::Step::clear() {
     setGate(false);
     setGateProbability(GateProbability::Max);
@@ -107,6 +109,10 @@ void NoteSequence::setNotes(std::initializer_list<int> notes) {
             _steps[step++].setNote(note);
         }
     }
+}
+
+void NoteSequence::shift(int direction) {
+    ModelUtils::shiftSteps(_steps, direction);
 }
 
 void NoteSequence::write(WriteContext &context, int index) const {

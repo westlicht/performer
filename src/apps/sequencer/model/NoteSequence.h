@@ -177,6 +177,8 @@ public:
     void setGates(std::initializer_list<int> gates);
     void setNotes(std::initializer_list<int> notes);
 
+    void shift(int direction);
+
     void write(WriteContext &context, int index) const;
     void read(ReadContext &context, int index);
 

@@ -184,6 +184,8 @@ public:
 
     void setShapes(std::initializer_list<int> shapes);
 
+    void shift(int direction);
+
     void write(WriteContext &context, int index) const;
     void read(ReadContext &context, int index);
 
