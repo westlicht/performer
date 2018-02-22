@@ -69,7 +69,7 @@ void ProjectPage::encoder(EncoderEvent &event) {
 }
 
 void ProjectPage::loadProject() {
-    _manager.pages().projectSelect.show("LOAD PROJECT", 0, false, [this] (bool result, int index) {
+    _manager.pages().projectSelect.show("LOAD PROJECT", _project.slotAssigned() ? _project.slot() : 0, false, [this] (bool result, int index) {
         if (result) {
             auto result = ProjectManager::loadProject(_project, index);
             if (result == fs::OK) {
