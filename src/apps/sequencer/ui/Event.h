@@ -7,6 +7,7 @@ public:
     enum Type {
         KeyUp,
         KeyDown,
+        KeyPress,
         Encoder,
     };
 
@@ -40,6 +41,19 @@ public:
 
 private:
     Key _key;
+};
+
+class KeyPressEvent : public KeyEvent {
+public:
+    KeyPressEvent(Type type, const Key &key, int count) :
+        KeyEvent(type, key),
+        _count(count)
+    {}
+
+    int count() const { return _count; }
+
+private:
+    int _count;
 };
 
 class EncoderEvent : public Event {

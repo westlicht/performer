@@ -5,6 +5,7 @@
 #include "Page.h"
 #include "PageManager.h"
 #include "Key.h"
+#include "KeyPressEventTracker.h"
 #include "Leds.h"
 
 #include "pages/Pages.h"
@@ -46,6 +47,7 @@ private:
     uint32_t _lastUpdateTicks;
 
     KeyState _keyState;
+    KeyPressEventTracker _keyPressEventTracker;
     Leds _leds;
 
     MessageManager _messageManager;

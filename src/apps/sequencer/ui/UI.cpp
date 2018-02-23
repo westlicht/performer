@@ -62,8 +62,13 @@ void UI::handleKeys() {
     while (_blm.nextEvent(event)) {
         bool isDown = event.action() == ButtonLedMatrix::Event::KeyDown;
         _keyState[event.value()] = isDown;
-        KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, Key(event.value(), _keyState));
+        Key key(event.value(), _keyState);
+        KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
         _pageManager.dispatchEvent(keyEvent);
+        if (isDown) {
+            KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
+            _pageManager.dispatchEvent(keyPressEvent);
+        }
     }
 }
 
@@ -81,8 +86,13 @@ void UI::handleEncoder() {
         case Encoder::Up: {
             bool isDown = event == Encoder::Down;
             _keyState[Key::Encoder] = isDown ? 1 : 0;
-            KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, Key(Key::Code::Encoder, _keyState));
+            Key key(Key::Code::Encoder, _keyState);
+            KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
             _pageManager.dispatchEvent(keyEvent);
+            if (isDown) {
+                KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
+                _pageManager.dispatchEvent(keyPressEvent);
+            }
             break;
         }
         }

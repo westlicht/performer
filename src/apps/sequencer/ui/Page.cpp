@@ -27,6 +27,9 @@ void Page::dispatchEvent(Event &event) {
     case Event::KeyUp:
         keyUp(event.as<KeyEvent>());
         break;
+    case Event::KeyPress:
+        keyPress(event.as<KeyPressEvent>());
+        break;
     case Event::Encoder:
         encoder(event.as<EncoderEvent>());
         break;

@@ -26,6 +26,7 @@ public:
     // Event handlers
     virtual void keyDown(KeyEvent &event) {}
     virtual void keyUp(KeyEvent &event) {}
+    virtual void keyPress(KeyPressEvent &event) {}
     virtual void encoder(EncoderEvent &event) {}
 
     virtual void show();
