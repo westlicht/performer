@@ -45,12 +45,3 @@ void BusyPage::draw(Canvas &canvas) {
 
 void BusyPage::updateLeds(Leds &leds) {
 }
-
-void BusyPage::keyDown(KeyEvent &event) {
-}
-
-void BusyPage::keyUp(KeyEvent &event) {
-}
-
-void BusyPage::encoder(EncoderEvent &event) {
-}

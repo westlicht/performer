@@ -35,7 +35,7 @@ void ConfirmationPage::draw(Canvas &canvas) {
 void ConfirmationPage::updateLeds(Leds &leds) {
 }
 
-void ConfirmationPage::keyDown(KeyEvent &event) {
+void ConfirmationPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
@@ -44,12 +44,6 @@ void ConfirmationPage::keyDown(KeyEvent &event) {
         case 4: closeWithResult(true); break;
         }
     }
-}
-
-void ConfirmationPage::keyUp(KeyEvent &event) {
-}
-
-void ConfirmationPage::encoder(EncoderEvent &event) {
 }
 
 void ConfirmationPage::closeWithResult(bool result) {

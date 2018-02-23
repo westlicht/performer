@@ -92,7 +92,7 @@ void TextInputPage::draw(Canvas &canvas) {
 void TextInputPage::updateLeds(Leds &leds) {
 }
 
-void TextInputPage::keyDown(KeyEvent &event) {
+void TextInputPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
@@ -118,9 +118,6 @@ void TextInputPage::keyDown(KeyEvent &event) {
     }
 
     event.consume();
-}
-
-void TextInputPage::keyUp(KeyEvent &event) {
 }
 
 void TextInputPage::encoder(EncoderEvent &event) {

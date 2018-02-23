@@ -29,7 +29,7 @@ void TrackSetupPage::draw(Canvas &canvas) {
 void TrackSetupPage::updateLeds(Leds &leds) {
 }
 
-void TrackSetupPage::keyDown(KeyEvent &event) {
+void TrackSetupPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction() && key.function() == 4) {
@@ -41,13 +41,5 @@ void TrackSetupPage::keyDown(KeyEvent &event) {
         _listModel.setTrackSetup(_project.selectedTrackSetup());
     }
 
-    ListPage::keyDown(event);
-}
-
-void TrackSetupPage::keyUp(KeyEvent &event) {
-    ListPage::keyUp(event);
-}
-
-void TrackSetupPage::encoder(EncoderEvent &event) {
-    ListPage::encoder(event);
+    ListPage::keyPress(event);
 }

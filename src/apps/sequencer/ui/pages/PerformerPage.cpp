@@ -81,7 +81,7 @@ void PerformerPage::draw(Canvas &canvas) {
 void PerformerPage::updateLeds(Leds &leds) {
 }
 
-void PerformerPage::keyDown(KeyEvent &event) {
+void PerformerPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &playState = _project.playState();
 
@@ -102,9 +102,6 @@ void PerformerPage::keyDown(KeyEvent &event) {
             playState.soloTrack(track, key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate);
         }
     }
-}
-
-void PerformerPage::keyUp(KeyEvent &event) {
 }
 
 void PerformerPage::encoder(EncoderEvent &event) {

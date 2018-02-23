@@ -39,7 +39,7 @@ void MonitorPage::draw(Canvas &canvas) {
 void MonitorPage::updateLeds(Leds &leds) {
 }
 
-void MonitorPage::keyDown(KeyEvent &event) {
+void MonitorPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
@@ -49,9 +49,6 @@ void MonitorPage::keyDown(KeyEvent &event) {
         case 4: close(); break;
         }
     }
-}
-
-void MonitorPage::keyUp(KeyEvent &event) {
 }
 
 void MonitorPage::encoder(EncoderEvent &event) {

@@ -20,7 +20,7 @@ void ClockSetupPage::draw(Canvas &canvas) {
     ListPage::draw(canvas);
 }
 
-void ClockSetupPage::keyDown(KeyEvent &event) {
+void ClockSetupPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction() && key.function() == 4) {
@@ -28,6 +28,6 @@ void ClockSetupPage::keyDown(KeyEvent &event) {
         event.consume();
     }
 
-    ListPage::keyDown(event);
+    ListPage::keyPress(event);
 }
 

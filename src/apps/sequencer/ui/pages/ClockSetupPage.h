@@ -12,7 +12,7 @@ public:
 
     virtual bool isModal() const override { return true; }
 
-    virtual void keyDown(KeyEvent &event) override;
+    virtual void keyPress(KeyPressEvent &event) override;
 
 private:
     ClockSetupListModel _listModel;

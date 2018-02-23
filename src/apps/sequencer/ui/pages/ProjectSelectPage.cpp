@@ -34,7 +34,7 @@ void ProjectSelectPage::draw(Canvas &canvas) {
 void ProjectSelectPage::updateLeds(Leds &leds) {
 }
 
-void ProjectSelectPage::keyDown(KeyEvent &event) {
+void ProjectSelectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
@@ -49,15 +49,7 @@ void ProjectSelectPage::keyDown(KeyEvent &event) {
         return;
     }
 
-    ListPage::keyDown(event);
-}
-
-void ProjectSelectPage::keyUp(KeyEvent &event) {
-    ListPage::keyUp(event);
-}
-
-void ProjectSelectPage::encoder(EncoderEvent &event) {
-    ListPage::encoder(event);
+    ListPage::keyPress(event);
 }
 
 void ProjectSelectPage::closeWithResult(bool result) {

@@ -19,6 +19,14 @@ void TopPage::updateLeds(Leds &leds) {
 }
 
 void TopPage::keyDown(KeyEvent &event) {
+    event.consume();
+}
+
+void TopPage::keyUp(KeyEvent &event) {
+    event.consume();
+}
+
+void TopPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isTrackSelect()) {
@@ -74,10 +82,6 @@ void TopPage::keyDown(KeyEvent &event) {
         _manager.pages().monitor.show();
     }
 
-    event.consume();
-}
-
-void TopPage::keyUp(KeyEvent &event) {
     event.consume();
 }
 

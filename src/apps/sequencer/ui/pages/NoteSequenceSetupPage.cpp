@@ -29,26 +29,3 @@ void NoteSequenceSetupPage::draw(Canvas &canvas) {
 
 void NoteSequenceSetupPage::updateLeds(Leds &leds) {
 }
-
-void NoteSequenceSetupPage::keyDown(KeyEvent &event) {
-    // const auto &key = event.key();
-
-    // if (key.isFunction() && key.function() == 4) {
-    //     _project.setTrackSetup(_project.selectedTrackIndex(), _listModel.trackSetup());
-    // }
-
-    // if (key.isTrackSelect()) {
-    //     _project.setSelectedTrackIndex(key.trackSelect());
-    //     _listModel.setTrackSetup(_project.selectedTrackSetup());
-    // }
-
-    ListPage::keyDown(event);
-}
-
-void NoteSequenceSetupPage::keyUp(KeyEvent &event) {
-    ListPage::keyUp(event);
-}
-
-void NoteSequenceSetupPage::encoder(EncoderEvent &event) {
-    ListPage::encoder(event);
-}

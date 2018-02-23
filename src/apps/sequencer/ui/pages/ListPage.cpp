@@ -63,7 +63,7 @@ void ListPage::draw(Canvas &canvas) {
 void ListPage::updateLeds(Leds &leds) {
 }
 
-void ListPage::keyDown(KeyEvent &event) {
+void ListPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     switch (key.code()) {
@@ -80,9 +80,6 @@ void ListPage::keyDown(KeyEvent &event) {
         event.consume();
         break;
     }
-}
-
-void ListPage::keyUp(KeyEvent &event) {
 }
 
 void ListPage::encoder(EncoderEvent &event) {
