@@ -81,12 +81,12 @@ void PerformerPage::keyDown(KeyEvent &event) {
     auto &playState = _project.playState();
 
     if (key.isFunction() && key.function() == 2) {
-        playState.fillAll(true);
+        updateFills();
         event.consume();
     }
 
-    if (key.isTrack()) {
-        playState.fillTrack(key.track(), true);
+    if (key.isTrackSelect()) {
+        updateFills();
         event.consume();
     }
 }
@@ -96,12 +96,12 @@ void PerformerPage::keyUp(KeyEvent &event) {
     auto &playState = _project.playState();
 
     if (key.isFunction() && key.function() == 2) {
-        playState.fillAll(false);
+        updateFills();
         event.consume();
     }
 
-    if (key.isTrack()) {
-        playState.fillTrack(key.track(), false);
+    if (key.isTrackSelect()) {
+        updateFills();
         event.consume();
     }
 }
@@ -110,7 +110,7 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &playState = _project.playState();
 
-    if (key.isTrack()) {
+    if (key.isTrackSelect()) {
         event.consume();
     }
 
@@ -118,8 +118,10 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
         switch (key.function()) {
         case 0: playState.muteAll(key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate); break;
         case 1: playState.unmuteAll(key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate); break;
-        case 2: playState.cancelScheduledMutesAndSolos(); break;
+        case 2: updateFills(); break;
+        case 4: playState.cancelScheduledMutesAndSolos(); break;
         }
+        event.consume();
     }
 
     if (key.isStep()) {
@@ -130,8 +132,17 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
             int track = key.step() - 8;
             playState.soloTrack(track, key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate);
         }
+        event.consume();
     }
 }
 
 void PerformerPage::encoder(EncoderEvent &event) {
+}
+
+void PerformerPage::updateFills() {
+    auto &playState = _project.playState();
+
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        playState.fillTrack(trackIndex, _keyState[MatrixMap::fromTrack(trackIndex)] || _keyState[MatrixMap::fromFunction(2)]);
+    }
 }

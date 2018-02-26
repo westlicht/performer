@@ -18,4 +18,5 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    void updateFills();
 };
