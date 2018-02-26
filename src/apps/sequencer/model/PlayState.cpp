@@ -37,9 +37,30 @@ void PlayState::unmuteTrack(int track, ExecuteType executeType) {
 
 void PlayState::toggleMuteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
-    trackState.setRequests(executeType == Immediate ? TrackState::ImmediateMuteRequest : TrackState::ScheduledMuteRequest);
-    trackState.setRequestedMute(!trackState.mute());
-    notify(executeType);
+    switch (executeType) {
+    case Immediate:
+        if (trackState.mute()) {
+            unmuteTrack(track, Immediate);
+        } else {
+            muteTrack(track, Immediate);
+        }
+        break;
+    case Scheduled:
+        if (trackState.requestedMute() == trackState.mute()) {
+            if (trackState.mute()) {
+                unmuteTrack(track, Scheduled);
+            } else {
+                muteTrack(track, Scheduled);
+            }
+        } else {
+            if (trackState.mute()) {
+                muteTrack(track, Scheduled);
+            } else {
+                unmuteTrack(track, Scheduled);
+            }
+        }
+        break;
+    }
 }
 
 void PlayState::muteAll(ExecuteType executeType) {
