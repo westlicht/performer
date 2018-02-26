@@ -5,6 +5,7 @@
 
 #include "model/TrackSetup.h"
 #include "model/Pattern.h"
+#include "model/PlayState.h"
 
 #include "core/Debug.h"
 #include "core/utils/Container.h"
@@ -26,6 +27,9 @@ public:
     bool mute() const { return _mute; }
     void setMute(bool mute);
 
+    bool fill() const { return _fill; }
+    void setFill(bool fill);
+
     bool gate() const;
     bool gateOutput() const;
     float cvOutput() const;
@@ -42,6 +46,7 @@ public:
 private:
     uint8_t _trackIndex;
     bool _mute;
+    bool _fill;
     const Pattern *_pattern;
 
     TrackSetup::Mode _mode;

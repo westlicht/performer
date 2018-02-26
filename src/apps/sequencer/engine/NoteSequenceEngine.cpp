@@ -55,7 +55,7 @@ void NoteSequenceEngine::tick(uint32_t tick) {
     if (tick % divisor == 0) {
         advance();
         const auto &step = sequence.step(_currentStep);
-        if (evalStepGate(step)) {
+        if (evalStepGate(step) || _fill) {
             _gateQueue.push({ tick, true });
             _gateQueue.push({ tick + (divisor * evalStepLength(step)) / NoteSequence::Length::Range, false });
         }
@@ -77,6 +77,10 @@ void NoteSequenceEngine::setSequence(const Sequence &sequence) {
 
 void NoteSequenceEngine::setMute(bool mute) {
     _mute = mute;
+}
+
+void NoteSequenceEngine::setFill(bool fill) {
+    _fill = fill;
 }
 
 void NoteSequenceEngine::advance() {

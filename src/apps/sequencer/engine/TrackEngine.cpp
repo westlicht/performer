@@ -51,6 +51,11 @@ void TrackEngine::setMute(bool mute) {
     _sequenceEngine->setMute(mute);
 }
 
+void TrackEngine::setFill(bool fill) {
+    _fill = fill;
+    _sequenceEngine->setFill(fill);
+}
+
 bool TrackEngine::gate() const {
     return _sequenceEngine->gate();
 }

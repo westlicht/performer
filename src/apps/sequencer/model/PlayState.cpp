@@ -82,6 +82,7 @@ void PlayState::cancelScheduledMutesAndSolos() {
 
 void PlayState::fillTrack(int track, bool fill) {
     _trackStates[track].setFill(fill);
+    notify(Immediate);
 }
 
 void PlayState::fillAll(bool fill) {

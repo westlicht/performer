@@ -15,6 +15,7 @@ public:
 
     virtual void setSequence(const Sequence &sequence) override;
     virtual void setMute(bool mute) override;
+    virtual void setFill(bool fill) override;
 
     virtual bool gate() const override { return _gate; }
     virtual bool gateOutput() const override { return _gateOutput; }
@@ -30,6 +31,7 @@ private:
     const NoteSequence *_sequence;
 
     bool _mute;
+    bool _fill;
     bool _gate;
     bool _gateOutput;
     float _cvOutput;

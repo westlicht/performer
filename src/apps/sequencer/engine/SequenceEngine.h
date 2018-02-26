@@ -16,6 +16,7 @@ public:
 
     virtual void setSequence(const Sequence &sequence) = 0;
     virtual void setMute(bool mute) = 0;
+    virtual void setFill(bool fill) = 0;
 
     virtual bool gate() const = 0;
     virtual bool gateOutput() const = 0;

@@ -61,6 +61,10 @@ void CurveSequenceEngine::setMute(bool mute) {
     _mute = mute;
 }
 
+void CurveSequenceEngine::setFill(bool fill) {
+
+}
+
 void CurveSequenceEngine::advance() {
     const auto &sequence = *_sequence;
 

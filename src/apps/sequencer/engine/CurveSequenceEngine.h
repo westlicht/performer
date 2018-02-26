@@ -14,6 +14,7 @@ public:
 
     virtual void setSequence(const Sequence &sequence) override;
     virtual void setMute(bool mute) override;
+    virtual void setFill(bool fill) override;
 
     virtual bool gate() const override { return true; }
     virtual bool gateOutput() const override { return !_mute; }

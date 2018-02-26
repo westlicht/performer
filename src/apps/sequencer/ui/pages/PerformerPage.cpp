@@ -24,23 +24,8 @@ void PerformerPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PERFORMER");
 
-    const char *functionNames[] = { "MUTE", "UNMUTE", "CANCEL", nullptr, nullptr };
+    const char *functionNames[] = { "MUTE", "UNMUTE", "FILL", nullptr, "CANCEL" };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
-
-    GridLayout<
-        CONFIG_TRACK_COUNT, // CellCount
-        16,                 // CellWidth
-        16,                 // CellHeight
-        4,                  // CellSpacing
-        8                   // Padding
-    > gridLayout;
-
-    CenterLayout<
-        Width,              // ContainerWidth
-        Height,             // ContainerHeight
-        gridLayout.width(), // Width
-        gridLayout.height() // Height
-    > centerLayout;
 
     constexpr int Border = 4;
     constexpr int BorderRequested = 6;
@@ -50,19 +35,29 @@ void PerformerPage::draw(Canvas &canvas) {
     float globalMeasureFraction = _engine.globalMeasureFraction();
     bool hasRequested = false;
 
+    canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &trackEngine = _engine.trackEngine(trackIndex);
         const auto &trackState = playState.trackState(trackIndex);
 
-        int x = centerLayout.originX() + gridLayout.cellX(trackIndex);
-        int y = centerLayout.originY() + gridLayout.cellY(trackIndex);
-        int w = gridLayout.cellWidth();
-        int h = gridLayout.cellHeight();
+        int x = trackIndex * 32;
+        int y = 16;
+
+        int w = 16;
+        int h = 16;
+
+        x += 8;
+
+        canvas.setColor(trackState.fill() ? 0xf : 0x7);
+        canvas.drawTextCentered(x, y - 2, w, 8, FixedStringBuilder<8>("T%d", trackIndex + 1));
+
+        y += 8;
 
         canvas.setColor(trackEngine.gate() ? 0xf : 0x7);
         canvas.drawRect(x, y, w, h);
+
         canvas.setColor(0xf);
         if (trackState.mute() != trackState.requestedMute()) {
             hasRequested = true;
@@ -81,9 +76,43 @@ void PerformerPage::draw(Canvas &canvas) {
 void PerformerPage::updateLeds(Leds &leds) {
 }
 
+void PerformerPage::keyDown(KeyEvent &event) {
+    const auto &key = event.key();
+    auto &playState = _project.playState();
+
+    if (key.isFunction() && key.function() == 2) {
+        playState.fillAll(true);
+        event.consume();
+    }
+
+    if (key.isTrack()) {
+        playState.fillTrack(key.track(), true);
+        event.consume();
+    }
+}
+
+void PerformerPage::keyUp(KeyEvent &event) {
+    const auto &key = event.key();
+    auto &playState = _project.playState();
+
+    if (key.isFunction() && key.function() == 2) {
+        playState.fillAll(false);
+        event.consume();
+    }
+
+    if (key.isTrack()) {
+        playState.fillTrack(key.track(), false);
+        event.consume();
+    }
+}
+
 void PerformerPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &playState = _project.playState();
+
+    if (key.isTrack()) {
+        event.consume();
+    }
 
     if (key.isFunction()) {
         switch (key.function()) {
