@@ -23,5 +23,8 @@ private:
     void saveAsProject();
     void formatSDCard();
 
+    void saveProjectToSlot(int slot);
+    void loadProjectFromSlot(int slot);
+
     ProjectListModel _listModel;
 };

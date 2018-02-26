@@ -28,7 +28,7 @@ void ConfirmationPage::draw(Canvas &canvas) {
 
     canvas.drawTextCentered(0, 32 - 4, Width, 8, _text);
 
-    const char *functionNames[] = { nullptr, nullptr, nullptr, "CANCEL", "OK" };
+    const char *functionNames[] = { nullptr, nullptr, nullptr, "NO", "YES" };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 }
 

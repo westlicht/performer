@@ -65,14 +65,13 @@ void ProjectPage::encoder(EncoderEvent &event) {
 }
 
 void ProjectPage::loadProject() {
-    _manager.pages().projectSelect.show("LOAD PROJECT", _project.slotAssigned() ? _project.slot() : 0, false, [this] (bool result, int index) {
+    _manager.pages().projectSelect.show("LOAD PROJECT", _project.slotAssigned() ? _project.slot() : 0, false, [this] (bool result, int slot) {
         if (result) {
-            auto result = ProjectManager::loadProject(_project, index);
-            if (result == fs::OK) {
-                showMessage(FixedStringBuilder<32>("Loaded project"));
-            } else {
-                showMessage(FixedStringBuilder<32>("Loading project failed (%s)", fs::errorToString(result)));
-            }
+            _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
+                if (result) {
+                    loadProjectFromSlot(slot);
+                }
+            });
         }
     });
 }
@@ -83,22 +82,22 @@ void ProjectPage::saveProject() {
         return;
     }
 
-    auto result = ProjectManager::saveProject(_project, _project.slot());
-    if (result == fs::OK) {
-        showMessage(FixedStringBuilder<32>("Saved project"));
-    } else {
-        showMessage(FixedStringBuilder<32>("Saving project failed (%s)", fs::errorToString(result)));
-    }
+    saveProjectToSlot(_project.slot());
 }
 
 void ProjectPage::saveAsProject() {
-    _manager.pages().projectSelect.show("SAVE PROJECT", 0, true, [this] (bool result, int index) {
+    _manager.pages().projectSelect.show("SAVE PROJECT", 0, true, [this] (bool result, int slot) {
         if (result) {
-            auto result = ProjectManager::saveProject(_project, index);
-            if (result == fs::OK) {
-                showMessage(FixedStringBuilder<32>("Saved project"));
+            ProjectManager::SlotInfo info;
+            ProjectManager::slotInfo(slot, info);
+            if (info.used) {
+                _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
+                    if (result) {
+                        saveProjectToSlot(slot);
+                    }
+                });
             } else {
-                showMessage(FixedStringBuilder<32>("Saving project failed (%s)", fs::errorToString(result)));
+                saveProjectToSlot(slot);
             }
         }
     });
@@ -116,3 +115,22 @@ void ProjectPage::formatSDCard() {
         }
     });
 }
+
+void ProjectPage::saveProjectToSlot(int slot) {
+    auto result = ProjectManager::saveProject(_project, slot);
+    if (result == fs::OK) {
+        showMessage(FixedStringBuilder<32>("SAVED PROJECT!"));
+    } else {
+        showMessage(FixedStringBuilder<32>("SAVING PROJECT FAILED! (%s)", fs::errorToString(result)));
+    }
+}
+
+void ProjectPage::loadProjectFromSlot(int slot) {
+    auto result = ProjectManager::loadProject(_project, slot);
+    if (result == fs::OK) {
+        showMessage(FixedStringBuilder<32>("LOADED PROJECT!"));
+    } else {
+        showMessage(FixedStringBuilder<32>("LOADING PROJECT FAILED! (%s)", fs::errorToString(result)));
+    }
+}
+
