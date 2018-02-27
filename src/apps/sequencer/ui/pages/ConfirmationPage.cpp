@@ -2,6 +2,14 @@
 
 #include "ui/painters/WindowPainter.h"
 
+enum class Function {
+    No  = 3,
+    Yes = 4,
+};
+
+static const char *functionNames[] = { nullptr, nullptr, nullptr, "NO", "YES" };
+
+
 ConfirmationPage::ConfirmationPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
@@ -21,15 +29,13 @@ void ConfirmationPage::exit() {
 void ConfirmationPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
+    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
 
     canvas.drawTextCentered(0, 32 - 4, Width, 8, _text);
-
-    const char *functionNames[] = { nullptr, nullptr, nullptr, "NO", "YES" };
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 }
 
 void ConfirmationPage::updateLeds(Leds &leds) {
@@ -39,9 +45,13 @@ void ConfirmationPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
-        switch (key.function()) {
-        case 3: closeWithResult(false); break;
-        case 4: closeWithResult(true); break;
+        switch (Function(key.function())) {
+        case Function::No:
+            closeWithResult(false);
+            break;
+        case Function::Yes:
+            closeWithResult(true);
+            break;
         }
     }
 }

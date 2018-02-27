@@ -2,6 +2,14 @@
 
 #include "ui/painters/WindowPainter.h"
 
+enum class Function {
+    Cancel  = 3,
+    OK      = 4,
+};
+
+static const char *functionNames[] = { nullptr, nullptr, nullptr, "CANCEL", "OK" };
+
+
 ProjectSelectPage::ProjectSelectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel)
 {}
@@ -24,8 +32,6 @@ void ProjectSelectPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, _title);
-
-    const char *functionNames[] = { nullptr, nullptr, nullptr, "CANCEL", "OK" };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
@@ -38,9 +44,13 @@ void ProjectSelectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
-        switch (key.function()) {
-        case 3: closeWithResult(false); break;
-        case 4: closeWithResult(true); break;
+        switch (Function(key.function())) {
+        case Function::Cancel:
+            closeWithResult(false);
+            break;
+        case Function::OK:
+            closeWithResult(true);
+            break;
         }
     }
 

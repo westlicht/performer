@@ -9,6 +9,16 @@
 #include "core/fs/FileSystem.h"
 #include "core/utils/StringBuilder.h"
 
+enum class Function {
+    Load    = 0,
+    Save    = 1,
+    SaveAs  = 2,
+    Format  = 3,
+};
+
+static const char *functionNames[] = { "LOAD", "SAVE", "SAVEAS", "FORMAT", nullptr };
+
+
 ProjectPage::ProjectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel),
     _listModel(context.model.project())
@@ -24,25 +34,32 @@ void ProjectPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PROJECT");
-
-    const char *functionNames[] = { "LOAD", "SAVE", "SAVEAS", "FORMAT", nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
 }
 
 void ProjectPage::updateLeds(Leds &leds) {
+    ListPage::updateLeds(leds);
 }
 
 void ProjectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
-        switch (key.function()) {
-        case 0: loadProject(); break;
-        case 1: saveProject(); break;
-        case 2: saveAsProject(); break;
-        case 3: formatSDCard(); break;
+        switch (Function(key.function())) {
+        case Function::Load:
+            loadProject();
+            break;
+        case Function::Save:
+            saveProject();
+            break;
+        case Function::SaveAs:
+            saveAsProject();
+            break;
+        case Function::Format:
+            formatSDCard();
+            break;
         }
         return;
     }

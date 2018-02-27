@@ -14,6 +14,17 @@ static const char characterSet[] = {
     '-', ' '
 };
 
+enum class Function {
+    Backspace   = 0,
+    Delete      = 1,
+    Clear       = 2,
+    Cancel      = 3,
+    OK          = 4,
+};
+
+static const char *functionNames[] = { "BS", "DEL", "CLEAR", "CANCEL", "OK" };
+
+
 TextInputPage::TextInputPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {
@@ -40,8 +51,6 @@ void TextInputPage::exit() {
 void TextInputPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
-
-    const char *functionNames[] = { "BS", "DEL", "CLEAR", "CANCEL", "OK" };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     canvas.setBlendMode(BlendMode::Set);
@@ -96,12 +105,22 @@ void TextInputPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
-        switch(key.function()) {
-        case 0: backspace(); break;
-        case 1: del(); break;
-        case 2: clear(); break;
-        case 3: closeWithResult(false); break;
-        case 4: closeWithResult(true); break;
+        switch (Function(key.function())) {
+        case Function::Backspace:
+            backspace();
+            break;
+        case Function::Delete:
+            del();
+            break;
+        case Function::Clear:
+            clear();
+            break;
+        case Function::Cancel:
+            closeWithResult(false);
+            break;
+        case Function::OK:
+            closeWithResult(true);
+            break;
         }
     }
 

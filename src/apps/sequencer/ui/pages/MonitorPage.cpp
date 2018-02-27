@@ -7,6 +7,15 @@
 
 #include "core/utils/StringBuilder.h"
 
+enum class Function {
+    CvIn    = 0,
+    CvOut   = 1,
+    Exit    = 4,
+};
+
+static const char *functionNames[] = { "CV IN", "CV OUT", nullptr, nullptr, "EXIT" };
+
+
 MonitorPage::MonitorPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
@@ -20,9 +29,6 @@ void MonitorPage::exit() {
 void MonitorPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "MONITOR");
-
-    const char *functionNames[] = { "CV IN", "CV OUT", nullptr, nullptr, "EXIT" };
-
     WindowPainter::drawActiveFunction(canvas, functionNames[int(_mode)]);
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
@@ -43,10 +49,16 @@ void MonitorPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
-        switch (key.function()) {
-        case 0: _mode = Mode::CvIn; break;
-        case 1: _mode = Mode::CvOut; break;
-        case 4: close(); break;
+        switch (Function(key.function())) {
+        case Function::CvIn:
+            _mode = Mode::CvIn;
+            break;
+        case Function::CvOut:
+            _mode = Mode::CvOut;
+            break;
+        case Function::Exit:
+            close();
+            break;
         }
     }
 }
