@@ -13,6 +13,10 @@ class Leds {
 public:
     typedef std::array<std::pair<uint8_t, uint8_t>, CONFIG_BLM_ROWS * CONFIG_BLM_COLS_LED> LedArray;
 
+    void clear() {
+        _array.fill({ 0, 0 });
+    }
+
     void setDimmed(int index, uint8_t red, uint8_t green) {
         ASSERT(index >= 0 && index < int(_array.size()), "invalid led index");
         _array[index] = { red, green };

@@ -42,6 +42,7 @@ void UI::update() {
     handleKeys();
     handleEncoder();
 
+    _leds.clear();
     _pageManager.updateLeds(_leds);
     _blm.setLeds(_leds.array());
 
