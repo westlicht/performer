@@ -121,7 +121,7 @@ void PlayState::selectTrackPattern(int track, int pattern, ExecuteType executeTy
 
 void PlayState::selectPattern(int pattern, ExecuteType executeType) {
     for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
-        selectTrackPattern(track, executeType);
+        selectTrackPattern(track, pattern, executeType);
     }
 }
 
