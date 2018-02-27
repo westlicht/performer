@@ -4,6 +4,8 @@
 #include "Bitfield.h"
 #include "Serialize.h"
 
+#include "engine/Curve.h"
+
 #include "core/math/Math.h"
 
 #include <array>
@@ -25,7 +27,7 @@ public:
         // shape
 
         int shape() const { return _shape; }
-        void setShape(int shape) { _shape = shape; }
+        void setShape(int shape) { _shape = clamp(shape, 0, int(Curve::Last)); }
 
         // min
 
