@@ -35,8 +35,8 @@ public:
 
     void clear();
 
-    void write(WriteContext &context, int index) const;
-    void read(ReadContext &context, int index);
+    void write(WriteContext &context) const;
+    void read(ReadContext &context);
 
 private:
     Types::TrackMode _trackMode = Types::TrackMode::Default;
