@@ -100,6 +100,7 @@ public:
     //----------------------------------------
 
     void setTrackSetup(int trackIndex, const TrackSetup &trackSetup);
+    void setTrackMode(int trackIndex, Types::TrackMode trackMode);
 
     const TrackSetup &selectedTrackSetup() const { return _trackSetups[_selectedTrackIndex]; }
           TrackSetup &selectedTrackSetup()       { return _trackSetups[_selectedTrackIndex]; }

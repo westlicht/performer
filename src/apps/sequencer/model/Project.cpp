@@ -41,23 +41,26 @@ void Project::demoProject() {
     sequence(7, 0).noteSequence().setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
     sequence(7, 0).noteSequence().setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
 
-    trackSetup(0).setTrackMode(Types::TrackMode::Curve);
-    setTrackSetup(0, trackSetup(0));
+    setTrackMode(0, Types::TrackMode::Curve);
     sequence(0, 0).curveSequence().setLastStep(7);
 }
 
 void Project::setTrackSetup(int trackIndex, const TrackSetup &trackSetup) {
     // TODO make sure engine is synced to this before updating UI
-    bool modeChanged = trackSetup.trackMode() != _trackSetups[trackIndex].trackMode();
+    if (trackSetup.trackMode() != _trackSetups[trackIndex].trackMode()) {
+        setTrackMode(trackIndex, trackSetup.trackMode());
+    }
     _trackSetups[trackIndex] = trackSetup;
-    if (modeChanged) {
-        // TODO reset snapshots
-        for (auto &sequence : _sequences[trackIndex]) {
-            switch (trackSetup.trackMode()) {
-            case Types::TrackMode::Note:    sequence.noteSequence().clear(); break;
-            case Types::TrackMode::Curve:   sequence.curveSequence().clear(); break;
-            case Types::TrackMode::Last:    break;
-            }
+}
+
+void Project::setTrackMode(int trackIndex, Types::TrackMode trackMode) {
+    // TODO reset snapshots
+    _trackSetups[trackIndex].setTrackMode(trackMode);
+    for (auto &sequence : _sequences[trackIndex]) {
+        switch (trackMode) {
+        case Types::TrackMode::Note:    sequence.noteSequence().clear(); break;
+        case Types::TrackMode::Curve:   sequence.curveSequence().clear(); break;
+        case Types::TrackMode::Last:    break;
         }
     }
 }
@@ -71,7 +74,13 @@ void Project::write(WriteContext &context) const {
 
     _clockSetup.write(context);
     writeArray(context, _trackSetups);
-    // TODO write sequences
+
+    for (const auto &sequenceArray : _sequences) {
+        for (const auto &sequence : sequenceArray) {
+            sequence.write(context);
+        }
+    }
+
     _playState.write(context);
 
     writer.write(_selectedTrackIndex);
@@ -87,7 +96,13 @@ void Project::read(ReadContext &context) {
 
     _clockSetup.read(context);
     readArray(context, _trackSetups);
-    // TODO read sequences
+
+    for (auto &sequenceArray : _sequences) {
+        for (auto &sequence : sequenceArray) {
+            sequence.read(context);
+        }
+    }
+
     _playState.read(context);
 
     reader.read(_selectedTrackIndex);
