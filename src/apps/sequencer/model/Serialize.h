@@ -27,13 +27,13 @@ struct ReadContext {
 template<typename T, size_t N>
 static void writeArray(WriteContext &context, const std::array<T, N> &array) {
     for (size_t i = 0; i < array.size(); ++i) {
-        array[i].write(context, i);
+        array[i].write(context);
     }
 }
 
 template<typename T, size_t N>
 static void readArray(ReadContext &context, std::array<T, N> &array) {
     for (size_t i = 0; i < array.size(); ++i) {
-        array[i].read(context, i);
+        array[i].read(context);
     }
 }

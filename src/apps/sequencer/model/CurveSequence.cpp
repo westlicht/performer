@@ -8,14 +8,14 @@ void CurveSequence::Step::clear() {
     setMax(Max::Max);
 }
 
-void CurveSequence::Step::write(WriteContext &context, int index) const {
+void CurveSequence::Step::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_shape);
     writer.write(_min);
     writer.write(_max);
 }
 
-void CurveSequence::Step::read(ReadContext &context, int index) {
+void CurveSequence::Step::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_shape);
     reader.read(_min);
@@ -47,7 +47,7 @@ void CurveSequence::shift(int direction) {
     ModelUtils::shiftSteps(_steps, direction);
 }
 
-void CurveSequence::write(WriteContext &context, int index) const {
+void CurveSequence::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_range);
     writer.write(_divisor);
@@ -59,7 +59,7 @@ void CurveSequence::write(WriteContext &context, int index) const {
     writeArray(context, _steps);
 }
 
-void CurveSequence::read(ReadContext &context, int index) {
+void CurveSequence::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_range);
     reader.read(_divisor);

@@ -6,14 +6,14 @@ void PlayState::TrackState::clear() {
     _requestedPattern = 0;
 }
 
-void PlayState::TrackState::write(WriteContext &context, int index) const {
+void PlayState::TrackState::write(WriteContext &context) const {
     auto &writer = context.writer;
     uint8_t muteValue = mute();
     writer.write(muteValue);
     writer.write(_pattern);
 }
 
-void PlayState::TrackState::read(ReadContext &context, int index) {
+void PlayState::TrackState::read(ReadContext &context) {
     auto &reader = context.reader;
     uint8_t muteValue;
     reader.read(muteValue);

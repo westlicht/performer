@@ -11,7 +11,7 @@ void NoteSequence::Step::clear() {
     setNote(0);
 }
 
-void NoteSequence::Step::write(WriteContext &context, int index) const {
+void NoteSequence::Step::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_data0.raw);
 
@@ -42,7 +42,7 @@ void NoteSequence::Step::write(WriteContext &context, int index) const {
 #endif
 }
 
-void NoteSequence::Step::read(ReadContext &context, int index) {
+void NoteSequence::Step::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_data0.raw);
 
@@ -115,7 +115,7 @@ void NoteSequence::shift(int direction) {
     ModelUtils::shiftSteps(_steps, direction);
 }
 
-void NoteSequence::write(WriteContext &context, int index) const {
+void NoteSequence::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_scale);
     writer.write(_divisor);
@@ -127,7 +127,7 @@ void NoteSequence::write(WriteContext &context, int index) const {
     writeArray(context, _steps);
 }
 
-void NoteSequence::read(ReadContext &context, int index) {
+void NoteSequence::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_scale);
     reader.read(_divisor);

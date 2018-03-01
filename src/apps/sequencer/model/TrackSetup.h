@@ -72,8 +72,8 @@ public:
 
     void clear();
 
-    void write(WriteContext &context, int index) const;
-    void read(ReadContext &context, int index);
+    void write(WriteContext &context) const;
+    void read(ReadContext &context);
 
     bool operator==(const TrackSetup &other) const {
         return std::memcmp(this, &other, sizeof(TrackSetup)) == 0;

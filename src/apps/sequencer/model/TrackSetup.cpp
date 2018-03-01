@@ -7,7 +7,7 @@ void TrackSetup::clear() {
     _linkTrack = -1;
 }
 
-void TrackSetup::write(WriteContext &context, int index) const {
+void TrackSetup::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_trackMode);
     writer.write(_playMode);
@@ -15,7 +15,7 @@ void TrackSetup::write(WriteContext &context, int index) const {
     writer.write(_linkTrack);
 }
 
-void TrackSetup::read(ReadContext &context, int index) {
+void TrackSetup::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_trackMode);
     reader.read(_playMode);

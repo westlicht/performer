@@ -72,8 +72,8 @@ public:
 
         void clear();
 
-        void write(WriteContext &context, int index) const;
-        void read(ReadContext &context, int index);
+        void write(WriteContext &context) const;
+        void read(ReadContext &context);
 
     private:
         union {
@@ -179,8 +179,8 @@ public:
 
     void shift(int direction);
 
-    void write(WriteContext &context, int index) const;
-    void read(ReadContext &context, int index);
+    void write(WriteContext &context) const;
+    void read(ReadContext &context);
 
 private:
     uint8_t _scale;
