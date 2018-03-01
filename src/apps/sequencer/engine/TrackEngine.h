@@ -4,7 +4,7 @@
 #include "CurveSequenceEngine.h"
 
 #include "model/TrackSetup.h"
-#include "model/Pattern.h"
+#include "model/Sequence.h"
 #include "model/PlayState.h"
 
 #include "core/Debug.h"
@@ -18,7 +18,7 @@ public:
 
     void setup(const TrackSetup &trackSetup);
 
-    void setPattern(const Pattern &pattern);
+    void setSequence(const Sequence &sequence);
 
     void reset();
 
@@ -35,11 +35,11 @@ public:
     float cvOutput() const;
 
     const NoteSequenceEngine &noteSequenceEngine() const {
-        ASSERT(_mode == TrackSetup::Mode::Note, "invalid mode");
+        ASSERT(_trackMode == Types::TrackMode::Note, "invalid mode");
         return *static_cast<const NoteSequenceEngine *>(_sequenceEngine);
     }
     const CurveSequenceEngine &curveSequenceEngine() const {
-        ASSERT(_mode == TrackSetup::Mode::Curve, "invalid mode");
+        ASSERT(_trackMode == Types::TrackMode::Curve, "invalid mode");
         return *static_cast<const CurveSequenceEngine *>(_sequenceEngine);
     }
 
@@ -47,10 +47,10 @@ private:
     uint8_t _trackIndex;
     bool _mute;
     bool _fill;
-    const Pattern *_pattern;
 
-    TrackSetup::Mode _mode;
+    Types::TrackMode _trackMode;
 
     Container<NoteSequenceEngine, CurveSequenceEngine> _sequenceEngineContainer;
     SequenceEngine *_sequenceEngine;
+    const Sequence *_sequence;
 };

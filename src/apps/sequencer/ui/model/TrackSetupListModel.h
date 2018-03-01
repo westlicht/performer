@@ -37,7 +37,7 @@ public:
 
 private:
     enum Item {
-        Mode,
+        TrackMode,
         PlayMode,
         FillMode,
         LinkTrack,
@@ -46,11 +46,11 @@ private:
 
     static const char *itemName(Item item) {
         switch (item) {
-        case Mode:              return "Mode";
-        case PlayMode:          return "Play Mode";
-        case FillMode:          return "Fill Mode";
-        case LinkTrack:         return "Link Track";
-        case Last:              break;
+        case TrackMode: return "Track Mode";
+        case PlayMode:  return "Play Mode";
+        case FillMode:  return "Fill Mode";
+        case LinkTrack: return "Link Track";
+        case Last:      break;
         }
         return nullptr;
     }
@@ -61,8 +61,8 @@ private:
 
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
-        case Mode:
-            str(TrackSetup::modeName(_trackSetup.mode()));
+        case TrackMode:
+            str(Types::trackModeName(_trackSetup.trackMode()));
             break;
         case PlayMode:
             str(TrackSetup::playModeName(_trackSetup.playMode()));
@@ -84,8 +84,8 @@ private:
 
     void editValue(Item item, int value) {
         switch (item) {
-        case Mode:
-            _trackSetup.setMode(adjustedEnum(_trackSetup.mode(), value));
+        case TrackMode:
+            _trackSetup.setTrackMode(adjustedEnum(_trackSetup.trackMode(), value));
             break;
         case PlayMode:
             _trackSetup.setPlayMode(adjustedEnum(_trackSetup.playMode(), value));

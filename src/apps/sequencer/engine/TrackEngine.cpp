@@ -3,39 +3,39 @@
 #include "core/Debug.h"
 
 void TrackEngine::init(int trackIndex) {
-    _mode = TrackSetup::Mode::Last;
+    _trackMode = Types::TrackMode::Last;
     _trackIndex = trackIndex;
     _mute = false;
-    _pattern = nullptr;
     _sequenceEngine = nullptr;
+    _sequence = nullptr;
 }
 
 void TrackEngine::setup(const TrackSetup &trackSetup) {
-    if (trackSetup.mode() == _mode) {
+    if (trackSetup.trackMode() == _trackMode) {
         return;
     }
-    _mode = trackSetup.mode();
+    _trackMode = trackSetup.trackMode();
     _sequenceEngineContainer.destroy(_sequenceEngine);
-    ASSERT(_mode != TrackSetup::Mode::Last, "invalid track mode");
-    switch (_mode) {
-    case TrackSetup::Mode::Note:
+    ASSERT(_trackMode != Types::TrackMode::Last, "invalid track mode");
+    switch (_trackMode) {
+    case Types::TrackMode::Note:
         _sequenceEngine = _sequenceEngineContainer.create<NoteSequenceEngine>();
         break;
-    case TrackSetup::Mode::Curve:
+    case Types::TrackMode::Curve:
         _sequenceEngine = _sequenceEngineContainer.create<CurveSequenceEngine>();
         break;
-    case TrackSetup::Mode::Last:
+    case Types::TrackMode::Last:
         break;
     }
 
     _sequenceEngine->setup(trackSetup);
     _sequenceEngine->setMute(_mute);
-    _sequenceEngine->setSequence(_pattern->sequence(_trackIndex));
+    _sequenceEngine->setSequence(*_sequence);
 }
 
-void TrackEngine::setPattern(const Pattern &pattern) {
-    _pattern = &pattern;
-    _sequenceEngine->setSequence(_pattern->sequence(_trackIndex));
+void TrackEngine::setSequence(const Sequence &sequence) {
+    _sequence = &sequence;
+    _sequenceEngine->setSequence(sequence);
 }
 
 void TrackEngine::reset() {

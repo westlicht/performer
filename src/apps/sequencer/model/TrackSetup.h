@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Types.h"
 #include "Serialize.h"
 
 #include <cstdint>
@@ -10,21 +11,6 @@ public:
     //----------------------------------------
     // Types
     //----------------------------------------
-
-    enum class Mode : uint8_t {
-        Note,
-        Curve,
-        Last
-    };
-
-    static const char *modeName(Mode mode) {
-        switch (mode) {
-        case Mode::Note:    return "Note";
-        case Mode::Curve:   return "Curve";
-        case Mode::Last:    break;
-        }
-        return nullptr;
-    }
 
     enum class PlayMode : uint8_t {
         Loose,
@@ -60,10 +46,10 @@ public:
     // Properties
     //----------------------------------------
 
-    // mode
+    // trackMode
 
-    Mode mode() const { return _mode; }
-    void setMode(Mode mode) { _mode = mode; }
+    Types::TrackMode trackMode() const { return _trackMode; }
+    void setTrackMode(Types::TrackMode trackMode) { _trackMode = trackMode; }
 
     // playMode
 
@@ -97,7 +83,7 @@ public:
     }
 
 private:
-    Mode _mode;
+    Types::TrackMode _trackMode;
     PlayMode _playMode;
     FillMode _fillMode;
     int8_t _linkTrack;

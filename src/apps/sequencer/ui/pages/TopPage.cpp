@@ -101,14 +101,14 @@ bool TopPage::isSequencePage() {
 }
 
 void TopPage::setSequencePage() {
-    switch (_project.selectedTrackSetup().mode()) {
-    case TrackSetup::Mode::Note:
+    switch (_project.selectedTrackSetup().trackMode()) {
+    case Types::TrackMode::Note:
         setMainPage(_manager.pages().noteSequence);
         break;
-    case TrackSetup::Mode::Curve:
+    case Types::TrackMode::Curve:
         setMainPage(_manager.pages().curveSequence);
         break;
-    case TrackSetup::Mode::Last:
+    case Types::TrackMode::Last:
         break;
     }
 }
@@ -120,14 +120,14 @@ bool TopPage::isSequenceSetupPage() {
 }
 
 void TopPage::setSequenceSetupPage() {
-    switch (_project.selectedTrackSetup().mode()) {
-    case TrackSetup::Mode::Note:
+    switch (_project.selectedTrackSetup().trackMode()) {
+    case Types::TrackMode::Note:
         setMainPage(_manager.pages().noteSequenceSetup);
         break;
-    case TrackSetup::Mode::Curve:
+    case Types::TrackMode::Curve:
         setMainPage(_manager.pages().curveSequenceSetup);
         break;
-    case TrackSetup::Mode::Last:
+    case Types::TrackMode::Last:
         break;
     }
 }

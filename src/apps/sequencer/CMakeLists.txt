@@ -20,7 +20,6 @@ set(sources
     model/CurveSequence.cpp
     model/Model.cpp
     model/NoteSequence.cpp
-    model/Pattern.cpp
     model/PlayState.cpp
     model/Project.cpp
     model/ProjectManager.cpp

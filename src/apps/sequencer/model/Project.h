@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Config.h"
+#include "Types.h"
 #include "ClockSetup.h"
 #include "TrackSetup.h"
-#include "Pattern.h"
+#include "Sequence.h"
 #include "PlayState.h"
 #include "Serialize.h"
 
@@ -19,7 +20,8 @@ public:
     static constexpr size_t NameLength = 16;
 
     typedef std::array<TrackSetup, CONFIG_TRACK_COUNT> TrackSetupArray;
-    typedef std::array<Pattern, CONFIG_PATTERN_COUNT> PatternArray;
+    typedef std::array<Sequence, CONFIG_PATTERN_COUNT> SequenceArray;
+    typedef std::array<SequenceArray, CONFIG_TRACK_COUNT> TrackSequenceArray;
 
     //----------------------------------------
     // Properties
@@ -70,8 +72,8 @@ public:
 
     // trackSetups
 
-    const TrackSetupArray &tracksSetups() const { return _trackSetups; }
-          TrackSetupArray &tracksSetups()       { return _trackSetups; }
+    const TrackSetupArray &trackSetups() const { return _trackSetups; }
+          TrackSetupArray &trackSetups()       { return _trackSetups; }
 
     const TrackSetup &trackSetup(int index) const { return _trackSetups[index]; }
           TrackSetup &trackSetup(int index)       { return _trackSetups[index]; }
@@ -80,14 +82,6 @@ public:
 
     const PlayState &playState() const { return _playState; }
           PlayState &playState()       { return _playState; }
-
-    // patterns
-
-    const PatternArray &patterns() const { return _patterns; }
-          PatternArray &patterns()       { return _patterns; }
-
-    const Pattern &pattern(int index) const { return _patterns[index]; }
-          Pattern &pattern(int index)       { return _patterns[index]; }
 
     // selectedTrackIndex
 
@@ -105,22 +99,16 @@ public:
     // Methods
     //----------------------------------------
 
-    void setTrackSetup(int index, const TrackSetup &trackSetup);
+    void setTrackSetup(int trackIndex, const TrackSetup &trackSetup);
 
     const TrackSetup &selectedTrackSetup() const { return _trackSetups[_selectedTrackIndex]; }
           TrackSetup &selectedTrackSetup()       { return _trackSetups[_selectedTrackIndex]; }
 
-    const Sequence &selectedSequence() const { return selectedPattern().sequence(_selectedTrackIndex); }
-          Sequence &selectedSequence()       { return selectedPattern().sequence(_selectedTrackIndex); }
+    const Sequence &sequence(int trackIndex, int patternIndex) const { return _sequences[trackIndex][patternIndex]; }
+          Sequence &sequence(int trackIndex, int patternIndex)       { return _sequences[trackIndex][patternIndex]; }
 
-    const Pattern &selectedPattern() const { return _patterns[_selectedPatternIndex]; }
-          Pattern &selectedPattern()       { return _patterns[_selectedPatternIndex]; }
-
-    const Sequence &selectedTrackSequence() const { return _patterns[_selectedPatternIndex].sequence(_selectedTrackIndex); }
-          Sequence &selectedTrackSequence()       { return _patterns[_selectedPatternIndex].sequence(_selectedTrackIndex); }
-
-    const Sequence &activeTrackSequence(int index) const { return _patterns[_selectedPatternIndex].sequence(index); }
-          Sequence &activeTrackSequence(int index)       { return _patterns[_selectedPatternIndex].sequence(index); }
+    const Sequence &selectedSequence() const { return sequence(_selectedTrackIndex, _selectedPatternIndex); }
+          Sequence &selectedSequence()       { return sequence(_selectedTrackIndex, _selectedPatternIndex); }
 
     void clear();
 
@@ -141,8 +129,8 @@ private:
 
     ClockSetup _clockSetup;
     TrackSetupArray _trackSetups;
+    TrackSequenceArray _sequences;
     PlayState _playState;
-    PatternArray _patterns;
 
     int _selectedTrackIndex = 0;
     int _selectedPatternIndex = 0;

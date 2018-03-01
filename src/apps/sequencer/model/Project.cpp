@@ -16,11 +16,13 @@ void Project::clear() {
         trackSetup.clear();
     }
 
-    _playState.clear();
-
-    for (auto &pattern : _patterns) {
-        pattern.clear();
+    for (auto &trackSequences : _sequences) {
+        for (auto &sequence : trackSequences) {
+            sequence.clear();
+        }
     }
+
+    _playState.clear();
 
     _selectedTrackIndex = 0;
     _selectedPatternIndex = 0;
@@ -30,32 +32,31 @@ void Project::clear() {
 }
 
 void Project::demoProject() {
-    pattern(0).sequence(0).noteSequence().setGates({ 1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0 });
-    pattern(0).sequence(1).noteSequence().setGates({ 0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0 });
-    pattern(0).sequence(2).noteSequence().setGates({ 0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0 });
-    pattern(0).sequence(3).noteSequence().setGates({ 0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0 });
-    pattern(0).sequence(4).noteSequence().setGates({ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 });
-    pattern(0).sequence(5).noteSequence().setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0 });
-    pattern(0).sequence(7).noteSequence().setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
-    pattern(0).sequence(7).noteSequence().setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
+    sequence(0, 0).noteSequence().setGates({ 1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0 });
+    sequence(1, 0).noteSequence().setGates({ 0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0 });
+    sequence(2, 0).noteSequence().setGates({ 0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0 });
+    sequence(3, 0).noteSequence().setGates({ 0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0 });
+    sequence(4, 0).noteSequence().setGates({ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 });
+    sequence(5, 0).noteSequence().setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0 });
+    sequence(7, 0).noteSequence().setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
+    sequence(7, 0).noteSequence().setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
 
-    trackSetup(0).setMode(TrackSetup::Mode::Curve);
-    pattern(0).sequence(0).curveSequence().clear();
-    pattern(0).sequence(0).curveSequence().setLastStep(7);
+    trackSetup(0).setTrackMode(Types::TrackMode::Curve);
+    setTrackSetup(0, trackSetup(0));
+    sequence(0, 0).curveSequence().setLastStep(7);
 }
 
-void Project::setTrackSetup(int index, const TrackSetup &trackSetup) {
+void Project::setTrackSetup(int trackIndex, const TrackSetup &trackSetup) {
     // TODO make sure engine is synced to this before updating UI
-    bool modeChanged = trackSetup.mode() != _trackSetups[index].mode();
-    _trackSetups[index] = trackSetup;
+    bool modeChanged = trackSetup.trackMode() != _trackSetups[trackIndex].trackMode();
+    _trackSetups[trackIndex] = trackSetup;
     if (modeChanged) {
         // TODO reset snapshots
-        for (auto &pattern : _patterns) {
-            auto &sequence = pattern.sequence(index);
-            switch (trackSetup.mode()) {
-            case TrackSetup::Mode::Note:    sequence.noteSequence().clear(); break;
-            case TrackSetup::Mode::Curve:   sequence.curveSequence().clear(); break;
-            case TrackSetup::Mode::Last:    break;
+        for (auto &sequence : _sequences[trackIndex]) {
+            switch (trackSetup.trackMode()) {
+            case Types::TrackMode::Note:    sequence.noteSequence().clear(); break;
+            case Types::TrackMode::Curve:   sequence.curveSequence().clear(); break;
+            case Types::TrackMode::Last:    break;
             }
         }
     }
@@ -70,8 +71,8 @@ void Project::write(WriteContext &context) const {
 
     _clockSetup.write(context);
     writeArray(context, _trackSetups);
+    // TODO write sequences
     _playState.write(context);
-    writeArray(context, _patterns);
 
     writer.write(_selectedTrackIndex);
     writer.write(_selectedPatternIndex);
@@ -86,8 +87,8 @@ void Project::read(ReadContext &context) {
 
     _clockSetup.read(context);
     readArray(context, _trackSetups);
+    // TODO read sequences
     _playState.read(context);
-    readArray(context, _patterns);
 
     reader.read(_selectedTrackIndex);
     reader.read(_selectedPatternIndex);

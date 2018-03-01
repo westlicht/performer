@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Config.h"
+#include "Types.h"
 #include "Serialize.h"
 #include "NoteSequence.h"
 #include "CurveSequence.h"
-#include "TrackSetup.h"
 
 #include <array>
 #include <cstdint>
@@ -15,6 +15,11 @@ public:
     //----------------------------------------
     // Properties
     //----------------------------------------
+
+    // trackMode
+
+    Types::TrackMode trackMode() const { return _trackMode; }
+    void setTrackMode(Types::TrackMode trackMode) { _trackMode = trackMode; }
 
     // sequence
 
@@ -28,12 +33,14 @@ public:
     // Methods
     //----------------------------------------
 
-    void clear(TrackSetup::Mode mode);
+    void clear();
 
     void write(WriteContext &context, int index) const;
     void read(ReadContext &context, int index);
 
 private:
+    Types::TrackMode _trackMode = Types::TrackMode::Default;
+
     union {
         NoteSequence noteSequence;
         CurveSequence curveSequence;

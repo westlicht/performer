@@ -33,7 +33,7 @@ void Engine::init() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         _trackEngines[trackIndex].init(trackIndex);
         _trackEngines[trackIndex].setup(_model.project().trackSetup(trackIndex));
-        _trackEngines[trackIndex].setPattern(_model.project().pattern(0));
+        _trackEngines[trackIndex].setSequence(_model.project().sequence(trackIndex, 0));
         _trackEngines[trackIndex].reset();
     }
 
