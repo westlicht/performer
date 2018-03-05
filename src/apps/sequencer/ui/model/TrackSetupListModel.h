@@ -62,20 +62,16 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case TrackMode:
-            str(Types::trackModeName(_trackSetup.trackMode()));
+            _trackSetup.printTrackMode(str);
             break;
         case PlayMode:
-            str(TrackSetup::playModeName(_trackSetup.playMode()));
+            _trackSetup.printPlayMode(str);
             break;
         case FillMode:
-            str(TrackSetup::fillModeName(_trackSetup.fillMode()));
+            _trackSetup.printFillMode(str);
             break;
         case LinkTrack:
-            if (_trackSetup.linkTrack() == -1) {
-                str("None");
-            } else {
-                str("Track%d", _trackSetup.linkTrack() + 1);
-            }
+            _trackSetup.printLinkTrack(str);
             break;
         case Last:
             break;
@@ -85,16 +81,16 @@ private:
     void editValue(Item item, int value, bool shift) {
         switch (item) {
         case TrackMode:
-            _trackSetup.setTrackMode(adjustedEnum(_trackSetup.trackMode(), value));
+            _trackSetup.editTrackMode(value, shift);
             break;
         case PlayMode:
-            _trackSetup.setPlayMode(adjustedEnum(_trackSetup.playMode(), value));
+            _trackSetup.editPlayMode(value, shift);
             break;
         case FillMode:
-            _trackSetup.setFillMode(adjustedEnum(_trackSetup.fillMode(), value));
+            _trackSetup.editFillMode(value, shift);
             break;
         case LinkTrack:
-            _trackSetup.setLinkTrack(clamp(_trackSetup.linkTrack() + value, -1, CONFIG_TRACK_COUNT - 1));
+            _trackSetup.editLinkTrack(value, shift);
             break;
         case Last:
             break;
