@@ -34,6 +34,7 @@ set(core_sources
     core/fs/Volume.cpp
     core/gfx/Canvas.cpp
     core/math/Mat3.cpp
+    core/math/Math.cpp
     core/math/Vec2.cpp
     core/midi/MIDIMessage.cpp
     core/midi/MIDIParser.cpp

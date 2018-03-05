@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Serialize.h"
+#include "ModelUtils.h"
 
 #include "core/math/Math.h"
+#include "core/utils/StringBuilder.h"
 
 #include <cstdint>
 
@@ -58,6 +60,14 @@ public:
         }
     }
 
+    void editMode(int value, int shift) {
+        setMode(ModelUtils::adjustedEnum(mode(), value));
+    }
+
+    void printMode(StringBuilder &str) const {
+        str(modeName(mode()));
+    }
+
     // clockInputPPQN
 
     int clockInputPPQN() const { return _clockInputPPQN; }
@@ -69,6 +79,14 @@ public:
         }
     }
 
+    void editClockInputPPQN(int value, int shift) {
+        setClockInputPPQN(ModelUtils::adjustedByPowerOfTwo(clockInputPPQN(), value, shift));
+    }
+
+    void printClockInputPPQN(StringBuilder &str) const {
+        str("%d", clockInputPPQN());
+    }
+
     // clockInputMode
 
     ClockMode clockInputMode() const { return _clockInputMode; }
@@ -77,6 +95,14 @@ public:
             _clockInputMode = mode;
             _dirty = true;
         }
+    }
+
+    void editClockInputMode(int value, int shift) {
+        setClockInputMode(ModelUtils::adjustedEnum(clockInputMode(), value));
+    }
+
+    void printClockInputMode(StringBuilder &str) const {
+        str(clockModeName(clockInputMode()));
     }
 
     // clockOutputPPQN
@@ -90,6 +116,14 @@ public:
         }
     }
 
+    void editClockOutputPPQN(int value, int shift) {
+        setClockOutputPPQN(ModelUtils::adjustedByPowerOfTwo(clockOutputPPQN(), value, shift));
+    }
+
+    void printClockOutputPPQN(StringBuilder &str) const {
+        str("%d", clockOutputPPQN());
+    }
+
     // clockOutputPulse
 
     int clockOutputPulse() const { return _clockOutputPulse; }
@@ -99,6 +133,14 @@ public:
             _clockOutputPulse = clockOutputPulse;
             _dirty = true;
         }
+    }
+
+    void editClockOutputPulse(int value, int shift) {
+        setClockOutputPulse(clockOutputPulse() + value);
+    }
+
+    void printClockOutputPulse(StringBuilder &str) const {
+        str("%dms", clockOutputPulse());
     }
 
     // clockOutputMode
@@ -111,6 +153,14 @@ public:
         }
     }
 
+    void editClockOutputMode(int value, int shift) {
+        setClockOutputMode(ModelUtils::adjustedEnum(clockOutputMode(), value));
+    }
+
+    void printClockOutputMode(StringBuilder &str) const {
+        str(clockModeName(clockOutputMode()));
+    }
+
     // midiRx
 
     bool midiRx() const { return _midiRx; }
@@ -119,6 +169,14 @@ public:
             _midiRx = midiRx;
             _dirty = true;
         }
+    }
+
+    void editMidiRx(int value, bool shift) {
+        setMidiRx(value > 0);
+    }
+
+    void printMidiRx(StringBuilder &str) const {
+        ModelUtils::printYesNo(str, midiRx());
     }
 
     // midiTx
@@ -131,6 +189,14 @@ public:
         }
     }
 
+    void editMidiTx(int value, bool shift) {
+        setMidiTx(value > 0);
+    }
+
+    void printMidiTx(StringBuilder &str) const {
+        ModelUtils::printYesNo(str, midiTx());
+    }
+
     // usbRx
 
     bool usbRx() const { return _usbRx; }
@@ -141,6 +207,14 @@ public:
         }
     }
 
+    void editUsbRx(int value, bool shift) {
+        setUsbRx(value > 0);
+    }
+
+    void printUsbRx(StringBuilder &str) const {
+        ModelUtils::printYesNo(str, usbRx());
+    }
+
     // usbTx
 
     bool usbTx() const { return _usbTx; }
@@ -149,6 +223,14 @@ public:
             _usbTx = usbTx;
             _dirty = true;
         }
+    }
+
+    void editUsbTx(int value, bool shift) {
+        setUsbTx(value > 0);
+    }
+
+    void printUsbTx(StringBuilder &str) const {
+        ModelUtils::printYesNo(str, usbTx());
     }
 
     //----------------------------------------

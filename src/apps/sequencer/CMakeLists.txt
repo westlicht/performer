@@ -19,6 +19,7 @@ set(sources
     model/ClockSetup.cpp
     model/CurveSequence.cpp
     model/Model.cpp
+    model/ModelUtils.cpp
     model/NoteSequence.cpp
     model/PlayState.cpp
     model/Project.cpp

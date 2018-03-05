@@ -73,34 +73,34 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case Mode:
-            str(ClockSetup::modeName(_clockSetup.mode()));
+            _clockSetup.printMode(str);
             break;
         case ClockInputPPQN:
-            str("%d", _clockSetup.clockInputPPQN());
+            _clockSetup.printClockInputPPQN(str);
             break;
         case ClockInputMode:
-            str(ClockSetup::clockModeName(_clockSetup.clockInputMode()));
+            _clockSetup.printClockInputMode(str);
             break;
         case ClockOutputPPQN:
-            str("%d", _clockSetup.clockOutputPPQN());
+            _clockSetup.printClockOutputPPQN(str);
             break;
         case ClockOutputPulse:
-            str("%dms", _clockSetup.clockOutputPulse());
+            _clockSetup.printClockOutputPulse(str);
             break;
         case ClockOutputMode:
-            str(ClockSetup::clockModeName(_clockSetup.clockOutputMode()));
+            _clockSetup.printClockOutputMode(str);
             break;
         case MidiRx:
-            str("%s", _clockSetup.midiRx() ? "yes" : "no");
+            _clockSetup.printMidiRx(str);
             break;
         case MidiTx:
-            str("%s", _clockSetup.midiTx() ? "yes" : "no");
+            _clockSetup.printMidiTx(str);
             break;
         case UsbRx:
-            str("%s", _clockSetup.usbRx() ? "yes" : "no");
+            _clockSetup.printUsbRx(str);
             break;
         case UsbTx:
-            str("%s", _clockSetup.usbTx() ? "yes" : "no");
+            _clockSetup.printUsbTx(str);
             break;
         case Last:
             break;
@@ -110,34 +110,34 @@ private:
     void editValue(Item item, int value, bool shift) {
         switch (item) {
         case Mode:
-            _clockSetup.setMode(adjustedEnum(_clockSetup.mode(), value));
+            _clockSetup.editMode(value, shift);
             break;
         case ClockInputPPQN:
-            _clockSetup.setClockInputPPQN(_clockSetup.clockInputPPQN() + value);
+            _clockSetup.editClockInputPPQN(value, shift);
             break;
         case ClockInputMode:
-            _clockSetup.setClockInputMode(adjustedEnum(_clockSetup.clockInputMode(), value));
+            _clockSetup.editClockInputMode(value, shift);
             break;
         case ClockOutputPPQN:
-            _clockSetup.setClockOutputPPQN(_clockSetup.clockOutputPPQN() + value);
+            _clockSetup.editClockOutputPPQN(value, shift);
             break;
         case ClockOutputPulse:
-            _clockSetup.setClockOutputPulse(_clockSetup.clockOutputPulse() + value);
+            _clockSetup.editClockOutputPulse(value, shift);
             break;
         case ClockOutputMode:
-            _clockSetup.setClockOutputMode(adjustedEnum(_clockSetup.clockOutputMode(), value));
+            _clockSetup.editClockOutputMode(value, shift);
             break;
         case MidiRx:
-            _clockSetup.setMidiRx(value > 0);
+            _clockSetup.editMidiRx(value, shift);
             break;
         case MidiTx:
-            _clockSetup.setMidiTx(value > 0);
+            _clockSetup.editMidiTx(value, shift);
             break;
         case UsbRx:
-            _clockSetup.setUsbRx(value > 0);
+            _clockSetup.editUsbRx(value, shift);
             break;
         case UsbTx:
-            _clockSetup.setUsbTx(value > 0);
+            _clockSetup.editUsbTx(value, shift);
             break;
         case Last:
             break;

@@ -66,13 +66,13 @@ private:
             str(_project.name());
             break;
         case BPM:
-            str("%.1f", _project.bpm());
+            _project.printBpm(str);
             break;
         case Swing:
-            str("%d%%", _project.swing());
+            _project.printSwing(str);
             break;
         case GlobalMeasure:
-            str("%d", _project.globalMeasure());
+            _project.printGlobalMeasure(str);
             break;
         case Last:
             break;
@@ -82,16 +82,15 @@ private:
     void editValue(Item item, int value, bool shift) {
         switch (item) {
         case Name:
-            // _trackSetup.setMode(adjustedEnum(_trackSetup.mode(), value));
             break;
         case BPM:
-            _project.setBpm(_project.bpm() + 0.1f * value);
+            _project.editBpm(value, shift);
             break;
         case Swing:
-            _project.setSwing(_project.swing() + value);
+            _project.editSwing(value, shift);
             break;
         case GlobalMeasure:
-            _project.setGlobalMeasure(_project.globalMeasure() + value);
+            _project.editGlobalMeasure(value, shift);
             break;
         case Last:
             break;

@@ -9,6 +9,7 @@
 #include "Serialize.h"
 
 #include "core/math/Math.h"
+#include "core/utils/StringBuilder.h"
 #include "core/utils/StringUtils.h"
 
 class Project {
@@ -51,6 +52,14 @@ public:
         _bpm = clamp(bpm, 1.f, 1000.f);
     }
 
+    void editBpm(int value, bool shift) {
+        setBpm(bpm() + value * (shift ? 0.1f : 1.f));
+    }
+
+    void printBpm(StringBuilder &str) const {
+        str("%.1f", bpm());
+    }
+
     // swing
 
     int swing() const { return _swing; }
@@ -58,11 +67,27 @@ public:
         _swing = clamp(swing, 50, 99);
     }
 
+    void editSwing(int value, bool shift) {
+        setSwing(swing() + value * (shift ? 1 : 5));
+    }
+
+    void printSwing(StringBuilder &str) const {
+        str("%d%%", swing());
+    }
+
     // globalMeasure
 
     int globalMeasure() const { return _globalMeasure; }
     void setGlobalMeasure(int globalMeasure) {
         _globalMeasure = clamp(globalMeasure, 1, 128);
+    }
+
+    void editGlobalMeasure(int value, bool shift) {
+        setGlobalMeasure(ModelUtils::adjustedByPowerOfTwo(globalMeasure(), value, shift));
+    }
+
+    void printGlobalMeasure(StringBuilder &str) const {
+        str("%d", globalMeasure());
     }
 
     // clockSetup
