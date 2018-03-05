@@ -9,5 +9,5 @@ public:
 
     virtual void cell(int row, int column, StringBuilder &str) const = 0;
 
-    virtual void edit(int row, int column, int value) = 0;
+    virtual void edit(int row, int column, int value, bool shift) = 0;
 };

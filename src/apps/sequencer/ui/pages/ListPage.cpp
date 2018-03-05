@@ -66,13 +66,22 @@ void ListPage::updateLeds(Leds &leds) {
 void ListPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
+
     switch (key.code()) {
     case Key::Left:
-        _edit = false;
+        if (_edit) {
+            _listModel.edit(_selectedRow, 1, -1, _keyState[Key::Shift]);
+        } else {
+            setSelectedRow(selectedRow() - 1);
+        }
         event.consume();
         break;
     case Key::Right:
-        _edit = true;
+        if (_edit) {
+            _listModel.edit(_selectedRow, 1, 1, _keyState[Key::Shift]);
+        } else {
+            setSelectedRow(selectedRow() + 1);
+        }
         event.consume();
         break;
     case Key::Encoder:
@@ -84,7 +93,7 @@ void ListPage::keyPress(KeyPressEvent &event) {
 
 void ListPage::encoder(EncoderEvent &event) {
     if (_edit) {
-        _listModel.edit(_selectedRow, 1, event.value());
+        _listModel.edit(_selectedRow, 1, event.value(), event.pressed() | _keyState[Key::Shift]);
     } else {
         setSelectedRow(selectedRow() + event.value());
     }

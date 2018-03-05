@@ -22,7 +22,7 @@ public:
         }
     }
 
-    virtual void edit(int row, int column, int value) override {
+    virtual void edit(int row, int column, int value, bool shift) override {
     }
 
 private:

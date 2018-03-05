@@ -28,9 +28,9 @@ public:
         }
     }
 
-    virtual void edit(int row, int column, int value) override {
+    virtual void edit(int row, int column, int value, bool shift) override {
         if (column == 1) {
-            editValue(Item(row), value);
+            editValue(Item(row), value, shift);
         }
     }
 
@@ -107,7 +107,7 @@ private:
         }
     }
 
-    void editValue(Item item, int value) {
+    void editValue(Item item, int value, bool shift) {
         switch (item) {
         case Mode:
             _clockSetup.setMode(adjustedEnum(_clockSetup.mode(), value));
