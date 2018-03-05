@@ -3,10 +3,12 @@
 #include "Config.h"
 #include "Bitfield.h"
 #include "Serialize.h"
+#include "ModelUtils.h"
 
 #include "engine/Curve.h"
 
 #include "core/math/Math.h"
+#include "core/utils/StringBuilder.h"
 
 #include <array>
 #include <cstdint>
@@ -135,11 +137,27 @@ public:
         _range = range;
     }
 
+    void editRange(int value, bool shift) {
+        setRange(ModelUtils::adjustedEnum(range(), value));
+    }
+
+    void printRange(StringBuilder &str) const {
+        str(rangeName(range()));
+    }
+
     // divisor
 
     int divisor() const { return _divisor; }
     void setDivisor(int divisor) {
         _divisor = clamp(divisor, 1, 128);
+    }
+
+    void editDivisor(int value, bool shift) {
+        setDivisor(divisor() + value);
+    }
+
+    void printDivisor(StringBuilder &str) const {
+        str("%d", divisor());
     }
 
     // resetMeasure
@@ -149,11 +167,31 @@ public:
         _resetMeasure = clamp(resetMeasure, 0, 128);
     }
 
+    void editResetMeasure(int value, bool shift) {
+        setResetMeasure(resetMeasure() + value);
+    }
+
+    void printResetMeasure(StringBuilder &str) const {
+        if (resetMeasure() == 0) {
+            str("off");
+        } else {
+            str("%d", resetMeasure());
+        }
+    }
+
     // playMode
 
     PlayMode playMode() const { return _playMode; }
     void setPlayMode(PlayMode playMode) {
         _playMode = playMode;
+    }
+
+    void editPlayMode(int value, bool shift) {
+        setPlayMode(ModelUtils::adjustedEnum(playMode(), value));
+    }
+
+    void printPlayMode(StringBuilder &str) const {
+        str(playModeName(playMode()));
     }
 
     // firstStep
@@ -163,11 +201,27 @@ public:
         _firstStep = clamp(firstStep, 0, lastStep());
     }
 
+    void editFirstStep(int value, bool shift) {
+        setFirstStep(firstStep() + value);
+    }
+
+    void printFirstStep(StringBuilder &str) const {
+        str("%d", firstStep() + 1);
+    }
+
     // lastStep
 
     int lastStep() const { return _lastStep; }
     void setLastStep(int lastStep) {
         _lastStep = clamp(lastStep, firstStep(), CONFIG_STEP_COUNT - 1);
+    }
+
+    void editLastStep(int value, bool shift) {
+        setLastStep(lastStep() + value);
+    }
+
+    void printLastStep(StringBuilder &str) const {
+        str("%d", lastStep() + 1);
     }
 
     // steps

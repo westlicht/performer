@@ -72,26 +72,22 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case Scale:
-            str(Scale::get(_sequence->scale()).name());
+            _sequence->printScale(str);
             break;
         case Divisor:
-            str("%d", _sequence->divisor());
+            _sequence->printDivisor(str);
             break;
         case ResetMeasure:
-            if (_sequence->resetMeasure() == 0) {
-                str("off");
-            } else {
-                str("%d", _sequence->resetMeasure());
-            }
+            _sequence->printResetMeasure(str);
             break;
         case PlayMode:
-            str(NoteSequence::playModeName(_sequence->playMode()));
+            _sequence->printPlayMode(str);
             break;
         case FirstStep:
-            str("%d", _sequence->firstStep() + 1);
+            _sequence->printFirstStep(str);
             break;
         case LastStep:
-            str("%d", _sequence->lastStep() + 1);
+            _sequence->printLastStep(str);
             break;
         case Last:
             break;
@@ -101,22 +97,22 @@ private:
     void editValue(Item item, int value, bool shift) {
         switch (item) {
         case Scale:
-            _sequence->setScale(_sequence->scale() + value);
+            _sequence->editScale(value, shift);
             break;
         case Divisor:
-            _sequence->setDivisor(_sequence->divisor() + value);
+            _sequence->editDivisor(value, shift);
             break;
         case ResetMeasure:
-            _sequence->setResetMeasure(_sequence->resetMeasure() + value);
+            _sequence->editResetMeasure(value, shift);
             break;
         case PlayMode:
-            _sequence->setPlayMode(adjustedEnum(_sequence->playMode(), value));
+            _sequence->editPlayMode(value, shift);
             break;
         case FirstStep:
-            _sequence->setFirstStep(_sequence->firstStep() + value);
+            _sequence->editFirstStep(value, shift);
             break;
         case LastStep:
-            _sequence->setLastStep(_sequence->lastStep() + value);
+            _sequence->editLastStep(value, shift);
             break;
         case Last:
             break;
