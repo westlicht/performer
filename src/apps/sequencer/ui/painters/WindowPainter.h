@@ -21,6 +21,7 @@ public:
 
     static void drawClock(Canvas &canvas, Engine &engine);
     static void drawActiveTrack(Canvas &canvas, int track);
+    static void drawActivePattern(Canvas &canvas, int edit, int play);
     static void drawActiveMode(Canvas &canvas, const char *mode);
     static void drawActiveFunction(Canvas &canvas, const char *function);
 

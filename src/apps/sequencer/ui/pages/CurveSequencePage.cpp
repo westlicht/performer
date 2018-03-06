@@ -8,6 +8,15 @@
 
 #include "core/utils/StringBuilder.h"
 
+enum class Function {
+    Shape   = 0,
+    Min     = 1,
+    Max     = 2,
+};
+
+static const char *functionNames[] = { "SHAPE", "MIN", "MAX", nullptr, nullptr };
+
+
 static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, const Curve::Function function, float min, float max) {
     const int Step = 2;
 
@@ -45,12 +54,11 @@ void CurveSequencePage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE");
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
-
-    const char *functionNames[] = { "SHAPE", "MIN", "MAX", nullptr, nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     const auto &sequenceEngine = _engine.selectedTrackEngine().curveSequenceEngine();
-    const auto &sequence = sequenceEngine.sequence();
+    const auto &sequence = _project.selectedSequence().curveSequence();
+    bool isActiveSequence = sequenceEngine.isActiveSequence(sequence);
 
     canvas.setBlendMode(BlendMode::Add);
 
@@ -72,7 +80,7 @@ void CurveSequencePage::draw(Canvas &canvas) {
 
         int x = stepIndex * stepWidth;
 
-        bool selected = _selectedSteps[stepIndex] || _keyState[Key::Shift];
+        bool selected = _stepSelection[stepIndex];
         float min = step.minNormalized();
         float max = step.maxNormalized();
         const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
@@ -81,17 +89,15 @@ void CurveSequencePage::draw(Canvas &canvas) {
             canvas.setColor(0x3);
             canvas.fillRect(x + 2, 16 - 2, stepWidth - 3, 32 + 4);
             canvas.setColor(0xf);
-            // canvas.setBlendMode(BlendMode::Sub);
         } else {
             canvas.setBlendMode(BlendMode::Add);
         }
-        // canvas.setColor(selected ? 0xf : 0x7);
 
         drawCurve(canvas, x, 16, stepWidth, 32, lastY, function, min, max);
     }
 
     // draw cursor
-    {
+    if (isActiveSequence) {
         canvas.setColor(0xf);
         int x = (sequenceEngine.currentStep() + sequenceEngine.currentStepFraction()) * stepWidth;
         canvas.vline(x, 16, 32);
@@ -99,49 +105,53 @@ void CurveSequencePage::draw(Canvas &canvas) {
 }
 
 void CurveSequencePage::updateLeds(Leds &leds) {
-    // const auto &sequence = _project.selectedTrackSequence();
-
-    // LedPainter::drawSequenceGateAndCurrentStep(leds, sequence, trackEngine.currentStep());
 }
 
 void CurveSequencePage::keyDown(KeyEvent &event) {
-    const auto &key = event.key();
-
-    if (key.isStep()) {
-        _selectedSteps.add(key.step());
-        event.consume();
-    }
-
-    if (key.isFunction()) {
-        switch (key.function()) {
-        case 0: _mode = Mode::Shape; break;
-        case 1: _mode = Mode::Min; break;
-        case 2: _mode = Mode::Max; break;
-        default: break;
-        }
-        event.consume();
-    }
+    _stepSelection.keyDown(event, 0);
 }
 
 void CurveSequencePage::keyUp(KeyEvent &event) {
-    const auto &key = event.key();
+    _stepSelection.keyUp(event, 0);
+}
 
-    if (key.isStep()) {
-        _selectedSteps.remove(key.step());
+void CurveSequencePage::keyPress(KeyPressEvent &event) {
+    const auto &key = event.key();
+    auto &sequence = _project.selectedSequence().curveSequence();
+
+    _stepSelection.keyPress(event, 0);
+
+    if (key.isFunction()) {
+        switch (Function(key.function())) {
+        case Function::Shape:
+            _mode = Mode::Shape;
+            break;
+        case Function::Min:
+            _mode = Mode::Min;
+            break;
+        case Function::Max:
+            _mode = Mode::Max;
+            break;
+        }
         event.consume();
     }
 
-    if (key.isFunction()) {
+    if (key.shiftModifier() && key.is(Key::Left)) {
+        sequence.shift(-1);
+        event.consume();
+    }
+    if (key.shiftModifier() && key.is(Key::Right)) {
+        sequence.shift(1);
         event.consume();
     }
 }
 
 void CurveSequencePage::encoder(EncoderEvent &event) {
-    auto &curveSequence = _project.selectedSequence().curveSequence();
+    auto &sequence = _project.selectedSequence().curveSequence();
 
-    for (size_t i = 0; i < curveSequence.steps().size(); ++i) {
-        if (_selectedSteps[i] || _keyState[Key::Shift]) {
-            auto &step = curveSequence.step(i);
+    for (size_t i = 0; i < sequence.steps().size(); ++i) {
+        if (_stepSelection[i] || _keyState[Key::Shift]) {
+            auto &step = sequence.step(i);
             switch (_mode) {
             case Mode::Shape:
                 step.setShape(CurveSequence::Shape::clamp(step.shape() + event.value()));

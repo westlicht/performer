@@ -16,6 +16,7 @@ public:
 
     virtual void keyDown(KeyEvent &event) override;
     virtual void keyUp(KeyEvent &event) override;
+    virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
 
 private:
@@ -26,6 +27,7 @@ private:
         LengthVariation,
         Note,
         NoteVariation,
+        TrigCondition,
     };
 
     static const char *modeName(Mode mode) {
@@ -36,13 +38,18 @@ private:
         case Mode::LengthVariation: return "LENGTH VAR"; break;
         case Mode::Note:            return "NOTE"; break;
         case Mode::NoteVariation:   return "NOTE VAR"; break;
+        case Mode::TrigCondition:   return "COND"; break;
         }
         return nullptr;
     }
 
+    int stepOffset() const { return _page * 16; }
+
     void drawDetail(Canvas &canvas, const NoteSequence::Step &step);
 
     Mode _mode = Mode::Gate;
+    int _page = 0;
+    uint32_t _lastEditTicks = 0;
 
-    StepSelection<CONFIG_STEP_COUNT> _selectedSteps;
+    StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 };

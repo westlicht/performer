@@ -69,14 +69,21 @@ void WindowPainter::drawClock(Canvas &canvas, Engine &engine) {
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    canvas.drawText(10, 8 - 2, FixedStringBuilder<16>("%.1f", engine.bpm()));
+    canvas.drawText(10, 8 - 2, FixedStringBuilder<8>("%.1f", engine.bpm()));
 }
 
 void WindowPainter::drawActiveTrack(Canvas &canvas, int track) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    canvas.drawText(48, 8 - 2, FixedStringBuilder<16>("TRACK%d", track + 1));
+    canvas.drawText(48, 8 - 2, FixedStringBuilder<8>("T%d", track + 1));
+}
+
+void WindowPainter::drawActivePattern(Canvas &canvas, int edit, int play) {
+    canvas.setFont(Font::Tiny);
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+    canvas.drawText(64, 8 - 2, FixedStringBuilder<8>("P%d", edit + 1));
 }
 
 void WindowPainter::drawActiveMode(Canvas &canvas, const char *mode) {
@@ -96,6 +103,7 @@ void WindowPainter::drawActiveFunction(Canvas &canvas, const char *function) {
 void WindowPainter::drawHeader(Canvas &canvas, Model &model, Engine &engine, const char *mode) {
     drawClock(canvas, engine);
     drawActiveTrack(canvas, model.project().selectedTrackIndex());
+    drawActivePattern(canvas, model.project().selectedPatternIndex(), 0);
     drawActiveMode(canvas, mode);
 
     canvas.setBlendMode(BlendMode::Set);

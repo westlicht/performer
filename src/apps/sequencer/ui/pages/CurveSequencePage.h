@@ -16,6 +16,7 @@ public:
 
     virtual void keyDown(KeyEvent &event) override;
     virtual void keyUp(KeyEvent &event) override;
+    virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
 
 private:
@@ -36,5 +37,5 @@ private:
 
     Mode _mode = Mode::Shape;
 
-    StepSelection<CONFIG_STEP_COUNT> _selectedSteps;
+    StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 };

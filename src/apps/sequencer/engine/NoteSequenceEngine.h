@@ -22,6 +22,7 @@ public:
     virtual float cvOutput() const override { return _cvOutput; }
 
     const NoteSequence &sequence() const { return *_sequence; }
+    bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
 
     int currentStep() const { return _currentStep; }
 

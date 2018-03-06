@@ -19,9 +19,18 @@ void LedPainter::drawTracksGateAndMuted(Leds &leds, const Engine &engine) {
     }
 }
 
-void LedPainter::drawNoteSequenceGateAndCurrentStep(Leds &leds, const NoteSequence &sequence, int currentStep) {
+void LedPainter::drawNoteSequenceGateAndCurrentStep(Leds &leds, const NoteSequence &sequence, int stepOffset, int currentStep) {
+    for (int i = 0; i < 16; ++i) {
+        int stepIndex = stepOffset + i;
+        leds.set(MatrixMap::fromStep(i), stepIndex == currentStep, sequence.step(stepIndex).gate());
+    }
+}
+
+void LedPainter::drawStepIndex(Leds &leds, int index) {
     for (int step = 0; step < 16; ++step) {
-        leds.set(MatrixMap::fromStep(step), step == currentStep, sequence.step(step).gate());
+        leds.set(MatrixMap::fromStep(step), step == index, step == index);
+    }
+}
 
 void LedPainter::drawSelectedPage(Leds &leds, int page) {
     for (int i = 0; i < 8; ++i) {
@@ -29,5 +38,21 @@ void LedPainter::drawSelectedPage(Leds &leds, int page) {
     }
 }
 
+void LedPainter::drawSelectedSequencePage(Leds &leds, int page) {
+    leds.set(Key::Code::Left, page == 0, page == 0);
+    leds.set(Key::Code::Right, page == 1, page == 1);
+    leds.set(Key::Code::Page, page == 2, page == 2);
+    leds.set(Key::Code::Shift, page == 3, page == 3);
+}
+
+void LedPainter::drawMode(Leds &leds, int index, int count) {
+    for (int i = 0; i < 8; ++i) {
+        leds.set(MatrixMap::fromStep(i), i < count, i == index);
+    }
+}
+
+void LedPainter::drawValue(Leds &leds, int index, int count) {
+    for (int i = 0; i < 8; ++i) {
+        leds.set(MatrixMap::fromStep(i + 8), i < count, i == index);
     }
 }

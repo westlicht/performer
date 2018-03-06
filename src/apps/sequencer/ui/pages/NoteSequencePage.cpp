@@ -6,7 +6,26 @@
 
 #include "engine/Scale.h"
 
+#include "os/os.h"
+
 #include "core/utils/StringBuilder.h"
+
+enum class Function {
+    Gate        = 0,
+    Length      = 1,
+    Index       = 2,
+    Condition   = 3,
+};
+
+static const char *functionNames[] = { "GATE", "LENGTH", "INDEX", "COND", nullptr };
+
+
+enum class MenuItem {
+    Clear,
+    Copy,
+    Paste,
+    Last
+};
 
 NoteSequencePage::NoteSequencePage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
@@ -23,16 +42,16 @@ void NoteSequencePage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE");
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
-
-    const char *functionNames[] = { "GATE", "LENGTH", "INDEX", nullptr, nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     const auto &sequenceEngine = _engine.selectedTrackEngine().noteSequenceEngine();
-    const auto &sequence = sequenceEngine.sequence();
+    const auto &sequence = _project.selectedSequence().noteSequence();
+    int currentStep = sequenceEngine.isActiveSequence(sequence) ? sequenceEngine.currentStep() : -1;
+
     const auto &scale = Scale::get(sequence.scale());
 
     bool drawStepIndices = true;
-    bool drawSelectedSteps = _mode != Mode::Gate;
+    bool drawSelectedSteps = true;
     bool drawGateProbabilities = _mode == Mode::GateVariation;
     bool drawLengths = _mode == Mode::Length;
     bool drawLengthVariations = _mode == Mode::LengthVariation;
@@ -41,22 +60,23 @@ void NoteSequencePage::draw(Canvas &canvas) {
 
     canvas.setBlendMode(BlendMode::Set);
 
-    for (int stepIndex = 0; stepIndex < 16; ++stepIndex) {
+    for (int i = 0; i < 16; ++i) {
+        int stepIndex = stepOffset() + i;
         const auto &step = sequence.step(stepIndex);
 
-        int x = stepIndex * 16;
+        int x = i * 16;
         int y = 20;
 
         if (drawStepIndices) {
             canvas.setColor(0x7);
-            if (drawSelectedSteps && (_selectedSteps[stepIndex] || _keyState[Key::Shift])) {
+            if (drawSelectedSteps && _stepSelection[stepIndex]) {
                 canvas.setColor(0xf);
             }
             FixedStringBuilder<8> str("%d", stepIndex + 1);
             canvas.drawText(x + (16 - canvas.textWidth(str)) / 2, y - 2, str);
         }
 
-        canvas.setColor(stepIndex == sequenceEngine.currentStep() ? 0xf : 0x7);
+        canvas.setColor(stepIndex == currentStep ? 0xf : 0x7);
         canvas.drawRect(x + 2, y + 2, 16 - 4, 16 - 4);
         if (step.gate()) {
             canvas.setColor(0xf);
@@ -101,71 +121,105 @@ void NoteSequencePage::draw(Canvas &canvas) {
             scale.shortName(step.note(), 1, str);
             canvas.drawText(x + 2, y + 27, str);
         }
-
     }
 
-    if (_mode != Mode::Gate && (_selectedSteps.any() || _keyState[Key::Shift])) {
-        drawDetail(canvas, sequence.step(_selectedSteps.first()));
+    if (_mode != Mode::Gate && os::ticks() < _lastEditTicks + os::time::ms(500)) {
+        drawDetail(canvas, sequence.step(_stepSelection.first()));
     }
 }
 
 void NoteSequencePage::updateLeds(Leds &leds) {
-    // LedPainter::drawTracksGateAndSelected(leds, _engine, _project.selectedTrackIndex());
-
     const auto &sequenceEngine = _engine.selectedTrackEngine().noteSequenceEngine();
-    const auto &sequence = sequenceEngine.sequence();
-    LedPainter::drawNoteSequenceGateAndCurrentStep(leds, sequence, sequenceEngine.currentStep());
+    const auto &sequence = _project.selectedSequence().noteSequence();
+    int currentStep = sequenceEngine.isActiveSequence(sequence) ? sequenceEngine.currentStep() : -1;
+
+    for (int i = 0; i < 16; ++i) {
+        int stepIndex = stepOffset() + i;
+        bool red = (stepIndex == currentStep) || _stepSelection[stepIndex];
+        bool green = (stepIndex != currentStep) && (sequence.step(stepIndex).gate() || _stepSelection[stepIndex]);
+        leds.set(MatrixMap::fromStep(i), red, green);
+    }
+
+    LedPainter::drawSelectedSequencePage(leds, _page);
 }
 
 void NoteSequencePage::keyDown(KeyEvent &event) {
+    _stepSelection.keyDown(event, stepOffset());
+}
+
+void NoteSequencePage::keyUp(KeyEvent &event) {
+    _stepSelection.keyUp(event, stepOffset());
+}
+
+void NoteSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
+    auto &sequence = _project.selectedSequence().noteSequence();
 
-    auto &noteSequence = _project.selectedSequence().noteSequence();
+    _stepSelection.keyPress(event, stepOffset());
 
-    if (key.isStep()) {
-        _selectedSteps.add(key.step());
+    if (!key.shiftModifier() && key.isStep()) {
+        int stepIndex = stepOffset() + key.step();
         switch (_mode) {
         case Mode::Gate:
-            noteSequence.step(key.step()).toggleGate();
+            sequence.step(stepIndex).toggleGate();
+            event.consume();
             break;
         default:
             break;
         }
-        event.consume();
     }
 
     if (key.isFunction()) {
-        switch (key.function()) {
-        case 0: _mode = _mode == Mode::Gate ? Mode::GateVariation : Mode::Gate; break;
-        case 1: _mode = _mode == Mode::Length ? Mode::LengthVariation : Mode::Length; break;
-        case 2: _mode = _mode == Mode::Note ? Mode::NoteVariation : Mode::Note; break;
-        default: break;
+        switch (Function(key.function())) {
+        case Function::Gate:
+            _mode = _mode == Mode::Gate ? Mode::GateVariation : Mode::Gate;
+            break;
+        case Function::Length:
+            _mode = _mode == Mode::Length ? Mode::LengthVariation : Mode::Length;
+            break;
+        case Function::Index:
+            _mode = _mode == Mode::Note ? Mode::NoteVariation : Mode::Note;
+            break;
+        case Function::Condition:
+            _mode = Mode::TrigCondition;
+            break;
         }
         event.consume();
     }
-}
 
-void NoteSequencePage::keyUp(KeyEvent &event) {
-    const auto &key = event.key();
-
-    if (key.isStep()) {
-        _selectedSteps.remove(key.step());
+    if (key.is(Key::Left)) {
+        if (key.shiftModifier()) {
+            sequence.shift(-1);
+        } else {
+            _page = std::max(0, _page - 1);
+        }
         event.consume();
     }
-
-    if (key.isFunction()) {
+    if (key.is(Key::Right)) {
+        if (key.shiftModifier()) {
+            sequence.shift(1);
+        } else {
+            _page = std::min(3, _page + 1);
+        }
         event.consume();
     }
 }
 
 void NoteSequencePage::encoder(EncoderEvent &event) {
-    auto &noteSequence = _project.selectedSequence().noteSequence();
-    const auto &scale = Scale::get(noteSequence.scale());
+    auto &sequence = _project.selectedSequence().noteSequence();
+    const auto &scale = Scale::get(sequence.scale());
 
-    for (size_t i = 0; i < noteSequence.steps().size(); ++i) {
-        if (_selectedSteps[i] || _keyState[Key::Shift]) {
-            auto &step = noteSequence.step(i);
+    if (_stepSelection.any()) {
+        _lastEditTicks = os::ticks();
+    }
+
+    for (size_t i = 0; i < sequence.steps().size(); ++i) {
+        if (_stepSelection[i]) {
+            auto &step = sequence.step(i);
             switch (_mode) {
+            case Mode::Gate:
+                step.setGate(event.value() > 0);
+                break;
             case Mode::GateVariation:
                 step.setGateProbability(NoteSequence::GateProbability::clamp(step.gateProbability() + event.value()));
                 break;
@@ -206,7 +260,7 @@ void NoteSequencePage::drawDetail(Canvas &canvas, const NoteSequence::Step &step
     canvas.vline(64 + 32, 16, 32);
 
     canvas.setFont(Font::Small);
-    str("%d", _selectedSteps.first() + 1);
+    str("%d", _stepSelection.first() + 1);
     canvas.drawTextCentered(64, 16, 32, 32, str);
 
     canvas.setFont(Font::Tiny);
