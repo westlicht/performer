@@ -12,8 +12,6 @@ public:
     virtual void draw(Canvas &canvas) override;
     virtual void updateLeds(Leds &leds) override;
 
-    virtual bool isModal() const override { return true; }
-
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
 

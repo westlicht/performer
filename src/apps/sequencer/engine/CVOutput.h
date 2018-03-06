@@ -4,6 +4,8 @@
 
 #include "drivers/DAC.h"
 
+#include <array>
+
 class CVOutput {
 public:
     static constexpr int Channels = CONFIG_CV_OUTPUT_CHANNELS;
@@ -25,5 +27,5 @@ public:
 private:
     DAC &_dac;
 
-    float _channels[Channels];
+    std::array<float, Channels> _channels;
 };

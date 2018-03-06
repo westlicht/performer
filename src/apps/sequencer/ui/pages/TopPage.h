@@ -23,6 +23,7 @@ private:
         Sequence        = 3,
         SequenceSetup   = 4,
         Performer       = 7,
+        Monitor         = 23,
     };
 
     void setMode(Mode mode);

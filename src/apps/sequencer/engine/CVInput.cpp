@@ -6,6 +6,7 @@ CVInput::CVInput(ADC &adc) :
 }
 
 void CVInput::init() {
+    _channels.fill(0.f);
 }
 
 void CVInput::update() {

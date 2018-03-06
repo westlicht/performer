@@ -5,6 +5,7 @@ CVOutput::CVOutput(DAC &dac) :
 {}
 
 void CVOutput::init() {
+    _channels.fill(0.f);
 
 }
 

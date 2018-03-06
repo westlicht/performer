@@ -10,10 +10,9 @@
 enum class Function {
     CvIn    = 0,
     CvOut   = 1,
-    Exit    = 4,
 };
 
-static const char *functionNames[] = { "CV IN", "CV OUT", nullptr, nullptr, "EXIT" };
+static const char *functionNames[] = { "CV IN", "CV OUT", nullptr, nullptr, nullptr };
 
 
 MonitorPage::MonitorPage(PageManager &manager, PageContext &context) :
@@ -56,9 +55,6 @@ void MonitorPage::keyPress(KeyPressEvent &event) {
         case Function::CvOut:
             _mode = Mode::CvOut;
             break;
-        case Function::Exit:
-            close();
-            break;
         }
     }
 }
@@ -67,33 +63,41 @@ void MonitorPage::encoder(EncoderEvent &event) {
 }
 
 void MonitorPage::drawCvIn(Canvas &canvas) {
-    FixedStringBuilder<16> string;
+    FixedStringBuilder<16> str;
 
-    int w = Width / CVInput::Channels;
+    int w = Width / 4;
+    int h = 8;
 
     for (size_t i = 0; i < CVInput::Channels; ++i) {
-        string.reset();
-        string("CV%d", i + 1);
-        canvas.drawTextCentered(i * w, 32 - 8, w, 8, string);
+        int x = i * w;
+        int y = 32;
 
-        string.reset();
-        string("%.2fV", _engine.cvInput().channel(i));
-        canvas.drawTextCentered(i * w, 32, w, 8, string);
+        str.reset();
+        str("CV%d", i + 1);
+        canvas.drawTextCentered(x, y - h, w, h, str);
+
+        str.reset();
+        str("%.2fV", _engine.cvInput().channel(i));
+        canvas.drawTextCentered(x, y, w, h, str);
     }
 }
 
 void MonitorPage::drawCvOut(Canvas &canvas) {
-    FixedStringBuilder<16> string;
+    FixedStringBuilder<16> str;
 
-    int w = Width / CVOutput::Channels;
+    int w = Width / 4;
+    int h = 8;
 
     for (size_t i = 0; i < CVOutput::Channels; ++i) {
-        string.reset();
-        string("CV%d", i + 1);
-        canvas.drawTextCentered(i * w, 32 - 8, w, 8, string);
+        int x = (i % 4) * w;
+        int y = 24 + (i / 4) * 20;
 
-        string.reset();
-        string("%.2fV", _engine.cvOutput().channel(i));
-        canvas.drawTextCentered(i * w, 32, w, 8, string);
+        str.reset();
+        str("CV%d", i + 1);
+        canvas.drawTextCentered(x, y - h, w, h, str);
+
+        str.reset();
+        str("%.2fV", _engine.cvOutput().channel(i));
+        canvas.drawTextCentered(x, y, w, h, str);
     }
 }

@@ -4,6 +4,8 @@
 
 #include "drivers/ADC.h"
 
+#include <array>
+
 class CVInput {
 public:
     static constexpr int Channels = CONFIG_CV_INPUT_CHANNELS;
@@ -21,5 +23,5 @@ public:
 private:
     ADC &_adc;
 
-    float _channels[Channels];
+    std::array<float, Channels> _channels;
 };

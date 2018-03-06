@@ -75,14 +75,6 @@ void TopPage::keyPress(KeyPressEvent &event) {
         }
     }
 
-    // if (key.is(Key::Mute)) {
-    //     _manager.pages().mute.show();
-    // }
-
-    // if (key.shiftModifier() && key.isGlobal()) {
-    //     _manager.pages().monitor.show();
-    // }
-
     event.consume();
 }
 
@@ -110,6 +102,8 @@ void TopPage::setMode(Mode mode) {
     case Mode::Performer:
         setMainPage(_manager.pages().performer);
         break;
+    case Mode::Monitor:
+        setMainPage(_manager.pages().monitor);
     default:
         return;
     }
