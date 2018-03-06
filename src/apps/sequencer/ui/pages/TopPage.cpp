@@ -8,6 +8,10 @@ TopPage::TopPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
 
+void TopPage::init() {
+    setMode(Mode::Project);
+}
+
 void TopPage::updateLeds(Leds &leds) {
     leds.set(
         Key::Start,
@@ -15,7 +19,11 @@ void TopPage::updateLeds(Leds &leds) {
         false // _engine.running()
     );
 
-    LedPainter::drawTracksGateAndSelected(leds, _engine, _project.selectedTrackIndex());
+    if (_keyState[Key::Page]) {
+        LedPainter::drawSelectedPage(leds, _mode);
+    } else {
+        LedPainter::drawTracksGateAndSelected(leds, _engine, _project.selectedTrackIndex());
+    }
 }
 
 void TopPage::keyDown(KeyEvent &event) {
@@ -38,15 +46,8 @@ void TopPage::keyPress(KeyPressEvent &event) {
         }
     }
 
-    if (key.isModeSelect()) {
-        switch (key.modeSelect()) {
-        case 0: setMainPage(_manager.pages().project); break;
-        case 1: setMainPage(_manager.pages().pattern); break;
-        case 2: setMainPage(_manager.pages().trackSetup); break;
-        case 3: setSequencePage(); break;
-        case 4: setSequenceSetupPage(); break;
-        case 7: setMainPage(_manager.pages().performer); break;
-        }
+    if (key.isPageSelect()) {
+        setMode(Mode(key.pageSelect()));
     }
 
     if (key.is(Key::Start)) {
@@ -78,15 +79,41 @@ void TopPage::keyPress(KeyPressEvent &event) {
     //     _manager.pages().mute.show();
     // }
 
-    if (key.is(Key::Global)) {
-        _manager.pages().monitor.show();
-    }
+    // if (key.shiftModifier() && key.isGlobal()) {
+    //     _manager.pages().monitor.show();
+    // }
 
     event.consume();
 }
 
 void TopPage::encoder(EncoderEvent &event) {
     event.consume();
+}
+
+void TopPage::setMode(Mode mode) {
+    switch (mode) {
+    case Mode::Project:
+        setMainPage(_manager.pages().project);
+        break;
+    case Mode::Pattern:
+        setMainPage(_manager.pages().pattern);
+        break;
+    case Mode::TrackSetup:
+        setMainPage(_manager.pages().trackSetup);
+        break;
+    case Mode::Sequence:
+        setSequencePage();
+        break;
+    case Mode::SequenceSetup:
+        setSequenceSetupPage();
+        break;
+    case Mode::Performer:
+        setMainPage(_manager.pages().performer);
+        break;
+    default:
+        return;
+    }
+    _mode = mode;
 }
 
 void TopPage::setMainPage(Page &page) {

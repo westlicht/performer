@@ -1,6 +1,7 @@
 #include "LedPainter.h"
 #include "Leds.h"
 #include "MatrixMap.h"
+#include "Key.h"
 
 #include "engine/Engine.h"
 
@@ -21,5 +22,12 @@ void LedPainter::drawTracksGateAndMuted(Leds &leds, const Engine &engine) {
 void LedPainter::drawNoteSequenceGateAndCurrentStep(Leds &leds, const NoteSequence &sequence, int currentStep) {
     for (int step = 0; step < 16; ++step) {
         leds.set(MatrixMap::fromStep(step), step == currentStep, sequence.step(step).gate());
+
+void LedPainter::drawSelectedPage(Leds &leds, int page) {
+    for (int i = 0; i < 8; ++i) {
+        leds.set(MatrixMap::fromTrack(i), true, i == page);
+    }
+}
+
     }
 }

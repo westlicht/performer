@@ -28,7 +28,7 @@ void UI::init() {
 #ifdef CONFIG_ENABLE_ASTEROIDS
     _pageManager.push(&_pages.asteroids);
 #else
-    _pageManager.push(&_pages.noteSequence);
+    _pages.top.init();
 #endif
 
     _engine.setMessageHandler([this] (const char *text, uint32_t duration) {

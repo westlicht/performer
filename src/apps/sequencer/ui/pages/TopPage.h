@@ -6,6 +6,8 @@ class TopPage : public BasePage {
 public:
     TopPage(PageManager &manager, PageContext &context);
 
+    void init();
+
     virtual void updateLeds(Leds &leds) override;
 
     virtual void keyDown(KeyEvent &event) override;
@@ -14,6 +16,16 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    enum Mode : uint8_t {
+        Project         = 0,
+        Pattern         = 1,
+        TrackSetup      = 2,
+        Sequence        = 3,
+        SequenceSetup   = 4,
+        Performer       = 7,
+    };
+
+    void setMode(Mode mode);
     void setMainPage(Page &page);
 
     bool isSequencePage();
@@ -21,4 +33,6 @@ private:
 
     bool isSequenceSetupPage();
     void setSequenceSetupPage();
+
+    Mode _mode;
 };

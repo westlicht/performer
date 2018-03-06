@@ -42,7 +42,7 @@ public:
         Mute = 26,
         Left = 28,
         Right = 29,
-        Global = 30,
+        Page = 30,
         Shift = 31,
         F0 = MatrixMap::fromFunction(0),
         F1 = MatrixMap::fromFunction(1),
@@ -60,6 +60,7 @@ public:
     bool state(int code) const { return _state[code]; }
 
     bool shiftModifier() const { return _state[Shift]; }
+    bool pageModifier() const { return _state[Page]; }
 
     bool is(int code) const { return _code == code; }
 
@@ -72,13 +73,13 @@ public:
     bool isFunction() const { return MatrixMap::isFunction(_code); }
     int function() const { return MatrixMap::toFunction(_code); }
 
-    bool isGlobal() const { return _code == Global; };
+    bool isPage() const { return _code == Page; };
 
-    bool isTrackSelect() const { return !shiftModifier() && isTrack(); }
+    bool isTrackSelect() const { return !pageModifier() && isTrack(); }
     int trackSelect() const { return track(); }
 
-    bool isModeSelect() const { return shiftModifier() && isTrack(); }
-    int modeSelect() const{ return track(); }
+    bool isPageSelect() const { return pageModifier() && isTrack(); }
+    int pageSelect() const{ return track(); }
 
     bool isEncoder() const { return is(Encoder); }
 
