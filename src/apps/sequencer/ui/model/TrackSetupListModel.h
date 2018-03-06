@@ -4,8 +4,6 @@
 
 #include "ListModel.h"
 
-#include "ui/utils/AdjustUtils.h"
-
 #include "model/TrackSetup.h"
 
 class TrackSetupListModel : public ListModel {

@@ -2,8 +2,6 @@
 
 #include "ListModel.h"
 
-#include "ui/utils/AdjustUtils.h"
-
 #include "model/ClockSetup.h"
 
 class ClockSetupListModel : public ListModel {

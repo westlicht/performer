@@ -4,8 +4,6 @@
 
 #include "ListModel.h"
 
-#include "ui/utils/AdjustUtils.h"
-
 #include "model/CurveSequence.h"
 
 #include "engine/Scale.h"
