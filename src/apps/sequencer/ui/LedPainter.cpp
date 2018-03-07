@@ -34,7 +34,12 @@ void LedPainter::drawStepIndex(Leds &leds, int index) {
 
 void LedPainter::drawSelectedPage(Leds &leds, int page) {
     for (int i = 0; i < 8; ++i) {
-        leds.set(MatrixMap::fromTrack(i), true, i == page);
+        leds.set(MatrixMap::fromTrack(i), false, i == page);
+        leds.mask(MatrixMap::fromTrack(i));
+    }
+    for (int i = 0; i < 16; ++i) {
+        leds.set(MatrixMap::fromStep(i), false, (i + 8) == page);
+        leds.mask(MatrixMap::fromStep(i));
     }
 }
 
