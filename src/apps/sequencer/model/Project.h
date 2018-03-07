@@ -68,7 +68,7 @@ public:
     }
 
     void editSwing(int value, bool shift) {
-        setSwing(swing() + value * (shift ? 1 : 5));
+        setSwing(ModelUtils::adjustedByStep(swing(), value, 5, shift));
     }
 
     void printSwing(StringBuilder &str) const {
