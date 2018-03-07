@@ -24,7 +24,7 @@ void CurveSequence::Step::read(ReadContext &context) {
 
 void CurveSequence::clear() {
     setRange(Range::Bipolar5V);
-    setDivisor(4);
+    setDivisor(12);
     setResetMeasure(0);
     setPlayMode(PlayMode::Forward);
     setFirstStep(0);

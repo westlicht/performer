@@ -19,6 +19,7 @@ static Enum adjustedEnum(Enum value, int offset) {
 
 int adjustedByStep(int value, int offset, int step, bool shift);
 int adjustedByPowerOfTwo(int value, int offset, bool shift);
+int adjustedByDivisor(int value, int offset, bool shift);
 
 template<typename Step, size_t N>
 static void shiftSteps(std::array<Step, N> &steps, int direction) {
@@ -34,5 +35,6 @@ static void shiftSteps(std::array<Step, N> &steps, int direction) {
 }
 
 void printYesNo(StringBuilder &str, bool value);
+void printDivisor(StringBuilder &str, int value);
 
 };

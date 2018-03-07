@@ -139,15 +139,16 @@ public:
 
     int divisor() const { return _divisor; }
     void setDivisor(int divisor) {
-        _divisor = clamp(divisor, 1, 128);
+        _divisor = clamp(divisor, 1, 192);
     }
 
     void editDivisor(int value, bool shift) {
-        setDivisor(divisor() + value);
+        setDivisor(ModelUtils::adjustedByDivisor(divisor(), value, shift));
     }
 
     void printDivisor(StringBuilder &str) const {
-        str("%d", divisor());
+        ModelUtils::printDivisor(str, divisor());
+        // str("%d", divisor());
     }
 
     // resetMeasure
@@ -158,7 +159,7 @@ public:
     }
 
     void editResetMeasure(int value, bool shift) {
-        setResetMeasure(resetMeasure() + value);
+        setResetMeasure(ModelUtils::adjustedByPowerOfTwo(resetMeasure(), value, shift));
     }
 
     void printResetMeasure(StringBuilder &str) const {

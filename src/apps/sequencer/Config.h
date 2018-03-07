@@ -2,8 +2,11 @@
 
 #include "SystemConfig.h"
 
-// Pulses per quarter note
+// Parts per quarter note
 #define CONFIG_PPQN                     192
+
+// Sequence parts per quarter note resolution
+#define CONFIG_SEQUENCE_PPQN            48
 
 // Default UI frames per second
 #define CONFIG_DEFAULT_UI_FPS           50

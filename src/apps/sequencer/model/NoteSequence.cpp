@@ -82,8 +82,8 @@ void NoteSequence::Step::read(ReadContext &context) {
 }
 
 void NoteSequence::clear() {
-    setScale(3);
-    setDivisor(4);
+    setScale(0);
+    setDivisor(12);
     setResetMeasure(0);
     setPlayMode(PlayMode::Forward);
     setFirstStep(0);

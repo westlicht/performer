@@ -37,7 +37,7 @@ void CurveSequenceEngine::tick(uint32_t tick) {
         _lastRange = sequence.range();
     }
 
-    const uint32_t divisor = (CONFIG_PPQN / 4);
+    const uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
 
     if (tick % divisor == 0) {
         advance();
