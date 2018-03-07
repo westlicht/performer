@@ -78,8 +78,15 @@ public:
     bool isTrackSelect() const { return !pageModifier() && isTrack(); }
     int trackSelect() const { return track(); }
 
-    bool isPageSelect() const { return pageModifier() && isTrack(); }
-    int pageSelect() const{ return track(); }
+    bool isPageSelect() const { return pageModifier() && (isTrack() || isStep()); }
+    int pageSelect() const {
+        if (isTrack()) {
+            return track();
+        } else if (isStep()) {
+            return step() + 8;
+        }
+        return -1;
+    }
 
     bool isEncoder() const { return is(Encoder); }
 
