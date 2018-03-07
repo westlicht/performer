@@ -22,6 +22,9 @@ public:
     int selectedRow() const { return _selectedRow; }
     void setSelectedRow(int selectedRow);
 
+    bool edit() const { return _edit; }
+    void setEdit(bool edit) { _edit = edit; }
+
 protected:
     void scrollTo(int row);
 

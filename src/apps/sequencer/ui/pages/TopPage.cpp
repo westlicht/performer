@@ -83,15 +83,17 @@ void TopPage::encoder(EncoderEvent &event) {
 }
 
 void TopPage::setMode(Mode mode) {
+    auto &pages = _manager.pages();
+
     switch (mode) {
     case Mode::Project:
-        setMainPage(_manager.pages().project);
+        setMainPage(pages.project);
         break;
     case Mode::Pattern:
-        setMainPage(_manager.pages().pattern);
+        setMainPage(pages.pattern);
         break;
     case Mode::TrackSetup:
-        setMainPage(_manager.pages().trackSetup);
+        setMainPage(pages.trackSetup);
         break;
     case Mode::Sequence:
         setSequencePage();
@@ -100,10 +102,27 @@ void TopPage::setMode(Mode mode) {
         setSequenceSetupPage();
         break;
     case Mode::Performer:
-        setMainPage(_manager.pages().performer);
+        setMainPage(pages.performer);
         break;
+    case Mode::Scale:
+        setSequenceSetupPage(0);
+        break;
+    case Mode::Divisor:
+        setSequenceSetupPage(1);
+        break;
+    case Mode::ResetMeasure:
+        setSequenceSetupPage(2);
+        break;
+    case Mode::PlayMode:
+        setSequenceSetupPage(3);
+        break;
+    case Mode::FirstStep:
+        setSequenceSetupPage(4);
+        break;
+
     case Mode::Monitor:
-        setMainPage(_manager.pages().monitor);
+        setMainPage(pages.monitor);
+        break;
     default:
         return;
     }
@@ -116,18 +135,22 @@ void TopPage::setMainPage(Page &page) {
 }
 
 bool TopPage::isSequencePage() {
+    auto &pages = _manager.pages();
+
     return
-        _manager.top() == &_manager.pages().noteSequence ||
-        _manager.top() == &_manager.pages().curveSequence;
+        _manager.top() == &pages.noteSequence ||
+        _manager.top() == &pages.curveSequence;
 }
 
 void TopPage::setSequencePage() {
+    auto &pages = _manager.pages();
+
     switch (_project.selectedTrackSetup().trackMode()) {
     case Types::TrackMode::Note:
-        setMainPage(_manager.pages().noteSequence);
+        setMainPage(pages.noteSequence);
         break;
     case Types::TrackMode::Curve:
-        setMainPage(_manager.pages().curveSequence);
+        setMainPage(pages.curveSequence);
         break;
     case Types::TrackMode::Last:
         break;
@@ -135,20 +158,35 @@ void TopPage::setSequencePage() {
 }
 
 bool TopPage::isSequenceSetupPage() {
+    auto &pages = _manager.pages();
+
     return
-        _manager.top() == &_manager.pages().noteSequenceSetup ||
-        _manager.top() == &_manager.pages().curveSequenceSetup;
+        _manager.top() == &pages.noteSequenceSetup ||
+        _manager.top() == &pages.curveSequenceSetup;
 }
 
 void TopPage::setSequenceSetupPage() {
+    auto &pages = _manager.pages();
+
     switch (_project.selectedTrackSetup().trackMode()) {
     case Types::TrackMode::Note:
-        setMainPage(_manager.pages().noteSequenceSetup);
+        setMainPage(pages.noteSequenceSetup);
         break;
     case Types::TrackMode::Curve:
-        setMainPage(_manager.pages().curveSequenceSetup);
+        setMainPage(pages.curveSequenceSetup);
         break;
     case Types::TrackMode::Last:
         break;
     }
+}
+
+void TopPage::setSequenceSetupPage(int row) {
+    auto &pages = _manager.pages();
+
+    pages.noteSequenceSetup.setSelectedRow(row);
+    pages.noteSequenceSetup.setEdit(true);
+    pages.curveSequenceSetup.setSelectedRow(row);
+    pages.curveSequenceSetup.setEdit(true);
+
+    setSequenceSetupPage();
 }

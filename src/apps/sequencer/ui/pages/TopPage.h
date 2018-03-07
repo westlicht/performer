@@ -17,12 +17,22 @@ public:
 
 private:
     enum Mode : uint8_t {
+        // main modes
         Project         = 0,
         Pattern         = 1,
         TrackSetup      = 2,
         Sequence        = 3,
         SequenceSetup   = 4,
         Performer       = 7,
+
+        // sequence setup shortcuts
+        Scale           = 8,
+        Divisor         = 9,
+        ResetMeasure    = 10,
+        PlayMode        = 11,
+        FirstStep       = 12,
+
+        // aux modes
         Monitor         = 23,
     };
 
@@ -34,6 +44,7 @@ private:
 
     bool isSequenceSetupPage();
     void setSequenceSetupPage();
+    void setSequenceSetupPage(int row);
 
     Mode _mode;
 };
