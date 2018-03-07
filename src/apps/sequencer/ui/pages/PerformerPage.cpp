@@ -110,6 +110,10 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &playState = _project.playState();
 
+    if (key.pageModifier()) {
+        return;
+    }
+
     if (key.isTrackSelect()) {
         event.consume();
     }

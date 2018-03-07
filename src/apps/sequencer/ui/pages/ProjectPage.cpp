@@ -46,6 +46,10 @@ void ProjectPage::updateLeds(Leds &leds) {
 void ProjectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
+    if (key.pageModifier()) {
+        return;
+    }
+
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Load:

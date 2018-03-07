@@ -32,6 +32,10 @@ void TrackSetupPage::updateLeds(Leds &leds) {
 void TrackSetupPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
+    if (key.pageModifier()) {
+        return;
+    }
+
     if (key.isFunction() && key.function() == 4) {
         _project.setTrackSetup(_project.selectedTrackIndex(), _listModel.trackSetup());
     }

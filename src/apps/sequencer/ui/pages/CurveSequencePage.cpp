@@ -119,6 +119,10 @@ void CurveSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &sequence = _project.selectedSequence().curveSequence();
 
+    if (key.pageModifier()) {
+        return;
+    }
+
     _stepSelection.keyPress(event, 0);
 
     if (key.isFunction()) {

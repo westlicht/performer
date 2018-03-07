@@ -66,6 +66,10 @@ void ListPage::updateLeds(Leds &leds) {
 void ListPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
+    if (key.pageModifier()) {
+        return;
+    }
+
 
     switch (key.code()) {
     case Key::Left:

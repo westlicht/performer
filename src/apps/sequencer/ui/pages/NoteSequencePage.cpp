@@ -155,6 +155,10 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &sequence = _project.selectedSequence().noteSequence();
 
+    if (key.pageModifier()) {
+        return;
+    }
+
     _stepSelection.keyPress(event, stepOffset());
 
     if (!key.shiftModifier() && key.isStep()) {
