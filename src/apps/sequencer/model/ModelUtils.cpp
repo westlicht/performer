@@ -57,11 +57,9 @@ int adjustedByDivisor(int value, int offset, bool shift) {
     }
 }
 
-
 void printYesNo(StringBuilder &str, bool value) {
     str(value ? "yes" : "no");
 }
-
 
 void printDivisor(StringBuilder &str, int value) {
     for (int i = 0; i < numKnownDivisors; ++i) {
@@ -76,6 +74,26 @@ void printDivisor(StringBuilder &str, int value) {
         }
     }
     str("%d", value);
+}
+
+int divisorToIndex(int divisor) {
+    for (int i = 0; i < numKnownDivisors; ++i) {
+        const auto &knownDivisor = knownDivisors[i];
+        if (divisor == knownDivisor.divisor) {
+            return knownDivisor.index;
+        }
+    }
+    return -1;
+}
+
+int indexToDivisor(int index) {
+    for (int i = 0; i < numKnownDivisors; ++i) {
+        const auto &knownDivisor = knownDivisors[i];
+        if (index == knownDivisor.index) {
+            return knownDivisor.divisor;
+        }
+    }
+    return -1;
 }
 
 } // namespace ModelUtils

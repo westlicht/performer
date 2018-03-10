@@ -21,6 +21,13 @@ int adjustedByStep(int value, int offset, int step, bool shift);
 int adjustedByPowerOfTwo(int value, int offset, bool shift);
 int adjustedByDivisor(int value, int offset, bool shift);
 
+void printYesNo(StringBuilder &str, bool value);
+void printDivisor(StringBuilder &str, int value);
+
+int divisorToIndex(int divisor);
+int indexToDivisor(int index);
+
+
 template<typename Step, size_t N>
 static void shiftSteps(std::array<Step, N> &steps, int direction) {
     if (direction == 1) {
@@ -33,8 +40,5 @@ static void shiftSteps(std::array<Step, N> &steps, int direction) {
         }
     }
 }
-
-void printYesNo(StringBuilder &str, bool value);
-void printDivisor(StringBuilder &str, int value);
 
 };

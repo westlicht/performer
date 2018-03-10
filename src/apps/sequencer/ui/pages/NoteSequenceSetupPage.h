@@ -14,6 +14,8 @@ public:
     virtual void draw(Canvas &canvas) override;
     virtual void updateLeds(Leds &leds) override;
 
+    virtual void keyPress(KeyPressEvent &event) override;
+
 private:
     NoteSequenceSetupListModel _listModel;
 };

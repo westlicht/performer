@@ -28,4 +28,47 @@ void NoteSequenceSetupPage::draw(Canvas &canvas) {
 }
 
 void NoteSequenceSetupPage::updateLeds(Leds &leds) {
+    const auto &sequence = _project.selectedSequence().noteSequence();
+
+    switch (_selectedRow) {
+    case NoteSequenceSetupListModel::Scale:
+        LedPainter::drawStepIndex(leds, sequence.scale());
+        break;
+    case NoteSequenceSetupListModel::Divisor:
+        LedPainter::drawStepIndex(leds, sequence.indexedDivisor());
+        break;
+    case NoteSequenceSetupListModel::FirstStep:
+        LedPainter::drawStepIndex(leds, sequence.firstStep());
+        break;
+    case NoteSequenceSetupListModel::LastStep:
+        LedPainter::drawStepIndex(leds, sequence.lastStep());
+        break;
+    }
+}
+
+void NoteSequenceSetupPage::keyPress(KeyPressEvent &event) {
+    const auto &key = event.key();
+
+    auto &sequence = _project.selectedSequence().noteSequence();
+
+    if (key.pageModifier()) {
+        return;
+    }
+
+    if (key.isStep()) {
+        int step = key.step();
+        switch (_selectedRow) {
+        case NoteSequenceSetupListModel::Scale:
+            sequence.setScale(step);
+            break;
+        case NoteSequenceSetupListModel::Divisor:
+            sequence.setIndexedDivisor(step);
+            break;
+        }
+        event.consume();
+    }
+
+    if (!event.consumed()) {
+        ListPage::keyPress(event);
+    }
 }

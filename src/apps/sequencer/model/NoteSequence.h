@@ -142,6 +142,14 @@ public:
         _divisor = clamp(divisor, 1, 192);
     }
 
+    int indexedDivisor() const { return ModelUtils::divisorToIndex(divisor()); }
+    void setIndexedDivisor(int index) {
+        int divisor = ModelUtils::indexToDivisor(index);
+        if (divisor > 0) {
+            setDivisor(divisor);
+        }
+    }
+
     void editDivisor(int value, bool shift) {
         setDivisor(ModelUtils::adjustedByDivisor(divisor(), value, shift));
     }
