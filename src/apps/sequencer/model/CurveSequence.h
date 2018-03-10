@@ -29,20 +29,27 @@ public:
         // shape
 
         int shape() const { return _shape; }
-        void setShape(int shape) { _shape = clamp(shape, 0, int(Curve::Last)); }
+        void setShape(int shape) {
+            _shape = clamp(shape, 0, int(Curve::Last));
+        }
 
         // min
 
         int min() const { return _min; }
-        void setMin(int min) { _min = min; }
+        void setMin(int min) {
+            _min = min;
+            _max = std::max(_max, _min);
+        }
         float minNormalized() const { return float(_min) / CurveSequence::Min::Max; }
 
         // max
 
         int max() const { return _max; }
-        void setMax(int max) { _max = max; }
+        void setMax(int max) {
+            _max = max;
+            _min = std::min(_min, _max);
+        }
         float maxNormalized() const { return float(_max) / CurveSequence::Max::Max; }
-
 
         void clear();
 
