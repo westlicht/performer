@@ -10,6 +10,16 @@
 
 class NoteSequenceSetupListModel : public ListModel {
 public:
+    enum Item {
+        Scale,
+        Divisor,
+        ResetMeasure,
+        PlayMode,
+        FirstStep,
+        LastStep,
+        Last
+    };
+
     NoteSequenceSetupListModel()
     {}
 
@@ -40,16 +50,6 @@ public:
     }
 
 private:
-    enum Item {
-        Scale,
-        Divisor,
-        ResetMeasure,
-        PlayMode,
-        FirstStep,
-        LastStep,
-        Last
-    };
-
     static const char *itemName(Item item) {
         switch (item) {
         case Scale:             return "Scale";
