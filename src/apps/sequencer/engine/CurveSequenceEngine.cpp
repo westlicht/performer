@@ -57,6 +57,10 @@ void CurveSequenceEngine::setSequence(const Sequence &sequence) {
     _sequence = &sequence.curveSequence();
 }
 
+void CurveSequenceEngine::setSwing(int swing) {
+
+}
+
 void CurveSequenceEngine::setMute(bool mute) {
     _mute = mute;
 }

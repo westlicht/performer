@@ -46,6 +46,10 @@ void TrackEngine::tick(uint32_t tick) {
     _sequenceEngine->tick(tick);
 }
 
+void TrackEngine::setSwing(int swing) {
+    _sequenceEngine->setSwing(swing);
+}
+
 void TrackEngine::setMute(bool mute) {
     _mute = mute;
     _sequenceEngine->setMute(mute);

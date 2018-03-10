@@ -15,6 +15,7 @@ public:
     virtual void tick(uint32_t tick) = 0;
 
     virtual void setSequence(const Sequence &sequence) = 0;
+    virtual void setSwing(int swing) = 0;
     virtual void setMute(bool mute) = 0;
     virtual void setFill(bool fill) = 0;
 

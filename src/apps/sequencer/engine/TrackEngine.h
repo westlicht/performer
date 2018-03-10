@@ -24,6 +24,8 @@ public:
 
     void tick(uint32_t tick);
 
+    void setSwing(int swing);
+
     bool mute() const { return _mute; }
     void setMute(bool mute);
 

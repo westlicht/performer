@@ -64,7 +64,7 @@ public:
 
     int swing() const { return _swing; }
     void setSwing(int swing) {
-        _swing = clamp(swing, 50, 99);
+        _swing = clamp(swing, 50, 75);
     }
 
     void editSwing(int value, bool shift) {

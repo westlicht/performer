@@ -1,6 +1,7 @@
 #include "NoteSequenceEngine.h"
 
 #include "Scale.h"
+#include "Groove.h"
 
 #include "core/Debug.h"
 #include "core/utils/Random.h"
@@ -34,6 +35,7 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale) {
     return scale.noteVolts(step.note());
 }
 
+
 void NoteSequenceEngine::setup(const TrackSetup &trackSetup) {
     reset();
 }
@@ -56,12 +58,12 @@ void NoteSequenceEngine::tick(uint32_t tick) {
         advance();
         const auto &step = sequence.step(_currentStep);
         if (evalStepGate(step) || _fill) {
-            _gateQueue.push({ tick, true });
-            _gateQueue.push({ tick + (divisor * evalStepLength(step)) / NoteSequence::Length::Range, false });
-        }
+            _gateQueue.push({ applySwing(tick), true });
+            _gateQueue.push({ applySwing(tick + (divisor * evalStepLength(step)) / NoteSequence::Length::Range), false });
 
-        const auto &scale = Scale::get(sequence.scale());
-        _cvOutput = evalStepNote(step, scale);
+            const auto &scale = Scale::get(sequence.scale());
+            _cvQueue.push({ applySwing(tick), evalStepNote(step, scale) });
+        }
     }
 
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
@@ -69,10 +71,19 @@ void NoteSequenceEngine::tick(uint32_t tick) {
         _gateOutput = !_mute && _gate;
         _gateQueue.pop();
     }
+
+    while (!_cvQueue.empty() && tick >= _cvQueue.front().tick) {
+        _cvOutput = _cvQueue.front().cv;
+        _cvQueue.pop();
+    }
 }
 
 void NoteSequenceEngine::setSequence(const Sequence &sequence) {
     _sequence = &sequence.noteSequence();
+}
+
+void NoteSequenceEngine::setSwing(int swing) {
+    _swing = swing;
 }
 
 void NoteSequenceEngine::setMute(bool mute) {
@@ -143,4 +154,8 @@ void NoteSequenceEngine::advance() {
             break;
         }
     }
+}
+
+uint32_t NoteSequenceEngine::applySwing(uint32_t tick) {
+    return Groove::swing(tick, CONFIG_PPQN / 4, _swing);
 }

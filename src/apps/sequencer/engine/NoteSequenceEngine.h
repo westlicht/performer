@@ -2,6 +2,7 @@
 
 #include "SequenceEngine.h"
 #include "SortedQueue.h"
+#include "Groove.h"
 
 #include "model/TrackSetup.h"
 #include "model/Sequence.h"
@@ -14,6 +15,7 @@ public:
     virtual void tick(uint32_t tick) override;
 
     virtual void setSequence(const Sequence &sequence) override;
+    virtual void setSwing(int swing) override;
     virtual void setMute(bool mute) override;
     virtual void setFill(bool fill) override;
 
@@ -29,8 +31,11 @@ public:
 private:
     void advance();
 
+    uint32_t applySwing(uint32_t tick);
+
     const NoteSequence *_sequence;
 
+    uint8_t _swing;
     bool _mute;
     bool _fill;
     bool _gate;
@@ -38,6 +43,7 @@ private:
     float _cvOutput;
     int _currentStep;
     int8_t _direction;
+
 
     struct Gate {
         uint32_t tick;
@@ -51,4 +57,17 @@ private:
     };
 
     SortedQueue<Gate, 16, GateCompare> _gateQueue;
+
+    struct CV {
+        uint32_t tick;
+        float cv;
+    };
+
+    struct CVCompare {
+        bool operator()(const CV &a, const CV &b) {
+            return a.tick < b.tick;;
+        }
+    };
+
+    SortedQueue<CV, 16, CVCompare> _cvQueue;
 };

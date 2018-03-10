@@ -13,6 +13,7 @@ public:
     virtual void tick(uint32_t tick) override;
 
     virtual void setSequence(const Sequence &sequence) override;
+    virtual void setSwing(int swing) override;
     virtual void setMute(bool mute) override;
     virtual void setFill(bool fill) override;
 

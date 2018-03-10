@@ -89,6 +89,7 @@ void Engine::update() {
 
         for (size_t i = 0; i < _trackEngines.size(); ++i) {
             auto &trackEngine = _trackEngines[i];
+            trackEngine.setSwing(_model.project().swing());
             trackEngine.tick(tick);
             _gateOutput.setGate(i, trackEngine.gateOutput());
             _cvOutput.setChannel(i, trackEngine.cvOutput());
