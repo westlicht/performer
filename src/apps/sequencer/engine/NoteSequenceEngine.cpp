@@ -60,7 +60,12 @@ void NoteSequenceEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
 
-    const uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+    uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+    uint32_t measureDivisor = (sequence.resetMeasure() * CONFIG_PPQN * 4);
+
+    if (measureDivisor != 0 && tick % measureDivisor == 0) {
+        reset();
+    }
 
     if (tick % divisor == 0) {
         advance();
