@@ -1,5 +1,19 @@
 #include "SequencePainter.h"
 
+void SequencePainter::drawRetrigger(Canvas &canvas, int x, int y, int w, int h, int retrigger, int maxRetrigger) {
+    canvas.setBlendMode(BlendMode::Set);
+
+    int bw = w / maxRetrigger;
+    x += (w - bw * retrigger) / 2;
+
+    canvas.setColor(0xf);
+
+    for (int i = 0; i < retrigger; ++i) {
+        canvas.fillRect(x, y, bw / 2, h);
+        x += bw;
+    }
+}
+
 void SequencePainter::drawProbability(Canvas &canvas, int x, int y, int w, int h, int probability, int maxProbability) {
     canvas.setBlendMode(BlendMode::Set);
 

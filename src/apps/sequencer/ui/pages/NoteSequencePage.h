@@ -23,6 +23,8 @@ private:
     enum class Mode : uint8_t {
         Gate,
         GateVariation,
+        Retrigger,
+        RetriggerVariation,
         Length,
         LengthVariation,
         Note,
@@ -32,13 +34,15 @@ private:
 
     static const char *modeName(Mode mode) {
         switch (mode) {
-        case Mode::Gate:            return "GATE"; break;
-        case Mode::GateVariation:   return "GATE VAR"; break;
-        case Mode::Length:          return "LENGTH"; break;
-        case Mode::LengthVariation: return "LENGTH VAR"; break;
-        case Mode::Note:            return "NOTE"; break;
-        case Mode::NoteVariation:   return "NOTE VAR"; break;
-        case Mode::TrigCondition:   return "COND"; break;
+        case Mode::Gate:                return "GATE"; break;
+        case Mode::GateVariation:       return "GATE VAR"; break;
+        case Mode::Retrigger:           return "RETRIG"; break;
+        case Mode::RetriggerVariation:  return "RETRIG VAR"; break;
+        case Mode::Length:              return "LENGTH"; break;
+        case Mode::LengthVariation:     return "LENGTH VAR"; break;
+        case Mode::Note:                return "NOTE"; break;
+        case Mode::NoteVariation:       return "NOTE VAR"; break;
+        case Mode::TrigCondition:       return "COND"; break;
         }
         return nullptr;
     }

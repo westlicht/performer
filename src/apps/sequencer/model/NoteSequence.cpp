@@ -4,6 +4,8 @@
 
 void NoteSequence::Step::clear() {
     setGate(false);
+    setRetrigger(0);
+    setRetriggerProbability(RetriggerProbability::Max);
     setGateProbability(GateProbability::Max);
     setLength(Length::Max / 2);
     setLengthVariationRange(0);
@@ -14,6 +16,7 @@ void NoteSequence::Step::clear() {
 void NoteSequence::Step::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_data0.raw);
+    writer.write(_data1.raw);
 
 #if 0
     bool gateValue = gate();
@@ -45,6 +48,7 @@ void NoteSequence::Step::write(WriteContext &context) const {
 void NoteSequence::Step::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_data0.raw);
+    reader.read(_data1.raw);
 
 #if 0
     bool gateValue;

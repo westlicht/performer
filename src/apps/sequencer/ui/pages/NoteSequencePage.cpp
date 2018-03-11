@@ -12,9 +12,10 @@
 
 enum class Function {
     Gate        = 0,
-    Length      = 1,
-    Index       = 2,
-    Condition   = 3,
+    Retrigger   = 1,
+    Length      = 2,
+    Note        = 3,
+    Condition   = 4,
 };
 
 static const char *functionNames[] = { "GATE", "LENGTH", "INDEX", "COND", nullptr };
@@ -52,11 +53,6 @@ void NoteSequencePage::draw(Canvas &canvas) {
 
     bool drawStepIndices = true;
     bool drawSelectedSteps = true;
-    bool drawGateProbabilities = _mode == Mode::GateVariation;
-    bool drawLengths = _mode == Mode::Length;
-    bool drawLengthVariations = _mode == Mode::LengthVariation;
-    bool drawNotes = _mode == Mode::Note;
-    // bool drawLengthProbabilities = _mode == Mode::LengthVariation;
 
     canvas.setBlendMode(BlendMode::Set);
 
@@ -67,7 +63,8 @@ void NoteSequencePage::draw(Canvas &canvas) {
         int x = i * 16;
         int y = 20;
 
-        if (drawStepIndices) {
+        // step index
+        {
             canvas.setColor(0x7);
             if (drawSelectedSteps && _stepSelection[stepIndex]) {
                 canvas.setColor(0xf);
@@ -76,6 +73,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
             canvas.drawText(x + (16 - canvas.textWidth(str)) / 2, y - 2, str);
         }
 
+        // step gate
         canvas.setColor(stepIndex == currentStep ? 0xf : 0x7);
         canvas.drawRect(x + 2, y + 2, 16 - 4, 16 - 4);
         if (step.gate()) {
@@ -83,7 +81,8 @@ void NoteSequencePage::draw(Canvas &canvas) {
             canvas.fillRect(x + 4, y + 4, 16 - 8, 16 - 8);
         }
 
-        if (drawGateProbabilities) {
+        // gate variation
+        if (_mode == Mode::GateVariation) {
             SequencePainter::drawProbability(
                 canvas,
                 x + 2, y + 18, 16 - 4, 2,
@@ -91,7 +90,29 @@ void NoteSequencePage::draw(Canvas &canvas) {
             );
         }
 
-        if (drawLengths) {
+        // retrigger
+        if (_mode == Mode::Retrigger) {
+            SequencePainter::drawRetrigger(
+                canvas,
+                x, y + 18, 16, 2,
+                step.retrigger() + 1, NoteSequence::Retrigger::Range
+            );
+            // canvas.setColor(0xf);
+            // FixedStringBuilder<8> str("%d", step.retrigger() + 1);
+            // canvas.drawText(x + (16 - canvas.textWidth(str)) / 2, y + 20, str);
+        }
+
+        // retrigger variation
+        if (_mode == Mode::RetriggerVariation) {
+            SequencePainter::drawProbability(
+                canvas,
+                x + 2, y + 18, 16 - 4, 2,
+                step.retriggerProbability() + 1, NoteSequence::RetriggerProbability::Range
+            );
+        }
+
+        // gate length
+        if (_mode == Mode::Length) {
             SequencePainter::drawLength(
                 canvas,
                 x + 2, y + 18, 16 - 4, 6,
@@ -99,7 +120,8 @@ void NoteSequencePage::draw(Canvas &canvas) {
             );
         }
 
-        if (drawLengthVariations) {
+        // gate length variation
+        if (_mode == Mode::LengthVariation) {
             SequencePainter::drawLengthRange(
                 canvas,
                 x + 2, y + 18, 16 - 4, 6,
@@ -112,7 +134,8 @@ void NoteSequencePage::draw(Canvas &canvas) {
             );
         }
 
-        if (drawNotes) {
+        // note
+        if (_mode == Mode::Note) {
             canvas.setColor(0xf);
             FixedStringBuilder<8> str;
             scale.shortName(step.note(), 0, str);
@@ -178,10 +201,13 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
         case Function::Gate:
             _mode = _mode == Mode::Gate ? Mode::GateVariation : Mode::Gate;
             break;
+        case Function::Retrigger:
+            _mode = _mode == Mode::Retrigger ? Mode::RetriggerVariation : Mode::Retrigger;
+            break;
         case Function::Length:
             _mode = _mode == Mode::Length ? Mode::LengthVariation : Mode::Length;
             break;
-        case Function::Index:
+        case Function::Note:
             _mode = _mode == Mode::Note ? Mode::NoteVariation : Mode::Note;
             break;
         case Function::Condition:
@@ -226,6 +252,12 @@ void NoteSequencePage::encoder(EncoderEvent &event) {
                 break;
             case Mode::GateVariation:
                 step.setGateProbability(NoteSequence::GateProbability::clamp(step.gateProbability() + event.value()));
+                break;
+            case Mode::Retrigger:
+                step.setRetrigger(NoteSequence::Retrigger::clamp(step.retrigger() + event.value()));
+                break;
+            case Mode::RetriggerVariation:
+                step.setRetriggerProbability(NoteSequence::RetriggerProbability::clamp(step.retriggerProbability() + event.value()));
                 break;
             case Mode::Length:
                 step.setLength(NoteSequence::Length::clamp(step.length() + event.value()));
@@ -278,6 +310,28 @@ void NoteSequencePage::drawDetail(Canvas &canvas, const NoteSequence::Step &step
         );
         str.reset();
         str("%.1f%%", 100.f * (step.gateProbability() + 1.f) / NoteSequence::GateProbability::Range);
+        canvas.setColor(0xf);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+    case Mode::Retrigger:
+        SequencePainter::drawRetrigger(
+            canvas,
+            64+ 32 + 8, 32 - 4, 64 - 16, 8,
+            step.retrigger() + 1, NoteSequence::Retrigger::Range
+        );
+        str.reset();
+        str("%d", step.retrigger() + 1);
+        canvas.setColor(0xf);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+    case Mode::RetriggerVariation:
+        SequencePainter::drawProbability(
+            canvas,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
+            step.retriggerProbability() + 1, NoteSequence::RetriggerProbability::Range
+        );
+        str.reset();
+        str("%.1f%%", 100.f * (step.retriggerProbability() + 1.f) / NoteSequence::RetriggerProbability::Range);
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;

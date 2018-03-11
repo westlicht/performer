@@ -21,6 +21,8 @@ public:
     //----------------------------------------
 
     typedef UnsignedValue<3> GateProbability;
+    typedef UnsignedValue<3> Retrigger;
+    typedef UnsignedValue<3> RetriggerProbability;
     typedef UnsignedValue<3> Length;
     typedef SignedValue<4> LengthVariationRange;
     typedef UnsignedValue<3> LengthVariationProbability;
@@ -40,6 +42,16 @@ public:
 
         int gateProbability() const { return _data0.gateProbability; }
         void setGateProbability(int gateProbability) { _data0.gateProbability = gateProbability; }
+
+        // retrigger
+
+        int retrigger() const { return _data1.retrigger; }
+        void setRetrigger(int retrigger) { _data1.retrigger = retrigger; }
+
+        // retriggerProbability
+
+        int retriggerProbability() const { return _data1.retriggerProbability; }
+        void setRetriggerProbability(int retriggerProbability) { _data1.retriggerProbability = retriggerProbability; }
 
         // length
 
@@ -90,7 +102,12 @@ public:
             BitField<28, NoteVariationProbability::Bits> noteVariationProbability;
             // 1 bit left
         } _data0;
-        uint16_t _data1;
+        union {
+            uint16_t raw;
+            BitField<0, Retrigger::Bits> retrigger;
+            BitField<3, RetriggerProbability::Bits> retriggerProbability;
+            // 10 bit left
+        } _data1;
     };
 
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;

@@ -16,6 +16,14 @@ static bool evalStepGate(const NoteSequence::Step &step) {
          int(rng.nextRange(NoteSequence::GateProbability::Range)) <= step.gateProbability());
 }
 
+// evaluate step retrigger count
+static int evalStepRetrigger(const NoteSequence::Step &step) {
+    return
+        (step.retriggerProbability() == NoteSequence::RetriggerProbability::Max ||
+         int(rng.nextRange(NoteSequence::RetriggerProbability::Range)) <= step.retriggerProbability()) ?
+         step.retrigger() + 1 : 1;
+}
+
 // evaluate step length
 static int evalStepLength(const NoteSequence::Step &step) {
     int length = step.length() + 1;
@@ -58,8 +66,20 @@ void NoteSequenceEngine::tick(uint32_t tick) {
         advance();
         const auto &step = sequence.step(_currentStep);
         if (evalStepGate(step) || _fill) {
-            _gateQueue.push({ applySwing(tick), true });
-            _gateQueue.push({ applySwing(tick + (divisor * evalStepLength(step)) / NoteSequence::Length::Range), false });
+            uint32_t stepLength = (divisor * evalStepLength(step)) / NoteSequence::Length::Range;
+            int stepRetrigger = evalStepRetrigger(step);
+            if (stepRetrigger > 1) {
+                uint32_t retriggerLength = divisor / stepRetrigger;
+                uint32_t stepOffset = 0;
+                while (stepRetrigger-- > 0 && stepOffset <= stepLength) {
+                    _gateQueue.push({ applySwing(tick + stepOffset), true });
+                    _gateQueue.push({ applySwing(tick + stepOffset + retriggerLength / 2), false });
+                    stepOffset += retriggerLength;
+                }
+            } else {
+                _gateQueue.push({ applySwing(tick), true });
+                _gateQueue.push({ applySwing(tick + stepLength), false });
+            }
 
             const auto &scale = Scale::get(sequence.scale());
             _cvQueue.push({ applySwing(tick), evalStepNote(step, scale) });
