@@ -45,6 +45,7 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale) {
 
 
 void NoteSequenceEngine::setup(const TrackSetup &trackSetup) {
+    _trackSetup = &trackSetup;
     reset();
 }
 
@@ -68,7 +69,7 @@ void NoteSequenceEngine::tick(uint32_t tick) {
     }
 
     if (tick % divisor == 0) {
-        advance();
+        advance(tick / divisor);
         const auto &step = sequence.step(_currentStep);
         if (evalStepGate(step) || _fill) {
             uint32_t stepLength = (divisor * evalStepLength(step)) / NoteSequence::Length::Range;
@@ -119,7 +120,20 @@ void NoteSequenceEngine::setFill(bool fill) {
     _fill = fill;
 }
 
-void NoteSequenceEngine::advance() {
+void NoteSequenceEngine::advance(int step) {
+    switch (_trackSetup->playMode()) {
+    case TrackSetup::PlayMode::Free:
+        advanceFree();
+        break;
+    case TrackSetup::PlayMode::Aligned:
+        advanceAligned(step);
+        break;
+    case TrackSetup::PlayMode::Last:
+        break;
+    }
+}
+
+void NoteSequenceEngine::advanceFree() {
     const auto &sequence = *_sequence;
 
     auto playMode = sequence.playMode();
@@ -178,6 +192,38 @@ void NoteSequenceEngine::advance() {
         case NoteSequence::PlayMode::Last:
             break;
         }
+    }
+}
+
+void NoteSequenceEngine::advanceAligned(int step) {
+    const auto &sequence = *_sequence;
+
+    auto playMode = sequence.playMode();
+    int firstStep = sequence.firstStep();
+    int lastStep = sequence.lastStep();
+    int stepCount = lastStep - firstStep + 1;
+    ASSERT(firstStep <= lastStep, "invalid first/last step");
+
+    switch (playMode) {
+    case NoteSequence::PlayMode::Forward:
+        _currentStep = firstStep + step % stepCount;
+        break;
+    case NoteSequence::PlayMode::PingPong:
+        step %= 2 * stepCount - 2;
+        _currentStep = (step < stepCount) ? (firstStep + step) : (lastStep - (step - stepCount) - 1);
+        break;
+    case NoteSequence::PlayMode::Pendulum:
+        step %= 2 * stepCount;
+        _currentStep = (step < stepCount) ? (firstStep + step) : (lastStep - (step - stepCount));
+        break;
+    case NoteSequence::PlayMode::Backward:
+        _currentStep = lastStep - step % stepCount;
+        break;
+    case NoteSequence::PlayMode::Random:
+        _currentStep = firstStep + rng.nextRange(stepCount);
+        break;
+    case NoteSequence::PlayMode::Last:
+        break;
     }
 }
 

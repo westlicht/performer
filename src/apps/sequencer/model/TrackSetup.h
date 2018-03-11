@@ -18,15 +18,15 @@ public:
     //----------------------------------------
 
     enum class PlayMode : uint8_t {
-        Loose,
-        Rigid,
+        Free,
+        Aligned,
         Last
     };
 
     static const char *playModeName(PlayMode playMode) {
         switch (playMode) {
-        case PlayMode::Loose:   return "Loose";
-        case PlayMode::Rigid:   return "Rigid";
+        case PlayMode::Free:    return "Free";
+        case PlayMode::Aligned: return "Aligned";
         case PlayMode::Last:    break;
         }
         return nullptr;

@@ -29,10 +29,13 @@ public:
     int currentStep() const { return _currentStep; }
 
 private:
-    void advance();
+    void advance(int step);
+    void advanceFree();
+    void advanceAligned(int step);
 
     uint32_t applySwing(uint32_t tick);
 
+    const TrackSetup *_trackSetup;
     const NoteSequence *_sequence;
 
     uint8_t _swing;

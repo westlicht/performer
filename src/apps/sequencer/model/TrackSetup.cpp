@@ -2,7 +2,7 @@
 
 void TrackSetup::clear() {
     _trackMode = Types::TrackMode::Default;
-    _playMode = PlayMode::Loose;
+    _playMode = PlayMode::Free;
     _fillMode = FillMode::None;
     _linkTrack = -1;
 }
