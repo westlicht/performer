@@ -34,9 +34,12 @@ private:
 
         // aux modes
         Monitor         = 23,
+
+        Last,
     };
 
     void setMode(Mode mode);
+    void switchMode(int direction);
     void setMainPage(Page &page);
 
     bool isSequencePage();

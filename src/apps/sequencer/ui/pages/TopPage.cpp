@@ -44,10 +44,21 @@ void TopPage::keyPress(KeyPressEvent &event) {
         } else if (isSequenceSetupPage()) {
             setSequenceSetupPage();
         }
+        event.consume();
+    }
+
+    if (key.pageModifier() && key.is(Key::Left)) {
+        switchMode(-1);
+        event.consume();
+    }
+    if (key.pageModifier() && key.is(Key::Right)) {
+        switchMode(1);
+        event.consume();
     }
 
     if (key.isPageSelect()) {
         setMode(Mode(key.pageSelect()));
+        event.consume();
     }
 
     if (key.is(Key::Start)) {
@@ -127,6 +138,16 @@ void TopPage::setMode(Mode mode) {
         return;
     }
     _mode = mode;
+}
+
+void TopPage::switchMode(int direction) {
+    int newMode = _mode;
+    while ((direction > 0 && ++newMode < int(Mode::Last)) || (direction < 0 && --newMode >= 0)) {
+        setMode(Mode(newMode));
+        if (_mode == Mode(newMode)) {
+            break;
+        }
+    }
 }
 
 void TopPage::setMainPage(Page &page) {
