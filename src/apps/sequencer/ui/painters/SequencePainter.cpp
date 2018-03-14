@@ -1,5 +1,25 @@
 #include "SequencePainter.h"
 
+void SequencePainter::drawLoopStart(Canvas &canvas, int x, int y, int w, int h) {
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+
+    y += h / 2;
+    canvas.vline(x, y - 1, 3);
+    canvas.point(x + 1, y);
+}
+
+void SequencePainter::drawLoopEnd(Canvas &canvas, int x, int y, int w, int h) {
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+
+    x += w - 1;
+    y += h / 2;
+    canvas.vline(x, y - 1, 3);
+    canvas.point(x - 1, y);
+}
+
+
 void SequencePainter::drawRetrigger(Canvas &canvas, int x, int y, int w, int h, int retrigger, int maxRetrigger) {
     canvas.setBlendMode(BlendMode::Set);
 

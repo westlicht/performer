@@ -51,41 +51,42 @@ void NoteSequencePage::draw(Canvas &canvas) {
 
     const auto &scale = Scale::get(sequence.scale());
 
-    bool drawStepIndices = true;
-    bool drawSelectedSteps = true;
+    const int stepCount = 16;
+    const int stepWidth = 256 / stepCount;
+    const int stepOffset = this->stepOffset();
 
     canvas.setBlendMode(BlendMode::Set);
 
-    for (int i = 0; i < 16; ++i) {
-        int stepIndex = stepOffset() + i;
+    SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, 12, stepWidth - 2, 8);
+    SequencePainter::drawLoopEnd(canvas, (sequence.lastStep()  - stepOffset)* stepWidth + 1, 12, stepWidth - 2, 8);
+
+    for (int i = 0; i < stepCount; ++i) {
+        int stepIndex = stepOffset + i;
         const auto &step = sequence.step(stepIndex);
 
-        int x = i * 16;
+        int x = i * stepWidth;
         int y = 20;
 
         // step index
         {
-            canvas.setColor(0x7);
-            if (drawSelectedSteps && _stepSelection[stepIndex]) {
-                canvas.setColor(0xf);
-            }
+            canvas.setColor(_stepSelection[stepIndex] ? 0xf : 0x7);
             FixedStringBuilder<8> str("%d", stepIndex + 1);
-            canvas.drawText(x + (16 - canvas.textWidth(str)) / 2, y - 2, str);
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str)) / 2, y - 2, str);
         }
 
         // step gate
         canvas.setColor(stepIndex == currentStep ? 0xf : 0x7);
-        canvas.drawRect(x + 2, y + 2, 16 - 4, 16 - 4);
+        canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
             canvas.setColor(0xf);
-            canvas.fillRect(x + 4, y + 4, 16 - 8, 16 - 8);
+            canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
         }
 
         // gate variation
         if (_mode == Mode::GateVariation) {
             SequencePainter::drawProbability(
                 canvas,
-                x + 2, y + 18, 16 - 4, 2,
+                x + 2, y + 18, stepWidth - 4, 2,
                 step.gateProbability() + 1, NoteSequence::GateProbability::Range
             );
         }
@@ -94,7 +95,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
         if (_mode == Mode::Retrigger) {
             SequencePainter::drawRetrigger(
                 canvas,
-                x, y + 18, 16, 2,
+                x, y + 18, stepWidth, 2,
                 step.retrigger() + 1, NoteSequence::Retrigger::Range
             );
             // canvas.setColor(0xf);
@@ -106,7 +107,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
         if (_mode == Mode::RetriggerVariation) {
             SequencePainter::drawProbability(
                 canvas,
-                x + 2, y + 18, 16 - 4, 2,
+                x + 2, y + 18, stepWidth - 4, 2,
                 step.retriggerProbability() + 1, NoteSequence::RetriggerProbability::Range
             );
         }
@@ -115,7 +116,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
         if (_mode == Mode::Length) {
             SequencePainter::drawLength(
                 canvas,
-                x + 2, y + 18, 16 - 4, 6,
+                x + 2, y + 18, stepWidth - 4, 6,
                 step.length() + 1, NoteSequence::Length::Range
             );
         }
@@ -124,12 +125,12 @@ void NoteSequencePage::draw(Canvas &canvas) {
         if (_mode == Mode::LengthVariation) {
             SequencePainter::drawLengthRange(
                 canvas,
-                x + 2, y + 18, 16 - 4, 6,
+                x + 2, y + 18, stepWidth - 4, 6,
                 step.length() + 1, step.lengthVariationRange(), NoteSequence::Length::Range
             );
             SequencePainter::drawProbability(
                 canvas,
-                x + 2, y + 28, 16 - 4, 2,
+                x + 2, y + 28, stepWidth - 4, 2,
                 step.lengthVariationProbability(), NoteSequence::LengthVariationProbability::Max
             );
         }
