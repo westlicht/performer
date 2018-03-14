@@ -62,57 +62,79 @@ void CurveSequencePage::draw(Canvas &canvas) {
 
     canvas.setBlendMode(BlendMode::Add);
 
-    const int stepWidth = 32;
-    const int stepCount = Width / stepWidth;
+    const int stepWidth = Width / StepCount;
+    const int stepOffset = this->stepOffset();
+
+    const int loopY = 16;
+    const int curveY = 24;
+    const int curveHeight = 24;
+
+    SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
+    SequencePainter::drawLoopEnd(canvas, (sequence.lastStep()  - stepOffset)* stepWidth + 1, loopY, stepWidth - 2);
 
     // draw grid
     canvas.setColor(0x3);
-    for (int stepIndex = 1; stepIndex < stepCount; ++stepIndex) {
+    for (int stepIndex = 1; stepIndex < StepCount; ++stepIndex) {
         int x = stepIndex * stepWidth;
-        canvas.vline(x, 16, 32);
+        canvas.vline(x, curveY, curveHeight);
     }
 
     // draw curve
     canvas.setColor(0xf);
     float lastY = 0.f;
-    for (int stepIndex = 0; stepIndex < 16; ++stepIndex) {
+    for (int i = 0; i < StepCount; ++i) {
+        int stepIndex = stepOffset + i;
         const auto &step = sequence.step(stepIndex);
 
-        int x = stepIndex * stepWidth;
+        int x = i * stepWidth;
+        int y = 20;
 
-        bool selected = _stepSelection[stepIndex];
-        float min = step.minNormalized();
-        float max = step.maxNormalized();
-        const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
+        canvas.setBlendMode(BlendMode::Set);
 
-        if (selected) {
-            canvas.setColor(0x3);
-            canvas.fillRect(x + 2, 16 - 2, stepWidth - 3, 32 + 4);
+        // loop
+        if (stepIndex > sequence.firstStep() && stepIndex <= sequence.lastStep()) {
             canvas.setColor(0xf);
-        } else {
-            canvas.setBlendMode(BlendMode::Add);
+            canvas.point(x, loopY);
         }
 
-        drawCurve(canvas, x, 16, stepWidth, 32, lastY, function, min, max);
+        // step index
+        {
+            canvas.setColor(_stepSelection[stepIndex] ? 0xf : 0x7);
+            FixedStringBuilder<8> str("%d", stepIndex + 1);
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y - 2, str);
+        }
+
+        // curve
+        {
+            float min = step.minNormalized();
+            float max = step.maxNormalized();
+            const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
+
+            canvas.setColor(0xf);
+            canvas.setBlendMode(BlendMode::Add);
+
+            drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastY, function, min, max);
+        }
     }
 
     // draw cursor
     if (isActiveSequence) {
         canvas.setColor(0xf);
-        int x = (sequenceEngine.currentStep() + sequenceEngine.currentStepFraction()) * stepWidth;
+        int x = ((sequenceEngine.currentStep() - stepOffset) + sequenceEngine.currentStepFraction()) * stepWidth;
         canvas.vline(x, 16, 32);
     }
 }
 
 void CurveSequencePage::updateLeds(Leds &leds) {
+    LedPainter::drawSelectedSequencePage(leds, _page);
 }
 
 void CurveSequencePage::keyDown(KeyEvent &event) {
-    _stepSelection.keyDown(event, 0);
+    _stepSelection.keyDown(event, stepOffset());
 }
 
 void CurveSequencePage::keyUp(KeyEvent &event) {
-    _stepSelection.keyUp(event, 0);
+    _stepSelection.keyUp(event, stepOffset());
 }
 
 void CurveSequencePage::keyPress(KeyPressEvent &event) {
@@ -140,12 +162,20 @@ void CurveSequencePage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.shiftModifier() && key.is(Key::Left)) {
-        sequence.shift(-1);
+    if (key.is(Key::Left)) {
+        if (key.shiftModifier()) {
+            sequence.shift(-1);
+        } else {
+            _page = std::max(0, _page - 1);
+        }
         event.consume();
     }
-    if (key.shiftModifier() && key.is(Key::Right)) {
-        sequence.shift(1);
+    if (key.is(Key::Right)) {
+        if (key.shiftModifier()) {
+            sequence.shift(1);
+        } else {
+            _page = std::min(3, _page + 1);
+        }
         event.consume();
     }
 }
@@ -154,7 +184,7 @@ void CurveSequencePage::encoder(EncoderEvent &event) {
     auto &sequence = _project.selectedSequence().curveSequence();
 
     for (size_t i = 0; i < sequence.steps().size(); ++i) {
-        if (_stepSelection[i] || _keyState[Key::Shift]) {
+        if (_stepSelection[i]) {
             auto &step = sequence.step(i);
             switch (_mode) {
             case Mode::Shape:

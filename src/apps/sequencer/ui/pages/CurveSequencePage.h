@@ -20,6 +20,8 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    static const int StepCount = 16;
+
     enum class Mode : uint8_t {
         Shape,
         Min,
@@ -35,7 +37,10 @@ private:
         return nullptr;
     }
 
+    int stepOffset() const { return _page * StepCount; }
+
     Mode _mode = Mode::Shape;
+    int _page = 0;
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 };

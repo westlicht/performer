@@ -41,15 +41,12 @@ void CurveSequenceEngine::tick(uint32_t tick) {
 
     if (tick % divisor == 0) {
         advance();
-
-        // const auto &scale = Scale::get(sequence.scale());
-        // _cvOutput = evalStepNote(step, scale);
     }
 
     _currentStepFraction = float(tick % divisor) / divisor;
 
     float value = evalStepShape(sequence.step(_currentStep), _currentStepFraction);
-    // value = _range[0] + value * (_range[1] - _range[0]);
+    value = _range[0] + value * (_range[1] - _range[0]);
     _cvOutput = value;
 }
 

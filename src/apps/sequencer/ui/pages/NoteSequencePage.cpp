@@ -51,27 +51,34 @@ void NoteSequencePage::draw(Canvas &canvas) {
 
     const auto &scale = Scale::get(sequence.scale());
 
-    const int stepCount = 16;
-    const int stepWidth = 256 / stepCount;
+    const int stepWidth = Width / StepCount;
     const int stepOffset = this->stepOffset();
+
+    const int loopY = 16;
 
     canvas.setBlendMode(BlendMode::Set);
 
-    SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, 12, stepWidth - 2, 8);
-    SequencePainter::drawLoopEnd(canvas, (sequence.lastStep()  - stepOffset)* stepWidth + 1, 12, stepWidth - 2, 8);
+    SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
+    SequencePainter::drawLoopEnd(canvas, (sequence.lastStep()  - stepOffset)* stepWidth + 1, loopY, stepWidth - 2);
 
-    for (int i = 0; i < stepCount; ++i) {
+    for (int i = 0; i < StepCount; ++i) {
         int stepIndex = stepOffset + i;
         const auto &step = sequence.step(stepIndex);
 
         int x = i * stepWidth;
         int y = 20;
 
+        // loop
+        if (stepIndex > sequence.firstStep() && stepIndex <= sequence.lastStep()) {
+            canvas.setColor(0xf);
+            canvas.point(x, loopY);
+        }
+
         // step index
         {
             canvas.setColor(_stepSelection[stepIndex] ? 0xf : 0x7);
             FixedStringBuilder<8> str("%d", stepIndex + 1);
-            canvas.drawText(x + (stepWidth - canvas.textWidth(str)) / 2, y - 2, str);
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y - 2, str);
         }
 
         // step gate

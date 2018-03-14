@@ -4,8 +4,8 @@
 
 class SequencePainter {
 public:
-    static void drawLoopStart(Canvas &canvas, int x, int y, int w, int h);
-    static void drawLoopEnd(Canvas &canvas, int x, int y, int w, int h);
+    static void drawLoopStart(Canvas &canvas, int x, int y, int w);
+    static void drawLoopEnd(Canvas &canvas, int x, int y, int w);
 
     static void drawRetrigger(Canvas &canvas, int x, int y, int w, int h, int retrigger, int maxRetrigger);
     static void drawProbability(Canvas &canvas, int x, int y, int w, int h, int probability, int maxProbability);

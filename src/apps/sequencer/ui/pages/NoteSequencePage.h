@@ -20,6 +20,8 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    static const int StepCount = 16;
+
     enum class Mode : uint8_t {
         Gate,
         GateVariation,
@@ -47,7 +49,7 @@ private:
         return nullptr;
     }
 
-    int stepOffset() const { return _page * 16; }
+    int stepOffset() const { return _page * StepCount; }
 
     void drawDetail(Canvas &canvas, const NoteSequence::Step &step);
 
