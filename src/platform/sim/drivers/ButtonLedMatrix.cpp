@@ -46,7 +46,7 @@ ButtonLedMatrix::ButtonLedMatrix() :
         SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA,
         SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,
         SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,
-        SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6, SDLK_LALT, SDLK_LSHIFT,
+        SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_LEFT, SDLK_RIGHT, SDLK_LALT, SDLK_LSHIFT,
         SDLK_F1, SDLK_F2, SDLK_F3, SDLK_F4, SDLK_F5
     });
 
