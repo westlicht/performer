@@ -161,10 +161,10 @@ void CurveSequencePage::encoder(EncoderEvent &event) {
                 step.setShape(CurveSequence::Shape::clamp(step.shape() + event.value()));
                 break;
             case Mode::Min:
-                step.setMin(CurveSequence::Min::clamp(step.min() + event.value() * (event.pressed() ? 8 : 1)));
+                step.setMin(CurveSequence::Min::clamp(step.min() + event.value() * (event.pressed() ? 1 : 8)));
                 break;
             case Mode::Max:
-                step.setMax(CurveSequence::Max::clamp(step.max() + event.value() * (event.pressed() ? 8 : 1)));
+                step.setMax(CurveSequence::Max::clamp(step.max() + event.value() * (event.pressed() ? 1 : 8)));
                 break;
             default:
                 break;
