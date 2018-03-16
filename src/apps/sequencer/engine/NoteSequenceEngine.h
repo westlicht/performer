@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SequenceEngine.h"
+#include "SequenceState.h"
 #include "SortedQueue.h"
 #include "Groove.h"
 
@@ -26,17 +27,15 @@ public:
     const NoteSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
 
-    int currentStep() const { return _currentStep; }
+    int currentStep() const { return _sequenceState.step(); }
 
 private:
-    void advance(int step);
-    void advanceFree();
-    void advanceAligned(int step);
-
     uint32_t applySwing(uint32_t tick);
 
     const TrackSetup *_trackSetup;
     const NoteSequence *_sequence;
+
+    SequenceState _sequenceState;
 
     uint8_t _swing;
     bool _mute;
@@ -44,9 +43,6 @@ private:
     bool _gate;
     bool _gateOutput;
     float _cvOutput;
-    int _currentStep;
-    int8_t _direction;
-
 
     struct Gate {
         uint32_t tick;

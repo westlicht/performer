@@ -12,6 +12,7 @@ set(sources
     engine/Engine.cpp
     engine/NoteSequenceEngine.cpp
     engine/Scale.cpp
+    engine/SequenceState.cpp
     engine/TrackEngine.cpp
     # engine/controllers
     engine/controllers/LaunchpadController.cpp

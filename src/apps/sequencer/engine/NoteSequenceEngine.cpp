@@ -50,8 +50,7 @@ void NoteSequenceEngine::setup(const TrackSetup &trackSetup) {
 }
 
 void NoteSequenceEngine::reset() {
-    _currentStep = -1;
-    _direction = 1;
+    _sequenceState.reset();
     _gate = false;
     _gateOutput = false;
     _gateQueue.clear();
@@ -69,8 +68,20 @@ void NoteSequenceEngine::tick(uint32_t tick) {
     }
 
     if (tick % divisor == 0) {
-        advance(tick / divisor);
-        const auto &step = sequence.step(_currentStep);
+        // advance sequence
+        switch (_trackSetup->playMode()) {
+        case TrackSetup::PlayMode::Free:
+            _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+            break;
+        case TrackSetup::PlayMode::Aligned:
+            _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+            break;
+        case TrackSetup::PlayMode::Last:
+            break;
+        }
+
+        const auto &step = sequence.step(_sequenceState.step());
+
         if (evalStepGate(step) || _fill) {
             uint32_t stepLength = (divisor * evalStepLength(step)) / NoteSequence::Length::Range;
             int stepRetrigger = evalStepRetrigger(step);
@@ -118,113 +129,6 @@ void NoteSequenceEngine::setMute(bool mute) {
 
 void NoteSequenceEngine::setFill(bool fill) {
     _fill = fill;
-}
-
-void NoteSequenceEngine::advance(int step) {
-    switch (_trackSetup->playMode()) {
-    case TrackSetup::PlayMode::Free:
-        advanceFree();
-        break;
-    case TrackSetup::PlayMode::Aligned:
-        advanceAligned(step);
-        break;
-    case TrackSetup::PlayMode::Last:
-        break;
-    }
-}
-
-void NoteSequenceEngine::advanceFree() {
-    const auto &sequence = *_sequence;
-
-    auto runMode = sequence.runMode();
-    int firstStep = sequence.firstStep();
-    int lastStep = sequence.lastStep();
-    ASSERT(firstStep <= lastStep, "invalid first/last step");
-
-    auto randomStep = [&] () {
-        return rng.nextRange(lastStep - firstStep + 1) + firstStep;
-    };
-
-    if (_currentStep == -1) {
-        // first step
-        switch (runMode) {
-        case Types::RunMode::Forward:
-        case Types::RunMode::PingPong:
-        case Types::RunMode::Pendulum:
-            _currentStep = firstStep;
-            break;
-        case Types::RunMode::Backward:
-            _currentStep = lastStep;
-            break;
-        case Types::RunMode::Random:
-            _currentStep = randomStep();
-            break;
-        case Types::RunMode::Last:
-            break;
-        }
-    } else {
-        // advance step
-        switch (runMode) {
-        case Types::RunMode::Forward:
-            _currentStep = _currentStep >= lastStep ? firstStep : _currentStep + 1;
-            break;
-        case Types::RunMode::Backward:
-            _currentStep = _currentStep <= firstStep ? lastStep : _currentStep - 1;
-            break;
-        case Types::RunMode::PingPong:
-        case Types::RunMode::Pendulum:
-            if (_direction > 0 && _currentStep >= lastStep) {
-                _direction = -1;
-            } else if (_direction < 0 && _currentStep <= firstStep) {
-                _direction = 1;
-            } else {
-                if (runMode == Types::RunMode::Pendulum) {
-                    _currentStep += _direction;
-                }
-            }
-            if (runMode == Types::RunMode::PingPong) {
-                _currentStep += _direction;
-            }
-            break;
-        case Types::RunMode::Random:
-            _currentStep = randomStep();
-            break;
-        case Types::RunMode::Last:
-            break;
-        }
-    }
-}
-
-void NoteSequenceEngine::advanceAligned(int step) {
-    const auto &sequence = *_sequence;
-
-    auto runMode = sequence.runMode();
-    int firstStep = sequence.firstStep();
-    int lastStep = sequence.lastStep();
-    int stepCount = lastStep - firstStep + 1;
-    ASSERT(firstStep <= lastStep, "invalid first/last step");
-
-    switch (runMode) {
-    case Types::RunMode::Forward:
-        _currentStep = firstStep + step % stepCount;
-        break;
-    case Types::RunMode::PingPong:
-        step %= 2 * stepCount - 2;
-        _currentStep = (step < stepCount) ? (firstStep + step) : (lastStep - (step - stepCount) - 1);
-        break;
-    case Types::RunMode::Pendulum:
-        step %= 2 * stepCount;
-        _currentStep = (step < stepCount) ? (firstStep + step) : (lastStep - (step - stepCount));
-        break;
-    case Types::RunMode::Backward:
-        _currentStep = lastStep - step % stepCount;
-        break;
-    case Types::RunMode::Random:
-        _currentStep = firstStep + rng.nextRange(stepCount);
-        break;
-    case Types::RunMode::Last:
-        break;
-    }
 }
 
 uint32_t NoteSequenceEngine::applySwing(uint32_t tick) {

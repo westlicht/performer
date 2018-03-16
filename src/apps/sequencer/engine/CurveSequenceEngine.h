@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SequenceEngine.h"
+#include "SequenceState.h"
 
 #include "model/TrackSetup.h"
 #include "model/Sequence.h"
@@ -24,19 +25,18 @@ public:
     const CurveSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const CurveSequence &sequence) const { return &sequence == _sequence; }
 
-    int currentStep() const { return _currentStep; }
-    float currentStepFraction() const { return _currentStepFraction; }
+    int currentStep() const { return _sequenceState.step(); }
+    float currentStepFraction() const { return _stepFraction; }
 
 private:
-    void advance();
-
+    const TrackSetup *_trackSetup;
     const CurveSequence *_sequence;
+
+    SequenceState _sequenceState;
+    float _stepFraction;
 
     bool _mute;
     float _cvOutput;
-    int _currentStep;
-    float _currentStepFraction;
-    int8_t _direction;
 
     CurveSequence::Range _lastRange;
     std::array<float, 2> _range;
