@@ -148,48 +148,48 @@ void NoteSequenceEngine::advanceFree() {
     if (_currentStep == -1) {
         // first step
         switch (playMode) {
-        case NoteSequence::PlayMode::Forward:
-        case NoteSequence::PlayMode::PingPong:
-        case NoteSequence::PlayMode::Pendulum:
+        case Types::PlayMode::Forward:
+        case Types::PlayMode::PingPong:
+        case Types::PlayMode::Pendulum:
             _currentStep = firstStep;
             break;
-        case NoteSequence::PlayMode::Backward:
+        case Types::PlayMode::Backward:
             _currentStep = lastStep;
             break;
-        case NoteSequence::PlayMode::Random:
+        case Types::PlayMode::Random:
             _currentStep = randomStep();
             break;
-        case NoteSequence::PlayMode::Last:
+        case Types::PlayMode::Last:
             break;
         }
     } else {
         // advance step
         switch (playMode) {
-        case NoteSequence::PlayMode::Forward:
+        case Types::PlayMode::Forward:
             _currentStep = _currentStep >= lastStep ? firstStep : _currentStep + 1;
             break;
-        case NoteSequence::PlayMode::Backward:
+        case Types::PlayMode::Backward:
             _currentStep = _currentStep <= firstStep ? lastStep : _currentStep - 1;
             break;
-        case NoteSequence::PlayMode::PingPong:
-        case NoteSequence::PlayMode::Pendulum:
+        case Types::PlayMode::PingPong:
+        case Types::PlayMode::Pendulum:
             if (_direction > 0 && _currentStep >= lastStep) {
                 _direction = -1;
             } else if (_direction < 0 && _currentStep <= firstStep) {
                 _direction = 1;
             } else {
-                if (playMode == NoteSequence::PlayMode::Pendulum) {
+                if (playMode == Types::PlayMode::Pendulum) {
                     _currentStep += _direction;
                 }
             }
-            if (playMode == NoteSequence::PlayMode::PingPong) {
+            if (playMode == Types::PlayMode::PingPong) {
                 _currentStep += _direction;
             }
             break;
-        case NoteSequence::PlayMode::Random:
+        case Types::PlayMode::Random:
             _currentStep = randomStep();
             break;
-        case NoteSequence::PlayMode::Last:
+        case Types::PlayMode::Last:
             break;
         }
     }
@@ -205,24 +205,24 @@ void NoteSequenceEngine::advanceAligned(int step) {
     ASSERT(firstStep <= lastStep, "invalid first/last step");
 
     switch (playMode) {
-    case NoteSequence::PlayMode::Forward:
+    case Types::PlayMode::Forward:
         _currentStep = firstStep + step % stepCount;
         break;
-    case NoteSequence::PlayMode::PingPong:
+    case Types::PlayMode::PingPong:
         step %= 2 * stepCount - 2;
         _currentStep = (step < stepCount) ? (firstStep + step) : (lastStep - (step - stepCount) - 1);
         break;
-    case NoteSequence::PlayMode::Pendulum:
+    case Types::PlayMode::Pendulum:
         step %= 2 * stepCount;
         _currentStep = (step < stepCount) ? (firstStep + step) : (lastStep - (step - stepCount));
         break;
-    case NoteSequence::PlayMode::Backward:
+    case Types::PlayMode::Backward:
         _currentStep = lastStep - step % stepCount;
         break;
-    case NoteSequence::PlayMode::Random:
+    case Types::PlayMode::Random:
         _currentStep = firstStep + rng.nextRange(stepCount);
         break;
-    case NoteSequence::PlayMode::Last:
+    case Types::PlayMode::Last:
         break;
     }
 }

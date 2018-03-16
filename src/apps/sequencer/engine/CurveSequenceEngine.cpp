@@ -81,48 +81,48 @@ void CurveSequenceEngine::advance() {
     if (_currentStep == -1) {
         // first step
         switch (playMode) {
-        case CurveSequence::PlayMode::Forward:
-        case CurveSequence::PlayMode::PingPong:
-        case CurveSequence::PlayMode::Pendulum:
+        case Types::PlayMode::Forward:
+        case Types::PlayMode::PingPong:
+        case Types::PlayMode::Pendulum:
             _currentStep = firstStep;
             break;
-        case CurveSequence::PlayMode::Backward:
+        case Types::PlayMode::Backward:
             _currentStep = lastStep;
             break;
-        case CurveSequence::PlayMode::Random:
+        case Types::PlayMode::Random:
             _currentStep = randomStep();
             break;
-        case CurveSequence::PlayMode::Last:
+        case Types::PlayMode::Last:
             break;
         }
     } else {
         // advance step
         switch (playMode) {
-        case CurveSequence::PlayMode::Forward:
+        case Types::PlayMode::Forward:
             _currentStep = _currentStep >= lastStep ? firstStep : _currentStep + 1;
             break;
-        case CurveSequence::PlayMode::Backward:
+        case Types::PlayMode::Backward:
             _currentStep = _currentStep <= firstStep ? lastStep : _currentStep - 1;
             break;
-        case CurveSequence::PlayMode::PingPong:
-        case CurveSequence::PlayMode::Pendulum:
+        case Types::PlayMode::PingPong:
+        case Types::PlayMode::Pendulum:
             if (_direction > 0 && _currentStep >= lastStep) {
                 _direction = -1;
             } else if (_direction < 0 && _currentStep <= firstStep) {
                 _direction = 1;
             } else {
-                if (playMode == CurveSequence::PlayMode::Pendulum) {
+                if (playMode == Types::PlayMode::Pendulum) {
                     _currentStep += _direction;
                 }
             }
-            if (playMode == CurveSequence::PlayMode::PingPong) {
+            if (playMode == Types::PlayMode::PingPong) {
                 _currentStep += _direction;
             }
             break;
-        case CurveSequence::PlayMode::Random:
+        case Types::PlayMode::Random:
             _currentStep = randomStep();
             break;
-        case CurveSequence::PlayMode::Last:
+        case Types::PlayMode::Last:
             break;
         }
     }

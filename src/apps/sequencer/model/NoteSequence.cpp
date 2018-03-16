@@ -89,7 +89,7 @@ void NoteSequence::clear() {
     setScale(0);
     setDivisor(12);
     setResetMeasure(0);
-    setPlayMode(PlayMode::Forward);
+    setPlayMode(Types::PlayMode::Forward);
     setFirstStep(0);
     setLastStep(CONFIG_STEP_COUNT - 1);
     for (auto &step : _steps) {

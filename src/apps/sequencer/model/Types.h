@@ -21,4 +21,26 @@ public:
         return nullptr;
     }
 
+    enum class PlayMode : uint8_t {
+        Forward,
+        Backward,
+        PingPong,
+        Pendulum,
+        Random,
+        Last
+    };
+
+    static const char *playModeName(PlayMode playMode) {
+        switch (playMode) {
+        case PlayMode::Forward:     return "Forward";
+        case PlayMode::Backward:    return "Backward";
+        case PlayMode::PingPong:    return "PingPong";
+        case PlayMode::Pendulum:    return "Pendulum";
+        case PlayMode::Random:      return "Random";
+        case PlayMode::Last:        break;
+        }
+        return nullptr;
+    }
+
+
 }; // namespace Types

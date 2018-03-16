@@ -4,6 +4,7 @@
 #include "Bitfield.h"
 #include "Serialize.h"
 #include "ModelUtils.h"
+#include "Types.h"
 
 #include "engine/Scale.h"
 
@@ -112,27 +113,6 @@ public:
 
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
 
-    enum class PlayMode : uint8_t {
-        Forward,
-        Backward,
-        PingPong,
-        Pendulum,
-        Random,
-        Last
-    };
-
-    static const char *playModeName(PlayMode playMode) {
-        switch (playMode) {
-        case PlayMode::Forward:     return "Forward";
-        case PlayMode::Backward:    return "Backward";
-        case PlayMode::PingPong:    return "PingPong";
-        case PlayMode::Pendulum:    return "Pendulum";
-        case PlayMode::Random:      return "Random";
-        case PlayMode::Last:        break;
-        }
-        return nullptr;
-    }
-
     //----------------------------------------
     // Properties
     //----------------------------------------
@@ -197,8 +177,8 @@ public:
 
     // playMode
 
-    PlayMode playMode() const { return _playMode; }
-    void setPlayMode(PlayMode playMode) {
+    Types::PlayMode playMode() const { return _playMode; }
+    void setPlayMode(Types::PlayMode playMode) {
         _playMode = playMode;
     }
 
@@ -207,7 +187,7 @@ public:
     }
 
     void printPlayMode(StringBuilder &str) const {
-        str(playModeName(playMode()));
+        str(Types::playModeName(playMode()));
     }
 
     // firstStep
@@ -266,7 +246,7 @@ private:
     uint8_t _scale;
     uint8_t _divisor;
     uint8_t _resetMeasure;
-    PlayMode _playMode;
+    Types::PlayMode _playMode;
     uint8_t _firstStep;
     uint8_t _lastStep;
     StepArray _steps;
