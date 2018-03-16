@@ -44,7 +44,7 @@ private:
         Range,
         Divisor,
         ResetMeasure,
-        PlayMode,
+        RunMode,
         FirstStep,
         LastStep,
         Last
@@ -55,7 +55,7 @@ private:
         case Range:             return "Range";
         case Divisor:           return "Divisor";
         case ResetMeasure:      return "Reset Measure";
-        case PlayMode:          return "Play Mode";
+        case RunMode:           return "Run Mode";
         case FirstStep:         return "First Step";
         case LastStep:          return "Last Step";
         case Last:              break;
@@ -78,8 +78,8 @@ private:
         case ResetMeasure:
             _sequence->printResetMeasure(str);
             break;
-        case PlayMode:
-            _sequence->printPlayMode(str);
+        case RunMode:
+            _sequence->printRunMode(str);
             break;
         case FirstStep:
             _sequence->printFirstStep(str);
@@ -103,8 +103,8 @@ private:
         case ResetMeasure:
             _sequence->editResetMeasure(value, shift);
             break;
-        case PlayMode:
-            _sequence->editPlayMode(value, shift);
+        case RunMode:
+            _sequence->editRunMode(value, shift);
             break;
         case FirstStep:
             _sequence->editFirstStep(value, shift);

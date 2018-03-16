@@ -136,7 +136,7 @@ void NoteSequenceEngine::advance(int step) {
 void NoteSequenceEngine::advanceFree() {
     const auto &sequence = *_sequence;
 
-    auto playMode = sequence.playMode();
+    auto runMode = sequence.runMode();
     int firstStep = sequence.firstStep();
     int lastStep = sequence.lastStep();
     ASSERT(firstStep <= lastStep, "invalid first/last step");
@@ -147,49 +147,49 @@ void NoteSequenceEngine::advanceFree() {
 
     if (_currentStep == -1) {
         // first step
-        switch (playMode) {
-        case Types::PlayMode::Forward:
-        case Types::PlayMode::PingPong:
-        case Types::PlayMode::Pendulum:
+        switch (runMode) {
+        case Types::RunMode::Forward:
+        case Types::RunMode::PingPong:
+        case Types::RunMode::Pendulum:
             _currentStep = firstStep;
             break;
-        case Types::PlayMode::Backward:
+        case Types::RunMode::Backward:
             _currentStep = lastStep;
             break;
-        case Types::PlayMode::Random:
+        case Types::RunMode::Random:
             _currentStep = randomStep();
             break;
-        case Types::PlayMode::Last:
+        case Types::RunMode::Last:
             break;
         }
     } else {
         // advance step
-        switch (playMode) {
-        case Types::PlayMode::Forward:
+        switch (runMode) {
+        case Types::RunMode::Forward:
             _currentStep = _currentStep >= lastStep ? firstStep : _currentStep + 1;
             break;
-        case Types::PlayMode::Backward:
+        case Types::RunMode::Backward:
             _currentStep = _currentStep <= firstStep ? lastStep : _currentStep - 1;
             break;
-        case Types::PlayMode::PingPong:
-        case Types::PlayMode::Pendulum:
+        case Types::RunMode::PingPong:
+        case Types::RunMode::Pendulum:
             if (_direction > 0 && _currentStep >= lastStep) {
                 _direction = -1;
             } else if (_direction < 0 && _currentStep <= firstStep) {
                 _direction = 1;
             } else {
-                if (playMode == Types::PlayMode::Pendulum) {
+                if (runMode == Types::RunMode::Pendulum) {
                     _currentStep += _direction;
                 }
             }
-            if (playMode == Types::PlayMode::PingPong) {
+            if (runMode == Types::RunMode::PingPong) {
                 _currentStep += _direction;
             }
             break;
-        case Types::PlayMode::Random:
+        case Types::RunMode::Random:
             _currentStep = randomStep();
             break;
-        case Types::PlayMode::Last:
+        case Types::RunMode::Last:
             break;
         }
     }
@@ -198,31 +198,31 @@ void NoteSequenceEngine::advanceFree() {
 void NoteSequenceEngine::advanceAligned(int step) {
     const auto &sequence = *_sequence;
 
-    auto playMode = sequence.playMode();
+    auto runMode = sequence.runMode();
     int firstStep = sequence.firstStep();
     int lastStep = sequence.lastStep();
     int stepCount = lastStep - firstStep + 1;
     ASSERT(firstStep <= lastStep, "invalid first/last step");
 
-    switch (playMode) {
-    case Types::PlayMode::Forward:
+    switch (runMode) {
+    case Types::RunMode::Forward:
         _currentStep = firstStep + step % stepCount;
         break;
-    case Types::PlayMode::PingPong:
+    case Types::RunMode::PingPong:
         step %= 2 * stepCount - 2;
         _currentStep = (step < stepCount) ? (firstStep + step) : (lastStep - (step - stepCount) - 1);
         break;
-    case Types::PlayMode::Pendulum:
+    case Types::RunMode::Pendulum:
         step %= 2 * stepCount;
         _currentStep = (step < stepCount) ? (firstStep + step) : (lastStep - (step - stepCount));
         break;
-    case Types::PlayMode::Backward:
+    case Types::RunMode::Backward:
         _currentStep = lastStep - step % stepCount;
         break;
-    case Types::PlayMode::Random:
+    case Types::RunMode::Random:
         _currentStep = firstStep + rng.nextRange(stepCount);
         break;
-    case Types::PlayMode::Last:
+    case Types::RunMode::Last:
         break;
     }
 }

@@ -21,7 +21,7 @@ public:
         return nullptr;
     }
 
-    enum class PlayMode : uint8_t {
+    enum class RunMode : uint8_t {
         Forward,
         Backward,
         PingPong,
@@ -30,17 +30,16 @@ public:
         Last
     };
 
-    static const char *playModeName(PlayMode playMode) {
-        switch (playMode) {
-        case PlayMode::Forward:     return "Forward";
-        case PlayMode::Backward:    return "Backward";
-        case PlayMode::PingPong:    return "PingPong";
-        case PlayMode::Pendulum:    return "Pendulum";
-        case PlayMode::Random:      return "Random";
-        case PlayMode::Last:        break;
+    static const char *runModeName(RunMode runMode) {
+        switch (runMode) {
+        case RunMode::Forward:  return "Forward";
+        case RunMode::Backward: return "Backward";
+        case RunMode::PingPong: return "PingPong";
+        case RunMode::Pendulum: return "Pendulum";
+        case RunMode::Random:   return "Random";
+        case RunMode::Last:     break;
         }
         return nullptr;
     }
-
 
 }; // namespace Types

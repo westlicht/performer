@@ -175,19 +175,19 @@ public:
         }
     }
 
-    // playMode
+    // runMode
 
-    Types::PlayMode playMode() const { return _playMode; }
-    void setPlayMode(Types::PlayMode playMode) {
-        _playMode = playMode;
+    Types::RunMode runMode() const { return _runMode; }
+    void setRunMode(Types::RunMode runMode) {
+        _runMode = runMode;
     }
 
-    void editPlayMode(int value, bool shift) {
-        setPlayMode(ModelUtils::adjustedEnum(playMode(), value));
+    void editRunMode(int value, bool shift) {
+        setRunMode(ModelUtils::adjustedEnum(runMode(), value));
     }
 
-    void printPlayMode(StringBuilder &str) const {
-        str(Types::playModeName(playMode()));
+    void printRunMode(StringBuilder &str) const {
+        str(Types::runModeName(runMode()));
     }
 
     // firstStep
@@ -246,7 +246,7 @@ private:
     uint8_t _scale;
     uint8_t _divisor;
     uint8_t _resetMeasure;
-    Types::PlayMode _playMode;
+    Types::RunMode _runMode;
     uint8_t _firstStep;
     uint8_t _lastStep;
     StepArray _steps;

@@ -26,7 +26,7 @@ void CurveSequence::clear() {
     setRange(Range::Bipolar5V);
     setDivisor(12);
     setResetMeasure(0);
-    setPlayMode(Types::PlayMode::Forward);
+    setRunMode(Types::RunMode::Forward);
     setFirstStep(0);
     setLastStep(CONFIG_STEP_COUNT - 1);
     for (auto &step : _steps) {
@@ -52,7 +52,7 @@ void CurveSequence::write(WriteContext &context) const {
     writer.write(_range);
     writer.write(_divisor);
     writer.write(_resetMeasure);
-    writer.write(_playMode);
+    writer.write(_runMode);
     writer.write(_firstStep);
     writer.write(_lastStep);
 
@@ -64,7 +64,7 @@ void CurveSequence::read(ReadContext &context) {
     reader.read(_range);
     reader.read(_divisor);
     reader.read(_resetMeasure);
-    reader.read(_playMode);
+    reader.read(_runMode);
     reader.read(_firstStep);
     reader.read(_lastStep);
 

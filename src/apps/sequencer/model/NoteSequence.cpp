@@ -89,7 +89,7 @@ void NoteSequence::clear() {
     setScale(0);
     setDivisor(12);
     setResetMeasure(0);
-    setPlayMode(Types::PlayMode::Forward);
+    setRunMode(Types::RunMode::Forward);
     setFirstStep(0);
     setLastStep(CONFIG_STEP_COUNT - 1);
     for (auto &step : _steps) {
@@ -124,7 +124,7 @@ void NoteSequence::write(WriteContext &context) const {
     writer.write(_scale);
     writer.write(_divisor);
     writer.write(_resetMeasure);
-    writer.write(_playMode);
+    writer.write(_runMode);
     writer.write(_firstStep);
     writer.write(_lastStep);
 
@@ -136,7 +136,7 @@ void NoteSequence::read(ReadContext &context) {
     reader.read(_scale);
     reader.read(_divisor);
     reader.read(_resetMeasure);
-    reader.read(_playMode);
+    reader.read(_runMode);
     reader.read(_firstStep);
     reader.read(_lastStep);
 
