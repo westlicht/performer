@@ -43,10 +43,13 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale) {
     return scale.noteVolts(step.note());
 }
 
-
 void NoteSequenceEngine::setup(const TrackSetup &trackSetup) {
     _trackSetup = &trackSetup;
     reset();
+}
+
+void NoteSequenceEngine::setSequence(const Sequence &sequence) {
+    _sequence = &sequence.noteSequence();
 }
 
 void NoteSequenceEngine::reset() {
@@ -113,22 +116,6 @@ void NoteSequenceEngine::tick(uint32_t tick) {
         _cvOutput = _cvQueue.front().cv;
         _cvQueue.pop();
     }
-}
-
-void NoteSequenceEngine::setSequence(const Sequence &sequence) {
-    _sequence = &sequence.noteSequence();
-}
-
-void NoteSequenceEngine::setSwing(int swing) {
-    _swing = swing;
-}
-
-void NoteSequenceEngine::setMute(bool mute) {
-    _mute = mute;
-}
-
-void NoteSequenceEngine::setFill(bool fill) {
-    _fill = fill;
 }
 
 uint32_t NoteSequenceEngine::applySwing(uint32_t tick) {

@@ -2,19 +2,21 @@
 
 #include "core/Debug.h"
 
-void TrackEngine::init(int trackIndex) {
-    _trackMode = Types::TrackMode::Last;
-    _trackIndex = trackIndex;
-    _mute = false;
-    _sequenceEngine = nullptr;
-    _sequence = nullptr;
-}
+void TrackEngine::setup(const TrackSetup &trackSetup, const TrackEngine *linkedTrackEngine) {
+    const SequenceEngine *linkedSequenceEngine = linkedTrackEngine ? &linkedTrackEngine->sequenceEngine() : nullptr;
 
-void TrackEngine::setup(const TrackSetup &trackSetup) {
     if (trackSetup.trackMode() == _trackMode) {
+        // update linked sequence engine
+        if (_sequenceEngine && linkedSequenceEngine != _linkedSequenceEngine) {
+            _sequenceEngine->setLinkedSequenceEngine(linkedSequenceEngine);
+        }
+        _linkedSequenceEngine = linkedSequenceEngine;
         return;
     }
+
     _trackMode = trackSetup.trackMode();
+    _linkedSequenceEngine = linkedSequenceEngine;
+
     _sequenceEngineContainer.destroy(_sequenceEngine);
     ASSERT(_trackMode != Types::TrackMode::Last, "invalid track mode");
     switch (_trackMode) {
@@ -30,6 +32,7 @@ void TrackEngine::setup(const TrackSetup &trackSetup) {
 
     _sequenceEngine->setup(trackSetup);
     _sequenceEngine->setMute(_mute);
+    _sequenceEngine->setLinkedSequenceEngine(linkedSequenceEngine);
     _sequenceEngine->setSequence(*_sequence);
 }
 

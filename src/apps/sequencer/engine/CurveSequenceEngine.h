@@ -10,13 +10,12 @@ class CurveSequenceEngine : public SequenceEngine {
 public:
     virtual void setup(const TrackSetup &trackSetup) override;
 
+    virtual void setSequence(const Sequence &sequence) override;
+
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
 
-    virtual void setSequence(const Sequence &sequence) override;
-    virtual void setSwing(int swing) override;
-    virtual void setMute(bool mute) override;
-    virtual void setFill(bool fill) override;
+    virtual const SequenceState *sequenceState() const override { return &_sequenceState; }
 
     virtual bool gate() const override { return true; }
     virtual bool gateOutput() const override { return !_mute; }
@@ -35,7 +34,6 @@ private:
     SequenceState _sequenceState;
     float _stepFraction;
 
-    bool _mute;
     float _cvOutput;
 
     CurveSequence::Range _lastRange;

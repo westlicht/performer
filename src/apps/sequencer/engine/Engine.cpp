@@ -30,12 +30,10 @@ void Engine::init() {
     initClockOutputs();
     updateClockSetup();
 
-    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        _trackEngines[trackIndex].init(trackIndex);
-        _trackEngines[trackIndex].setup(_model.project().trackSetup(trackIndex));
-        _trackEngines[trackIndex].setSequence(_model.project().sequence(trackIndex, 0));
-        _trackEngines[trackIndex].reset();
-    }
+    // setup track engines
+    updateTrackSetups();
+    updateTrackSequences();
+    resetTrackEngines();
 
     _lastSystemTicks = os::ticks();
 }
@@ -48,9 +46,7 @@ void Engine::update() {
     // process clock requests
     if (_clock.checkStart()) {
         DBG("START");
-        for (auto &trackEngine : _trackEngines) {
-            trackEngine.reset();
-        }
+        resetTrackEngines();
         _running = true;
     }
 
@@ -172,7 +168,22 @@ void Engine::updateClockSetup() {
 
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        trackEngine(trackIndex).setup(_model.project().trackSetup(trackIndex));
+        const auto &trackSetup = _model.project().trackSetup(trackIndex);
+        int linkTrack = trackSetup.linkTrack();
+        const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
+        trackEngine(trackIndex).setup(trackSetup, linkedTrackEngine);
+    }
+}
+
+void Engine::updateTrackSequences() {
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        _trackEngines[trackIndex].setSequence(_model.project().sequence(trackIndex, 0));
+    }
+}
+
+void Engine::resetTrackEngines() {
+    for (auto &trackEngine : _trackEngines) {
+        trackEngine.reset();
     }
 }
 

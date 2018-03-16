@@ -21,6 +21,10 @@ void CurveSequenceEngine::setup(const TrackSetup &trackSetup) {
     reset();
 }
 
+void CurveSequenceEngine::setSequence(const Sequence &sequence) {
+    _sequence = &sequence.curveSequence();
+}
+
 void CurveSequenceEngine::reset() {
     _sequenceState.reset();
     _stepFraction = 0.f;
@@ -58,20 +62,4 @@ void CurveSequenceEngine::tick(uint32_t tick) {
     float value = evalStepShape(sequence.step(_sequenceState.step()), _stepFraction);
     value = _range[0] + value * (_range[1] - _range[0]);
     _cvOutput = value;
-}
-
-void CurveSequenceEngine::setSequence(const Sequence &sequence) {
-    _sequence = &sequence.curveSequence();
-}
-
-void CurveSequenceEngine::setSwing(int swing) {
-
-}
-
-void CurveSequenceEngine::setMute(bool mute) {
-    _mute = mute;
-}
-
-void CurveSequenceEngine::setFill(bool fill) {
-
 }

@@ -12,13 +12,12 @@ class NoteSequenceEngine : public SequenceEngine {
 public:
     virtual void setup(const TrackSetup &trackSetup) override;
 
+    virtual void setSequence(const Sequence &sequence) override;
+
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
 
-    virtual void setSequence(const Sequence &sequence) override;
-    virtual void setSwing(int swing) override;
-    virtual void setMute(bool mute) override;
-    virtual void setFill(bool fill) override;
+    virtual const SequenceState *sequenceState() const override { return &_sequenceState; }
 
     virtual bool gate() const override { return _gate; }
     virtual bool gateOutput() const override { return _gateOutput; }
@@ -37,9 +36,6 @@ private:
 
     SequenceState _sequenceState;
 
-    uint8_t _swing;
-    bool _mute;
-    bool _fill;
     bool _gate;
     bool _gateOutput;
     float _cvOutput;

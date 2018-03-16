@@ -14,9 +14,7 @@
 
 class TrackEngine {
 public:
-    void init(int trackIndex);
-
-    void setup(const TrackSetup &trackSetup);
+    void setup(const TrackSetup &trackSetup, const TrackEngine *linkedTrackEngine);
 
     void setSequence(const Sequence &sequence);
 
@@ -36,6 +34,10 @@ public:
     bool gateOutput() const;
     float cvOutput() const;
 
+    const SequenceEngine &sequenceEngine() const {
+        return *_sequenceEngine;
+    }
+
     const NoteSequenceEngine &noteSequenceEngine() const {
         ASSERT(_trackMode == Types::TrackMode::Note, "invalid mode");
         return *static_cast<const NoteSequenceEngine *>(_sequenceEngine);
@@ -46,13 +48,13 @@ public:
     }
 
 private:
-    uint8_t _trackIndex;
-    bool _mute;
-    bool _fill;
+    bool _mute = false;
+    bool _fill = false;
 
-    Types::TrackMode _trackMode;
+    Types::TrackMode _trackMode = Types::TrackMode::Last;
+    const SequenceEngine *_linkedSequenceEngine = nullptr;
 
     Container<NoteSequenceEngine, CurveSequenceEngine> _sequenceEngineContainer;
-    SequenceEngine *_sequenceEngine;
-    const Sequence *_sequence;
+    SequenceEngine *_sequenceEngine = nullptr;
+    const Sequence *_sequence = nullptr;
 };

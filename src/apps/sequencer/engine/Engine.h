@@ -91,6 +91,8 @@ public:
 private:
     void updateClockSetup();
     void updateTrackSetups();
+    void updateTrackSequences();
+    void resetTrackEngines();
     void updatePlayState();
 
     void initClockSources();
