@@ -3,6 +3,12 @@
 #include "core/fs/FileWriter.h"
 #include "core/fs/FileReader.h"
 
+Project::Project() {
+    for (size_t i = 0; i < _trackSetups.size(); ++i) {
+        _trackSetups[i].setTrackIndex(i);
+    }
+}
+
 void Project::clear() {
     _slot = uint8_t(-1);
     StringUtils::copy(_name, "INIT", sizeof(_name));

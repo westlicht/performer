@@ -24,6 +24,8 @@ public:
     typedef std::array<Sequence, CONFIG_PATTERN_COUNT> SequenceArray;
     typedef std::array<SequenceArray, CONFIG_TRACK_COUNT> TrackSequenceArray;
 
+    Project();
+
     //----------------------------------------
     // Properties
     //----------------------------------------

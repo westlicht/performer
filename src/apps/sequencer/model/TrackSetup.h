@@ -51,6 +51,11 @@ public:
     // Properties
     //----------------------------------------
 
+    // trackIndex
+
+    int trackIndex() const { return _trackIndex; }
+    void setTrackIndex(int trackIndex) { _trackIndex = trackIndex; }
+
     // trackMode
 
     Types::TrackMode trackMode() const { return _trackMode; }
@@ -93,10 +98,12 @@ public:
     // linkTrack
 
     int linkTrack() const { return _linkTrack; }
-    void setLinkTrack(int linkTrack) { _linkTrack = linkTrack; }
+    void setLinkTrack(int linkTrack) {
+        _linkTrack = clamp(linkTrack, -1, _trackIndex - 1);
+    }
 
     void editLinkTrack(int value, bool shift) {
-        setLinkTrack(clamp(linkTrack() + value, -1, CONFIG_TRACK_COUNT - 1));
+        setLinkTrack(linkTrack() + value);
     }
 
     void printLinkTrack(StringBuilder &str) const {
@@ -124,6 +131,7 @@ public:
     }
 
 private:
+    uint8_t _trackIndex = -1;
     Types::TrackMode _trackMode;
     PlayMode _playMode;
     FillMode _fillMode;
