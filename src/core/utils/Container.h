@@ -30,5 +30,6 @@ public:
     }
 
 private:
-    uint32_t data[(Size + 3) / 4];
+    // memory aligned to system pointer size
+    uintptr_t data[(Size + sizeof(uintptr_t) - 1) / sizeof(uintptr_t)];
 };
