@@ -14,10 +14,10 @@ public:
 
     virtual void setSequence(const Sequence &sequence) override;
 
+    virtual const SequenceLinkData *sequenceLinkData() const override { return &_sequenceLinkData; }
+
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
-
-    virtual const SequenceState *sequenceState() const override { return &_sequenceState; }
 
     virtual bool gate() const override { return _gate; }
     virtual bool gateOutput() const override { return _gateOutput; }
@@ -29,12 +29,14 @@ public:
     int currentStep() const { return _sequenceState.step(); }
 
 private:
+    void triggerStep(uint32_t tick, uint32_t divisor);
     uint32_t applySwing(uint32_t tick);
 
     const TrackSetup *_trackSetup;
     const NoteSequence *_sequence;
 
     SequenceState _sequenceState;
+    SequenceLinkData _sequenceLinkData;
 
     bool _gate;
     bool _gateOutput;

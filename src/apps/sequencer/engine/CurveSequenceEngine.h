@@ -12,10 +12,10 @@ public:
 
     virtual void setSequence(const Sequence &sequence) override;
 
+    virtual const SequenceLinkData *sequenceLinkData() const override { return &_sequenceLinkData; }
+
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
-
-    virtual const SequenceState *sequenceState() const override { return &_sequenceState; }
 
     virtual bool gate() const override { return true; }
     virtual bool gateOutput() const override { return !_mute; }
@@ -28,11 +28,14 @@ public:
     float currentStepFraction() const { return _stepFraction; }
 
 private:
+    void updateOutput(uint32_t relativeTick, uint32_t divisor);
+
     const TrackSetup *_trackSetup;
     const CurveSequence *_sequence;
 
     SequenceState _sequenceState;
     float _stepFraction;
+    SequenceLinkData _sequenceLinkData;
 
     float _cvOutput;
 

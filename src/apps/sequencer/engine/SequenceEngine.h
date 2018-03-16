@@ -6,6 +6,12 @@ class TrackSetup;
 class Sequence;
 class SequenceState;
 
+struct SequenceLinkData {
+    uint32_t divisor;
+    uint32_t relativeTick;
+    SequenceState *sequenceState;
+};
+
 class SequenceEngine {
 public:
     virtual ~SequenceEngine() {}
@@ -30,10 +36,10 @@ public:
         _fill = fill;
     }
 
+    virtual const SequenceLinkData *sequenceLinkData() const { return nullptr; }
+
     virtual void reset() = 0;
     virtual void tick(uint32_t tick) = 0;
-
-    virtual const SequenceState *sequenceState() const = 0;
 
     virtual bool gate() const = 0;
     virtual bool gateOutput() const = 0;

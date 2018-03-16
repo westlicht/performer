@@ -62,48 +62,46 @@ void NoteSequenceEngine::reset() {
 void NoteSequenceEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
+    const auto *sequenceLinkData = _linkedSequenceEngine ? _linkedSequenceEngine->sequenceLinkData() : nullptr;
 
-    uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
-    uint32_t measureDivisor = (sequence.resetMeasure() * CONFIG_PPQN * 4);
+    if (sequenceLinkData) {
+        _sequenceLinkData = *sequenceLinkData;
+        _sequenceState = *sequenceLinkData->sequenceState;
 
-    if (measureDivisor != 0 && tick % measureDivisor == 0) {
-        reset();
-    }
+        if (sequenceLinkData->relativeTick == 0) {
+            triggerStep(tick, sequenceLinkData->divisor);
+        }
+    } else {
+        uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+        uint32_t measureDivisor = (sequence.resetMeasure() * CONFIG_PPQN * 4);
+        uint32_t relativeTick = measureDivisor == 0 ? tick : tick % measureDivisor;
 
-    if (tick % divisor == 0) {
-        // advance sequence
-        switch (_trackSetup->playMode()) {
-        case TrackSetup::PlayMode::Free:
-            _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-            break;
-        case TrackSetup::PlayMode::Aligned:
-            _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-            break;
-        case TrackSetup::PlayMode::Last:
-            break;
+        // handle reset measure
+        if (relativeTick == 0) {
+            reset();
         }
 
-        const auto &step = sequence.step(_sequenceState.step());
+        relativeTick %= divisor;
 
-        if (evalStepGate(step) || _fill) {
-            uint32_t stepLength = (divisor * evalStepLength(step)) / NoteSequence::Length::Range;
-            int stepRetrigger = evalStepRetrigger(step);
-            if (stepRetrigger > 1) {
-                uint32_t retriggerLength = divisor / stepRetrigger;
-                uint32_t stepOffset = 0;
-                while (stepRetrigger-- > 0 && stepOffset <= stepLength) {
-                    _gateQueue.push({ applySwing(tick + stepOffset), true });
-                    _gateQueue.push({ applySwing(tick + stepOffset + retriggerLength / 2), false });
-                    stepOffset += retriggerLength;
-                }
-            } else {
-                _gateQueue.push({ applySwing(tick), true });
-                _gateQueue.push({ applySwing(tick + stepLength), false });
+        // advance sequence
+        if (relativeTick == 0) {
+            switch (_trackSetup->playMode()) {
+            case TrackSetup::PlayMode::Free:
+                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                break;
+            case TrackSetup::PlayMode::Aligned:
+                _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                break;
+            case TrackSetup::PlayMode::Last:
+                break;
             }
 
-            const auto &scale = Scale::get(sequence.scale());
-            _cvQueue.push({ applySwing(tick), evalStepNote(step, scale) });
+            triggerStep(tick, divisor);
         }
+
+        _sequenceLinkData.divisor = divisor;
+        _sequenceLinkData.relativeTick = relativeTick;
+        _sequenceLinkData.sequenceState = &_sequenceState;
     }
 
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
@@ -115,6 +113,31 @@ void NoteSequenceEngine::tick(uint32_t tick) {
     while (!_cvQueue.empty() && tick >= _cvQueue.front().tick) {
         _cvOutput = _cvQueue.front().cv;
         _cvQueue.pop();
+    }
+}
+
+void NoteSequenceEngine::triggerStep(uint32_t tick, uint32_t divisor) {
+    const auto &sequence = *_sequence;
+    const auto &step = sequence.step(_sequenceState.step());
+
+    if (evalStepGate(step) || _fill) {
+        uint32_t stepLength = (divisor * evalStepLength(step)) / NoteSequence::Length::Range;
+        int stepRetrigger = evalStepRetrigger(step);
+        if (stepRetrigger > 1) {
+            uint32_t retriggerLength = divisor / stepRetrigger;
+            uint32_t stepOffset = 0;
+            while (stepRetrigger-- > 0 && stepOffset <= stepLength) {
+                _gateQueue.push({ applySwing(tick + stepOffset), true });
+                _gateQueue.push({ applySwing(tick + stepOffset + retriggerLength / 2), false });
+                stepOffset += retriggerLength;
+            }
+        } else {
+            _gateQueue.push({ applySwing(tick), true });
+            _gateQueue.push({ applySwing(tick + stepLength), false });
+        }
+
+        const auto &scale = Scale::get(sequence.scale());
+        _cvQueue.push({ applySwing(tick), evalStepNote(step, scale) });
     }
 }
 

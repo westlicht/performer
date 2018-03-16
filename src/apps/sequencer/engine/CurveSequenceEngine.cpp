@@ -34,6 +34,7 @@ void CurveSequenceEngine::reset() {
 void CurveSequenceEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
+    const auto *sequenceLinkData = _linkedSequenceEngine ? _linkedSequenceEngine->sequenceLinkData() : nullptr;
 
     // update range values
     if (sequence.range() != _lastRange) {
@@ -41,23 +42,48 @@ void CurveSequenceEngine::tick(uint32_t tick) {
         _lastRange = sequence.range();
     }
 
-    const uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+    if (sequenceLinkData) {
+        _sequenceLinkData = *sequenceLinkData;
+        _sequenceState = *sequenceLinkData->sequenceState;
+        updateOutput(sequenceLinkData->relativeTick, sequenceLinkData->divisor);
+    } else {
+        uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+        uint32_t measureDivisor = (sequence.resetMeasure() * CONFIG_PPQN * 4);
+        uint32_t relativeTick = measureDivisor == 0 ? tick : tick % measureDivisor;
 
-    if (tick % divisor == 0) {
-        // advance sequence
-        switch (_trackSetup->playMode()) {
-        case TrackSetup::PlayMode::Free:
-            _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-            break;
-        case TrackSetup::PlayMode::Aligned:
-            _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-            break;
-        case TrackSetup::PlayMode::Last:
-            break;
+        // handle reset measure
+        if (relativeTick == 0) {
+            reset();
         }
-    }
 
-    _stepFraction = float(tick % divisor) / divisor;
+        relativeTick %= divisor;
+
+        if (relativeTick == 0) {
+            // advance sequence
+            switch (_trackSetup->playMode()) {
+            case TrackSetup::PlayMode::Free:
+                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                break;
+            case TrackSetup::PlayMode::Aligned:
+                _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                break;
+            case TrackSetup::PlayMode::Last:
+                break;
+            }
+        }
+
+        updateOutput(relativeTick, divisor);
+
+        _sequenceLinkData.divisor = divisor;
+        _sequenceLinkData.relativeTick = relativeTick;
+        _sequenceLinkData.sequenceState = &_sequenceState;
+    }
+}
+
+void CurveSequenceEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
+    const auto &sequence = *_sequence;
+
+    _stepFraction = float(relativeTick) / divisor;
 
     float value = evalStepShape(sequence.step(_sequenceState.step()), _stepFraction);
     value = _range[0] + value * (_range[1] - _range[0]);
