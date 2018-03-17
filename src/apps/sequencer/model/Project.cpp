@@ -14,7 +14,7 @@ void Project::clear() {
     StringUtils::copy(_name, "INIT", sizeof(_name));
     _bpm = 120.f;
     _swing = 50;
-    _globalMeasure = 1;
+    _syncMeasure = 1;
 
     _clockSetup.clear();
 
@@ -76,7 +76,7 @@ void Project::write(WriteContext &context) const {
     writer.write(_name, NameLength + 1);
     writer.write(_bpm);
     writer.write(_swing);
-    writer.write(_globalMeasure);
+    writer.write(_syncMeasure);
 
     _clockSetup.write(context);
     writeArray(context, _trackSetups);
@@ -98,7 +98,7 @@ void Project::read(ReadContext &context) {
     reader.read(_name, NameLength + 1);
     reader.read(_bpm);
     reader.read(_swing);
-    reader.read(_globalMeasure);
+    reader.read(_syncMeasure);
 
     _clockSetup.read(context);
     readArray(context, _trackSetups);

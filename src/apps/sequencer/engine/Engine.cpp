@@ -139,7 +139,7 @@ float Engine::nudgeTempoStrength() const {
 }
 
 float Engine::globalMeasureFraction() const {
-    uint32_t measureDivisor = (_model.project().globalMeasure() * CONFIG_PPQN * 4);
+    uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
     return float(_tick % measureDivisor) / measureDivisor;
 }
 
@@ -197,7 +197,7 @@ void Engine::updatePlayState() {
         return;
     }
 
-    uint32_t measureDivisor = (_model.project().globalMeasure() * CONFIG_PPQN * 4);
+    uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
     bool handleScheduledRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
 
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {

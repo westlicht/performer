@@ -77,19 +77,19 @@ public:
         str("%d%%", swing());
     }
 
-    // globalMeasure
+    // syncMeasure
 
-    int globalMeasure() const { return _globalMeasure; }
-    void setGlobalMeasure(int globalMeasure) {
-        _globalMeasure = clamp(globalMeasure, 1, 128);
+    int syncMeasure() const { return _syncMeasure; }
+    void setSyncMeasure(int syncMeasure) {
+        _syncMeasure = clamp(syncMeasure, 1, 128);
     }
 
-    void editGlobalMeasure(int value, bool shift) {
-        setGlobalMeasure(ModelUtils::adjustedByPowerOfTwo(globalMeasure(), value, shift));
+    void editSyncMeasure(int value, bool shift) {
+        setSyncMeasure(ModelUtils::adjustedByPowerOfTwo(syncMeasure(), value, shift));
     }
 
-    void printGlobalMeasure(StringBuilder &str) const {
-        str("%d", globalMeasure());
+    void printSyncMeasure(StringBuilder &str) const {
+        str("%d", syncMeasure());
     }
 
     // clockSetup
@@ -153,7 +153,7 @@ private:
     char _name[NameLength + 1] = { 'I', 'N', 'I', 'T', '\0' };
     float _bpm = 120.f;
     uint8_t _swing = 50;
-    uint8_t _globalMeasure = 1;
+    uint8_t _syncMeasure = 1;
 
     ClockSetup _clockSetup;
     TrackSetupArray _trackSetups;

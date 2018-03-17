@@ -39,7 +39,7 @@ private:
         Name,
         BPM,
         Swing,
-        GlobalMeasure,
+        SyncMeasure,
         Last
     };
 
@@ -48,7 +48,7 @@ private:
         case Name:              return "Name";
         case BPM:               return "BPM";
         case Swing:             return "Swing";
-        case GlobalMeasure:     return "Global Measure";
+        case SyncMeasure:       return "Sync Measure";
         case Last:              break;
         }
         return nullptr;
@@ -69,8 +69,8 @@ private:
         case Swing:
             _project.printSwing(str);
             break;
-        case GlobalMeasure:
-            _project.printGlobalMeasure(str);
+        case SyncMeasure:
+            _project.printSyncMeasure(str);
             break;
         case Last:
             break;
@@ -87,8 +87,8 @@ private:
         case Swing:
             _project.editSwing(value, shift);
             break;
-        case GlobalMeasure:
-            _project.editGlobalMeasure(value, shift);
+        case SyncMeasure:
+            _project.editSyncMeasure(value, shift);
             break;
         case Last:
             break;
