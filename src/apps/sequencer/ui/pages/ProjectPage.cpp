@@ -9,19 +9,27 @@
 #include "core/fs/FileSystem.h"
 #include "core/utils/StringBuilder.h"
 
-enum class Function {
-    Load    = 0,
-    Save    = 1,
-    SaveAs  = 2,
-    Format  = 3,
+enum class ContextAction {
+    Init,
+    Load,
+    Save,
+    SaveAs,
+    Format,
+    Last
 };
 
-static const char *functionNames[] = { "LOAD", "SAVE", "SAVEAS", "FORMAT", nullptr };
-
+const ContextMenuModel::Item contextMenuItems[] = {
+    { "INIT" },
+    { "LOAD" },
+    { "SAVE" },
+    { "SAVE AS" },
+    { "FORMAT" }
+};
 
 ProjectPage::ProjectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel),
-    _listModel(context.model.project())
+    _listModel(context.model.project()),
+    _contextMenu(manager.pages().contextMenu, contextMenuItems, int(ContextAction::Last), [&] (int index) { contextAction(index); })
 {}
 
 void ProjectPage::enter() {
@@ -34,7 +42,6 @@ void ProjectPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PROJECT");
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
 }
@@ -46,25 +53,13 @@ void ProjectPage::updateLeds(Leds &leds) {
 void ProjectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
-    if (key.pageModifier()) {
+    if (key.isContextMenu()) {
+        _contextMenu.show();
+        event.consume();
         return;
     }
 
-    if (key.isFunction()) {
-        switch (Function(key.function())) {
-        case Function::Load:
-            loadProject();
-            break;
-        case Function::Save:
-            saveProject();
-            break;
-        case Function::SaveAs:
-            saveAsProject();
-            break;
-        case Function::Format:
-            formatSDCard();
-            break;
-        }
+    if (key.pageModifier()) {
         return;
     }
 
@@ -83,6 +78,36 @@ void ProjectPage::keyPress(KeyPressEvent &event) {
 
 void ProjectPage::encoder(EncoderEvent &event) {
     ListPage::encoder(event);
+}
+
+void ProjectPage::contextAction(int index) {
+    switch (ContextAction(index)) {
+    case ContextAction::Init:
+        initProject();
+        break;
+    case ContextAction::Load:
+        loadProject();
+        break;
+    case ContextAction::Save:
+        saveProject();
+        break;
+    case ContextAction::SaveAs:
+        saveAsProject();
+        break;
+    case ContextAction::Format:
+        formatSDCard();
+        break;
+    case ContextAction::Last:
+        break;
+    }
+}
+
+void ProjectPage::initProject() {
+    _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
+        if (result) {
+            _project.clear();
+        }
+    });
 }
 
 void ProjectPage::loadProject() {
