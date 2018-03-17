@@ -2,4 +2,5 @@
 
 void Model::init() {
     _project.clear();
+    _clipBoard.clear();
 }

@@ -17,6 +17,7 @@ set(sources
     # engine/controllers
     engine/controllers/LaunchpadController.cpp
     # model
+    model/ClipBoard.cpp
     model/ClockSetup.cpp
     model/CurveSequence.cpp
     model/Model.cpp
