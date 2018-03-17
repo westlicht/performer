@@ -150,7 +150,7 @@ public:
 
 private:
     uint8_t _slot = uint8_t(-1);
-    char _name[NameLength + 1] = "INIT";
+    char _name[NameLength + 1] = { 'I', 'N', 'I', 'T', '\0' };
     float _bpm = 120.f;
     uint8_t _swing = 50;
     uint8_t _globalMeasure = 1;
