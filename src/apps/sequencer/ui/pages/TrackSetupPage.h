@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ListPage.h"
+#include "ContextMenu.h"
 
 #include "ui/model/TrackSetupListModel.h"
 
@@ -17,5 +18,11 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
 
 private:
+    void contextAction(int index);
+    void initTrackSetup();
+    void copyTrackSetup();
+    void pasteTrackSetup();
+
     TrackSetupListModel _listModel;
+    ContextMenu _contextMenu;
 };

@@ -118,14 +118,30 @@ public:
     // Methods
     //----------------------------------------
 
+    TrackSetup() { clear(); }
+
     void clear();
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
 
-    bool operator==(const TrackSetup &other) const {
-        return std::memcmp(this, &other, sizeof(TrackSetup)) == 0;
+    TrackSetup &operator=(const TrackSetup &other) {
+        _trackMode = other._trackMode;
+        _playMode = other._playMode;
+        _fillMode = other._fillMode;
+        _linkTrack = other._linkTrack;
+        return *this;
     }
+
+    bool operator==(const TrackSetup &other) const {
+        return (
+            _trackMode == other._trackMode &&
+            _playMode == other._playMode &&
+            _fillMode == other._fillMode &&
+            _linkTrack == other._linkTrack
+        );
+    }
+
     bool operator!=(const TrackSetup &other) const {
         return !(*this == other);
     }
