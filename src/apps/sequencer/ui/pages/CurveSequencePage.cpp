@@ -145,7 +145,7 @@ void CurveSequencePage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-    _stepSelection.keyPress(event, 0);
+    _stepSelection.keyPress(event, stepOffset());
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
