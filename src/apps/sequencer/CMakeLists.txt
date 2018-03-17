@@ -40,6 +40,7 @@ set(sources
     ui/pages/BusyPage.cpp
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
+    ui/pages/ContextMenuPage.cpp
     ui/pages/CurveSequencePage.cpp
     ui/pages/CurveSequenceSetupPage.cpp
     ui/pages/ListPage.cpp

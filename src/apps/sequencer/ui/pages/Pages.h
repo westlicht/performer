@@ -6,6 +6,7 @@
 #include "BusyPage.h"
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
+#include "ContextMenuPage.h"
 #include "CurveSequencePage.h"
 #include "CurveSequenceSetupPage.h"
 #include "MonitorPage.h"
@@ -39,6 +40,7 @@ struct Pages {
     ClockSetupPage clockSetup;
     MonitorPage monitor;
     ProjectSelectPage projectSelect;
+    ContextMenuPage contextMenu;
     // helper pages
     TextInputPage textInput;
     ConfirmationPage confirmation;
@@ -64,6 +66,7 @@ struct Pages {
         clockSetup(manager, context),
         monitor(manager, context),
         projectSelect(manager, context),
+        contextMenu(manager, context),
         // helper pages
         textInput(manager, context),
         confirmation(manager, context),

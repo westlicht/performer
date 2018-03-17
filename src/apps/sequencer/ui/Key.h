@@ -88,6 +88,8 @@ public:
         return -1;
     }
 
+    bool isContextMenu() const { return pageModifier() && shiftModifier(); }
+
     bool isEncoder() const { return is(Encoder); }
 
 private:
