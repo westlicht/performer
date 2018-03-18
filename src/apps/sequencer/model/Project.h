@@ -113,14 +113,24 @@ public:
     // selectedTrackIndex
 
     int selectedTrackIndex() const { return _selectedTrackIndex; }
-    void setSelectedTrackIndex(int index) { _selectedTrackIndex = index; }
+    void setSelectedTrackIndex(int index) {
+        _selectedTrackIndex = clamp(index, 0, CONFIG_TRACK_COUNT - 1);
+    }
+
     bool isSelectedTrack(int index) const { return _selectedTrackIndex == index; }
 
     // selectedPatternIndex
 
     int selectedPatternIndex() const { return _selectedPatternIndex; }
-    void setSelectedPatternIndex(int index) { _selectedPatternIndex = index; }
+    void setSelectedPatternIndex(int index) {
+        _selectedPatternIndex = clamp(index, 0, CONFIG_PATTERN_COUNT - 1);
+    }
+
     bool isSelectedPattern(int index) const { return _selectedPatternIndex == index; }
+
+    void editSelectedPatternIndex(int value, bool shift) {
+        setSelectedPatternIndex(selectedPatternIndex() + value);
+    }
 
     //----------------------------------------
     // Methods
@@ -139,6 +149,7 @@ public:
           Sequence &selectedSequence()       { return sequence(_selectedTrackIndex, _selectedPatternIndex); }
 
     void clear();
+    void clearPattern(int patternIndex);
 
     void demoProject();
 

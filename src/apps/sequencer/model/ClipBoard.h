@@ -1,7 +1,10 @@
 #pragma once
 
+#include "Config.h"
+
 #include "TrackSetup.h"
 #include "Sequence.h"
+#include "Project.h"
 
 class TrackSetupBuffer {
 public:
@@ -63,35 +66,44 @@ private:
     bool _copied;
 };
 
-// class PatternBuffer {
-// public:
-//     void clear() {
-//         _copied = false;
-//     }
+class PatternBuffer {
+public:
+    void clear() {
+        _copied = false;
+    }
 
-//     const Pattern &pattern() const { return _pattern; }
+    const Sequence &sequence(int trackIndex) const { return _sequences[trackIndex]; }
 
-//     bool isCopied() const { return _copied; }
+    bool isCopied() const { return _copied; }
 
-//     void copyFrom(const Pattern &pattern) {
-//         _pattern = pattern;
-//         _copied = true;
-//     }
+    void copyFrom(const Project &project, int patternIndex) {
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            _sequences[trackIndex] = project.sequence(trackIndex, patternIndex);
+        }
+        _copied = true;
+    }
 
-//     void pasteTo(Pattern &pattern) const {
-//         if (canPasteTo(pattern)) {
-//             pattern = _pattern;
-//         }
-//     }
+    void pasteTo(Project &project, int patternIndex) const {
+        if (canPasteTo(project, patternIndex)) {
+            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                project.sequence(trackIndex, patternIndex) = _sequences[trackIndex];
+            }
+        }
+    }
 
-//     bool canPasteTo(Pattern &pattern) const {
-//         return true;
-//     }
+    bool canPasteTo(Project &project, int patternIndex) const {
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            if (_sequences[trackIndex].trackMode() != project.sequence(trackIndex, patternIndex).trackMode()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-// private:
-//     Pattern _pattern;
-//     bool _copied;
-// };
+private:
+    std::array<Sequence, CONFIG_TRACK_COUNT> _sequences;
+    bool _copied;
+};
 
 class ClipBoard {
 public:
@@ -101,10 +113,10 @@ public:
 
     TrackSetupBuffer &trackSetupBuffer() { return _trackSetupBuffer; }
     SequenceBuffer &sequenceBuffer() { return _sequenceBuffer; }
-    // PatternBuffer &patternBuffer() { return _patternBuffer; }
+    PatternBuffer &patternBuffer() { return _patternBuffer; }
 
 private:
     TrackSetupBuffer _trackSetupBuffer;
     SequenceBuffer _sequenceBuffer;
-    // PatternBuffer _patternBuffer;
+    PatternBuffer _patternBuffer;
 };

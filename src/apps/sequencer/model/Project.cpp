@@ -37,13 +37,26 @@ void Project::clear() {
     demoProject();
 }
 
+void Project::clearPattern(int patternIndex) {
+    for (auto &trackSequences : _sequences) {
+        trackSequences[patternIndex].clear();
+    }
+}
+
 void Project::demoProject() {
+    sequence(0, 0).noteSequence().setLastStep(15);
     sequence(0, 0).noteSequence().setGates({ 1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0 });
+    sequence(1, 0).noteSequence().setLastStep(15);
     sequence(1, 0).noteSequence().setGates({ 0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0 });
+    sequence(2, 0).noteSequence().setLastStep(15);
     sequence(2, 0).noteSequence().setGates({ 0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0 });
+    sequence(3, 0).noteSequence().setLastStep(15);
     sequence(3, 0).noteSequence().setGates({ 0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0 });
+    sequence(4, 0).noteSequence().setLastStep(15);
     sequence(4, 0).noteSequence().setGates({ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 });
+    sequence(5, 0).noteSequence().setLastStep(15);
     sequence(5, 0).noteSequence().setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0 });
+    sequence(7, 0).noteSequence().setLastStep(15);
     sequence(7, 0).noteSequence().setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
     sequence(7, 0).noteSequence().setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
 

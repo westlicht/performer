@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BasePage.h"
+#include "ContextMenu.h"
 
 class PatternPage : public BasePage {
 public:
@@ -14,7 +15,14 @@ public:
 
     virtual void keyDown(KeyEvent &event) override;
     virtual void keyUp(KeyEvent &event) override;
+    virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    void contextAction(int index);
+    void initPattern();
+    void copyPattern();
+    void pastePattern();
+
+    ContextMenu _contextMenu;
 };
