@@ -19,7 +19,12 @@ public:
     // trackMode
 
     Types::TrackMode trackMode() const { return _trackMode; }
-    void setTrackMode(Types::TrackMode trackMode) { _trackMode = trackMode; }
+    void setTrackMode(Types::TrackMode trackMode) {
+        if (trackMode != _trackMode) {
+            _trackMode = trackMode;
+            clear();
+        }
+    }
 
     // sequence
 

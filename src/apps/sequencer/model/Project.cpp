@@ -63,11 +63,7 @@ void Project::setTrackMode(int trackIndex, Types::TrackMode trackMode) {
     // TODO reset snapshots
     _trackSetups[trackIndex].setTrackMode(trackMode);
     for (auto &sequence : _sequences[trackIndex]) {
-        switch (trackMode) {
-        case Types::TrackMode::Note:    sequence.noteSequence().clear(); break;
-        case Types::TrackMode::Curve:   sequence.curveSequence().clear(); break;
-        case Types::TrackMode::Last:    break;
-        }
+        sequence.setTrackMode(trackMode);
     }
 }
 
