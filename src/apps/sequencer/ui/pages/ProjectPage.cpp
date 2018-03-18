@@ -29,7 +29,12 @@ const ContextMenuModel::Item contextMenuItems[] = {
 ProjectPage::ProjectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel),
     _listModel(context.model.project()),
-    _contextMenu(manager.pages().contextMenu, contextMenuItems, int(ContextAction::Last), [&] (int index) { contextAction(index); })
+    _contextMenu(
+        manager.pages().contextMenu,
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); }
+    )
 {}
 
 void ProjectPage::enter() {

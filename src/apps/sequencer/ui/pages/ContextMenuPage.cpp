@@ -33,6 +33,7 @@ void ContextMenuPage::draw(Canvas &canvas) {
         int itemIndex = i;
         if (itemIndex < _contextMenuModel->itemCount()) {
             const auto &item = _contextMenuModel->item(itemIndex);
+            bool enabled = _contextMenuModel->itemEnabled(itemIndex);
 
             int x = (Width * i) / 5;
             int w = Width / 5;
@@ -41,6 +42,7 @@ void ContextMenuPage::draw(Canvas &canvas) {
             // int iconSize = 16;
             // canvas.drawRect(x + (w - iconSize) / 2, 32 + 4, iconSize, iconSize);
 
+            canvas.setColor(enabled ? 0xf : 0x7);
             canvas.drawText(x + (w - canvas.textWidth(item.title) + 1) / 2, Height - 4, item.title);
         }
     }
@@ -59,7 +61,10 @@ void ContextMenuPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
-        closeAndCallback(key.function());
+        int itemIndex = key.function();
+        if (_contextMenuModel->itemEnabled(itemIndex)) {
+            closeAndCallback(itemIndex);
+        }
         event.consume();
     }
 }

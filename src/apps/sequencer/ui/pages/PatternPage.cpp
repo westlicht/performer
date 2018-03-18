@@ -33,7 +33,13 @@ const ContextMenuModel::Item contextMenuItems[] = {
 
 PatternPage::PatternPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context),
-    _contextMenu(manager.pages().contextMenu, contextMenuItems, int(ContextAction::Last), [&] (int index) { contextAction(index); })
+    _contextMenu(
+        manager.pages().contextMenu,
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    )
 {}
 
 void PatternPage::enter() {
@@ -170,6 +176,15 @@ void PatternPage::contextAction(int index) {
         break;
     case ContextAction::Last:
         break;
+    }
+}
+
+bool PatternPage::contextActionEnabled(int index) const {
+    switch (ContextAction(index)) {
+    case ContextAction::Paste:
+        return _model.clipBoard().patternBuffer().isCopied() && _model.clipBoard().patternBuffer().canPasteTo(_project, _project.selectedPatternIndex());
+    default:
+        return true;
     }
 }
 

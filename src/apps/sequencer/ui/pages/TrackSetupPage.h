@@ -19,6 +19,7 @@ public:
 
 private:
     void contextAction(int index);
+    bool contextActionEnabled(int index) const;
     void initTrackSetup();
     void copyTrackSetup();
     void pasteTrackSetup();

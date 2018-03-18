@@ -20,6 +20,7 @@ public:
 
 private:
     void contextAction(int index);
+    bool contextActionEnabled(int index) const;
     void initPattern();
     void copyPattern();
     void pastePattern();

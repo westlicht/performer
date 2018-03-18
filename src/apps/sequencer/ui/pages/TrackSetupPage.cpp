@@ -22,7 +22,13 @@ const ContextMenuModel::Item contextMenuItems[] = {
 
 TrackSetupPage::TrackSetupPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel),
-    _contextMenu(manager.pages().contextMenu, contextMenuItems, int(ContextAction::Last), [&] (int index) { contextAction(index); })
+    _contextMenu(
+        manager.pages().contextMenu,
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    )
 {}
 
 void TrackSetupPage::enter() {
@@ -84,6 +90,15 @@ void TrackSetupPage::contextAction(int index) {
         break;
     case ContextAction::Last:
         break;
+    }
+}
+
+bool TrackSetupPage::contextActionEnabled(int index) const {
+    switch (ContextAction(index)) {
+    case ContextAction::Paste:
+        return _model.clipBoard().trackSetupBuffer().isCopied() && _model.clipBoard().trackSetupBuffer().canPasteTo(_project.selectedTrackSetup());
+    default:
+        return true;
     }
 }
 

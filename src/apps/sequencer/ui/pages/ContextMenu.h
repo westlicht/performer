@@ -9,20 +9,20 @@
 class ContextMenu : private ContextMenuModel {
 public:
     typedef std::function<void(int)> ActionCallback;
-    typedef std::function<bool(int)> IsActiveCallback;
+    typedef std::function<bool(int)> ItemEnabledCallback;
 
     ContextMenu(
         ContextMenuPage &contextMenuPage,
         const Item items[],
         int itemCount,
         ActionCallback actionCallback,
-        IsActiveCallback isActiveCallback = [] (int) { return true; }
+        ItemEnabledCallback itemEnabledCallback = [] (int) { return true; }
     ) :
         _contextMenuPage(contextMenuPage),
         _items(items),
         _itemCount(itemCount),
         _actionCallback(actionCallback),
-        _isActiveCallback(isActiveCallback)
+        _itemEnabledCallback(itemEnabledCallback)
     {
     }
 
@@ -43,9 +43,13 @@ private:
         return _items[index];
     }
 
+    virtual bool itemEnabled(int index) const override {
+        return _itemEnabledCallback(index);
+    }
+
     ContextMenuPage &_contextMenuPage;
     const Item *_items;
     int _itemCount;
     ActionCallback _actionCallback;
-    IsActiveCallback _isActiveCallback;
+    ItemEnabledCallback _itemEnabledCallback;
 };

@@ -88,7 +88,7 @@ public:
         return -1;
     }
 
-    bool isContextMenu() const { return pageModifier() && shiftModifier(); }
+    bool isContextMenu() const { return (is(Page) && shiftModifier()) || (is(Shift) && pageModifier()); }
 
     bool isEncoder() const { return is(Encoder); }
 

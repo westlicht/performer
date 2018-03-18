@@ -12,4 +12,5 @@ public:
     virtual int itemCount() const = 0;
 
     virtual const Item &item(int index) const = 0;
+    virtual bool itemEnabled(int index) const = 0;
 };
