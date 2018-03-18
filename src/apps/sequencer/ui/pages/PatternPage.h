@@ -23,6 +23,7 @@ private:
     void initPattern();
     void copyPattern();
     void pastePattern();
+    void duplicatePattern();
 
     ContextMenu _contextMenu;
 };

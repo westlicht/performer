@@ -19,6 +19,7 @@ enum class ContextAction {
     Init,
     Copy,
     Paste,
+    Duplicate,
     Last
 };
 
@@ -26,6 +27,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
     { "COPY" },
     { "PASTE" },
+    { "DUP"},
 };
 
 
@@ -56,6 +58,7 @@ void PatternPage::draw(Canvas &canvas) {
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &trackState = playState.trackState(trackIndex);
+        bool trackSelected = _keyState[MatrixMap::fromTrack(trackIndex)];
 
         int x = trackIndex * 32;
         int y = 16;
@@ -64,12 +67,12 @@ void PatternPage::draw(Canvas &canvas) {
 
         x += 8;
 
-        canvas.setColor(trackState.fill() ? 0xf : 0x7);
+        canvas.setColor(trackSelected ? 0xf : 0x7);
         canvas.drawTextCentered(x, y - 2, w, 8, FixedStringBuilder<8>("T%d", trackIndex + 1));
 
         y += 8;
 
-        canvas.setColor(trackState.fill() ? 0xf : 0x7);
+        canvas.setColor(trackSelected ? 0xf : 0x7);
         canvas.drawTextCentered(x, y + 10, w, 8, FixedStringBuilder<8>("P%d", trackState.pattern() + 1));
 
         if (trackState.pattern() != trackState.requestedPattern()) {
@@ -162,6 +165,9 @@ void PatternPage::contextAction(int index) {
     case ContextAction::Paste:
         pastePattern();
         break;
+    case ContextAction::Duplicate:
+        duplicatePattern();
+        break;
     case ContextAction::Last:
         break;
     }
@@ -177,4 +183,13 @@ void PatternPage::copyPattern() {
 
 void PatternPage::pastePattern() {
     _model.clipBoard().patternBuffer().pasteTo(_project, _project.selectedPatternIndex());
+}
+
+void PatternPage::duplicatePattern() {
+    if (_project.selectedPatternIndex() < CONFIG_PATTERN_COUNT - 1) {
+        _model.clipBoard().patternBuffer().copyFrom(_project, _project.selectedPatternIndex());
+        _project.editSelectedPatternIndex(1, false);
+        _model.clipBoard().patternBuffer().pasteTo(_project, _project.selectedPatternIndex());
+        _model.clipBoard().patternBuffer().clear();
+    }
 }
