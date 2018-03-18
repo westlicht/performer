@@ -176,8 +176,10 @@ void Engine::updateTrackSetups() {
 }
 
 void Engine::updateTrackSequences() {
+    auto &project = _model.project();
+
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        _trackEngines[trackIndex].setSequence(_model.project().sequence(trackIndex, 0));
+        _trackEngines[trackIndex].setSequence(project.sequence(trackIndex, project.playState().trackState(trackIndex).pattern()));
     }
 }
 
@@ -200,9 +202,9 @@ void Engine::updatePlayState() {
     uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
     bool handleScheduledRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
 
-    for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-        auto &trackState = playState.trackState(i);
-        auto &trackEngine = _trackEngines[i];
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        auto &trackState = playState.trackState(trackIndex);
+        auto &trackEngine = _trackEngines[trackIndex];
 
         // handle mute requests
         if (
@@ -229,6 +231,7 @@ void Engine::updatePlayState() {
         // update track engine
         trackEngine.setMute(trackState.mute());
         trackEngine.setFill(trackState.fill());
+        trackEngine.setSequence(_model.project().sequence(trackIndex, trackState.pattern()));
     }
 
     playState.clearImmediateRequests();
