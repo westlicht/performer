@@ -214,18 +214,34 @@ void CurveSequencePage::keyPress(KeyPressEvent &event) {
 void CurveSequencePage::encoder(EncoderEvent &event) {
     auto &sequence = _project.selectedSequence().curveSequence();
 
-    for (size_t i = 0; i < sequence.steps().size(); ++i) {
-        if (_stepSelection[i]) {
-            auto &step = sequence.step(i);
+    if (!_stepSelection.any()) {
+        return;
+    }
+
+    const auto &firstStep = sequence.step(_stepSelection.first());
+
+    for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+        if (_stepSelection[stepIndex]) {
+            auto &step = sequence.step(stepIndex);
+            bool setToFirst = int(stepIndex) != _stepSelection.first() && _keyState[Key::Shift];
             switch (_mode) {
             case Mode::Shape:
-                step.setShape(CurveSequence::Shape::clamp(step.shape() + event.value()));
+                step.setShape(
+                    setToFirst ? firstStep.shape() :
+                    CurveSequence::Shape::clamp(step.shape() + event.value())
+                );
                 break;
             case Mode::Min:
-                step.setMin(CurveSequence::Min::clamp(step.min() + event.value() * (event.pressed() ? 1 : 8)));
+                step.setMin(
+                    setToFirst ? firstStep.min() :
+                    CurveSequence::Min::clamp(step.min() + event.value() * (event.pressed() ? 1 : 8))
+                );
                 break;
             case Mode::Max:
-                step.setMax(CurveSequence::Max::clamp(step.max() + event.value() * (event.pressed() ? 1 : 8)));
+                step.setMax(
+                    setToFirst ? firstStep.max() :
+                    CurveSequence::Max::clamp(step.max() + event.value() * (event.pressed() ? 1 : 8))
+                );
                 break;
             default:
                 break;

@@ -270,36 +270,65 @@ void NoteSequencePage::encoder(EncoderEvent &event) {
 
     if (_stepSelection.any()) {
         _lastEditTicks = os::ticks();
+    } else {
+        return;
     }
 
-    for (size_t i = 0; i < sequence.steps().size(); ++i) {
-        if (_stepSelection[i]) {
-            auto &step = sequence.step(i);
+    const auto &firstStep = sequence.step(_stepSelection.first());
+
+    for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+        if (_stepSelection[stepIndex]) {
+            auto &step = sequence.step(stepIndex);
+            bool setToFirst = int(stepIndex) != _stepSelection.first() && _keyState[Key::Shift];
             switch (_mode) {
             case Mode::Gate:
-                step.setGate(event.value() > 0);
+                step.setGate(
+                    setToFirst ? firstStep.gate() :
+                    event.value() > 0
+                );
                 break;
             case Mode::GateVariation:
-                step.setGateProbability(NoteSequence::GateProbability::clamp(step.gateProbability() + event.value()));
+                step.setGateProbability(
+                    setToFirst ? firstStep.gateProbability() :
+                    NoteSequence::GateProbability::clamp(step.gateProbability() + event.value())
+                );
                 break;
             case Mode::Retrigger:
-                step.setRetrigger(NoteSequence::Retrigger::clamp(step.retrigger() + event.value()));
+                step.setRetrigger(
+                    setToFirst ? firstStep.retrigger() :
+                    NoteSequence::Retrigger::clamp(step.retrigger() + event.value())
+                );
                 break;
             case Mode::RetriggerVariation:
-                step.setRetriggerProbability(NoteSequence::RetriggerProbability::clamp(step.retriggerProbability() + event.value()));
+                step.setRetriggerProbability(
+                    setToFirst ? firstStep.retriggerProbability() :
+                    NoteSequence::RetriggerProbability::clamp(step.retriggerProbability() + event.value())
+                );
                 break;
             case Mode::Length:
-                step.setLength(NoteSequence::Length::clamp(step.length() + event.value()));
+                step.setLength(
+                    setToFirst ? firstStep.length() :
+                    NoteSequence::Length::clamp(step.length() + event.value())
+                );
                 break;
             case Mode::LengthVariation:
                 if (event.pressed()) {
-                    step.setLengthVariationProbability(NoteSequence::LengthVariationProbability::clamp(step.lengthVariationProbability() + event.value()));
+                    step.setLengthVariationProbability(
+                        setToFirst ? firstStep.lengthVariationProbability() :
+                        NoteSequence::LengthVariationProbability::clamp(step.lengthVariationProbability() + event.value())
+                    );
                 } else {
-                    step.setLengthVariationRange(NoteSequence::LengthVariationRange::clamp(step.lengthVariationRange() + event.value()));
+                    step.setLengthVariationRange(
+                        setToFirst ? firstStep.lengthVariationRange() :
+                        NoteSequence::LengthVariationRange::clamp(step.lengthVariationRange() + event.value())
+                    );
                 }
                 break;
             case Mode::Note:
-                step.setNote(NoteSequence::Note::clamp(step.note() + event.value() * (event.pressed() ? scale.octave() : 1)));
+                step.setNote(
+                    setToFirst ? firstStep.note() :
+                    NoteSequence::Note::clamp(step.note() + event.value() * (event.pressed() ? scale.octave() : 1))
+                );
                 break;
             case Mode::NoteVariation:
                 break;
