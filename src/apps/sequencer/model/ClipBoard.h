@@ -58,7 +58,7 @@ public:
     }
 
     bool canPasteTo(Sequence &sequence) const {
-        return true;
+        return _sequence.trackMode() == sequence.trackMode();
     }
 
 private:

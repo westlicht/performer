@@ -1,5 +1,7 @@
 #include "CurveSequencePage.h"
 
+#include "Pages.h"
+
 #include "ui/LedPainter.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
@@ -7,6 +9,19 @@
 #include "engine/Curve.h"
 
 #include "core/utils/StringBuilder.h"
+
+enum class ContextAction {
+    Init,
+    Copy,
+    Paste,
+    Last
+};
+
+const ContextMenuModel::Item contextMenuItems[] = {
+    { "INIT" },
+    { "COPY" },
+    { "PASTE" },
+};
 
 enum class Function {
     Shape   = 0,
@@ -40,7 +55,14 @@ static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, 
 }
 
 CurveSequencePage::CurveSequencePage(PageManager &manager, PageContext &context) :
-    BasePage(manager, context)
+    BasePage(manager, context),
+    _contextMenu(
+        manager.pages().contextMenu,
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    )
 {}
 
 void CurveSequencePage::enter() {
@@ -144,6 +166,12 @@ void CurveSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &sequence = _project.selectedSequence().curveSequence();
 
+    if (key.isContextMenu()) {
+        _contextMenu.show();
+        event.consume();
+        return;
+    }
+
     if (key.pageModifier()) {
         return;
     }
@@ -206,4 +234,41 @@ void CurveSequencePage::encoder(EncoderEvent &event) {
     }
 
     event.consume();
+}
+
+void CurveSequencePage::contextAction(int index) {
+    switch (ContextAction(index)) {
+    case ContextAction::Init:
+        initSequence();
+        break;
+    case ContextAction::Copy:
+        copySequence();
+        break;
+    case ContextAction::Paste:
+        pasteSequence();
+        break;
+    case ContextAction::Last:
+        break;
+    }
+}
+
+bool CurveSequencePage::contextActionEnabled(int index) const {
+    switch (ContextAction(index)) {
+    case ContextAction::Paste:
+        return _model.clipBoard().sequenceBuffer().isCopied() && _model.clipBoard().sequenceBuffer().canPasteTo(_project.selectedSequence());
+    default:
+        return true;
+    }
+}
+
+void CurveSequencePage::initSequence() {
+    _project.selectedSequence().clear();
+}
+
+void CurveSequencePage::copySequence() {
+    _model.clipBoard().sequenceBuffer().copyFrom(_project.selectedSequence());
+}
+
+void CurveSequencePage::pasteSequence() {
+    _model.clipBoard().sequenceBuffer().pasteTo(_project.selectedSequence());
 }

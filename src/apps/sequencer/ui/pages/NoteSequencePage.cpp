@@ -1,5 +1,7 @@
 #include "NoteSequencePage.h"
 
+#include "Pages.h"
+
 #include "ui/LedPainter.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
@@ -10,6 +12,19 @@
 
 #include "core/utils/StringBuilder.h"
 
+enum class ContextAction {
+    Init,
+    Copy,
+    Paste,
+    Last
+};
+
+const ContextMenuModel::Item contextMenuItems[] = {
+    { "INIT" },
+    { "COPY" },
+    { "PASTE" },
+};
+
 enum class Function {
     Gate        = 0,
     Retrigger   = 1,
@@ -18,18 +33,17 @@ enum class Function {
     Condition   = 4,
 };
 
-static const char *functionNames[] = { "GATE", "LENGTH", "INDEX", "COND", nullptr };
-
-
-enum class MenuItem {
-    Clear,
-    Copy,
-    Paste,
-    Last
-};
+static const char *functionNames[] = { "GATE", "RETRIG", "LENGTH", "NOTE", "COND" };
 
 NoteSequencePage::NoteSequencePage(PageManager &manager, PageContext &context) :
-    BasePage(manager, context)
+    BasePage(manager, context),
+    _contextMenu(
+        manager.pages().contextMenu,
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    )
 {}
 
 void NoteSequencePage::enter() {
@@ -56,8 +70,9 @@ void NoteSequencePage::draw(Canvas &canvas) {
 
     const int loopY = 16;
 
+    // draw loop points
     canvas.setBlendMode(BlendMode::Set);
-
+    canvas.setColor(0xf);
     SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
     SequencePainter::drawLoopEnd(canvas, (sequence.lastStep()  - stepOffset)* stepWidth + 1, loopY, stepWidth - 2);
 
@@ -185,6 +200,12 @@ void NoteSequencePage::keyUp(KeyEvent &event) {
 void NoteSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &sequence = _project.selectedSequence().noteSequence();
+
+    if (key.isContextMenu()) {
+        _contextMenu.show();
+        event.consume();
+        return;
+    }
 
     if (key.pageModifier()) {
         return;
@@ -385,3 +406,41 @@ void NoteSequencePage::drawDetail(Canvas &canvas, const NoteSequence::Step &step
         break;
     }
 }
+
+void NoteSequencePage::contextAction(int index) {
+    switch (ContextAction(index)) {
+    case ContextAction::Init:
+        initSequence();
+        break;
+    case ContextAction::Copy:
+        copySequence();
+        break;
+    case ContextAction::Paste:
+        pasteSequence();
+        break;
+    case ContextAction::Last:
+        break;
+    }
+}
+
+bool NoteSequencePage::contextActionEnabled(int index) const {
+    switch (ContextAction(index)) {
+    case ContextAction::Paste:
+        return _model.clipBoard().sequenceBuffer().isCopied() && _model.clipBoard().sequenceBuffer().canPasteTo(_project.selectedSequence());
+    default:
+        return true;
+    }
+}
+
+void NoteSequencePage::initSequence() {
+    _project.selectedSequence().clear();
+}
+
+void NoteSequencePage::copySequence() {
+    _model.clipBoard().sequenceBuffer().copyFrom(_project.selectedSequence());
+}
+
+void NoteSequencePage::pasteSequence() {
+    _model.clipBoard().sequenceBuffer().pasteTo(_project.selectedSequence());
+}
+
