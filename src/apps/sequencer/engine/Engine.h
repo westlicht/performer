@@ -95,6 +95,9 @@ private:
     void resetTrackEngines();
     void updatePlayState();
 
+    void receiveMIDI();
+    void receiveMIDI(MIDIPort port, const MIDIMessage &message);
+
     void initClockSources();
     void initClockOutputs();
 

@@ -60,6 +60,8 @@ void Engine::update() {
         _running = true;
     }
 
+    receiveMIDI();
+
     // update tempo
     _nudgeTempo.update(dt);
     _clock.setMasterBpm(_model.project().bpm() + _nudgeTempo.strength() * 10.f);
@@ -238,6 +240,19 @@ void Engine::updatePlayState() {
     if (handleScheduledRequests) {
         playState.clearScheduledRequests();
     }
+}
+
+void Engine::receiveMIDI() {
+    MIDIMessage message;
+    while (_midi.recv(&message)) {
+        receiveMIDI(MIDIPort::MIDI, message);
+    }
+    while (_usbMidi.recv(&message)) {
+        receiveMIDI(MIDIPort::USBMIDI, message);
+    }
+}
+
+void Engine::receiveMIDI(MIDIPort port, const MIDIMessage &message) {
 }
 
 void Engine::initClockSources() {
