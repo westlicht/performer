@@ -11,6 +11,7 @@ set(sources
     engine/CVOutput.cpp
     engine/Engine.cpp
     engine/NoteSequenceEngine.cpp
+    engine/RoutingEngine.cpp
     engine/Scale.cpp
     engine/SequenceState.cpp
     engine/TrackEngine.cpp
