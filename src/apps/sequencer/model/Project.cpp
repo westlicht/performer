@@ -29,6 +29,7 @@ void Project::clear() {
     }
 
     _playState.clear();
+    _routing.clear();
 
     _selectedTrackIndex = 0;
     _selectedPatternIndex = 0;
@@ -97,6 +98,7 @@ void Project::write(WriteContext &context) const {
     }
 
     _playState.write(context);
+    _routing.write(context);
 
     writer.write(_selectedTrackIndex);
     writer.write(_selectedPatternIndex);
@@ -119,6 +121,7 @@ void Project::read(ReadContext &context) {
     }
 
     _playState.read(context);
+    _routing.read(context);
 
     reader.read(_selectedTrackIndex);
     reader.read(_selectedPatternIndex);

@@ -6,6 +6,7 @@
 #include "TrackSetup.h"
 #include "Sequence.h"
 #include "PlayState.h"
+#include "Routing.h"
 #include "Serialize.h"
 
 #include "core/math/Math.h"
@@ -110,6 +111,11 @@ public:
     const PlayState &playState() const { return _playState; }
           PlayState &playState()       { return _playState; }
 
+    // routing
+
+    const Routing &routing() const { return _routing; }
+          Routing &routing()       { return _routing; }
+
     // selectedTrackIndex
 
     int selectedTrackIndex() const { return _selectedTrackIndex; }
@@ -170,6 +176,7 @@ private:
     TrackSetupArray _trackSetups;
     TrackSequenceArray _sequences;
     PlayState _playState;
+    Routing _routing;
 
     int _selectedTrackIndex = 0;
     int _selectedPatternIndex = 0;

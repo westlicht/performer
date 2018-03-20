@@ -26,6 +26,7 @@ set(sources
     model/PlayState.cpp
     model/Project.cpp
     model/ProjectManager.cpp
+    model/Routing.cpp
     model/Sequence.cpp
     model/Settings.cpp
     model/TrackSetup.cpp
