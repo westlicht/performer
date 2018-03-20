@@ -16,6 +16,7 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &di
     _cvInput(adc),
     _cvOutput(dac),
     _clock(clockTimer),
+    _routingEngine(*this, model),
     _controllerManager(usbMidi)
 {
     _cvOutputOverrideValues.fill(0.f);
@@ -77,6 +78,9 @@ void Engine::update() {
 
     // update cv inputs
     _cvInput.update();
+
+    // update routings
+    _routingEngine.update();
 
     uint32_t tick;
     while (_clock.checkTick(&tick)) {
@@ -253,6 +257,7 @@ void Engine::receiveMIDI() {
 }
 
 void Engine::receiveMIDI(MIDIPort port, const MIDIMessage &message) {
+    _routingEngine.receiveMIDI(port, message);
 }
 
 void Engine::initClockSources() {

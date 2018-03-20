@@ -42,6 +42,7 @@ public:
         ASSERT(_trackMode == Types::TrackMode::Note, "invalid mode");
         return *static_cast<const NoteSequenceEngine *>(_sequenceEngine);
     }
+
     const CurveSequenceEngine &curveSequenceEngine() const {
         ASSERT(_trackMode == Types::TrackMode::Curve, "invalid mode");
         return *static_cast<const CurveSequenceEngine *>(_sequenceEngine);

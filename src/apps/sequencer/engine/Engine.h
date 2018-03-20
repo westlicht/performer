@@ -7,6 +7,7 @@
 #include "Controller.h"
 #include "CVInput.h"
 #include "CVOutput.h"
+#include "RoutingEngine.h"
 #include "MIDIPort.h"
 
 #include "model/Model.h"
@@ -85,6 +86,9 @@ public:
     const TrackEngine &selectedTrackEngine() const { return _trackEngines[_model.project().selectedTrackIndex()]; }
           TrackEngine &selectedTrackEngine()       { return _trackEngines[_model.project().selectedTrackIndex()]; }
 
+    const RoutingEngine &routingEngine() const { return _routingEngine; }
+          RoutingEngine &routingEngine()       { return _routingEngine; }
+
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
     void setMessageHandler(MessageHandler handler);
@@ -116,6 +120,8 @@ private:
     NudgeTempo _nudgeTempo;
 
     TrackEngineArray _trackEngines;
+
+    RoutingEngine _routingEngine;
 
     ControllerManager _controllerManager;
 
