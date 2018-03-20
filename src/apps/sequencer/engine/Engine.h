@@ -7,6 +7,7 @@
 #include "Controller.h"
 #include "CVInput.h"
 #include "CVOutput.h"
+#include "MIDIPort.h"
 
 #include "model/Model.h"
 
