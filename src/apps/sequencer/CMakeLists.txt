@@ -17,6 +17,8 @@ set(sources
     engine/TrackEngine.cpp
     # engine/controllers
     engine/controllers/LaunchpadController.cpp
+    # engine/generators
+    engine/generators/Rhythm.cpp
     # model
     model/ClipBoard.cpp
     model/ClockSetup.cpp
