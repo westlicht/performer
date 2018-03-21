@@ -59,15 +59,8 @@ void Project::demoProject() {
     // sequence(0, 0).curveSequence().setLastStep(7);
 }
 
-void Project::setTrackSetup(int trackIndex, const Track &track) {
-    // TODO make sure engine is synced to this before updating UI
-    if (track.trackMode() != _tracks[trackIndex].trackMode()) {
-        setTrackMode(trackIndex, track.trackMode());
-    }
-    _tracks[trackIndex] = track;
-}
-
 void Project::setTrackMode(int trackIndex, Types::TrackMode trackMode) {
+    // TODO make sure engine is synced to this before updating UI
     // TODO reset snapshots
     _tracks[trackIndex].setTrackMode(trackMode);
     // for (auto &sequence : _sequences[trackIndex]) {

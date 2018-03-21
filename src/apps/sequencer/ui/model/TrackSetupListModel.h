@@ -8,8 +8,12 @@
 
 class TrackSetupListModel : public ListModel {
 public:
-    const Track &track() const { return _track; }
-    void setTrack(const Track &track) { _track = track; }
+    void setTrack(Track &track) {
+        _track = &track;
+        _trackMode = track.trackMode();
+    }
+
+    Types::TrackMode trackMode() const { return _trackMode; }
 
     virtual int rows() const override {
         return Last;
@@ -60,16 +64,16 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case TrackMode:
-            _track.printTrackMode(str);
+            str(Types::trackModeName(_trackMode));
             break;
         case PlayMode:
-            _track.printPlayMode(str);
+            _track->printPlayMode(str);
             break;
         case FillMode:
-            _track.printFillMode(str);
+            _track->printFillMode(str);
             break;
         case LinkTrack:
-            _track.printLinkTrack(str);
+            _track->printLinkTrack(str);
             break;
         case Last:
             break;
@@ -79,21 +83,22 @@ private:
     void editValue(Item item, int value, bool shift) {
         switch (item) {
         case TrackMode:
-            _track.editTrackMode(value, shift);
+            _trackMode = ModelUtils::adjustedEnum(_trackMode, value);
             break;
         case PlayMode:
-            _track.editPlayMode(value, shift);
+            _track->editPlayMode(value, shift);
             break;
         case FillMode:
-            _track.editFillMode(value, shift);
+            _track->editFillMode(value, shift);
             break;
         case LinkTrack:
-            _track.editLinkTrack(value, shift);
+            _track->editLinkTrack(value, shift);
             break;
         case Last:
             break;
         }
     }
 
-    Track _track;
+    Track *_track;
+    Types::TrackMode _trackMode;
 };

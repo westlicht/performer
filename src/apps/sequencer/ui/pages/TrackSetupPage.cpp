@@ -42,7 +42,7 @@ void TrackSetupPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "TRACK SETUP");
 
-    const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, _listModel.track() != _project.selectedTrack() ? "COMMIT" : nullptr };
+    const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, _listModel.trackMode() != _project.selectedTrack().trackMode() ? "CHANGE" : nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
@@ -66,7 +66,9 @@ void TrackSetupPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isFunction() && key.function() == 4) {
-        _project.setTrackSetup(_project.selectedTrackIndex(), _listModel.track());
+        if (_listModel.trackMode() != _project.selectedTrack().trackMode()) {
+            _project.setTrackMode(_project.selectedTrackIndex(), _listModel.trackMode());
+        }
     }
 
     if (key.isTrackSelect()) {
@@ -103,7 +105,7 @@ bool TrackSetupPage::contextActionEnabled(int index) const {
 }
 
 void TrackSetupPage::initTrackSetup() {
-    _project.setTrackSetup(_project.selectedTrackIndex(), Track());
+    _project.selectedTrack().clear();
     _listModel.setTrack(_project.selectedTrack());
 }
 

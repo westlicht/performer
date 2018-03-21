@@ -139,7 +139,6 @@ public:
     // Methods
     //----------------------------------------
 
-    void setTrackSetup(int trackIndex, const Track &track);
     void setTrackMode(int trackIndex, Types::TrackMode trackMode);
 
     const Track &selectedTrack() const { return _tracks[_selectedTrackIndex]; }

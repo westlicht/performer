@@ -66,10 +66,11 @@ public:
     // trackMode
 
     Types::TrackMode trackMode() const { return _trackMode; }
-    void setTrackMode(Types::TrackMode trackMode) { _trackMode = trackMode; }
-
-    void editTrackMode(int value, bool shift) {
-        setTrackMode(ModelUtils::adjustedEnum(trackMode(), value));
+    void setTrackMode(Types::TrackMode trackMode) {
+        if (trackMode != _trackMode) {
+            _trackMode = trackMode;
+            setupTrack();
+        }
     }
 
     void printTrackMode(StringBuilder &str) const {
