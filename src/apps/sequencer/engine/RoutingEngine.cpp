@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 // for allowing direct mapping
-static_assert(int(MIDIPort::MIDI) == int(Routing::MIDISource::Port::MIDI));
-static_assert(int(MIDIPort::USBMIDI) == int(Routing::MIDISource::Port::USBMIDI));
+static_assert(int(MIDIPort::MIDI) == int(Routing::MIDISource::Port::MIDI), "invalid mapping");
+static_assert(int(MIDIPort::USBMIDI) == int(Routing::MIDISource::Port::USBMIDI), "invalid mapping");
 
 struct ParamInfo {
     uint16_t min;
