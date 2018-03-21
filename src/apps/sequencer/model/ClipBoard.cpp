@@ -1,5 +1,7 @@
 #include "ClipBoard.h"
 
+#include "Model.h"
+
 ClipBoard::ClipBoard() {
     clear();
 }
@@ -24,28 +26,62 @@ void ClipBoard::copyCurveSequence(const CurveSequence &curveSequence) {
 
 void ClipBoard::copyPattern(Project &project, int patternIndex) {
     _type = Type::Pattern;
+    auto &pattern = _container.as<Pattern>();
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        const auto &track = project.track(trackIndex);
+        pattern.sequences[trackIndex].trackMode = track.trackMode();
+        switch (track.trackMode()) {
+        case Types::TrackMode::Note:
+            pattern.sequences[trackIndex].data.note = track.noteTrack().sequence(patternIndex);
+            break;
+        case Types::TrackMode::Curve:
+            pattern.sequences[trackIndex].data.curve = track.curveTrack().sequence(patternIndex);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 void ClipBoard::pasteTrack(Track &track) const {
     if (canPasteTrack()) {
+        Model::WriteLock lock;
     }
 }
 
 void ClipBoard::pasteNoteSequence(NoteSequence &noteSequence) const {
     if (canPasteNoteSequence()) {
+        Model::WriteLock lock;
         noteSequence = _container.as<NoteSequence>();
     }
 }
 
 void ClipBoard::pasteCurveSequence(CurveSequence &curveSequence) const {
     if (canPasteCurveSequence()) {
+        Model::WriteLock lock;
         curveSequence = _container.as<CurveSequence>();
     }
 }
 
 void ClipBoard::pastePattern(Project &project, int patternIndex) const {
     if (canPastePattern()) {
-
+        Model::WriteLock lock;
+        const auto &pattern = _container.as<Pattern>();
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            auto &track = project.track(trackIndex);
+            if (track.trackMode() == pattern.sequences[trackIndex].trackMode) {
+                switch (track.trackMode()) {
+                case Types::TrackMode::Note:
+                    track.noteTrack().sequence(patternIndex) = pattern.sequences[trackIndex].data.note;
+                    break;
+                case Types::TrackMode::Curve:
+                    track.curveTrack().sequence(patternIndex) = pattern.sequences[trackIndex].data.curve;
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
     }
 }
 

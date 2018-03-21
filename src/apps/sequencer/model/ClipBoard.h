@@ -39,6 +39,16 @@ private:
         Pattern,
     };
 
+    struct Pattern {
+        struct {
+            Types::TrackMode trackMode;
+            union {
+                NoteSequence note;
+                CurveSequence curve;
+            } data;
+        } sequences[CONFIG_TRACK_COUNT];
+    };
+
     Type _type = Type::None;
-    Container<NoteSequence, CurveSequence> _container;
+    Container<NoteSequence, CurveSequence, Pattern> _container;
 };
