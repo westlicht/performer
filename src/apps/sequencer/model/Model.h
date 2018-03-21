@@ -7,8 +7,25 @@
 
 #include "core/fs/FileSystem.h"
 
+#include "os/os.h"
+
 class Model {
 public:
+    //----------------------------------------
+    // Types
+    //----------------------------------------
+
+    class WriteLock : public os::InterruptLock {};
+
+    class ConfigLock {
+    public:
+        ConfigLock() {
+        }
+
+        ~ConfigLock() {
+        }
+    };
+
     //----------------------------------------
     // Properties
     //----------------------------------------
