@@ -19,7 +19,7 @@ public:
 
     template<typename U, typename... Args>
     U *create(Args... args) {
-        return new(data) U(args...);
+        return new(_data) U(args...);
     }
 
     template<typename U>
@@ -29,7 +29,17 @@ public:
         }
     }
 
+    template<typename U>
+    U &as() {
+        return *reinterpret_cast<U *>(_data);
+    }
+
+    template<typename U>
+    const U &as() const {
+        return *reinterpret_cast<const U *>(_data);
+    }
+
 private:
     // memory aligned to system pointer size
-    uintptr_t data[(Size + sizeof(uintptr_t) - 1) / sizeof(uintptr_t)];
+    uintptr_t _data[(Size + sizeof(uintptr_t) - 1) / sizeof(uintptr_t)];
 };

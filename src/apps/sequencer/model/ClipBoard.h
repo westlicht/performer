@@ -7,6 +7,8 @@
 #include "CurveSequence.h"
 #include "Project.h"
 
+#include "core/utils/Container.h"
+
 class ClipBoard {
 public:
     ClipBoard();
@@ -19,8 +21,8 @@ public:
     void copyPattern(Project &project, int patternIndex);
 
     void pasteTrack(Track &track) const;
-    void pasteNoteSequence(const NoteSequence &noteSequence) const;
-    void pasteCurveSequence(const CurveSequence &curveSequence) const;
+    void pasteNoteSequence(NoteSequence &noteSequence) const;
+    void pasteCurveSequence(CurveSequence &curveSequence) const;
     void pastePattern(Project &project, int patternIndex) const;
 
     bool canPasteTrack() const;
@@ -29,4 +31,14 @@ public:
     bool canPastePattern() const;
 
 private:
+    enum class Type : uint8_t {
+        None,
+        Track,
+        NoteSequence,
+        CurveSequence,
+        Pattern,
+    };
+
+    Type _type = Type::None;
+    Container<NoteSequence, CurveSequence> _container;
 };
