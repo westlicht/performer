@@ -48,8 +48,8 @@ void NoteSequenceEngine::setup(const Track &track) {
     reset();
 }
 
-void NoteSequenceEngine::setSequence(const Sequence &sequence) {
-    _sequence = &sequence.noteSequence();
+void NoteSequenceEngine::setPatternIndex(int patternIndex) {
+    _sequence = &_track->noteTrack().sequence(patternIndex);
 }
 
 void NoteSequenceEngine::reset() {

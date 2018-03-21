@@ -10,7 +10,7 @@ NoteSequenceSetupPage::NoteSequenceSetupPage(PageManager &manager, PageContext &
 {}
 
 void NoteSequenceSetupPage::enter() {
-    _listModel.setSequence(&_project.selectedSequence().noteSequence());
+    _listModel.setSequence(&_project.selectedNoteSequence());
 }
 
 void NoteSequenceSetupPage::exit() {
@@ -28,7 +28,7 @@ void NoteSequenceSetupPage::draw(Canvas &canvas) {
 }
 
 void NoteSequenceSetupPage::updateLeds(Leds &leds) {
-    const auto &sequence = _project.selectedSequence().noteSequence();
+    const auto &sequence = _project.selectedNoteSequence();
 
     switch (_selectedRow) {
     case NoteSequenceSetupListModel::Scale:
@@ -49,7 +49,7 @@ void NoteSequenceSetupPage::updateLeds(Leds &leds) {
 void NoteSequenceSetupPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
-    auto &sequence = _project.selectedSequence().noteSequence();
+    auto &sequence = _project.selectedNoteSequence();
 
     if (key.pageModifier()) {
         return;

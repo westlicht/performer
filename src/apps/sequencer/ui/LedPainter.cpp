@@ -5,7 +5,7 @@
 
 #include "engine/Engine.h"
 
-#include "model/Sequence.h"
+#include "model/NoteSequence.h"
 
 void LedPainter::drawTracksGateAndSelected(Leds &leds, const Engine &engine, int selectedTrack) {
     for (int track = 0; track < 8; ++track) {

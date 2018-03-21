@@ -23,14 +23,15 @@ set(sources
     model/ClipBoard.cpp
     model/ClockSetup.cpp
     model/CurveSequence.cpp
+    model/CurveTrack.cpp
     model/Model.cpp
     model/ModelUtils.cpp
     model/NoteSequence.cpp
+    model/NoteTrack.cpp
     model/PlayState.cpp
     model/Project.cpp
     model/ProjectManager.cpp
     model/Routing.cpp
-    model/Sequence.cpp
     model/Settings.cpp
     model/Track.cpp
     # ui

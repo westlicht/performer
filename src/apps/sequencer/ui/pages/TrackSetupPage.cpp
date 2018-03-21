@@ -96,7 +96,7 @@ void TrackSetupPage::contextAction(int index) {
 bool TrackSetupPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
-        return _model.clipBoard().trackBuffer().isCopied() && _model.clipBoard().trackBuffer().canPasteTo(_project.selectedTrack());
+        return _model.clipBoard().canPasteTrack();
     default:
         return true;
     }
@@ -108,17 +108,10 @@ void TrackSetupPage::initTrackSetup() {
 }
 
 void TrackSetupPage::copyTrackSetup() {
-    auto &trackBuffer = _model.clipBoard().trackBuffer();
-
-    trackBuffer.copyFrom(_project.selectedTrack());
+    _model.clipBoard().copyTrack(_project.selectedTrack());
 }
 
 void TrackSetupPage::pasteTrackSetup() {
-    auto &trackBuffer = _model.clipBoard().trackBuffer();
-
-    if (trackBuffer.isCopied()) {
-        _project.setTrackSetup(_project.selectedTrackIndex(), trackBuffer.track());
-        _listModel.setTrack(_project.selectedTrack());
-    }
+    _model.clipBoard().pasteTrack(_project.selectedTrack());
 }
 

@@ -119,7 +119,7 @@ void RoutingEngine::updateSinks() {
     }
 }
 
-void RoutingEngine::writeParam(Routing::Param param, int track, int pattern, float value) {
+void RoutingEngine::writeParam(Routing::Param param, int trackIndex, int patternIndex, float value) {
     value = denormalizeParamValue(param, value);
     switch (param) {
     case Routing::Param::BPM:
@@ -129,19 +129,19 @@ void RoutingEngine::writeParam(Routing::Param param, int track, int pattern, flo
         _project.setSwing(value);
         break;
     default:
-        writeTrackParam(param, track, pattern, value);
+        writeTrackParam(param, trackIndex, patternIndex, value);
         break;
     }
 }
 
-void RoutingEngine::writeTrackParam(Routing::Param param, int track, int pattern, float value) {
-    auto &sequence = _project.sequence(track, pattern);
-    switch (_project.track(track).trackMode()) {
+void RoutingEngine::writeTrackParam(Routing::Param param, int trackIndex, int patternIndex, float value) {
+    auto &track = _project.track(trackIndex);
+    switch (track.trackMode()) {
     case Types::TrackMode::Note:
-        writeNoteSequenceParam(sequence.noteSequence(), param, value);
+        writeNoteSequenceParam(track.noteTrack().sequence(patternIndex), param, value);
         break;
     case Types::TrackMode::Curve:
-        writeCurveSequenceParam(sequence.curveSequence(), param, value);
+        writeCurveSequenceParam(track.curveTrack().sequence(patternIndex), param, value);
         break;
     case Types::TrackMode::Last:
         break;
@@ -165,7 +165,7 @@ void RoutingEngine::writeCurveSequenceParam(CurveSequence &sequence, Routing::Pa
 
 }
 
-float RoutingEngine::readParam(Routing::Param param, int pattern, int track) const {
+float RoutingEngine::readParam(Routing::Param param, int patternIndex, int trackIndex) const {
     switch (param) {
     case Routing::Param::BPM:
         return _project.bpm();

@@ -10,7 +10,7 @@ CurveSequenceSetupPage::CurveSequenceSetupPage(PageManager &manager, PageContext
 {}
 
 void CurveSequenceSetupPage::enter() {
-    _listModel.setSequence(&_project.selectedSequence().curveSequence());
+    _listModel.setSequence(&_project.selectedCurveSequence());
 }
 
 void CurveSequenceSetupPage::exit() {

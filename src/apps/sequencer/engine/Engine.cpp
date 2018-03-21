@@ -185,7 +185,7 @@ void Engine::updateTrackSequences() {
     auto &project = _model.project();
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        _trackEngines[trackIndex].setSequence(project.sequence(trackIndex, project.playState().trackState(trackIndex).pattern()));
+        _trackEngines[trackIndex].setPatternIndex(project.playState().trackState(trackIndex).pattern());
     }
 }
 
@@ -237,7 +237,7 @@ void Engine::updatePlayState() {
         // update track engine
         trackEngine.setMute(trackState.mute());
         trackEngine.setFill(trackState.fill());
-        trackEngine.setSequence(_model.project().sequence(trackIndex, trackState.pattern()));
+        trackEngine.setPatternIndex(trackState.pattern());
     }
 
     playState.clearImmediateRequests();

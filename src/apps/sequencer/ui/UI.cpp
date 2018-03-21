@@ -24,6 +24,8 @@ UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &en
 }
 
 void UI::init() {
+    _keyState.fill(false);
+
     _pageManager.push(&_pages.top);
 #ifdef CONFIG_ENABLE_ASTEROIDS
     _pageManager.push(&_pages.asteroids);

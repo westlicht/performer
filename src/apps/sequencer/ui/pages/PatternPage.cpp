@@ -182,7 +182,7 @@ void PatternPage::contextAction(int index) {
 bool PatternPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
-        return _model.clipBoard().patternBuffer().isCopied() && _model.clipBoard().patternBuffer().canPasteTo(_project, _project.selectedPatternIndex());
+        return _model.clipBoard().canPastePattern();
     default:
         return true;
     }
@@ -193,18 +193,18 @@ void PatternPage::initPattern() {
 }
 
 void PatternPage::copyPattern() {
-    _model.clipBoard().patternBuffer().copyFrom(_project, _project.selectedPatternIndex());
+    _model.clipBoard().copyPattern(_project, _project.selectedPatternIndex());
 }
 
 void PatternPage::pastePattern() {
-    _model.clipBoard().patternBuffer().pasteTo(_project, _project.selectedPatternIndex());
+    _model.clipBoard().pastePattern(_project, _project.selectedPatternIndex());
 }
 
 void PatternPage::duplicatePattern() {
     if (_project.selectedPatternIndex() < CONFIG_PATTERN_COUNT - 1) {
-        _model.clipBoard().patternBuffer().copyFrom(_project, _project.selectedPatternIndex());
+        _model.clipBoard().copyPattern(_project, _project.selectedPatternIndex());
         _project.editSelectedPatternIndex(1, false);
-        _model.clipBoard().patternBuffer().pasteTo(_project, _project.selectedPatternIndex());
-        _model.clipBoard().patternBuffer().clear();
+        _model.clipBoard().pastePattern(_project, _project.selectedPatternIndex());
+        _model.clipBoard().clear();
     }
 }

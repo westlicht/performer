@@ -33,12 +33,7 @@ void TrackEngine::setup(const Track &track, const TrackEngine *linkedTrackEngine
     _sequenceEngine->setup(track);
     _sequenceEngine->setMute(_mute);
     _sequenceEngine->setLinkedSequenceEngine(linkedSequenceEngine);
-    _sequenceEngine->setSequence(*_sequence);
-}
-
-void TrackEngine::setSequence(const Sequence &sequence) {
-    _sequence = &sequence;
-    _sequenceEngine->setSequence(sequence);
+    _sequenceEngine->setPatternIndex(_patternIndex);
 }
 
 void TrackEngine::reset() {
@@ -51,6 +46,11 @@ void TrackEngine::tick(uint32_t tick) {
 
 void TrackEngine::setSwing(int swing) {
     _sequenceEngine->setSwing(swing);
+}
+
+void TrackEngine::setPatternIndex(int patternIndex) {
+    _patternIndex = patternIndex;
+    _sequenceEngine->setPatternIndex(_patternIndex);
 }
 
 void TrackEngine::setMute(bool mute) {

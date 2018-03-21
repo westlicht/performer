@@ -21,8 +21,8 @@ void CurveSequenceEngine::setup(const Track &track) {
     reset();
 }
 
-void CurveSequenceEngine::setSequence(const Sequence &sequence) {
-    _sequence = &sequence.curveSequence();
+void CurveSequenceEngine::setPatternIndex(int patternIndex) {
+    _sequence = &_track->curveTrack().sequence(patternIndex);
 }
 
 void CurveSequenceEngine::reset() {

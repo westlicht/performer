@@ -79,7 +79,7 @@ void CurveSequencePage::draw(Canvas &canvas) {
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     const auto &sequenceEngine = _engine.selectedTrackEngine().curveSequenceEngine();
-    const auto &sequence = _project.selectedSequence().curveSequence();
+    const auto &sequence = _project.selectedCurveSequence();
     bool isActiveSequence = sequenceEngine.isActiveSequence(sequence);
 
     canvas.setBlendMode(BlendMode::Add);
@@ -164,7 +164,7 @@ void CurveSequencePage::keyUp(KeyEvent &event) {
 
 void CurveSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
-    auto &sequence = _project.selectedSequence().curveSequence();
+    auto &sequence = _project.selectedCurveSequence();
 
     if (key.isContextMenu()) {
         _contextMenu.show();
@@ -212,7 +212,7 @@ void CurveSequencePage::keyPress(KeyPressEvent &event) {
 }
 
 void CurveSequencePage::encoder(EncoderEvent &event) {
-    auto &sequence = _project.selectedSequence().curveSequence();
+    auto &sequence = _project.selectedCurveSequence();
 
     if (!_stepSelection.any()) {
         return;
@@ -271,20 +271,20 @@ void CurveSequencePage::contextAction(int index) {
 bool CurveSequencePage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
-        return _model.clipBoard().sequenceBuffer().isCopied() && _model.clipBoard().sequenceBuffer().canPasteTo(_project.selectedSequence());
+        return _model.clipBoard().canPasteCurveSequence();
     default:
         return true;
     }
 }
 
 void CurveSequencePage::initSequence() {
-    _project.selectedSequence().clear();
+    _project.selectedCurveSequence().clear();
 }
 
 void CurveSequencePage::copySequence() {
-    _model.clipBoard().sequenceBuffer().copyFrom(_project.selectedSequence());
+    _model.clipBoard().copyCurveSequence(_project.selectedCurveSequence());
 }
 
 void CurveSequencePage::pasteSequence() {
-    _model.clipBoard().sequenceBuffer().pasteTo(_project.selectedSequence());
+    _model.clipBoard().pasteCurveSequence(_project.selectedCurveSequence());
 }

@@ -4,7 +4,6 @@
 #include "Types.h"
 #include "ClockSetup.h"
 #include "Track.h"
-#include "Sequence.h"
 #include "PlayState.h"
 #include "Routing.h"
 #include "Serialize.h"
@@ -22,8 +21,6 @@ public:
     static constexpr size_t NameLength = 16;
 
     typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
-    typedef std::array<Sequence, CONFIG_PATTERN_COUNT> SequenceArray;
-    typedef std::array<SequenceArray, CONFIG_TRACK_COUNT> TrackSequenceArray;
 
     Project();
 
@@ -148,11 +145,18 @@ public:
     const Track &selectedTrack() const { return _tracks[_selectedTrackIndex]; }
           Track &selectedTrack()       { return _tracks[_selectedTrackIndex]; }
 
-    const Sequence &sequence(int trackIndex, int patternIndex) const { return _sequences[trackIndex][patternIndex]; }
-          Sequence &sequence(int trackIndex, int patternIndex)       { return _sequences[trackIndex][patternIndex]; }
+    const NoteSequence &noteSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].noteTrack().sequence(patternIndex); }
+          NoteSequence &noteSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].noteTrack().sequence(patternIndex); }
 
-    const Sequence &selectedSequence() const { return sequence(_selectedTrackIndex, _selectedPatternIndex); }
-          Sequence &selectedSequence()       { return sequence(_selectedTrackIndex, _selectedPatternIndex); }
+    const NoteSequence &selectedNoteSequence() const { return noteSequence(_selectedTrackIndex, _selectedPatternIndex); }
+          NoteSequence &selectedNoteSequence()       { return noteSequence(_selectedTrackIndex, _selectedPatternIndex); }
+
+    const CurveSequence &curveSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].curveTrack().sequence(patternIndex); }
+          CurveSequence &curveSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].curveTrack().sequence(patternIndex); }
+
+    const CurveSequence &selectedCurveSequence() const { return curveSequence(_selectedTrackIndex, _selectedPatternIndex); }
+          CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, _selectedPatternIndex); }
+
 
     void clear();
     void clearPattern(int patternIndex);
@@ -174,7 +178,6 @@ private:
 
     ClockSetup _clockSetup;
     TrackArray _tracks;
-    TrackSequenceArray _sequences;
     PlayState _playState;
     Routing _routing;
 

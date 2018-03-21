@@ -4,9 +4,13 @@
 #include "Types.h"
 #include "Serialize.h"
 #include "ModelUtils.h"
+#include "NoteTrack.h"
+#include "CurveTrack.h"
 
+#include "core/Debug.h"
 #include "core/math/Math.h"
 #include "core/utils/StringUtils.h"
+#include "core/utils/Container.h"
 
 #include <cstdint>
 #include <cstring>
@@ -46,6 +50,9 @@ public:
         }
         return nullptr;
     }
+
+    typedef std::array<NoteSequence, CONFIG_PATTERN_COUNT> NoteSequenceArray;
+    typedef std::array<CurveSequence, CONFIG_PATTERN_COUNT> CurveSequenceArray;
 
     //----------------------------------------
     // Properties
@@ -114,6 +121,16 @@ public:
         }
     }
 
+    // noteTrack
+
+    const NoteTrack &noteTrack() const { ASSERT(_trackMode == Types::TrackMode::Note, "invalid mode"); return *_track.note; }
+          NoteTrack &noteTrack()       { ASSERT(_trackMode == Types::TrackMode::Note, "invalid mode"); return *_track.note; }
+
+    // curveTrack
+
+    const CurveTrack &curveTrack() const { ASSERT(_trackMode == Types::TrackMode::Curve, "invalid mode"); return *_track.curve; }
+          CurveTrack &curveTrack()       { ASSERT(_trackMode == Types::TrackMode::Curve, "invalid mode"); return *_track.curve; }
+
     //----------------------------------------
     // Methods
     //----------------------------------------
@@ -121,6 +138,8 @@ public:
     Track() { clear(); }
 
     void clear();
+
+    void clearPattern(int patternIndex);
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
@@ -147,9 +166,17 @@ public:
     }
 
 private:
+    void setupTrack();
+
     uint8_t _trackIndex = -1;
     Types::TrackMode _trackMode;
     PlayMode _playMode;
     FillMode _fillMode;
     int8_t _linkTrack;
+
+    Container<NoteTrack, CurveTrack> _container;
+    union {
+        NoteTrack *note;
+        CurveTrack *curve;
+    } _track;
 };

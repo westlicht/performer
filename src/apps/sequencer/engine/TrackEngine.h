@@ -4,7 +4,6 @@
 #include "CurveSequenceEngine.h"
 
 #include "model/Track.h"
-#include "model/Sequence.h"
 #include "model/PlayState.h"
 
 #include "core/Debug.h"
@@ -16,13 +15,14 @@ class TrackEngine {
 public:
     void setup(const Track &track, const TrackEngine *linkedTrackEngine);
 
-    void setSequence(const Sequence &sequence);
-
     void reset();
 
     void tick(uint32_t tick);
 
     void setSwing(int swing);
+
+    int patternIndex() const { return _patternIndex; }
+    void setPatternIndex(int patternIndex);
 
     bool mute() const { return _mute; }
     void setMute(bool mute);
@@ -49,6 +49,7 @@ public:
     }
 
 private:
+    uint8_t _patternIndex = 0;
     bool _mute = false;
     bool _fill = false;
 
@@ -57,5 +58,4 @@ private:
 
     Container<NoteSequenceEngine, CurveSequenceEngine> _sequenceEngineContainer;
     SequenceEngine *_sequenceEngine = nullptr;
-    const Sequence *_sequence = nullptr;
 };

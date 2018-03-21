@@ -18,7 +18,7 @@ public:
 
     virtual void setup(const Track &track) = 0;
 
-    virtual void setSequence(const Sequence &sequence) = 0;
+    virtual void setPatternIndex(int patternIndex) = 0;
 
     virtual void setLinkedSequenceEngine(const SequenceEngine *linkedSequenceEngine) {
         _linkedSequenceEngine = linkedSequenceEngine;

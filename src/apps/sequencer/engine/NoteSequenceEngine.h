@@ -6,13 +6,12 @@
 #include "Groove.h"
 
 #include "model/Track.h"
-#include "model/Sequence.h"
 
 class NoteSequenceEngine : public SequenceEngine {
 public:
     virtual void setup(const Track &track) override;
 
-    virtual void setSequence(const Sequence &sequence) override;
+    virtual void setPatternIndex(int patternIndex) override;
 
     virtual const SequenceLinkData *sequenceLinkData() const override { return &_sequenceLinkData; }
 

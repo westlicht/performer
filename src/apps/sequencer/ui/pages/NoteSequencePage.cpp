@@ -60,7 +60,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     const auto &sequenceEngine = _engine.selectedTrackEngine().noteSequenceEngine();
-    const auto &sequence = _project.selectedSequence().noteSequence();
+    const auto &sequence = _project.selectedNoteSequence();
     int currentStep = sequenceEngine.isActiveSequence(sequence) ? sequenceEngine.currentStep() : -1;
 
     const auto &scale = Scale::get(sequence.scale());
@@ -176,7 +176,7 @@ void NoteSequencePage::draw(Canvas &canvas) {
 
 void NoteSequencePage::updateLeds(Leds &leds) {
     const auto &sequenceEngine = _engine.selectedTrackEngine().noteSequenceEngine();
-    const auto &sequence = _project.selectedSequence().noteSequence();
+    const auto &sequence = _project.selectedNoteSequence();
     int currentStep = sequenceEngine.isActiveSequence(sequence) ? sequenceEngine.currentStep() : -1;
 
     for (int i = 0; i < 16; ++i) {
@@ -199,7 +199,7 @@ void NoteSequencePage::keyUp(KeyEvent &event) {
 
 void NoteSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
-    auto &sequence = _project.selectedSequence().noteSequence();
+    auto &sequence = _project.selectedNoteSequence();
 
     if (key.isContextMenu()) {
         _contextMenu.show();
@@ -265,7 +265,7 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
 }
 
 void NoteSequencePage::encoder(EncoderEvent &event) {
-    auto &sequence = _project.selectedSequence().noteSequence();
+    auto &sequence = _project.selectedNoteSequence();
     const auto &scale = Scale::get(sequence.scale());
 
     if (_stepSelection.any()) {
@@ -343,7 +343,7 @@ void NoteSequencePage::encoder(EncoderEvent &event) {
 
 void NoteSequencePage::drawDetail(Canvas &canvas, const NoteSequence::Step &step) {
 
-    const auto &scale = Scale::get(_project.selectedSequence().noteSequence().scale());
+    const auto &scale = Scale::get(_project.selectedNoteSequence().scale());
 
     FixedStringBuilder<16> str;
 
@@ -455,21 +455,21 @@ void NoteSequencePage::contextAction(int index) {
 bool NoteSequencePage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
-        return _model.clipBoard().sequenceBuffer().isCopied() && _model.clipBoard().sequenceBuffer().canPasteTo(_project.selectedSequence());
+        return _model.clipBoard().canPasteNoteSequence();
     default:
         return true;
     }
 }
 
 void NoteSequencePage::initSequence() {
-    _project.selectedSequence().clear();
+    _project.selectedNoteSequence().clear();
 }
 
 void NoteSequencePage::copySequence() {
-    _model.clipBoard().sequenceBuffer().copyFrom(_project.selectedSequence());
+    _model.clipBoard().copyNoteSequence(_project.selectedNoteSequence());
 }
 
 void NoteSequencePage::pasteSequence() {
-    _model.clipBoard().sequenceBuffer().pasteTo(_project.selectedSequence());
+    _model.clipBoard().pasteNoteSequence(_project.selectedNoteSequence());
 }
 

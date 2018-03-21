@@ -22,12 +22,6 @@ void Project::clear() {
         track.clear();
     }
 
-    for (auto &trackSequences : _sequences) {
-        for (auto &sequence : trackSequences) {
-            sequence.clear();
-        }
-    }
-
     _playState.clear();
     _routing.clear();
 
@@ -39,30 +33,30 @@ void Project::clear() {
 }
 
 void Project::clearPattern(int patternIndex) {
-    for (auto &trackSequences : _sequences) {
-        trackSequences[patternIndex].clear();
+    for (auto &track : _tracks) {
+        track.clearPattern(patternIndex);
     }
 }
 
 void Project::demoProject() {
-    sequence(0, 0).noteSequence().setLastStep(15);
-    sequence(0, 0).noteSequence().setGates({ 1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0 });
-    sequence(1, 0).noteSequence().setLastStep(15);
-    sequence(1, 0).noteSequence().setGates({ 0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0 });
-    sequence(2, 0).noteSequence().setLastStep(15);
-    sequence(2, 0).noteSequence().setGates({ 0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0 });
-    sequence(3, 0).noteSequence().setLastStep(15);
-    sequence(3, 0).noteSequence().setGates({ 0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0 });
-    sequence(4, 0).noteSequence().setLastStep(15);
-    sequence(4, 0).noteSequence().setGates({ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 });
-    sequence(5, 0).noteSequence().setLastStep(15);
-    sequence(5, 0).noteSequence().setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0 });
-    sequence(7, 0).noteSequence().setLastStep(15);
-    sequence(7, 0).noteSequence().setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
-    sequence(7, 0).noteSequence().setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
+    noteSequence(0, 0).setLastStep(15);
+    noteSequence(0, 0).setGates({ 1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0 });
+    noteSequence(1, 0).setLastStep(15);
+    noteSequence(1, 0).setGates({ 0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0 });
+    noteSequence(2, 0).setLastStep(15);
+    noteSequence(2, 0).setGates({ 0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,0 });
+    noteSequence(3, 0).setLastStep(15);
+    noteSequence(3, 0).setGates({ 0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0 });
+    noteSequence(4, 0).setLastStep(15);
+    noteSequence(4, 0).setGates({ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 });
+    noteSequence(5, 0).setLastStep(15);
+    noteSequence(5, 0).setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0 });
+    noteSequence(7, 0).setLastStep(15);
+    noteSequence(7, 0).setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
+    noteSequence(7, 0).setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
 
-    setTrackMode(0, Types::TrackMode::Curve);
-    sequence(0, 0).curveSequence().setLastStep(7);
+    // setTrackMode(0, Types::TrackMode::Curve);
+    // sequence(0, 0).curveSequence().setLastStep(7);
 }
 
 void Project::setTrackSetup(int trackIndex, const Track &track) {
@@ -76,9 +70,9 @@ void Project::setTrackSetup(int trackIndex, const Track &track) {
 void Project::setTrackMode(int trackIndex, Types::TrackMode trackMode) {
     // TODO reset snapshots
     _tracks[trackIndex].setTrackMode(trackMode);
-    for (auto &sequence : _sequences[trackIndex]) {
-        sequence.setTrackMode(trackMode);
-    }
+    // for (auto &sequence : _sequences[trackIndex]) {
+    //     sequence.setTrackMode(trackMode);
+    // }
 }
 
 void Project::write(WriteContext &context) const {
@@ -89,13 +83,8 @@ void Project::write(WriteContext &context) const {
     writer.write(_syncMeasure);
 
     _clockSetup.write(context);
-    writeArray(context, _tracks);
 
-    for (const auto &sequenceArray : _sequences) {
-        for (const auto &sequence : sequenceArray) {
-            sequence.write(context);
-        }
-    }
+    writeArray(context, _tracks);
 
     _playState.write(context);
     _routing.write(context);
@@ -112,13 +101,8 @@ void Project::read(ReadContext &context) {
     reader.read(_syncMeasure);
 
     _clockSetup.read(context);
-    readArray(context, _tracks);
 
-    for (auto &sequenceArray : _sequences) {
-        for (auto &sequence : sequenceArray) {
-            sequence.read(context);
-        }
-    }
+    readArray(context, _tracks);
 
     _playState.read(context);
     _routing.read(context);
