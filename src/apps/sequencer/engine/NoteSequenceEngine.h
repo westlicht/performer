@@ -5,12 +5,12 @@
 #include "SortedQueue.h"
 #include "Groove.h"
 
-#include "model/TrackSetup.h"
+#include "model/Track.h"
 #include "model/Sequence.h"
 
 class NoteSequenceEngine : public SequenceEngine {
 public:
-    virtual void setup(const TrackSetup &trackSetup) override;
+    virtual void setup(const Track &track) override;
 
     virtual void setSequence(const Sequence &sequence) override;
 
@@ -32,7 +32,7 @@ private:
     void triggerStep(uint32_t tick, uint32_t divisor);
     uint32_t applySwing(uint32_t tick);
 
-    const TrackSetup *_trackSetup;
+    const Track *_track;
     const NoteSequence *_sequence;
 
     SequenceState _sequenceState;

@@ -136,7 +136,7 @@ void RoutingEngine::writeParam(Routing::Param param, int track, int pattern, flo
 
 void RoutingEngine::writeTrackParam(Routing::Param param, int track, int pattern, float value) {
     auto &sequence = _project.sequence(track, pattern);
-    switch (_project.trackSetup(track).trackMode()) {
+    switch (_project.track(track).trackMode()) {
     case Types::TrackMode::Note:
         writeNoteSequenceParam(sequence.noteSequence(), param, value);
         break;

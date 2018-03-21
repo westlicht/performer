@@ -4,12 +4,12 @@
 
 #include "ListModel.h"
 
-#include "model/TrackSetup.h"
+#include "model/Track.h"
 
 class TrackSetupListModel : public ListModel {
 public:
-    const TrackSetup &trackSetup() const { return _trackSetup; }
-    void setTrackSetup(const TrackSetup &trackSetup) { _trackSetup = trackSetup; }
+    const Track &track() const { return _track; }
+    void setTrack(const Track &track) { _track = track; }
 
     virtual int rows() const override {
         return Last;
@@ -60,16 +60,16 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case TrackMode:
-            _trackSetup.printTrackMode(str);
+            _track.printTrackMode(str);
             break;
         case PlayMode:
-            _trackSetup.printPlayMode(str);
+            _track.printPlayMode(str);
             break;
         case FillMode:
-            _trackSetup.printFillMode(str);
+            _track.printFillMode(str);
             break;
         case LinkTrack:
-            _trackSetup.printLinkTrack(str);
+            _track.printLinkTrack(str);
             break;
         case Last:
             break;
@@ -79,21 +79,21 @@ private:
     void editValue(Item item, int value, bool shift) {
         switch (item) {
         case TrackMode:
-            _trackSetup.editTrackMode(value, shift);
+            _track.editTrackMode(value, shift);
             break;
         case PlayMode:
-            _trackSetup.editPlayMode(value, shift);
+            _track.editPlayMode(value, shift);
             break;
         case FillMode:
-            _trackSetup.editFillMode(value, shift);
+            _track.editFillMode(value, shift);
             break;
         case LinkTrack:
-            _trackSetup.editLinkTrack(value, shift);
+            _track.editLinkTrack(value, shift);
             break;
         case Last:
             break;
         }
     }
 
-    TrackSetup _trackSetup;
+    Track _track;
 };

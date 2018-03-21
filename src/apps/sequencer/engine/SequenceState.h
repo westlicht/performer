@@ -1,7 +1,6 @@
 #pragma once
 
 #include "model/Types.h"
-#include "model/TrackSetup.h"
 
 #include "core/utils/Random.h"
 

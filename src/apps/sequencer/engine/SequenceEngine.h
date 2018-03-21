@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-class TrackSetup;
+class Track;
 class Sequence;
 class SequenceState;
 
@@ -16,7 +16,7 @@ class SequenceEngine {
 public:
     virtual ~SequenceEngine() {}
 
-    virtual void setup(const TrackSetup &trackSetup) = 0;
+    virtual void setup(const Track &track) = 0;
 
     virtual void setSequence(const Sequence &sequence) = 0;
 

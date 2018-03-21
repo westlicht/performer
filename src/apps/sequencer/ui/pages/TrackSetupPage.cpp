@@ -32,7 +32,7 @@ TrackSetupPage::TrackSetupPage(PageManager &manager, PageContext &context) :
 {}
 
 void TrackSetupPage::enter() {
-    _listModel.setTrackSetup(_project.selectedTrackSetup());
+    _listModel.setTrack(_project.selectedTrack());
 }
 
 void TrackSetupPage::exit() {
@@ -42,7 +42,7 @@ void TrackSetupPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "TRACK SETUP");
 
-    const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, _listModel.trackSetup() != _project.selectedTrackSetup() ? "COMMIT" : nullptr };
+    const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, _listModel.track() != _project.selectedTrack() ? "COMMIT" : nullptr };
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
@@ -66,12 +66,12 @@ void TrackSetupPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isFunction() && key.function() == 4) {
-        _project.setTrackSetup(_project.selectedTrackIndex(), _listModel.trackSetup());
+        _project.setTrackSetup(_project.selectedTrackIndex(), _listModel.track());
     }
 
     if (key.isTrackSelect()) {
         _project.setSelectedTrackIndex(key.trackSelect());
-        _listModel.setTrackSetup(_project.selectedTrackSetup());
+        _listModel.setTrack(_project.selectedTrack());
     }
 
     ListPage::keyPress(event);
@@ -96,29 +96,29 @@ void TrackSetupPage::contextAction(int index) {
 bool TrackSetupPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
-        return _model.clipBoard().trackSetupBuffer().isCopied() && _model.clipBoard().trackSetupBuffer().canPasteTo(_project.selectedTrackSetup());
+        return _model.clipBoard().trackBuffer().isCopied() && _model.clipBoard().trackBuffer().canPasteTo(_project.selectedTrack());
     default:
         return true;
     }
 }
 
 void TrackSetupPage::initTrackSetup() {
-    _project.setTrackSetup(_project.selectedTrackIndex(), TrackSetup());
-    _listModel.setTrackSetup(_project.selectedTrackSetup());
+    _project.setTrackSetup(_project.selectedTrackIndex(), Track());
+    _listModel.setTrack(_project.selectedTrack());
 }
 
 void TrackSetupPage::copyTrackSetup() {
-    auto &trackSetupBuffer = _model.clipBoard().trackSetupBuffer();
+    auto &trackBuffer = _model.clipBoard().trackBuffer();
 
-    trackSetupBuffer.copyFrom(_project.selectedTrackSetup());
+    trackBuffer.copyFrom(_project.selectedTrack());
 }
 
 void TrackSetupPage::pasteTrackSetup() {
-    auto &trackSetupBuffer = _model.clipBoard().trackSetupBuffer();
+    auto &trackBuffer = _model.clipBoard().trackBuffer();
 
-    if (trackSetupBuffer.isCopied()) {
-        _project.setTrackSetup(_project.selectedTrackIndex(), trackSetupBuffer.trackSetup());
-        _listModel.setTrackSetup(_project.selectedTrackSetup());
+    if (trackBuffer.isCopied()) {
+        _project.setTrackSetup(_project.selectedTrackIndex(), trackBuffer.track());
+        _listModel.setTrack(_project.selectedTrack());
     }
 }
 

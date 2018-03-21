@@ -4,8 +4,8 @@
 #include "core/fs/FileReader.h"
 
 Project::Project() {
-    for (size_t i = 0; i < _trackSetups.size(); ++i) {
-        _trackSetups[i].setTrackIndex(i);
+    for (size_t i = 0; i < _tracks.size(); ++i) {
+        _tracks[i].setTrackIndex(i);
     }
 }
 
@@ -18,8 +18,8 @@ void Project::clear() {
 
     _clockSetup.clear();
 
-    for (auto &trackSetup : _trackSetups) {
-        trackSetup.clear();
+    for (auto &track : _tracks) {
+        track.clear();
     }
 
     for (auto &trackSequences : _sequences) {
@@ -65,17 +65,17 @@ void Project::demoProject() {
     sequence(0, 0).curveSequence().setLastStep(7);
 }
 
-void Project::setTrackSetup(int trackIndex, const TrackSetup &trackSetup) {
+void Project::setTrackSetup(int trackIndex, const Track &track) {
     // TODO make sure engine is synced to this before updating UI
-    if (trackSetup.trackMode() != _trackSetups[trackIndex].trackMode()) {
-        setTrackMode(trackIndex, trackSetup.trackMode());
+    if (track.trackMode() != _tracks[trackIndex].trackMode()) {
+        setTrackMode(trackIndex, track.trackMode());
     }
-    _trackSetups[trackIndex] = trackSetup;
+    _tracks[trackIndex] = track;
 }
 
 void Project::setTrackMode(int trackIndex, Types::TrackMode trackMode) {
     // TODO reset snapshots
-    _trackSetups[trackIndex].setTrackMode(trackMode);
+    _tracks[trackIndex].setTrackMode(trackMode);
     for (auto &sequence : _sequences[trackIndex]) {
         sequence.setTrackMode(trackMode);
     }
@@ -89,7 +89,7 @@ void Project::write(WriteContext &context) const {
     writer.write(_syncMeasure);
 
     _clockSetup.write(context);
-    writeArray(context, _trackSetups);
+    writeArray(context, _tracks);
 
     for (const auto &sequenceArray : _sequences) {
         for (const auto &sequence : sequenceArray) {
@@ -112,7 +112,7 @@ void Project::read(ReadContext &context) {
     reader.read(_syncMeasure);
 
     _clockSetup.read(context);
-    readArray(context, _trackSetups);
+    readArray(context, _tracks);
 
     for (auto &sequenceArray : _sequences) {
         for (auto &sequence : sequenceArray) {

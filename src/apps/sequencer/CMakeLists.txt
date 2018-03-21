@@ -32,7 +32,7 @@ set(sources
     model/Routing.cpp
     model/Sequence.cpp
     model/Settings.cpp
-    model/TrackSetup.cpp
+    model/Track.cpp
     # ui
     ui/LedPainter.cpp
     ui/MessageManager.cpp

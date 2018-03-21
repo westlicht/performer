@@ -1,13 +1,13 @@
-#include "TrackSetup.h"
+#include "Track.h"
 
-void TrackSetup::clear() {
+void Track::clear() {
     _trackMode = Types::TrackMode::Default;
     _playMode = PlayMode::Free;
     _fillMode = FillMode::None;
     _linkTrack = -1;
 }
 
-void TrackSetup::write(WriteContext &context) const {
+void Track::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_trackMode);
     writer.write(_playMode);
@@ -15,7 +15,7 @@ void TrackSetup::write(WriteContext &context) const {
     writer.write(_linkTrack);
 }
 
-void TrackSetup::read(ReadContext &context) {
+void Track::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_trackMode);
     reader.read(_playMode);

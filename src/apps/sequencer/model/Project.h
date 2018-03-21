@@ -3,7 +3,7 @@
 #include "Config.h"
 #include "Types.h"
 #include "ClockSetup.h"
-#include "TrackSetup.h"
+#include "Track.h"
 #include "Sequence.h"
 #include "PlayState.h"
 #include "Routing.h"
@@ -21,7 +21,7 @@ public:
 
     static constexpr size_t NameLength = 16;
 
-    typedef std::array<TrackSetup, CONFIG_TRACK_COUNT> TrackSetupArray;
+    typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
     typedef std::array<Sequence, CONFIG_PATTERN_COUNT> SequenceArray;
     typedef std::array<SequenceArray, CONFIG_TRACK_COUNT> TrackSequenceArray;
 
@@ -98,13 +98,13 @@ public:
     const ClockSetup &clockSetup() const { return _clockSetup; }
           ClockSetup &clockSetup()       { return _clockSetup; }
 
-    // trackSetups
+    // tracks
 
-    const TrackSetupArray &trackSetups() const { return _trackSetups; }
-          TrackSetupArray &trackSetups()       { return _trackSetups; }
+    const TrackArray &tracks() const { return _tracks; }
+          TrackArray &tracks()       { return _tracks; }
 
-    const TrackSetup &trackSetup(int index) const { return _trackSetups[index]; }
-          TrackSetup &trackSetup(int index)       { return _trackSetups[index]; }
+    const Track &track(int index) const { return _tracks[index]; }
+          Track &track(int index)       { return _tracks[index]; }
 
     // playState
 
@@ -142,11 +142,11 @@ public:
     // Methods
     //----------------------------------------
 
-    void setTrackSetup(int trackIndex, const TrackSetup &trackSetup);
+    void setTrackSetup(int trackIndex, const Track &track);
     void setTrackMode(int trackIndex, Types::TrackMode trackMode);
 
-    const TrackSetup &selectedTrackSetup() const { return _trackSetups[_selectedTrackIndex]; }
-          TrackSetup &selectedTrackSetup()       { return _trackSetups[_selectedTrackIndex]; }
+    const Track &selectedTrack() const { return _tracks[_selectedTrackIndex]; }
+          Track &selectedTrack()       { return _tracks[_selectedTrackIndex]; }
 
     const Sequence &sequence(int trackIndex, int patternIndex) const { return _sequences[trackIndex][patternIndex]; }
           Sequence &sequence(int trackIndex, int patternIndex)       { return _sequences[trackIndex][patternIndex]; }
@@ -173,7 +173,7 @@ private:
     uint8_t _syncMeasure = 1;
 
     ClockSetup _clockSetup;
-    TrackSetupArray _trackSetups;
+    TrackArray _tracks;
     TrackSequenceArray _sequences;
     PlayState _playState;
     Routing _routing;

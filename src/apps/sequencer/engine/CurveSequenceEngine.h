@@ -3,12 +3,12 @@
 #include "SequenceEngine.h"
 #include "SequenceState.h"
 
-#include "model/TrackSetup.h"
+#include "model/Track.h"
 #include "model/Sequence.h"
 
 class CurveSequenceEngine : public SequenceEngine {
 public:
-    virtual void setup(const TrackSetup &trackSetup) override;
+    virtual void setup(const Track &track) override;
 
     virtual void setSequence(const Sequence &sequence) override;
 
@@ -30,7 +30,7 @@ public:
 private:
     void updateOutput(uint32_t relativeTick, uint32_t divisor);
 
-    const TrackSetup *_trackSetup;
+    const Track *_track;
     const CurveSequence *_sequence;
 
     SequenceState _sequenceState;

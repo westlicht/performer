@@ -5,7 +5,7 @@ ClipBoard::ClipBoard() {
 }
 
 void ClipBoard::clear() {
-    _trackSetupBuffer.clear();
+    _trackBuffer.clear();
     _sequenceBuffer.clear();
     // _patternBuffer.clear();
 }

@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <cstring>
 
-class TrackSetup {
+class Track {
 public:
     //----------------------------------------
     // Types
@@ -118,14 +118,14 @@ public:
     // Methods
     //----------------------------------------
 
-    TrackSetup() { clear(); }
+    Track() { clear(); }
 
     void clear();
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
 
-    TrackSetup &operator=(const TrackSetup &other) {
+    Track &operator=(const Track &other) {
         _trackMode = other._trackMode;
         _playMode = other._playMode;
         _fillMode = other._fillMode;
@@ -133,7 +133,7 @@ public:
         return *this;
     }
 
-    bool operator==(const TrackSetup &other) const {
+    bool operator==(const Track &other) const {
         return (
             _trackMode == other._trackMode &&
             _playMode == other._playMode &&
@@ -142,7 +142,7 @@ public:
         );
     }
 
-    bool operator!=(const TrackSetup &other) const {
+    bool operator!=(const Track &other) const {
         return !(*this == other);
     }
 

@@ -2,10 +2,10 @@
 
 #include "core/Debug.h"
 
-void TrackEngine::setup(const TrackSetup &trackSetup, const TrackEngine *linkedTrackEngine) {
+void TrackEngine::setup(const Track &track, const TrackEngine *linkedTrackEngine) {
     const SequenceEngine *linkedSequenceEngine = linkedTrackEngine ? &linkedTrackEngine->sequenceEngine() : nullptr;
 
-    if (trackSetup.trackMode() == _trackMode) {
+    if (track.trackMode() == _trackMode) {
         // update linked sequence engine
         if (_sequenceEngine && linkedSequenceEngine != _linkedSequenceEngine) {
             _sequenceEngine->setLinkedSequenceEngine(linkedSequenceEngine);
@@ -14,7 +14,7 @@ void TrackEngine::setup(const TrackSetup &trackSetup, const TrackEngine *linkedT
         return;
     }
 
-    _trackMode = trackSetup.trackMode();
+    _trackMode = track.trackMode();
     _linkedSequenceEngine = linkedSequenceEngine;
 
     _sequenceEngineContainer.destroy(_sequenceEngine);
@@ -30,7 +30,7 @@ void TrackEngine::setup(const TrackSetup &trackSetup, const TrackEngine *linkedT
         break;
     }
 
-    _sequenceEngine->setup(trackSetup);
+    _sequenceEngine->setup(track);
     _sequenceEngine->setMute(_mute);
     _sequenceEngine->setLinkedSequenceEngine(linkedSequenceEngine);
     _sequenceEngine->setSequence(*_sequence);

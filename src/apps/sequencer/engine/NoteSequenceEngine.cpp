@@ -43,8 +43,8 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale) {
     return scale.noteVolts(step.note());
 }
 
-void NoteSequenceEngine::setup(const TrackSetup &trackSetup) {
-    _trackSetup = &trackSetup;
+void NoteSequenceEngine::setup(const Track &track) {
+    _track = &track;
     reset();
 }
 
@@ -85,14 +85,14 @@ void NoteSequenceEngine::tick(uint32_t tick) {
 
         // advance sequence
         if (relativeTick == 0) {
-            switch (_trackSetup->playMode()) {
-            case TrackSetup::PlayMode::Free:
+            switch (_track->playMode()) {
+            case Track::PlayMode::Free:
                 _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
-            case TrackSetup::PlayMode::Aligned:
+            case Track::PlayMode::Aligned:
                 _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
-            case TrackSetup::PlayMode::Last:
+            case Track::PlayMode::Last:
                 break;
             }
 

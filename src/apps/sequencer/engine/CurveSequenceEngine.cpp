@@ -16,8 +16,8 @@ static float evalStepShape(const CurveSequence::Step &step, float fraction) {
     return min + value * (max - min);
 }
 
-void CurveSequenceEngine::setup(const TrackSetup &trackSetup) {
-    _trackSetup = &trackSetup;
+void CurveSequenceEngine::setup(const Track &track) {
+    _track = &track;
     reset();
 }
 
@@ -60,14 +60,14 @@ void CurveSequenceEngine::tick(uint32_t tick) {
 
         if (relativeTick == 0) {
             // advance sequence
-            switch (_trackSetup->playMode()) {
-            case TrackSetup::PlayMode::Free:
+            switch (_track->playMode()) {
+            case Track::PlayMode::Free:
                 _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
-            case TrackSetup::PlayMode::Aligned:
+            case Track::PlayMode::Aligned:
                 _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
-            case TrackSetup::PlayMode::Last:
+            case Track::PlayMode::Last:
                 break;
             }
         }

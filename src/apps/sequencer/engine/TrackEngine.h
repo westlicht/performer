@@ -3,7 +3,7 @@
 #include "NoteSequenceEngine.h"
 #include "CurveSequenceEngine.h"
 
-#include "model/TrackSetup.h"
+#include "model/Track.h"
 #include "model/Sequence.h"
 #include "model/PlayState.h"
 
@@ -14,7 +14,7 @@
 
 class TrackEngine {
 public:
-    void setup(const TrackSetup &trackSetup, const TrackEngine *linkedTrackEngine);
+    void setup(const Track &track, const TrackEngine *linkedTrackEngine);
 
     void setSequence(const Sequence &sequence);
 

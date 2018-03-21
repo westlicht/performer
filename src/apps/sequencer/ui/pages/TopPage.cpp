@@ -169,7 +169,7 @@ bool TopPage::isSequencePage() {
 void TopPage::setSequencePage() {
     auto &pages = _manager.pages();
 
-    switch (_project.selectedTrackSetup().trackMode()) {
+    switch (_project.selectedTrack().trackMode()) {
     case Types::TrackMode::Note:
         setMainPage(pages.noteSequence);
         break;
@@ -192,7 +192,7 @@ bool TopPage::isSequenceSetupPage() {
 void TopPage::setSequenceSetupPage() {
     auto &pages = _manager.pages();
 
-    switch (_project.selectedTrackSetup().trackMode()) {
+    switch (_project.selectedTrack().trackMode()) {
     case Types::TrackMode::Note:
         setMainPage(pages.noteSequenceSetup);
         break;

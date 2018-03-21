@@ -2,37 +2,37 @@
 
 #include "Config.h"
 
-#include "TrackSetup.h"
+#include "Track.h"
 #include "Sequence.h"
 #include "Project.h"
 
-class TrackSetupBuffer {
+class TrackBuffer {
 public:
     void clear() {
         _copied = false;
     }
 
-    const TrackSetup &trackSetup() const { return _trackSetup; }
+    const Track &track() const { return _track; }
 
     bool isCopied() const { return _copied; }
 
-    void copyFrom(const TrackSetup &trackSetup) {
-        _trackSetup = trackSetup;
+    void copyFrom(const Track &track) {
+        _track = track;
         _copied = true;
     }
 
-    void pasteTo(TrackSetup &trackSetup) const {
-        if (canPasteTo(trackSetup)) {
-            trackSetup = _trackSetup;
+    void pasteTo(Track &track) const {
+        if (canPasteTo(track)) {
+            track = _track;
         }
     }
 
-    bool canPasteTo(TrackSetup &trackSetup) const {
+    bool canPasteTo(Track &track) const {
         return true;
     }
 
 private:
-    TrackSetup _trackSetup;
+    Track _track;
     bool _copied;
 };
 
@@ -111,12 +111,12 @@ public:
 
     void clear();
 
-    TrackSetupBuffer &trackSetupBuffer() { return _trackSetupBuffer; }
+    TrackBuffer &trackBuffer() { return _trackBuffer; }
     SequenceBuffer &sequenceBuffer() { return _sequenceBuffer; }
     PatternBuffer &patternBuffer() { return _patternBuffer; }
 
 private:
-    TrackSetupBuffer _trackSetupBuffer;
+    TrackBuffer _trackBuffer;
     SequenceBuffer _sequenceBuffer;
     PatternBuffer _patternBuffer;
 };

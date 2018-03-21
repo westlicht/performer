@@ -174,10 +174,10 @@ void Engine::updateClockSetup() {
 
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        const auto &trackSetup = _model.project().trackSetup(trackIndex);
-        int linkTrack = trackSetup.linkTrack();
+        const auto &track = _model.project().track(trackIndex);
+        int linkTrack = track.linkTrack();
         const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
-        trackEngine(trackIndex).setup(trackSetup, linkedTrackEngine);
+        trackEngine(trackIndex).setup(track, linkedTrackEngine);
     }
 }
 
