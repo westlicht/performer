@@ -20,6 +20,8 @@
 #include "TopPage.h"
 #include "TrackSetupPage.h"
 
+#include "EuclideanPage.h"
+
 #ifdef CONFIG_ENABLE_ASTEROIDS
 #include "AsteroidsPage.h"
 #endif
@@ -45,6 +47,8 @@ struct Pages {
     TextInputPage textInput;
     ConfirmationPage confirmation;
     BusyPage busy;
+    // misc
+    EuclideanPage euclidean;
 
 #ifdef CONFIG_ENABLE_ASTEROIDS
     AsteroidsPage asteroids;
@@ -70,7 +74,9 @@ struct Pages {
         // helper pages
         textInput(manager, context),
         confirmation(manager, context),
-        busy(manager, context)
+        busy(manager, context),
+        // misc
+        euclidean(manager, context)
 #ifdef CONFIG_ENABLE_ASTEROIDS
         ,asteroids(manager, context)
 #endif

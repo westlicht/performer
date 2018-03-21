@@ -48,6 +48,7 @@ set(sources
     ui/pages/ContextMenuPage.cpp
     ui/pages/CurveSequencePage.cpp
     ui/pages/CurveSequenceSetupPage.cpp
+    ui/pages/EuclideanPage.cpp
     ui/pages/ListPage.cpp
     ui/pages/MonitorPage.cpp
     ui/pages/NoteSequencePage.cpp

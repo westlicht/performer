@@ -33,6 +33,7 @@ private:
         FirstStep       = 12,
 
         // aux modes
+        Euclidean       = 22,
         Monitor         = 23,
 
         Last,
