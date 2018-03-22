@@ -77,7 +77,8 @@ public:
         };
 
         enum class Kind : uint8_t {
-            CCAbsolute,
+            ControllerAbs,
+            ControllerRel,
             PitchBend,
             NoteMomentary,
             NoteToggle,
@@ -141,6 +142,7 @@ public:
         // midi
 
         const MIDISource &midi() const { return _source.midi; }
+              MIDISource &midi()       { return _source.midi; }
 
         void clear();
 

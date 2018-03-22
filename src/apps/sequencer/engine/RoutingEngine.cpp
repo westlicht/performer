@@ -29,9 +29,16 @@ void RoutingEngine::receiveMIDI(MIDIPort port, const MIDIMessage &message) {
             const auto &midiSource = route.source().midi();
             auto &sourceValue = _sourceValues[i];
             switch (midiSource.kind()) {
-            case Routing::MIDISource::Kind::CCAbsolute:
+            case Routing::MIDISource::Kind::ControllerAbs:
                 if (message.controllerNumber() == midiSource.controller()) {
                     sourceValue = message.controllerValue() * (1.f / 127.f);
+                }
+                break;
+            case Routing::MIDISource::Kind::ControllerRel:
+                if (message.controllerNumber() == midiSource.controller()) {
+                    int value = message.controllerValue();
+                    value = value >= 64 ? 64 - value : value;
+                    sourceValue = clamp(sourceValue + value * (1.f / 127.f), 0.f, 1.f);
                 }
                 break;
             case Routing::MIDISource::Kind::PitchBend:
