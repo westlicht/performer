@@ -1,5 +1,30 @@
 #include "Routing.h"
 
+#include "Project.h"
+
+struct ParamInfo {
+    uint16_t min;
+    uint16_t max;
+};
+
+const ParamInfo paramInfos[int(Routing::Param::Last)] = {
+    [int(Routing::Param::BPM)]              = { 20,     500 },
+    [int(Routing::Param::Swing)]            = { 50,     75  },
+    [int(Routing::Param::SequenceParams)]   = { 0,      0   },
+    [int(Routing::Param::FirstStep)]        = { 0,      63  },
+    [int(Routing::Param::LastStep)]         = { 0,      63  },
+};
+
+static float normalizeParamValue(Routing::Param param, float value) {
+    const auto &info = paramInfos[int(param)];
+    return clamp((value - info.min) / (info.max - info.min), 0.f, 1.f);
+}
+
+static float denormalizeParamValue(Routing::Param param, float normalized) {
+    const auto &info = paramInfos[int(param)];
+    return normalized * (info.max - info.min) + info.min;
+}
+
 //----------------------------------------
 // Routing::CVSource
 //----------------------------------------
@@ -160,20 +185,81 @@ void Routing::Route::read(ReadContext &context) {
 // Routing
 //----------------------------------------
 
+Routing::Routing(Project &project) :
+    _project(project)
+{}
+
 void Routing::clear() {
     for (auto &route : _routes) {
         route.clear();
     }
 
     // route(0).source().initCV(0);
-    // route(0).sink().init(Routing::Param::BPM);
-    // route(0).sink().initTrack(Routing::Param::FirstStep, 0);
+    // route(0).sink().init(Param::BPM);
+    // route(0).sink().initTrack(Param::FirstStep, 0);
     // route(0).enable();
 
     // route(1).source().initCV(1);
-    // route(1).sink().init(Routing::Param::Swing);
-    // route(1).sink().initTrack(Routing::Param::LastStep, 0);
+    // route(1).sink().init(Param::Swing);
+    // route(1).sink().initTrack(Param::LastStep, 0);
     // route(1).enable();
+}
+
+void Routing::writeParam(Param param, int trackIndex, int patternIndex, float value) {
+    value = denormalizeParamValue(param, value);
+    switch (param) {
+    case Param::BPM:
+        _project.setBpm(value);
+        break;
+    case Param::Swing:
+        _project.setSwing(value);
+        break;
+    default:
+        writeTrackParam(param, trackIndex, patternIndex, value);
+        break;
+    }
+}
+
+void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, float value) {
+    auto &track = _project.track(trackIndex);
+    switch (track.trackMode()) {
+    case Track::TrackMode::Note:
+        writeNoteSequenceParam(track.noteTrack().sequence(patternIndex), param, value);
+        break;
+    case Track::TrackMode::Curve:
+        writeCurveSequenceParam(track.curveTrack().sequence(patternIndex), param, value);
+        break;
+    case Track::TrackMode::Last:
+        break;
+    }
+}
+
+void Routing::writeNoteSequenceParam(NoteSequence &sequence, Param param, float value) {
+    switch (param) {
+    case Param::FirstStep:
+        sequence.setFirstStep(value);
+        break;
+    case Param::LastStep:
+        sequence.setLastStep(value);
+        break;
+    default:
+        break;
+    }
+}
+
+void Routing::writeCurveSequenceParam(CurveSequence &sequence, Param param, float value) {
+
+}
+
+float Routing::readParam(Param param, int patternIndex, int trackIndex) const {
+    switch (param) {
+    case Param::BPM:
+        return _project.bpm();
+    case Param::Swing:
+        return _project.swing();
+    default:
+        return 0.f;
+    }
 }
 
 void Routing::write(WriteContext &context) const {

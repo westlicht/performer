@@ -6,29 +6,6 @@
 static_assert(int(MIDIPort::MIDI) == int(Routing::MIDISource::Port::MIDI), "invalid mapping");
 static_assert(int(MIDIPort::USBMIDI) == int(Routing::MIDISource::Port::USBMIDI), "invalid mapping");
 
-struct ParamInfo {
-    uint16_t min;
-    uint16_t max;
-};
-
-const ParamInfo paramInfos[int(Routing::Param::Last)] = {
-    [int(Routing::Param::BPM)]              = { 20,     500 },
-    [int(Routing::Param::Swing)]            = { 50,     75  },
-    [int(Routing::Param::SequenceParams)]   = { 0,      0   },
-    [int(Routing::Param::FirstStep)]        = { 0,      63  },
-    [int(Routing::Param::LastStep)]         = { 0,      63  },
-};
-
-static float normalizeParamValue(Routing::Param param, float value) {
-    const auto &info = paramInfos[int(param)];
-    return clamp((value - info.min) / (info.max - info.min), 0.f, 1.f);
-}
-
-static float denormalizeParamValue(Routing::Param param, float normalized) {
-    const auto &info = paramInfos[int(param)];
-    return normalized * (info.max - info.min) + info.min;
-}
-
 RoutingEngine::RoutingEngine(Engine &engine, Model &model) :
     _engine(engine),
     _model(model),
@@ -114,64 +91,7 @@ void RoutingEngine::updateSinks() {
             const auto &sink = route.sink();
             float value = _sourceValues[i];
             // TODO handle pattern
-            writeParam(sink.param(), sink.track(), 0, value);
+            _routing.writeParam(sink.param(), sink.track(), 0, value);
         }
-    }
-}
-
-void RoutingEngine::writeParam(Routing::Param param, int trackIndex, int patternIndex, float value) {
-    value = denormalizeParamValue(param, value);
-    switch (param) {
-    case Routing::Param::BPM:
-        _project.setBpm(value);
-        break;
-    case Routing::Param::Swing:
-        _project.setSwing(value);
-        break;
-    default:
-        writeTrackParam(param, trackIndex, patternIndex, value);
-        break;
-    }
-}
-
-void RoutingEngine::writeTrackParam(Routing::Param param, int trackIndex, int patternIndex, float value) {
-    auto &track = _project.track(trackIndex);
-    switch (track.trackMode()) {
-    case Track::TrackMode::Note:
-        writeNoteSequenceParam(track.noteTrack().sequence(patternIndex), param, value);
-        break;
-    case Track::TrackMode::Curve:
-        writeCurveSequenceParam(track.curveTrack().sequence(patternIndex), param, value);
-        break;
-    case Track::TrackMode::Last:
-        break;
-    }
-}
-
-void RoutingEngine::writeNoteSequenceParam(NoteSequence &sequence, Routing::Param param, float value) {
-    switch (param) {
-    case Routing::Param::FirstStep:
-        sequence.setFirstStep(value);
-        break;
-    case Routing::Param::LastStep:
-        sequence.setLastStep(value);
-        break;
-    default:
-        break;
-    }
-}
-
-void RoutingEngine::writeCurveSequenceParam(CurveSequence &sequence, Routing::Param param, float value) {
-
-}
-
-float RoutingEngine::readParam(Routing::Param param, int patternIndex, int trackIndex) const {
-    switch (param) {
-    case Routing::Param::BPM:
-        return _project.bpm();
-    case Routing::Param::Swing:
-        return _project.swing();
-    default:
-        return 0.f;
     }
 }

@@ -26,12 +26,6 @@ private:
     void updateSources();
     void updateSinks();
 
-    void writeParam(Routing::Param param, int trackIndex, int patternIndex, float value);
-    void writeTrackParam(Routing::Param param, int trackIndex, int patternIndex, float value);
-    void writeNoteSequenceParam(NoteSequence &sequence, Routing::Param param, float value);
-    void writeCurveSequenceParam(CurveSequence &sequence, Routing::Param param, float value);
-    float readParam(Routing::Param param, int trackIndex, int patternIndex) const;
-
     Engine &_engine;
     Model &_model;
     Project &_project;

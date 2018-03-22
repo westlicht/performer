@@ -3,7 +3,9 @@
 #include "core/fs/FileWriter.h"
 #include "core/fs/FileReader.h"
 
-Project::Project() {
+Project::Project() :
+    _routing(*this)
+{
     for (size_t i = 0; i < _tracks.size(); ++i) {
         _tracks[i].setTrackIndex(i);
     }
@@ -63,9 +65,6 @@ void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
     // TODO make sure engine is synced to this before updating UI
     // TODO reset snapshots
     _tracks[trackIndex].setTrackMode(trackMode);
-    // for (auto &sequence : _sequences[trackIndex]) {
-    //     sequence.setTrackMode(trackMode);
-    // }
 }
 
 void Project::write(WriteContext &context) const {

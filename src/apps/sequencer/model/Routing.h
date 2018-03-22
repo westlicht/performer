@@ -11,6 +11,10 @@
 
 #include <cstdint>
 
+class Project;
+class NoteSequence;
+class CurveSequence;
+
 class Routing {
 public:
     //----------------------------------------
@@ -208,7 +212,15 @@ public:
     // Methods
     //----------------------------------------
 
+    Routing(Project &project);
+
     void clear();
+
+    void writeParam(Param param, int trackIndex, int patternIndex, float value);
+    void writeTrackParam(Param param, int trackIndex, int patternIndex, float value);
+    void writeNoteSequenceParam(NoteSequence &sequence, Param param, float value);
+    void writeCurveSequenceParam(CurveSequence &sequence, Param param, float value);
+    float readParam(Param param, int trackIndex, int patternIndex) const;
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
@@ -217,6 +229,7 @@ public:
     void clearDirty() { _dirty = false; }
 
 private:
+    Project &_project;
     RouteArray _routes;
     bool _dirty;
 };
