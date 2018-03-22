@@ -1,12 +1,12 @@
 #pragma once
 
-#include "USBMIDI.h"
+#include "UsbMidi.h"
 
 #include <cstdint>
 
-class USBH {
+class UsbH {
 public:
-    USBH(USBMIDI &usbMidi);
+    UsbH(UsbMidi &usbMidi);
 
     void init();
 
@@ -42,9 +42,9 @@ private:
         return _usbMidi.dequeueMessage(message);
     }
 
-    USBMIDI &_usbMidi;
+    UsbMidi &_usbMidi;
 
     uint8_t _midiDevices = 0;
 
-    friend struct MIDIDriverHandler;
+    friend struct MidiDriverHandler;
 };

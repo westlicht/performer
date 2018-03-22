@@ -3,7 +3,7 @@
 #include "core/midi/MidiMessage.h"
 #include "core/midi/MidiParser.h"
 
-#include "drivers/USBMIDI.h"
+#include "drivers/UsbMidi.h"
 
 class ControllerManager;
 
@@ -20,13 +20,13 @@ protected:
 
 class ControllerManager {
 public:
-    ControllerManager(USBMIDI &midi);
+    ControllerManager(UsbMidi &midi);
 
     void update();
     void sendMessage(const MidiMessage &message);
 
 private:
-    USBMIDI &_midi;
+    UsbMidi &_midi;
     MidiParser _midiParser;
     Controller *_controller = nullptr;
 };

@@ -19,8 +19,8 @@
 #include "drivers/DAC.h"
 #include "drivers/DIO.h"
 #include "drivers/GateOutput.h"
-#include "drivers/MIDI.h"
-#include "drivers/USBMIDI.h"
+#include "drivers/Midi.h"
+#include "drivers/UsbMidi.h"
 
 #include <array>
 
@@ -40,7 +40,7 @@ public:
         ClockSourceUsbMidi,
     };
 
-    Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, MIDI &midi, USBMIDI &usbMidi);
+    Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi);
 
     void init();
     void update();
@@ -113,8 +113,8 @@ private:
     Model &_model;
     DIO &_dio;
     GateOutput &_gateOutput;
-    MIDI &_midi;
-    USBMIDI &_usbMidi;
+    Midi &_midi;
+    UsbMidi &_usbMidi;
 
     CVInput _cvInput;
     CVOutput _cvOutput;

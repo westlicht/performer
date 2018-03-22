@@ -1,4 +1,4 @@
-#include "MIDI.h"
+#include "Midi.h"
 
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
@@ -7,9 +7,9 @@
 
 #define MIDI_USART USART6
 
-static MIDI *g_midi = nullptr;
+static Midi *g_midi = nullptr;
 
-void MIDI::init() {
+void Midi::init() {
     g_midi = this;
 
     // setup GPIO pins
@@ -33,13 +33,13 @@ void MIDI::init() {
     nvic_enable_irq(NVIC_USART6_IRQ);
 }
 
-void MIDI::send(const MidiMessage &message) {
+void Midi::send(const MidiMessage &message) {
     for (uint8_t i = 0; i < message.length(); ++i) {
         send(message.raw()[i]);
     }
 }
 
-bool MIDI::recv(MidiMessage *message) {
+bool Midi::recv(MidiMessage *message) {
     while (!_rxBuffer.empty()) {
         if (_midiParser.feed(_rxBuffer.read())) {
             *message = _midiParser.message();
@@ -49,11 +49,11 @@ bool MIDI::recv(MidiMessage *message) {
     return false;
 }
 
-void MIDI::setRecvFilter(std::function<bool(uint8_t)> filter) {
+void Midi::setRecvFilter(std::function<bool(uint8_t)> filter) {
     _filter = filter;
 }
 
-void MIDI::send(uint8_t data) {
+void Midi::send(uint8_t data) {
     while (_txBuffer.full()) {}
 
     _txBuffer.write(data);
@@ -66,7 +66,7 @@ void MIDI::send(uint8_t data) {
     }
 }
 
-void MIDI::handleIrq() {
+void Midi::handleIrq() {
     if (usart_get_flag(MIDI_USART, USART_SR_TXE)) {
         usart_disable_tx_interrupt(MIDI_USART);
         if (_txBuffer.readable() > 0) {

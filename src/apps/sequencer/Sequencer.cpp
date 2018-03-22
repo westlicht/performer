@@ -7,13 +7,13 @@
 #include "drivers/DIO.h"
 #include "drivers/GateOutput.h"
 #include "drivers/LCD.h"
-#include "drivers/MIDI.h"
+#include "drivers/Midi.h"
 #include "drivers/System.h"
 #include "drivers/ShiftRegister.h"
 #include "drivers/DebugLed.h"
 #include "drivers/HighResolutionTimer.h"
-#include "drivers/USBH.h"
-#include "drivers/USBMIDI.h"
+#include "drivers/UsbH.h"
+#include "drivers/UsbMidi.h"
 #include "drivers/ClockTimer.h"
 
 #include "os/os.h"
@@ -36,9 +36,9 @@ static ADC adc;
 static DAC dac;
 static DIO dio;
 static GateOutput gateOutput(shiftRegister);
-static MIDI midi;
-static USBMIDI usbMidi;
-static USBH usbh(usbMidi);
+static Midi midi;
+static UsbMidi usbMidi;
+static UsbH usbh(usbMidi);
 
 static Profiler profiler;
 

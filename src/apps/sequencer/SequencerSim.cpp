@@ -9,9 +9,9 @@
 #include "drivers/Encoder.h"
 #include "drivers/GateOutput.h"
 #include "drivers/LCD.h"
-#include "drivers/MIDI.h"
+#include "drivers/Midi.h"
 #include "drivers/SDCard.h"
-#include "drivers/USBMIDI.h"
+#include "drivers/UsbMidi.h"
 
 #include "core/fs/Volume.h"
 
@@ -35,8 +35,8 @@ struct Environment {
     DIO dio;
     Encoder encoder;
     GateOutput gateOutput;
-    MIDI midi;
-    USBMIDI usbMidi;
+    Midi midi;
+    UsbMidi usbMidi;
     SDCard sdcard;
 
     // filesystem

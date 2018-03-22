@@ -1,11 +1,11 @@
 #include "IntegrationTest.h"
 
-#include "drivers/MIDI.h"
+#include "drivers/Midi.h"
 
-class TestMIDI : public IntegrationTest {
+class TestMidi : public IntegrationTest {
 public:
-    TestMIDI() :
-        IntegrationTest("MIDI", true)
+    TestMidi() :
+        IntegrationTest("Midi", true)
     {}
 
     void init() override {
@@ -38,9 +38,9 @@ private:
         Arpeggio,
     };
 
-    MIDI midi;
+    Midi midi;
     Mode mode = Receive;
     int step = 0;
 };
 
-INTEGRATION_TEST(TestMIDI)
+INTEGRATION_TEST(TestMidi)

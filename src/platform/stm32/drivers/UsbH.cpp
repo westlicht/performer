@@ -1,4 +1,4 @@
-#include "USBH.h"
+#include "UsbH.h"
 #include "HighResolutionTimer.h"
 
 #include "SystemConfig.h"
@@ -24,7 +24,7 @@
 #define USB_PWR_FAULT_PORT GPIOA
 #define USB_PWR_FAULT_PIN GPIO8
 
-static USBH *g_usbh;
+static UsbH *g_usbh;
 
 static const usbh_dev_driver_t *device_drivers[] = {
 	&usbh_hub_driver,
@@ -76,7 +76,7 @@ static const usbh_low_level_driver_t * const lld_drivers[] = {
 // 	.hid_in_message_handler = &hid_in_message_handler
 // };
 
-struct MIDIDriverHandler {
+struct MidiDriverHandler {
 
     static void connectHandler(int device) {
         DBG("MIDI device connected (id=%d)", device);
@@ -149,19 +149,19 @@ struct MIDIDriverHandler {
 };
 
 static const midi_config_t midi_config = {
-    .read_callback = &MIDIDriverHandler::recvHandler,
-    .notify_connected = &MIDIDriverHandler::connectHandler,
-    .notify_disconnected = &MIDIDriverHandler::disconnectHandler,
+    .read_callback = &MidiDriverHandler::recvHandler,
+    .notify_connected = &MidiDriverHandler::connectHandler,
+    .notify_disconnected = &MidiDriverHandler::disconnectHandler,
 };
 
 
 
 
-USBH::USBH(USBMIDI &usbMidi) :
+UsbH::UsbH(UsbMidi &usbMidi) :
     _usbMidi(usbMidi)
 {}
 
-void USBH::init() {
+void UsbH::init() {
     g_usbh = this;
 
 	rcc_periph_clock_enable(RCC_GPIOA); // OTG_FS + USB_PWR_FAULT
@@ -222,7 +222,7 @@ void USBH::init() {
 	// gpio_clear(GPIOD,  GPIO13);
 }
 
-void USBH::process() {
+void UsbH::process() {
     uint32_t time_us = HighResolutionTimer::us();
 
     usbh_poll(time_us);
@@ -232,19 +232,19 @@ void USBH::process() {
     MidiMessage message;
     if (midiDequeueMessage(&device, &message)) {
         if (midiDeviceConnected(device)) {
-            MIDIDriverHandler::write(device, message);
+            MidiDriverHandler::write(device, message);
         }
     }
 }
 
-void USBH::powerOn() {
+void UsbH::powerOn() {
     gpio_set(USB_PWR_EN_PORT, USB_PWR_EN_PIN);
 }
 
-void USBH::powerOff() {
+void UsbH::powerOff() {
     gpio_clear(USB_PWR_EN_PORT, USB_PWR_EN_PIN);
 }
 
-bool USBH::powerFault() {
+bool UsbH::powerFault() {
     return !gpio_get(USB_PWR_FAULT_PORT, USB_PWR_FAULT_PIN);
 }

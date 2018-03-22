@@ -12,7 +12,7 @@ void Controller::sendMessage(const MidiMessage &message) {
     _manager.sendMessage(message);
 }
 
-ControllerManager::ControllerManager(USBMIDI &midi) :
+ControllerManager::ControllerManager(UsbMidi &midi) :
     _midi(midi)
 {
     _controller = new LaunchpadController(*this);// &_testController;

@@ -1,17 +1,17 @@
 #include "IntegrationTest.h"
 
 #ifdef PLATFORM_STM32
-#include "drivers/USBH.h"
+#include "drivers/UsbH.h"
 #endif
 
-#include "drivers/USBMIDI.h"
+#include "drivers/UsbMidi.h"
 
 #include "core/midi/MidiMessage.h"
 
-class TestUSBMIDI : public IntegrationTest {
+class TestUsbMidi : public IntegrationTest {
 public:
-    TestUSBMIDI() :
-        IntegrationTest("USBMIDI", true)
+    TestUsbMidi() :
+        IntegrationTest("UsbMidi", true)
 #ifdef PLATFORM_STM32
         ,usbh(usbMidi)
 #endif
@@ -45,12 +45,12 @@ public:
     }
 
 private:
-    USBMIDI usbMidi;
+    UsbMidi usbMidi;
 #ifdef PLATFORM_STM32
-    USBH usbh;
+    UsbH usbh;
 #endif
     uint32_t sendInterval = 0;
     uint8_t sendPosition = 0;
 };
 
-INTEGRATION_TEST(TestUSBMIDI)
+INTEGRATION_TEST(TestUsbMidi)

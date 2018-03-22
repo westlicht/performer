@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-class USBMIDI {
+class UsbMidi {
 public:
     void init() {}
 

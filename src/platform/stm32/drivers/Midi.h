@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-class MIDI {
+class Midi {
 public:
     void init();
 

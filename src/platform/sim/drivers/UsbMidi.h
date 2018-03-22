@@ -11,12 +11,12 @@
 
 #include <cstdint>
 
-class MIDI {
+class UsbMidi {
 public:
-    MIDI() :
+    UsbMidi() :
         _simulator(sim::Simulator::instance())
     {
-        _simulator.recvMidi(sim::Simulator::MidiHardwarePort, [this] (uint8_t data) {
+        _simulator.recvMidi(sim::Simulator::MidiUsbHostPort, [this] (uint8_t data) {
             if (!_filter || !_filter(data)) {
                 std::lock_guard<std::mutex> lock(_recvMutex);
                 _recvQueue.emplace_back(data);
@@ -27,7 +27,7 @@ public:
     void init() {}
 
     void send(const MidiMessage &message) {
-        _simulator.sendMidi(sim::Simulator::MidiHardwarePort, message.raw(), message.length());
+        _simulator.sendMidi(sim::Simulator::MidiUsbHostPort, message.raw(), message.length());
     }
 
     bool recv(MidiMessage *message) {

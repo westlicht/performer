@@ -24,11 +24,11 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/GateOutput.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/HighResolutionTimer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/LCD.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/MIDI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Midi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ShiftRegister.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/System.cpp
     # ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Timer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/USBH.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/UsbH.cpp
     # FreeRTOS
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/croutine.c
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/freertos/kernel/event_groups.c
