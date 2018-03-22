@@ -17,7 +17,7 @@
 
 #include "model/Model.h"
 #include "engine/Engine.h"
-#include "ui/UI.h"
+#include "ui/Ui.h"
 
 #ifdef __EMSCRIPTEN__
 # include <emscripten.h>
@@ -45,7 +45,7 @@ struct Environment {
     // application
     Model model;
     Engine engine;
-    UI ui;
+    Ui ui;
 
     Environment() :
         simulator(sim::Simulator::instance()),

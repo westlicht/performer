@@ -6,9 +6,9 @@ set(sources
     engine/Clock.cpp
     engine/Controller.cpp
     engine/Curve.cpp
-    engine/CVInput.cpp
     engine/CurveTrackEngine.cpp
-    engine/CVOutput.cpp
+    engine/CvInput.cpp
+    engine/CvOutput.cpp
     engine/Engine.cpp
     engine/NoteTrackEngine.cpp
     engine/RoutingEngine.cpp
@@ -39,7 +39,7 @@ set(sources
     ui/MessageManager.cpp
     ui/Page.cpp
     ui/PageManager.cpp
-    ui/UI.cpp
+    ui/Ui.cpp
     # ui/pages
     ui/pages/AsteroidsPage.cpp
     ui/pages/BpmPage.cpp

@@ -2,8 +2,8 @@
 
 #include "ui/painters/WindowPainter.h"
 
-#include "engine/CVInput.h"
-#include "engine/CVOutput.h"
+#include "engine/CvInput.h"
+#include "engine/CvOutput.h"
 
 #include "core/utils/StringBuilder.h"
 
@@ -72,7 +72,7 @@ void MonitorPage::drawCvIn(Canvas &canvas) {
     int w = Width / 4;
     int h = 8;
 
-    for (size_t i = 0; i < CVInput::Channels; ++i) {
+    for (size_t i = 0; i < CvInput::Channels; ++i) {
         int x = i * w;
         int y = 32;
 
@@ -92,7 +92,7 @@ void MonitorPage::drawCvOut(Canvas &canvas) {
     int w = Width / 4;
     int h = 8;
 
-    for (size_t i = 0; i < CVOutput::Channels; ++i) {
+    for (size_t i = 0; i < CvOutput::Channels; ++i) {
         int x = (i % 4) * w;
         int y = 24 + (i / 4) * 20;
 

@@ -1,6 +1,6 @@
 #include "Config.h"
 
-#include "UI.h"
+#include "Ui.h"
 #include "Key.h"
 
 #include "core/Debug.h"
@@ -9,7 +9,7 @@
 
 #include "model/Model.h"
 
-UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &encoder) :
+Ui::Ui(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &encoder) :
     _model(model),
     _engine(engine),
     _lcd(lcd),
@@ -23,7 +23,7 @@ UI::UI(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &en
 {
 }
 
-void UI::init() {
+void Ui::init() {
     _keyState.fill(false);
 
     _pageManager.push(&_pages.top);
@@ -40,7 +40,7 @@ void UI::init() {
     _lastUpdateTicks = os::ticks();
 }
 
-void UI::update() {
+void Ui::update() {
     handleKeys();
     handleEncoder();
 
@@ -60,7 +60,7 @@ void UI::update() {
     }
 }
 
-void UI::handleKeys() {
+void Ui::handleKeys() {
     ButtonLedMatrix::Event event;
     while (_blm.nextEvent(event)) {
         bool isDown = event.action() == ButtonLedMatrix::Event::KeyDown;
@@ -75,7 +75,7 @@ void UI::handleKeys() {
     }
 }
 
-void UI::handleEncoder() {
+void Ui::handleEncoder() {
     Encoder::Event event;
     while (_encoder.nextEvent(event)) {
         switch (event) {

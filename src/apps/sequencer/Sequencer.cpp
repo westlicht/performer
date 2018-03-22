@@ -22,7 +22,7 @@
 
 #include "model/Model.h"
 #include "engine/Engine.h"
-#include "ui/UI.h"
+#include "ui/Ui.h"
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
@@ -44,7 +44,7 @@ static Profiler profiler;
 
 static Model model;
 static Engine engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi);
-static UI ui(model, engine, lcd, blm, encoder);
+static Ui ui(model, engine, lcd, blm, encoder);
 
 static os::PeriodicTask<1024> driverTask("driver", 5, os::time::ms(1), [] () {
     shiftRegister.process();
