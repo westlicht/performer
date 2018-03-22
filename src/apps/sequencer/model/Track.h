@@ -146,24 +146,12 @@ public:
     void read(ReadContext &context);
 
     Track &operator=(const Track &other) {
-        _trackMode = other._trackMode;
+        setTrackMode(other._trackMode);
         _playMode = other._playMode;
         _fillMode = other._fillMode;
         _linkTrack = other._linkTrack;
+        _container = other._container;
         return *this;
-    }
-
-    bool operator==(const Track &other) const {
-        return (
-            _trackMode == other._trackMode &&
-            _playMode == other._playMode &&
-            _fillMode == other._fillMode &&
-            _linkTrack == other._linkTrack
-        );
-    }
-
-    bool operator!=(const Track &other) const {
-        return !(*this == other);
     }
 
 private:

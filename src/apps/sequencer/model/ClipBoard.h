@@ -50,5 +50,5 @@ private:
     };
 
     Type _type = Type::None;
-    Container<NoteSequence, CurveSequence, Pattern> _container;
+    Container<Track, NoteSequence, CurveSequence, Pattern> _container;
 };

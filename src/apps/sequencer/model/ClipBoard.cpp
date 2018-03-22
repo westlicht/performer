@@ -12,6 +12,7 @@ void ClipBoard::clear() {
 
 void ClipBoard::copyTrack(const Track &track) {
     _type = Type::Track;
+    _container.as<Track>() = track;
 }
 
 void ClipBoard::copyNoteSequence(const NoteSequence &noteSequence) {
@@ -45,7 +46,8 @@ void ClipBoard::copyPattern(Project &project, int patternIndex) {
 
 void ClipBoard::pasteTrack(Track &track) const {
     if (canPasteTrack()) {
-        Model::WriteLock lock;
+        Model::ConfigLock lock;
+        track = _container.as<Track>();
     }
 }
 

@@ -115,5 +115,6 @@ void TrackSetupPage::copyTrackSetup() {
 
 void TrackSetupPage::pasteTrackSetup() {
     _model.clipBoard().pasteTrack(_project.selectedTrack());
+    _listModel.setTrack(_project.selectedTrack());
 }
 
