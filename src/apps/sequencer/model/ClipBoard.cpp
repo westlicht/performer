@@ -32,10 +32,10 @@ void ClipBoard::copyPattern(Project &project, int patternIndex) {
         const auto &track = project.track(trackIndex);
         pattern.sequences[trackIndex].trackMode = track.trackMode();
         switch (track.trackMode()) {
-        case Types::TrackMode::Note:
+        case Track::TrackMode::Note:
             pattern.sequences[trackIndex].data.note = track.noteTrack().sequence(patternIndex);
             break;
-        case Types::TrackMode::Curve:
+        case Track::TrackMode::Curve:
             pattern.sequences[trackIndex].data.curve = track.curveTrack().sequence(patternIndex);
             break;
         default:
@@ -73,10 +73,10 @@ void ClipBoard::pastePattern(Project &project, int patternIndex) const {
             auto &track = project.track(trackIndex);
             if (track.trackMode() == pattern.sequences[trackIndex].trackMode) {
                 switch (track.trackMode()) {
-                case Types::TrackMode::Note:
+                case Track::TrackMode::Note:
                     track.noteTrack().sequence(patternIndex) = pattern.sequences[trackIndex].data.note;
                     break;
-                case Types::TrackMode::Curve:
+                case Track::TrackMode::Curve:
                     track.curveTrack().sequence(patternIndex) = pattern.sequences[trackIndex].data.curve;
                     break;
                 default:

@@ -55,11 +55,11 @@ void Project::demoProject() {
     noteSequence(7, 0).setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
     noteSequence(7, 0).setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
 
-    // setTrackMode(0, Types::TrackMode::Curve);
+    // setTrackMode(0, Track::TrackMode::Curve);
     // sequence(0, 0).curveSequence().setLastStep(7);
 }
 
-void Project::setTrackMode(int trackIndex, Types::TrackMode trackMode) {
+void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
     // TODO make sure engine is synced to this before updating UI
     // TODO reset snapshots
     _tracks[trackIndex].setTrackMode(trackMode);

@@ -18,15 +18,15 @@ void TrackEngine::setup(const Track &track, const TrackEngine *linkedTrackEngine
     _linkedSequenceEngine = linkedSequenceEngine;
 
     _sequenceEngineContainer.destroy(_sequenceEngine);
-    ASSERT(_trackMode != Types::TrackMode::Last, "invalid track mode");
+    ASSERT(_trackMode != Track::TrackMode::Last, "invalid track mode");
     switch (_trackMode) {
-    case Types::TrackMode::Note:
+    case Track::TrackMode::Note:
         _sequenceEngine = _sequenceEngineContainer.create<NoteSequenceEngine>();
         break;
-    case Types::TrackMode::Curve:
+    case Track::TrackMode::Curve:
         _sequenceEngine = _sequenceEngineContainer.create<CurveSequenceEngine>();
         break;
-    case Types::TrackMode::Last:
+    case Track::TrackMode::Last:
         break;
     }
 

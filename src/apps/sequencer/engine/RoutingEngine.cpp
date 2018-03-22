@@ -137,13 +137,13 @@ void RoutingEngine::writeParam(Routing::Param param, int trackIndex, int pattern
 void RoutingEngine::writeTrackParam(Routing::Param param, int trackIndex, int patternIndex, float value) {
     auto &track = _project.track(trackIndex);
     switch (track.trackMode()) {
-    case Types::TrackMode::Note:
+    case Track::TrackMode::Note:
         writeNoteSequenceParam(track.noteTrack().sequence(patternIndex), param, value);
         break;
-    case Types::TrackMode::Curve:
+    case Track::TrackMode::Curve:
         writeCurveSequenceParam(track.curveTrack().sequence(patternIndex), param, value);
         break;
-    case Types::TrackMode::Last:
+    case Track::TrackMode::Last:
         break;
     }
 }

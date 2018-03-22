@@ -41,7 +41,7 @@ private:
 
     struct Pattern {
         struct {
-            Types::TrackMode trackMode;
+            Track::TrackMode trackMode;
             union {
                 NoteSequence note;
                 CurveSequence curve;

@@ -39,12 +39,12 @@ public:
     }
 
     const NoteSequenceEngine &noteSequenceEngine() const {
-        ASSERT(_trackMode == Types::TrackMode::Note, "invalid mode");
+        ASSERT(_trackMode == Track::TrackMode::Note, "invalid mode");
         return *static_cast<const NoteSequenceEngine *>(_sequenceEngine);
     }
 
     const CurveSequenceEngine &curveSequenceEngine() const {
-        ASSERT(_trackMode == Types::TrackMode::Curve, "invalid mode");
+        ASSERT(_trackMode == Track::TrackMode::Curve, "invalid mode");
         return *static_cast<const CurveSequenceEngine *>(_sequenceEngine);
     }
 
@@ -53,7 +53,7 @@ private:
     bool _mute = false;
     bool _fill = false;
 
-    Types::TrackMode _trackMode = Types::TrackMode::Last;
+    Track::TrackMode _trackMode = Track::TrackMode::Last;
     const SequenceEngine *_linkedSequenceEngine = nullptr;
 
     Container<NoteSequenceEngine, CurveSequenceEngine> _sequenceEngineContainer;

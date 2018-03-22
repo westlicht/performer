@@ -1,7 +1,7 @@
 #include "Track.h"
 
 void Track::clear() {
-    _trackMode = Types::TrackMode::Default;
+    _trackMode = TrackMode::Default;
     _playMode = PlayMode::Free;
     _fillMode = FillMode::None;
     _linkTrack = -1;
@@ -11,10 +11,10 @@ void Track::clear() {
 
 void Track::clearPattern(int patternIndex) {
     switch (_trackMode) {
-    case Types::TrackMode::Note:
+    case TrackMode::Note:
         _track.note->sequence(patternIndex).clear();
         break;
-    case Types::TrackMode::Curve:
+    case TrackMode::Curve:
         _track.curve->sequence(patternIndex).clear();
         break;
     default:
@@ -30,10 +30,10 @@ void Track::write(WriteContext &context) const {
     writer.write(_linkTrack);
 
     switch (_trackMode) {
-    case Types::TrackMode::Note:
+    case TrackMode::Note:
         _track.note->write(context);
         break;
-    case Types::TrackMode::Curve:
+    case TrackMode::Curve:
         _track.curve->write(context);
         break;
     default:
@@ -49,10 +49,10 @@ void Track::read(ReadContext &context) {
     reader.read(_linkTrack);
 
     switch (_trackMode) {
-    case Types::TrackMode::Note:
+    case TrackMode::Note:
         _track.note->read(context);
         break;
-    case Types::TrackMode::Curve:
+    case TrackMode::Curve:
         _track.curve->read(context);
         break;
     default:
@@ -62,10 +62,10 @@ void Track::read(ReadContext &context) {
 
 void Track::setupTrack() {
     switch (_trackMode) {
-    case Types::TrackMode::Note:
+    case TrackMode::Note:
         _track.note = _container.create<NoteTrack>();
         break;
-    case Types::TrackMode::Curve:
+    case TrackMode::Curve:
         _track.curve = _container.create<CurveTrack>();
         break;
     default:

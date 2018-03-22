@@ -21,6 +21,22 @@ public:
     // Types
     //----------------------------------------
 
+    enum class TrackMode : uint8_t {
+        Note,
+        Curve,
+        Last,
+        Default = Note
+    };
+
+    static const char *trackModeName(TrackMode trackMode) {
+        switch (trackMode) {
+        case TrackMode::Note:    return "Note";
+        case TrackMode::Curve:   return "Curve";
+        case TrackMode::Last:    break;
+        }
+        return nullptr;
+    }
+
     enum class PlayMode : uint8_t {
         Free,
         Aligned,
@@ -65,8 +81,8 @@ public:
 
     // trackMode
 
-    Types::TrackMode trackMode() const { return _trackMode; }
-    void setTrackMode(Types::TrackMode trackMode) {
+    TrackMode trackMode() const { return _trackMode; }
+    void setTrackMode(TrackMode trackMode) {
         if (trackMode != _trackMode) {
             _trackMode = trackMode;
             setupTrack();
@@ -74,7 +90,7 @@ public:
     }
 
     void printTrackMode(StringBuilder &str) const {
-        str(Types::trackModeName(trackMode()));
+        str(trackModeName(trackMode()));
     }
 
     // playMode
@@ -124,13 +140,13 @@ public:
 
     // noteTrack
 
-    const NoteTrack &noteTrack() const { ASSERT(_trackMode == Types::TrackMode::Note, "invalid mode"); return *_track.note; }
-          NoteTrack &noteTrack()       { ASSERT(_trackMode == Types::TrackMode::Note, "invalid mode"); return *_track.note; }
+    const NoteTrack &noteTrack() const { ASSERT(_trackMode == TrackMode::Note, "invalid mode"); return *_track.note; }
+          NoteTrack &noteTrack()       { ASSERT(_trackMode == TrackMode::Note, "invalid mode"); return *_track.note; }
 
     // curveTrack
 
-    const CurveTrack &curveTrack() const { ASSERT(_trackMode == Types::TrackMode::Curve, "invalid mode"); return *_track.curve; }
-          CurveTrack &curveTrack()       { ASSERT(_trackMode == Types::TrackMode::Curve, "invalid mode"); return *_track.curve; }
+    const CurveTrack &curveTrack() const { ASSERT(_trackMode == TrackMode::Curve, "invalid mode"); return *_track.curve; }
+          CurveTrack &curveTrack()       { ASSERT(_trackMode == TrackMode::Curve, "invalid mode"); return *_track.curve; }
 
     //----------------------------------------
     // Methods
@@ -158,7 +174,7 @@ private:
     void setupTrack();
 
     uint8_t _trackIndex = -1;
-    Types::TrackMode _trackMode;
+    TrackMode _trackMode;
     PlayMode _playMode;
     FillMode _fillMode;
     int8_t _linkTrack;

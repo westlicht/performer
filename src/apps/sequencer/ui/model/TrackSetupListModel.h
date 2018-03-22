@@ -13,7 +13,7 @@ public:
         _trackMode = track.trackMode();
     }
 
-    Types::TrackMode trackMode() const { return _trackMode; }
+    Track::TrackMode trackMode() const { return _trackMode; }
 
     virtual int rows() const override {
         return Last;
@@ -64,7 +64,7 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case TrackMode:
-            str(Types::trackModeName(_trackMode));
+            str(Track::trackModeName(_trackMode));
             break;
         case PlayMode:
             _track->printPlayMode(str);
@@ -100,5 +100,5 @@ private:
     }
 
     Track *_track;
-    Types::TrackMode _trackMode;
+    Track::TrackMode _trackMode;
 };
