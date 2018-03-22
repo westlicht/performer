@@ -18,7 +18,7 @@ public:
     static constexpr size_t Size = maxsizeof<Ts...>::value;
 
     template<typename U, typename... Args>
-    U *create(Args... args) {
+    U *create(Args&&... args) {
         return new(_data) U(args...);
     }
 
