@@ -79,7 +79,6 @@ public:
     }
 
     inline float process() {
-        // return _gate ? 1.f : 0.f;
         switch (_state) {
         case Idle:
             if (_gate) {
@@ -173,7 +172,7 @@ public:
     }
 
 private:
-    static constexpr float BaseFrequency = 440.f / 32.f;
+    static constexpr float BaseFrequency = 440.f / 8.f;
 
     Oscillator _osc;
     ADSR _envVolume;
