@@ -1,20 +1,21 @@
 #pragma once
 
-#include "SequenceEngine.h"
+#include "TrackEngine.h"
 #include "SequenceState.h"
 
 #include "model/Track.h"
 
-class CurveSequenceEngine : public SequenceEngine {
+class CurveTrackEngine : public TrackEngine {
 public:
-    virtual void setup(const Track &track) override;
-
-    virtual void setPatternIndex(int patternIndex) override;
-
-    virtual const SequenceLinkData *sequenceLinkData() const override { return &_sequenceLinkData; }
+    CurveTrackEngine(const Track &track, const TrackEngine *linkedTrackEngine) :
+        TrackEngine(track, linkedTrackEngine)
+    {}
 
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
+    virtual void changePattern() override;
+
+    virtual const TrackLinkData *linkData() const override { return &_linkData; }
 
     virtual bool gate() const override { return true; }
     virtual bool gateOutput() const override { return !_mute; }
@@ -29,12 +30,11 @@ public:
 private:
     void updateOutput(uint32_t relativeTick, uint32_t divisor);
 
-    const Track *_track;
-    const CurveSequence *_sequence;
+    TrackLinkData _linkData;
 
+    const CurveSequence *_sequence;
     SequenceState _sequenceState;
     float _stepFraction;
-    SequenceLinkData _sequenceLinkData;
 
     float _cvOutput;
 

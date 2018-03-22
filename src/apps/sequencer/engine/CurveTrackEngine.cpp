@@ -1,4 +1,4 @@
-#include "CurveSequenceEngine.h"
+#include "CurveTrackEngine.h"
 
 #include "Curve.h"
 
@@ -16,25 +16,17 @@ static float evalStepShape(const CurveSequence::Step &step, float fraction) {
     return min + value * (max - min);
 }
 
-void CurveSequenceEngine::setup(const Track &track) {
-    _track = &track;
-    reset();
-}
-
-void CurveSequenceEngine::setPatternIndex(int patternIndex) {
-    _sequence = &_track->curveTrack().sequence(patternIndex);
-}
-
-void CurveSequenceEngine::reset() {
+void CurveTrackEngine::reset() {
     _sequenceState.reset();
     _stepFraction = 0.f;
     _lastRange = CurveSequence::Range::Last;
+    changePattern();
 }
 
-void CurveSequenceEngine::tick(uint32_t tick) {
+void CurveTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
-    const auto *sequenceLinkData = _linkedSequenceEngine ? _linkedSequenceEngine->sequenceLinkData() : nullptr;
+    const auto *linkData = _linkedTrackEngine ? _linkedTrackEngine->linkData() : nullptr;
 
     // update range values
     if (sequence.range() != _lastRange) {
@@ -42,10 +34,10 @@ void CurveSequenceEngine::tick(uint32_t tick) {
         _lastRange = sequence.range();
     }
 
-    if (sequenceLinkData) {
-        _sequenceLinkData = *sequenceLinkData;
-        _sequenceState = *sequenceLinkData->sequenceState;
-        updateOutput(sequenceLinkData->relativeTick, sequenceLinkData->divisor);
+    if (linkData) {
+        _linkData = *linkData;
+        _sequenceState = *linkData->sequenceState;
+        updateOutput(linkData->relativeTick, linkData->divisor);
     } else {
         uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
         uint32_t measureDivisor = (sequence.resetMeasure() * CONFIG_PPQN * 4);
@@ -60,7 +52,7 @@ void CurveSequenceEngine::tick(uint32_t tick) {
 
         if (relativeTick == 0) {
             // advance sequence
-            switch (_track->playMode()) {
+            switch (_track.playMode()) {
             case Track::PlayMode::Free:
                 _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
@@ -74,13 +66,17 @@ void CurveSequenceEngine::tick(uint32_t tick) {
 
         updateOutput(relativeTick, divisor);
 
-        _sequenceLinkData.divisor = divisor;
-        _sequenceLinkData.relativeTick = relativeTick;
-        _sequenceLinkData.sequenceState = &_sequenceState;
+        _linkData.divisor = divisor;
+        _linkData.relativeTick = relativeTick;
+        _linkData.sequenceState = &_sequenceState;
     }
 }
 
-void CurveSequenceEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
+void CurveTrackEngine::changePattern() {
+    _sequence = &_track.curveTrack().sequence(_pattern);
+}
+
+void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     const auto &sequence = *_sequence;
 
     _stepFraction = float(relativeTick) / divisor;

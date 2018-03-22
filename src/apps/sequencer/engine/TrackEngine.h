@@ -1,28 +1,55 @@
 #pragma once
 
-#include "NoteSequenceEngine.h"
-#include "CurveSequenceEngine.h"
-
 #include "model/Track.h"
 #include "model/PlayState.h"
 
-#include "core/Debug.h"
-#include "core/utils/Container.h"
-
 #include <cstdint>
+
+class SequenceState;
+
+struct TrackLinkData {
+    uint32_t divisor;
+    uint32_t relativeTick;
+    SequenceState *sequenceState;
+};
 
 class TrackEngine {
 public:
-    void setup(const Track &track, const TrackEngine *linkedTrackEngine);
+    TrackEngine(const Track &track, const TrackEngine *linkedTrackEngine) :
+        _track(track),
+        _trackMode(track.trackMode()),
+        _linkedTrackEngine(linkedTrackEngine),
+        _pattern(0),
+        _mute(false),
+        _fill(false)
+    {
+    }
 
-    void reset();
+    void setLinkedTrackEngine(const TrackEngine *linkedTrackEngine) {
+        _linkedTrackEngine = linkedTrackEngine;
+    }
 
-    void tick(uint32_t tick);
+    Track::TrackMode trackMode() const { return _trackMode; }
 
+    template<typename T>
+    const T &as() const {
+        // TODO sanitze
+        return *static_cast<const T *>(this);
+    }
+
+    template<typename T>
+    T &as() {
+        // TODO sanitize
+        return *static_cast<T *>(this);
+    }
+
+    // sequencer control
+
+    int swing() const { return _swing; }
     void setSwing(int swing);
 
-    int patternIndex() const { return _patternIndex; }
-    void setPatternIndex(int patternIndex);
+    int pattern() const { return _pattern; }
+    void setPattern(int pattern);
 
     bool mute() const { return _mute; }
     void setMute(bool mute);
@@ -30,32 +57,25 @@ public:
     bool fill() const { return _fill; }
     void setFill(bool fill);
 
-    bool gate() const;
-    bool gateOutput() const;
-    float cvOutput() const;
+    virtual void reset() = 0;
+    virtual void tick(uint32_t tick) = 0;
+    virtual void changePattern() = 0;
 
-    const SequenceEngine &sequenceEngine() const {
-        return *_sequenceEngine;
-    }
+    virtual const TrackLinkData *linkData() const { return nullptr; }
 
-    const NoteSequenceEngine &noteSequenceEngine() const {
-        ASSERT(_trackMode == Track::TrackMode::Note, "invalid mode");
-        return *static_cast<const NoteSequenceEngine *>(_sequenceEngine);
-    }
+    // track output
 
-    const CurveSequenceEngine &curveSequenceEngine() const {
-        ASSERT(_trackMode == Track::TrackMode::Curve, "invalid mode");
-        return *static_cast<const CurveSequenceEngine *>(_sequenceEngine);
-    }
+    virtual bool gate() const = 0;
+    virtual bool gateOutput() const = 0;
+    virtual float cvOutput() const = 0;
 
-private:
-    uint8_t _patternIndex = 0;
-    bool _mute = false;
-    bool _fill = false;
+protected:
+    const Track &_track;
+    Track::TrackMode _trackMode;
+    const TrackEngine *_linkedTrackEngine;
 
-    Track::TrackMode _trackMode = Track::TrackMode::Last;
-    const SequenceEngine *_linkedSequenceEngine = nullptr;
-
-    Container<NoteSequenceEngine, CurveSequenceEngine> _sequenceEngineContainer;
-    SequenceEngine *_sequenceEngine = nullptr;
+    uint8_t _swing;
+    uint8_t _pattern;
+    bool _mute;
+    bool _fill;
 };

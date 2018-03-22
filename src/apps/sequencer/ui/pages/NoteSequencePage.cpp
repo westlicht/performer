@@ -59,9 +59,9 @@ void NoteSequencePage::draw(Canvas &canvas) {
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
-    const auto &sequenceEngine = _engine.selectedTrackEngine().noteSequenceEngine();
+    const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
     const auto &sequence = _project.selectedNoteSequence();
-    int currentStep = sequenceEngine.isActiveSequence(sequence) ? sequenceEngine.currentStep() : -1;
+    int currentStep = trackEngine.isActiveSequence(sequence) ? trackEngine.currentStep() : -1;
 
     const auto &scale = Scale::get(sequence.scale());
 
@@ -175,9 +175,9 @@ void NoteSequencePage::draw(Canvas &canvas) {
 }
 
 void NoteSequencePage::updateLeds(Leds &leds) {
-    const auto &sequenceEngine = _engine.selectedTrackEngine().noteSequenceEngine();
+    const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
     const auto &sequence = _project.selectedNoteSequence();
-    int currentStep = sequenceEngine.isActiveSequence(sequence) ? sequenceEngine.currentStep() : -1;
+    int currentStep = trackEngine.isActiveSequence(sequence) ? trackEngine.currentStep() : -1;
 
     for (int i = 0; i < 16; ++i) {
         int stepIndex = stepOffset() + i;

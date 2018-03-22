@@ -1,22 +1,23 @@
 #pragma once
 
-#include "SequenceEngine.h"
+#include "TrackEngine.h"
 #include "SequenceState.h"
 #include "SortedQueue.h"
 #include "Groove.h"
 
 #include "model/Track.h"
 
-class NoteSequenceEngine : public SequenceEngine {
+class NoteTrackEngine : public TrackEngine {
 public:
-    virtual void setup(const Track &track) override;
-
-    virtual void setPatternIndex(int patternIndex) override;
-
-    virtual const SequenceLinkData *sequenceLinkData() const override { return &_sequenceLinkData; }
+    NoteTrackEngine(const Track &track, const TrackEngine *linkedTrackEngine) :
+        TrackEngine(track, linkedTrackEngine)
+    {}
 
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
+    virtual void changePattern() override;
+
+    virtual const TrackLinkData *linkData() const override { return &_linkData; }
 
     virtual bool gate() const override { return _gate; }
     virtual bool gateOutput() const override { return _gateOutput; }
@@ -31,11 +32,10 @@ private:
     void triggerStep(uint32_t tick, uint32_t divisor);
     uint32_t applySwing(uint32_t tick);
 
-    const Track *_track;
-    const NoteSequence *_sequence;
+    TrackLinkData _linkData;
 
+    const NoteSequence *_sequence;
     SequenceState _sequenceState;
-    SequenceLinkData _sequenceLinkData;
 
     bool _gate;
     bool _gateOutput;

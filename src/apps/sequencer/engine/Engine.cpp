@@ -20,6 +20,7 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &di
     _controllerManager(usbMidi)
 {
     _cvOutputOverrideValues.fill(0.f);
+    _trackEngines.fill(nullptr);
 }
 
 void Engine::init() {
@@ -90,11 +91,10 @@ void Engine::update() {
         updatePlayState();
 
         for (size_t i = 0; i < _trackEngines.size(); ++i) {
-            auto &trackEngine = _trackEngines[i];
-            trackEngine.setSwing(_model.project().swing());
-            trackEngine.tick(tick);
-            _gateOutput.setGate(i, trackEngine.gateOutput());
-            _cvOutput.setChannel(i, trackEngine.cvOutput());
+            auto trackEngine = _trackEngines[i];
+            trackEngine->tick(tick);
+            _gateOutput.setGate(i, trackEngine->gateOutput());
+            _cvOutput.setChannel(i, trackEngine->cvOutput());
         }
     }
 
@@ -177,7 +177,29 @@ void Engine::updateTrackSetups() {
         const auto &track = _model.project().track(trackIndex);
         int linkTrack = track.linkTrack();
         const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
-        trackEngine(trackIndex).setup(track, linkedTrackEngine);
+
+        if (!_trackEngines[trackIndex] || _trackEngines[trackIndex]->trackMode() != track.trackMode()) {
+            auto &trackEngine = _trackEngines[trackIndex];
+            auto &trackContainer = _trackEngineContainers[trackIndex];
+
+            switch (track.trackMode()) {
+            case Track::TrackMode::Note:
+                trackEngine = trackContainer.create<NoteTrackEngine>(track, linkedTrackEngine);
+                break;
+            case Track::TrackMode::Curve:
+                trackEngine = trackContainer.create<CurveTrackEngine>(track, linkedTrackEngine);
+                break;
+            case Track::TrackMode::Last:
+                break;
+            }
+
+            const auto &trackState = _model.project().playState().trackState(trackIndex);
+            trackEngine->setMute(trackState.mute());
+            trackEngine->setFill(trackState.fill());
+            trackEngine->setPattern(trackState.pattern());
+        }
+
+        _trackEngines[trackIndex]->setSwing(_model.project().swing());
     }
 }
 
@@ -185,13 +207,13 @@ void Engine::updateTrackSequences() {
     auto &project = _model.project();
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        _trackEngines[trackIndex].setPatternIndex(project.playState().trackState(trackIndex).pattern());
+        _trackEngines[trackIndex]->setPattern(project.playState().trackState(trackIndex).pattern());
     }
 }
 
 void Engine::resetTrackEngines() {
-    for (auto &trackEngine : _trackEngines) {
-        trackEngine.reset();
+    for (auto trackEngine : _trackEngines) {
+        trackEngine->reset();
     }
 }
 
@@ -210,7 +232,7 @@ void Engine::updatePlayState() {
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         auto &trackState = playState.trackState(trackIndex);
-        auto &trackEngine = _trackEngines[trackIndex];
+        auto trackEngine = _trackEngines[trackIndex];
 
         // handle mute requests
         if (
@@ -235,9 +257,9 @@ void Engine::updatePlayState() {
         }
 
         // update track engine
-        trackEngine.setMute(trackState.mute());
-        trackEngine.setFill(trackState.fill());
-        trackEngine.setPatternIndex(trackState.pattern());
+        trackEngine->setMute(trackState.mute());
+        trackEngine->setFill(trackState.fill());
+        trackEngine->setPattern(trackState.pattern());
     }
 
     playState.clearImmediateRequests();

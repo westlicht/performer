@@ -7,10 +7,10 @@ set(sources
     engine/Controller.cpp
     engine/Curve.cpp
     engine/CVInput.cpp
-    engine/CurveSequenceEngine.cpp
+    engine/CurveTrackEngine.cpp
     engine/CVOutput.cpp
     engine/Engine.cpp
-    engine/NoteSequenceEngine.cpp
+    engine/NoteTrackEngine.cpp
     engine/RoutingEngine.cpp
     engine/Scale.cpp
     engine/SequenceState.cpp

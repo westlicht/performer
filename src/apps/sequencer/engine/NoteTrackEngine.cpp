@@ -1,4 +1,4 @@
-#include "NoteSequenceEngine.h"
+#include "NoteTrackEngine.h"
 
 #include "Scale.h"
 #include "Groove.h"
@@ -43,33 +43,26 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale) {
     return scale.noteVolts(step.note());
 }
 
-void NoteSequenceEngine::setup(const Track &track) {
-    _track = &track;
-    reset();
-}
 
-void NoteSequenceEngine::setPatternIndex(int patternIndex) {
-    _sequence = &_track->noteTrack().sequence(patternIndex);
-}
-
-void NoteSequenceEngine::reset() {
+void NoteTrackEngine::reset() {
     _sequenceState.reset();
     _gate = false;
     _gateOutput = false;
     _gateQueue.clear();
+    changePattern();
 }
 
-void NoteSequenceEngine::tick(uint32_t tick) {
+void NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
-    const auto *sequenceLinkData = _linkedSequenceEngine ? _linkedSequenceEngine->sequenceLinkData() : nullptr;
+    const auto *linkData = _linkedTrackEngine ? _linkedTrackEngine->linkData() : nullptr;
 
-    if (sequenceLinkData) {
-        _sequenceLinkData = *sequenceLinkData;
-        _sequenceState = *sequenceLinkData->sequenceState;
+    if (linkData) {
+        _linkData = *linkData;
+        _sequenceState = *linkData->sequenceState;
 
-        if (sequenceLinkData->relativeTick == 0) {
-            triggerStep(tick, sequenceLinkData->divisor);
+        if (linkData->relativeTick == 0) {
+            triggerStep(tick, linkData->divisor);
         }
     } else {
         uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
@@ -85,7 +78,7 @@ void NoteSequenceEngine::tick(uint32_t tick) {
 
         // advance sequence
         if (relativeTick == 0) {
-            switch (_track->playMode()) {
+            switch (_track.playMode()) {
             case Track::PlayMode::Free:
                 _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
@@ -99,9 +92,9 @@ void NoteSequenceEngine::tick(uint32_t tick) {
             triggerStep(tick, divisor);
         }
 
-        _sequenceLinkData.divisor = divisor;
-        _sequenceLinkData.relativeTick = relativeTick;
-        _sequenceLinkData.sequenceState = &_sequenceState;
+        _linkData.divisor = divisor;
+        _linkData.relativeTick = relativeTick;
+        _linkData.sequenceState = &_sequenceState;
     }
 
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
@@ -116,7 +109,11 @@ void NoteSequenceEngine::tick(uint32_t tick) {
     }
 }
 
-void NoteSequenceEngine::triggerStep(uint32_t tick, uint32_t divisor) {
+void NoteTrackEngine::changePattern() {
+    _sequence = &_track.noteTrack().sequence(_pattern);
+}
+
+void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     const auto &sequence = *_sequence;
     const auto &step = sequence.step(_sequenceState.step());
 
@@ -141,6 +138,6 @@ void NoteSequenceEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     }
 }
 
-uint32_t NoteSequenceEngine::applySwing(uint32_t tick) {
+uint32_t NoteTrackEngine::applySwing(uint32_t tick) {
     return Groove::swing(tick, CONFIG_PPQN / 4, _swing);
 }

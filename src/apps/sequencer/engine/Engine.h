@@ -4,6 +4,8 @@
 #include "TapTempo.h"
 #include "NudgeTempo.h"
 #include "TrackEngine.h"
+#include "NoteTrackEngine.h"
+#include "CurveTrackEngine.h"
 #include "Controller.h"
 #include "CVInput.h"
 #include "CVOutput.h"
@@ -26,7 +28,9 @@
 
 class Engine {
 public:
-    typedef std::array<TrackEngine, CONFIG_TRACK_COUNT> TrackEngineArray;
+    typedef Container<NoteTrackEngine, CurveTrackEngine> TrackEngineContainer;
+    typedef std::array<TrackEngineContainer, CONFIG_TRACK_COUNT> TrackEngineContainerArray;
+    typedef std::array<TrackEngine *, CONFIG_TRACK_COUNT> TrackEngineArray;
 
     typedef std::function<void(const char *text, uint32_t duration)> MessageHandler;
 
@@ -80,11 +84,11 @@ public:
     const TrackEngineArray &tracksEngines() const { return _trackEngines; }
           TrackEngineArray &tracksEngines()       { return _trackEngines; }
 
-    const TrackEngine &trackEngine(int index) const { return _trackEngines[index]; }
-          TrackEngine &trackEngine(int index)       { return _trackEngines[index]; }
+    const TrackEngine &trackEngine(int index) const { return *_trackEngines[index]; }
+          TrackEngine &trackEngine(int index)       { return *_trackEngines[index]; }
 
-    const TrackEngine &selectedTrackEngine() const { return _trackEngines[_model.project().selectedTrackIndex()]; }
-          TrackEngine &selectedTrackEngine()       { return _trackEngines[_model.project().selectedTrackIndex()]; }
+    const TrackEngine &selectedTrackEngine() const { return *_trackEngines[_model.project().selectedTrackIndex()]; }
+          TrackEngine &selectedTrackEngine()       { return *_trackEngines[_model.project().selectedTrackIndex()]; }
 
     const RoutingEngine &routingEngine() const { return _routingEngine; }
           RoutingEngine &routingEngine()       { return _routingEngine; }
@@ -119,6 +123,7 @@ private:
     TapTempo _tapTempo;
     NudgeTempo _nudgeTempo;
 
+    TrackEngineContainerArray _trackEngineContainers;
     TrackEngineArray _trackEngines;
 
     RoutingEngine _routingEngine;

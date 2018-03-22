@@ -78,9 +78,9 @@ void CurveSequencePage::draw(Canvas &canvas) {
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
-    const auto &sequenceEngine = _engine.selectedTrackEngine().curveSequenceEngine();
+    const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
     const auto &sequence = _project.selectedCurveSequence();
-    bool isActiveSequence = sequenceEngine.isActiveSequence(sequence);
+    bool isActiveSequence = trackEngine.isActiveSequence(sequence);
 
     canvas.setBlendMode(BlendMode::Add);
 
@@ -145,7 +145,7 @@ void CurveSequencePage::draw(Canvas &canvas) {
     // draw cursor
     if (isActiveSequence) {
         canvas.setColor(0xf);
-        int x = ((sequenceEngine.currentStep() - stepOffset) + sequenceEngine.currentStepFraction()) * stepWidth;
+        int x = ((trackEngine.currentStep() - stepOffset) + trackEngine.currentStepFraction()) * stepWidth;
         canvas.vline(x, 16, 32);
     }
 }
