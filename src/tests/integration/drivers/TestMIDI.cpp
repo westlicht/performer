@@ -13,15 +13,34 @@ public:
     }
 
     void update() override {
-        MIDIMessage message;
-        while (midi.recv(&message)) {
-            MIDIMessage::dump(message);
-            midi.send(message);
+        switch (mode) {
+        case Receive: {
+            MIDIMessage msg;
+            if (midi.recv(&msg)) {
+                MIDIMessage::dump(msg);
+            }
+            break;
+        }
+        case Arpeggio: {
+            DBG("step: %d", step);
+            midi.send(MIDIMessage::makeNoteOff(0, 36 + step % 24));
+            ++step;
+            midi.send(MIDIMessage::makeNoteOn(0, 36 + step % 24));
+            os::delay(500);
+            break;
+        }
         }
     }
 
 private:
+    enum Mode {
+        Receive,
+        Arpeggio,
+    };
+
     MIDI midi;
+    Mode mode = Receive;
+    int step = 0;
 };
 
 INTEGRATION_TEST(TestMIDI)
