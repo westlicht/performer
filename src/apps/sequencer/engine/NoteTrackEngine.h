@@ -54,16 +54,16 @@ private:
 
     SortedQueue<Gate, 16, GateCompare> _gateQueue;
 
-    struct CV {
+    struct Cv {
         uint32_t tick;
         float cv;
     };
 
-    struct CVCompare {
-        bool operator()(const CV &a, const CV &b) {
+    struct CvCompare {
+        bool operator()(const Cv &a, const Cv &b) {
             return a.tick < b.tick;;
         }
     };
 
-    SortedQueue<CV, 16, CVCompare> _cvQueue;
+    SortedQueue<Cv, 16, CvCompare> _cvQueue;
 };

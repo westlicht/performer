@@ -6,11 +6,11 @@
 
 #include <array>
 
-class CVInput {
+class CvInput {
 public:
     static constexpr int Channels = CONFIG_CV_INPUT_CHANNELS;
 
-    CVInput(ADC &adc);
+    CvInput(ADC &adc);
 
     void init();
 

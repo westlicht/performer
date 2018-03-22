@@ -7,8 +7,8 @@
 #include "NoteTrackEngine.h"
 #include "CurveTrackEngine.h"
 #include "Controller.h"
-#include "CVInput.h"
-#include "CVOutput.h"
+#include "CvInput.h"
+#include "CvOutput.h"
 #include "RoutingEngine.h"
 #include "MidiPort.h"
 
@@ -66,8 +66,8 @@ public:
     uint32_t tick() const { return _tick; }
     float globalMeasureFraction() const;
 
-    const CVInput &cvInput() const { return _cvInput; }
-    const CVOutput &cvOutput() const { return _cvOutput; }
+    const CvInput &cvInput() const { return _cvInput; }
+    const CvOutput &cvOutput() const { return _cvOutput; }
 
     // gate overrides
     bool gateOutputOverride() const { return _gateOutputOverride; }
@@ -116,8 +116,8 @@ private:
     Midi &_midi;
     UsbMidi &_usbMidi;
 
-    CVInput _cvInput;
-    CVOutput _cvOutput;
+    CvInput _cvInput;
+    CvOutput _cvOutput;
 
     Clock _clock;
     TapTempo _tapTempo;
@@ -142,7 +142,7 @@ private:
 
     // cv output overrides
     bool _cvOutputOverride = false;
-    std::array<float, CVOutput::Channels> _cvOutputOverrideValues;
+    std::array<float, CvOutput::Channels> _cvOutputOverrideValues;
 
     MessageHandler _messageHandler;
 };

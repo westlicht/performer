@@ -26,15 +26,15 @@ static float denormalizeParamValue(Routing::Param param, float normalized) {
 }
 
 //----------------------------------------
-// Routing::CVSource
+// Routing::CvSource
 //----------------------------------------
 
-void Routing::CVSource::write(WriteContext &context) const {
+void Routing::CvSource::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_index);
 }
 
-void Routing::CVSource::read(ReadContext &context) {
+void Routing::CvSource::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_index);
 }
@@ -81,8 +81,8 @@ void Routing::Source::clear() {
     _kind = Kind::None;
 }
 
-void Routing::Source::initCV(int index) {
-    _kind = Kind::CV;
+void Routing::Source::initCv(int index) {
+    _kind = Kind::Cv;
     _source.cv.setIndex(index);
 }
 
@@ -102,7 +102,7 @@ void Routing::Source::write(WriteContext &context) const {
     switch (_kind) {
     case Kind::None:
         break;
-    case Kind::CV:
+    case Kind::Cv:
         _source.cv.write(context);
         break;
     case Kind::Track:
@@ -122,7 +122,7 @@ void Routing::Source::read(ReadContext &context) {
     switch (_kind) {
     case Kind::None:
         break;
-    case Kind::CV:
+    case Kind::Cv:
         _source.cv.read(context);
         break;
     case Kind::Track:
@@ -180,12 +180,12 @@ void Routing::clear() {
         route.clear();
     }
 
-    // route(0).source().initCV(0);
+    // route(0).source().initCv(0);
     // route(0).sink().init(Param::BPM);
     // route(0).sink().initTrack(Param::FirstStep, 0);
     // route(0).enable();
 
-    // route(1).source().initCV(1);
+    // route(1).source().initCv(1);
     // route(1).sink().init(Param::Swing);
     // route(1).sink().initTrack(Param::LastStep, 0);
     // route(1).enable();

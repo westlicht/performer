@@ -45,7 +45,7 @@ public:
         return nullptr;
     }
 
-    class CVSource {
+    class CvSource {
     public:
         int index() const { return _index; }
         void setIndex(int index) { _index = index; }
@@ -121,7 +121,7 @@ public:
     public:
         enum class Kind : uint8_t {
             None,
-            CV,
+            Cv,
             Track,
             Midi,
             Last,
@@ -133,7 +133,7 @@ public:
 
         // cv
 
-        const CVSource &cv() const { return _source.cv; }
+        const CvSource &cv() const { return _source.cv; }
 
         // track
 
@@ -146,7 +146,7 @@ public:
 
         void clear();
 
-        void initCV(int index);
+        void initCv(int index);
         void initTrack(int index);
         void initMidi();
 
@@ -156,7 +156,7 @@ public:
     private:
         Kind _kind;
         union {
-            CVSource cv;
+            CvSource cv;
             TrackSource track;
             MidiSource midi;
         } _source;
