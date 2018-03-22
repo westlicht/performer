@@ -67,9 +67,6 @@ public:
         return nullptr;
     }
 
-    typedef std::array<NoteSequence, CONFIG_PATTERN_COUNT> NoteSequenceArray;
-    typedef std::array<CurveSequence, CONFIG_PATTERN_COUNT> CurveSequenceArray;
-
     //----------------------------------------
     // Properties
     //----------------------------------------

@@ -33,6 +33,18 @@ public:
         Last,
     };
 
+    static const char *paramName(Param param) {
+        switch (param) {
+        case Param::BPM:            return "BPM";
+        case Param::Swing:          return "Swing";
+        case Param::FirstStep:      return "First Step";
+        case Param::LastStep:       return "Last Step";
+        case Param::SequenceParams: break;
+        case Param::Last:           break;
+        }
+        return nullptr;
+    }
+
     class CVSource {
     public:
         int index() const { return _index; }
@@ -107,6 +119,7 @@ public:
     class Source {
     public:
         enum class Kind : uint8_t {
+            None,
             CV,
             Track,
             MIDI,
@@ -177,7 +190,7 @@ public:
         const Source &source() const { return _source; }
               Source &source()       { return _source; }
 
-        bool hasSource() const { return _source.kind() != Source::Kind::Last; }
+        bool hasSource() const { return _source.kind() != Source::Kind::None; }
 
         void clear();
 
@@ -191,6 +204,10 @@ public:
         Param _param;
         int8_t _track;
         Source _source;
+
+        float _shadowValue;
+
+        friend class Routing;
     };
 
     typedef std::array<Route, CONFIG_ROUTE_COUNT> RouteArray;

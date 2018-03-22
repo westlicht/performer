@@ -68,6 +68,9 @@ void RoutingEngine::updateSources() {
             const auto &source = route.source();
             auto &sourceValue = _sourceValues[i];
             switch (source.kind()) {
+            case Routing::Source::Kind::None:
+                sourceValue = 0.f;
+                break;
             case Routing::Source::Kind::CV:
                 sourceValue = (_engine.cvInput().channel(source.cv().index()) + 5.f) / 10.f;
                 break;

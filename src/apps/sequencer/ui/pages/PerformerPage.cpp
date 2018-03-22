@@ -78,7 +78,6 @@ void PerformerPage::updateLeds(Leds &leds) {
 
 void PerformerPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
-    auto &playState = _project.playState();
 
     if (key.isFunction() && key.function() == 2) {
         updateFills();
@@ -93,7 +92,6 @@ void PerformerPage::keyDown(KeyEvent &event) {
 
 void PerformerPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
-    auto &playState = _project.playState();
 
     if (key.isFunction() && key.function() == 2) {
         updateFills();

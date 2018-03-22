@@ -78,7 +78,7 @@ void Routing::MIDISource::read(ReadContext &context) {
 //----------------------------------------
 
 void Routing::Source::clear() {
-    _kind = Kind::Last;
+    _kind = Kind::None;
 }
 
 void Routing::Source::initCV(int index) {
@@ -100,6 +100,8 @@ void Routing::Source::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_kind);
     switch (_kind) {
+    case Kind::None:
+        break;
     case Kind::CV:
         _source.cv.write(context);
         break;
@@ -118,6 +120,8 @@ void Routing::Source::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_kind);
     switch (_kind) {
+    case Kind::None:
+        break;
     case Kind::CV:
         _source.cv.read(context);
         break;
