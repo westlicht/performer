@@ -149,6 +149,21 @@ public:
 
     class Sink {
     public:
+
+        void clear();
+
+        void write(WriteContext &context) const;
+        void read(ReadContext &context);
+
+    private:
+    };
+
+    class Route {
+    public:
+        // active
+
+        bool active() const { return _active; }
+
         // param
 
         Param param() const { return _param; }
@@ -157,40 +172,25 @@ public:
 
         int track() const { return _track; }
 
-        void clear();
+        // source
 
-        void init(Param param);
-        void initTrack(Param param, int track);
-
-        void write(WriteContext &context) const;
-        void read(ReadContext &context);
-
-    private:
-        Param _param;
-        uint8_t _track;
-    };
-
-    class Route {
-    public:
         const Source &source() const { return _source; }
               Source &source()       { return _source; }
 
-        const Sink &sink() const { return _sink; }
-              Sink &sink()       { return _sink; }
-
-        bool active() const { return _active; }
-        void enable() { _active = true; }
+        bool hasSource() const { return _source.kind() != Source::Kind::Last; }
 
         void clear();
+
+        void init(Param param, int track = -1);
 
         void write(WriteContext &context) const;
         void read(ReadContext &context);
 
     private:
         bool _active;
-
+        Param _param;
+        int8_t _track;
         Source _source;
-        Sink _sink;
     };
 
     typedef std::array<Route, CONFIG_ROUTE_COUNT> RouteArray;
@@ -215,6 +215,14 @@ public:
     Routing(Project &project);
 
     void clear();
+
+    Route *nextFreeRoute();
+    const Route *findRoute(Param param, int trackIndex = -1) const;
+          Route *findRoute(Param param, int trackIndex = -1);
+    bool hasRoute(Param param, int trackIndex = -1) const { return findRoute(param, trackIndex) != nullptr; }
+
+    Route *addRoute(Param param, int trackIndex = -1);
+    void removeRoute(Route *route);
 
     void writeParam(Param param, int trackIndex, int patternIndex, float value);
     void writeTrackParam(Param param, int trackIndex, int patternIndex, float value);

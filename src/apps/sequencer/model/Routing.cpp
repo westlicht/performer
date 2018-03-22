@@ -133,52 +133,34 @@ void Routing::Source::read(ReadContext &context) {
 }
 
 //----------------------------------------
-// Routing::Sink
-//----------------------------------------
-
-void Routing::Sink::clear() {
-}
-
-void Routing::Sink::init(Param param) {
-    _param = param;
-    _track = -1;
-}
-
-void Routing::Sink::initTrack(Param param, int track) {
-    _param = param;
-    _track = track;
-}
-
-void Routing::Sink::write(WriteContext &context) const {
-    auto &writer = context.writer;
-    writer.write(_param);
-    writer.write(_track);
-}
-
-void Routing::Sink::read(ReadContext &context) {
-    auto &reader = context.reader;
-    reader.read(_param);
-    reader.read(_track);
-}
-
-//----------------------------------------
 // Routing::Route
 //----------------------------------------
 
 void Routing::Route::clear() {
     _active = false;
+}
+
+void Routing::Route::init(Param param, int track) {
+    _param = param;
+    _track = -1;
     _source.clear();
-    _sink.clear();
+    _active = true;
 }
 
 void Routing::Route::write(WriteContext &context) const {
+    auto &writer = context.writer;
+    writer.write(_active);
+    writer.write(_param);
+    writer.write(_track);
     _source.write(context);
-    _sink.write(context);
 }
 
 void Routing::Route::read(ReadContext &context) {
+    auto &reader = context.reader;
+    reader.read(_active);
+    reader.read(_param);
+    reader.read(_track);
     _source.read(context);
-    _sink.read(context);
 }
 
 //----------------------------------------
@@ -203,6 +185,55 @@ void Routing::clear() {
     // route(1).sink().init(Param::Swing);
     // route(1).sink().initTrack(Param::LastStep, 0);
     // route(1).enable();
+}
+
+Routing::Route *Routing::nextFreeRoute() {
+    for (auto &route : _routes) {
+        if (!route.active()) {
+            return &route;
+        }
+    }
+    return nullptr;
+}
+
+const Routing::Route *Routing::findRoute(Param param, int trackIndex) const {
+    for (auto &route : _routes) {
+        if (route.active() && route.param() == param && route.track() == trackIndex) {
+            return &route;
+        }
+    }
+    return nullptr;
+}
+
+Routing::Route *Routing::findRoute(Param param, int trackIndex) {
+    for (auto &route : _routes) {
+        if (route.active() && route.param() == param && route.track() == trackIndex) {
+            return &route;
+        }
+    }
+    return nullptr;
+}
+
+Routing::Route *Routing::addRoute(Param param, int trackIndex) {
+    Route *route = findRoute(param, trackIndex);
+    if (route) {
+        return route;
+    }
+
+    route = nextFreeRoute();
+    if (!route) {
+        return nullptr;
+    }
+
+    route->init(param, trackIndex);
+
+    return route;
+}
+
+void Routing::removeRoute(Route *route) {
+    if (route) {
+        route->clear();
+    }
 }
 
 void Routing::writeParam(Param param, int trackIndex, int patternIndex, float value) {

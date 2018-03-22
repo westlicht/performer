@@ -87,11 +87,10 @@ void RoutingEngine::updateSources() {
 void RoutingEngine::updateSinks() {
     for (int i = 0; i < CONFIG_ROUTE_COUNT; ++i) {
         const auto &route = _routing.route(i);
-        if (route.active()) {
-            const auto &sink = route.sink();
+        if (route.active() && route.hasSource()) {
             float value = _sourceValues[i];
             // TODO handle pattern
-            _routing.writeParam(sink.param(), sink.track(), 0, value);
+            _routing.writeParam(route.param(), route.track(), 0, value);
         }
     }
 }
