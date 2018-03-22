@@ -3,7 +3,7 @@
 #include "Config.h"
 
 #include "core/Debug.h"
-#include "core/midi/MIDIMessage.h"
+#include "core/midi/MidiMessage.h"
 
 #include "os/os.h"
 
@@ -62,7 +62,7 @@ void Engine::update() {
         _running = true;
     }
 
-    receiveMIDI();
+    receiveMidi();
 
     // update tempo
     _nudgeTempo.update(dt);
@@ -268,25 +268,25 @@ void Engine::updatePlayState() {
     }
 }
 
-void Engine::receiveMIDI() {
-    MIDIMessage message;
+void Engine::receiveMidi() {
+    MidiMessage message;
     while (_midi.recv(&message)) {
-        receiveMIDI(MIDIPort::MIDI, message);
+        receiveMidi(MidiPort::Midi, message);
     }
     while (_usbMidi.recv(&message)) {
-        receiveMIDI(MIDIPort::USBMIDI, message);
+        receiveMidi(MidiPort::UsbMidi, message);
     }
 }
 
-void Engine::receiveMIDI(MIDIPort port, const MIDIMessage &message) {
-    _routingEngine.receiveMIDI(port, message);
+void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
+    _routingEngine.receiveMidi(port, message);
 }
 
 void Engine::initClockSources() {
     // Configure slaves
     _clock.slaveConfigure(ClockSourceExternal, 16, Clock::SlaveFreeRunning);
-    _clock.slaveConfigure(ClockSourceMIDI, 24);
-    _clock.slaveConfigure(ClockSourceUSBMIDI, 24);
+    _clock.slaveConfigure(ClockSourceMidi, 24);
+    _clock.slaveConfigure(ClockSourceUsbMidi, 24);
 
     // Forward external clock signals to clock
     _dio.clockInput.setHandler([&] (bool value) {
@@ -302,15 +302,15 @@ void Engine::initClockSources() {
 
     // Forward MIDI clock messages to clock
     _midi.setRecvFilter([this] (uint8_t data) {
-        if (MIDIMessage::isClockMessage(data)) {
-            _clock.slaveHandleMIDI(ClockSourceMIDI, data);
+        if (MidiMessage::isClockMessage(data)) {
+            _clock.slaveHandleMidi(ClockSourceMidi, data);
             return true;
         }
         return false;
     });
     _usbMidi.setRecvFilter([this] (uint8_t data) {
-        if (MIDIMessage::isClockMessage(data)) {
-            _clock.slaveHandleMIDI(ClockSourceUSBMIDI, data);
+        if (MidiMessage::isClockMessage(data)) {
+            _clock.slaveHandleMidi(ClockSourceUsbMidi, data);
             return true;
         }
         return false;
@@ -318,9 +318,9 @@ void Engine::initClockSources() {
 }
 
 void Engine::initClockOutputs() {
-    _clock.outputMIDI([this] (uint8_t msg) {
+    _clock.outputMidi([this] (uint8_t msg) {
         // TODO we should send a single byte with priority
-        _midi.send(MIDIMessage(msg));
+        _midi.send(MidiMessage(msg));
     });
 
     _clock.outputClock(

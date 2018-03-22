@@ -52,7 +52,7 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Encoder.cpp
     # sim
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Audio.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/MIDI.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/Midi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Simulator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Text.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Window.cpp

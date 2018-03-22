@@ -2,7 +2,7 @@
 
 #include "os/os.h"
 #include "core/Debug.h"
-#include "core/midi/MIDIMessage.h"
+#include "core/midi/MidiMessage.h"
 #include "drivers/ClockTimer.h"
 
 #include <cmath>
@@ -189,18 +189,18 @@ void Clock::slaveReset(int slave) {
     _timer.disable();
 }
 
-void Clock::slaveHandleMIDI(int slave, uint8_t msg) {
-    switch (MIDIMessage::realTimeMessage(msg)) {
-    case MIDIMessage::Tick:
+void Clock::slaveHandleMidi(int slave, uint8_t msg) {
+    switch (MidiMessage::realTimeMessage(msg)) {
+    case MidiMessage::Tick:
         slaveTick(slave);
         break;
-    case MIDIMessage::Start:
+    case MidiMessage::Start:
         slaveStart(slave);
         break;
-    case MIDIMessage::Stop:
+    case MidiMessage::Stop:
         slaveStop(slave);
         break;
-    case MIDIMessage::Continue:
+    case MidiMessage::Continue:
         slaveResume(slave);
         break;
     default:
@@ -217,7 +217,7 @@ void Clock::outputClock(std::function<void(bool)> clock, std::function<void(bool
     _output.reset = reset;
 }
 
-void Clock::outputMIDI(std::function<void(uint8_t)> midi) {
+void Clock::outputMidi(std::function<void(uint8_t)> midi) {
     _output.midi = midi;
 }
 
@@ -258,17 +258,17 @@ void Clock::resetTicks() {
 
 void Clock::requestStart() {
     _requestStart = 1;
-    outputMIDIMessage(MIDIMessage::Start);
+    outputMidiMessage(MidiMessage::Start);
 }
 
 void Clock::requestStop() {
     _requestStop = 1;
-    outputMIDIMessage(MIDIMessage::Stop);
+    outputMidiMessage(MidiMessage::Stop);
 }
 
 void Clock::requestResume() {
     _requestResume = 1;
-    outputMIDIMessage(MIDIMessage::Continue);
+    outputMidiMessage(MidiMessage::Continue);
 }
 
 void Clock::setupMasterTimer() {
@@ -285,7 +285,7 @@ void Clock::setupSlaveTimer() {
     _timer.setHandler([&] () { _elapsedUs += 250; });
 }
 
-void Clock::outputMIDIMessage(uint8_t msg) {
+void Clock::outputMidiMessage(uint8_t msg) {
     if (_output.midi) {
         _output.midi(msg);
     }
@@ -293,7 +293,7 @@ void Clock::outputMIDIMessage(uint8_t msg) {
 
 void Clock::outputTick(uint32_t tick) {
     if (tick % (_ppqn / 24) == 0) {
-        outputMIDIMessage(MIDIMessage::Tick);
+        outputMidiMessage(MidiMessage::Tick);
     }
     if (_output.clock) {
         _output.clock((tick % 2) < 1);

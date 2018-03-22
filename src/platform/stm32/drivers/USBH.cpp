@@ -4,7 +4,7 @@
 #include "SystemConfig.h"
 
 #include "core/Debug.h"
-#include "core/midi/MIDIMessage.h"
+#include "core/midi/MidiMessage.h"
 
 #include "usbh_core.h"				/// provides usbh_init() and usbh_poll()
 #include "usbh_lld_stm32f4.h"		/// provides low level usb host driver for stm32f4 platform
@@ -91,7 +91,7 @@ struct MIDIDriverHandler {
     static void recvHandler(int device_id, uint8_t *data) {
         // uint8_t cable = data[0] >> 4;
         uint8_t code = data[0] & 0xf;
-        MIDIMessage message;
+        MidiMessage message;
 
         switch (code) {
         case 0x0: // (1, 2 or 3 bytes) Miscellaneous function codes. Reserved for future extensions.
@@ -102,13 +102,13 @@ struct MIDIDriverHandler {
             // ignore for now
             return;
         case 0x5: // (1 bytes) Single-byte System Common Message or SysEx ends with following single byte.
-            message = MIDIMessage(data[1]);
+            message = MidiMessage(data[1]);
             g_usbh->midiEnqueueMessage(device_id, message);
             break;
         case 0x2: // (2 bytes) Two-byte System Common messages like MTC, SongSelect, etc.
         case 0xC: // (2 bytes) Program Change
         case 0xD: // (2 bytes) Channel Pressure
-            message = MIDIMessage(data[1], data[2]);
+            message = MidiMessage(data[1], data[2]);
             g_usbh->midiEnqueueMessage(device_id, message);
             break;
         case 0x3: // (3 bytes) Three-byte System Common messages like SPP, etc.
@@ -117,7 +117,7 @@ struct MIDIDriverHandler {
         case 0xA: // (3 bytes) Poly-KeyPress
         case 0xB: // (3 bytes) Control Change
         case 0xE: // (3 bytes) PitchBend Change
-            message = MIDIMessage(data[1], data[2], data[3]);
+            message = MidiMessage(data[1], data[2], data[3]);
             g_usbh->midiEnqueueMessage(device_id, message);
             break;
         case 0xF: // (1 bytes) Single Byte
@@ -126,7 +126,7 @@ struct MIDIDriverHandler {
         }
     }
 
-    static void write(uint8_t device, MIDIMessage &message) {
+    static void write(uint8_t device, MidiMessage &message) {
         uint8_t data[4];
 
         data[0] = message.status() >> 4;
@@ -139,7 +139,7 @@ struct MIDIDriverHandler {
 
     static void writeCallback(uint8_t bytes_written) {
         uint8_t device;
-        MIDIMessage message;
+        MidiMessage message;
         if (g_usbh->midiDequeueMessage(&device, &message)) {
             if (g_usbh->midiDeviceConnected(device)) {
                 write(device, message);
@@ -229,7 +229,7 @@ void USBH::process() {
 
     // Start sending MIDI messages
     uint8_t device;
-    MIDIMessage message;
+    MidiMessage message;
     if (midiDequeueMessage(&device, &message)) {
         if (midiDeviceConnected(device)) {
             MIDIDriverHandler::write(device, message);

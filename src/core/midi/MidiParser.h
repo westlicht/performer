@@ -1,17 +1,17 @@
 #pragma once
 
-#include "MIDIMessage.h"
+#include "MidiMessage.h"
 
 #include <cstdint>
 
-class MIDIParser {
+class MidiParser {
 public:
-    MIDIParser() {
+    MidiParser() {
     }
 
     bool feed(uint8_t data);
 
-    const MIDIMessage &message() const {
+    const MidiMessage &message() const {
         return _message;
     }
 
@@ -22,5 +22,5 @@ private:
     uint8_t _dataLength = 0;
     bool _recvSystemExclusive = false;
 
-    MIDIMessage _message;
+    MidiMessage _message;
 };

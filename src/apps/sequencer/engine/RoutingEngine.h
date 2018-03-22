@@ -2,11 +2,11 @@
 
 #include "Config.h"
 
-#include "MIDIPort.h"
+#include "MidiPort.h"
 
 #include "model/Model.h"
 
-#include "core/midi/MIDIMessage.h"
+#include "core/midi/MidiMessage.h"
 
 #include <array>
 
@@ -20,7 +20,7 @@ public:
 
     void update();
 
-    void receiveMIDI(MIDIPort port, const MIDIMessage &message);
+    void receiveMidi(MidiPort port, const MidiMessage &message);
 
 private:
     void updateSources();

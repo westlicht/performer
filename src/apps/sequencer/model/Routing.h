@@ -69,11 +69,11 @@ public:
         uint8_t _index;
     };
 
-    class MIDISource {
+    class MidiSource {
     public:
         enum class Port : uint8_t {
-            MIDI,
-            USBMIDI,
+            Midi,
+            UsbMidi,
         };
 
         enum class Kind : uint8_t {
@@ -123,7 +123,7 @@ public:
             None,
             CV,
             Track,
-            MIDI,
+            Midi,
             Last,
         };
 
@@ -141,14 +141,14 @@ public:
 
         // midi
 
-        const MIDISource &midi() const { return _source.midi; }
-              MIDISource &midi()       { return _source.midi; }
+        const MidiSource &midi() const { return _source.midi; }
+              MidiSource &midi()       { return _source.midi; }
 
         void clear();
 
         void initCV(int index);
         void initTrack(int index);
-        void initMIDI();
+        void initMidi();
 
         void write(WriteContext &context) const;
         void read(ReadContext &context);
@@ -158,7 +158,7 @@ public:
         union {
             CVSource cv;
             TrackSource track;
-            MIDISource midi;
+            MidiSource midi;
         } _source;
     };
 

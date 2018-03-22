@@ -1,4 +1,4 @@
-#include "MIDI.h"
+#include "Midi.h"
 
 #include <algorithm>
 
@@ -16,16 +16,16 @@ static int findPort(T &midi, const std::string &port) {
 
 static void recvCallback(double timeStamp, std::vector<uint8_t> *message, void *userData) {
     for (auto data : *message) {
-        auto callback = *static_cast<MIDI::RecvCallback *>(userData);
+        auto callback = *static_cast<Midi::RecvCallback *>(userData);
         callback(data);
     }
 }
 
-MIDI::MIDI() {
+Midi::Midi() {
     dumpPorts();
 }
 
-void MIDI::recv(const std::string &port, RecvCallback callback) {
+void Midi::recv(const std::string &port, RecvCallback callback) {
     // open port and assign callback
     if (_inputPorts.find(port) == _inputPorts.end()) {
         std::unique_ptr<RtMidiIn> input(new RtMidiIn());
@@ -53,7 +53,7 @@ void MIDI::recv(const std::string &port, RecvCallback callback) {
     }
 }
 
-void MIDI::send(const std::string &port, uint8_t data) {
+void Midi::send(const std::string &port, uint8_t data) {
     // open port on first send
     if (_outputPorts.find(port) == _outputPorts.end()) {
         std::unique_ptr<RtMidiOut> output;
@@ -82,7 +82,7 @@ void MIDI::send(const std::string &port, uint8_t data) {
     }
 }
 
-void MIDI::dumpPorts() {
+void Midi::dumpPorts() {
     try {
         std::vector<std::string> ports;
 

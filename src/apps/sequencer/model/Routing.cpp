@@ -54,10 +54,10 @@ void Routing::TrackSource::read(ReadContext &context) {
 }
 
 //----------------------------------------
-// Routing::MIDISource
+// Routing::MidiSource
 //----------------------------------------
 
-void Routing::MIDISource::write(WriteContext &context) const {
+void Routing::MidiSource::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_port);
     writer.write(_channel);
@@ -65,7 +65,7 @@ void Routing::MIDISource::write(WriteContext &context) const {
     writer.write(_data);
 }
 
-void Routing::MIDISource::read(ReadContext &context) {
+void Routing::MidiSource::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_port);
     reader.read(_channel);
@@ -91,8 +91,8 @@ void Routing::Source::initTrack(int index) {
     _source.track.setIndex(index);
 }
 
-void Routing::Source::initMIDI() {
-    _kind = Kind::MIDI;
+void Routing::Source::initMidi() {
+    _kind = Kind::Midi;
     // ...
 }
 
@@ -108,7 +108,7 @@ void Routing::Source::write(WriteContext &context) const {
     case Kind::Track:
         _source.track.write(context);
         break;
-    case Kind::MIDI:
+    case Kind::Midi:
         _source.midi.write(context);
         break;
     case Kind::Last:
@@ -128,7 +128,7 @@ void Routing::Source::read(ReadContext &context) {
     case Kind::Track:
         _source.track.read(context);
         break;
-    case Kind::MIDI:
+    case Kind::Midi:
         _source.midi.read(context);
         break;
     case Kind::Last:

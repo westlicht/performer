@@ -51,12 +51,12 @@ public:
     void slaveStop(int slave);
     void slaveResume(int slave);
     void slaveReset(int slave);
-    void slaveHandleMIDI(int slave, uint8_t msg);
+    void slaveHandleMidi(int slave, uint8_t msg);
 
     // Clock output
     void outputConfigure(int ppqn);
     void outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset);
-    void outputMIDI(std::function<void(uint8_t)> midi);
+    void outputMidi(std::function<void(uint8_t)> midi);
 
     // Sequencer interface
     bool checkStart();
@@ -73,7 +73,7 @@ private:
     void setupMasterTimer();
     void setupSlaveTimer();
 
-    void outputMIDIMessage(uint8_t msg);
+    void outputMidiMessage(uint8_t msg);
     void outputTick(uint32_t tick);
 
     static constexpr size_t SlaveCount = 4;

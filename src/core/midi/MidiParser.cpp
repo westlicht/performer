@@ -1,4 +1,4 @@
-#include "MIDIParser.h"
+#include "MidiParser.h"
 
 #include "core/Debug.h"
 
@@ -6,48 +6,48 @@ static bool isStatusByte(uint8_t byte) {
     return byte & 0x80;
 }
 
-bool MIDIParser::feed(uint8_t data) {
+bool MidiParser::feed(uint8_t data) {
     // DBG("%02x", data);
     if (isStatusByte(data)) {
         // DBG("status");
-        if (MIDIMessage::isRealTimeMessage(data)) {
+        if (MidiMessage::isRealTimeMessage(data)) {
             // emit real-time message
-            _message = MIDIMessage(data);
+            _message = MidiMessage(data);
             return true;
-        } else if (MIDIMessage::isSystemMessage(data)) {
-            switch (MIDIMessage::systemMessage(data)) {
-            case MIDIMessage::SystemExclusive:
+        } else if (MidiMessage::isSystemMessage(data)) {
+            switch (MidiMessage::systemMessage(data)) {
+            case MidiMessage::SystemExclusive:
                 // start system exclusive receive
                 _recvSystemExclusive = true;
                 break;
-            case MIDIMessage::TimeCode:
-            case MIDIMessage::SongPosition:
-            case MIDIMessage::SongSelect:
+            case MidiMessage::TimeCode:
+            case MidiMessage::SongPosition:
+            case MidiMessage::SongSelect:
                 _recvSystemExclusive = false;
                 // update running status
                 _status = data;
                 // receive data
                 _dataIndex = 0;
-                _dataLength = MIDIMessage::systemMessageLength(MIDIMessage::systemMessage(data));
+                _dataLength = MidiMessage::systemMessageLength(MidiMessage::systemMessage(data));
                 break;
-            case MIDIMessage::TuneRequest:
+            case MidiMessage::TuneRequest:
                 _recvSystemExclusive = false;
                 // emit tune-request message
-                _message = MIDIMessage(data);
+                _message = MidiMessage(data);
                 return true;
-            case MIDIMessage::EndOfExclusive:
+            case MidiMessage::EndOfExclusive:
                 // end system exclusive receive
                 _recvSystemExclusive = false;
                 // TODO emit message
                 break;
             }
-        } else if (MIDIMessage::isChannelMessage(data)) {
+        } else if (MidiMessage::isChannelMessage(data)) {
             _recvSystemExclusive = false;
             // update running status
             _status = data;
             // receive data
             _dataIndex = 0;
-            _dataLength = MIDIMessage::channelMessageLength(MIDIMessage::channelMessage(data));
+            _dataLength = MidiMessage::channelMessageLength(MidiMessage::channelMessage(data));
         } else {
             // Unknown status byte -> ignore
         }
@@ -60,7 +60,7 @@ bool MIDIParser::feed(uint8_t data) {
             if (_dataIndex == _dataLength) {
                 _dataIndex = 0;
                 // emit message
-                _message = (_dataLength == 1) ? MIDIMessage(_status, _data[0]) : MIDIMessage(_status, _data[0], _data[1]);
+                _message = (_dataLength == 1) ? MidiMessage(_status, _data[0]) : MidiMessage(_status, _data[0], _data[1]);
                 return true;
             }
         }

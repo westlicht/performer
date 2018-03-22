@@ -33,13 +33,13 @@ void MIDI::init() {
     nvic_enable_irq(NVIC_USART6_IRQ);
 }
 
-void MIDI::send(const MIDIMessage &message) {
+void MIDI::send(const MidiMessage &message) {
     for (uint8_t i = 0; i < message.length(); ++i) {
         send(message.raw()[i]);
     }
 }
 
-bool MIDI::recv(MIDIMessage *message) {
+bool MIDI::recv(MidiMessage *message) {
     while (!_rxBuffer.empty()) {
         if (_midiParser.feed(_rxBuffer.read())) {
             *message = _midiParser.message();

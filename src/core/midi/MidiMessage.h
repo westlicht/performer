@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-class MIDIMessage {
+class MidiMessage {
 public:
     // Channel (voice) messages
 
@@ -113,7 +113,7 @@ public:
     }
 
     ChannelMessage channelMessage() const {
-        return MIDIMessage::channelMessage(status());
+        return MidiMessage::channelMessage(status());
     }
 
     uint8_t channel() const {
@@ -197,11 +197,11 @@ public:
     // System messages
 
     bool isSystemMessage() const {
-        return MIDIMessage::isSystemMessage(status());
+        return MidiMessage::isSystemMessage(status());
     }
 
     SystemMessage systemMessage() const {
-        return MIDIMessage::systemMessage(status());
+        return MidiMessage::systemMessage(status());
     }
 
     bool isSystemExclusive() const { return isSystemMessage<SystemExclusive>(status()); }
@@ -221,15 +221,15 @@ public:
     // Real-time messages
 
     bool isRealTimeMessage() const {
-        return MIDIMessage::isRealTimeMessage(status());
+        return MidiMessage::isRealTimeMessage(status());
     }
 
     RealTimeMessage realTimeMessage() const {
-        return MIDIMessage::realTimeMessage(status());
+        return MidiMessage::realTimeMessage(status());
     }
 
     bool isClockMessage() const {
-        return MIDIMessage::isClockMessage(status());
+        return MidiMessage::isClockMessage(status());
     }
 
     bool isTick() const { return isRealTimeMessage<Tick>(status()); }
@@ -241,49 +241,49 @@ public:
 
     // Constructor
 
-    MIDIMessage() = default;
-    MIDIMessage(uint8_t status) :
+    MidiMessage() = default;
+    MidiMessage(uint8_t status) :
         _raw { status }, _length(1)
     {}
-    MIDIMessage(uint8_t status, uint8_t data0) :
+    MidiMessage(uint8_t status, uint8_t data0) :
         _raw { status, data0 }, _length(2)
     {}
-    MIDIMessage(uint8_t status, uint8_t data0, uint8_t data1) :
+    MidiMessage(uint8_t status, uint8_t data0, uint8_t data1) :
         _raw { status, data0, data1 }, _length(3)
     {}
 
     // Factory
 
-    static MIDIMessage makeNoteOff(uint8_t channel, uint8_t note, uint8_t velocity = 0) {
-        return MIDIMessage(NoteOff | channel, note, velocity);
+    static MidiMessage makeNoteOff(uint8_t channel, uint8_t note, uint8_t velocity = 0) {
+        return MidiMessage(NoteOff | channel, note, velocity);
     }
 
-    static MIDIMessage makeNoteOn(uint8_t channel, uint8_t note, uint8_t velocity = 127) {
-        return MIDIMessage(NoteOn | channel, note, velocity);
+    static MidiMessage makeNoteOn(uint8_t channel, uint8_t note, uint8_t velocity = 127) {
+        return MidiMessage(NoteOn | channel, note, velocity);
     }
 
-    static MIDIMessage makeKeyPressure(uint8_t channel, uint8_t note, uint8_t pressure) {
-        return MIDIMessage(KeyPressure | channel, note, pressure);
+    static MidiMessage makeKeyPressure(uint8_t channel, uint8_t note, uint8_t pressure) {
+        return MidiMessage(KeyPressure | channel, note, pressure);
     }
 
-    static MIDIMessage makeControlChange(uint8_t channel, uint8_t controllerNumber, uint8_t controllerValue) {
-        return MIDIMessage(ControlChange | channel, controllerNumber, controllerValue);
+    static MidiMessage makeControlChange(uint8_t channel, uint8_t controllerNumber, uint8_t controllerValue) {
+        return MidiMessage(ControlChange | channel, controllerNumber, controllerValue);
     }
 
-    static MIDIMessage makeProgramChange(uint8_t channel, uint8_t programNumber) {
-        return MIDIMessage(ProgramChange | channel, programNumber);
+    static MidiMessage makeProgramChange(uint8_t channel, uint8_t programNumber) {
+        return MidiMessage(ProgramChange | channel, programNumber);
     }
 
-    static MIDIMessage makeChannelPressure(uint8_t channel, uint8_t pressure) {
-        return MIDIMessage(ChannelPressure | channel, pressure);
+    static MidiMessage makeChannelPressure(uint8_t channel, uint8_t pressure) {
+        return MidiMessage(ChannelPressure | channel, pressure);
     }
 
-    static MIDIMessage makePitchBend(uint8_t channel, int pitchBend) {
+    static MidiMessage makePitchBend(uint8_t channel, int pitchBend) {
         pitchBend = std::min(0, std::max(0x3fff, pitchBend + 0x2000));
-        return MIDIMessage(PitchBend | channel, pitchBend & 0x7f, (pitchBend >> 7) & 0x7f);
+        return MidiMessage(PitchBend | channel, pitchBend & 0x7f, (pitchBend >> 7) & 0x7f);
     }
 
-    static void dump(const MIDIMessage &msg);
+    static void dump(const MidiMessage &msg);
 
 private:
     uint8_t _raw[3];

@@ -4,7 +4,7 @@
 #include "Window.h"
 #include "Audio.h"
 #include "Instrument.h"
-#include "MIDI.h"
+#include "Midi.h"
 
 #include "widgets/Button.h"
 
@@ -42,16 +42,16 @@ public:
     void writeDAC(int channel, uint16_t value);
 
     // MIDI emulation
-    enum MIDIPort {
-        MIDIHardwarePort,
-        MIDIUSBHostPort,
+    enum MidiPort {
+        MidiHardwarePort,
+        MidiUsbHostPort,
     };
 
-    typedef std::function<void(uint8_t)> MIDIRecvCallback;
+    typedef std::function<void(uint8_t)> MidiRecvCallback;
 
-    void sendMIDI(int port, uint8_t data);
-    void sendMIDI(int port, const uint8_t *data, size_t length);
-    void recvMIDI(int port, MIDIRecvCallback callback);
+    void sendMidi(int port, uint8_t data);
+    void sendMidi(int port, const uint8_t *data, size_t length);
+    void recvMidi(int port, MidiRecvCallback callback);
 
     static Simulator &instance();
 
@@ -74,7 +74,7 @@ private:
     std::shared_ptr<Button> _screenshotButton;
 
     static const std::vector<std::string> _midiPortName;
-    MIDI _midi;
+    Midi _midi;
 };
 
 } // namespace sim

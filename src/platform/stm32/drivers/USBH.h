@@ -29,7 +29,7 @@ private:
         return _midiDevices & (1 << device);
     }
 
-    void midiEnqueueMessage(uint8_t device, MIDIMessage &message) {
+    void midiEnqueueMessage(uint8_t device, MidiMessage &message) {
         _usbMidi.enqueueMessage(message);
     }
 
@@ -37,7 +37,7 @@ private:
         _usbMidi.enqueueData(data);
     }
 
-    bool midiDequeueMessage(uint8_t *device, MIDIMessage *message) {
+    bool midiDequeueMessage(uint8_t *device, MidiMessage *message) {
         *device = 0;
         return _usbMidi.dequeueMessage(message);
     }

@@ -36,8 +36,8 @@ set(core_sources
     core/math/Mat3.cpp
     core/math/Math.cpp
     core/math/Vec2.cpp
-    core/midi/MIDIMessage.cpp
-    core/midi/MIDIParser.cpp
+    core/midi/MidiMessage.cpp
+    core/midi/MidiParser.cpp
     core/profiler/Profiler.cpp
 )
 

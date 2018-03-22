@@ -15,17 +15,17 @@ public:
     void update() override {
         switch (mode) {
         case Receive: {
-            MIDIMessage msg;
+            MidiMessage msg;
             if (midi.recv(&msg)) {
-                MIDIMessage::dump(msg);
+                MidiMessage::dump(msg);
             }
             break;
         }
         case Arpeggio: {
             DBG("step: %d", step);
-            midi.send(MIDIMessage::makeNoteOff(0, 36 + step % 24));
+            midi.send(MidiMessage::makeNoteOff(0, 36 + step % 24));
             ++step;
-            midi.send(MIDIMessage::makeNoteOn(0, 36 + step % 24));
+            midi.send(MidiMessage::makeNoteOn(0, 36 + step % 24));
             os::delay(500);
             break;
         }

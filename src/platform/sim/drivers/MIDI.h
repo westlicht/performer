@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/midi/MIDIMessage.h"
-#include "core/midi/MIDIParser.h"
+#include "core/midi/MidiMessage.h"
+#include "core/midi/MidiParser.h"
 
 #include "sim/Simulator.h"
 
@@ -16,7 +16,7 @@ public:
     MIDI() :
         _simulator(sim::Simulator::instance())
     {
-        _simulator.recvMIDI(sim::Simulator::MIDIHardwarePort, [this] (uint8_t data) {
+        _simulator.recvMidi(sim::Simulator::MidiHardwarePort, [this] (uint8_t data) {
             if (!_filter || !_filter(data)) {
                 std::lock_guard<std::mutex> lock(_recvMutex);
                 _recvQueue.emplace_back(data);
@@ -26,11 +26,11 @@ public:
 
     void init() {}
 
-    void send(const MIDIMessage &message) {
-        _simulator.sendMIDI(sim::Simulator::MIDIHardwarePort, message.raw(), message.length());
+    void send(const MidiMessage &message) {
+        _simulator.sendMidi(sim::Simulator::MidiHardwarePort, message.raw(), message.length());
     }
 
-    bool recv(MIDIMessage *message) {
+    bool recv(MidiMessage *message) {
         std::lock_guard<std::mutex> lock(_recvMutex);
         while (!_recvQueue.empty()) {
             uint8_t data = _recvQueue.front();
@@ -52,5 +52,5 @@ private:
     std::deque<uint8_t> _recvQueue;
     std::mutex _recvMutex;
     std::function<bool(uint8_t)> _filter;
-    MIDIParser _midiParser;
+    MidiParser _midiParser;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/utils/RingBuffer.h"
-#include "core/midi/MIDIMessage.h"
+#include "core/midi/MidiMessage.h"
 
 #include <functional>
 
@@ -11,11 +11,11 @@ class USBMIDI {
 public:
     void init() {}
 
-    void send(const MIDIMessage &message) {
+    void send(const MidiMessage &message) {
         _txQueue.write(message);
     }
 
-    bool recv(MIDIMessage *message) {
+    bool recv(MidiMessage *message) {
         if (_rxQueue.empty()) {
             return false;
         }
@@ -27,7 +27,7 @@ public:
         _filter = filter;
     }
 
-    void enqueueMessage(MIDIMessage &message) {
+    void enqueueMessage(MidiMessage &message) {
         _rxQueue.write(message);
     }
 
@@ -37,7 +37,7 @@ public:
         }
     }
 
-    bool dequeueMessage(MIDIMessage *message) {
+    bool dequeueMessage(MidiMessage *message) {
         if (_txQueue.empty()) {
             return false;
         }
@@ -48,6 +48,6 @@ public:
 private:
     std::function<bool(uint8_t)> _filter;
 
-    RingBuffer<MIDIMessage, 16> _txQueue;
-    RingBuffer<MIDIMessage, 16> _rxQueue;
+    RingBuffer<MidiMessage, 16> _txQueue;
+    RingBuffer<MidiMessage, 16> _rxQueue;
 };

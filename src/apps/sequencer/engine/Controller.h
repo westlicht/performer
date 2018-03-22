@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/midi/MIDIMessage.h"
-#include "core/midi/MIDIParser.h"
+#include "core/midi/MidiMessage.h"
+#include "core/midi/MidiParser.h"
 
 #include "drivers/USBMIDI.h"
 
@@ -11,8 +11,8 @@ class Controller {
 public:
     Controller(ControllerManager &manager);
 
-    virtual void processMessage(const MIDIMessage &message) = 0;
-    void sendMessage(const MIDIMessage &message);
+    virtual void processMessage(const MidiMessage &message) = 0;
+    void sendMessage(const MidiMessage &message);
 
 protected:
     ControllerManager &_manager;
@@ -23,10 +23,10 @@ public:
     ControllerManager(USBMIDI &midi);
 
     void update();
-    void sendMessage(const MIDIMessage &message);
+    void sendMessage(const MidiMessage &message);
 
 private:
     USBMIDI &_midi;
-    MIDIParser _midiParser;
+    MidiParser _midiParser;
     Controller *_controller = nullptr;
 };

@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 // for allowing direct mapping
-static_assert(int(MIDIPort::MIDI) == int(Routing::MIDISource::Port::MIDI), "invalid mapping");
-static_assert(int(MIDIPort::USBMIDI) == int(Routing::MIDISource::Port::USBMIDI), "invalid mapping");
+static_assert(int(MidiPort::Midi) == int(Routing::MidiSource::Port::Midi), "invalid mapping");
+static_assert(int(MidiPort::UsbMidi) == int(Routing::MidiSource::Port::UsbMidi), "invalid mapping");
 
 RoutingEngine::RoutingEngine(Engine &engine, Model &model) :
     _engine(engine),
@@ -18,47 +18,47 @@ void RoutingEngine::update() {
     updateSinks();
 }
 
-void RoutingEngine::receiveMIDI(MIDIPort port, const MIDIMessage &message) {
+void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
     for (int i = 0; i < CONFIG_ROUTE_COUNT; ++i) {
         const auto &route = _routing.route(i);
         if (route.active() &&
-            route.source().kind() == Routing::Source::Kind::MIDI &&
-            route.source().midi().port() == Routing::MIDISource::Port(port) &&
+            route.source().kind() == Routing::Source::Kind::Midi &&
+            route.source().midi().port() == Routing::MidiSource::Port(port) &&
             (route.source().midi().channel() == 0 || route.source().midi().channel() == message.channel() + 1)
         ) {
             const auto &midiSource = route.source().midi();
             auto &sourceValue = _sourceValues[i];
             switch (midiSource.kind()) {
-            case Routing::MIDISource::Kind::ControllerAbs:
+            case Routing::MidiSource::Kind::ControllerAbs:
                 if (message.controllerNumber() == midiSource.controller()) {
                     sourceValue = message.controllerValue() * (1.f / 127.f);
                 }
                 break;
-            case Routing::MIDISource::Kind::ControllerRel:
+            case Routing::MidiSource::Kind::ControllerRel:
                 if (message.controllerNumber() == midiSource.controller()) {
                     int value = message.controllerValue();
                     value = value >= 64 ? 64 - value : value;
                     sourceValue = clamp(sourceValue + value * (1.f / 127.f), 0.f, 1.f);
                 }
                 break;
-            case Routing::MIDISource::Kind::PitchBend:
+            case Routing::MidiSource::Kind::PitchBend:
                 if (message.isPitchBend()) {
                     sourceValue = (message.pitchBend() + 0x2000) * (1.f / 16384.f);
                 }
                 break;
-            case Routing::MIDISource::Kind::NoteMomentary:
+            case Routing::MidiSource::Kind::NoteMomentary:
                 if (message.isNoteOn() && message.note() == midiSource.note()) {
                     sourceValue = 1.f;
                 } else if (message.isNoteOff() && message.note() == midiSource.note()) {
                     sourceValue = 0.f;
                 }
                 break;
-            case Routing::MIDISource::Kind::NoteToggle:
+            case Routing::MidiSource::Kind::NoteToggle:
                 if (message.isNoteOn() && message.note() == midiSource.note()) {
                     sourceValue = sourceValue < 0.5f ? 1.f : 0.f;
                 }
                 break;
-            case Routing::MIDISource::Kind::NoteVelocity:
+            case Routing::MidiSource::Kind::NoteVelocity:
                 if (message.isNoteOn() && message.note() == midiSource.note()) {
                     sourceValue = message.velocity() * (1.f / 127.f);
                 }
@@ -84,8 +84,8 @@ void RoutingEngine::updateSources() {
             case Routing::Source::Kind::Track:
                 sourceValue = (_engine.cvOutput().channel(source.track().index()) + 5.f) / 10.f;
                 break;
-            case Routing::Source::Kind::MIDI:
-                // handled in receiveMIDI
+            case Routing::Source::Kind::Midi:
+                // handled in receiveMidi
                 break;
             case Routing::Source::Kind::Last:
                 break;

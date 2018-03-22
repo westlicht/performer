@@ -8,7 +8,7 @@ Controller::Controller(ControllerManager &manager) :
     _manager(manager)
 {}
 
-void Controller::sendMessage(const MIDIMessage &message) {
+void Controller::sendMessage(const MidiMessage &message) {
     _manager.sendMessage(message);
 }
 
@@ -19,16 +19,16 @@ ControllerManager::ControllerManager(USBMIDI &midi) :
 }
 
 void ControllerManager::update() {
-    MIDIMessage message;
+    MidiMessage message;
     while (_midi.recv(&message)) {
         DBG("recv:");
-        MIDIMessage::dump(message);
+        MidiMessage::dump(message);
         _controller->processMessage(message);
     }
 }
 
-void ControllerManager::sendMessage(const MIDIMessage &message) {
+void ControllerManager::sendMessage(const MidiMessage &message) {
     DBG("send:");
-    MIDIMessage::dump(message);
+    MidiMessage::dump(message);
     _midi.send(message);
 }

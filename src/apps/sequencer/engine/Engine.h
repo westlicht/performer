@@ -10,7 +10,7 @@
 #include "CVInput.h"
 #include "CVOutput.h"
 #include "RoutingEngine.h"
-#include "MIDIPort.h"
+#include "MidiPort.h"
 
 #include "model/Model.h"
 
@@ -36,8 +36,8 @@ public:
 
     enum ClockSource {
         ClockSourceExternal,
-        ClockSourceMIDI,
-        ClockSourceUSBMIDI,
+        ClockSourceMidi,
+        ClockSourceUsbMidi,
     };
 
     Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, MIDI &midi, USBMIDI &usbMidi);
@@ -104,8 +104,8 @@ private:
     void resetTrackEngines();
     void updatePlayState();
 
-    void receiveMIDI();
-    void receiveMIDI(MIDIPort port, const MIDIMessage &message);
+    void receiveMidi();
+    void receiveMidi(MidiPort port, const MidiMessage &message);
 
     void initClockSources();
     void initClockOutputs();

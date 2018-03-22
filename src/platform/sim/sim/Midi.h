@@ -8,9 +8,9 @@
 
 namespace sim {
 
-class MIDI {
+class Midi {
 public:
-    MIDI();
+    Midi();
 
     typedef std::function<void(uint8_t)> RecvCallback;
 

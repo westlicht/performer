@@ -1,8 +1,8 @@
-#include "MIDIMessage.h"
+#include "MidiMessage.h"
 
 #include "core/Debug.h"
 
-void MIDIMessage::dump(const MIDIMessage &msg) {
+void MidiMessage::dump(const MidiMessage &msg) {
     if (msg.isChannelMessage()) {
         switch (msg.channelMessage()) {
         case NoteOff:           DBG("NoteOff(channel=%d, note=%d, velocity=%d)", msg.channel(), msg.note(), msg.velocity()); return;

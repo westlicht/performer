@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/midi/MIDIMessage.h"
-#include "core/midi/MIDIParser.h"
+#include "core/midi/MidiMessage.h"
+#include "core/midi/MidiParser.h"
 #include "core/utils/RingBuffer.h"
 
 #include <functional>
@@ -12,8 +12,8 @@ class MIDI {
 public:
     void init();
 
-    void send(const MIDIMessage &message);
-    bool recv(MIDIMessage *message);
+    void send(const MidiMessage &message);
+    bool recv(MidiMessage *message);
 
     void setRecvFilter(std::function<bool(uint8_t)> filter);
 
@@ -26,5 +26,5 @@ private:
     volatile uint32_t _txActive = 0;
 
     std::function<bool(uint8_t)> _filter;
-    MIDIParser _midiParser;
+    MidiParser _midiParser;
 };

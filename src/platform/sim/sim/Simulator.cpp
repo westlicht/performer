@@ -13,8 +13,8 @@
 namespace sim {
 
 const std::vector<std::string> Simulator::_midiPortName = {
-    "Fireface UCX (23456129) Port 1", // MIDIHardwarePort
-    "Port2", // MIDIUSBHostPort
+    "Fireface UCX (23456129) Port 1", // MidiHardwarePort
+    "Port2", // MidiUsbHostPort
 };
 
 Simulator::Simulator() :
@@ -102,17 +102,17 @@ void Simulator::writeDAC(int channel, uint16_t value) {
     }
 }
 
-void Simulator::sendMIDI(int port, uint8_t data) {
+void Simulator::sendMidi(int port, uint8_t data) {
     _midi.send(_midiPortName[port], data);
 }
 
-void Simulator::sendMIDI(int port, const uint8_t *data, size_t length) {
+void Simulator::sendMidi(int port, const uint8_t *data, size_t length) {
     for (size_t i = 0; i < length; ++i) {
         _midi.send(_midiPortName[port], data[i]);
     }
 }
 
-void Simulator::recvMIDI(int port, MIDIRecvCallback callback) {
+void Simulator::recvMidi(int port, MidiRecvCallback callback) {
     _midi.recv(_midiPortName[port], [callback] (uint8_t data) { callback(data); });
 }
 
