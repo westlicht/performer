@@ -29,6 +29,9 @@ public:
         }
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
     template<typename U>
     U &as() {
         return *reinterpret_cast<U *>(_data);
@@ -38,6 +41,8 @@ public:
     const U &as() const {
         return *reinterpret_cast<const U *>(_data);
     }
+
+#pragma GCC diagnostic pop
 
 private:
     // memory aligned to system pointer size
