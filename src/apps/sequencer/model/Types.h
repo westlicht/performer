@@ -25,4 +25,20 @@ public:
         return nullptr;
     }
 
+    enum class MidiPort : uint8_t {
+        Midi,
+        UsbMidi,
+        Last
+    };
+
+    static const char *midiPortName(MidiPort midiPort) {
+        switch (midiPort) {
+        case MidiPort::Midi:    return "MIDI";
+        case MidiPort::UsbMidi: return "USB";
+        case MidiPort::Last:    break;
+        }
+        return nullptr;
+    }
+
+
 }; // namespace Types

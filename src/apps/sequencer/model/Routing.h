@@ -2,6 +2,7 @@
 
 #include "Config.h"
 
+#include "Types.h"
 #include "Serialize.h"
 
 #include "core/math/Math.h"
@@ -71,11 +72,6 @@ public:
 
     class MidiSource {
     public:
-        enum class Port : uint8_t {
-            Midi,
-            UsbMidi,
-        };
-
         enum class Kind : uint8_t {
             ControllerAbs,
             ControllerRel,
@@ -85,8 +81,8 @@ public:
             NoteVelocity,
         };
 
-        Port port() const { return _port; }
-        void setPort(Port port) { _port = port; }
+        Types::MidiPort port() const { return _port; }
+        void setPort(Types::MidiPort port) { _port = port; }
 
         int channel() const { return _channel; }
         void setChannel(int channel) { _channel = channel; }
@@ -104,7 +100,7 @@ public:
         void read(ReadContext &context);
 
     private:
-        Port _port;
+        Types::MidiPort _port;
         uint8_t _channel;
         Kind _kind;
         union {

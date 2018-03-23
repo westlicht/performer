@@ -3,8 +3,8 @@
 #include "Engine.h"
 
 // for allowing direct mapping
-static_assert(int(MidiPort::Midi) == int(Routing::MidiSource::Port::Midi), "invalid mapping");
-static_assert(int(MidiPort::UsbMidi) == int(Routing::MidiSource::Port::UsbMidi), "invalid mapping");
+static_assert(int(MidiPort::Midi) == int(Types::MidiPort::Midi), "invalid mapping");
+static_assert(int(MidiPort::UsbMidi) == int(Types::MidiPort::UsbMidi), "invalid mapping");
 
 RoutingEngine::RoutingEngine(Engine &engine, Model &model) :
     _engine(engine),
@@ -23,7 +23,7 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
         const auto &route = _routing.route(i);
         if (route.active() &&
             route.source().kind() == Routing::Source::Kind::Midi &&
-            route.source().midi().port() == Routing::MidiSource::Port(port) &&
+            route.source().midi().port() == Types::MidiPort(port) &&
             (route.source().midi().channel() == 0 || route.source().midi().channel() == message.channel() + 1)
         ) {
             const auto &midiSource = route.source().midi();
