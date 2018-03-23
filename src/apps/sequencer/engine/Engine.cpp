@@ -84,18 +84,23 @@ void Engine::update() {
     _routingEngine.update();
 
     uint32_t tick;
+    bool updated = false;
     while (_clock.checkTick(&tick)) {
         _tick = tick;
 
         // update play state
         updatePlayState();
 
-        for (size_t i = 0; i < _trackEngines.size(); ++i) {
-            auto trackEngine = _trackEngines[i];
+        for (auto trackEngine : _trackEngines) {
             trackEngine->tick(tick);
-            _gateOutput.setGate(i, trackEngine->gateOutput());
-            _cvOutput.setChannel(i, trackEngine->cvOutput());
         }
+
+        updateTrackOutputs();
+        updated = true;
+    }
+
+    if (!updated) {
+        updateTrackOutputs();
     }
 
     // overrides
@@ -211,6 +216,14 @@ void Engine::updateTrackSequences() {
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         _trackEngines[trackIndex]->setPattern(project.playState().trackState(trackIndex).pattern());
+    }
+}
+
+void Engine::updateTrackOutputs() {
+    for (size_t i = 0; i < _trackEngines.size(); ++i) {
+        auto trackEngine = _trackEngines[i];
+        _gateOutput.setGate(i, trackEngine->gateOutput());
+        _cvOutput.setChannel(i, trackEngine->cvOutput());
     }
 }
 
