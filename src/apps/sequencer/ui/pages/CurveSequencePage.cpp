@@ -146,7 +146,7 @@ void CurveSequencePage::draw(Canvas &canvas) {
     if (isActiveSequence) {
         canvas.setColor(0xf);
         int x = ((trackEngine.currentStep() - stepOffset) + trackEngine.currentStepFraction()) * stepWidth;
-        canvas.vline(x, 16, 32);
+        canvas.vline(x, curveY, curveHeight);
     }
 }
 
