@@ -22,7 +22,7 @@ void LayoutPage::draw(Canvas &canvas) {
     const char *functionNames[] = { "MODE", "GATE", "CV", nullptr, showChange ? "CHANGE" : nullptr };
 
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "TRACK LAYOUT");
+    WindowPainter::drawHeader(canvas, _model, _engine, "LAYOUT");
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
 
