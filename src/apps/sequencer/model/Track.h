@@ -15,6 +15,12 @@
 #include <cstdint>
 #include <cstring>
 
+#if CONFIG_ENABLE_SANITIZE
+# define SANITIZE_TRACK_MODE(_actual_, _expected_) ASSERT(_actual_ == _expected_, "invalid track mode");
+#else // CONFIG_ENABLE_SANITIZE
+# define SANITIZE_TRACK_MODE(_actual_, _expected_) {}
+#endif // CONFIG_ENABLE_SANITIZE
+
 class Track {
 public:
     //----------------------------------------
@@ -137,13 +143,13 @@ public:
 
     // noteTrack
 
-    const NoteTrack &noteTrack() const { ASSERT(_trackMode == TrackMode::Note, "invalid mode"); return *_track.note; }
-          NoteTrack &noteTrack()       { ASSERT(_trackMode == TrackMode::Note, "invalid mode"); return *_track.note; }
+    const NoteTrack &noteTrack() const { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Note); return *_track.note; }
+          NoteTrack &noteTrack()       { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Note); return *_track.note; }
 
     // curveTrack
 
-    const CurveTrack &curveTrack() const { ASSERT(_trackMode == TrackMode::Curve, "invalid mode"); return *_track.curve; }
-          CurveTrack &curveTrack()       { ASSERT(_trackMode == TrackMode::Curve, "invalid mode"); return *_track.curve; }
+    const CurveTrack &curveTrack() const { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Curve); return *_track.curve; }
+          CurveTrack &curveTrack()       { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Curve); return *_track.curve; }
 
     //----------------------------------------
     // Methods
@@ -182,3 +188,5 @@ private:
         CurveTrack *curve;
     } _track;
 };
+
+#undef SANITIZE_TRACK_MODE

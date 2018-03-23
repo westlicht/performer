@@ -27,6 +27,8 @@ public:
     int currentStep() const { return _sequenceState.step(); }
     float currentStepFraction() const { return _stepFraction; }
 
+    static constexpr Track::TrackMode trackMode = Track::TrackMode::Curve;
+
 private:
     void updateOutput(uint32_t relativeTick, uint32_t divisor);
 

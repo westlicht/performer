@@ -28,6 +28,8 @@ public:
 
     int currentStep() const { return _sequenceState.step(); }
 
+    static constexpr Track::TrackMode trackMode = Track::TrackMode::Note;
+
 private:
     void triggerStep(uint32_t tick, uint32_t divisor);
     uint32_t applySwing(uint32_t tick);

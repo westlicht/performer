@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Config.h"
+
 #include "model/Track.h"
 #include "model/PlayState.h"
 
@@ -12,6 +14,12 @@ struct TrackLinkData {
     uint32_t relativeTick;
     SequenceState *sequenceState;
 };
+
+#if CONFIG_ENABLE_SANITIZE
+# define SANITIZE_TRACK_MODE(_actual_, _expected_) ASSERT(_actual_ == _expected_, "invalid track mode");
+#else // CONFIG_ENABLE_SANITIZE
+# define SANITIZE_TRACK_MODE(_actual_, _expected_) {}
+#endif // CONFIG_ENABLE_SANITIZE
 
 class TrackEngine {
 public:
@@ -33,13 +41,13 @@ public:
 
     template<typename T>
     const T &as() const {
-        // TODO sanitze
+        SANITIZE_TRACK_MODE(_trackMode, T::trackMode);
         return *static_cast<const T *>(this);
     }
 
     template<typename T>
     T &as() {
-        // TODO sanitize
+        SANITIZE_TRACK_MODE(_trackMode, T::trackMode);
         return *static_cast<T *>(this);
     }
 
@@ -79,3 +87,5 @@ protected:
     bool _mute;
     bool _fill;
 };
+
+#undef SANITIZE_TRACK_MODE
