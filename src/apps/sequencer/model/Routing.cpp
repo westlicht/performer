@@ -180,15 +180,33 @@ void Routing::clear() {
         route.clear();
     }
 
-    // route(0).source().initCv(0);
-    // route(0).sink().init(Param::BPM);
-    // route(0).sink().initTrack(Param::FirstStep, 0);
-    // route(0).enable();
+    // {
+    //     auto route = addRoute(Param::BPM);
+    //     route->source().initMIDI();
+    //     // route->source().midi().setKind(MIDISource::Kind::ControllerAbs);
+    //     // route->source().midi().setPort(MIDISource::Port::MIDI);
+    //     // route->source().midi().setChannel(1);
+    //     // route->source().midi().setController(16);
 
-    // route(1).source().initCv(1);
-    // route(1).sink().init(Param::Swing);
-    // route(1).sink().initTrack(Param::LastStep, 0);
-    // route(1).enable();
+    //     // route->source().midi().setKind(MIDISource::Kind::PitchBend);
+    //     // route->source().midi().setPort(MIDISource::Port::MIDI);
+    //     // route->source().midi().setChannel(1);
+
+    //     route->source().midi().setKind(MIDISource::Kind::NoteVelocity);
+    //     route->source().midi().setPort(MIDISource::Port::MIDI);
+    //     route->source().midi().setChannel(1);
+    //     route->source().midi().setNote(60);
+
+    // }
+
+    // {
+    //     auto route = addRoute(Param::Swing);
+    //     route->source().initMIDI();
+    //     route->source().midi().setKind(MIDISource::Kind::ControllerRel);
+    //     route->source().midi().setPort(MIDISource::Port::MIDI);
+    //     route->source().midi().setChannel(1);
+    //     route->source().midi().setController(63);
+    // }
 }
 
 Routing::Route *Routing::nextFreeRoute() {
