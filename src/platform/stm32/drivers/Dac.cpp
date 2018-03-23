@@ -1,4 +1,4 @@
-#include "DAC.h"
+#include "Dac.h"
 
 #include "hal/Delay.h"
 
@@ -23,7 +23,7 @@
 #define RESET_POWER_ON                  7
 #define SETUP_INTERNAL_REF              8
 
-void DAC::init() {
+void Dac::init() {
 
     // init spi pins
     rcc_periph_clock_enable(RCC_GPIOB);
@@ -57,20 +57,20 @@ void DAC::init() {
     reset();
     setClearCode(ClearIgnore);
     setInternalRef(true);
-    writeDAC(POWER_DOWN_UP_DAC, 0, 0, 0xff);
+    writeDac(POWER_DOWN_UP_DAC, 0, 0, 0xff);
 }
 
-void DAC::write(int channel) {
-    writeDAC(WRITE_INPUT_REGISTER_UPDATE_N, channel, _values[channel], 15);
+void Dac::write(int channel) {
+    writeDac(WRITE_INPUT_REGISTER_UPDATE_N, channel, _values[channel], 15);
 }
 
-void DAC::write() {
+void Dac::write() {
     for (int channel = 0; channel < Channels; ++channel) {
-        writeDAC(channel == 7 ? WRITE_INPUT_REGISTER_UPDATE_ALL : WRITE_INPUT_REGISTER, channel, _values[channel], 0);
+        writeDac(channel == 7 ? WRITE_INPUT_REGISTER_UPDATE_ALL : WRITE_INPUT_REGISTER, channel, _values[channel], 0);
     }
 }
 
-void DAC::writeDAC(uint8_t command, uint8_t address, uint16_t data, uint8_t function) {
+void Dac::writeDac(uint8_t command, uint8_t address, uint16_t data, uint8_t function) {
     uint8_t b1 = command;
     uint8_t b2 = (address << 4) | (data >> 12);
     uint8_t b3 = data >> 4;
@@ -94,15 +94,15 @@ void DAC::writeDAC(uint8_t command, uint8_t address, uint16_t data, uint8_t func
     hal::Delay::delay_ns<80>(); // t4 in timing diagram
 }
 
-void DAC::reset() {
-    writeDAC(RESET_POWER_ON, 0, 0, 0);
+void Dac::reset() {
+    writeDac(RESET_POWER_ON, 0, 0, 0);
     hal::Delay::delay_us(50);
 }
 
-void DAC::setInternalRef(bool enabled) {
-    writeDAC(SETUP_INTERNAL_REF, 0, 0, enabled ? 1 : 0);
+void Dac::setInternalRef(bool enabled) {
+    writeDac(SETUP_INTERNAL_REF, 0, 0, enabled ? 1 : 0);
 }
 
-void DAC::setClearCode(ClearCode code) {
-    writeDAC(LOAD_CLEAR_CODE_REGISTER, 0, 0, code);
+void Dac::setClearCode(ClearCode code) {
+    writeDac(LOAD_CLEAR_CODE_REGISTER, 0, 0, code);
 }

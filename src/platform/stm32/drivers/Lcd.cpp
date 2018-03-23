@@ -1,4 +1,4 @@
-#include "LCD.h"
+#include "Lcd.h"
 
 #include "core/Debug.h"
 
@@ -75,7 +75,7 @@ static inline void waitTxDone() {
 }
 
 
-void LCD::init() {
+void Lcd::init() {
     // init spi pins
     rcc_periph_clock_enable(RCC_GPIOB);
     rcc_periph_clock_enable(RCC_GPIOC);
@@ -123,7 +123,7 @@ void LCD::init() {
     initialize();
 }
 
-void LCD::draw(uint8_t *frameBuffer) {
+void Lcd::draw(uint8_t *frameBuffer) {
 
 #ifdef LCD_USE_DMA
     // wait until previous frame is sent
@@ -187,19 +187,19 @@ void LCD::draw(uint8_t *frameBuffer) {
 #endif // LCD_USE_DMA
 }
 
-void LCD::sendCmd(uint8_t cmd) {
+void Lcd::sendCmd(uint8_t cmd) {
     waitTxDone();
     gpio_clear(LCD_PORT, LCD_DC);
     spi_send(LCD_SPI, cmd);
 }
 
-void LCD::sendData(uint8_t data) {
+void Lcd::sendData(uint8_t data) {
     waitTxDone();
     gpio_set(LCD_PORT, LCD_DC);
     spi_send(LCD_SPI, data);
 }
 
-void LCD::initialize() {
+void Lcd::initialize() {
     InitCommand *cmd = initCommands;
     while (cmd->cmd) {
         sendCmd(cmd->cmd);
@@ -213,19 +213,19 @@ void LCD::initialize() {
     }
 }
 
-void LCD::setColAddr(uint8_t a, uint8_t b) {
+void Lcd::setColAddr(uint8_t a, uint8_t b) {
     sendCmd(0x15);
     sendData(a);
     sendData(b);
 }
 
-void LCD::setRowAddr(uint8_t a, uint8_t b) {
+void Lcd::setRowAddr(uint8_t a, uint8_t b) {
     sendCmd(0x75);
     sendData(a);
     sendData(b);
 }
 
-void LCD::setWrite() {
+void Lcd::setWrite() {
     sendCmd(0x5C);
 }
 

@@ -1,6 +1,6 @@
 #include "IntegrationTest.h"
 
-#include "drivers/LCD.h"
+#include "drivers/Lcd.h"
 
 #include "core/gfx/FrameBuffer.h"
 #include "core/gfx/Canvas.h"
@@ -8,10 +8,10 @@
 
 #include "os/os.h"
 
-class TestLCD : public IntegrationTest {
+class TestLcd : public IntegrationTest {
 public:
-    TestLCD() :
-        IntegrationTest("LCD", true),
+    TestLcd() :
+        IntegrationTest("Lcd", true),
         frameBuffer(256, 64, frameBufferData),
         canvas(frameBuffer)
     {}
@@ -47,10 +47,10 @@ private:
     uint8_t frameBufferData[256*64];
     FrameBuffer8bit frameBuffer;
     Canvas canvas;
-    LCD lcd;
+    Lcd lcd;
     Timer timer;
     MovingAverage<uint32_t, 10> frameInterval;
     int lastFrame = -1;
 };
 
-INTEGRATION_TEST(TestLCD)
+INTEGRATION_TEST(TestLcd)

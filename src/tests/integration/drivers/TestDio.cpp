@@ -1,11 +1,11 @@
 #include "IntegrationTest.h"
 
-#include "drivers/DIO.h"
+#include "drivers/Dio.h"
 
-class TestDIO : public IntegrationTest {
+class TestDio : public IntegrationTest {
 public:
-    TestDIO() :
-        IntegrationTest("DIO", true)
+    TestDio() :
+        IntegrationTest("Dio", true)
     {}
 
     void init() override {
@@ -32,11 +32,11 @@ public:
     }
 
 private:
-    DIO dio;
+    Dio dio;
     bool clockOutput = false;
     bool resetOutput = true;
     int clockInputCount = 0;
     int resetInputCount = 0;
 };
 
-INTEGRATION_TEST(TestDIO)
+INTEGRATION_TEST(TestDio)

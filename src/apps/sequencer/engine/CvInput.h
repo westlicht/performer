@@ -2,7 +2,7 @@
 
 #include "Config.h"
 
-#include "drivers/ADC.h"
+#include "drivers/Adc.h"
 
 #include <array>
 
@@ -10,7 +10,7 @@ class CvInput {
 public:
     static constexpr int Channels = CONFIG_CV_INPUT_CHANNELS;
 
-    CvInput(ADC &adc);
+    CvInput(Adc &adc);
 
     void init();
 
@@ -21,7 +21,7 @@ public:
     }
 
 private:
-    ADC &_adc;
+    Adc &_adc;
 
     std::array<float, Channels> _channels;
 };

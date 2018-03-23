@@ -1,4 +1,4 @@
-#include "DIO.h"
+#include "Dio.h"
 
 #include "sim/widgets/Button.h"
 
@@ -50,7 +50,7 @@ private:
     double _lastTicks;
 };
 
-DIO::DIO() :
+Dio::Dio() :
     _simulator(sim::Simulator::instance())
 {
     _clockSource.reset(new ClockSource(_simulator, [this] () {
@@ -79,8 +79,8 @@ DIO::DIO() :
     });
 }
 
-DIO::~DIO() {
+Dio::~Dio() {
 }
 
-void DIO::init() {
+void Dio::init() {
 }

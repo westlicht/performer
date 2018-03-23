@@ -1,6 +1,6 @@
 #include "CvInput.h"
 
-CvInput::CvInput(ADC &adc) :
+CvInput::CvInput(Adc &adc) :
     _adc(adc)
 {
 }

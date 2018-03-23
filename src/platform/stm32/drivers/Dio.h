@@ -4,7 +4,7 @@
 
 #include <functional>
 
-class DIO {
+class Dio {
 public:
     template<uint32_t Port, uint32_t Pin>
     struct Input {
@@ -52,7 +52,7 @@ public:
         }
     };
 
-    DIO();
+    Dio();
 
     void init();
 

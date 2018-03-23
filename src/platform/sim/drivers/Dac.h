@@ -7,13 +7,13 @@
 #include <cstdint>
 #include <cstdlib>
 
-class DAC {
+class Dac {
 public:
     static constexpr int Channels = CONFIG_DAC_CHANNELS;
 
     typedef uint16_t Value;
 
-    DAC() :
+    Dac() :
         _simulator(sim::Simulator::instance())
     {}
 
@@ -24,7 +24,7 @@ public:
     }
 
     void write(int channel) {
-        _simulator.writeDAC(channel, _values[channel]);
+        _simulator.writeDac(channel, _values[channel]);
     }
 
     void write() {

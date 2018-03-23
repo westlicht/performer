@@ -7,7 +7,7 @@
 
 #include "os/os.h"
 
-Engine::Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi) :
+Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi) :
     _model(model),
     _dio(dio),
     _gateOutput(gateOutput),

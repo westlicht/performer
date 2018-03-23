@@ -2,7 +2,7 @@
 
 #include "Config.h"
 
-#include "drivers/DAC.h"
+#include "drivers/Dac.h"
 
 #include <array>
 
@@ -10,7 +10,7 @@ class CvOutput {
 public:
     static constexpr int Channels = CONFIG_CV_OUTPUT_CHANNELS;
 
-    CvOutput(DAC &dac);
+    CvOutput(Dac &dac);
 
     void init();
 
@@ -25,7 +25,7 @@ public:
     }
 
 private:
-    DAC &_dac;
+    Dac &_dac;
 
     std::array<float, Channels> _channels;
 };

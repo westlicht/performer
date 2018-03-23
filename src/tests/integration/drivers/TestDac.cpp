@@ -1,11 +1,11 @@
 #include "IntegrationTest.h"
 
-#include "drivers/DAC.h"
+#include "drivers/Dac.h"
 
-class TestDAC : public IntegrationTest {
+class TestDac : public IntegrationTest {
 public:
-    TestDAC() :
-        IntegrationTest("DAC", true)
+    TestDac() :
+        IntegrationTest("Dac", true)
     {}
 
     void init() override {
@@ -23,8 +23,8 @@ public:
     }
 
 private:
-    DAC dac;
+    Dac dac;
     uint16_t value = 0;
 };
 
-INTEGRATION_TEST(TestDAC)
+INTEGRATION_TEST(TestDac)

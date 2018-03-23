@@ -9,7 +9,7 @@
 
 #include "model/Model.h"
 
-Ui::Ui(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &encoder) :
+Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder) :
     _model(model),
     _engine(engine),
     _lcd(lcd),

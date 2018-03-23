@@ -1,14 +1,14 @@
 
 #include "sim/Simulator.h"
 
-#include "drivers/ADC.h"
+#include "drivers/Adc.h"
 #include "drivers/ButtonLedMatrix.h"
 #include "drivers/ClockTimer.h"
-#include "drivers/DAC.h"
-#include "drivers/DIO.h"
+#include "drivers/Dac.h"
+#include "drivers/Dio.h"
 #include "drivers/Encoder.h"
 #include "drivers/GateOutput.h"
-#include "drivers/LCD.h"
+#include "drivers/Lcd.h"
 #include "drivers/Midi.h"
 #include "drivers/SDCard.h"
 #include "drivers/UsbMidi.h"
@@ -29,10 +29,10 @@ struct Environment {
     // drivers
     ClockTimer clockTimer;
     ButtonLedMatrix blm;
-    LCD lcd;
-    ADC adc;
-    DAC dac;
-    DIO dio;
+    Lcd lcd;
+    Adc adc;
+    Dac dac;
+    Dio dio;
     Encoder encoder;
     GateOutput gateOutput;
     Midi midi;

@@ -8,11 +8,11 @@
 #include <cstdint>
 #include <cstdlib>
 
-class ADC {
+class Adc {
 public:
     static constexpr int Channels = CONFIG_ADC_CHANNELS;
 
-    ADC() :
+    Adc() :
         _simulator(sim::Simulator::instance())
     {
         for (int i = 0; i < Channels; ++i) {

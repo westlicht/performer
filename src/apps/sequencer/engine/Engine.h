@@ -15,9 +15,9 @@
 #include "model/Model.h"
 
 #include "drivers/ClockTimer.h"
-#include "drivers/ADC.h"
-#include "drivers/DAC.h"
-#include "drivers/DIO.h"
+#include "drivers/Adc.h"
+#include "drivers/Dac.h"
+#include "drivers/Dio.h"
 #include "drivers/GateOutput.h"
 #include "drivers/Midi.h"
 #include "drivers/UsbMidi.h"
@@ -40,7 +40,7 @@ public:
         ClockSourceUsbMidi,
     };
 
-    Engine(Model &model, ClockTimer &clockTimer, ADC &adc, DAC &dac, DIO &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi);
+    Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi);
 
     void init();
     void update();
@@ -111,7 +111,7 @@ private:
     void initClockOutputs();
 
     Model &_model;
-    DIO &_dio;
+    Dio &_dio;
     GateOutput &_gateOutput;
     Midi &_midi;
     UsbMidi &_usbMidi;

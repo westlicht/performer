@@ -9,12 +9,12 @@
 
 #include <cstdint>
 
-class LCD {
+class Lcd {
 public:
     static constexpr int Width = CONFIG_LCD_WIDTH;
     static constexpr int Height = CONFIG_LCD_HEIGHT;
 
-    LCD() :
+    Lcd() :
         _simulator(sim::Simulator::instance())
     {
         sim::Vector2i resolution(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT);

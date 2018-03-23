@@ -1,6 +1,6 @@
 #include "CvOutput.h"
 
-CvOutput::CvOutput(DAC &dac) :
+CvOutput::CvOutput(Dac &dac) :
     _dac(dac)
 {}
 

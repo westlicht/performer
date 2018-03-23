@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-class DAC {
+class Dac {
 public:
     static constexpr int Channels = CONFIG_DAC_CHANNELS;
 
@@ -21,7 +21,7 @@ public:
     void write();
 
 private:
-    void writeDAC(uint8_t command, uint8_t address, uint16_t data, uint8_t function);
+    void writeDac(uint8_t command, uint8_t address, uint16_t data, uint8_t function);
 
     void reset();
     void setInternalRef(bool enabled);

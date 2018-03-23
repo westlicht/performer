@@ -1,12 +1,12 @@
 #include "SystemConfig.h"
 
-#include "drivers/ADC.h"
+#include "drivers/Adc.h"
 #include "drivers/ButtonLedMatrix.h"
 #include "drivers/Console.h"
-#include "drivers/DAC.h"
-#include "drivers/DIO.h"
+#include "drivers/Dac.h"
+#include "drivers/Dio.h"
 #include "drivers/GateOutput.h"
-#include "drivers/LCD.h"
+#include "drivers/Lcd.h"
 #include "drivers/Midi.h"
 #include "drivers/System.h"
 #include "drivers/ShiftRegister.h"
@@ -31,10 +31,10 @@ static ClockTimer clockTimer;
 static ShiftRegister shiftRegister;
 static ButtonLedMatrix blm(shiftRegister);
 static Encoder encoder;
-static LCD lcd;
-static ADC adc;
-static DAC dac;
-static DIO dio;
+static Lcd lcd;
+static Adc adc;
+static Dac dac;
+static Dio dio;
 static GateOutput gateOutput(shiftRegister);
 static Midi midi;
 static UsbMidi usbMidi;

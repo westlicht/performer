@@ -1,4 +1,4 @@
-#include "ADC.h"
+#include "Adc.h"
 
 #include "hal/Delay.h"
 
@@ -12,7 +12,7 @@
 #define ADC_PORT GPIOA
 #define ADC_GPIO (GPIO0 | GPIO1 | GPIO2 | GPIO3)
 
-void ADC::init() {
+void Adc::init() {
     // init pins
     rcc_periph_clock_enable(RCC_GPIOA);
     gpio_mode_setup(ADC_PORT, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, ADC_GPIO);

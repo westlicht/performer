@@ -12,7 +12,7 @@
 
 #include "drivers/ButtonLedMatrix.h"
 #include "drivers/Encoder.h"
-#include "drivers/LCD.h"
+#include "drivers/Lcd.h"
 
 #include "core/gfx/FrameBuffer.h"
 #include "core/gfx/Canvas.h"
@@ -25,7 +25,7 @@ class Key;
 
 class Ui {
 public:
-    Ui(Model &model, Engine &engine, LCD &lcd, ButtonLedMatrix &blm, Encoder &encoder);
+    Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder);
 
     void init();
     void update();
@@ -37,7 +37,7 @@ private:
     Model &_model;
     Engine &_engine;
 
-    LCD &_lcd;
+    Lcd &_lcd;
     ButtonLedMatrix &_blm;
     Encoder &_encoder;
 

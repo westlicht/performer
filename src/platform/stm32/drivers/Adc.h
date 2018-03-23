@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-class ADC {
+class Adc {
 public:
     static constexpr int Channels = CONFIG_ADC_CHANNELS;
 

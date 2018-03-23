@@ -1,11 +1,11 @@
 #include "IntegrationTest.h"
 
-#include "drivers/ADC.h"
+#include "drivers/Adc.h"
 
-class TestADC : public IntegrationTest {
+class TestAdc : public IntegrationTest {
 public:
-    TestADC() :
-        IntegrationTest("ADC", true)
+    TestAdc() :
+        IntegrationTest("Adc", true)
     {}
 
     void init() override {
@@ -13,13 +13,13 @@ public:
     }
 
     void update() override {
-        for (int c = 0; c < ADC::Channels; ++c) {
+        for (int c = 0; c < Adc::Channels; ++c) {
             DBG("adc%d: %d", c, adc.channel(c));
         }
     }
 
 private:
-    ADC adc;
+    Adc adc;
 };
 
-INTEGRATION_TEST(TestADC)
+INTEGRATION_TEST(TestAdc)

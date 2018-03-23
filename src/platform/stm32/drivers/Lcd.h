@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-class LCD {
+class Lcd {
 public:
     static constexpr int Width = CONFIG_LCD_WIDTH;
     static constexpr int Height = CONFIG_LCD_HEIGHT;

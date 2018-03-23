@@ -93,7 +93,7 @@ void Simulator::writeGate(int channel, bool value) {
     }
 }
 
-void Simulator::writeDAC(int channel, uint16_t value) {
+void Simulator::writeDac(int channel, uint16_t value) {
     if (channel >= 0 && channel < _dac.size()) {
         _dac[channel] = value;
     }

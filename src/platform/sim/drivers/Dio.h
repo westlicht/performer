@@ -7,7 +7,7 @@
 
 class ClockSource;
 
-class DIO {
+class Dio {
 public:
     struct Input {
         typedef std::function<void(bool)> Handler;
@@ -26,15 +26,15 @@ public:
         bool _value = false;
         Handler _handler;
 
-        friend class DIO;
+        friend class Dio;
     };
 
     struct Output {
         void set(bool value) {}
     };
 
-    DIO();
-    ~DIO();
+    Dio();
+    ~Dio();
 
     void init();
 
