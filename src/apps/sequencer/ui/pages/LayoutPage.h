@@ -3,6 +3,7 @@
 #include "ListPage.h"
 
 #include "ui/model/TrackModeListModel.h"
+#include "ui/model/LinkTrackListModel.h"
 #include "ui/model/GateOutputListModel.h"
 #include "ui/model/CvOutputListModel.h"
 
@@ -19,6 +20,7 @@ public:
 private:
     enum class Mode : uint8_t {
         TrackMode,
+        LinkTrack,
         GateOutput,
         CvOutput,
     };
@@ -26,6 +28,7 @@ private:
     static const char *modeName(Mode mode) {
         switch (mode) {
         case Mode::TrackMode:   return "TRACK MODE"; break;
+        case Mode::LinkTrack:   return "LINK TRACK"; break;
         case Mode::GateOutput:  return "GATE OUTPUT"; break;
         case Mode::CvOutput:    return "CV OUTPUT"; break;
         }
@@ -36,6 +39,7 @@ private:
 
     Mode _mode = Mode::TrackMode;
     TrackModeListModel _trackModeListModel;
+    LinkTrackListModel _linkTrackListModel;
     GateOutputListModel _gateOutputListModel;
     CvOutputListModel _cvOutputListModel;
 };
