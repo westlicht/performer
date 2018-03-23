@@ -1,4 +1,4 @@
-#include "TrackSetupPage.h"
+#include "TrackPage.h"
 
 #include "Pages.h"
 
@@ -20,7 +20,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "PASTE" },
 };
 
-TrackSetupPage::TrackSetupPage(PageManager &manager, PageContext &context) :
+TrackPage::TrackPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _noteTrackListModel),
     _contextMenu(
         manager.pages().contextMenu,
@@ -31,28 +31,25 @@ TrackSetupPage::TrackSetupPage(PageManager &manager, PageContext &context) :
     )
 {}
 
-void TrackSetupPage::enter() {
+void TrackPage::enter() {
     setTrack(_project.selectedTrack());
 }
 
-void TrackSetupPage::exit() {
+void TrackPage::exit() {
 }
 
-void TrackSetupPage::draw(Canvas &canvas) {
+void TrackPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "TRACK");
-
-    // const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, nullptr };
-    // WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
 }
 
-void TrackSetupPage::updateLeds(Leds &leds) {
+void TrackPage::updateLeds(Leds &leds) {
     ListPage::updateLeds(leds);
 }
 
-void TrackSetupPage::keyPress(KeyPressEvent &event) {
+void TrackPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isContextMenu()) {
@@ -73,7 +70,7 @@ void TrackSetupPage::keyPress(KeyPressEvent &event) {
     ListPage::keyPress(event);
 }
 
-void TrackSetupPage::setTrack(Track &track) {
+void TrackPage::setTrack(Track &track) {
     switch (track.trackMode()) {
     case Track::TrackMode::Note:
         _noteTrackListModel.setTrack(track.noteTrack());
@@ -92,7 +89,7 @@ void TrackSetupPage::setTrack(Track &track) {
     }
 }
 
-void TrackSetupPage::contextAction(int index) {
+void TrackPage::contextAction(int index) {
     switch (ContextAction(index)) {
     case ContextAction::Init:
         initTrackSetup();
@@ -108,7 +105,7 @@ void TrackSetupPage::contextAction(int index) {
     }
 }
 
-bool TrackSetupPage::contextActionEnabled(int index) const {
+bool TrackPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
         return _model.clipBoard().canPasteTrack();
@@ -117,16 +114,16 @@ bool TrackSetupPage::contextActionEnabled(int index) const {
     }
 }
 
-void TrackSetupPage::initTrackSetup() {
+void TrackPage::initTrackSetup() {
     _project.selectedTrack().clear();
     setTrack(_project.selectedTrack());
 }
 
-void TrackSetupPage::copyTrackSetup() {
+void TrackPage::copyTrackSetup() {
     _model.clipBoard().copyTrack(_project.selectedTrack());
 }
 
-void TrackSetupPage::pasteTrackSetup() {
+void TrackPage::pasteTrackSetup() {
     _model.clipBoard().pasteTrack(_project.selectedTrack());
     setTrack(_project.selectedTrack());
 }

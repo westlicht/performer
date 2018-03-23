@@ -99,8 +99,8 @@ void TopPage::setMode(Mode mode) {
     case Mode::Layout:
         setMainPage(pages.layout);
         break;
-    case Mode::TrackSetup:
-        setMainPage(pages.trackSetup);
+    case Mode::Track:
+        setMainPage(pages.track);
         break;
     case Mode::Sequence:
         setSequencePage();
@@ -168,7 +168,7 @@ void TopPage::setSequencePage() {
         setMainPage(pages.curveSequence);
         break;
     case Track::TrackMode::MidiCv:
-        setMainPage(pages.trackSetup);
+        setMainPage(pages.track);
         break;
     case Track::TrackMode::Last:
         break;
@@ -186,7 +186,7 @@ void TopPage::setSequenceSetupPage() {
         setMainPage(pages.curveSequenceSetup);
         break;
     case Track::TrackMode::MidiCv:
-        setMainPage(pages.trackSetup);
+        setMainPage(pages.track);
         break;
     case Track::TrackMode::Last:
         break;

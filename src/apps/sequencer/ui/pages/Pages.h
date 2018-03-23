@@ -19,7 +19,7 @@
 #include "TextInputPage.h"
 #include "TopPage.h"
 #include "LayoutPage.h"
-#include "TrackSetupPage.h"
+#include "TrackPage.h"
 
 #include "EuclideanPage.h"
 
@@ -32,7 +32,7 @@ struct Pages {
     // main pages
     ProjectPage project;
     LayoutPage layout;
-    TrackSetupPage trackSetup;
+    TrackPage track;
     NoteSequencePage noteSequence;
     CurveSequencePage curveSequence;
     NoteSequenceSetupPage noteSequenceSetup;
@@ -61,7 +61,7 @@ struct Pages {
         // main pages
         project(manager, context),
         layout(manager, context),
-        trackSetup(manager, context),
+        track(manager, context),
         noteSequence(manager, context),
         curveSequence(manager, context),
         noteSequenceSetup(manager, context),

@@ -63,7 +63,7 @@ set(sources
     ui/pages/ProjectSelectPage.cpp
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
-    ui/pages/TrackSetupPage.cpp
+    ui/pages/TrackPage.cpp
     # ui/painters
     ui/painters/SequencePainter.cpp
     ui/painters/WindowPainter.cpp

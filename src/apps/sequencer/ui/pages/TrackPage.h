@@ -7,9 +7,9 @@
 #include "ui/model/CurveTrackListModel.h"
 #include "ui/model/MidiCvTrackListModel.h"
 
-class TrackSetupPage : public ListPage {
+class TrackPage : public ListPage {
 public:
-    TrackSetupPage(PageManager &manager, PageContext &context);
+    TrackPage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;

@@ -20,7 +20,7 @@ private:
         // main modes
         Project         = 0,
         Layout          = 1,
-        TrackSetup      = 2,
+        Track           = 2,
         Sequence        = 3,
         SequenceSetup   = 4,
         Pattern         = 6,
