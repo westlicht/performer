@@ -29,7 +29,7 @@
 
 class Engine {
 public:
-    typedef Container<NoteTrackEngine, CurveTrackEngine> TrackEngineContainer;
+    typedef Container<NoteTrackEngine, CurveTrackEngine, MidiCvTrackEngine> TrackEngineContainer;
     typedef std::array<TrackEngineContainer, CONFIG_TRACK_COUNT> TrackEngineContainerArray;
     typedef std::array<TrackEngine *, CONFIG_TRACK_COUNT> TrackEngineArray;
 
@@ -102,6 +102,7 @@ private:
     void updateClockSetup();
     void updateTrackSetups();
     void updateTrackSequences();
+    void updateTrackOutputs();
     void resetTrackEngines();
     void updatePlayState();
 
