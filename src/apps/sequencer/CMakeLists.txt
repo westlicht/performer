@@ -10,6 +10,7 @@ set(sources
     engine/CvInput.cpp
     engine/CvOutput.cpp
     engine/Engine.cpp
+    engine/MidiCvTrackEngine.cpp
     engine/NoteTrackEngine.cpp
     engine/RoutingEngine.cpp
     engine/Scale.cpp
@@ -24,6 +25,7 @@ set(sources
     model/ClockSetup.cpp
     model/CurveSequence.cpp
     model/CurveTrack.cpp
+    model/MidiCvTrack.cpp
     model/Model.cpp
     model/ModelUtils.cpp
     model/NoteSequence.cpp

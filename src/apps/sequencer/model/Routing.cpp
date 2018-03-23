@@ -282,6 +282,9 @@ void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, flo
     case Track::TrackMode::Curve:
         writeCurveSequenceParam(track.curveTrack().sequence(patternIndex), param, value);
         break;
+    case Track::TrackMode::MidiCv:
+        // TODO
+        break;
     case Track::TrackMode::Last:
         break;
     }

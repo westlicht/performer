@@ -44,10 +44,7 @@ private:
     void switchMode(int direction);
     void setMainPage(Page &page);
 
-    bool isSequencePage();
     void setSequencePage();
-
-    bool isSequenceSetupPage();
     void setSequenceSetupPage();
     void setSequenceSetupPage(int row);
 

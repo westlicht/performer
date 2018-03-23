@@ -6,6 +6,7 @@
 #include "TrackEngine.h"
 #include "NoteTrackEngine.h"
 #include "CurveTrackEngine.h"
+#include "MidiCvTrackEngine.h"
 #include "Controller.h"
 #include "CvInput.h"
 #include "CvOutput.h"

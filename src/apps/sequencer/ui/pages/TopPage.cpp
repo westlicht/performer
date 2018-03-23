@@ -39,11 +39,7 @@ void TopPage::keyPress(KeyPressEvent &event) {
 
     if (key.isTrackSelect()) {
         _project.setSelectedTrackIndex(key.trackSelect());
-        if (isSequencePage()) {
-            setSequencePage();
-        } else if (isSequenceSetupPage()) {
-            setSequenceSetupPage();
-        }
+        setMode(_mode);
         event.consume();
     }
 
@@ -161,14 +157,6 @@ void TopPage::setMainPage(Page &page) {
     _manager.push(&page);
 }
 
-bool TopPage::isSequencePage() {
-    auto &pages = _manager.pages();
-
-    return
-        _manager.top() == &pages.noteSequence ||
-        _manager.top() == &pages.curveSequence;
-}
-
 void TopPage::setSequencePage() {
     auto &pages = _manager.pages();
 
@@ -179,17 +167,12 @@ void TopPage::setSequencePage() {
     case Track::TrackMode::Curve:
         setMainPage(pages.curveSequence);
         break;
+    case Track::TrackMode::MidiCv:
+        setMainPage(pages.trackSetup);
+        break;
     case Track::TrackMode::Last:
         break;
     }
-}
-
-bool TopPage::isSequenceSetupPage() {
-    auto &pages = _manager.pages();
-
-    return
-        _manager.top() == &pages.noteSequenceSetup ||
-        _manager.top() == &pages.curveSequenceSetup;
 }
 
 void TopPage::setSequenceSetupPage() {
@@ -201,6 +184,9 @@ void TopPage::setSequenceSetupPage() {
         break;
     case Track::TrackMode::Curve:
         setMainPage(pages.curveSequenceSetup);
+        break;
+    case Track::TrackMode::MidiCv:
+        setMainPage(pages.trackSetup);
         break;
     case Track::TrackMode::Last:
         break;

@@ -189,6 +189,9 @@ void Engine::updateTrackSetups() {
             case Track::TrackMode::Curve:
                 trackEngine = trackContainer.create<CurveTrackEngine>(track, linkedTrackEngine);
                 break;
+            case Track::TrackMode::MidiCv:
+                trackEngine = trackContainer.create<MidiCvTrackEngine>(track, linkedTrackEngine);
+                break;
             case Track::TrackMode::Last:
                 break;
             }

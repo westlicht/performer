@@ -6,6 +6,7 @@
 #include "ModelUtils.h"
 #include "NoteTrack.h"
 #include "CurveTrack.h"
+#include "MidiCvTrack.h"
 
 #include "core/Debug.h"
 #include "core/math/Math.h"
@@ -30,15 +31,17 @@ public:
     enum class TrackMode : uint8_t {
         Note,
         Curve,
+        MidiCv,
         Last,
         Default = Note
     };
 
     static const char *trackModeName(TrackMode trackMode) {
         switch (trackMode) {
-        case TrackMode::Note:    return "Note";
-        case TrackMode::Curve:   return "Curve";
-        case TrackMode::Last:    break;
+        case TrackMode::Note:   return "Note";
+        case TrackMode::Curve:  return "Curve";
+        case TrackMode::MidiCv: return "MIDI/CV";
+        case TrackMode::Last:   break;
         }
         return nullptr;
     }
@@ -151,6 +154,11 @@ public:
     const CurveTrack &curveTrack() const { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Curve); return *_track.curve; }
           CurveTrack &curveTrack()       { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Curve); return *_track.curve; }
 
+    // midiCvTrack
+
+    const MidiCvTrack &midiCvTrack() const { SANITIZE_TRACK_MODE(_trackMode, TrackMode::MidiCv); return *_track.midiCv; }
+          MidiCvTrack &midiCvTrack()       { SANITIZE_TRACK_MODE(_trackMode, TrackMode::MidiCv); return *_track.midiCv; }
+
     //----------------------------------------
     // Methods
     //----------------------------------------
@@ -182,10 +190,11 @@ private:
     FillMode _fillMode;
     int8_t _linkTrack;
 
-    Container<NoteTrack, CurveTrack> _container;
+    Container<NoteTrack, CurveTrack, MidiCvTrack> _container;
     union {
         NoteTrack *note;
         CurveTrack *curve;
+        MidiCvTrack *midiCv;
     } _track;
 };
 
