@@ -100,8 +100,8 @@ void TopPage::setMode(Mode mode) {
     case Mode::Project:
         setMainPage(pages.project);
         break;
-    case Mode::Pattern:
-        setMainPage(pages.pattern);
+    case Mode::Layout:
+        setMainPage(pages.layout);
         break;
     case Mode::TrackSetup:
         setMainPage(pages.trackSetup);
@@ -111,6 +111,9 @@ void TopPage::setMode(Mode mode) {
         break;
     case Mode::SequenceSetup:
         setSequenceSetupPage();
+        break;
+    case Mode::Pattern:
+        setMainPage(pages.pattern);
         break;
     case Mode::Performer:
         setMainPage(pages.performer);

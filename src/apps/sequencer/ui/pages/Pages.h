@@ -18,6 +18,7 @@
 #include "ProjectSelectPage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
+#include "LayoutPage.h"
 #include "TrackSetupPage.h"
 
 #include "EuclideanPage.h"
@@ -30,12 +31,13 @@ struct Pages {
     TopPage top;
     // main pages
     ProjectPage project;
-    PatternPage pattern;
+    LayoutPage layout;
     TrackSetupPage trackSetup;
     NoteSequencePage noteSequence;
     CurveSequencePage curveSequence;
     NoteSequenceSetupPage noteSequenceSetup;
     CurveSequenceSetupPage curveSequenceSetup;
+    PatternPage pattern;
     PerformerPage performer;
     // modal pages
     BpmPage bpm;
@@ -58,12 +60,13 @@ struct Pages {
         top(manager, context),
         // main pages
         project(manager, context),
-        pattern(manager, context),
+        layout(manager, context),
         trackSetup(manager, context),
         noteSequence(manager, context),
         curveSequence(manager, context),
         noteSequenceSetup(manager, context),
         curveSequenceSetup(manager, context),
+        pattern(manager, context),
         performer(manager, context),
         // modal pages
         bpm(manager, context),

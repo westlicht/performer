@@ -19,10 +19,11 @@ private:
     enum Mode : uint8_t {
         // main modes
         Project         = 0,
-        Pattern         = 1,
+        Layout          = 1,
         TrackSetup      = 2,
         Sequence        = 3,
         SequenceSetup   = 4,
+        Pattern         = 6,
         Performer       = 7,
 
         // sequence setup shortcuts
