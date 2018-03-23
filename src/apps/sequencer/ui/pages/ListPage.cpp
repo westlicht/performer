@@ -20,16 +20,23 @@ static void drawScrollbar(Canvas &canvas, int x, int y, int w, int h, int totalR
 }
 
 ListPage::ListPage(PageManager &manager, PageContext &context, ListModel &listModel) :
-    BasePage(manager, context),
-    _listModel(listModel)
-{}
+    BasePage(manager, context)
+{
+    setListModel(listModel);
+}
+
+void ListPage::setListModel(ListModel &listModel) {
+    _listModel = &listModel;
+    setSelectedRow(0);
+    _edit = false;
+}
 
 void ListPage::show() {
-    scrollTo(_selectedRow);
     BasePage::show();
 }
 
 void ListPage::enter() {
+    scrollTo(_selectedRow);
 }
 
 void ListPage::exit() {
@@ -44,20 +51,20 @@ void ListPage::draw(Canvas &canvas) {
 
     for (int i = 0; i < 3; ++i) {
         int row = _displayRow + i;
-        if (row < _listModel.rows()) {
+        if (row < _listModel->rows()) {
             str.reset();
-            _listModel.cell(row, 0, str);
+            _listModel->cell(row, 0, str);
             canvas.setColor(!_edit && row == _selectedRow ? 0xf : 0x7);
             canvas.drawText(8, 8 + (i + 1) * 14, str);
 
             str.reset();
-            _listModel.cell(row, 1, str);
+            _listModel->cell(row, 1, str);
             canvas.setColor(_edit && row == _selectedRow ? 0xf : 0x7);
             canvas.drawText(128, 8 + (i + 1) * 14, str);
         }
     }
 
-    drawScrollbar(canvas, Width - 8, 10, 4, 3 * 14, _listModel.rows(), 3, _displayRow);
+    drawScrollbar(canvas, Width - 8, 10, 4, 3 * 14, _listModel->rows(), 3, _displayRow);
 }
 
 void ListPage::updateLeds(Leds &leds) {
@@ -74,7 +81,7 @@ void ListPage::keyPress(KeyPressEvent &event) {
     switch (key.code()) {
     case Key::Left:
         if (_edit) {
-            _listModel.edit(_selectedRow, 1, -1, _keyState[Key::Shift]);
+            _listModel->edit(_selectedRow, 1, -1, _keyState[Key::Shift]);
         } else {
             setSelectedRow(selectedRow() - 1);
         }
@@ -82,7 +89,7 @@ void ListPage::keyPress(KeyPressEvent &event) {
         break;
     case Key::Right:
         if (_edit) {
-            _listModel.edit(_selectedRow, 1, 1, _keyState[Key::Shift]);
+            _listModel->edit(_selectedRow, 1, 1, _keyState[Key::Shift]);
         } else {
             setSelectedRow(selectedRow() + 1);
         }
@@ -97,7 +104,7 @@ void ListPage::keyPress(KeyPressEvent &event) {
 
 void ListPage::encoder(EncoderEvent &event) {
     if (_edit) {
-        _listModel.edit(_selectedRow, 1, event.value(), event.pressed() | _keyState[Key::Shift]);
+        _listModel->edit(_selectedRow, 1, event.value(), event.pressed() | _keyState[Key::Shift]);
     } else {
         setSelectedRow(selectedRow() + event.value());
     }
@@ -106,7 +113,7 @@ void ListPage::encoder(EncoderEvent &event) {
 
 void ListPage::setSelectedRow(int selectedRow) {
     if (selectedRow != _selectedRow) {
-        _selectedRow = clamp(selectedRow, 0, _listModel.rows() - 1);;
+        _selectedRow = clamp(selectedRow, 0, _listModel->rows() - 1);;
         scrollTo(_selectedRow);
     }
 }
