@@ -8,7 +8,8 @@
 class CurveTrackEngine : public TrackEngine {
 public:
     CurveTrackEngine(const Track &track, const TrackEngine *linkedTrackEngine) :
-        TrackEngine(track, linkedTrackEngine)
+        TrackEngine(track, linkedTrackEngine),
+        _curveTrack(track.curveTrack())
     {}
 
     virtual void reset() override;
@@ -31,6 +32,8 @@ public:
 
 private:
     void updateOutput(uint32_t relativeTick, uint32_t divisor);
+
+    const CurveTrack &_curveTrack;
 
     TrackLinkData _linkData;
 

@@ -1,9 +1,41 @@
 #pragma once
 
+#include "core/utils/StringBuilder.h"
+
 #include <cstdint>
 
 class Types {
 public:
+    enum class PlayMode : uint8_t {
+        Free,
+        Aligned,
+        Last
+    };
+
+    static const char *playModeName(PlayMode playMode) {
+        switch (playMode) {
+        case PlayMode::Free:    return "Free";
+        case PlayMode::Aligned: return "Aligned";
+        case PlayMode::Last:    break;
+        }
+        return nullptr;
+    }
+
+    enum class FillMode : uint8_t {
+        None,
+        // all gates
+        // max gate probability
+        Last
+    };
+
+    static const char *fillModeName(FillMode fillMode) {
+        switch (fillMode) {
+        case FillMode::None:    return "None";
+        case FillMode::Last:    break;
+        }
+        return nullptr;
+    }
+
     enum class RunMode : uint8_t {
         Forward,
         Backward,
@@ -38,6 +70,14 @@ public:
         case MidiPort::Last:    break;
         }
         return nullptr;
+    }
+
+    static void printMidiChannel(StringBuilder &str, int midiChannel) {
+        if (midiChannel == -1) {
+            str("Omni");
+        } else {
+            str("%d", midiChannel + 1);
+        }
     }
 
 

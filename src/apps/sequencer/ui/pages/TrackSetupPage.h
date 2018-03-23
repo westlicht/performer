@@ -3,7 +3,9 @@
 #include "ListPage.h"
 #include "ContextMenu.h"
 
-#include "ui/model/TrackSetupListModel.h"
+#include "ui/model/NoteTrackListModel.h"
+#include "ui/model/CurveTrackListModel.h"
+#include "ui/model/MidiCvTrackListModel.h"
 
 class TrackSetupPage : public ListPage {
 public:
@@ -18,12 +20,16 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
 
 private:
+    void setTrack(Track &track);
+
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
     void initTrackSetup();
     void copyTrackSetup();
     void pasteTrackSetup();
 
-    TrackSetupListModel _listModel;
+    NoteTrackListModel _noteTrackListModel;
+    CurveTrackListModel _curveTrackListModel;
+    MidiCvTrackListModel _midiCvTrackListModel;
     ContextMenu _contextMenu;
 };

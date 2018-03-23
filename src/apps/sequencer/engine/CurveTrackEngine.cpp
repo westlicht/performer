@@ -52,14 +52,14 @@ void CurveTrackEngine::tick(uint32_t tick) {
 
         if (relativeTick == 0) {
             // advance sequence
-            switch (_track.playMode()) {
-            case Track::PlayMode::Free:
+            switch (_curveTrack.playMode()) {
+            case Types::PlayMode::Free:
                 _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
-            case Track::PlayMode::Aligned:
+            case Types::PlayMode::Aligned:
                 _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
-            case Track::PlayMode::Last:
+            case Types::PlayMode::Last:
                 break;
             }
         }
@@ -73,7 +73,7 @@ void CurveTrackEngine::tick(uint32_t tick) {
 }
 
 void CurveTrackEngine::changePattern() {
-    _sequence = &_track.curveTrack().sequence(_pattern);
+    _sequence = &_curveTrack.sequence(_pattern);
 }
 
 void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {

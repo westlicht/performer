@@ -46,36 +46,6 @@ public:
         return nullptr;
     }
 
-    enum class PlayMode : uint8_t {
-        Free,
-        Aligned,
-        Last
-    };
-
-    static const char *playModeName(PlayMode playMode) {
-        switch (playMode) {
-        case PlayMode::Free:    return "Free";
-        case PlayMode::Aligned: return "Aligned";
-        case PlayMode::Last:    break;
-        }
-        return nullptr;
-    }
-
-    enum class FillMode : uint8_t {
-        None,
-        // all gates
-        // max gate probability
-        Last
-    };
-
-    static const char *fillModeName(FillMode fillMode) {
-        switch (fillMode) {
-        case FillMode::None:    return "None";
-        case FillMode::Last:    break;
-        }
-        return nullptr;
-    }
-
     //----------------------------------------
     // Properties
     //----------------------------------------
@@ -97,32 +67,6 @@ public:
 
     void printTrackMode(StringBuilder &str) const {
         str(trackModeName(trackMode()));
-    }
-
-    // playMode
-
-    PlayMode playMode() const { return _playMode; }
-    void setPlayMode(PlayMode playMode) { _playMode = playMode; }
-
-    void editPlayMode(int value, bool shift) {
-        setPlayMode(ModelUtils::adjustedEnum(playMode(), value));
-    }
-
-    void printPlayMode(StringBuilder &str) const {
-        str(playModeName(playMode()));
-    }
-
-    // fillMode
-
-    FillMode fillMode() const { return _fillMode; }
-    void setFillMode(FillMode fillMode) { _fillMode = fillMode; }
-
-    void editFillMode(int value, bool shift) {
-        setFillMode(ModelUtils::adjustedEnum(fillMode(), value));
-    }
-
-    void printFillMode(StringBuilder &str) const {
-        str(fillModeName(fillMode()));
     }
 
     // linkTrack
@@ -174,8 +118,6 @@ public:
 
     Track &operator=(const Track &other) {
         setTrackMode(other._trackMode);
-        _playMode = other._playMode;
-        _fillMode = other._fillMode;
         _linkTrack = other._linkTrack;
         _container = other._container;
         return *this;
@@ -186,8 +128,6 @@ private:
 
     uint8_t _trackIndex = -1;
     TrackMode _trackMode;
-    PlayMode _playMode;
-    FillMode _fillMode;
     int8_t _linkTrack;
 
     Container<NoteTrack, CurveTrack, MidiCvTrack> _container;

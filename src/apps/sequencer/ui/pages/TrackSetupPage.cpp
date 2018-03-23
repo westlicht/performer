@@ -21,7 +21,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
 };
 
 TrackSetupPage::TrackSetupPage(PageManager &manager, PageContext &context) :
-    ListPage(manager, context, _listModel),
+    ListPage(manager, context, _noteTrackListModel),
     _contextMenu(
         manager.pages().contextMenu,
         contextMenuItems,
@@ -32,7 +32,7 @@ TrackSetupPage::TrackSetupPage(PageManager &manager, PageContext &context) :
 {}
 
 void TrackSetupPage::enter() {
-    _listModel.setTrack(_project.selectedTrack());
+    setTrack(_project.selectedTrack());
 }
 
 void TrackSetupPage::exit() {
@@ -40,10 +40,10 @@ void TrackSetupPage::exit() {
 
 void TrackSetupPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "TRACK SETUP");
+    WindowPainter::drawHeader(canvas, _model, _engine, "TRACK");
 
-    const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, _listModel.trackMode() != _project.selectedTrack().trackMode() ? "CHANGE" : nullptr };
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    // const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, nullptr };
+    // WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
 }
@@ -65,18 +65,31 @@ void TrackSetupPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-    if (key.isFunction() && key.function() == 4) {
-        if (_listModel.trackMode() != _project.selectedTrack().trackMode()) {
-            _project.setTrackMode(_project.selectedTrackIndex(), _listModel.trackMode());
-        }
-    }
-
     if (key.isTrackSelect()) {
         _project.setSelectedTrackIndex(key.trackSelect());
-        _listModel.setTrack(_project.selectedTrack());
+        setTrack(_project.selectedTrack());
     }
 
     ListPage::keyPress(event);
+}
+
+void TrackSetupPage::setTrack(Track &track) {
+    switch (track.trackMode()) {
+    case Track::TrackMode::Note:
+        _noteTrackListModel.setTrack(track.noteTrack());
+        setListModel(_noteTrackListModel);
+        break;
+    case Track::TrackMode::Curve:
+        _curveTrackListModel.setTrack(track.curveTrack());
+        setListModel(_curveTrackListModel);
+        break;
+    case Track::TrackMode::MidiCv:
+        _midiCvTrackListModel.setTrack(track.midiCvTrack());
+        setListModel(_midiCvTrackListModel);
+        break;
+    case Track::TrackMode::Last:
+        break;
+    }
 }
 
 void TrackSetupPage::contextAction(int index) {
@@ -106,7 +119,7 @@ bool TrackSetupPage::contextActionEnabled(int index) const {
 
 void TrackSetupPage::initTrackSetup() {
     _project.selectedTrack().clear();
-    _listModel.setTrack(_project.selectedTrack());
+    setTrack(_project.selectedTrack());
 }
 
 void TrackSetupPage::copyTrackSetup() {
@@ -115,6 +128,6 @@ void TrackSetupPage::copyTrackSetup() {
 
 void TrackSetupPage::pasteTrackSetup() {
     _model.clipBoard().pasteTrack(_project.selectedTrack());
-    _listModel.setTrack(_project.selectedTrack());
+    setTrack(_project.selectedTrack());
 }
 

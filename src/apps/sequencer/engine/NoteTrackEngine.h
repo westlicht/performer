@@ -10,7 +10,8 @@
 class NoteTrackEngine : public TrackEngine {
 public:
     NoteTrackEngine(const Track &track, const TrackEngine *linkedTrackEngine) :
-        TrackEngine(track, linkedTrackEngine)
+        TrackEngine(track, linkedTrackEngine),
+        _noteTrack(track.noteTrack())
     {}
 
     virtual void reset() override;
@@ -33,6 +34,8 @@ public:
 private:
     void triggerStep(uint32_t tick, uint32_t divisor);
     uint32_t applySwing(uint32_t tick);
+
+    const NoteTrack &_noteTrack;
 
     TrackLinkData _linkData;
 

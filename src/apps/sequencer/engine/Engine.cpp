@@ -283,6 +283,11 @@ void Engine::receiveMidi() {
 
 void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
     _routingEngine.receiveMidi(port, message);
+
+    int channel = message.channel();
+    for (auto trackEngine : _trackEngines) {
+        trackEngine->receiveMidi(port, channel, message);
+    }
 }
 
 void Engine::initClockSources() {

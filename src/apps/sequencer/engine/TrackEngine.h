@@ -2,8 +2,12 @@
 
 #include "Config.h"
 
+#include "MidiPort.h"
+
 #include "model/Track.h"
 #include "model/PlayState.h"
+
+#include "core/midi/MidiMessage.h"
 
 #include <cstdint>
 
@@ -67,7 +71,8 @@ public:
 
     virtual void reset() = 0;
     virtual void tick(uint32_t tick) = 0;
-    virtual void changePattern() = 0;
+    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message) {}
+    virtual void changePattern() {}
 
     virtual const TrackLinkData *linkData() const { return nullptr; }
 
