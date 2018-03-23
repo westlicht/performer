@@ -24,6 +24,11 @@ void Project::clear() {
         track.clear();
     }
 
+    for (int i = 0; i < CONFIG_CHANNEL_COUNT; ++i) {
+        _cvOutputs[i] = i;
+        _gateOutputs[i] = i;
+    }
+
     _playState.clear();
     _routing.clear();
 

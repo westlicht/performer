@@ -21,6 +21,8 @@ public:
     static constexpr size_t NameLength = 16;
 
     typedef std::array<Track, CONFIG_TRACK_COUNT> TrackArray;
+    typedef std::array<uint8_t, CONFIG_CHANNEL_COUNT> CvOutputArray;
+    typedef std::array<uint8_t, CONFIG_CHANNEL_COUNT> GateOutputArray;
 
     Project();
 
@@ -103,6 +105,30 @@ public:
     const Track &track(int index) const { return _tracks[index]; }
           Track &track(int index)       { return _tracks[index]; }
 
+    // cvOutput
+
+    const CvOutputArray &cvOutputs() const { return _cvOutputs; }
+          CvOutputArray &cvOutputs()       { return _cvOutputs; }
+
+    int cvOutput(int index) const { return _cvOutputs[index]; }
+    void setCvOutput(int index, int trackIndex) { _cvOutputs[index] = clamp(trackIndex, 0, CONFIG_TRACK_COUNT - 1); }
+
+    void editCvOutput(int index, int value, bool shift) {
+        setCvOutput(index, cvOutput(index) + value);
+    }
+
+    // gateOutput
+
+    const GateOutputArray &gateOutputs() const { return _gateOutputs; }
+          GateOutputArray &gateOutputs()       { return _gateOutputs; }
+
+    int gateOutput(int index) const { return _gateOutputs[index]; }
+    void setGateOutput(int index, int trackIndex) { _gateOutputs[index] = clamp(trackIndex, 0, CONFIG_TRACK_COUNT - 1); }
+
+    void editGateOutput(int index, int value, bool shift) {
+        setGateOutput(index, gateOutput(index) + value);
+    }
+
     // playState
 
     const PlayState &playState() const { return _playState; }
@@ -177,6 +203,8 @@ private:
 
     ClockSetup _clockSetup;
     TrackArray _tracks;
+    CvOutputArray _cvOutputs;
+    GateOutputArray _gateOutputs;
     PlayState _playState;
     Routing _routing;
 
