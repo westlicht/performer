@@ -66,7 +66,7 @@ private:
 
     struct CvCompare {
         bool operator()(const Cv &a, const Cv &b) {
-            return a.tick < b.tick;;
+            return a.tick < b.tick;
         }
     };
 

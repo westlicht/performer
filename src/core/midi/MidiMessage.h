@@ -36,7 +36,7 @@ public:
     static bool isChannelMessage(uint8_t status) { return (status & 0xf0) >= 0x80 && (status & 0xf0) < 0xf0; }
 
     template<uint8_t ChannelMessage>
-    static bool isChannelMessage(uint8_t status) { return (status & ChannelMessage) == ChannelMessage; }
+    static bool isChannelMessage(uint8_t status) { return (status & 0xf0) == ChannelMessage; }
 
     static ChannelMessage channelMessage(uint8_t status) { return ChannelMessage(status & 0xf0); }
 

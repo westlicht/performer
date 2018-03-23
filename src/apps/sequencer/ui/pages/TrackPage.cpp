@@ -41,6 +41,7 @@ void TrackPage::exit() {
 void TrackPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "TRACK");
+    WindowPainter::drawActiveFunction(canvas, Track::trackModeName(_project.selectedTrack().trackMode()));
 
     ListPage::draw(canvas);
 }
