@@ -14,16 +14,16 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/os/board.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/os/os.cpp
     # drivers
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ADC.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Adc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ButtonLedMatrix.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ClockTimer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/DAC.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/DIO.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Dac.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Dio.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Encoder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/GateOutput.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/HighResolutionTimer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/LCD.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Lcd.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Midi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ShiftRegister.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/System.cpp
