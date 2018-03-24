@@ -49,22 +49,22 @@ void ListPage::draw(Canvas &canvas) {
 
     FixedStringBuilder<32> str;
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < LineCount; ++i) {
         int row = _displayRow + i;
         if (row < _listModel->rows()) {
             str.reset();
             _listModel->cell(row, 0, str);
             canvas.setColor(!_edit && row == _selectedRow ? 0xf : 0x7);
-            canvas.drawText(8, 8 + (i + 1) * 14, str);
+            canvas.drawText(8, 10 + (i + 1) * LineHeight, str);
 
             str.reset();
             _listModel->cell(row, 1, str);
             canvas.setColor(_edit && row == _selectedRow ? 0xf : 0x7);
-            canvas.drawText(128, 8 + (i + 1) * 14, str);
+            canvas.drawText(128, 10 + (i + 1) * LineHeight, str);
         }
     }
 
-    drawScrollbar(canvas, Width - 8, 10, 4, 3 * 14, _listModel->rows(), 3, _displayRow);
+    drawScrollbar(canvas, Width - 8, 12, 4, LineCount * LineHeight, _listModel->rows(), LineCount, _displayRow);
 }
 
 void ListPage::updateLeds(Leds &leds) {
@@ -121,7 +121,7 @@ void ListPage::setSelectedRow(int selectedRow) {
 void ListPage::scrollTo(int row) {
     if (row < _displayRow) {
         _displayRow = row;
-    } else if (row >= _displayRow + 3) {
+    } else if (row >= _displayRow + LineCount) {
         _displayRow = row - 2;
     }
 }

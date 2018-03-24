@@ -30,6 +30,9 @@ public:
 protected:
     void scrollTo(int row);
 
+    static constexpr int LineHeight = 10;
+    static constexpr int LineCount = 4;
+
     ListModel *_listModel;
     int _selectedRow = 0;
     int _displayRow = 0;
