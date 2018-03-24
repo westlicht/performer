@@ -16,7 +16,6 @@ public:
 
     static void drawFrame(Canvas &canvas, int x, int y, int w, int h);
 
-    static void drawFunctionKey(Canvas &canvas, int index, const char *text, bool pressed);
     static void drawFunctionKeys(Canvas &canvas, const char *names[], KeyState &keyState);
 
     static void drawClock(Canvas &canvas, Engine &engine);
@@ -30,6 +29,8 @@ public:
 private:
     const static int PageWidth = CONFIG_LCD_WIDTH;
     const static int PageHeight = CONFIG_LCD_HEIGHT;
+    const static int HeaderHeight = 9;
+    const static int FooterHeight = 9;
     const static int FunctionKeyCount = CONFIG_FUNCTION_KEY_COUNT;
     const static int FunctionKeyWidth = 40;
     const static int FunctionKeyHeight = 8;

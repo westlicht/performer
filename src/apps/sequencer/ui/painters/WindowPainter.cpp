@@ -20,38 +20,37 @@ void WindowPainter::drawFrame(Canvas &canvas, int x, int y, int w, int h) {
     canvas.drawRect(x, y, w, h);
 }
 
-void WindowPainter::drawFunctionKey(Canvas &canvas, int index, const char *text, bool pressed) {
-    PartitionLayout<
-        PageWidth,
-        FunctionKeyCount,
-        FunctionKeyWidth
-    > partitionLayout;
-
-    int x = partitionLayout.cellOffset(index);
-    int w = partitionLayout.cellSize();
-    int h = FunctionKeyHeight;
-
-    canvas.setColor(0xf);
+void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], KeyState &keyState) {
     canvas.setBlendMode(BlendMode::Set);
-    canvas.vline(x, PageHeight - h + 1, h - 1);
-    canvas.vline(x + w - 1, PageHeight - h + 1, h - 1);
-    canvas.hline(x + 1, PageHeight - h, w - 2);
+    canvas.setColor(0x7);
+    canvas.hline(0, PageHeight - FooterHeight - 1, PageWidth);
 
-    if (pressed) {
-        // canvas.setColor(0xf);
-        canvas.fillRect(x + 1, PageHeight - h + 1, w - 2, h - 1);
+    for (int i = 0; i < FunctionKeyCount; ++i) {
+        if (names[i] || (i + 1 < FunctionKeyCount && names[i + 1])) {
+            int x = (PageWidth * (i + 1)) / FunctionKeyCount;
+            canvas.vline(x, PageHeight - FooterHeight, FooterHeight);
+        }
     }
 
-    // canvas.setColor(pressed ? 0x7 : 0xf);
-    canvas.setBlendMode(pressed ? BlendMode::Sub : BlendMode::Set);
     canvas.setFont(Font::Tiny);
-    canvas.drawText(x + (w - canvas.textWidth(text)) / 2, PageHeight - 2, text);
-}
+    canvas.setColor(0xf);
 
-void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], KeyState &keyState) {
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < FunctionKeyCount; ++i) {
         if (names[i]) {
-            drawFunctionKey(canvas, i, names[i], keyState[Key::F0 + i]);
+            bool pressed = keyState[Key::F0 + i];
+
+            int x0 = (PageWidth * i) / FunctionKeyCount;
+            int x1 = (PageWidth * (i + 1)) / FunctionKeyCount;
+            int w = x1 - x0 + 1;
+
+            canvas.setBlendMode(BlendMode::Set);
+
+            if (pressed) {
+                canvas.fillRect(x0, PageHeight - FooterHeight, w, FooterHeight);
+                canvas.setBlendMode(BlendMode::Sub);
+            }
+
+            canvas.drawText(x0 + (w - canvas.textWidth(names[i])) / 2, PageHeight - 3, names[i]);
         }
     }
 }
@@ -108,5 +107,5 @@ void WindowPainter::drawHeader(Canvas &canvas, Model &model, Engine &engine, con
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0x7);
-    canvas.hline(0, 9, PageWidth);
+    canvas.hline(0, HeaderHeight, PageWidth);
 }
