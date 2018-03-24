@@ -38,7 +38,7 @@ private:
     enum Item {
         Port,
         Channel,
-        Config,
+        Voices,
         Last
     };
 
@@ -46,7 +46,7 @@ private:
         switch (item) {
         case Port:      return "Port";
         case Channel:   return "Channel";
-        case Config:    return "Config";
+        case Voices:    return "Voices";
         case Last:      break;
         }
         return nullptr;
@@ -64,8 +64,8 @@ private:
         case Channel:
             _track->printChannel(str);
             break;
-        case Config:
-            _track->printConfig(str);
+        case Voices:
+            _track->printVoices(str);
             break;
         case Last:
             break;
@@ -80,8 +80,8 @@ private:
         case Channel:
             _track->editChannel(value, shift);
             break;
-        case Config:
-            _track->editConfig(value, shift);
+        case Voices:
+            _track->editVoices(value, shift);
             break;
         case Last:
             break;

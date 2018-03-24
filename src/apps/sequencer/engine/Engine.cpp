@@ -220,10 +220,22 @@ void Engine::updateTrackSequences() {
 }
 
 void Engine::updateTrackOutputs() {
-    for (size_t i = 0; i < _trackEngines.size(); ++i) {
-        auto trackEngine = _trackEngines[i];
-        _gateOutput.setGate(i, trackEngine->gateOutput());
-        _cvOutput.setChannel(i, trackEngine->cvOutput());
+    int trackGateIndex[CONFIG_TRACK_COUNT];
+    int trackCvIndex[CONFIG_TRACK_COUNT];
+
+    for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
+        trackGateIndex[i] = 0;
+        trackCvIndex[i] = 0;
+    }
+
+    const auto &gateOutputTracks = _model.project().gateOutputTracks();
+    const auto &cvOutputTracks = _model.project().cvOutputTracks();
+
+    for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
+        int gateOutputTrack = gateOutputTracks[i];
+        _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
+        int cvOutputTrack = cvOutputTracks[i];
+        _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
     }
 }
 

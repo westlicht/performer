@@ -15,7 +15,9 @@ void Track::clearPattern(int patternIndex) {
     case TrackMode::Curve:
         _track.curve->sequence(patternIndex).clear();
         break;
-    default:
+    case TrackMode::MidiCv:
+        break;
+    case TrackMode::Last:
         break;
     }
 }
@@ -32,7 +34,10 @@ void Track::write(WriteContext &context) const {
     case TrackMode::Curve:
         _track.curve->write(context);
         break;
-    default:
+    case TrackMode::MidiCv:
+        _track.midiCv->write(context);
+        break;
+    case TrackMode::Last:
         break;
     }
 }
@@ -49,7 +54,10 @@ void Track::read(ReadContext &context) {
     case TrackMode::Curve:
         _track.curve->read(context);
         break;
-    default:
+    case TrackMode::MidiCv:
+        _track.midiCv->read(context);
+        break;
+    case TrackMode::Last:
         break;
     }
 }
@@ -62,7 +70,10 @@ void Track::setupTrack() {
     case TrackMode::Curve:
         _track.curve = _container.create<CurveTrack>();
         break;
-    default:
+    case TrackMode::MidiCv:
+        _track.midiCv = _container.create<MidiCvTrack>();
+        break;
+    case TrackMode::Last:
         break;
     }
 }

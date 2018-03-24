@@ -6,6 +6,7 @@
 
 
 void MidiCvTrackEngine::reset() {
+    _activity = false;
     _pitchBendCv = 0.f;
     _channelPressureCv = 0.f;
     resetVoices();
@@ -18,7 +19,7 @@ void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessag
     if (port == MidiPort(_midiCvTrack.port()) && (_midiCvTrack.channel() == -1 || _midiCvTrack.channel() == channel)) {
         if (message.isNoteOn()) {
             int note = message.note();
-            auto voice = allocateVoice(note, 1);
+            auto voice = allocateVoice(note, _midiCvTrack.voices());
             voice->ticks = os::ticks();
             voice->note = note;
             voice->pitchCv = noteToCv(note);
@@ -26,7 +27,7 @@ void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessag
             voice->pressureCv = 0.f;
             // printVoices();
         } else if (message.isNoteOff()) {
-            freeVoice(message.note(), 1);
+            freeVoice(message.note(), _midiCvTrack.voices());
             // printVoices();
         } else if (message.isKeyPressure()) {
             auto voice = findVoice(0, _voices.size(), message.note());
@@ -36,6 +37,8 @@ void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessag
         } else if (message.isPitchBend()) {
             _pitchBendCv = pitchBendToCv(message.pitchBend());
         }
+
+        updateActivity();
     }
 }
 
@@ -122,5 +125,15 @@ void MidiCvTrackEngine::printVoices() {
     DBG("voices");
     for (auto voice : _voices) {
         DBG("%d %d", voice.ticks, voice.note);
+    }
+}
+
+void MidiCvTrackEngine::updateActivity() {
+    _activity = false;
+    for (int i = 0; i < _midiCvTrack.voices(); ++i) {
+        if (_voices[i].ticks > 0) {
+            _activity = true;
+            break;
+        }
     }
 }

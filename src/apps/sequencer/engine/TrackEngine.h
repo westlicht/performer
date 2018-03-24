@@ -78,9 +78,9 @@ public:
 
     // track output
 
-    virtual bool gate() const = 0;
-    virtual bool gateOutput() const = 0;
-    virtual float cvOutput() const = 0;
+    virtual bool activity() const = 0;
+    virtual bool gateOutput(int index) const = 0;
+    virtual float cvOutput(int index) const = 0;
 
 protected:
     const Track &_track;

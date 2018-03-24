@@ -18,9 +18,9 @@ public:
 
     virtual const TrackLinkData *linkData() const override { return &_linkData; }
 
-    virtual bool gate() const override { return true; }
-    virtual bool gateOutput() const override { return !_mute; }
-    virtual float cvOutput() const override { return _cvOutput; }
+    virtual bool activity() const override { return true; }
+    virtual bool gateOutput(int index) const override { return !_mute; }
+    virtual float cvOutput(int index) const override { return _cvOutput; }
 
     const CurveSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const CurveSequence &sequence) const { return &sequence == _sequence; }

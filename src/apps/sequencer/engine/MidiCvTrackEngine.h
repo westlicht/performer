@@ -16,9 +16,9 @@ public:
     virtual void tick(uint32_t tick) override;
     virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message) override;
 
-    virtual bool gate() const override { return _voices[0].ticks > 0; }
-    virtual bool gateOutput() const override { return _voices[0].ticks > 0; }
-    virtual float cvOutput() const override { return _voices[0].pitchCv + _pitchBendCv; }
+    virtual bool activity() const override { return _activity; }
+    virtual bool gateOutput(int index) const override { return _voices[index % _midiCvTrack.voices()].ticks > 0; }
+    virtual float cvOutput(int index) const override { return _voices[index % _midiCvTrack.voices()].pitchCv + _pitchBendCv; }
 
     static constexpr Track::TrackMode trackMode = Track::TrackMode::MidiCv;
 
@@ -39,6 +39,8 @@ private:
 
     void printVoices();
 
+    void updateActivity();
+
     const MidiCvTrack &_midiCvTrack;
 
     struct Voice {
@@ -50,6 +52,8 @@ private:
     };
 
     std::array<Voice, 8> _voices;
+
+    bool _activity;
 
     float _pitchBendCv;
     float _channelPressureCv;

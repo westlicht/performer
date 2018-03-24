@@ -26,13 +26,13 @@ public:
         if (column == 0) {
             str("Gate%d", row + 1);
         } else if (column == 1) {
-            str("Track%d", _project.gateOutput(row) + 1);
+            str("Track%d", _project.gateOutputTrack(row) + 1);
         }
     }
 
     virtual void edit(int row, int column, int value, bool shift) override {
         if (column == 1) {
-            _project.editGateOutput(row, value, shift);
+            _project.editGateOutputTrack(row, value, shift);
         }
     }
 

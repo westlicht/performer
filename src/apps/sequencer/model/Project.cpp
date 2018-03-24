@@ -25,8 +25,8 @@ void Project::clear() {
     }
 
     for (int i = 0; i < CONFIG_CHANNEL_COUNT; ++i) {
-        _cvOutputs[i] = i;
-        _gateOutputs[i] = i;
+        _cvOutputTracks[i] = i;
+        _gateOutputTracks[i] = i;
     }
 
     _playState.clear();
@@ -64,6 +64,12 @@ void Project::demoProject() {
 
     // setTrackMode(0, Track::TrackMode::Curve);
     // sequence(0, 0).curveSequence().setLastStep(7);
+
+    setTrackMode(7, Track::TrackMode::MidiCv);
+    for (int i = 4; i < 8; ++i) {
+        setGateOutputTrack(i, 7);
+        setCvOutputTrack(i, 7);
+    }
 }
 
 void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
@@ -82,6 +88,8 @@ void Project::write(WriteContext &context) const {
     _clockSetup.write(context);
 
     writeArray(context, _tracks);
+    writeArray(context, _cvOutputTracks);
+    writeArray(context, _gateOutputTracks);
 
     _playState.write(context);
     _routing.write(context);
@@ -100,6 +108,8 @@ void Project::read(ReadContext &context) {
     _clockSetup.read(context);
 
     readArray(context, _tracks);
+    readArray(context, _cvOutputTracks);
+    readArray(context, _gateOutputTracks);
 
     _playState.read(context);
     _routing.read(context);

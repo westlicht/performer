@@ -55,7 +55,7 @@ void PerformerPage::draw(Canvas &canvas) {
 
         y += 8;
 
-        canvas.setColor(trackEngine.gate() ? 0xf : 0x7);
+        canvas.setColor(trackEngine.activity() ? 0xf : 0x7);
         canvas.drawRect(x, y, w, h);
 
         canvas.setColor(0xf);
