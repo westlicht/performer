@@ -39,6 +39,8 @@ private:
         Port,
         Channel,
         Voices,
+        Velocity,
+        Pressure,
         Last
     };
 
@@ -47,6 +49,8 @@ private:
         case Port:      return "Port";
         case Channel:   return "Channel";
         case Voices:    return "Voices";
+        case Velocity:  return "Velocity";
+        case Pressure:  return "Pressure";
         case Last:      break;
         }
         return nullptr;
@@ -67,6 +71,12 @@ private:
         case Voices:
             _track->printVoices(str);
             break;
+        case Velocity:
+            _track->printOutputVelocity(str);
+            break;
+        case Pressure:
+            _track->printOutputPressure(str);
+            break;
         case Last:
             break;
         }
@@ -82,6 +92,12 @@ private:
             break;
         case Voices:
             _track->editVoices(value, shift);
+            break;
+        case Velocity:
+            _track->editOutputVelocity(value, shift);
+            break;
+        case Pressure:
+            _track->editOutputPressure(value, shift);
             break;
         case Last:
             break;

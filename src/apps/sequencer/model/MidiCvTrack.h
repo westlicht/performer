@@ -53,18 +53,31 @@ public:
         str("%d", voices());
     }
 
-    // - 1-voice, gate/pitch
-    // - 1-voice, gate/pitch/velocity
-    // - 1-voice, gate/pitch/aftertouch
-    // - 1-voice, gate/pitch/velocity/aftertouch
-    // - 2-voice, gate/pitch
-    // - 2-voice, gate/pitch/velocity
-    // - 2-voice, gate/pitch/aftertouch
-    // - 2-voice, gate/pitch/velocity/aftertouch
-    // - 4-voice, gate/pitch
-    // - 4-voice, gate/pitch/velocity
-    // - 4-voice, gate/pitch/aftertouch
-    // - 8-voice, gate/pitch
+    // outputVelocity
+
+    bool outputVelocity() const { return _outputVelocity; }
+    void setOutputVelocity(bool outputVelocity) { _outputVelocity = outputVelocity; }
+
+    void editOutputVelocity(int value, bool shift) {
+        setOutputVelocity(value > 0);
+    }
+
+    void printOutputVelocity(StringBuilder &str) const {
+        return ModelUtils::printYesNo(str, _outputVelocity);
+    }
+
+    // outputPressure
+
+    bool outputPressure() const { return _outputPressure; }
+    void setOutputPressure(bool outputPressure) { _outputPressure = outputPressure; }
+
+    void editOutputPressure(int value, bool shift) {
+        setOutputPressure(value > 0);
+    }
+
+    void printOutputPressure(StringBuilder &str) const {
+        return ModelUtils::printYesNo(str, _outputPressure);
+    }
 
     // legato
 
@@ -87,4 +100,6 @@ private:
     Types::MidiPort _port;
     int8_t _channel;
     uint8_t _voices;
+    bool _outputVelocity;
+    bool _outputPressure;
 };

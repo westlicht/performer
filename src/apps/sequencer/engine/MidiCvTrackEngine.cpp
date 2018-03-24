@@ -42,6 +42,33 @@ void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessag
     }
 }
 
+bool MidiCvTrackEngine::activity() const {
+    return _activity;
+}
+
+bool MidiCvTrackEngine::gateOutput(int index) const {
+    return _voices[index % _midiCvTrack.voices()].ticks > 0;
+}
+
+float MidiCvTrackEngine::cvOutput(int index) const {
+    int voices = _midiCvTrack.voices();
+    bool outputVelocity = _midiCvTrack.outputVelocity();
+    bool outputPressure = _midiCvTrack.outputPressure();
+    int totalOutputs = voices * (1 + (outputVelocity ? 1 : 0) + (outputPressure ? 1 : 0));
+    index %= totalOutputs;
+    if (index < voices) {
+        return _voices[index].pitchCv + _pitchBendCv;
+    } else if (index < voices * 2) {
+        if (outputVelocity) {
+            return _voices[index - voices].velocityCv;
+        } else {
+            return _voices[index - voices].pressureCv + _channelPressureCv;
+        }
+    } else {
+        return _voices[index - voices * 2].pressureCv + _channelPressureCv;
+    }
+}
+
 float MidiCvTrackEngine::noteToCv(int note) const {
     return (note - 60) * (1.f / 12.f);
 }
