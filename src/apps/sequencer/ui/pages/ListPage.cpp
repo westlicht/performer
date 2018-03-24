@@ -122,6 +122,6 @@ void ListPage::scrollTo(int row) {
     if (row < _displayRow) {
         _displayRow = row;
     } else if (row >= _displayRow + LineCount) {
-        _displayRow = row - 2;
+        _displayRow = row - (LineCount - 1);
     }
 }
