@@ -110,8 +110,10 @@ public:
     Track() { clear(); }
 
     void clear();
-
     void clearPattern(int patternIndex);
+
+    void gateOutputName(int index, StringBuilder &str) const;
+    void cvOutputName(int index, StringBuilder &str) const;
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);

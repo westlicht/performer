@@ -10,6 +10,23 @@ public:
     // Types
     //----------------------------------------
 
+    enum class VoiceConfig {
+        Pitch,
+        PitchVelocity,
+        PitchVelocityPressure,
+        Last,
+    };
+
+    static const char *voiceConfigName(VoiceConfig voiceConfig) {
+        switch (voiceConfig) {
+        case VoiceConfig::Pitch:                return "Pitch";
+        case VoiceConfig::PitchVelocity:        return "Pitch|Vel";
+        case VoiceConfig::PitchVelocityPressure:return "Pitch|Vel|Press";
+        case VoiceConfig::Last:                 break;
+        }
+        return nullptr;
+    }
+
     //----------------------------------------
     // Properties
     //----------------------------------------
@@ -53,30 +70,17 @@ public:
         str("%d", voices());
     }
 
-    // outputVelocity
+    // voiceConfig
 
-    bool outputVelocity() const { return _outputVelocity; }
-    void setOutputVelocity(bool outputVelocity) { _outputVelocity = outputVelocity; }
+    VoiceConfig voiceConfig() const { return _voiceConfig; }
+    void setVoiceConfig(VoiceConfig voiceConfig) { _voiceConfig = voiceConfig; }
 
-    void editOutputVelocity(int value, bool shift) {
-        setOutputVelocity(value > 0);
+    void editVoiceConfig(int value, bool shift) {
+        setVoiceConfig(ModelUtils::adjustedEnum(voiceConfig(), value));
     }
 
-    void printOutputVelocity(StringBuilder &str) const {
-        return ModelUtils::printYesNo(str, _outputVelocity);
-    }
-
-    // outputPressure
-
-    bool outputPressure() const { return _outputPressure; }
-    void setOutputPressure(bool outputPressure) { _outputPressure = outputPressure; }
-
-    void editOutputPressure(int value, bool shift) {
-        setOutputPressure(value > 0);
-    }
-
-    void printOutputPressure(StringBuilder &str) const {
-        return ModelUtils::printYesNo(str, _outputPressure);
+    void printVoiceConfig(StringBuilder &str) const {
+        str(voiceConfigName(_voiceConfig));
     }
 
     // legato
@@ -93,6 +97,9 @@ public:
 
     void clear();
 
+    void gateOutputName(int index, StringBuilder &str) const;
+    void cvOutputName(int index, StringBuilder &str) const;
+
     void write(WriteContext &context) const;
     void read(ReadContext &context);
 
@@ -100,6 +107,5 @@ private:
     Types::MidiPort _port;
     int8_t _channel;
     uint8_t _voices;
-    bool _outputVelocity;
-    bool _outputPressure;
+    VoiceConfig _voiceConfig;
 };

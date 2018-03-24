@@ -22,6 +22,34 @@ void Track::clearPattern(int patternIndex) {
     }
 }
 
+void Track::gateOutputName(int index, StringBuilder &str) const {
+    switch (_trackMode) {
+    case TrackMode::Note:
+    case TrackMode::Curve:
+        str("Gate");
+        break;
+    case TrackMode::MidiCv:
+        _track.midiCv->gateOutputName(index, str);
+        break;
+    case TrackMode::Last:
+        break;
+    }
+}
+
+void Track::cvOutputName(int index, StringBuilder &str) const {
+    switch (_trackMode) {
+    case TrackMode::Note:
+    case TrackMode::Curve:
+        str("CV");
+        break;
+    case TrackMode::MidiCv:
+        _track.midiCv->cvOutputName(index, str);
+        break;
+    case TrackMode::Last:
+        break;
+    }
+}
+
 void Track::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_trackMode);
