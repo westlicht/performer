@@ -40,16 +40,18 @@ private:
         Channel,
         Voices,
         VoiceConfig,
+        PitchBendRange,
         Last
     };
 
     static const char *itemName(Item item) {
         switch (item) {
-        case Port:          return "Port";
-        case Channel:       return "Channel";
-        case Voices:        return "Voices";
-        case VoiceConfig:   return "Voice Config";
-        case Last:          break;
+        case Port:              return "MIDI Port";
+        case Channel:           return "MIDI Channel";
+        case Voices:            return "Voices";
+        case VoiceConfig:       return "Voice Config";
+        case PitchBendRange:    return "Pitch Bend";
+        case Last:              break;
         }
         return nullptr;
     }
@@ -72,6 +74,9 @@ private:
         case VoiceConfig:
             _track->printVoiceConfig(str);
             break;
+        case PitchBendRange:
+            _track->printPitchBendRange(str);
+            break;
         case Last:
             break;
         }
@@ -91,6 +96,8 @@ private:
         case VoiceConfig:
             _track->editVoiceConfig(value, shift);
             break;
+        case PitchBendRange:
+            _track->editPitchBendRange(value, shift);
         case Last:
             break;
         }

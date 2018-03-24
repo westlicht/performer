@@ -4,6 +4,8 @@
 #include "NoteSequence.h"
 #include "Serialize.h"
 
+#include "core/math/Math.h"
+
 class MidiCvTrack {
 public:
     //----------------------------------------
@@ -83,6 +85,23 @@ public:
         str(voiceConfigName(_voiceConfig));
     }
 
+    // pitchBendRange
+
+    int pitchBendRange() const { return _pitchBendRange; }
+    void setPitchBendRange(int pitchBendRange) { _pitchBendRange = clamp(pitchBendRange, 0, 48); }
+
+    void editPitchBendRange(int value, bool shift) {
+        setPitchBendRange(pitchBendRange() + value);
+    }
+
+    void printPitchBendRange(StringBuilder &str) const {
+        if (_pitchBendRange == 0) {
+            str("off");
+        } else {
+            str("%d semitones", _pitchBendRange);
+        }
+    }
+
     // legato
 
     // glide
@@ -108,4 +127,5 @@ private:
     int8_t _channel;
     uint8_t _voices;
     VoiceConfig _voiceConfig;
+    uint8_t _pitchBendRange;
 };

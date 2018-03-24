@@ -75,7 +75,7 @@ float MidiCvTrackEngine::valueToCv(int value) const {
 }
 
 float MidiCvTrackEngine::pitchBendToCv(int value) const {
-    return value * (1.f / 8192.f);
+    return value * _midiCvTrack.pitchBendRange() * (1.f / (12 * 8192));
 }
 
 void MidiCvTrackEngine::resetVoices() {
