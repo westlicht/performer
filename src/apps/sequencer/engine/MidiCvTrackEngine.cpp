@@ -57,7 +57,13 @@ float MidiCvTrackEngine::cvOutput(int index) const {
     index %= totalOutputs;
     int voiceIndex = index % voices;
     int signalIndex = index / voices;
-    return *(&_voices[voiceIndex].pitchCv + signalIndex);
+    const auto &voice = _voices[voiceIndex];
+    switch (signalIndex) {
+    case 0: return voice.pitchCv + _pitchBendCv;
+    case 1: return voice.velocityCv;
+    case 2: return voice.pressureCv + _channelPressureCv;
+    }
+    return 0.f;
 }
 
 float MidiCvTrackEngine::noteToCv(int note) const {
