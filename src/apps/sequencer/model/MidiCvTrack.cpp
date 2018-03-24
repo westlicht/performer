@@ -8,7 +8,7 @@ void MidiCvTrack::clear() {
 }
 
 void MidiCvTrack::gateOutputName(int index, StringBuilder &str) const {
-    str("Gate %d", (index % _voices) + 1);
+    str("Gate%d", (index % _voices) + 1);
 }
 
 void MidiCvTrack::cvOutputName(int index, StringBuilder &str) const {
@@ -18,9 +18,9 @@ void MidiCvTrack::cvOutputName(int index, StringBuilder &str) const {
     int voiceIndex = index % _voices;
     int signalIndex = index / _voices;
     switch (signalIndex) {
-    case 0: str("V/Oct %d", voiceIndex + 1); break;
-    case 1: str("Vel %d", voiceIndex + 1); break;
-    case 2: str("Press %d", voiceIndex + 1); break;
+    case 0: str("V/Oct%d", voiceIndex + 1); break;
+    case 1: str("Vel%d", voiceIndex + 1); break;
+    case 2: str("Press%d", voiceIndex + 1); break;
     }
 }
 

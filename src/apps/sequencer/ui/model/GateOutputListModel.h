@@ -31,9 +31,8 @@ public:
             for (int i = 0; i < row; ++i) {
                 outputIndex += _project.gateOutputTrack(i) == trackIndex ? 1 : 0;
             }
-            str("Track%d (", trackIndex + 1);
+            str("Track%d:", trackIndex + 1);
             _project.track(trackIndex).gateOutputName(outputIndex, str);
-            str(")");
         }
     }
 
