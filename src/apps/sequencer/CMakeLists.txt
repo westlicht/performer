@@ -11,6 +11,7 @@ set(sources
     engine/CvOutput.cpp
     engine/Engine.cpp
     engine/MidiCvTrackEngine.cpp
+    engine/MidiLearn.cpp
     engine/NoteTrackEngine.cpp
     engine/RoutingEngine.cpp
     engine/Scale.cpp

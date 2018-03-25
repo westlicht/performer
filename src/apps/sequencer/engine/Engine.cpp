@@ -307,6 +307,7 @@ void Engine::receiveMidi() {
 }
 
 void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
+    _midiLearn.receiveMidi(port, message);
     _routingEngine.receiveMidi(port, message);
 
     int channel = message.channel();

@@ -12,6 +12,7 @@
 #include "CvOutput.h"
 #include "RoutingEngine.h"
 #include "MidiPort.h"
+#include "MidiLearn.h"
 
 #include "model/Model.h"
 
@@ -94,6 +95,8 @@ public:
     const RoutingEngine &routingEngine() const { return _routingEngine; }
           RoutingEngine &routingEngine()       { return _routingEngine; }
 
+    MidiLearn &midiLearn() { return _midiLearn; }
+
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
     void setMessageHandler(MessageHandler handler);
@@ -129,6 +132,7 @@ private:
     TrackEngineArray _trackEngines;
 
     RoutingEngine _routingEngine;
+    MidiLearn _midiLearn;
 
     ControllerManager _controllerManager;
 
