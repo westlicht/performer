@@ -5,12 +5,12 @@
 
 // Font definitions
 #include "fonts/tiny_5x5.h"
-#include "fonts/commodore.h"
+#include "fonts/ati8x8.h"
 
 static const BitmapFont &bitmapFont(Font font) {
     switch (font) {
     case Font::Tiny: return tiny_5x5;
-    case Font::Small: return commodore;
+    case Font::Small: return ati8x8;
     default: return tiny_5x5;
     }
 }

@@ -55,12 +55,12 @@ void ListPage::draw(Canvas &canvas) {
             str.reset();
             _listModel->cell(row, 0, str);
             canvas.setColor(!_edit && row == _selectedRow ? 0xf : 0x7);
-            canvas.drawText(8, 10 + (i + 1) * LineHeight, str);
+            canvas.drawText(8, 9 + (i + 1) * LineHeight, str);
 
             str.reset();
             _listModel->cell(row, 1, str);
             canvas.setColor(_edit && row == _selectedRow ? 0xf : 0x7);
-            canvas.drawText(128, 10 + (i + 1) * LineHeight, str);
+            canvas.drawText(128, 9 + (i + 1) * LineHeight, str);
         }
     }
 
