@@ -31,7 +31,7 @@ public:
 
         int shape() const { return _shape; }
         void setShape(int shape) {
-            _shape = clamp(shape, 0, int(Curve::Last));
+            _shape = clamp(shape, 0, int(Curve::Last) - 1);
         }
 
         // min
