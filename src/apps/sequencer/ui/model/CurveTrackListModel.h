@@ -2,14 +2,14 @@
 
 #include "Config.h"
 
-#include "ListModel.h"
+#include "TrackListModel.h"
 
 #include "model/CurveTrack.h"
 
-class CurveTrackListModel : public ListModel {
+class CurveTrackListModel : public TrackListModel {
 public:
-    void setTrack(CurveTrack &track) {
-        _track = &track;
+    virtual void setTrack(Track &track) override {
+        _track = &track.curveTrack();
     }
 
     virtual int rows() const override {
@@ -32,6 +32,10 @@ public:
         if (column == 1) {
             editValue(Item(row), value, shift);
         }
+    }
+
+    virtual Routing::Param routingParam(int row) const override {
+        return Routing::Param::Last;
     }
 
 private:

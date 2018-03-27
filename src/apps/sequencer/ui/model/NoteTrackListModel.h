@@ -2,14 +2,14 @@
 
 #include "Config.h"
 
-#include "ListModel.h"
+#include "TrackListModel.h"
 
 #include "model/NoteTrack.h"
 
-class NoteTrackListModel : public ListModel {
+class NoteTrackListModel : public TrackListModel {
 public:
-    void setTrack(NoteTrack &track) {
-        _track = &track;
+    virtual void setTrack(Track &track) override {
+        _track = &track.noteTrack();
     }
 
     virtual int rows() const override {
@@ -31,6 +31,17 @@ public:
     virtual void edit(int row, int column, int value, bool shift) override {
         if (column == 1) {
             editValue(Item(row), value, shift);
+        }
+    }
+
+    virtual Routing::Param routingParam(int row) const override {
+        switch (Item(row)) {
+        case Transpose:
+            return Routing::Param::TrackTranspose;
+        case Rotate:
+            return Routing::Param::TrackRotate;
+        default:
+            return Routing::Param::Last;
         }
     }
 

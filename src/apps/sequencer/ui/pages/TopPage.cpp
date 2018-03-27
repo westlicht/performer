@@ -12,6 +12,11 @@ void TopPage::init() {
     setMode(Mode::Project);
 }
 
+void TopPage::initRoute(Routing::Param param, int trackIndex) {
+    setMode(Mode::Routing);
+    DBG("init route for %s", Routing::paramName(param));
+}
+
 void TopPage::updateLeds(Leds &leds) {
     leds.set(
         Key::Start,
@@ -132,6 +137,9 @@ void TopPage::setMode(Mode mode) {
 
     case Mode::Euclidean:
         setMainPage(pages.euclidean);
+        break;
+    case Mode::Routing:
+        setMainPage(pages.routing);
         break;
     case Mode::Monitor:
         setMainPage(pages.monitor);

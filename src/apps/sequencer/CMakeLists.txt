@@ -62,6 +62,8 @@ set(sources
     ui/pages/PerformerPage.cpp
     ui/pages/ProjectPage.cpp
     ui/pages/ProjectSelectPage.cpp
+    ui/pages/RoutePage.cpp
+    ui/pages/RoutingPage.cpp
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp

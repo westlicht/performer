@@ -2,138 +2,40 @@
 
 #include "Project.h"
 
-struct ParamInfo {
-    uint16_t min;
-    uint16_t max;
-};
-
-const ParamInfo paramInfos[int(Routing::Param::Last)] = {
-    [int(Routing::Param::BPM)]              = { 20,     500 },
-    [int(Routing::Param::Swing)]            = { 50,     75  },
-    [int(Routing::Param::SequenceParams)]   = { 0,      0   },
-    [int(Routing::Param::FirstStep)]        = { 0,      63  },
-    [int(Routing::Param::LastStep)]         = { 0,      63  },
-};
-
-static float normalizeParamValue(Routing::Param param, float value) {
-    const auto &info = paramInfos[int(param)];
-    return clamp((value - info.min) / (info.max - info.min), 0.f, 1.f);
-}
-
-static float denormalizeParamValue(Routing::Param param, float normalized) {
-    const auto &info = paramInfos[int(param)];
-    return normalized * (info.max - info.min) + info.min;
-}
-
-//----------------------------------------
-// Routing::CvSource
-//----------------------------------------
-
-void Routing::CvSource::write(WriteContext &context) const {
-    auto &writer = context.writer;
-    writer.write(_index);
-}
-
-void Routing::CvSource::read(ReadContext &context) {
-    auto &reader = context.reader;
-    reader.read(_index);
-}
-
-//----------------------------------------
-// Routing::TrackSource
-//----------------------------------------
-
-void Routing::TrackSource::write(WriteContext &context) const {
-    auto &writer = context.writer;
-    writer.write(_index);
-}
-
-void Routing::TrackSource::read(ReadContext &context) {
-    auto &reader = context.reader;
-    reader.read(_index);
-}
-
 //----------------------------------------
 // Routing::MidiSource
 //----------------------------------------
+
+void Routing::MidiSource::clear() {
+    _port = Types::MidiPort::Midi;
+    _channel = -1;
+    _event = Event::ControllerAbs;
+    _controllerOrNote = 0;
+}
 
 void Routing::MidiSource::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_port);
     writer.write(_channel);
-    writer.write(_kind);
-    writer.write(_data);
+    writer.write(_event);
+    writer.write(_controllerOrNote);
 }
 
 void Routing::MidiSource::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_port);
     reader.read(_channel);
-    reader.read(_kind);
-    reader.read(_data);
+    reader.read(_event);
+    reader.read(_controllerOrNote);
 }
 
-//----------------------------------------
-// Routing::Source
-//----------------------------------------
-
-void Routing::Source::clear() {
-    _kind = Kind::None;
-}
-
-void Routing::Source::initCv(int index) {
-    _kind = Kind::Cv;
-    _source.cv.setIndex(index);
-}
-
-void Routing::Source::initTrack(int index) {
-    _kind = Kind::Track;
-    _source.track.setIndex(index);
-}
-
-void Routing::Source::initMidi() {
-    _kind = Kind::Midi;
-    // ...
-}
-
-void Routing::Source::write(WriteContext &context) const {
-    auto &writer = context.writer;
-    writer.write(_kind);
-    switch (_kind) {
-    case Kind::None:
-        break;
-    case Kind::Cv:
-        _source.cv.write(context);
-        break;
-    case Kind::Track:
-        _source.track.write(context);
-        break;
-    case Kind::Midi:
-        _source.midi.write(context);
-        break;
-    case Kind::Last:
-        break;
-    }
-}
-
-void Routing::Source::read(ReadContext &context) {
-    auto &reader = context.reader;
-    reader.read(_kind);
-    switch (_kind) {
-    case Kind::None:
-        break;
-    case Kind::Cv:
-        _source.cv.read(context);
-        break;
-    case Kind::Track:
-        _source.track.read(context);
-        break;
-    case Kind::Midi:
-        _source.midi.read(context);
-        break;
-    case Kind::Last:
-        break;
-    }
+bool Routing::MidiSource::operator==(const MidiSource &other) const {
+    return (
+        _port == other._port &&
+        _channel == other._channel &&
+        _event == other._event &&
+        _controllerOrNote == other._controllerOrNote
+    );
 }
 
 //----------------------------------------
@@ -141,30 +43,52 @@ void Routing::Source::read(ReadContext &context) {
 //----------------------------------------
 
 void Routing::Route::clear() {
-    _active = false;
+    _param = Param::None;
+    _track = -1;
+    _min = 0.f;
+    _max = 1.f;
+    _source = Source::None;
+    _midiSource.clear();
 }
 
 void Routing::Route::init(Param param, int track) {
+    clear();
     _param = param;
-    _track = -1;
-    _source.clear();
-    _active = true;
 }
 
 void Routing::Route::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_active);
     writer.write(_param);
     writer.write(_track);
-    _source.write(context);
+    writer.write(_min);
+    writer.write(_max);
+    writer.write(_source);
+    if (_source == Source::Midi) {
+        _midiSource.write(context);
+    }
 }
 
 void Routing::Route::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_active);
     reader.read(_param);
     reader.read(_track);
-    _source.read(context);
+    reader.read(_min);
+    reader.read(_max);
+    reader.read(_source);
+    if (_source == Source::Midi) {
+        _midiSource.read(context);
+    }
+}
+
+bool Routing::Route::operator==(const Route &other) const {
+    return (
+        _param == other._param &&
+        _track == other._track &&
+        _min == other._min &&
+        _max == other._max &&
+        _source == other._source &&
+        _midiSource == other._midiSource
+    );
 }
 
 //----------------------------------------
@@ -324,4 +248,63 @@ void Routing::write(WriteContext &context) const {
 
 void Routing::read(ReadContext &context) {
     readArray(context, _routes);
+}
+
+
+
+
+struct ParamInfo {
+    int16_t min;
+    int16_t max;
+};
+
+const ParamInfo paramInfos[int(Routing::Param::Last)] = {
+    [int(Routing::Param::None)]             = { 0,      0   },
+    [int(Routing::Param::BPM)]              = { 20,     500 },
+    [int(Routing::Param::Swing)]            = { 50,     75  },
+    [int(Routing::Param::TrackTranspose)]   = { -12,    12  },
+    [int(Routing::Param::TrackRotate)]      = { -64,    64  },
+    [int(Routing::Param::FirstStep)]        = { 0,      63  },
+    [int(Routing::Param::LastStep)]         = { 0,      63  },
+};
+
+float Routing::normalizeParamValue(Routing::Param param, float value) {
+    const auto &info = paramInfos[int(param)];
+    return clamp((value - info.min) / (info.max - info.min), 0.f, 1.f);
+}
+
+float Routing::denormalizeParamValue(Routing::Param param, float normalized) {
+    const auto &info = paramInfos[int(param)];
+    return normalized * (info.max - info.min) + info.min;
+}
+
+float Routing::paramValueStep(Routing::Param param) {
+    const auto &info = paramInfos[int(param)];
+    return 1.f / (info.max - info.min);
+}
+
+void Routing::printParamValue(Routing::Param param, float normalized, StringBuilder &str) {
+    float value = denormalizeParamValue(param, normalized);
+    switch (param) {
+    case Param::None:
+        str("-");
+        break;
+    case Param::BPM:
+        str("%.1f", value);
+        break;
+    case Param::Swing:
+        str("%d%%", int(value));
+        break;
+    case Param::TrackTranspose:
+    case Param::TrackRotate:
+        str("%+d", int(value));
+        break;
+    case Param::FirstStep:
+    case Param::LastStep:
+        str("%d", int(value) + 1);
+        break;
+    default:
+        str("%d", int(value));
+        break;
+    }
 }

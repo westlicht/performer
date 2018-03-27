@@ -16,6 +16,8 @@
 #include "PerformerPage.h"
 #include "ProjectPage.h"
 #include "ProjectSelectPage.h"
+#include "RoutingPage.h"
+#include "RoutePage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
 #include "LayoutPage.h"
@@ -39,6 +41,8 @@ struct Pages {
     CurveSequenceSetupPage curveSequenceSetup;
     PatternPage pattern;
     PerformerPage performer;
+    RoutingPage routing;
+    RoutePage route;
     // modal pages
     BpmPage bpm;
     ClockSetupPage clockSetup;
@@ -68,6 +72,8 @@ struct Pages {
         curveSequenceSetup(manager, context),
         pattern(manager, context),
         performer(manager, context),
+        routing(manager, context),
+        route(manager, context),
         // modal pages
         bpm(manager, context),
         clockSetup(manager, context),

@@ -80,5 +80,11 @@ public:
         }
     }
 
+    static void printMidiNote(StringBuilder &str, int note) {
+        static const char *names[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+        int octave = note / 12 - 1;
+        str("%s%d", names[note % 12], octave);
+    }
+
 
 }; // namespace Types

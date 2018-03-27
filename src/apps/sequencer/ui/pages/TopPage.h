@@ -2,11 +2,15 @@
 
 #include "BasePage.h"
 
+#include "model/Routing.h"
+
 class TopPage : public BasePage {
 public:
     TopPage(PageManager &manager, PageContext &context);
 
     void init();
+
+    void initRoute(Routing::Param param, int trackIndex);
 
     virtual void updateLeds(Leds &leds) override;
 
@@ -34,7 +38,8 @@ private:
         FirstStep       = 12,
 
         // aux modes
-        Euclidean       = 22,
+        Euclidean       = 21,
+        Routing         = 22,
         Monitor         = 23,
 
         Last,

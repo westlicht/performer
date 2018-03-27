@@ -11,6 +11,7 @@ enum class ContextAction {
     Init,
     Copy,
     Paste,
+    Route,
     Last
 };
 
@@ -18,6 +19,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
     { "COPY" },
     { "PASTE" },
+    { "ROUTE" },
 };
 
 TrackPage::TrackPage(PageManager &manager, PageContext &context) :
@@ -74,20 +76,20 @@ void TrackPage::keyPress(KeyPressEvent &event) {
 void TrackPage::setTrack(Track &track) {
     switch (track.trackMode()) {
     case Track::TrackMode::Note:
-        _noteTrackListModel.setTrack(track.noteTrack());
-        setListModel(_noteTrackListModel);
+        _trackListModel = &_noteTrackListModel;
         break;
     case Track::TrackMode::Curve:
-        _curveTrackListModel.setTrack(track.curveTrack());
-        setListModel(_curveTrackListModel);
+        _trackListModel = &_curveTrackListModel;
         break;
     case Track::TrackMode::MidiCv:
-        _midiCvTrackListModel.setTrack(track.midiCvTrack());
-        setListModel(_midiCvTrackListModel);
+        _trackListModel = &_midiCvTrackListModel;
         break;
     case Track::TrackMode::Last:
+        ASSERT(false, "invalid track mode");
         break;
     }
+    _trackListModel->setTrack(track);
+    setListModel(*_trackListModel);
 }
 
 void TrackPage::contextAction(int index) {
@@ -101,6 +103,9 @@ void TrackPage::contextAction(int index) {
     case ContextAction::Paste:
         pasteTrackSetup();
         break;
+    case ContextAction::Route:
+        initRoute();
+        break;
     case ContextAction::Last:
         break;
     }
@@ -110,6 +115,8 @@ bool TrackPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
         return _model.clipBoard().canPasteTrack();
+    case ContextAction::Route:
+        return _trackListModel->routingParam(_selectedRow) != Routing::Param::Last;
     default:
         return true;
     }
@@ -129,3 +136,6 @@ void TrackPage::pasteTrackSetup() {
     setTrack(_project.selectedTrack());
 }
 
+void TrackPage::initRoute() {
+    _manager.pages().top.initRoute(_trackListModel->routingParam(_selectedRow), _project.selectedTrack().trackIndex());
+}

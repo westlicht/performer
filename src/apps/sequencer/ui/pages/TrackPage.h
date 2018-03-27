@@ -27,7 +27,9 @@ private:
     void initTrackSetup();
     void copyTrackSetup();
     void pasteTrackSetup();
+    void initRoute();
 
+    TrackListModel *_trackListModel;
     NoteTrackListModel _noteTrackListModel;
     CurveTrackListModel _curveTrackListModel;
     MidiCvTrackListModel _midiCvTrackListModel;
