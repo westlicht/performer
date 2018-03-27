@@ -17,7 +17,7 @@ void DrumSampler::setGate(bool gate) {
     }
 }
 
-void DrumSampler::setCV(float cv) {
+void DrumSampler::setCv(float cv) {
 }
 
 void DrumSampler::trigger() {

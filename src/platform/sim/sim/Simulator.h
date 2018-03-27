@@ -3,7 +3,7 @@
 #include "Common.h"
 #include "Window.h"
 #include "Audio.h"
-#include "Instrument.h"
+#include "InstrumentSetup.h"
 #include "Midi.h"
 
 #include "widgets/Button.h"
@@ -60,7 +60,7 @@ private:
 
     Window _window;
     Audio _audio;
-    std::vector<Instrument::Ptr> _instruments;
+    std::unique_ptr<InstrumentSetup> _instruments;
 
     double _timerFrequency;
     double _timerStart;

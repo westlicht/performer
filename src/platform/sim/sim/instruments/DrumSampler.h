@@ -10,7 +10,7 @@ public:
     DrumSampler(Audio &audio, const std::string &filename);
 
     virtual void setGate(bool gate) override;
-    virtual void setCV(float cv) override;
+    virtual void setCv(float cv) override;
 
 private:
     void trigger();

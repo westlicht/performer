@@ -26,14 +26,16 @@ private:
 class Synth : public Instrument, SoLoud::AudioSource {
 public:
     Synth(Audio &audio);
+    ~Synth();
 
     virtual SoLoud::AudioSourceInstance *createInstance() override;
 
     virtual void setGate(bool gate) override;
-    virtual void setCV(float cv) override;
+    virtual void setCv(float cv) override;
 
 private:
     Audio &_audio;
+    int _handle;
     bool _gate = false;
     float _cv = 0.f;
 

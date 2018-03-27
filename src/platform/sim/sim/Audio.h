@@ -17,6 +17,7 @@ public:
     SoLoud::Soloud &engine() { return _engine; }
 
     void play(Sample &sample);
+    void stopAll();
 
 private:
     SoLoud::Soloud _engine;

@@ -1,6 +1,13 @@
 #include "Synth.h"
 
+#include <cstdint>
+#include <cmath>
+
 namespace sim {
+
+static float flushDenormal(float value) {
+    return ((((*(uint32_t *) &(value))) & 0x7f800000) == 0) ? 0.f : value;
+}
 
 class Oscillator {
 public:
@@ -51,6 +58,87 @@ private:
     float _frequency = 100.f;
     float _phase = 0.f;
     float _increment = 0.f;
+};
+
+class Filter {
+public:
+    enum Mode {
+        LowPass,
+        HighPass,
+        BandPass,
+    };
+
+    Filter(float sampleRate) :
+        _invSampleRate(1.f / sampleRate)
+    {
+        setMode(LowPass);
+        setFrequency(0.05f * sampleRate);
+        setResonance(0.8f);
+    }
+
+    Mode mode() const { return _mode; }
+    void setMode(Mode mode) {
+        _mode = mode;
+    }
+
+    float frequency() const { return _frequency; }
+    void setFrequency(float frequency) {
+        _frequency = frequency;
+        _g = std::tan(M_PI * std::max(0.f, std::min(1.f, _frequency * _invSampleRate)));
+
+    }
+
+    float resonance() const { return _resonance; }
+    void setResonance(float resonance) {
+        _resonance = std::max(0.f, std::min(1.f, resonance));
+        _k = 2.f - 2.f * _resonance;
+    }
+
+    inline float process(float input) {
+        float a1 = 1.f / (1.f + _g * (_g + _k));
+        float a2 = _g * a1;
+        float a3 = _g * a2;
+        float m0 = 0.f, m1 = 0.f, m2 = 1.f;
+
+        switch (_mode) {
+        case LowPass:
+            break;
+        case HighPass:
+            m0 = 1.f;
+            m1 = -_k;
+            m2 = -1.f;
+            break;
+        case BandPass:
+            m1 = 1.f;
+            m2 = 0.f;
+            break;
+        }
+
+        flushDenormal(input);
+
+        float v0 = input;
+        float v3 = v0 - _ic2eq;
+        float v1 = a1 * _ic1eq + a2 * v3;
+        float v2 = _ic2eq + a2 * _ic1eq + a3 * v3;
+        _ic1eq = 2.f * v1 - _ic1eq;
+        _ic2eq = 2.f * v2 - _ic2eq;
+
+        flushDenormal(_ic1eq);
+        flushDenormal(_ic2eq);
+
+        return m0 * v0 + m1 * v1 + m2 * v2;
+    }
+
+private:
+    float _invSampleRate;
+    Mode _mode;
+    float _frequency;
+    float _resonance;
+
+    float _ic1eq = 0.f;
+    float _ic2eq = 0.f;
+    float _g;
+    float _k;
 };
 
 class ADSR {
@@ -154,28 +242,31 @@ class Voice {
 public:
     Voice(float sampleRate) :
         _osc(sampleRate),
+        _filter(sampleRate),
         _envVolume(sampleRate)
     {
-        _osc.setWaveform(Oscillator::Triangle);
+        _osc.setWaveform(Oscillator::Square);
     }
 
     void setGate(bool gate) {
         _envVolume.setGate(gate);
     }
 
-    void setCV(float cv) {
+    void setCv(float cv) {
         _osc.setFrequency(BaseFrequency * std::exp2(cv));
     }
 
     inline float process() {
-        return _osc.process() * _envVolume.process();
+        return _filter.process(_osc.process()) * _envVolume.process() * _gain;
     }
 
 private:
     static constexpr float BaseFrequency = 440.f / 8.f;
 
     Oscillator _osc;
+    Filter _filter;
     ADSR _envVolume;
+    float _gain = 0.3f;
 };
 
 
@@ -193,7 +284,7 @@ void SynthInstance::getAudio(float *aBuffer, unsigned int aSamples) {
     for (size_t i = 0; i < aSamples; ++i) {
         if (i % 128 == 0) {
             _voice->setGate(_synth._gate);
-            _voice->setCV(_synth._cv);
+            _voice->setCv(_synth._cv);
         }
         aBuffer[i] = _voice->process();
     }
@@ -209,7 +300,11 @@ Synth::Synth(Audio &audio) :
     _audio(audio)
 {
     setSingleInstance(true);
-    _audio.engine().play(*this);
+    _handle = _audio.engine().play(*this);
+}
+
+Synth::~Synth() {
+    _audio.engine().stop(_handle);
 }
 
 SoLoud::AudioSourceInstance *Synth::createInstance() {
@@ -220,7 +315,7 @@ void Synth::setGate(bool gate) {
     _gate = gate;
 }
 
-void Synth::setCV(float cv) {
+void Synth::setCv(float cv) {
     _cv = cv;
 }
 

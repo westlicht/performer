@@ -13,8 +13,8 @@
 namespace sim {
 
 const std::vector<std::string> Simulator::_midiPortName = {
-    "Fireface UCX (23456129) Port 1", // MidiHardwarePort
-    "Port2", // MidiUsbHostPort
+    "SL MkII Port 1", // MidiHardwarePort
+    "SL MkII Port 2", // MidiUsbHostPort
 };
 
 Simulator::Simulator() :
@@ -87,18 +87,14 @@ void Simulator::screenshot(const std::string &filename) {
 void Simulator::writeGate(int channel, bool value) {
     if (channel >= 0 && channel < _gate.size()) {
         _gate[channel] = value;
-    }
-    if (channel >= 0 && channel < _instruments.size()) {
-        _instruments[channel]->setGate(value);
+        _instruments->setGate(channel, value);
     }
 }
 
 void Simulator::writeDac(int channel, uint16_t value) {
     if (channel >= 0 && channel < _dac.size()) {
         _dac[channel] = value;
-    }
-    if (channel >= 0 && channel < _instruments.size()) {
-        _instruments[channel]->setCV(10.f - value / 3276.75f);
+        _instruments->setCv(channel, 10.f - value / 3276.75f);
     }
 }
 
@@ -129,11 +125,8 @@ void Simulator::addUpdateCallback(UpdateCallback callback) {
 }
 
 void Simulator::setupInstruments() {
-    std::string prefix("assets/drumkit/");
-    for (const auto &wav : { "kick.wav", "snare.wav", "rim.wav", "clap.wav", "hh1.wav", "hh2.wav", "tom1.wav" }) {
-        _instruments.emplace_back(std::make_shared<DrumSampler>(_audio, prefix + wav));
-    }
-    _instruments.emplace_back(std::make_shared<Synth>(_audio));
+    // _instruments.reset(new SamplerSetup(_audio));
+    _instruments.reset(new MixedSetup(_audio));
 }
 
 
