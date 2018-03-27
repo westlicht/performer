@@ -38,6 +38,8 @@ private:
     enum Item {
         PlayMode,
         FillMode,
+        Transpose,
+        Rotate,
         Last
     };
 
@@ -45,6 +47,8 @@ private:
         switch (item) {
         case PlayMode:  return "Play Mode";
         case FillMode:  return "Fill Mode";
+        case Transpose: return "Transpose";
+        case Rotate:    return "Rotate";
         case Last:      break;
         }
         return nullptr;
@@ -62,6 +66,12 @@ private:
         case FillMode:
             _track->printFillMode(str);
             break;
+        case Transpose:
+            _track->printTranspose(str);
+            break;
+        case Rotate:
+            _track->printRotate(str);
+            break;
         case Last:
             break;
         }
@@ -74,6 +84,12 @@ private:
             break;
         case FillMode:
             _track->editFillMode(value, shift);
+            break;
+        case Transpose:
+            _track->editTranspose(value, shift);
+            break;
+        case Rotate:
+            _track->editRotate(value, shift);
             break;
         case Last:
             break;

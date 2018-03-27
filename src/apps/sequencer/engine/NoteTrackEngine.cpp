@@ -39,8 +39,8 @@ static int evalStepLength(const NoteSequence::Step &step) {
     return length;
 }
 
-static float evalStepNote(const NoteSequence::Step &step, const Scale &scale) {
-    return scale.noteVolts(step.note());
+static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, int transpose) {
+    return scale.noteVolts(step.note() + transpose);
 }
 
 
@@ -117,6 +117,9 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     const auto &sequence = *_sequence;
     const auto &step = sequence.step(_sequenceState.step());
 
+    int transpose = _noteTrack.transpose();
+    int rotate = _noteTrack.rotate();
+
     if (evalStepGate(step) || _fill) {
         uint32_t stepLength = (divisor * evalStepLength(step)) / NoteSequence::Length::Range;
         int stepRetrigger = evalStepRetrigger(step);
@@ -134,7 +137,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
         }
 
         const auto &scale = Scale::get(sequence.scale());
-        _cvQueue.push({ applySwing(tick), evalStepNote(step, scale) });
+        _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, transpose) });
     }
 }
 

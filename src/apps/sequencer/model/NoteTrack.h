@@ -43,6 +43,32 @@ public:
         str(Types::fillModeName(fillMode()));
     }
 
+    // transpose
+
+    int transpose() const { return _transpose; }
+    void setTranspose(int transpose) { _transpose = clamp(transpose, -100, 100); }
+
+    void editTranspose(int value, bool shift) {
+        setTranspose(transpose() + value);
+    }
+
+    void printTranspose(StringBuilder &str) const {
+        str("%+d", transpose());
+    }
+
+    // rotate
+
+    int rotate() const { return _rotate; }
+    void setRotate(int rotate) { _rotate = clamp(rotate, -64, 64); }
+
+    void editRotate(int value, bool shift) {
+        setRotate(rotate() + value);
+    }
+
+    void printRotate(StringBuilder &str) const {
+        str("%+d", rotate());
+    }
+
     // sequences
 
     const NoteSequenceArray &sequences() const { return _sequences; }
@@ -66,4 +92,6 @@ private:
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
     NoteSequenceArray _sequences;
+    int8_t _transpose;
+    int8_t _rotate;
 };
