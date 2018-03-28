@@ -74,6 +74,14 @@ public:
         return nullptr;
     }
 
+    static bool isTrackParam(Param param) {
+        return param >= Param::TrackFirst && param <= Param::TrackLast;
+    }
+
+    static bool isSequenceParam(Param param) {
+        return param >= Param::SequenceFirst && param <= Param::SequenceLast;
+    }
+
     enum class Source : uint8_t {
         None,
         CvIn1,
@@ -244,9 +252,10 @@ public:
             str(paramName(param()));
         }
 
-        // track
+        // tracks
 
-        int track() const { return _track; }
+        uint8_t tracks() const { return _tracks; }
+        void setTracks(uint8_t tracks) { _tracks = tracks; }
 
         // min
 
@@ -312,7 +321,7 @@ public:
 
     private:
         Param _param;
-        int8_t _track;
+        int8_t _tracks;
         float _min; // TODO make these int16_t
         float _max;
         Source _source;
@@ -345,15 +354,8 @@ public:
 
     void clear();
 
-    int firstEmptyRouteIndex() const;
-
-    Route *firstEmptyRoute();
-    const Route *findRoute(Param param, int trackIndex = -1) const;
-          Route *findRoute(Param param, int trackIndex = -1);
-    bool hasRoute(Param param, int trackIndex = -1) const { return findRoute(param, trackIndex) != nullptr; }
-
-    Route *addRoute(Param param, int trackIndex = -1);
-    void removeRoute(Route *route);
+    int findEmptyRoute() const;
+    int findRoute(Param param, int trackIndex) const;
 
     void writeParam(Param param, int trackIndex, int patternIndex, float value);
     void writeTrackParam(Param param, int trackIndex, int patternIndex, float value);

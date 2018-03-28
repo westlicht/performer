@@ -26,15 +26,11 @@ public:
         if (column == 0) {
             str("Route%d", row + 1);
         } else if (column == 1) {
-            const auto &route = _routing.route(row);
-            str(route.active() ? "used" : "unused");
+            _routing.route(row).printParam(str);
         }
     }
 
     virtual void edit(int row, int column, int value, bool shift) override {
-        if (column == 1) {
-            // _routing.track(row).editLinkTrack(value, shift);
-        }
     }
 
 private:

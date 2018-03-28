@@ -19,15 +19,15 @@ void RoutingEngine::update() {
 }
 
 void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
-    for (int i = 0; i < CONFIG_ROUTE_COUNT; ++i) {
-        const auto &route = _routing.route(i);
+    for (int routeIndex = 0; routeIndex < CONFIG_ROUTE_COUNT; ++routeIndex) {
+        const auto &route = _routing.route(routeIndex);
         if (route.active() &&
             route.source() == Routing::Source::Midi &&
             route.midiSource().port() == Types::MidiPort(port) &&
             (route.midiSource().channel() == 0 || route.midiSource().channel() == message.channel() + 1)
         ) {
             const auto &midiSource = route.midiSource();
-            auto &sourceValue = _sourceValues[i];
+            auto &sourceValue = _sourceValues[routeIndex];
             switch (midiSource.event()) {
             case Routing::MidiSource::Event::ControlAbsolute:
                 if (message.controlNumber() == midiSource.controlNumber()) {
@@ -71,10 +71,10 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
 }
 
 void RoutingEngine::updateSources() {
-    for (int i = 0; i < CONFIG_ROUTE_COUNT; ++i) {
-        const auto &route = _routing.route(i);
+    for (int routeIndex = 0; routeIndex < CONFIG_ROUTE_COUNT; ++routeIndex) {
+        const auto &route = _routing.route(routeIndex);
         if (route.active()) {
-            auto &sourceValue = _sourceValues[i];
+            auto &sourceValue = _sourceValues[routeIndex];
             switch (route.source()) {
             case Routing::Source::None:
                 sourceValue = 0.f;
@@ -110,12 +110,21 @@ void RoutingEngine::updateSources() {
 }
 
 void RoutingEngine::updateSinks() {
-    for (int i = 0; i < CONFIG_ROUTE_COUNT; ++i) {
-        const auto &route = _routing.route(i);
+    for (int routeIndex = 0; routeIndex < CONFIG_ROUTE_COUNT; ++routeIndex) {
+        const auto &route = _routing.route(routeIndex);
         if (route.active()) {
-            float value = route.min() + _sourceValues[i] * (route.max() - route.min());
+            float value = route.min() + _sourceValues[routeIndex] * (route.max() - route.min());
             // TODO handle pattern
-            _routing.writeParam(route.param(), route.track(), 0, value);
+            if (Routing::isTrackParam(route.param()) || Routing::isSequenceParam(route.param())) {
+                uint8_t tracks = route.tracks();
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    if (tracks & (1<<trackIndex)) {
+                        _routing.writeParam(route.param(), trackIndex, 0, value);
+                    }
+                }
+            } else {
+                _routing.writeParam(route.param(), 0, 0, value);
+            }
         }
     }
 }

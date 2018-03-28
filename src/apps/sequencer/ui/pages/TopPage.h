@@ -10,7 +10,7 @@ public:
 
     void init();
 
-    void initRoute(Routing::Param param, int trackIndex);
+    void editRoute(Routing::Param param, int trackIndex);
 
     virtual void updateLeds(Leds &leds) override;
 

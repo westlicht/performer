@@ -48,7 +48,7 @@ Routing::Route::Route() {
 
 void Routing::Route::clear() {
     _param = Param::None;
-    _track = -1;
+    _tracks = 0;
     _min = 0.f;
     _max = 1.f;
     _source = Source::None;
@@ -63,7 +63,7 @@ void Routing::Route::init(Param param, int track) {
 void Routing::Route::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_param);
-    writer.write(_track);
+    writer.write(_tracks);
     writer.write(_min);
     writer.write(_max);
     writer.write(_source);
@@ -75,7 +75,7 @@ void Routing::Route::write(WriteContext &context) const {
 void Routing::Route::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_param);
-    reader.read(_track);
+    reader.read(_tracks);
     reader.read(_min);
     reader.read(_max);
     reader.read(_source);
@@ -87,7 +87,7 @@ void Routing::Route::read(ReadContext &context) {
 bool Routing::Route::operator==(const Route &other) const {
     return (
         _param == other._param &&
-        _track == other._track &&
+        _tracks == other._tracks &&
         _min == other._min &&
         _max == other._max &&
         _source == other._source &&
@@ -137,7 +137,7 @@ void Routing::clear() {
     // }
 }
 
-int Routing::firstEmptyRouteIndex() const {
+int Routing::findEmptyRoute() const {
     for (size_t i = 0; i < _routes.size(); ++i) {
         if (!_routes[i].active()) {
             return i;
@@ -146,53 +146,14 @@ int Routing::firstEmptyRouteIndex() const {
     return -1;
 }
 
-Routing::Route *Routing::firstEmptyRoute() {
-    for (auto &route : _routes) {
-        if (!route.active()) {
-            return &route;
+int Routing::findRoute(Param param, int trackIndex) const {
+    for (size_t i = 0; i < _routes.size(); ++i) {
+        const auto &route = _routes[i];
+        if (route.active() && (!Routing::isTrackParam(param) || route.tracks() & (1<<trackIndex))) {
+            return i;
         }
     }
-    return nullptr;
-}
-
-const Routing::Route *Routing::findRoute(Param param, int trackIndex) const {
-    for (auto &route : _routes) {
-        if (route.active() && route.param() == param && route.track() == trackIndex) {
-            return &route;
-        }
-    }
-    return nullptr;
-}
-
-Routing::Route *Routing::findRoute(Param param, int trackIndex) {
-    for (auto &route : _routes) {
-        if (route.active() && route.param() == param && route.track() == trackIndex) {
-            return &route;
-        }
-    }
-    return nullptr;
-}
-
-Routing::Route *Routing::addRoute(Param param, int trackIndex) {
-    Route *route = findRoute(param, trackIndex);
-    if (route) {
-        return route;
-    }
-
-    route = firstEmptyRoute();
-    if (!route) {
-        return nullptr;
-    }
-
-    route->init(param, trackIndex);
-
-    return route;
-}
-
-void Routing::removeRoute(Route *route) {
-    if (route) {
-        route->clear();
-    }
+    return -1;
 }
 
 void Routing::writeParam(Param param, int trackIndex, int patternIndex, float value) {
@@ -213,9 +174,21 @@ void Routing::writeParam(Param param, int trackIndex, int patternIndex, float va
 void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, float value) {
     auto &track = _project.track(trackIndex);
     switch (track.trackMode()) {
-    case Track::TrackMode::Note:
-        writeNoteSequenceParam(track.noteTrack().sequence(patternIndex), param, value);
+    case Track::TrackMode::Note: {
+        auto &noteTrack = track.noteTrack();
+        switch (param) {
+        case Param::TrackTranspose:
+            noteTrack.setTranspose(value);
+            break;
+        case Param::TrackRotate:
+            noteTrack.setRotate(value);
+            break;
+        default:
+            writeNoteSequenceParam(track.noteTrack().sequence(patternIndex), param, value);
+            break;
+        }
         break;
+    }
     case Track::TrackMode::Curve:
         writeCurveSequenceParam(track.curveTrack().sequence(patternIndex), param, value);
         break;

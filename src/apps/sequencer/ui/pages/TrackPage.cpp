@@ -139,5 +139,5 @@ void TrackPage::pasteTrackSetup() {
 }
 
 void TrackPage::initRoute() {
-    _manager.pages().top.initRoute(_listModel->routingParam(selectedRow()), _project.selectedTrack().trackIndex());
+    _manager.pages().top.editRoute(_listModel->routingParam(selectedRow()), _project.selectedTrackIndex());
 }
