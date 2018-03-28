@@ -68,7 +68,7 @@ void ProjectPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-    if (key.is(Key::Encoder) && _selectedRow == 0) {
+    if (key.is(Key::Encoder) && selectedRow() == 0) {
         _manager.pages().textInput.show("NAME:", _project.name(), Project::NameLength, [this] (bool result, const char *text) {
             if (result) {
                 _project.setName(text);

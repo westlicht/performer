@@ -27,7 +27,9 @@ public:
     bool edit() const { return _edit; }
     void setEdit(bool edit) { _edit = edit; }
 
-protected:
+    void setTopRow(int row);
+
+private:
     void scrollTo(int row);
 
     static constexpr int LineHeight = 10;

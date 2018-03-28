@@ -18,7 +18,7 @@ void ProjectSelectPage::show(const char *title, int selectedSlot, bool allowEmpt
     _title = title;
     _allowEmpty = allowEmpty;
     _callback = callback;
-    _selectedRow = clamp(selectedSlot, 0, _listModel.rows() - 1);
+    setSelectedRow(clamp(selectedSlot, 0, _listModel.rows() - 1));
     ListPage::show();
 }
 
@@ -66,7 +66,7 @@ void ProjectSelectPage::closeWithResult(bool result) {
     // cancel if empty slot is selected but not allowed to be
     if (result && !_allowEmpty) {
         ProjectManager::SlotInfo info;
-        ProjectManager::slotInfo(_selectedRow, info);
+        ProjectManager::slotInfo(selectedRow(), info);
         if (!info.used) {
             return;
         }
@@ -74,6 +74,6 @@ void ProjectSelectPage::closeWithResult(bool result) {
 
     Page::close();
     if (_callback) {
-        _callback(result, _selectedRow);
+        _callback(result, selectedRow());
     }
 }

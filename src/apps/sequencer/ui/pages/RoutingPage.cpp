@@ -28,7 +28,7 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isEncoder()) {
-        _manager.pages().route.show(_selectedRow);
+        _manager.pages().route.show(selectedRow());
         event.consume();
         return;
     }

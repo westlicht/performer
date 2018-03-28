@@ -10,6 +10,20 @@
 
 class RouteListModel : public ListModel {
 public:
+    enum Item {
+        Param,
+        Min,
+        Max,
+        Tracks,
+        Source,
+        FirstMidi,
+        MidiPort = FirstMidi,
+        MidiChannel,
+        MidiEvent,
+        MidiControlNumberOrNote,
+        Last
+    };
+
     RouteListModel(Routing::Route &route) :
         _route(route)
     {}
@@ -39,20 +53,6 @@ public:
     }
 
 private:
-    enum Item {
-        Param,
-        Min,
-        Max,
-        Tracks,
-        Source,
-        FirstMidi,
-        MidiPort = FirstMidi,
-        MidiChannel,
-        MidiEvent,
-        MidiControlNumberOrNote,
-        Last
-    };
-
     const char *itemName(Item item) const {
         switch (item) {
         case Param:         return "Parameter";

@@ -13,6 +13,10 @@ void TopPage::init() {
 }
 
 void TopPage::initRoute(Routing::Param param, int trackIndex) {
+    if (param == Routing::Param::None) {
+        return;
+    }
+
     int routeIndex = _project.routing().firstEmptyRouteIndex();
     if (routeIndex >= 0) {
         Routing::Route initRoute;

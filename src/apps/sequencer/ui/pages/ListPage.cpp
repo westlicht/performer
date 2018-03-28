@@ -118,6 +118,10 @@ void ListPage::setSelectedRow(int selectedRow) {
     }
 }
 
+void ListPage::setTopRow(int row) {
+    _displayRow = std::min(row, std::max(0, _listModel->rows() - LineCount));
+}
+
 void ListPage::scrollTo(int row) {
     if (row < _displayRow) {
         _displayRow = row;

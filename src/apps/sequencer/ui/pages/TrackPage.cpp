@@ -118,7 +118,7 @@ bool TrackPage::contextActionEnabled(int index) const {
     case ContextAction::Paste:
         return _model.clipBoard().canPasteTrack();
     case ContextAction::Route:
-        return _listModel->routingParam(_selectedRow) != Routing::Param::Last;
+        return _listModel->routingParam(selectedRow()) != Routing::Param::None;
     default:
         return true;
     }
@@ -139,5 +139,5 @@ void TrackPage::pasteTrackSetup() {
 }
 
 void TrackPage::initRoute() {
-    _manager.pages().top.initRoute(_listModel->routingParam(_selectedRow), _project.selectedTrack().trackIndex());
+    _manager.pages().top.initRoute(_listModel->routingParam(selectedRow()), _project.selectedTrack().trackIndex());
 }

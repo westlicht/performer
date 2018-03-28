@@ -186,7 +186,7 @@ public:
         }
 
         bool isControlEvent() const {
-            return int(_event) < int(Event::LastControlEvent);
+            return int(_event) <= int(Event::LastControlEvent);
         }
 
         // note

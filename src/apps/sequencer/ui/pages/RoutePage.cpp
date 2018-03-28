@@ -24,8 +24,9 @@ void RoutePage::show(int routeIndex, const Routing::Route &editRoute) {
     _route = &_project.routing().route(routeIndex);
     _routeIndex = routeIndex;
     _editRoute = editRoute;
-    _selectedRow = 0;
-    _edit = false;
+
+    setSelectedRow(0);
+    setEdit(false);
 
     ListPage::show();
 }
@@ -62,9 +63,8 @@ void RoutePage::keyPress(KeyPressEvent &event) {
             break;
         case Function::Learn:
             _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
-                _engine.midiLearn().stop();
                 assignMidiLearn(result);
-                DBG("learned!");
+                _engine.midiLearn().stop();
             });
             break;
         case Function::Back:
@@ -79,6 +79,8 @@ void RoutePage::keyPress(KeyPressEvent &event) {
 
 void RoutePage::assignMidiLearn(const MidiLearn::Result &result) {
     auto &midiSource = _editRoute.midiSource();
+
+    _editRoute.setSource(Routing::Source::Midi);
 
     midiSource.setPort(Types::MidiPort(result.port));
     midiSource.setChannel(result.channel);
@@ -102,4 +104,8 @@ void RoutePage::assignMidiLearn(const MidiLearn::Result &result) {
     case MidiLearn::Controller::Last:
         break;
     }
+
+    setSelectedRow(int(RouteListModel::MidiPort));
+    setTopRow(int(RouteListModel::MidiPort));
+    setEdit(false);
 }

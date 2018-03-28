@@ -30,7 +30,7 @@ void NoteSequenceSetupPage::draw(Canvas &canvas) {
 void NoteSequenceSetupPage::updateLeds(Leds &leds) {
     const auto &sequence = _project.selectedNoteSequence();
 
-    switch (_selectedRow) {
+    switch (selectedRow()) {
     case NoteSequenceSetupListModel::Scale:
         LedPainter::drawStepIndex(leds, sequence.scale());
         break;
@@ -57,7 +57,7 @@ void NoteSequenceSetupPage::keyPress(KeyPressEvent &event) {
 
     if (key.isStep()) {
         int step = key.step();
-        switch (_selectedRow) {
+        switch (selectedRow()) {
         case NoteSequenceSetupListModel::Scale:
             sequence.setScale(step);
             break;
