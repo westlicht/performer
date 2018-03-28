@@ -9,7 +9,7 @@
 
 class MidiLearn {
 public:
-    enum class Controller : uint8_t {
+    enum class Event : uint8_t {
         ControlAbsolute,
         ControlRelative,
         PitchBend,
@@ -20,7 +20,7 @@ public:
     struct Result {
         MidiPort port;
         uint8_t channel;
-        Controller controller;
+        Event event;
         union {
             uint8_t controlNumber;
             uint8_t note;
@@ -30,7 +30,7 @@ public:
             return
                 port == other.port &&
                 channel == other.channel &&
-                controller == other.controller &&
+                event == other.event &&
                 controlNumber == other.controlNumber;
         }
     };
@@ -57,5 +57,5 @@ private:
 
     Result _lastResult;
 
-    std::array<uint8_t, size_t(Controller::Last)> _messageCounters;
+    std::array<uint8_t, size_t(Event::Last)> _eventCounters;
 };

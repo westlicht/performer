@@ -25,36 +25,36 @@ void MidiLearn::receiveMidi(MidiPort port, const MidiMessage &message) {
 
     if (message.isNoteOn() || message.isNoteOff()) {
         if (message.note() != _note) {
-            _messageCounters[int(Controller::Note)] = 0;
+            _eventCounters[int(Event::Note)] = 0;
             _note = message.note();
         }
-        ++_messageCounters[int(Controller::Note)];
+        ++_eventCounters[int(Event::Note)];
     } else if (message.isPitchBend()) {
-        ++_messageCounters[int(Controller::PitchBend)];
+        ++_eventCounters[int(Event::PitchBend)];
     } else if (message.isControlChange()) {
         if (message.controlNumber() != _controlNumber) {
-            _messageCounters[int(Controller::ControlAbsolute)] = 0;
-            _messageCounters[int(Controller::ControlRelative)] = 0;
+            _eventCounters[int(Event::ControlAbsolute)] = 0;
+            _eventCounters[int(Event::ControlRelative)] = 0;
             _controlNumber = message.controlNumber();
         }
         int value = message.controlValue();
         if ((value > 0 && value < 8) || (value > 64 && value < (64 + 8))) {
-            ++_messageCounters[int(Controller::ControlRelative)];
+            ++_eventCounters[int(Event::ControlRelative)];
         } else {
-            ++_messageCounters[int(Controller::ControlAbsolute)];
+            ++_eventCounters[int(Event::ControlAbsolute)];
         }
     } else {
         return;
     }
 
-    if (_messageCounters[int(Controller::Note)] >= 4) {
-        emitResult(Result({_port, uint8_t(_channel), Controller::Note, { uint8_t(_note) }}));
-    } else if (_messageCounters[int(Controller::PitchBend)] >= 8) {
-        emitResult(Result({_port, uint8_t(_channel), Controller::PitchBend, { 0 }}));
-    } else if (_messageCounters[int(Controller::ControlAbsolute)] >= 8) {
-        emitResult(Result({_port, uint8_t(_channel), Controller::ControlAbsolute, { uint8_t(_controlNumber)}}));
-    } else if (_messageCounters[int(Controller::ControlRelative)] >= 8) {
-        emitResult(Result({_port, uint8_t(_channel), Controller::ControlRelative, { uint8_t(_controlNumber)}}));
+    if (_eventCounters[int(Event::Note)] >= 4) {
+        emitResult(Result({_port, uint8_t(_channel), Event::Note, { uint8_t(_note) }}));
+    } else if (_eventCounters[int(Event::PitchBend)] >= 8) {
+        emitResult(Result({_port, uint8_t(_channel), Event::PitchBend, { 0 }}));
+    } else if (_eventCounters[int(Event::ControlAbsolute)] >= 8) {
+        emitResult(Result({_port, uint8_t(_channel), Event::ControlAbsolute, { uint8_t(_controlNumber)}}));
+    } else if (_eventCounters[int(Event::ControlRelative)] >= 8) {
+        emitResult(Result({_port, uint8_t(_channel), Event::ControlRelative, { uint8_t(_controlNumber)}}));
     }
 }
 
@@ -63,7 +63,7 @@ void MidiLearn::reset() {
     _channel = -1;
     _controlNumber = -1;
     _note = -1;
-    _messageCounters.fill(0);
+    _eventCounters.fill(0);
 }
 
 void MidiLearn::emitResult(Result result) {
