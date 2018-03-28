@@ -90,7 +90,7 @@ private:
             _route.printMax(str);
             break;
         case Tracks:
-            // _track->printFillMode(str);
+            _route.printTracks(str);
             break;
         case Source:
             _route.printSource(str);

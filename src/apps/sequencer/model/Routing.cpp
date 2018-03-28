@@ -2,6 +2,8 @@
 
 #include "Project.h"
 
+#include <cmath>
+
 //----------------------------------------
 // Routing::MidiSource
 //----------------------------------------
@@ -107,34 +109,6 @@ void Routing::clear() {
     for (auto &route : _routes) {
         route.clear();
     }
-
-    // {
-    //     auto route = addRoute(Param::BPM);
-    //     route->source().initMIDI();
-    //     // route->source().midi().setKind(MIDISource::Kind::ControllerAbs);
-    //     // route->source().midi().setPort(MIDISource::Port::MIDI);
-    //     // route->source().midi().setChannel(1);
-    //     // route->source().midi().setController(16);
-
-    //     // route->source().midi().setKind(MIDISource::Kind::PitchBend);
-    //     // route->source().midi().setPort(MIDISource::Port::MIDI);
-    //     // route->source().midi().setChannel(1);
-
-    //     route->source().midi().setKind(MIDISource::Kind::NoteVelocity);
-    //     route->source().midi().setPort(MIDISource::Port::MIDI);
-    //     route->source().midi().setChannel(1);
-    //     route->source().midi().setNote(60);
-
-    // }
-
-    // {
-    //     auto route = addRoute(Param::Swing);
-    //     route->source().initMIDI();
-    //     route->source().midi().setKind(MIDISource::Kind::ControllerRel);
-    //     route->source().midi().setPort(MIDISource::Port::MIDI);
-    //     route->source().midi().setChannel(1);
-    //     route->source().midi().setController(63);
-    // }
 }
 
 int Routing::findEmptyRoute() const {
@@ -156,65 +130,10 @@ int Routing::findRoute(Param param, int trackIndex) const {
     return -1;
 }
 
-void Routing::writeParam(Param param, int trackIndex, int patternIndex, float value) {
-    value = denormalizeParamValue(param, value);
-    switch (param) {
-    case Param::BPM:
-        _project.setBpm(value);
-        break;
-    case Param::Swing:
-        _project.setSwing(value);
-        break;
-    default:
-        writeTrackParam(param, trackIndex, patternIndex, value);
-        break;
-    }
-}
-
-void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, float value) {
-    auto &track = _project.track(trackIndex);
-    switch (track.trackMode()) {
-    case Track::TrackMode::Note: {
-        auto &noteTrack = track.noteTrack();
-        switch (param) {
-        case Param::TrackTranspose:
-            noteTrack.setTranspose(value);
-            break;
-        case Param::TrackRotate:
-            noteTrack.setRotate(value);
-            break;
-        default:
-            writeNoteSequenceParam(track.noteTrack().sequence(patternIndex), param, value);
-            break;
-        }
-        break;
-    }
-    case Track::TrackMode::Curve:
-        writeCurveSequenceParam(track.curveTrack().sequence(patternIndex), param, value);
-        break;
-    case Track::TrackMode::MidiCv:
-        // TODO
-        break;
-    case Track::TrackMode::Last:
-        break;
-    }
-}
-
-void Routing::writeNoteSequenceParam(NoteSequence &sequence, Param param, float value) {
-    switch (param) {
-    case Param::FirstStep:
-        sequence.setFirstStep(value);
-        break;
-    case Param::LastStep:
-        sequence.setLastStep(value);
-        break;
-    default:
-        break;
-    }
-}
-
-void Routing::writeCurveSequenceParam(CurveSequence &sequence, Param param, float value) {
-
+void Routing::writeParam(Param param, int trackIndex, int patternIndex, float normalized) {
+    float floatValue = denormalizeParamValue(param, normalized);
+    int intValue = std::round(floatValue);
+    writeParam(param, trackIndex, patternIndex, floatValue, intValue);
 }
 
 float Routing::readParam(Param param, int patternIndex, int trackIndex) const {
@@ -237,6 +156,72 @@ void Routing::read(ReadContext &context) {
 }
 
 
+void Routing::writeParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue) {
+    switch (param) {
+    case Param::BPM:
+        _project.setBpm(floatValue);
+        break;
+    case Param::Swing:
+        _project.setSwing(intValue);
+        break;
+    default:
+        writeTrackParam(param, trackIndex, patternIndex, floatValue, intValue);
+        break;
+    }
+}
+
+void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue) {
+    auto &track = _project.track(trackIndex);
+    switch (track.trackMode()) {
+    case Track::TrackMode::Note: {
+        auto &noteTrack = track.noteTrack();
+        switch (param) {
+        case Param::TrackTranspose:
+            noteTrack.setTranspose(intValue);
+            break;
+        case Param::TrackRotate:
+            noteTrack.setRotate(intValue);
+            break;
+        default:
+            writeNoteSequenceParam(noteTrack.sequence(patternIndex), param, floatValue, intValue);
+            break;
+        }
+        break;
+    }
+    case Track::TrackMode::Curve: {
+        auto &curveTrack = track.curveTrack();
+        switch (param) {
+        default:
+            writeCurveSequenceParam(curveTrack.sequence(patternIndex), param, floatValue, intValue);
+            break;
+        }
+        break;
+    }
+    case Track::TrackMode::MidiCv: {
+        // auto &midiCvTrack = track.midiCvTrack();
+        break;
+    }
+    case Track::TrackMode::Last:
+        break;
+    }
+}
+
+void Routing::writeNoteSequenceParam(NoteSequence &sequence, Param param, float floatValue, int intValue) {
+    switch (param) {
+    case Param::FirstStep:
+        sequence.setFirstStep(intValue);
+        break;
+    case Param::LastStep:
+        sequence.setLastStep(intValue);
+        break;
+    default:
+        break;
+    }
+}
+
+void Routing::writeCurveSequenceParam(CurveSequence &sequence, Param param, float floatValue, int intValue) {
+
+}
 
 
 struct ParamInfo {

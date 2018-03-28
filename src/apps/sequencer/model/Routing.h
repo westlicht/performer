@@ -257,6 +257,12 @@ public:
         uint8_t tracks() const { return _tracks; }
         void setTracks(uint8_t tracks) { _tracks = tracks; }
 
+        void printTracks(StringBuilder &str) const {
+            for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
+                str("%c", (_tracks & (1<<i)) ? 'x' : '-');
+            }
+        }
+
         // min
 
         float min() const { return _min; }
@@ -357,10 +363,7 @@ public:
     int findEmptyRoute() const;
     int findRoute(Param param, int trackIndex) const;
 
-    void writeParam(Param param, int trackIndex, int patternIndex, float value);
-    void writeTrackParam(Param param, int trackIndex, int patternIndex, float value);
-    void writeNoteSequenceParam(NoteSequence &sequence, Param param, float value);
-    void writeCurveSequenceParam(CurveSequence &sequence, Param param, float value);
+    void writeParam(Param param, int trackIndex, int patternIndex, float normalized);
     float readParam(Param param, int trackIndex, int patternIndex) const;
 
     void write(WriteContext &context) const;
@@ -370,6 +373,11 @@ public:
     void clearDirty() { _dirty = false; }
 
 private:
+    void writeParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue);
+    void writeTrackParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue);
+    void writeNoteSequenceParam(NoteSequence &sequence, Param param, float floatValue, int intValue);
+    void writeCurveSequenceParam(CurveSequence &sequence, Param param, float floatValue, int intValue);
+
     static float normalizeParamValue(Param param, float value);
     static float denormalizeParamValue(Param param, float normalized);
     static float paramValueStep(Param param);
