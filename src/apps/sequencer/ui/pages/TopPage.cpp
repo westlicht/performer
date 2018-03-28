@@ -13,8 +13,16 @@ void TopPage::init() {
 }
 
 void TopPage::initRoute(Routing::Param param, int trackIndex) {
-    setMode(Mode::Routing);
-    DBG("init route for %s", Routing::paramName(param));
+    int routeIndex = _project.routing().firstEmptyRouteIndex();
+    if (routeIndex >= 0) {
+        Routing::Route initRoute;
+        initRoute.setParam(param);
+        // initRoute.setTrack(trackIndex);
+        setMode(Mode::Routing);
+        _manager.pages().route.show(routeIndex, initRoute);
+    } else {
+        showMessage("All routes are used!");
+    }
 }
 
 void TopPage::updateLeds(Leds &leds) {

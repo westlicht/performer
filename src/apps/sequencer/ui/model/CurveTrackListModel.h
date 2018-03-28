@@ -2,14 +2,14 @@
 
 #include "Config.h"
 
-#include "TrackListModel.h"
+#include "ParamListModel.h"
 
 #include "model/CurveTrack.h"
 
-class CurveTrackListModel : public TrackListModel {
+class CurveTrackListModel : public ParamListModel {
 public:
-    virtual void setTrack(Track &track) override {
-        _track = &track.curveTrack();
+    void setTrack(CurveTrack &track) {
+        _track = &track;
     }
 
     virtual int rows() const override {
@@ -35,7 +35,7 @@ public:
     }
 
     virtual Routing::Param routingParam(int row) const override {
-        return Routing::Param::Last;
+        return Routing::Param::None;
     }
 
 private:

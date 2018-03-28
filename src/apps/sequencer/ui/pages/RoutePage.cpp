@@ -16,12 +16,17 @@ RoutePage::RoutePage(PageManager &manager, PageContext &context) :
 {
 }
 
-void RoutePage::show(Routing::Route &route, int routeIndex) {
-    _route = &route;
+void RoutePage::show(int routeIndex) {
+    show(routeIndex, _project.routing().route(routeIndex));
+}
+
+void RoutePage::show(int routeIndex, const Routing::Route &editRoute) {
+    _route = &_project.routing().route(routeIndex);
     _routeIndex = routeIndex;
-    _editRoute = *_route;
+    _editRoute = editRoute;
     _selectedRow = 0;
     _edit = false;
+
     ListPage::show();
 }
 
@@ -30,6 +35,8 @@ void RoutePage::enter() {
 }
 
 void RoutePage::exit() {
+    _engine.midiLearn().stop();
+
     ListPage::exit();
 }
 
@@ -54,10 +61,11 @@ void RoutePage::keyPress(KeyPressEvent &event) {
             *_route = _editRoute;
             break;
         case Function::Learn:
-            // _engine.midiLearn().start([] (const MidiLearn::Result &result) {
-            //     DBG("learned!");
-            // });
-            // _engine.midiLearn().stop();
+            _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
+                _engine.midiLearn().stop();
+                assignMidiLearn(result);
+                DBG("learned!");
+            });
             break;
         case Function::Back:
             close();
@@ -67,4 +75,31 @@ void RoutePage::keyPress(KeyPressEvent &event) {
     }
 
     ListPage::keyPress(event);
+}
+
+void RoutePage::assignMidiLearn(const MidiLearn::Result &result) {
+    auto &midiSource = _editRoute.midiSource();
+
+    midiSource.setPort(Types::MidiPort(result.port));
+    midiSource.setChannel(result.channel);
+
+    switch (result.controller) {
+    case MidiLearn::Controller::ControlAbsolute:
+        midiSource.setEvent(Routing::MidiSource::Event::ControlAbsolute);
+        midiSource.setControlNumber(result.controlNumber);
+        break;
+    case MidiLearn::Controller::ControlRelative:
+        midiSource.setEvent(Routing::MidiSource::Event::ControlRelative);
+        midiSource.setControlNumber(result.controlNumber);
+        break;
+    case MidiLearn::Controller::PitchBend:
+        midiSource.setEvent(Routing::MidiSource::Event::PitchBend);
+        break;
+    case MidiLearn::Controller::Note:
+        midiSource.setEvent(Routing::MidiSource::Event::NoteMomentary);
+        midiSource.setNote(result.note);
+        break;
+    case MidiLearn::Controller::Last:
+        break;
+    }
 }

@@ -9,8 +9,8 @@
 void Routing::MidiSource::clear() {
     _port = Types::MidiPort::Midi;
     _channel = -1;
-    _event = Event::ControllerAbs;
-    _controllerOrNote = 0;
+    _event = Event::ControlAbsolute;
+    _controlNumberOrNote = 0;
 }
 
 void Routing::MidiSource::write(WriteContext &context) const {
@@ -18,7 +18,7 @@ void Routing::MidiSource::write(WriteContext &context) const {
     writer.write(_port);
     writer.write(_channel);
     writer.write(_event);
-    writer.write(_controllerOrNote);
+    writer.write(_controlNumberOrNote);
 }
 
 void Routing::MidiSource::read(ReadContext &context) {
@@ -26,7 +26,7 @@ void Routing::MidiSource::read(ReadContext &context) {
     reader.read(_port);
     reader.read(_channel);
     reader.read(_event);
-    reader.read(_controllerOrNote);
+    reader.read(_controlNumberOrNote);
 }
 
 bool Routing::MidiSource::operator==(const MidiSource &other) const {
@@ -34,13 +34,17 @@ bool Routing::MidiSource::operator==(const MidiSource &other) const {
         _port == other._port &&
         _channel == other._channel &&
         _event == other._event &&
-        _controllerOrNote == other._controllerOrNote
+        _controlNumberOrNote == other._controlNumberOrNote
     );
 }
 
 //----------------------------------------
 // Routing::Route
 //----------------------------------------
+
+Routing::Route::Route() {
+    clear();
+}
 
 void Routing::Route::clear() {
     _param = Param::None;
@@ -133,7 +137,16 @@ void Routing::clear() {
     // }
 }
 
-Routing::Route *Routing::nextFreeRoute() {
+int Routing::firstEmptyRouteIndex() const {
+    for (size_t i = 0; i < _routes.size(); ++i) {
+        if (!_routes[i].active()) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+Routing::Route *Routing::firstEmptyRoute() {
     for (auto &route : _routes) {
         if (!route.active()) {
             return &route;
@@ -166,7 +179,7 @@ Routing::Route *Routing::addRoute(Param param, int trackIndex) {
         return route;
     }
 
-    route = nextFreeRoute();
+    route = firstEmptyRoute();
     if (!route) {
         return nullptr;
     }

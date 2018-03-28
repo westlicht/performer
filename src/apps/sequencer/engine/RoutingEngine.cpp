@@ -29,14 +29,14 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
             const auto &midiSource = route.midiSource();
             auto &sourceValue = _sourceValues[i];
             switch (midiSource.event()) {
-            case Routing::MidiSource::Event::ControllerAbs:
-                if (message.controllerNumber() == midiSource.controller()) {
-                    sourceValue = message.controllerValue() * (1.f / 127.f);
+            case Routing::MidiSource::Event::ControlAbsolute:
+                if (message.controlNumber() == midiSource.controlNumber()) {
+                    sourceValue = message.controlValue() * (1.f / 127.f);
                 }
                 break;
-            case Routing::MidiSource::Event::ControllerRel:
-                if (message.controllerNumber() == midiSource.controller()) {
-                    int value = message.controllerValue();
+            case Routing::MidiSource::Event::ControlRelative:
+                if (message.controlNumber() == midiSource.controlNumber()) {
+                    int value = message.controlValue();
                     value = value >= 64 ? 64 - value : value;
                     sourceValue = clamp(sourceValue + value * (1.f / 127.f), 0.f, 1.f);
                 }
@@ -62,6 +62,8 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
                 if (message.isNoteOn() && message.note() == midiSource.note()) {
                     sourceValue = message.velocity() * (1.f / 127.f);
                 }
+                break;
+            case Routing::MidiSource::Event::Last:
                 break;
             }
         }

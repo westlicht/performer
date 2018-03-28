@@ -123,9 +123,9 @@ public:
     class MidiSource {
     public:
         enum class Event : uint8_t {
-            ControllerAbs,
-            ControllerRel,
-            LastController = ControllerRel,
+            ControlAbsolute,
+            ControlRelative,
+            LastControlEvent = ControlRelative,
             PitchBend,
             NoteMomentary,
             NoteToggle,
@@ -135,8 +135,8 @@ public:
 
         static const char *eventName(Event event) {
             switch (event) {
-            case Event::ControllerAbs:  return "CC Absolute";
-            case Event::ControllerRel:  return "CC Relative";
+            case Event::ControlAbsolute:return "CC Absolute";
+            case Event::ControlRelative:return "CC Relative";
             case Event::PitchBend:      return "Pitch Bend";
             case Event::NoteMomentary:  return "Note Momentary";
             case Event::NoteToggle:     return "Note Toggle";
@@ -185,14 +185,14 @@ public:
             str(eventName(event()));
         }
 
-        bool isControllerEvent() const {
-            return int(_event) < int(Event::LastController);
+        bool isControlEvent() const {
+            return int(_event) < int(Event::LastControlEvent);
         }
 
         // note
 
-        int note() const { return _controllerOrNote; }
-        void setNote(int note) { _controllerOrNote  = note; }
+        int note() const { return _controlNumberOrNote; }
+        void setNote(int note) { _controlNumberOrNote  = note; }
 
         void editNote(int value, bool shift) {
             setNote(clamp(note() + value, 0, 127));
@@ -202,16 +202,16 @@ public:
             Types::printMidiNote(str, note());
         }
 
-        // controller
+        // controlNumber
 
-        int controller() const { return _controllerOrNote; }
-        void setController(int controller) { _controllerOrNote = controller; }
+        int controlNumber() const { return _controlNumberOrNote; }
+        void setControlNumber(int controlNumber) { _controlNumberOrNote = controlNumber; }
 
-        void editController(int value, bool shift) {
-            setController(clamp(controller() + value, 0, 127));
+        void editControlNumber(int value, bool shift) {
+            setControlNumber(clamp(controlNumber() + value, 0, 127));
         }
 
-        void printController(StringBuilder &str) const {
+        void printControlNumber(StringBuilder &str) const {
             str("%d", note());
         }
 
@@ -226,7 +226,7 @@ public:
         Types::MidiPort _port;
         int8_t _channel;
         Event _event;
-        uint8_t _controllerOrNote;
+        uint8_t _controlNumberOrNote;
     };
 
     class Route {
@@ -294,6 +294,7 @@ public:
         const MidiSource &midiSource() const { return _midiSource; }
               MidiSource &midiSource()       { return _midiSource; }
 
+        Route();
 
         void clear();
 
@@ -344,7 +345,9 @@ public:
 
     void clear();
 
-    Route *nextFreeRoute();
+    int firstEmptyRouteIndex() const;
+
+    Route *firstEmptyRoute();
     const Route *findRoute(Param param, int trackIndex = -1) const;
           Route *findRoute(Param param, int trackIndex = -1);
     bool hasRoute(Param param, int trackIndex = -1) const { return findRoute(param, trackIndex) != nullptr; }

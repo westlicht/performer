@@ -76,20 +76,22 @@ void TrackPage::keyPress(KeyPressEvent &event) {
 void TrackPage::setTrack(Track &track) {
     switch (track.trackMode()) {
     case Track::TrackMode::Note:
-        _trackListModel = &_noteTrackListModel;
+        _noteTrackListModel.setTrack(track.noteTrack());
+        _listModel = &_noteTrackListModel;
         break;
     case Track::TrackMode::Curve:
-        _trackListModel = &_curveTrackListModel;
+        _curveTrackListModel.setTrack(track.curveTrack());
+        _listModel = &_curveTrackListModel;
         break;
     case Track::TrackMode::MidiCv:
-        _trackListModel = &_midiCvTrackListModel;
+        _midiCvTrackListModel.setTrack(track.midiCvTrack());
+        _listModel = &_midiCvTrackListModel;
         break;
     case Track::TrackMode::Last:
         ASSERT(false, "invalid track mode");
         break;
     }
-    _trackListModel->setTrack(track);
-    setListModel(*_trackListModel);
+    setListModel(*_listModel);
 }
 
 void TrackPage::contextAction(int index) {
@@ -116,7 +118,7 @@ bool TrackPage::contextActionEnabled(int index) const {
     case ContextAction::Paste:
         return _model.clipBoard().canPasteTrack();
     case ContextAction::Route:
-        return _trackListModel->routingParam(_selectedRow) != Routing::Param::Last;
+        return _listModel->routingParam(_selectedRow) != Routing::Param::Last;
     default:
         return true;
     }
@@ -137,5 +139,5 @@ void TrackPage::pasteTrackSetup() {
 }
 
 void TrackPage::initRoute() {
-    _manager.pages().top.initRoute(_trackListModel->routingParam(_selectedRow), _project.selectedTrack().trackIndex());
+    _manager.pages().top.initRoute(_listModel->routingParam(_selectedRow), _project.selectedTrack().trackIndex());
 }

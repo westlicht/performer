@@ -49,7 +49,7 @@ private:
         MidiPort = FirstMidi,
         MidiChannel,
         MidiEvent,
-        MidiControllerOrNote,
+        MidiControlNumberOrNote,
         Last
     };
 
@@ -63,8 +63,8 @@ private:
         case MidiPort:      return "MIDI Port";
         case MidiChannel:   return "MIDI Channel";
         case MidiEvent:     return "MIDI Event";
-        case MidiControllerOrNote:
-            if (_route.midiSource().isControllerEvent()) {
+        case MidiControlNumberOrNote:
+            if (_route.midiSource().isControlEvent()) {
                             return "CC Number";
             } else {
                             return "Note";
@@ -104,9 +104,9 @@ private:
         case MidiEvent:
             _route.midiSource().printEvent(str);
             break;
-        case MidiControllerOrNote:
-            if (_route.midiSource().isControllerEvent()) {
-                _route.midiSource().printController(str);
+        case MidiControlNumberOrNote:
+            if (_route.midiSource().isControlEvent()) {
+                _route.midiSource().printControlNumber(str);
             } else {
                 _route.midiSource().printNote(str);
             }
@@ -142,9 +142,9 @@ private:
         case MidiEvent:
             _route.midiSource().editEvent(value, shift);
             break;
-        case MidiControllerOrNote:
-            if (_route.midiSource().isControllerEvent()) {
-                _route.midiSource().editController(value, shift);
+        case MidiControlNumberOrNote:
+            if (_route.midiSource().isControlEvent()) {
+                _route.midiSource().editControlNumber(value, shift);
             } else {
                 _route.midiSource().editNote(value, shift);
             }

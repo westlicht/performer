@@ -10,8 +10,8 @@
 class MidiLearn {
 public:
     enum class Controller : uint8_t {
-        AbsoluteCC,
-        RelativeCC,
+        ControlAbsolute,
+        ControlRelative,
         PitchBend,
         Note,
         Last,
@@ -22,7 +22,7 @@ public:
         uint8_t channel;
         Controller controller;
         union {
-            uint8_t controllerNumber;
+            uint8_t controlNumber;
             uint8_t note;
         };
 
@@ -31,7 +31,7 @@ public:
                 port == other.port &&
                 channel == other.channel &&
                 controller == other.controller &&
-                controllerNumber == other.controllerNumber;
+                controlNumber == other.controlNumber;
         }
     };
 
@@ -52,7 +52,7 @@ private:
 
     MidiPort _port;
     int8_t _channel;
-    int8_t _controllerNumber;
+    int8_t _controlNumber;
     int8_t _note;
 
     Result _lastResult;

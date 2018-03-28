@@ -2,14 +2,14 @@
 
 #include "Config.h"
 
-#include "TrackListModel.h"
+#include "ParamListModel.h"
 
 #include "model/MidiCvTrack.h"
 
-class MidiCvTrackListModel : public TrackListModel {
+class MidiCvTrackListModel : public ParamListModel {
 public:
-    virtual void setTrack(Track &track) override {
-        _track = &track.midiCvTrack();
+    void setTrack(MidiCvTrack &track) {
+        _track = &track;
     }
 
     virtual int rows() const override {
@@ -35,7 +35,7 @@ public:
     }
 
     virtual Routing::Param routingParam(int row) const override {
-        return Routing::Param::Last;
+        return Routing::Param::None;
     }
 
 private:

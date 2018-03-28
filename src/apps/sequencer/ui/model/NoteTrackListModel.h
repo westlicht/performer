@@ -2,14 +2,14 @@
 
 #include "Config.h"
 
-#include "TrackListModel.h"
+#include "ParamListModel.h"
 
 #include "model/NoteTrack.h"
 
-class NoteTrackListModel : public TrackListModel {
+class NoteTrackListModel : public ParamListModel {
 public:
-    virtual void setTrack(Track &track) override {
-        _track = &track.noteTrack();
+    void setTrack(NoteTrack &track) {
+        _track = &track;
     }
 
     virtual int rows() const override {
@@ -41,7 +41,7 @@ public:
         case Rotate:
             return Routing::Param::TrackRotate;
         default:
-            return Routing::Param::Last;
+            return Routing::Param::None;
         }
     }
 
