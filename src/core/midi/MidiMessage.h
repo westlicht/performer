@@ -156,11 +156,11 @@ public:
         return isChannelMessage<ControlChange>(status());
     }
 
-    uint8_t controllerNumber() const {
+    uint8_t controlNumber() const {
         return data0();
     }
 
-    uint8_t controllerValue() const {
+    uint8_t controlValue() const {
         return data1();
     }
 
@@ -266,8 +266,8 @@ public:
         return MidiMessage(KeyPressure | channel, note, pressure);
     }
 
-    static MidiMessage makeControlChange(uint8_t channel, uint8_t controllerNumber, uint8_t controllerValue) {
-        return MidiMessage(ControlChange | channel, controllerNumber, controllerValue);
+    static MidiMessage makeControlChange(uint8_t channel, uint8_t controlNumber, uint8_t controlValue) {
+        return MidiMessage(ControlChange | channel, controlNumber, controlValue);
     }
 
     static MidiMessage makeProgramChange(uint8_t channel, uint8_t programNumber) {

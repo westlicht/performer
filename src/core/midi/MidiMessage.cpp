@@ -8,7 +8,7 @@ void MidiMessage::dump(const MidiMessage &msg) {
         case NoteOff:           DBG("NoteOff(channel=%d, note=%d, velocity=%d)", msg.channel(), msg.note(), msg.velocity()); return;
         case NoteOn:            DBG("NoteOn(channel=%d, note=%d, velocity=%d)", msg.channel(), msg.note(), msg.velocity()); return;
         case KeyPressure:       DBG("KeyPressure(channel=%d, note=%d, pressure=%d)", msg.channel(), msg.note(), msg.keyPressure()); return;
-        case ControlChange:     DBG("ControlChange(channel=%d, number=%d, value=%d)", msg.channel(), msg.controllerNumber(), msg.controllerValue()); return;
+        case ControlChange:     DBG("ControlChange(channel=%d, number=%d, value=%d)", msg.channel(), msg.controlNumber(), msg.controlValue()); return;
         case ProgramChange:     DBG("ProgramChange(channel=%d, number=%d)", msg.channel(), msg.programNumber()); return;
         case ChannelPressure:   DBG("ChannelPressure(channel=%d, pressure=%d", msg.channel(), msg.channelPressure()); return;
         case PitchBend:         DBG("PitchBend(channel=%d, value=%d", msg.channel(), msg.pitchBend()); return;
