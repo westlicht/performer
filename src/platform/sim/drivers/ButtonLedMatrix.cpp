@@ -54,7 +54,7 @@ ButtonLedMatrix::ButtonLedMatrix() :
         "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16",
         "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8",
         "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8",
-        "PLAY", "TEMPO", "MUTE", "-", "<", ">", "PAGE", "SHIFT",
+        "PLAY", "TEMPO", "SNAP", "PERF", "<", ">", "PAGE", "SHIFT",
         "", "", "", "", ""
     });
 
