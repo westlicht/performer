@@ -123,7 +123,7 @@ int Routing::findEmptyRoute() const {
 int Routing::findRoute(Param param, int trackIndex) const {
     for (size_t i = 0; i < _routes.size(); ++i) {
         const auto &route = _routes[i];
-        if (route.active() && (!Routing::isTrackParam(param) || route.tracks() & (1<<trackIndex))) {
+        if (route.active() && route.param() == param && (!Routing::isTrackParam(param) || route.tracks() & (1<<trackIndex))) {
             return i;
         }
     }
