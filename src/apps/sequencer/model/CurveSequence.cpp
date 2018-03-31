@@ -28,7 +28,7 @@ void CurveSequence::clear() {
     setResetMeasure(0);
     setRunMode(Types::RunMode::Forward);
     setFirstStep(0);
-    setLastStep(CONFIG_STEP_COUNT - 1);
+    setLastStep(15);
     for (auto &step : _steps) {
         step.clear();
     }
@@ -45,6 +45,11 @@ void CurveSequence::setShapes(std::initializer_list<int> shapes) {
 
 void CurveSequence::shift(int direction) {
     ModelUtils::shiftSteps(_steps, direction);
+}
+
+void CurveSequence::duplicate() {
+    ModelUtils::duplicateSteps(_steps, firstStep(), lastStep());
+    setLastStep(lastStep() + (lastStep() - firstStep() + 1));
 }
 
 void CurveSequence::write(WriteContext &context) const {

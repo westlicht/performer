@@ -14,6 +14,7 @@ enum class ContextAction {
     Init,
     Copy,
     Paste,
+    Duplicate,
     Last
 };
 
@@ -21,6 +22,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
     { "COPY" },
     { "PASTE" },
+    { "DUPL" },
 };
 
 enum class Function {
@@ -263,6 +265,9 @@ void CurveSequencePage::contextAction(int index) {
     case ContextAction::Paste:
         pasteSequence();
         break;
+    case ContextAction::Duplicate:
+        duplicateSequence();
+        break;
     case ContextAction::Last:
         break;
     }
@@ -287,4 +292,8 @@ void CurveSequencePage::copySequence() {
 
 void CurveSequencePage::pasteSequence() {
     _model.clipBoard().pasteCurveSequence(_project.selectedCurveSequence());
+}
+
+void CurveSequencePage::duplicateSequence() {
+    _project.selectedCurveSequence().duplicate();
 }

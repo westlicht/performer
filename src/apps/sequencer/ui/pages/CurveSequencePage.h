@@ -45,6 +45,7 @@ private:
     void initSequence();
     void copySequence();
     void pasteSequence();
+    void duplicateSequence();
 
     ContextMenu _contextMenu;
 

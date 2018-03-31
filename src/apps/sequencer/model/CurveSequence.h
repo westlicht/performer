@@ -229,6 +229,8 @@ public:
 
     void shift(int direction);
 
+    void duplicate();
+
     void write(WriteContext &context) const;
     void read(ReadContext &context);
 
