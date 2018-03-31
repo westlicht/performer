@@ -162,10 +162,10 @@ void NoteSequencePage::draw(Canvas &canvas) {
             canvas.setColor(0xf);
             FixedStringBuilder<8> str;
             scale.shortName(step.note(), 0, str);
-            canvas.drawText(x + 2, y + 20, str);
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
             str.reset();
             scale.shortName(step.note(), 1, str);
-            canvas.drawText(x + 2, y + 27, str);
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
         }
     }
 

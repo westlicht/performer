@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include <cstdint>
+#include <cmath>
 
 class Scale {
 public:
@@ -37,6 +38,11 @@ public:
     }
 
     void shortName(int note, int line, StringBuilder &str) const override {
+        if (line == 0) {
+            str("%c", note < 0 ? '-' : '+');
+        } else {
+            str("%.1f", std::abs(note * _interval));
+        }
 
     }
 
@@ -70,13 +76,13 @@ public:
     void shortName(int note, int line, StringBuilder &str) const override {
         int octave = note >= 0 ? (note / _noteCount) : (note - _noteCount + 1) / _noteCount;
         if (line == 0) {
-            str("%+d", octave);
-        } else if (line == 1) {
             int index = note - octave * _noteCount;
             uint8_t noteInfo = _notes[index];
             int wholeNote = noteInfo & 0xf;
             const char *intonation = noteInfo & Flat ? "b" : (noteInfo & Sharp ? "#" : "");
             str("%s%d", intonation, wholeNote);
+        } else if (line == 1) {
+            str("%+d", octave);
         }
     }
 
@@ -86,7 +92,7 @@ public:
         uint8_t noteInfo = _notes[index];
         int wholeNote = noteInfo & 0xf;
         const char *intonation = (noteInfo & Flat) ? "b" : ((noteInfo & Sharp) ? "#" : "");
-        str("%d-%s%d-%d", octave, intonation, wholeNote, toSemiNotes(noteInfo));
+        str("%s%d%+d", intonation, wholeNote, octave);
     }
 
     float noteVolts(int note) const override {

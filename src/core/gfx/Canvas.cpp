@@ -26,7 +26,7 @@ static const int bitmapFontHeight(Font font) {
 static const int bitmapFontOffset(Font font) {
     switch (font) {
     case Font::Tiny: return 5;
-    case Font::Small: return 13;
+    case Font::Small: return 8;
     default: return 0;
     }
 }
