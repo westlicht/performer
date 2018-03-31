@@ -29,6 +29,9 @@ public:
 
     void setTopRow(int row);
 
+protected:
+    virtual void drawCell(Canvas &canvas, int row, int column, int x, int y, int w, int h);
+
 private:
     void scrollTo(int row);
 

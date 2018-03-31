@@ -47,20 +47,11 @@ void ListPage::draw(Canvas &canvas) {
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
 
-    FixedStringBuilder<32> str;
-
     for (int i = 0; i < LineCount; ++i) {
         int row = _displayRow + i;
         if (row < _listModel->rows()) {
-            str.reset();
-            _listModel->cell(row, 0, str);
-            canvas.setColor(!_edit && row == _selectedRow ? 0xf : 0x7);
-            canvas.drawText(8, 9 + (i + 1) * LineHeight, str);
-
-            str.reset();
-            _listModel->cell(row, 1, str);
-            canvas.setColor(_edit && row == _selectedRow ? 0xf : 0x7);
-            canvas.drawText(128, 9 + (i + 1) * LineHeight, str);
+            drawCell(canvas, row, 0, 8, 12 + i * LineHeight, 128 - 16, LineHeight);
+            drawCell(canvas, row, 1, 128, 12 + i * LineHeight, 128 - 16, LineHeight);
         }
     }
 
@@ -120,6 +111,15 @@ void ListPage::setSelectedRow(int selectedRow) {
 
 void ListPage::setTopRow(int row) {
     _displayRow = std::min(row, std::max(0, _listModel->rows() - LineCount));
+}
+
+void ListPage::drawCell(Canvas &canvas, int row, int column, int x, int y, int w, int h) {
+    // canvas.drawRect(x, y, w, h);
+
+    FixedStringBuilder<32> str;
+    _listModel->cell(row, column, str);
+    canvas.setColor(column == int(_edit) && row == _selectedRow ? 0xf : 0x7);
+    canvas.drawText(x, y + 7, str);
 }
 
 void ListPage::scrollTo(int row) {
