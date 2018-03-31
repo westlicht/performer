@@ -91,7 +91,7 @@ void NoteSequence::clear() {
     setResetMeasure(0);
     setRunMode(Types::RunMode::Forward);
     setFirstStep(0);
-    setLastStep(CONFIG_STEP_COUNT - 1);
+    setLastStep(15);
     for (auto &step : _steps) {
         step.clear();
     }
@@ -117,6 +117,11 @@ void NoteSequence::setNotes(std::initializer_list<int> notes) {
 
 void NoteSequence::shift(int direction) {
     ModelUtils::shiftSteps(_steps, direction);
+}
+
+void NoteSequence::duplicate() {
+    ModelUtils::duplicateSteps(_steps, firstStep(), lastStep());
+    setLastStep(lastStep() + (lastStep() - firstStep() + 1));
 }
 
 void NoteSequence::write(WriteContext &context) const {
