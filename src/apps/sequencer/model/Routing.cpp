@@ -191,6 +191,9 @@ void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, flo
     case Track::TrackMode::Curve: {
         auto &curveTrack = track.curveTrack();
         switch (param) {
+        case Param::TrackRotate:
+            curveTrack.setRotate(intValue);
+            break;
         default:
             writeCurveSequenceParam(curveTrack.sequence(patternIndex), param, floatValue, intValue);
             break;

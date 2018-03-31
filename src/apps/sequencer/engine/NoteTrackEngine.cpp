@@ -7,6 +7,8 @@
 #include "core/utils/Random.h"
 #include "core/math/Math.h"
 
+#include "engine/SequenceUtils.h"
+
 static Random rng;
 
 // evaluate if step gate is active
@@ -46,6 +48,7 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, in
 
 void NoteTrackEngine::reset() {
     _sequenceState.reset();
+    _currentStep = -1;
     _gate = false;
     _gateOutput = false;
     _gateQueue.clear();
@@ -114,11 +117,12 @@ void NoteTrackEngine::changePattern() {
 }
 
 void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
-    const auto &sequence = *_sequence;
-    const auto &step = sequence.step(_sequenceState.step());
-
     int transpose = _noteTrack.transpose();
     int rotate = _noteTrack.rotate();
+
+    const auto &sequence = *_sequence;
+    _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
+    const auto &step = sequence.step(_currentStep);
 
     if (evalStepGate(step) || _fill) {
         uint32_t stepLength = (divisor * evalStepLength(step)) / NoteSequence::Length::Range;

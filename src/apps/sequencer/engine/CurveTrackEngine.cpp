@@ -6,6 +6,8 @@
 #include "core/utils/Random.h"
 #include "core/math/Math.h"
 
+#include "engine/SequenceUtils.h"
+
 static Random rng;
 
 static float evalStepShape(const CurveSequence::Step &step, float fraction) {
@@ -18,7 +20,8 @@ static float evalStepShape(const CurveSequence::Step &step, float fraction) {
 
 void CurveTrackEngine::reset() {
     _sequenceState.reset();
-    _stepFraction = 0.f;
+    _currentStep = -1;
+    _currentStepFraction = 0.f;
     _lastRange = CurveSequence::Range::Last;
     changePattern();
 }
@@ -77,11 +80,19 @@ void CurveTrackEngine::changePattern() {
 }
 
 void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
+    if (_sequenceState.step() < 0) {
+        return;
+    }
+
+    int rotate = _curveTrack.rotate();
+
     const auto &sequence = *_sequence;
+    _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
+    const auto &step = sequence.step(_currentStep);
 
-    _stepFraction = float(relativeTick) / divisor;
+    _currentStepFraction = float(relativeTick) / divisor;
 
-    float value = evalStepShape(sequence.step(_sequenceState.step()), _stepFraction);
+    float value = evalStepShape(step, _currentStepFraction);
     value = _range[0] + value * (_range[1] - _range[0]);
     _cvOutput = value;
 }

@@ -43,6 +43,19 @@ public:
         str(Types::fillModeName(fillMode()));
     }
 
+    // rotate
+
+    int rotate() const { return _rotate; }
+    void setRotate(int rotate) { _rotate = clamp(rotate, -64, 64); }
+
+    void editRotate(int value, bool shift) {
+        setRotate(rotate() + value);
+    }
+
+    void printRotate(StringBuilder &str) const {
+        str("%+d", rotate());
+    }
+
     // sequences
 
     const CurveSequenceArray &sequences() const { return _sequences; }
@@ -65,5 +78,6 @@ public:
 private:
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
+    int8_t _rotate;
     CurveSequenceArray _sequences;
 };

@@ -27,7 +27,7 @@ public:
     const NoteSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
 
-    int currentStep() const { return _sequenceState.step(); }
+    int currentStep() const { return _currentStep; }
 
     static constexpr Track::TrackMode trackMode = Track::TrackMode::Note;
 
@@ -41,6 +41,7 @@ private:
 
     const NoteSequence *_sequence;
     SequenceState _sequenceState;
+    int _currentStep;
 
     bool _gate;
     bool _gateOutput;

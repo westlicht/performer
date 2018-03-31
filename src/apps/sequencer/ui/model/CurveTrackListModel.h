@@ -35,13 +35,19 @@ public:
     }
 
     virtual Routing::Param routingParam(int row) const override {
-        return Routing::Param::None;
+        switch (Item(row)) {
+        case Rotate:
+            return Routing::Param::TrackRotate;
+        default:
+            return Routing::Param::None;
+        }
     }
 
 private:
     enum Item {
         PlayMode,
         FillMode,
+        Rotate,
         Last
     };
 
@@ -49,6 +55,7 @@ private:
         switch (item) {
         case PlayMode:  return "Play Mode";
         case FillMode:  return "Fill Mode";
+        case Rotate:    return "Rotate";
         case Last:      break;
         }
         return nullptr;
@@ -66,6 +73,9 @@ private:
         case FillMode:
             _track->printFillMode(str);
             break;
+        case Rotate:
+            _track->printRotate(str);
+            break;
         case Last:
             break;
         }
@@ -78,6 +88,9 @@ private:
             break;
         case FillMode:
             _track->editFillMode(value, shift);
+            break;
+        case Rotate:
+            _track->editRotate(value, shift);
             break;
         case Last:
             break;
