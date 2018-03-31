@@ -56,6 +56,12 @@ void RoutePage::draw(Canvas &canvas) {
 void RoutePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
+    if (selectedRow() == int(RouteListModel::Item::Tracks) && key.isTrack()) {
+        _editRoute.toggleTrack(key.track());
+        event.consume();
+        return;
+    }
+
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Change:

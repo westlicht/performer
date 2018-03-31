@@ -128,7 +128,7 @@ private:
             _route.editMax(value, shift);
             break;
         case Tracks:
-            // _route.editFillMode(value, shift);
+            // handled in RoutePage
             break;
         case Source:
             _route.editSource(value, shift);

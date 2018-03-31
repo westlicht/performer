@@ -257,9 +257,17 @@ public:
         uint8_t tracks() const { return _tracks; }
         void setTracks(uint8_t tracks) { _tracks = tracks; }
 
+        void toggleTrack(int trackIndex) {
+            if (tracks() & (1<<trackIndex)) {
+                setTracks(tracks() & ~(1<<trackIndex));
+            } else {
+                setTracks(tracks() | (1<<trackIndex));
+            }
+        }
+
         void printTracks(StringBuilder &str) const {
             for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-                str("%c", (_tracks & (1<<i)) ? 'x' : '-');
+                str("%c", (_tracks & (1<<i)) ? 'X' : '-');
             }
         }
 
