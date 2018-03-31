@@ -58,6 +58,11 @@ void Simulator::update() {
 }
 
 void Simulator::render() {
+    double currentTicks = ticks();
+    if (currentTicks < _lastRenderTicks + 15) {
+        return;
+    }
+    _lastRenderTicks = currentTicks;
     _window.render();
 }
 

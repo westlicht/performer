@@ -65,6 +65,8 @@ private:
     double _timerFrequency;
     double _timerStart;
 
+    double _lastRenderTicks = 0.0;
+
     std::array<bool, 8> _gate;
     std::array<uint16_t, 8> _dac;
 
