@@ -66,7 +66,7 @@ public:
 
     // time base
     uint32_t tick() const { return _tick; }
-    float globalMeasureFraction() const;
+    float syncMeasureFraction() const;
 
     const CvInput &cvInput() const { return _cvInput; }
     const CvOutput &cvOutput() const { return _cvOutput; }

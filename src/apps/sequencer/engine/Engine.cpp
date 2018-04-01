@@ -149,7 +149,7 @@ float Engine::nudgeTempoStrength() const {
     return _nudgeTempo.strength();
 }
 
-float Engine::globalMeasureFraction() const {
+float Engine::syncMeasureFraction() const {
     uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
     return float(_tick % measureDivisor) / measureDivisor;
 }

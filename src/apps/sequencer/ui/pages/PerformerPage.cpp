@@ -32,7 +32,7 @@ void PerformerPage::draw(Canvas &canvas) {
 
     const auto &playState = _project.playState();
 
-    float globalMeasureFraction = _engine.globalMeasureFraction();
+    float syncMeasureFraction = _engine.syncMeasureFraction();
     bool hasRequested = false;
 
     canvas.setFont(Font::Tiny);
@@ -69,7 +69,7 @@ void PerformerPage::draw(Canvas &canvas) {
 
     if (hasRequested) {
         canvas.setColor(0xf);
-        canvas.hline(0, 10, globalMeasureFraction * Width);
+        canvas.hline(0, 10, syncMeasureFraction * Width);
     }
 }
 
