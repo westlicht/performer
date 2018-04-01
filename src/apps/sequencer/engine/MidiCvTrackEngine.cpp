@@ -3,6 +3,7 @@
 #include "os/os.h"
 
 #include <cmath>
+#include <cinttypes>
 
 
 void MidiCvTrackEngine::reset() {
@@ -148,7 +149,7 @@ MidiCvTrackEngine::Voice *MidiCvTrackEngine::mruVoice(int begin, int end) {
 void MidiCvTrackEngine::printVoices() {
     DBG("voices");
     for (auto voice : _voices) {
-        DBG("%d %d", voice.ticks, voice.note);
+        DBG("%" PRIu32 " %" PRIu8, voice.ticks, voice.note);
     }
 }
 

@@ -45,7 +45,7 @@ template<typename Step, size_t N>
 static void duplicateSteps(std::array<Step, N> &steps, int firstStep, int lastStep) {
     for (int src = firstStep; src <= lastStep; ++src) {
         int dst = src + (lastStep - firstStep + 1);
-        if (dst < steps.size()) {
+        if (dst < int(steps.size())) {
             steps[dst] = steps[src];
         }
     }
