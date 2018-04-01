@@ -13,12 +13,6 @@ void LedPainter::drawTracksGateAndSelected(Leds &leds, const Engine &engine, int
     }
 }
 
-void LedPainter::drawTracksGateAndMuted(Leds &leds, const Engine &engine) {
-    for (int track = 0; track < 8; ++track) {
-        leds.set(MatrixMap::fromTrack(track), engine.trackEngine(track).activity(), engine.trackEngine(track).mute());
-    }
-}
-
 void LedPainter::drawNoteSequenceGateAndCurrentStep(Leds &leds, const NoteSequence &sequence, int stepOffset, int currentStep) {
     for (int i = 0; i < 16; ++i) {
         int stepIndex = stepOffset + i;

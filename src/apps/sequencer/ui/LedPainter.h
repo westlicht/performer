@@ -9,7 +9,6 @@ class NoteSequence;
 class LedPainter {
 public:
     static void drawTracksGateAndSelected(Leds &leds, const Engine &engine, int selectedTrack);
-    static void drawTracksGateAndMuted(Leds &leds, const Engine &engine);
 
     static void drawNoteSequenceGateAndCurrentStep(Leds &leds, const NoteSequence &sequence, int stepOffset, int currentStep);
 
