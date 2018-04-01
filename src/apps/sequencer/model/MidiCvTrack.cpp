@@ -6,6 +6,7 @@ void MidiCvTrack::clear() {
     _voices = 1;
     _voiceConfig = VoiceConfig::Pitch;
     _pitchBendRange = 2;
+    _retrigger = false;
 }
 
 void MidiCvTrack::gateOutputName(int index, StringBuilder &str) const {
@@ -32,6 +33,7 @@ void MidiCvTrack::write(WriteContext &context) const {
     writer.write(_voices);
     writer.write(_voiceConfig);
     writer.write(_pitchBendRange);
+    writer.write(_retrigger);
 }
 
 void MidiCvTrack::read(ReadContext &context) {
@@ -41,4 +43,5 @@ void MidiCvTrack::read(ReadContext &context) {
     reader.read(_voices);
     reader.read(_voiceConfig);
     reader.read(_pitchBendRange);
+    reader.read(_retrigger);
 }

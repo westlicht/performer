@@ -48,7 +48,11 @@ bool MidiCvTrackEngine::activity() const {
 }
 
 bool MidiCvTrackEngine::gateOutput(int index) const {
-    return _voices[index % _midiCvTrack.voices()].ticks > 0;
+    if (_midiCvTrack.retrigger()) {
+        return _voices[index % _midiCvTrack.voices()].ticks > os::ticks() + RetriggerDelay;
+    } else {
+        return _voices[index % _midiCvTrack.voices()].ticks > 0;
+    }
 }
 
 float MidiCvTrackEngine::cvOutput(int index) const {

@@ -102,11 +102,22 @@ public:
         }
     }
 
-    // legato
+    // retrigger
+
+    bool retrigger() const { return _retrigger; }
+    void setRetrigger(bool retrigger) { _retrigger = retrigger; }
+
+    void editRetrigger(int value, bool shift) {
+        setRetrigger(value > 0);
+    }
+
+    void printRetrigger(StringBuilder &str) const {
+        ModelUtils::printYesNo(str, retrigger());
+    }
 
     // glide
 
-    // retrigger
+
 
     //----------------------------------------
     // Methods
@@ -128,4 +139,5 @@ private:
     uint8_t _voices;
     VoiceConfig _voiceConfig;
     uint8_t _pitchBendRange;
+    bool _retrigger;
 };

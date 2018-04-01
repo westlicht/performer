@@ -41,6 +41,8 @@ private:
 
     void updateActivity();
 
+    static constexpr int RetriggerDelay = 2;
+
     const MidiCvTrack &_midiCvTrack;
 
     struct Voice {
