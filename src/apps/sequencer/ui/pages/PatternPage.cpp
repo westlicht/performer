@@ -106,6 +106,32 @@ void PatternPage::draw(Canvas &canvas) {
 }
 
 void PatternPage::updateLeds(Leds &leds) {
+    const auto &playState = _project.playState();
+
+    if (_keyState[MatrixMap::fromFunction(int(Function::Edit))]) {
+        LedPainter::drawSelectedPattern(leds, _project.selectedPatternIndex(), _project.selectedPatternIndex());
+    } else {
+        uint16_t allActivePatterns = 0;
+        uint16_t allRequestedPatterns = 0;
+        uint16_t selectedActivePatterns = 0;
+        uint16_t selectedRequestedPatterns = 0;
+
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            const auto &trackState = playState.trackState(trackIndex);
+            allActivePatterns |= (trackState.pattern() < 16) ? (1<<trackState.pattern()) : 0;
+            allRequestedPatterns |= (trackState.requestedPattern() < 16) ? (1<<trackState.requestedPattern()) : 0;
+            if (_keyState[MatrixMap::fromTrack(trackIndex)]) {
+                selectedActivePatterns |= (trackState.pattern() < 16) ? (1<<trackState.pattern()) : 0;
+                selectedRequestedPatterns |= (trackState.requestedPattern() < 16) ? (1<<trackState.requestedPattern()) : 0;
+            }
+        }
+
+        if (selectedActivePatterns || selectedRequestedPatterns) {
+            LedPainter::drawSelectedPatterns(leds, selectedActivePatterns, selectedRequestedPatterns);
+        } else {
+            LedPainter::drawSelectedPatterns(leds, allActivePatterns, allRequestedPatterns);
+        }
+    }
 }
 
 void PatternPage::keyDown(KeyEvent &event) {

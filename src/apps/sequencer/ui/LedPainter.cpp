@@ -50,6 +50,18 @@ void LedPainter::drawSelectedSequencePage(Leds &leds, int page) {
     leds.set(Key::Code::Shift, page == 3, page == 3);
 }
 
+void LedPainter::drawSelectedPattern(Leds &leds, int activePattern, int requestedPattern) {
+    for (int i = 0; i < 16; ++i) {
+        leds.set(MatrixMap::fromStep(i), i == activePattern, i == requestedPattern);
+    }
+}
+
+void LedPainter::drawSelectedPatterns(Leds &leds, uint16_t activePatterns, uint16_t requestedPatterns) {
+    for (int i = 0; i < 16; ++i) {
+        leds.set(MatrixMap::fromStep(i), activePatterns & (1<<i), requestedPatterns & (1<<i));
+    }
+}
+
 void LedPainter::drawMode(Leds &leds, int index, int count) {
     for (int i = 0; i < 8; ++i) {
         leds.set(MatrixMap::fromStep(i), i < count, i == index);

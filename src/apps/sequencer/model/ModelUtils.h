@@ -51,4 +51,4 @@ static void duplicateSteps(std::array<Step, N> &steps, int firstStep, int lastSt
     }
 }
 
-};
+} // namespace ModelUtils
