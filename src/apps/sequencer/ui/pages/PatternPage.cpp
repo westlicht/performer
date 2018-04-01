@@ -54,6 +54,8 @@ void PatternPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
+    constexpr int Border = 4;
+
     const auto &playState = _project.playState();
 
     float syncMeasureFraction = _engine.syncMeasureFraction();
@@ -63,6 +65,7 @@ void PatternPage::draw(Canvas &canvas) {
     canvas.setBlendMode(BlendMode::Set);
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        const auto &trackEngine = _engine.trackEngine(trackIndex);
         const auto &trackState = playState.trackState(trackIndex);
         bool trackSelected = _keyState[MatrixMap::fromTrack(trackIndex)];
 
@@ -70,11 +73,21 @@ void PatternPage::draw(Canvas &canvas) {
         int y = 16;
 
         int w = 16;
+        int h = 16;
 
         x += 8;
 
         canvas.setColor(trackSelected ? 0xf : 0x7);
         canvas.drawTextCentered(x, y - 2, w, 8, FixedStringBuilder<8>("T%d", trackIndex + 1));
+
+        y += 8;
+
+        canvas.setColor(trackEngine.activity() ? 0xf : 0x7);
+        canvas.drawRect(x, y, w, h);
+        if (trackState.mute()) {
+            canvas.setColor(0xf);
+            canvas.fillRect(x + Border, y + Border, w - 2 * Border, h - 2 * Border);
+        }
 
         y += 8;
 
