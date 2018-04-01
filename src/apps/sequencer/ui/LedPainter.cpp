@@ -62,6 +62,12 @@ void LedPainter::drawSelectedPatterns(Leds &leds, uint16_t activePatterns, uint1
     }
 }
 
+void LedPainter::drawMutes(Leds &leds, uint8_t activeMutes, uint8_t requestedMutes) {
+    for (int i = 0; i < 8; ++i) {
+        leds.set(MatrixMap::fromStep(i), requestedMutes & (1<<i), activeMutes & (1<<i));
+    }
+}
+
 void LedPainter::drawMode(Leds &leds, int index, int count) {
     for (int i = 0; i < 8; ++i) {
         leds.set(MatrixMap::fromStep(i), i < count, i == index);
