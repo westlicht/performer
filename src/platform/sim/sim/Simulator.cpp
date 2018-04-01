@@ -90,14 +90,14 @@ void Simulator::screenshot(const std::string &filename) {
 }
 
 void Simulator::writeGate(int channel, bool value) {
-    if (channel >= 0 && channel < _gate.size()) {
+    if (channel >= 0 && channel < int(_gate.size())) {
         _gate[channel] = value;
         _instruments->setGate(channel, value);
     }
 }
 
 void Simulator::writeDac(int channel, uint16_t value) {
-    if (channel >= 0 && channel < _dac.size()) {
+    if (channel >= 0 && channel < int(_dac.size())) {
         _dac[channel] = value;
         _instruments->setCv(channel, 10.f - value / 3276.75f);
     }

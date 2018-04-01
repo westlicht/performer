@@ -116,13 +116,13 @@ ButtonLedMatrix::ButtonLedMatrix() :
 }
 
 void ButtonLedMatrix::setLed(int index, uint8_t red, uint8_t green) {
-    if (index < _leds.size()) {
+    if (index < int(_leds.size())) {
         _leds[index]->color() = sim::Color(red / 255.f, green / 255.f, 0.f, 1.f);
     }
 }
 
 bool ButtonLedMatrix::buttonState(int index) const {
-    if (index < _buttons.size()) {
+    if (index < int(_buttons.size())) {
         return _buttons[index]->pressed();
     }
     return false;

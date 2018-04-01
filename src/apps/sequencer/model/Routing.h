@@ -341,8 +341,6 @@ public:
         Source _source;
         MidiSource _midiSource;
 
-        float _shadowValue;
-
         friend class Routing;
     };
 

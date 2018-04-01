@@ -138,7 +138,6 @@ private:
 
     bool _running = false;
     uint32_t _tick = 0;
-    uint32_t _lastTick = 0;
 
     uint32_t _lastSystemTicks = 0;
 

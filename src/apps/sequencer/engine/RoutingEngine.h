@@ -27,10 +27,7 @@ private:
     void updateSinks();
 
     Engine &_engine;
-    Model &_model;
-    Project &_project;
     Routing &_routing;
 
     std::array<float, CONFIG_ROUTE_COUNT> _sourceValues;
-    std::array<float, CONFIG_ROUTE_COUNT> _shadowValues;
 };

@@ -8,8 +8,6 @@ static_assert(int(MidiPort::UsbMidi) == int(Types::MidiPort::UsbMidi), "invalid 
 
 RoutingEngine::RoutingEngine(Engine &engine, Model &model) :
     _engine(engine),
-    _model(model),
-    _project(model.project()),
     _routing(model.project().routing())
 {}
 
