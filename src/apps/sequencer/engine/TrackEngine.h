@@ -82,6 +82,10 @@ public:
     virtual bool gateOutput(int index) const = 0;
     virtual float cvOutput(int index) const = 0;
 
+    virtual bool idleOutput() const { return false; }
+    virtual bool idleGateOutput(int index) const { return false; }
+    virtual float idleCvOutput(int index) const { return 0.f; }
+
 protected:
     const Track &_track;
     Track::TrackMode _trackMode;

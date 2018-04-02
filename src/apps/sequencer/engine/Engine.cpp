@@ -220,6 +220,10 @@ void Engine::updateTrackSequences() {
 }
 
 void Engine::updateTrackOutputs() {
+    bool isIdle = _clock.isIdle();
+    const auto &gateOutputTracks = _model.project().gateOutputTracks();
+    const auto &cvOutputTracks = _model.project().cvOutputTracks();
+
     int trackGateIndex[CONFIG_TRACK_COUNT];
     int trackCvIndex[CONFIG_TRACK_COUNT];
 
@@ -228,14 +232,19 @@ void Engine::updateTrackOutputs() {
         trackCvIndex[i] = 0;
     }
 
-    const auto &gateOutputTracks = _model.project().gateOutputTracks();
-    const auto &cvOutputTracks = _model.project().cvOutputTracks();
-
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
         int gateOutputTrack = gateOutputTracks[i];
-        _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
+        if (isIdle && _trackEngines[gateOutputTrack]->idleOutput()) {
+            _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->idleGateOutput(trackGateIndex[gateOutputTrack]++));
+        } else {
+            _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
+        }
         int cvOutputTrack = cvOutputTracks[i];
-        _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
+        if (isIdle && _trackEngines[cvOutputTrack]->idleOutput()) {
+            _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->idleCvOutput(trackCvIndex[cvOutputTrack]++));
+        } else {
+            _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
+        }
     }
 }
 

@@ -52,6 +52,7 @@ void NoteSequencePage::enter() {
 }
 
 void NoteSequencePage::exit() {
+    _engine.selectedTrackEngine().as<NoteTrackEngine>().clearIdleOutput();
 }
 
 void NoteSequencePage::draw(Canvas &canvas) {
@@ -193,10 +194,12 @@ void NoteSequencePage::updateLeds(Leds &leds) {
 
 void NoteSequencePage::keyDown(KeyEvent &event) {
     _stepSelection.keyDown(event, stepOffset());
+    updateIdleOutput();
 }
 
 void NoteSequencePage::keyUp(KeyEvent &event) {
     _stepSelection.keyUp(event, stepOffset());
+    updateIdleOutput();
 }
 
 void NoteSequencePage::keyPress(KeyPressEvent &event) {
@@ -214,6 +217,7 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
     }
 
     _stepSelection.keyPress(event, stepOffset());
+    updateIdleOutput();
 
     if (!key.shiftModifier() && key.isStep()) {
         int stepIndex = stepOffset() + key.step();
@@ -331,6 +335,7 @@ void NoteSequencePage::encoder(EncoderEvent &event) {
                     setToFirst ? firstStep.note() :
                     NoteSequence::Note::clamp(step.note() + event.value() * (event.pressed() ? scale.octave() : 1))
                 );
+                updateIdleOutput();
                 break;
             case Mode::NoteVariation:
                 break;
@@ -341,6 +346,18 @@ void NoteSequencePage::encoder(EncoderEvent &event) {
     }
 
     event.consume();
+}
+
+void NoteSequencePage::updateIdleOutput() {
+    auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
+
+    if (_mode == Mode::Note && _stepSelection.any()) {
+        trackEngine.setIdleStep(_stepSelection.first());
+        trackEngine.setIdleGate(true);
+    } else {
+        trackEngine.setIdleGate(false);
+    }
+
 }
 
 void NoteSequencePage::drawDetail(Canvas &canvas, const NoteSequence::Step &step) {

@@ -32,6 +32,9 @@ public:
 
     Mode activeMode();
 
+    bool isIdle() const { return _state == Idle; }
+    bool isRunning() const { return _state != Idle; }
+
     int ppqn() const { return _ppqn; }
     float bpm() const { return _state == SlaveRunning ? _slaveBpm : _masterBpm; }
     uint32_t tick() const { return _tick; }

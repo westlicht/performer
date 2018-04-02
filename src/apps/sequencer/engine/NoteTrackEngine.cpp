@@ -50,6 +50,7 @@ void NoteTrackEngine::reset() {
     _sequenceState.reset();
     _currentStep = -1;
     _gate = false;
+    _idleOutput = false;
     _gateOutput = false;
     _gateQueue.clear();
     changePattern();
@@ -114,6 +115,23 @@ void NoteTrackEngine::tick(uint32_t tick) {
 
 void NoteTrackEngine::changePattern() {
     _sequence = &_noteTrack.sequence(_pattern);
+}
+
+void NoteTrackEngine::clearIdleOutput() {
+    _idleOutput = false;
+}
+
+void NoteTrackEngine::setIdleStep(int index) {
+    _idleOutput = true;
+    const auto &sequence = *_sequence;
+    const auto &step = sequence.step(index);
+    const auto &scale = Scale::get(sequence.scale());
+    int transpose = _noteTrack.transpose();
+    _idleCvOutput = evalStepNote(step, scale, transpose);
+}
+
+void NoteTrackEngine::setIdleGate(bool gate) {
+    _idleGateOutput = gate;
 }
 
 void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {

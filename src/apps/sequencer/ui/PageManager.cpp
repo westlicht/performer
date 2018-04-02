@@ -24,7 +24,9 @@ void PageManager::pop() {
 }
 
 void PageManager::reset(Page *page) {
-    _pageStackPos = -1;
+    while (_pageStackPos >= 0) {
+        _pageStack[_pageStackPos--]->exit();
+    }
     push(page);
 }
 

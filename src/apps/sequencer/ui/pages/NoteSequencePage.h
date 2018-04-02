@@ -52,6 +52,7 @@ private:
 
     int stepOffset() const { return _page * StepCount; }
 
+    void updateIdleOutput();
     void drawDetail(Canvas &canvas, const NoteSequence::Step &step);
 
     void contextAction(int index);
