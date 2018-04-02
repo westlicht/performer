@@ -10,3 +10,4 @@ function(register_test test file)
 endfunction(register_test)
 
 add_subdirectory(core)
+add_subdirectory(sequencer)

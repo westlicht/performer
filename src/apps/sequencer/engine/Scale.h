@@ -47,7 +47,7 @@ public:
     }
 
     void longName(int note, StringBuilder &str) const override {
-        str("%+.1fV", note * _interval);
+        str("%+.3fV", note * _interval);
     }
 
     float noteVolts(int note) const override {
