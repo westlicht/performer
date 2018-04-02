@@ -24,7 +24,7 @@ void BpmPage::draw(Canvas &canvas) {
     canvas.setColor(0xf);
 
     FixedStringBuilder<16> string("BPM: %.1f", _project.bpm());
-    canvas.drawText(50, 36, string);
+    canvas.drawText(50, 34, string);
 
     float nudgeTempoStrength = _engine.nudgeTempoStrength();
     if (nudgeTempoStrength > 0.f) {
