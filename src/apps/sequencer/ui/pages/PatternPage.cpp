@@ -229,6 +229,7 @@ bool PatternPage::contextActionEnabled(int index) const {
 
 void PatternPage::initPattern() {
     _project.clearPattern(_project.selectedPatternIndex());
+    showMessage("PATTERN INITIALIZED");
 }
 
 void PatternPage::copyPattern() {
@@ -237,6 +238,7 @@ void PatternPage::copyPattern() {
 
 void PatternPage::pastePattern() {
     _model.clipBoard().pastePattern(_project, _project.selectedPatternIndex());
+    showMessage("PATTERN PASTED");
 }
 
 void PatternPage::duplicatePattern() {
@@ -245,5 +247,6 @@ void PatternPage::duplicatePattern() {
         _project.editSelectedPatternIndex(1, false);
         _model.clipBoard().pastePattern(_project, _project.selectedPatternIndex());
         _model.clipBoard().clear();
+        showMessage("PATTERN DUPLICATED");
     }
 }

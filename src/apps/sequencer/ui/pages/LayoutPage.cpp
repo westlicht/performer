@@ -1,5 +1,7 @@
 #include "LayoutPage.h"
 
+#include "Pages.h"
+
 #include "ui/painters/WindowPainter.h"
 
 #include "core/utils/StringBuilder.h"
@@ -35,7 +37,12 @@ void LayoutPage::keyPress(KeyPressEvent &event) {
 
     if (key.isFunction()) {
         if (_mode == Mode::TrackMode && key.function() == 4) {
-            _trackModeListModel.toProject(_project);
+            _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
+                if (result) {
+                    _trackModeListModel.toProject(_project);
+                    showMessage("LAYOUT CHANGED");
+                }
+            });
         }
         setMode(Mode(key.function()));
         event.consume();

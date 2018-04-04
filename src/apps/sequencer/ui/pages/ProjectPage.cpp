@@ -111,6 +111,7 @@ void ProjectPage::initProject() {
     _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
         if (result) {
             _project.clear();
+            showMessage("PROJECT INITIALIZED");
         }
     });
 }
@@ -172,7 +173,7 @@ void ProjectPage::saveProjectToSlot(int slot) {
     if (result == fs::OK) {
         showMessage(FixedStringBuilder<32>("SAVED PROJECT!"));
     } else {
-        showMessage(FixedStringBuilder<32>("SAVING PROJECT FAILED! (%s)", fs::errorToString(result)));
+        showMessage(FixedStringBuilder<32>("SAVING PROJECT FAILED (%s)", fs::errorToString(result)));
     }
 }
 
@@ -181,7 +182,7 @@ void ProjectPage::loadProjectFromSlot(int slot) {
     if (result == fs::OK) {
         showMessage(FixedStringBuilder<32>("LOADED PROJECT!"));
     } else {
-        showMessage(FixedStringBuilder<32>("LOADING PROJECT FAILED! (%s)", fs::errorToString(result)));
+        showMessage(FixedStringBuilder<32>("LOADING PROJECT FAILED (%s)", fs::errorToString(result)));
     }
 }
 

@@ -127,6 +127,7 @@ bool TrackPage::contextActionEnabled(int index) const {
 void TrackPage::initTrackSetup() {
     _project.selectedTrack().clear();
     setTrack(_project.selectedTrack());
+    showMessage("TRACK INITIALIZED");
 }
 
 void TrackPage::copyTrackSetup() {
@@ -136,6 +137,7 @@ void TrackPage::copyTrackSetup() {
 void TrackPage::pasteTrackSetup() {
     _model.clipBoard().pasteTrack(_project.selectedTrack());
     setTrack(_project.selectedTrack());
+    showMessage("TRACK PASTED");
 }
 
 void TrackPage::initRoute() {

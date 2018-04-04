@@ -284,6 +284,7 @@ bool CurveSequencePage::contextActionEnabled(int index) const {
 
 void CurveSequencePage::initSequence() {
     _project.selectedCurveSequence().clear();
+    showMessage("SEQUENCE INITIALIZED");
 }
 
 void CurveSequencePage::copySequence() {
@@ -292,8 +293,10 @@ void CurveSequencePage::copySequence() {
 
 void CurveSequencePage::pasteSequence() {
     _model.clipBoard().pasteCurveSequence(_project.selectedCurveSequence());
+    showMessage("SEQUENCE PASTED");
 }
 
 void CurveSequencePage::duplicateSequence() {
     _project.selectedCurveSequence().duplicate();
+    showMessage("SEQUENCE DUPLICATED");
 }

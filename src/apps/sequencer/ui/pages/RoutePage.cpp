@@ -66,6 +66,7 @@ void RoutePage::keyPress(KeyPressEvent &event) {
         switch (Function(key.function())) {
         case Function::Change:
             *_route = _editRoute;
+            showMessage("ROUTE CHANGED");
             break;
         case Function::Learn:
             _engine.midiLearn().start([this] (const MidiLearn::Result &result) {

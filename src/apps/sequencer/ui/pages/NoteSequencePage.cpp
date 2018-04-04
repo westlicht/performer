@@ -485,6 +485,7 @@ bool NoteSequencePage::contextActionEnabled(int index) const {
 
 void NoteSequencePage::initSequence() {
     _project.selectedNoteSequence().clear();
+    showMessage("SEQUENCE INITIALIZED");
 }
 
 void NoteSequencePage::copySequence() {
@@ -493,9 +494,11 @@ void NoteSequencePage::copySequence() {
 
 void NoteSequencePage::pasteSequence() {
     _model.clipBoard().pasteNoteSequence(_project.selectedNoteSequence());
+    showMessage("SEQUENCE PASTED");
 }
 
 void NoteSequencePage::duplicateSequence() {
     _project.selectedNoteSequence().duplicate();
+    showMessage("SEQUENCE DUPLICATED");
 }
 
