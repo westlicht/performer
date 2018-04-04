@@ -176,11 +176,20 @@ void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, flo
     case Track::TrackMode::Note: {
         auto &noteTrack = track.noteTrack();
         switch (param) {
+        case Param::TrackOctave:
+            noteTrack.setOctave(intValue);
+            break;
         case Param::TrackTranspose:
             noteTrack.setTranspose(intValue);
             break;
         case Param::TrackRotate:
             noteTrack.setRotate(intValue);
+            break;
+        case Param::TrackStepProbabilityBias:
+            noteTrack.setStepProbabilityBias(intValue);
+            break;
+        case Param::TrackStepLengthBias:
+            noteTrack.setStepLengthBias(intValue);
             break;
         default:
             writeNoteSequenceParam(noteTrack.sequence(patternIndex), param, floatValue, intValue);
@@ -236,8 +245,11 @@ const ParamInfo paramInfos[int(Routing::Param::Last)] = {
     [int(Routing::Param::None)]             = { 0,      0   },
     [int(Routing::Param::BPM)]              = { 20,     500 },
     [int(Routing::Param::Swing)]            = { 50,     75  },
+    [int(Routing::Param::TrackOctave)]      = { -10,    10  },
     [int(Routing::Param::TrackTranspose)]   = { -12,    12  },
     [int(Routing::Param::TrackRotate)]      = { -64,    64  },
+    [int(Routing::Param::TrackStepProbabilityBias)] = { -8,    8  },
+    [int(Routing::Param::TrackStepLengthBias)] = { -8,     8   },
     [int(Routing::Param::FirstStep)]        = { 0,      63  },
     [int(Routing::Param::LastStep)]         = { 0,      63  },
 };
@@ -269,9 +281,14 @@ void Routing::printParamValue(Routing::Param param, float normalized, StringBuil
     case Param::Swing:
         str("%d%%", int(value));
         break;
+    case Param::TrackOctave:
     case Param::TrackTranspose:
     case Param::TrackRotate:
         str("%+d", int(value));
+        break;
+    case Param::TrackStepProbabilityBias:
+    case Param::TrackStepLengthBias:
+        str("%+.1f%%", value * 12.5f);
         break;
     case Param::FirstStep:
     case Param::LastStep:

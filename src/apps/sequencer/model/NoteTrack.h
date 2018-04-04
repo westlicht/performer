@@ -43,6 +43,19 @@ public:
         str(Types::fillModeName(fillMode()));
     }
 
+    // octave
+
+    int octave() const { return _octave; }
+    void setOctave(int octave) { _octave = clamp(octave, -10, 10); }
+
+    void editOctave(int value, bool shift) {
+        setOctave(octave() + value);
+    }
+
+    void printOctave(StringBuilder &str) const {
+        str("%+d", octave());
+    }
+
     // transpose
 
     int transpose() const { return _transpose; }
@@ -69,6 +82,39 @@ public:
         str("%+d", rotate());
     }
 
+    // stepProbabilityBias
+
+    int stepProbabilityBias() const { return _stepProbabilityBias; }
+    void setStepProbabilityBias(int stepProbabilityBias) {
+        _stepProbabilityBias = clamp(stepProbabilityBias, -NoteSequence::GateProbability::Range, NoteSequence::GateProbability::Range);
+    }
+
+    void editStepProbabilityBias(int value, bool shift) {
+        setStepProbabilityBias(stepProbabilityBias() + value);
+    }
+
+    void printStepProbabilityBias(StringBuilder &str) const {
+        str("%+.1f%%", stepProbabilityBias() * 12.5f);
+    }
+
+    // stepLengthBias
+
+    int stepLengthBias() const { return _stepLengthBias; }
+    void setStepLengthBias(int stepLengthBias) {
+        _stepLengthBias = clamp(stepLengthBias, -NoteSequence::Length::Range, NoteSequence::Length::Range);
+    }
+
+    void editStepLengthBias(int value, bool shift) {
+        setStepLengthBias(stepLengthBias() + value);
+    }
+
+    void printStepLengthBias(StringBuilder &str) const {
+        str("%+.1f%%", stepLengthBias() * 12.5f);
+    }
+
+    // retriggerProbability
+    // lengthVariationProbability
+
     // sequences
 
     const NoteSequenceArray &sequences() const { return _sequences; }
@@ -92,6 +138,9 @@ private:
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
     NoteSequenceArray _sequences;
+    int8_t _octave;
     int8_t _transpose;
     int8_t _rotate;
+    int8_t _stepProbabilityBias;
+    int8_t _stepLengthBias;
 };

@@ -44,9 +44,12 @@ public:
 
         // Track parameters
         TrackFirst,
-        TrackTranspose = TrackFirst,
+        TrackOctave = TrackFirst,
+        TrackTranspose,
         TrackRotate,
-        TrackLast = TrackRotate,
+        TrackStepProbabilityBias,
+        TrackStepLengthBias,
+        TrackLast = TrackStepLengthBias,
 
         // Sequence parameters
         SequenceFirst,
@@ -63,8 +66,11 @@ public:
         case Param::BPM:            return "BPM";
         case Param::Swing:          return "Swing";
 
+        case Param::TrackOctave:    return "Octave";
         case Param::TrackTranspose: return "Transpose";
         case Param::TrackRotate:    return "Rotate";
+        case Param::TrackStepProbabilityBias: return "Step P. Bias";
+        case Param::TrackStepLengthBias: return "Step L. Bias";
 
         case Param::FirstStep:      return "First Step";
         case Param::LastStep:       return "Last Step";

@@ -36,10 +36,16 @@ public:
 
     virtual Routing::Param routingParam(int row) const override {
         switch (Item(row)) {
+        case Octave:
+            return Routing::Param::TrackOctave;
         case Transpose:
             return Routing::Param::TrackTranspose;
         case Rotate:
             return Routing::Param::TrackRotate;
+        case StepProbabilityBias:
+            return Routing::Param::TrackStepProbabilityBias;
+        case StepLengthBias:
+            return Routing::Param::TrackStepLengthBias;
         default:
             return Routing::Param::None;
         }
@@ -49,8 +55,11 @@ private:
     enum Item {
         PlayMode,
         FillMode,
+        Octave,
         Transpose,
         Rotate,
+        StepProbabilityBias,
+        StepLengthBias,
         Last
     };
 
@@ -58,8 +67,11 @@ private:
         switch (item) {
         case PlayMode:  return "Play Mode";
         case FillMode:  return "Fill Mode";
+        case Octave:    return "Octave";
         case Transpose: return "Transpose";
         case Rotate:    return "Rotate";
+        case StepProbabilityBias: return "Step P. Bias";
+        case StepLengthBias: return "Step L. Bias";
         case Last:      break;
         }
         return nullptr;
@@ -77,11 +89,20 @@ private:
         case FillMode:
             _track->printFillMode(str);
             break;
+        case Octave:
+            _track->printOctave(str);
+            break;
         case Transpose:
             _track->printTranspose(str);
             break;
         case Rotate:
             _track->printRotate(str);
+            break;
+        case StepProbabilityBias:
+            _track->printStepProbabilityBias(str);
+            break;
+        case StepLengthBias:
+            _track->printStepLengthBias(str);
             break;
         case Last:
             break;
@@ -96,11 +117,20 @@ private:
         case FillMode:
             _track->editFillMode(value, shift);
             break;
+        case Octave:
+            _track->editOctave(value, shift);
+            break;
         case Transpose:
             _track->editTranspose(value, shift);
             break;
         case Rotate:
             _track->editRotate(value, shift);
+            break;
+        case StepProbabilityBias:
+            _track->editStepProbabilityBias(value, shift);
+            break;
+        case StepLengthBias:
+            _track->editStepLengthBias(value, shift);
             break;
         case Last:
             break;
