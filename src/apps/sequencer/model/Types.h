@@ -23,15 +23,17 @@ public:
 
     enum class FillMode : uint8_t {
         None,
-        // all gates
-        // max gate probability
+        Gates,
+        NextPattern,
         Last
     };
 
     static const char *fillModeName(FillMode fillMode) {
         switch (fillMode) {
-        case FillMode::None:    return "None";
-        case FillMode::Last:    break;
+        case FillMode::None:        return "None";
+        case FillMode::Gates:       return "Gates";
+        case FillMode::NextPattern: return "Next Pattern";
+        case FillMode::Last:        break;
         }
         return nullptr;
     }

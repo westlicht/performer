@@ -115,6 +115,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
 
 void NoteTrackEngine::changePattern() {
     _sequence = &_noteTrack.sequence(_pattern);
+    _fillSequence = &_noteTrack.sequence(std::min(_pattern + 1, CONFIG_PATTERN_COUNT - 1));
 }
 
 void NoteTrackEngine::clearIdleOutput() {
@@ -137,12 +138,15 @@ void NoteTrackEngine::setIdleGate(bool gate) {
 void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     int transpose = _noteTrack.transpose();
     int rotate = _noteTrack.rotate();
+    bool useFillGates = _fill && _noteTrack.fillMode() == Types::FillMode::Gates;
+    bool useFillSequence = _fill && _noteTrack.fillMode() == Types::FillMode::NextPattern;
 
     const auto &sequence = *_sequence;
+    const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
-    const auto &step = sequence.step(_currentStep);
+    const auto &step = evalSequence.step(_currentStep);
 
-    if (evalStepGate(step) || _fill) {
+    if (evalStepGate(step) || useFillGates) {
         uint32_t stepLength = (divisor * evalStepLength(step)) / NoteSequence::Length::Range;
         int stepRetrigger = evalStepRetrigger(step);
         if (stepRetrigger > 1) {
@@ -158,7 +162,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
             _gateQueue.push({ applySwing(tick + stepLength), false });
         }
 
-        const auto &scale = Scale::get(sequence.scale());
+        const auto &scale = Scale::get(evalSequence.scale());
         _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, transpose) });
     }
 }

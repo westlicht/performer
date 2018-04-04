@@ -48,6 +48,7 @@ private:
     TrackLinkData _linkData;
 
     const NoteSequence *_sequence;
+    const NoteSequence *_fillSequence;
     SequenceState _sequenceState;
     int _currentStep;
 

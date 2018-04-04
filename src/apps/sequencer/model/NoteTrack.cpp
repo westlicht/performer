@@ -2,7 +2,7 @@
 
 void NoteTrack::clear() {
     _playMode = Types::PlayMode::Free;
-    _fillMode = Types::FillMode::None;
+    _fillMode = Types::FillMode::Gates;
     _transpose = 0;
     _rotate = 0;
 
