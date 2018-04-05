@@ -19,4 +19,6 @@ public:
 
 private:
     void updateFills();
+
+    bool _latching;
 };

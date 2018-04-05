@@ -10,10 +10,10 @@
 #include "core/utils/StringBuilder.h"
 
 enum class Function {
-    Edit    = 0,
+    Latch   = 0,
+    Edit    = 1,
+    Cancel  = 4,
 };
-
-static const char *functionNames[] = { "EDIT", nullptr, nullptr, nullptr, nullptr };
 
 enum class ContextAction {
     Init,
@@ -43,20 +43,27 @@ PatternPage::PatternPage(PageManager &manager, PageContext &context) :
 {}
 
 void PatternPage::enter() {
+    _latching = false;
 }
 
 void PatternPage::exit() {
+    _project.playState().commitLatchedRequests();
 }
 
 void PatternPage::draw(Canvas &canvas) {
 
+    const auto &playState = _project.playState();
+
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
+
+    bool hasCancel = playState.hasSyncedRequests() || playState.hasLatchedRequests();
+    const char *functionNames[] = { "LATCH", "EDIT", nullptr, nullptr, hasCancel ? "CANCEL" : nullptr };
+
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     constexpr int Border = 4;
 
-    const auto &playState = _project.playState();
 
     float syncMeasureFraction = _engine.syncMeasureFraction();
     bool hasRequested = false;
@@ -99,7 +106,7 @@ void PatternPage::draw(Canvas &canvas) {
         }
     }
 
-    if (hasRequested) {
+    if (playState.hasSyncedRequests() && hasRequested) {
         canvas.setColor(0xf);
         canvas.hline(0, 10, syncMeasureFraction * Width);
     }
@@ -135,9 +142,34 @@ void PatternPage::updateLeds(Leds &leds) {
 }
 
 void PatternPage::keyDown(KeyEvent &event) {
+    const auto &key = event.key();
+
+    if (key.isFunction()) {
+        switch (Function(key.function())) {
+        case Function::Latch:
+            _latching = true;
+            break;
+        default:
+            break;
+        }
+        event.consume();
+    }
 }
 
 void PatternPage::keyUp(KeyEvent &event) {
+    const auto &key = event.key();
+
+    if (key.isFunction()) {
+        switch (Function(key.function())) {
+        case Function::Latch:
+            _latching = false;
+            _project.playState().commitLatchedRequests();
+            break;
+        default:
+            break;
+        }
+        event.consume();
+    }
 }
 
 void PatternPage::keyPress(KeyPressEvent &event) {
@@ -159,6 +191,13 @@ void PatternPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isFunction()) {
+        switch (Function(key.function())) {
+        case Function::Cancel:
+            playState.cancelPatternRequests();
+            break;
+        default:
+            break;
+        }
         event.consume();
     }
 
@@ -170,15 +209,21 @@ void PatternPage::keyPress(KeyPressEvent &event) {
             _project.setSelectedPatternIndex(pattern);
         } else {
             // select playing pattern
+
+            // use immediate by default
+            // use synced when SHIFT is pressed
+            // use latched when LATCH is pressed
+            PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (key.shiftModifier() ? PlayState::Synced : PlayState::Immediate);
+
             bool globalChange = true;
             for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
                 if (_keyState[MatrixMap::fromTrack(trackIndex)]) {
-                    playState.selectTrackPattern(trackIndex, pattern, key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate);
+                    playState.selectTrackPattern(trackIndex, pattern, executeType);
                     globalChange = false;
                 }
             }
             if (globalChange) {
-                playState.selectPattern(pattern, key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate);
+                playState.selectPattern(pattern, executeType);
             }
         }
 

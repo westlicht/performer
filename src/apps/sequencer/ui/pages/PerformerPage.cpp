@@ -9,28 +9,41 @@
 
 #include "core/utils/StringBuilder.h"
 
+enum class Function {
+    Latch   = 0,
+    Mute    = 1,
+    Unmute  = 2,
+    Fill    = 3,
+    Cancel  = 4
+};
+
 PerformerPage::PerformerPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
 
 void PerformerPage::enter() {
+    _latching = false;
 }
 
 void PerformerPage::exit() {
+    _project.playState().commitLatchedRequests();
 }
 
 void PerformerPage::draw(Canvas &canvas) {
 
+    const auto &playState = _project.playState();
+
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PERFORMER");
 
-    const char *functionNames[] = { "MUTE", "UNMUTE", "FILL", nullptr, "CANCEL" };
+    bool hasCancel = playState.hasSyncedRequests() || playState.hasLatchedRequests();
+    const char *functionNames[] = { "LATCH", "MUTE", "UNMUTE", "FILL", hasCancel ? "CANCEL" : nullptr };
+
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     constexpr int Border = 4;
     constexpr int BorderRequested = 6;
 
-    const auto &playState = _project.playState();
 
     float syncMeasureFraction = _engine.syncMeasureFraction();
     bool hasRequested = false;
@@ -67,7 +80,7 @@ void PerformerPage::draw(Canvas &canvas) {
         }
     }
 
-    if (hasRequested) {
+    if (playState.hasSyncedRequests() && hasRequested) {
         canvas.setColor(0xf);
         canvas.hline(0, 10, syncMeasureFraction * Width);
     }
@@ -91,8 +104,17 @@ void PerformerPage::updateLeds(Leds &leds) {
 void PerformerPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.isFunction() && key.function() == 2) {
-        updateFills();
+    if (key.isFunction()) {
+        switch (Function(key.function())) {
+        case Function::Latch:
+            _latching = true;
+            break;
+        case Function::Fill:
+            updateFills();
+            break;
+        default:
+            break;
+        }
         event.consume();
     }
 
@@ -105,8 +127,18 @@ void PerformerPage::keyDown(KeyEvent &event) {
 void PerformerPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.isFunction() && key.function() == 2) {
-        updateFills();
+    if (key.isFunction()) {
+        switch (Function(key.function())) {
+        case Function::Latch:
+            _latching = false;
+            _project.playState().commitLatchedRequests();
+            break;
+        case Function::Fill:
+            updateFills();
+            break;
+        default:
+            break;
+        }
         event.consume();
     }
 
@@ -128,23 +160,39 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
+    // use immediate by default
+    // use synced when SHIFT is pressed
+    // use latched when LATCH is pressed
+    PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (key.shiftModifier() ? PlayState::Synced : PlayState::Immediate);
+
     if (key.isFunction()) {
-        switch (key.function()) {
-        case 0: playState.muteAll(key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate); break;
-        case 1: playState.unmuteAll(key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate); break;
-        case 2: updateFills(); break;
-        case 4: playState.cancelScheduledMutesAndSolos(); break;
+        switch (Function(key.function())) {
+        case Function::Latch:
+            break;
+        case Function::Mute:
+            playState.muteAll(executeType);
+            break;
+        case Function::Unmute:
+            playState.unmuteAll(executeType);
+            break;
+        case Function::Fill:
+            updateFills();
+            break;
+        case Function::Cancel:
+            playState.cancelMuteRequests();
+            break;
         }
         event.consume();
     }
 
     if (key.isStep()) {
+
         if (key.step() < 8) {
             int track = key.step();
-            playState.toggleMuteTrack(track, key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate);
+            playState.toggleMuteTrack(track, executeType);
         } else {
             int track = key.step() - 8;
-            playState.soloTrack(track, key.shiftModifier() ? PlayState::Scheduled : PlayState::Immediate);
+            playState.soloTrack(track, executeType);
         }
         event.consume();
     }
@@ -155,8 +203,10 @@ void PerformerPage::encoder(EncoderEvent &event) {
 
 void PerformerPage::updateFills() {
     auto &playState = _project.playState();
+    bool globalFill = _keyState[MatrixMap::fromFunction(int(Function::Fill))];
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        playState.fillTrack(trackIndex, _keyState[MatrixMap::fromTrack(trackIndex)] || _keyState[MatrixMap::fromFunction(2)]);
+        bool trackFill = _keyState[MatrixMap::fromTrack(trackIndex)];
+        playState.fillTrack(trackIndex, trackFill || globalFill);
     }
 }

@@ -23,14 +23,14 @@ void PlayState::TrackState::read(ReadContext &context) {
 
 void PlayState::muteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
-    trackState.setRequests(executeType == Immediate ? TrackState::ImmediateMuteRequest : TrackState::ScheduledMuteRequest);
+    trackState.setRequests(TrackState::muteRequestFromExecuteType(executeType));
     trackState.setRequestedMute(true);
     notify(executeType);
 }
 
 void PlayState::unmuteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
-    trackState.setRequests(executeType == Immediate ? TrackState::ImmediateMuteRequest : TrackState::ScheduledMuteRequest);
+    trackState.setRequests(TrackState::muteRequestFromExecuteType(executeType));
     trackState.setRequestedMute(false);
     notify(executeType);
 }
@@ -45,18 +45,19 @@ void PlayState::toggleMuteTrack(int track, ExecuteType executeType) {
             muteTrack(track, Immediate);
         }
         break;
-    case Scheduled:
+    case Synced:
+    case Latched:
         if (trackState.requestedMute() == trackState.mute()) {
             if (trackState.mute()) {
-                unmuteTrack(track, Scheduled);
+                unmuteTrack(track, executeType);
             } else {
-                muteTrack(track, Scheduled);
+                muteTrack(track, executeType);
             }
         } else {
             if (trackState.mute()) {
-                muteTrack(track, Scheduled);
+                muteTrack(track, executeType);
             } else {
-                unmuteTrack(track, Scheduled);
+                unmuteTrack(track, executeType);
             }
         }
         break;
@@ -93,14 +94,6 @@ void PlayState::unsoloTrack(int track, ExecuteType executeType) {
     }
 }
 
-void PlayState::cancelScheduledMutesAndSolos() {
-    for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
-        auto &trackState = _trackStates[track];
-        trackState.clearRequests(TrackState::MuteRequests);
-        trackState.setRequestedMute(trackState.mute());
-    }
-}
-
 void PlayState::fillTrack(int track, bool fill) {
     _trackStates[track].setFill(fill);
     notify(Immediate);
@@ -114,7 +107,7 @@ void PlayState::fillAll(bool fill) {
 
 void PlayState::selectTrackPattern(int track, int pattern, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
-    trackState.setRequests(executeType == Immediate ? TrackState::ImmediatePatternRequest : TrackState::ScheduledPatternRequest);
+    trackState.setRequests(TrackState::patternRequestFromExecuteType(executeType));
     trackState.setRequestedPattern(pattern);
     notify(executeType);
 }
@@ -125,12 +118,31 @@ void PlayState::selectPattern(int pattern, ExecuteType executeType) {
     }
 }
 
+void PlayState::cancelMuteRequests() {
+    for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
+        auto &trackState = _trackStates[track];
+        trackState.clearRequests(TrackState::MuteRequests);
+        trackState.setRequestedMute(trackState.mute());
+    }
+}
+
+void PlayState::cancelPatternRequests() {
+    for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
+        auto &trackState = _trackStates[track];
+        trackState.clearRequests(TrackState::PatternRequests);
+        trackState.setRequestedPattern(trackState.pattern());
+    }
+}
+
 void PlayState::clear() {
     for (auto &trackState : _trackStates) {
         trackState.clear();
     }
+
+    _executeLatchedRequests = false;
     _hasImmediateRequests = false;
-    _hasScheduledRequests = false;
+    _hasSyncedRequests = false;
+    _hasLatchedRequests = false;
 }
 
 void PlayState::write(WriteContext &context) const {

@@ -16,7 +16,8 @@ public:
 
     enum ExecuteType {
         Immediate,
-        Scheduled,
+        Synced,
+        Latched,
     };
 
     class TrackState {
@@ -40,27 +41,39 @@ public:
             RequestedMute           = 1<<1,
             Fill                    = 1<<2,
 
-            ImmediateMuteRequest    = 1<<4,
-            ScheduledMuteRequest    = 1<<5,
-            ImmediatePatternRequest = 1<<6,
-            ScheduledPatternRequest = 1<<7,
+            ImmediateMuteRequest    = 1<<3,
+            SyncedMuteRequest       = 1<<4,
+            LatchedMuteRequest      = 1<<5,
 
-            MuteRequests = ImmediateMuteRequest | ScheduledMuteRequest,
-            PatternRequests = ImmediatePatternRequest | ScheduledPatternRequest,
+            ImmediatePatternRequest = 1<<6,
+            SyncedPatternRequest    = 1<<7,
+            LatchedPatternRequest   = 1<<8,
+
+            MuteRequests = ImmediateMuteRequest | SyncedMuteRequest | LatchedMuteRequest,
+            PatternRequests = ImmediatePatternRequest | SyncedPatternRequest | LatchedPatternRequest,
             ImmediateRequests = ImmediateMuteRequest | ImmediatePatternRequest,
-            ScheduledRequests = ScheduledMuteRequest | ScheduledPatternRequest,
+            SyncedRequests = SyncedMuteRequest | SyncedPatternRequest,
+            LatchedRequests = LatchedMuteRequest | LatchedPatternRequest
         };
 
+        static State muteRequestFromExecuteType(ExecuteType type) {
+            return State(1<<(3 + type));
+        }
+
+        static State patternRequestFromExecuteType(ExecuteType type) {
+            return State(1<<(6 + type));
+        }
+
         void setRequests(int requests) {
-            _state |= uint8_t(requests);
+            _state |= uint16_t(requests);
         }
 
         void clearRequests(int requests) {
-            _state &= ~uint8_t(requests);
+            _state &= ~uint16_t(requests);
         }
 
         bool hasRequests(int requests) const {
-            return _state & uint8_t(requests);
+            return _state & uint16_t(requests);
         }
 
         void setMute(bool mute) {
@@ -95,7 +108,7 @@ public:
             _requestedPattern = pattern;
         }
 
-        uint8_t _state;
+        uint16_t _state;
         uint8_t _pattern;
         uint8_t _requestedPattern;
 
@@ -130,8 +143,6 @@ public:
     void soloTrack(int track, ExecuteType executeType = Immediate);
     void unsoloTrack(int track, ExecuteType executeType = Immediate);
 
-    void cancelScheduledMutesAndSolos();
-
     // fills
 
     void fillTrack(int track, bool fill);
@@ -142,6 +153,15 @@ public:
     void selectTrackPattern(int track, int pattern, ExecuteType executeType = Immediate);
     void selectPattern(int pattern, ExecuteType executeType = Immediate);
 
+
+    void cancelMuteRequests();
+    void cancelPatternRequests();
+    void commitLatchedRequests() { _executeLatchedRequests = true; }
+
+    bool hasImmediateRequests() const { return _hasImmediateRequests; }
+    bool hasSyncedRequests() const { return _hasSyncedRequests; }
+    bool hasLatchedRequests() const { return _hasLatchedRequests; }
+
     void clear();
 
     void write(WriteContext &context) const;
@@ -150,18 +170,21 @@ public:
 private:
     void notify(ExecuteType executeType) {
         _hasImmediateRequests |= (executeType == Immediate);
-        _hasScheduledRequests |= (executeType == Scheduled);
+        _hasSyncedRequests |= (executeType == Synced);
+        _hasLatchedRequests |= (executeType == Latched);
     }
 
-    bool hasImmediateRequests() const { return _hasImmediateRequests; }
-    bool hasScheduledRequests() const { return _hasScheduledRequests; }
+    bool executeLatchedRequests() const { return _executeLatchedRequests; }
 
     void clearImmediateRequests() { _hasImmediateRequests = false; }
-    void clearScheduledRequests() { _hasScheduledRequests = false; }
+    void clearSyncedRequests() { _hasSyncedRequests = false; }
+    void clearLatchedRequests() { _hasLatchedRequests = false; _executeLatchedRequests = false; }
 
     std::array<TrackState, CONFIG_TRACK_COUNT> _trackStates;
+    bool _executeLatchedRequests;
     bool _hasImmediateRequests;
-    bool _hasScheduledRequests;
+    bool _hasSyncedRequests;
+    bool _hasLatchedRequests;
 
     friend class Engine;
 };

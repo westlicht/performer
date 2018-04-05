@@ -258,40 +258,40 @@ void Engine::updatePlayState() {
     auto &playState = _model.project().playState();
 
     bool hasImmediateRequests = playState.hasImmediateRequests();
-    bool hasScheduledRequests = playState.hasScheduledRequests();
+    bool hasSyncedRequests = playState.hasSyncedRequests();
+    bool handleLatchedRequests = playState.executeLatchedRequests();
 
-    if (!(hasImmediateRequests || hasScheduledRequests)) {
+    if (!(hasImmediateRequests || hasSyncedRequests || handleLatchedRequests)) {
         return;
     }
 
     uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
-    bool handleScheduledRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
+    bool handleSyncedRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
+
+    int muteRequests = PlayState::TrackState::ImmediateMuteRequest |
+        (handleSyncedRequests ? PlayState::TrackState::SyncedMuteRequest : 0) |
+        (handleLatchedRequests ? PlayState::TrackState::LatchedMuteRequest : 0);
+
+    int patternRequests = PlayState::TrackState::ImmediatePatternRequest |
+        (handleSyncedRequests ? PlayState::TrackState::SyncedPatternRequest : 0) |
+        (handleLatchedRequests ? PlayState::TrackState::LatchedPatternRequest : 0);
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         auto &trackState = playState.trackState(trackIndex);
         auto trackEngine = _trackEngines[trackIndex];
 
         // handle mute requests
-        if (
-            (trackState.hasRequests(PlayState::TrackState::ImmediateMuteRequest)) ||
-            (handleScheduledRequests && trackState.hasRequests(PlayState::TrackState::ScheduledMuteRequest))
-        ) {
+        if (trackState.hasRequests(muteRequests)) {
             trackState.setMute(trackState.requestedMute());
         }
 
         // handle pattern requests
-        if (
-            (trackState.hasRequests(PlayState::TrackState::ImmediatePatternRequest)) ||
-            (handleScheduledRequests && trackState.hasRequests(PlayState::TrackState::ScheduledPatternRequest))
-        ) {
+        if (trackState.hasRequests(patternRequests)) {
             trackState.setPattern(trackState.requestedPattern());
         }
 
         // clear requests
-        trackState.clearRequests(PlayState::TrackState::ImmediateRequests);
-        if (handleScheduledRequests) {
-            trackState.clearRequests(PlayState::TrackState::ScheduledRequests);
-        }
+        trackState.clearRequests(muteRequests | patternRequests);
 
         // update track engine
         trackEngine->setMute(trackState.mute());
@@ -300,8 +300,11 @@ void Engine::updatePlayState() {
     }
 
     playState.clearImmediateRequests();
-    if (handleScheduledRequests) {
-        playState.clearScheduledRequests();
+    if (handleSyncedRequests) {
+        playState.clearSyncedRequests();
+    }
+    if (handleLatchedRequests) {
+        playState.clearLatchedRequests();
     }
 }
 

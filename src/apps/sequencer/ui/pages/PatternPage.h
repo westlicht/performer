@@ -27,4 +27,6 @@ private:
     void duplicatePattern();
 
     ContextMenu _contextMenu;
+
+    bool _latching;
 };
