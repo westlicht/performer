@@ -51,13 +51,13 @@ set(sources
     ui/pages/ConfirmationPage.cpp
     ui/pages/ContextMenuPage.cpp
     ui/pages/CurveSequencePage.cpp
-    ui/pages/CurveSequenceSetupPage.cpp
+    ui/pages/CurveSequenceEditPage.cpp
     ui/pages/EuclideanPage.cpp
     ui/pages/LayoutPage.cpp
     ui/pages/ListPage.cpp
     ui/pages/MonitorPage.cpp
     ui/pages/NoteSequencePage.cpp
-    ui/pages/NoteSequenceSetupPage.cpp
+    ui/pages/NoteSequenceEditPage.cpp
     ui/pages/PatternPage.cpp
     ui/pages/PerformerPage.cpp
     ui/pages/ProjectPage.cpp

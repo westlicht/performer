@@ -129,8 +129,8 @@ void TopPage::setMode(Mode mode) {
     case Mode::Sequence:
         setSequencePage();
         break;
-    case Mode::SequenceSetup:
-        setSequenceSetupPage();
+    case Mode::SequenceEdit:
+        setSequenceEditPage();
         break;
     case Mode::Pattern:
         setMainPage(pages.pattern);
@@ -139,19 +139,19 @@ void TopPage::setMode(Mode mode) {
         setMainPage(pages.performer);
         break;
     case Mode::Scale:
-        setSequenceSetupPage(0);
+        setSequencePage(0);
         break;
     case Mode::Divisor:
-        setSequenceSetupPage(1);
+        setSequencePage(1);
         break;
     case Mode::ResetMeasure:
-        setSequenceSetupPage(2);
+        setSequencePage(2);
         break;
     case Mode::PlayMode:
-        setSequenceSetupPage(3);
+        setSequencePage(3);
         break;
     case Mode::FirstStep:
-        setSequenceSetupPage(4);
+        setSequencePage(4);
         break;
 
     case Mode::Euclidean:
@@ -202,15 +202,26 @@ void TopPage::setSequencePage() {
     }
 }
 
-void TopPage::setSequenceSetupPage() {
+void TopPage::setSequencePage(int row) {
+    auto &pages = _manager.pages();
+
+    pages.noteSequence.setSelectedRow(row);
+    pages.noteSequence.setEdit(true);
+    pages.curveSequence.setSelectedRow(row);
+    pages.curveSequence.setEdit(true);
+
+    setSequencePage();
+}
+
+void TopPage::setSequenceEditPage() {
     auto &pages = _manager.pages();
 
     switch (_project.selectedTrack().trackMode()) {
     case Track::TrackMode::Note:
-        setMainPage(pages.noteSequenceSetup);
+        setMainPage(pages.noteSequenceEdit);
         break;
     case Track::TrackMode::Curve:
-        setMainPage(pages.curveSequenceSetup);
+        setMainPage(pages.curveSequenceEdit);
         break;
     case Track::TrackMode::MidiCv:
         setMainPage(pages.track);
@@ -218,15 +229,4 @@ void TopPage::setSequenceSetupPage() {
     case Track::TrackMode::Last:
         break;
     }
-}
-
-void TopPage::setSequenceSetupPage(int row) {
-    auto &pages = _manager.pages();
-
-    pages.noteSequenceSetup.setSelectedRow(row);
-    pages.noteSequenceSetup.setEdit(true);
-    pages.curveSequenceSetup.setSelectedRow(row);
-    pages.curveSequenceSetup.setEdit(true);
-
-    setSequenceSetupPage();
 }

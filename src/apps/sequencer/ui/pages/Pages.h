@@ -8,10 +8,10 @@
 #include "ConfirmationPage.h"
 #include "ContextMenuPage.h"
 #include "CurveSequencePage.h"
-#include "CurveSequenceSetupPage.h"
+#include "CurveSequenceEditPage.h"
 #include "MonitorPage.h"
 #include "NoteSequencePage.h"
-#include "NoteSequenceSetupPage.h"
+#include "NoteSequenceEditPage.h"
 #include "PatternPage.h"
 #include "PerformerPage.h"
 #include "ProjectPage.h"
@@ -37,8 +37,8 @@ struct Pages {
     TrackPage track;
     NoteSequencePage noteSequence;
     CurveSequencePage curveSequence;
-    NoteSequenceSetupPage noteSequenceSetup;
-    CurveSequenceSetupPage curveSequenceSetup;
+    NoteSequenceEditPage noteSequenceEdit;
+    CurveSequenceEditPage curveSequenceEdit;
     PatternPage pattern;
     PerformerPage performer;
     RoutingPage routing;
@@ -68,8 +68,8 @@ struct Pages {
         track(manager, context),
         noteSequence(manager, context),
         curveSequence(manager, context),
-        noteSequenceSetup(manager, context),
-        curveSequenceSetup(manager, context),
+        noteSequenceEdit(manager, context),
+        curveSequenceEdit(manager, context),
         pattern(manager, context),
         performer(manager, context),
         routing(manager, context),

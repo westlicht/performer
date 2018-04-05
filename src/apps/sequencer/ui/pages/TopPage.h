@@ -26,7 +26,7 @@ private:
         Layout          = 1,
         Track           = 2,
         Sequence        = 3,
-        SequenceSetup   = 4,
+        SequenceEdit    = 4,
         Pattern         = 6,
         Performer       = 7,
 
@@ -50,8 +50,8 @@ private:
     void setMainPage(Page &page);
 
     void setSequencePage();
-    void setSequenceSetupPage();
-    void setSequenceSetupPage(int row);
+    void setSequencePage(int row);
+    void setSequenceEditPage();
 
     Mode _mode;
 };
