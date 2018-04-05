@@ -289,6 +289,7 @@ void CurveSequencePage::initSequence() {
 
 void CurveSequencePage::copySequence() {
     _model.clipBoard().copyCurveSequence(_project.selectedCurveSequence());
+    showMessage("SEQUENCE COPIED");
 }
 
 void CurveSequencePage::pasteSequence() {

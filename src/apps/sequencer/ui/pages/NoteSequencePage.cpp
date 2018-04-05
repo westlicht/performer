@@ -490,6 +490,7 @@ void NoteSequencePage::initSequence() {
 
 void NoteSequencePage::copySequence() {
     _model.clipBoard().copyNoteSequence(_project.selectedNoteSequence());
+    showMessage("SEQUENCE COPIED");
 }
 
 void NoteSequencePage::pasteSequence() {

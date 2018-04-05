@@ -132,6 +132,7 @@ void TrackPage::initTrackSetup() {
 
 void TrackPage::copyTrackSetup() {
     _model.clipBoard().copyTrack(_project.selectedTrack());
+    showMessage("TRACK COPIED");
 }
 
 void TrackPage::pasteTrackSetup() {

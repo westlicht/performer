@@ -234,6 +234,7 @@ void PatternPage::initPattern() {
 
 void PatternPage::copyPattern() {
     _model.clipBoard().copyPattern(_project, _project.selectedPatternIndex());
+    showMessage("PATTERN COPIED");
 }
 
 void PatternPage::pastePattern() {
