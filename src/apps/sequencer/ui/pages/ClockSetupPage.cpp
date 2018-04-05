@@ -5,10 +5,10 @@
 #include "core/utils/StringBuilder.h"
 
 enum class Function {
-    Exit = 4,
+    Back = 4,
 };
 
-static const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, "EXIT" };
+static const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, "BACK" };
 
 
 ClockSetupPage::ClockSetupPage(PageManager &manager, PageContext &context) :
@@ -28,7 +28,7 @@ void ClockSetupPage::draw(Canvas &canvas) {
 void ClockSetupPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
-    if (key.isFunction() && Function(key.function()) == Function::Exit) {
+    if (key.isFunction() && Function(key.function()) == Function::Back) {
         close();
         event.consume();
     }

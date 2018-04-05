@@ -97,7 +97,7 @@ void TopPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.is(Key::BPM)) {
-        if (key.shiftModifier()) {
+        if (key.pageModifier()) {
             // clock setup page
             _manager.pages().clockSetup.show();
         } else {

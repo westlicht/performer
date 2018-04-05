@@ -5,8 +5,8 @@
 #include "core/utils/StringBuilder.h"
 
 enum class Function {
-    Change  = 0,
-    Learn   = 1,
+    Learn   = 0,
+    Change  = 3,
     Back    = 4,
 };
 
@@ -43,7 +43,7 @@ void RoutePage::exit() {
 
 void RoutePage::draw(Canvas &canvas) {
     bool showChange = *_route != _editRoute;
-    const char *functionNames[] = { showChange ? "CHANGE" : nullptr, "LEARN", nullptr, nullptr, "BACK" };
+    const char *functionNames[] = { "LEARN", nullptr, nullptr, showChange ? "CHANGE" : nullptr, "BACK" };
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "ROUTING");
@@ -64,15 +64,15 @@ void RoutePage::keyPress(KeyPressEvent &event) {
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
-        case Function::Change:
-            *_route = _editRoute;
-            showMessage("ROUTE CHANGED");
-            break;
         case Function::Learn:
             _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
                 assignMidiLearn(result);
                 _engine.midiLearn().stop();
             });
+            break;
+        case Function::Change:
+            *_route = _editRoute;
+            showMessage("ROUTE CHANGED");
             break;
         case Function::Back:
             close();
