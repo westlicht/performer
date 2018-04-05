@@ -92,6 +92,10 @@ void NoteSequence::clear() {
     setRunMode(Types::RunMode::Forward);
     setFirstStep(0);
     setLastStep(15);
+    clearSteps();
+}
+
+void NoteSequence::clearSteps() {
     for (auto &step : _steps) {
         step.clear();
     }
@@ -115,11 +119,11 @@ void NoteSequence::setNotes(std::initializer_list<int> notes) {
     }
 }
 
-void NoteSequence::shift(int direction) {
+void NoteSequence::shiftSteps(int direction) {
     ModelUtils::shiftSteps(_steps, direction);
 }
 
-void NoteSequence::duplicate() {
+void NoteSequence::duplicateSteps() {
     ModelUtils::duplicateSteps(_steps, firstStep(), lastStep());
     setLastStep(lastStep() + (lastStep() - firstStep() + 1));
 }

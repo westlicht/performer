@@ -233,13 +233,14 @@ public:
     //----------------------------------------
 
     void clear();
+    void clearSteps();
 
     void setGates(std::initializer_list<int> gates);
     void setNotes(std::initializer_list<int> notes);
 
-    void shift(int direction);
+    void shiftSteps(int direction);
 
-    void duplicate();
+    void duplicateSteps();
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);

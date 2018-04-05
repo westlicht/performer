@@ -197,7 +197,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
 
     if (key.is(Key::Left)) {
         if (key.shiftModifier()) {
-            sequence.shift(-1);
+            sequence.shiftSteps(-1);
         } else {
             _page = std::max(0, _page - 1);
         }
@@ -205,7 +205,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
     if (key.is(Key::Right)) {
         if (key.shiftModifier()) {
-            sequence.shift(1);
+            sequence.shiftSteps(1);
         } else {
             _page = std::min(3, _page + 1);
         }
@@ -283,21 +283,21 @@ bool CurveSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void CurveSequenceEditPage::initSequence() {
-    _project.selectedCurveSequence().clear();
-    showMessage("SEQUENCE INITIALIZED");
+    _project.selectedCurveSequence().clearSteps();
+    showMessage("STEPS INITIALIZED");
 }
 
 void CurveSequenceEditPage::copySequence() {
-    _model.clipBoard().copyCurveSequence(_project.selectedCurveSequence());
-    showMessage("SEQUENCE COPIED");
+    _model.clipBoard().copyCurveSequenceSteps(_project.selectedCurveSequence(), _stepSelection.selected());
+    showMessage("STEPS COPIED");
 }
 
 void CurveSequenceEditPage::pasteSequence() {
-    _model.clipBoard().pasteCurveSequence(_project.selectedCurveSequence());
-    showMessage("SEQUENCE PASTED");
+    _model.clipBoard().pasteCurveSequenceSteps(_project.selectedCurveSequence(), _stepSelection.selected());
+    showMessage("STEPS PASTED");
 }
 
 void CurveSequenceEditPage::duplicateSequence() {
-    _project.selectedCurveSequence().duplicate();
-    showMessage("SEQUENCE DUPLICATED");
+    _project.selectedCurveSequence().duplicateSteps();
+    showMessage("STEPS DUPLICATED");
 }

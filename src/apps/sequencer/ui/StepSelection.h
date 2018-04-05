@@ -117,6 +117,8 @@ public:
         return _selected.any();
     }
 
+    const std::bitset<N> &selected() const { return _selected; }
+
     bool operator[](int index) const {
         return _selected[index];
     }

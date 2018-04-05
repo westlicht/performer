@@ -9,25 +9,35 @@
 
 #include "core/utils/Container.h"
 
+#include <bitset>
+
 class ClipBoard {
 public:
+    typedef std::bitset<CONFIG_STEP_COUNT> SelectedSteps;
+
     ClipBoard();
 
     void clear();
 
     void copyTrack(const Track &track);
     void copyNoteSequence(const NoteSequence &noteSequence);
+    void copyNoteSequenceSteps(const NoteSequence &noteSequence, const SelectedSteps &selectedSteps);
     void copyCurveSequence(const CurveSequence &curveSequence);
+    void copyCurveSequenceSteps(const CurveSequence &curveSequence, const SelectedSteps &selectedSteps);
     void copyPattern(Project &project, int patternIndex);
 
     void pasteTrack(Track &track) const;
     void pasteNoteSequence(NoteSequence &noteSequence) const;
+    void pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps);
     void pasteCurveSequence(CurveSequence &curveSequence) const;
+    void pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps);
     void pastePattern(Project &project, int patternIndex) const;
 
     bool canPasteTrack() const;
     bool canPasteNoteSequence() const;
+    bool canPasteNoteSequenceSteps() const;
     bool canPasteCurveSequence() const;
+    bool canPasteCurveSequenceSteps() const;
     bool canPastePattern() const;
 
 private:
@@ -35,7 +45,9 @@ private:
         None,
         Track,
         NoteSequence,
+        NoteSequenceSteps,
         CurveSequence,
+        CurveSequenceSteps,
         Pattern,
     };
 

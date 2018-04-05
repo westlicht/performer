@@ -254,7 +254,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
 
     if (key.is(Key::Left)) {
         if (key.shiftModifier()) {
-            sequence.shift(-1);
+            sequence.shiftSteps(-1);
         } else {
             _page = std::max(0, _page - 1);
         }
@@ -262,7 +262,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
     if (key.is(Key::Right)) {
         if (key.shiftModifier()) {
-            sequence.shift(1);
+            sequence.shiftSteps(1);
         } else {
             _page = std::min(3, _page + 1);
         }
@@ -484,22 +484,22 @@ bool NoteSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void NoteSequenceEditPage::initSequence() {
-    _project.selectedNoteSequence().clear();
-    showMessage("SEQUENCE INITIALIZED");
+    _project.selectedNoteSequence().clearSteps();
+    showMessage("STEPS INITIALIZED");
 }
 
 void NoteSequenceEditPage::copySequence() {
-    _model.clipBoard().copyNoteSequence(_project.selectedNoteSequence());
-    showMessage("SEQUENCE COPIED");
+    _model.clipBoard().copyNoteSequenceSteps(_project.selectedNoteSequence(), _stepSelection.selected());
+    showMessage("STEPS COPIED");
 }
 
 void NoteSequenceEditPage::pasteSequence() {
-    _model.clipBoard().pasteNoteSequence(_project.selectedNoteSequence());
-    showMessage("SEQUENCE PASTED");
+    _model.clipBoard().pasteNoteSequenceSteps(_project.selectedNoteSequence(), _stepSelection.selected());
+    showMessage("STEPS PASTED");
 }
 
 void NoteSequenceEditPage::duplicateSequence() {
-    _project.selectedNoteSequence().duplicate();
-    showMessage("SEQUENCE DUPLICATED");
+    _project.selectedNoteSequence().duplicateSteps();
+    showMessage("STEPS DUPLICATED");
 }
 

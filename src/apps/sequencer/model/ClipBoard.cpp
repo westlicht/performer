@@ -20,9 +20,17 @@ void ClipBoard::copyNoteSequence(const NoteSequence &noteSequence) {
     _container.as<NoteSequence>() = noteSequence;
 }
 
+void ClipBoard::copyNoteSequenceSteps(const NoteSequence &noteSequence, const SelectedSteps &selectedSteps) {
+    _type = Type::NoteSequenceSteps;
+}
+
 void ClipBoard::copyCurveSequence(const CurveSequence &curveSequence) {
     _type = Type::CurveSequence;
     _container.as<CurveSequence>() = curveSequence;
+}
+
+void ClipBoard::copyCurveSequenceSteps(const CurveSequence &curveSequence, const SelectedSteps &selectedSteps) {
+    _type = Type::CurveSequenceSteps;
 }
 
 void ClipBoard::copyPattern(Project &project, int patternIndex) {
@@ -58,10 +66,22 @@ void ClipBoard::pasteNoteSequence(NoteSequence &noteSequence) const {
     }
 }
 
+void ClipBoard::pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps) {
+    if (canPasteNoteSequenceSteps()) {
+
+    }
+}
+
 void ClipBoard::pasteCurveSequence(CurveSequence &curveSequence) const {
     if (canPasteCurveSequence()) {
         Model::WriteLock lock;
         curveSequence = _container.as<CurveSequence>();
+    }
+}
+
+void ClipBoard::pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps) {
+    if (canPasteCurveSequenceSteps()) {
+
     }
 }
 
@@ -95,8 +115,16 @@ bool ClipBoard::canPasteNoteSequence() const {
     return _type == Type::NoteSequence;
 }
 
+bool ClipBoard::canPasteNoteSequenceSteps() const {
+    return _type == Type::NoteSequenceSteps;
+}
+
 bool ClipBoard::canPasteCurveSequence() const {
     return _type == Type::CurveSequence;
+}
+
+bool ClipBoard::canPasteCurveSequenceSteps() const {
+    return _type == Type::CurveSequenceSteps;
 }
 
 bool ClipBoard::canPastePattern() const {

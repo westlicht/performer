@@ -29,6 +29,10 @@ void CurveSequence::clear() {
     setRunMode(Types::RunMode::Forward);
     setFirstStep(0);
     setLastStep(15);
+    clearSteps();
+}
+
+void CurveSequence::clearSteps() {
     for (auto &step : _steps) {
         step.clear();
     }
@@ -43,11 +47,11 @@ void CurveSequence::setShapes(std::initializer_list<int> shapes) {
     }
 }
 
-void CurveSequence::shift(int direction) {
+void CurveSequence::shiftSteps(int direction) {
     ModelUtils::shiftSteps(_steps, direction);
 }
 
-void CurveSequence::duplicate() {
+void CurveSequence::duplicateSteps() {
     ModelUtils::duplicateSteps(_steps, firstStep(), lastStep());
     setLastStep(lastStep() + (lastStep() - firstStep() + 1));
 }

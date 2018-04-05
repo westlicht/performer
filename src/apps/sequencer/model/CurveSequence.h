@@ -224,12 +224,13 @@ public:
     //----------------------------------------
 
     void clear();
+    void clearSteps();
 
     void setShapes(std::initializer_list<int> shapes);
 
-    void shift(int direction);
+    void shiftSteps(int direction);
 
-    void duplicate();
+    void duplicateSteps();
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
