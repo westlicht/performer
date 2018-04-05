@@ -19,7 +19,7 @@ ClockSetupPage::ClockSetupPage(PageManager &manager, PageContext &context) :
 
 void ClockSetupPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "CLOCK SETUP");
+    WindowPainter::drawHeader(canvas, _model, _engine, "CLOCK");
     WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
@@ -35,4 +35,3 @@ void ClockSetupPage::keyPress(KeyPressEvent &event) {
 
     ListPage::keyPress(event);
 }
-
