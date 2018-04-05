@@ -2,7 +2,7 @@
 
 #include "ListPage.h"
 
-#include "ui/model/CurveSequenceSetupListModel.h"
+#include "ui/model/CurveSequenceListModel.h"
 
 class CurveSequencePage : public ListPage {
 public:
@@ -15,5 +15,5 @@ public:
     virtual void updateLeds(Leds &leds) override;
 
 private:
-    CurveSequenceSetupListModel _listModel;
+    CurveSequenceListModel _listModel;
 };

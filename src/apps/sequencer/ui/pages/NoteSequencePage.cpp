@@ -31,16 +31,16 @@ void NoteSequencePage::updateLeds(Leds &leds) {
     const auto &sequence = _project.selectedNoteSequence();
 
     switch (selectedRow()) {
-    case NoteSequenceSetupListModel::Scale:
+    case NoteSequenceListModel::Scale:
         LedPainter::drawStepIndex(leds, sequence.scale());
         break;
-    case NoteSequenceSetupListModel::Divisor:
+    case NoteSequenceListModel::Divisor:
         LedPainter::drawStepIndex(leds, sequence.indexedDivisor());
         break;
-    case NoteSequenceSetupListModel::FirstStep:
+    case NoteSequenceListModel::FirstStep:
         LedPainter::drawStepIndex(leds, sequence.firstStep());
         break;
-    case NoteSequenceSetupListModel::LastStep:
+    case NoteSequenceListModel::LastStep:
         LedPainter::drawStepIndex(leds, sequence.lastStep());
         break;
     }
@@ -58,10 +58,10 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
     if (key.isStep()) {
         int step = key.step();
         switch (selectedRow()) {
-        case NoteSequenceSetupListModel::Scale:
+        case NoteSequenceListModel::Scale:
             sequence.setScale(step);
             break;
-        case NoteSequenceSetupListModel::Divisor:
+        case NoteSequenceListModel::Divisor:
             sequence.setIndexedDivisor(step);
             break;
         }

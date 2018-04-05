@@ -2,7 +2,7 @@
 
 #include "ListPage.h"
 
-#include "ui/model/NoteSequenceSetupListModel.h"
+#include "ui/model/NoteSequenceListModel.h"
 
 class NoteSequencePage : public ListPage {
 public:
@@ -17,5 +17,5 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
 
 private:
-    NoteSequenceSetupListModel _listModel;
+    NoteSequenceListModel _listModel;
 };

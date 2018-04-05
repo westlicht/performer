@@ -8,7 +8,7 @@
 
 #include "engine/Scale.h"
 
-class NoteSequenceSetupListModel : public ListModel {
+class NoteSequenceListModel : public ListModel {
 public:
     enum Item {
         Scale,
@@ -20,7 +20,7 @@ public:
         Last
     };
 
-    NoteSequenceSetupListModel()
+    NoteSequenceListModel()
     {}
 
     void setSequence(NoteSequence *sequence) {

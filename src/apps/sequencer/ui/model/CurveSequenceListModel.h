@@ -8,9 +8,9 @@
 
 #include "engine/Scale.h"
 
-class CurveSequenceSetupListModel : public ListModel {
+class CurveSequenceListModel : public ListModel {
 public:
-    CurveSequenceSetupListModel()
+    CurveSequenceListModel()
     {}
 
     void setSequence(CurveSequence *sequence) {
