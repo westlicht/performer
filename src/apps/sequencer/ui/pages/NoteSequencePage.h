@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ListPage.h"
+#include "ContextMenu.h"
 
 #include "ui/model/NoteSequenceListModel.h"
 
@@ -17,5 +18,14 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
 
 private:
+    void contextAction(int index);
+    bool contextActionEnabled(int index) const;
+    void initSequence();
+    void copySequence();
+    void pasteSequence();
+    void duplicateSequence();
+
     NoteSequenceListModel _listModel;
+
+    ContextMenu _contextMenu;
 };
