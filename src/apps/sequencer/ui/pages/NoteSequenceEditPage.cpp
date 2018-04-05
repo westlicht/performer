@@ -477,7 +477,7 @@ void NoteSequenceEditPage::contextAction(int index) {
 bool NoteSequenceEditPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
-        return _model.clipBoard().canPasteNoteSequence();
+        return _model.clipBoard().canPasteNoteSequenceSteps();
     default:
         return true;
     }

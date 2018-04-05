@@ -1,6 +1,7 @@
 #include "ClipBoard.h"
 
 #include "Model.h"
+#include "ModelUtils.h"
 
 ClipBoard::ClipBoard() {
     clear();
@@ -22,6 +23,9 @@ void ClipBoard::copyNoteSequence(const NoteSequence &noteSequence) {
 
 void ClipBoard::copyNoteSequenceSteps(const NoteSequence &noteSequence, const SelectedSteps &selectedSteps) {
     _type = Type::NoteSequenceSteps;
+    auto &noteSequenceSteps = _container.as<NoteSequenceSteps>();
+    noteSequenceSteps.sequence = noteSequence;
+    noteSequenceSteps.selected = selectedSteps;
 }
 
 void ClipBoard::copyCurveSequence(const CurveSequence &curveSequence) {
@@ -31,6 +35,9 @@ void ClipBoard::copyCurveSequence(const CurveSequence &curveSequence) {
 
 void ClipBoard::copyCurveSequenceSteps(const CurveSequence &curveSequence, const SelectedSteps &selectedSteps) {
     _type = Type::CurveSequenceSteps;
+    auto &curveSequenceSteps = _container.as<CurveSequenceSteps>();
+    curveSequenceSteps.sequence = curveSequence;
+    curveSequenceSteps.selected = selectedSteps;
 }
 
 void ClipBoard::copyPattern(Project &project, int patternIndex) {
@@ -68,7 +75,8 @@ void ClipBoard::pasteNoteSequence(NoteSequence &noteSequence) const {
 
 void ClipBoard::pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps) {
     if (canPasteNoteSequenceSteps()) {
-
+        const auto &noteSequenceSteps = _container.as<NoteSequenceSteps>();
+        ModelUtils::copySteps(noteSequenceSteps.sequence.steps(), noteSequenceSteps.selected, noteSequence.steps(), selectedSteps);
     }
 }
 
@@ -81,7 +89,8 @@ void ClipBoard::pasteCurveSequence(CurveSequence &curveSequence) const {
 
 void ClipBoard::pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps) {
     if (canPasteCurveSequenceSteps()) {
-
+        const auto &curveSequenceSteps = _container.as<CurveSequenceSteps>();
+        ModelUtils::copySteps(curveSequenceSteps.sequence.steps(), curveSequenceSteps.selected, curveSequence.steps(), selectedSteps);
     }
 }
 

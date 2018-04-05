@@ -5,6 +5,7 @@
 
 #include <array>
 #include <algorithm>
+#include <bitset>
 
 namespace ModelUtils {
 
@@ -47,6 +48,40 @@ static void duplicateSteps(std::array<Step, N> &steps, int firstStep, int lastSt
         int dst = src + (lastStep - firstStep + 1);
         if (dst < int(steps.size())) {
             steps[dst] = steps[src];
+        }
+    }
+}
+
+template<typename Step, size_t N>
+static void copySteps(
+    const std::array<Step, N> &src, const std::bitset<N> &srcSelected,
+    std::array<Step, N> &dst, const std::bitset<N> &dstSelected
+) {
+    if (srcSelected.none() || dstSelected.none()) {
+        return;
+    }
+
+    size_t srcFirstIndex = 0;
+    for (size_t srcIndex = 0; srcIndex < dst.size(); ++srcIndex) {
+        if (srcSelected[srcIndex]) {
+            srcFirstIndex = srcIndex;
+            break;
+        }
+    }
+
+    bool copy = false;
+    for (size_t dstIndex = 0; dstIndex < dst.size(); ++dstIndex) {
+        size_t srcIndex;
+        if (dstSelected[dstIndex]) {
+            copy = true;
+            srcIndex = srcFirstIndex;
+        }
+        if (copy) {
+            dst[dstIndex] = src[srcIndex];
+            ++srcIndex;
+            if (srcIndex >= N) {
+                break;
+            }
         }
     }
 }

@@ -276,7 +276,7 @@ void CurveSequenceEditPage::contextAction(int index) {
 bool CurveSequenceEditPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
-        return _model.clipBoard().canPasteCurveSequence();
+        return _model.clipBoard().canPasteCurveSequenceSteps();
     default:
         return true;
     }

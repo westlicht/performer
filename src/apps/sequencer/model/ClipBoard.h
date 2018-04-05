@@ -51,6 +51,16 @@ private:
         Pattern,
     };
 
+    struct NoteSequenceSteps {
+        NoteSequence sequence;
+        SelectedSteps selected;
+    };
+
+    struct CurveSequenceSteps {
+        CurveSequence sequence;
+        SelectedSteps selected;
+    };
+
     struct Pattern {
         struct {
             Track::TrackMode trackMode;
@@ -62,5 +72,5 @@ private:
     };
 
     Type _type = Type::None;
-    Container<Track, NoteSequence, CurveSequence, Pattern> _container;
+    Container<Track, NoteSequence, NoteSequenceSteps, CurveSequence, CurveSequenceSteps, Pattern> _container;
 };
