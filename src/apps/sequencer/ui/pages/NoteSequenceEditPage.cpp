@@ -49,6 +49,7 @@ NoteSequenceEditPage::NoteSequenceEditPage(PageManager &manager, PageContext &co
 {}
 
 void NoteSequenceEditPage::enter() {
+    _showDetail = false;
 }
 
 void NoteSequenceEditPage::exit() {
@@ -107,47 +108,36 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
         }
 
-        // gate variation
-        if (_mode == Mode::GateVariation) {
+        switch (_mode) {
+        case Mode::GateVariation:
             SequencePainter::drawProbability(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 2,
                 step.gateProbability() + 1, NoteSequence::GateProbability::Range
             );
-        }
-
-        // retrigger
-        if (_mode == Mode::Retrigger) {
+            break;
+        case Mode::Retrigger:
             SequencePainter::drawRetrigger(
                 canvas,
                 x, y + 18, stepWidth, 2,
                 step.retrigger() + 1, NoteSequence::Retrigger::Range
             );
-            // canvas.setColor(0xf);
-            // FixedStringBuilder<8> str("%d", step.retrigger() + 1);
-            // canvas.drawText(x + (16 - canvas.textWidth(str)) / 2, y + 20, str);
-        }
-
-        // retrigger variation
-        if (_mode == Mode::RetriggerVariation) {
+            break;
+        case Mode::RetriggerVariation:
             SequencePainter::drawProbability(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 2,
                 step.retriggerProbability() + 1, NoteSequence::RetriggerProbability::Range
             );
-        }
-
-        // gate length
-        if (_mode == Mode::Length) {
+            break;
+        case Mode::Length:
             SequencePainter::drawLength(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 6,
                 step.length() + 1, NoteSequence::Length::Range
             );
-        }
-
-        // gate length variation
-        if (_mode == Mode::LengthVariation) {
+            break;
+        case Mode::LengthVariation:
             SequencePainter::drawLengthRange(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 6,
@@ -158,10 +148,8 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
                 x + 2, y + 28, stepWidth - 4, 2,
                 step.lengthVariationProbability(), NoteSequence::LengthVariationProbability::Max
             );
-        }
-
-        // note
-        if (_mode == Mode::Note) {
+            break;
+        case Mode::Note: {
             canvas.setColor(0xf);
             FixedStringBuilder<8> str;
             scale.shortName(step.note(), 0, str);
@@ -169,11 +157,24 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             str.reset();
             scale.shortName(step.note(), 1, str);
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
+            break;
+        }
+        case Mode::NoteSlide:
+            SequencePainter::drawSlide(
+                canvas,
+                x + 4, y + 18, stepWidth - 8, 4,
+                step.slide()
+            );
+            break;
+        default:
+            break;
         }
     }
 
-    if (_mode != Mode::Gate && os::ticks() < _lastEditTicks + os::time::ms(500)) {
+    if (_showDetail && _mode != Mode::Gate && _mode != Mode::NoteSlide && _stepSelection.any()) {
         drawDetail(canvas, sequence.step(_stepSelection.first()));
+    } else {
+        _showDetail = false;
     }
 }
 
@@ -243,13 +244,17 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
             _mode = _mode == Mode::Length ? Mode::LengthVariation : Mode::Length;
             break;
         case Function::Note:
-            _mode = _mode == Mode::Note ? Mode::NoteVariation : Mode::Note;
+            _mode = _mode == Mode::Note ? Mode::NoteVariation : (_mode == Mode::NoteVariation ? Mode::NoteSlide : Mode::Note);
             break;
         case Function::Condition:
             _mode = Mode::TrigCondition;
             break;
         }
         event.consume();
+    }
+
+    if (key.isEncoder()) {
+        _showDetail = true;
     }
 
     if (key.is(Key::Left)) {
@@ -275,7 +280,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
     const auto &scale = Scale::get(sequence.scale());
 
     if (_stepSelection.any()) {
-        _lastEditTicks = os::ticks();
+        _showDetail = true;
     } else {
         return;
     }
@@ -339,6 +344,12 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
                 break;
             case Mode::NoteVariation:
                 break;
+            case Mode::NoteSlide:
+                step.setSlide(
+                    setToFirst ? firstStep.slide() :
+                    event.value() > 0
+                );
+                break;
             default:
                 break;
             }
@@ -357,7 +368,6 @@ void NoteSequenceEditPage::updateIdleOutput() {
     } else {
         trackEngine.setIdleGate(false);
     }
-
 }
 
 void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &step) {
@@ -374,6 +384,9 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
 
     canvas.setFont(Font::Small);
     str("%d", _stepSelection.first() + 1);
+    if (_stepSelection.count() > 1) {
+        str("*");
+    }
     canvas.drawTextCentered(64, 16, 32, 32, str);
 
     canvas.setFont(Font::Tiny);

@@ -32,6 +32,7 @@ private:
         LengthVariation,
         Note,
         NoteVariation,
+        NoteSlide,
         TrigCondition,
     };
 
@@ -45,6 +46,7 @@ private:
         case Mode::LengthVariation:     return "LENGTH VAR"; break;
         case Mode::Note:                return "NOTE"; break;
         case Mode::NoteVariation:       return "NOTE VAR"; break;
+        case Mode::NoteSlide:           return "NOTE SLIDE"; break;
         case Mode::TrigCondition:       return "COND"; break;
         }
         return nullptr;
@@ -66,7 +68,7 @@ private:
 
     Mode _mode = Mode::Gate;
     int _page = 0;
-    uint32_t _lastEditTicks = 0;
+    bool _showDetail;
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 };

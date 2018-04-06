@@ -67,3 +67,14 @@ void SequencePainter::drawLengthRange(Canvas &canvas, int x, int y, int w, int h
 
     canvas.fillRect(x + std::min(gw, rw), y + 2, std::max(gw, rw) - std::min(gw, rw) + 1, h - 4);
 }
+
+void SequencePainter::drawSlide(Canvas &canvas, int x, int y, int w, int h, bool active) {
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+
+    if (active) {
+        canvas.line(x, y + h, x + w, y);
+    } else {
+        canvas.hline(x, y + h, w);
+    }
+}

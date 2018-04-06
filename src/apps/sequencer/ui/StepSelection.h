@@ -117,6 +117,10 @@ public:
         return _selected.any();
     }
 
+    size_t count() const {
+        return _selected.count();
+    }
+
     const std::bitset<N> &selected() const { return _selected; }
 
     bool operator[](int index) const {
