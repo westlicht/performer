@@ -176,6 +176,9 @@ void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, flo
     case Track::TrackMode::Note: {
         auto &noteTrack = track.noteTrack();
         switch (param) {
+        case Param::TrackSlideTime:
+            noteTrack.setSlideTime(intValue);
+            break;
         case Param::TrackOctave:
             noteTrack.setOctave(intValue);
             break;
@@ -245,6 +248,7 @@ const ParamInfo paramInfos[int(Routing::Param::Last)] = {
     [int(Routing::Param::None)]             = { 0,      0   },
     [int(Routing::Param::BPM)]              = { 20,     500 },
     [int(Routing::Param::Swing)]            = { 50,     75  },
+    [int(Routing::Param::TrackSlideTime)]   = { 0,      100 },
     [int(Routing::Param::TrackOctave)]      = { -10,    10  },
     [int(Routing::Param::TrackTranspose)]   = { -12,    12  },
     [int(Routing::Param::TrackRotate)]      = { -64,    64  },
@@ -279,6 +283,7 @@ void Routing::printParamValue(Routing::Param param, float normalized, StringBuil
         str("%.1f", value);
         break;
     case Param::Swing:
+    case Param::TrackSlideTime:
         str("%d%%", int(value));
         break;
     case Param::TrackOctave:

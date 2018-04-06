@@ -44,7 +44,8 @@ public:
 
         // Track parameters
         TrackFirst,
-        TrackOctave = TrackFirst,
+        TrackSlideTime = TrackFirst,
+        TrackOctave,
         TrackTranspose,
         TrackRotate,
         TrackStepProbabilityBias,
@@ -66,6 +67,7 @@ public:
         case Param::BPM:            return "BPM";
         case Param::Swing:          return "Swing";
 
+        case Param::TrackSlideTime: return "Slide Time";
         case Param::TrackOctave:    return "Octave";
         case Param::TrackTranspose: return "Transpose";
         case Param::TrackRotate:    return "Rotate";

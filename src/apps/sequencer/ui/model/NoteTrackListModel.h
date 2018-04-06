@@ -36,6 +36,8 @@ public:
 
     virtual Routing::Param routingParam(int row) const override {
         switch (Item(row)) {
+        case SlideTime:
+            return Routing::Param::TrackSlideTime;
         case Octave:
             return Routing::Param::TrackOctave;
         case Transpose:
@@ -55,6 +57,7 @@ private:
     enum Item {
         PlayMode,
         FillMode,
+        SlideTime,
         Octave,
         Transpose,
         Rotate,
@@ -67,6 +70,7 @@ private:
         switch (item) {
         case PlayMode:  return "Play Mode";
         case FillMode:  return "Fill Mode";
+        case SlideTime: return "Slide Time";
         case Octave:    return "Octave";
         case Transpose: return "Transpose";
         case Rotate:    return "Rotate";
@@ -88,6 +92,9 @@ private:
             break;
         case FillMode:
             _track->printFillMode(str);
+            break;
+        case SlideTime:
+            _track->printSlideTime(str);
             break;
         case Octave:
             _track->printOctave(str);
@@ -116,6 +123,9 @@ private:
             break;
         case FillMode:
             _track->editFillMode(value, shift);
+            break;
+        case SlideTime:
+            _track->editSlideTime(value, shift);
             break;
         case Octave:
             _track->editOctave(value, shift);

@@ -43,6 +43,19 @@ public:
         str(Types::fillModeName(fillMode()));
     }
 
+    // slideTime
+
+    int slideTime() const { return _slideTime; }
+    void setSlideTime(int slideTime) { _slideTime = clamp(slideTime, 0, 100); }
+
+    void editSlideTime(int value, bool shift) {
+        setSlideTime(ModelUtils::adjustedByStep(slideTime(), value, 5, !shift));
+    }
+
+    void printSlideTime(StringBuilder &str) const {
+        str("%d%%", slideTime());
+    }
+
     // octave
 
     int octave() const { return _octave; }
@@ -137,10 +150,12 @@ public:
 private:
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
-    NoteSequenceArray _sequences;
+    uint8_t _slideTime;
     int8_t _octave;
     int8_t _transpose;
     int8_t _rotate;
     int8_t _stepProbabilityBias;
     int8_t _stepLengthBias;
+
+    NoteSequenceArray _sequences;
 };
