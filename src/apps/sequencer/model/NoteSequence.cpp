@@ -4,6 +4,7 @@
 
 void NoteSequence::Step::clear() {
     setGate(false);
+    setSlide(false);
     setRetrigger(0);
     setRetriggerProbability(RetriggerProbability::Max);
     setGateProbability(GateProbability::Max);

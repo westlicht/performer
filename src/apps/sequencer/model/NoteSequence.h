@@ -44,6 +44,12 @@ public:
         int gateProbability() const { return _data0.gateProbability; }
         void setGateProbability(int gateProbability) { _data0.gateProbability = gateProbability; }
 
+        // slide
+
+        bool slide() const { return _data0.slide ? true : false; }
+        void setSlide(bool slide) { _data0.slide = slide; }
+        void toggleSlide() { setSlide(!slide()); }
+
         // retrigger
 
         int retrigger() const { return _data1.retrigger; }
@@ -94,14 +100,14 @@ public:
         union {
             uint32_t raw;
             BitField<0, 1> gate;
-            BitField<1, GateProbability::Bits> gateProbability;
-            BitField<4, Length::Bits> length;
-            BitField<7, LengthVariationRange::Bits> lengthVariationRange;
-            BitField<11, LengthVariationProbability::Bits> lengthVariationProbability;
-            BitField<14, Note::Bits> note;
-            BitField<21, NoteVariationRange::Bits> noteVariationRange;
-            BitField<28, NoteVariationProbability::Bits> noteVariationProbability;
-            // 1 bit left
+            BitField<1, 1> slide;
+            BitField<2, GateProbability::Bits> gateProbability;
+            BitField<5, Length::Bits> length;
+            BitField<8, LengthVariationRange::Bits> lengthVariationRange;
+            BitField<12, LengthVariationProbability::Bits> lengthVariationProbability;
+            BitField<15, Note::Bits> note;
+            BitField<22, NoteVariationRange::Bits> noteVariationRange;
+            BitField<29, NoteVariationProbability::Bits> noteVariationProbability;
         } _data0;
         union {
             uint16_t raw;
