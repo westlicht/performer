@@ -84,7 +84,7 @@ void Engine::update() {
     _routingEngine.update();
 
     uint32_t tick;
-    bool updated = false;
+    bool updateOutputs = true;
     while (_clock.checkTick(&tick)) {
         _tick = tick;
 
@@ -96,11 +96,15 @@ void Engine::update() {
         }
 
         updateTrackOutputs();
-        updated = true;
+        updateOutputs = false;
     }
 
-    if (!updated) {
+    if (updateOutputs) {
         updateTrackOutputs();
+    }
+
+    for (auto trackEngine : _trackEngines) {
+        trackEngine->update(dt);
     }
 
     // overrides
@@ -180,10 +184,10 @@ void Engine::updateClockSetup() {
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &track = _model.project().track(trackIndex);
-        int linkTrack = track.linkTrack();
-        const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
 
         if (!_trackEngines[trackIndex] || _trackEngines[trackIndex]->trackMode() != track.trackMode()) {
+            int linkTrack = track.linkTrack();
+            const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
             auto &trackEngine = _trackEngines[trackIndex];
             auto &trackContainer = _trackEngineContainers[trackIndex];
 

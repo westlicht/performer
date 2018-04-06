@@ -71,6 +71,7 @@ public:
 
     virtual void reset() = 0;
     virtual void tick(uint32_t tick) = 0;
+    virtual void update(float dt) = 0;
     virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message) {}
     virtual void changePattern() {}
 

@@ -75,6 +75,9 @@ void CurveTrackEngine::tick(uint32_t tick) {
     }
 }
 
+void CurveTrackEngine::update(float dt) {
+}
+
 void CurveTrackEngine::changePattern() {
     _sequence = &_curveTrack.sequence(_pattern);
 }

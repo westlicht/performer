@@ -114,6 +114,9 @@ void NoteTrackEngine::tick(uint32_t tick) {
     }
 }
 
+void NoteTrackEngine::update(float dt) {
+}
+
 void NoteTrackEngine::changePattern() {
     _sequence = &_noteTrack.sequence(_pattern);
     _fillSequence = &_noteTrack.sequence(std::min(_pattern + 1, CONFIG_PATTERN_COUNT - 1));

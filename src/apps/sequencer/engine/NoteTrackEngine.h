@@ -16,6 +16,7 @@ public:
 
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
+    virtual void update(float dt) override;
     virtual void changePattern() override;
 
     virtual const TrackLinkData *linkData() const override { return &_linkData; }
