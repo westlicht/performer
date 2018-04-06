@@ -45,6 +45,9 @@ void TrackPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "TRACK");
     WindowPainter::drawActiveFunction(canvas, Track::trackModeName(_project.selectedTrack().trackMode()));
 
+    const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, nullptr };
+    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+
     ListPage::draw(canvas);
 }
 
