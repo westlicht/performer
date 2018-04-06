@@ -53,7 +53,11 @@ void NoteTrackEngine::reset() {
     _gate = false;
     _idleOutput = false;
     _gateOutput = false;
+    _cvOutput = 0.f;
+    _cvOutputTarget = 0.f;
+    _slideActive = false;
     _gateQueue.clear();
+    _cvQueue.clear();
     changePattern();
 }
 
@@ -109,12 +113,18 @@ void NoteTrackEngine::tick(uint32_t tick) {
     }
 
     while (!_cvQueue.empty() && tick >= _cvQueue.front().tick) {
-        _cvOutput = _cvQueue.front().cv;
+        _cvOutputTarget = _cvQueue.front().cv;
+        _slideActive = _cvQueue.front().slide;
         _cvQueue.pop();
     }
 }
 
 void NoteTrackEngine::update(float dt) {
+    if (_slideActive) {
+        _cvOutput += (_cvOutputTarget - _cvOutput) * std::min(1.f, dt * (200 - 2 * _noteTrack.slideTime()));
+    } else {
+        _cvOutput = _cvOutputTarget;
+    }
 }
 
 void NoteTrackEngine::changePattern() {
@@ -169,7 +179,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
         }
 
         const auto &scale = Scale::get(evalSequence.scale());
-        _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, octave, transpose) });
+        _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, octave, transpose), step.slide() });
     }
 }
 

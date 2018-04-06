@@ -56,6 +56,8 @@ private:
     bool _gate;
     bool _gateOutput;
     float _cvOutput;
+    float _cvOutputTarget;
+    bool _slideActive;
 
     bool _idleOutput;
     bool _idleGateOutput;
@@ -77,6 +79,7 @@ private:
     struct Cv {
         uint32_t tick;
         float cv;
+        bool slide;
     };
 
     struct CvCompare {
