@@ -2,7 +2,7 @@
 
 #include "core/utils/StringBuilder.h"
 
-#include "apps/sequencer/engine/Scale.cpp"
+#include "apps/sequencer/model/Scale.cpp"
 
 #include <array>
 #include <cstdint>
