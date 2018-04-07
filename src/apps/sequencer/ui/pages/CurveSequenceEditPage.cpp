@@ -57,14 +57,7 @@ static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, 
 }
 
 CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &context) :
-    BasePage(manager, context),
-    _contextMenu(
-        manager.pages().contextMenu,
-        contextMenuItems,
-        int(ContextAction::Last),
-        [&] (int index) { contextAction(index); },
-        [&] (int index) { return contextActionEnabled(index); }
-    )
+    BasePage(manager, context)
 {}
 
 void CurveSequenceEditPage::enter() {
@@ -168,7 +161,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     auto &sequence = _project.selectedCurveSequence();
 
     if (key.isContextMenu()) {
-        _contextMenu.show();
+        contextShow();
         event.consume();
         return;
     }
@@ -251,6 +244,15 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
     }
 
     event.consume();
+}
+
+void CurveSequenceEditPage::contextShow() {
+    showContextMenu(ContextMenu(
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    ));
 }
 
 void CurveSequenceEditPage::contextAction(int index) {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BasePage.h"
-#include "ContextMenu.h"
 
 #include "ui/StepSelection.h"
 
@@ -40,6 +39,7 @@ private:
 
     int stepOffset() const { return _page * StepCount; }
 
+    void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
     void initSequence();

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BasePage.h"
-#include "ContextMenu.h"
 
 #include "ui/StepSelection.h"
 
@@ -57,14 +56,13 @@ private:
     void updateIdleOutput();
     void drawDetail(Canvas &canvas, const NoteSequence::Step &step);
 
+    void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
     void initSequence();
     void copySequence();
     void pasteSequence();
     void duplicateSequence();
-
-    ContextMenu _contextMenu;
 
     Mode _mode = Mode::Gate;
     int _page = 0;

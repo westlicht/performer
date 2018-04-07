@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ListPage.h"
-#include "ContextMenu.h"
 
 #include "ui/model/CurveSequenceListModel.h"
 
@@ -18,6 +17,7 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
 
 private:
+    void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
     void initSequence();
@@ -26,6 +26,4 @@ private:
     void duplicateSequence();
 
     CurveSequenceListModel _listModel;
-
-    ContextMenu _contextMenu;
 };

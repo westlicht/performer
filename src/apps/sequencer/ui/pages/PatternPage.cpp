@@ -32,14 +32,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
 
 
 PatternPage::PatternPage(PageManager &manager, PageContext &context) :
-    BasePage(manager, context),
-    _contextMenu(
-        manager.pages().contextMenu,
-        contextMenuItems,
-        int(ContextAction::Last),
-        [&] (int index) { contextAction(index); },
-        [&] (int index) { return contextActionEnabled(index); }
-    )
+    BasePage(manager, context)
 {}
 
 void PatternPage::enter() {
@@ -174,7 +167,7 @@ void PatternPage::keyPress(KeyPressEvent &event) {
     auto &playState = _project.playState();
 
     if (key.isContextMenu()) {
-        _contextMenu.show();
+        contextShow();
         event.consume();
         return;
     }
@@ -239,6 +232,15 @@ void PatternPage::keyPress(KeyPressEvent &event) {
 
 void PatternPage::encoder(EncoderEvent &event) {
     _project.editSelectedPatternIndex(event.value(), event.pressed());
+}
+
+void PatternPage::contextShow() {
+    showContextMenu(ContextMenu(
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    ));
 }
 
 void PatternPage::contextAction(int index) {

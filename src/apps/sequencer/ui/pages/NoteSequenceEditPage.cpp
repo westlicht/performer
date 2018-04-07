@@ -38,14 +38,7 @@ enum class Function {
 static const char *functionNames[] = { "GATE", "RETRIG", "LENGTH", "NOTE", "COND" };
 
 NoteSequenceEditPage::NoteSequenceEditPage(PageManager &manager, PageContext &context) :
-    BasePage(manager, context),
-    _contextMenu(
-        manager.pages().contextMenu,
-        contextMenuItems,
-        int(ContextAction::Last),
-        [&] (int index) { contextAction(index); },
-        [&] (int index) { return contextActionEnabled(index); }
-    )
+    BasePage(manager, context)
 {}
 
 void NoteSequenceEditPage::enter() {
@@ -207,7 +200,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     auto &sequence = _project.selectedNoteSequence();
 
     if (key.isContextMenu()) {
-        _contextMenu.show();
+        contextShow();
         event.consume();
         return;
     }
@@ -465,6 +458,15 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
     default:
         break;
     }
+}
+
+void NoteSequenceEditPage::contextShow() {
+    showContextMenu(ContextMenu(
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    ));
 }
 
 void NoteSequenceEditPage::contextAction(int index) {

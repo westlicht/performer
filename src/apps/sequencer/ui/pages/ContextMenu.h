@@ -1,24 +1,22 @@
 #pragma once
 
-#include "ContextMenuPage.h"
-
 #include "ui/model/ContextMenuModel.h"
 
 #include <functional>
 
-class ContextMenu : private ContextMenuModel {
+class ContextMenu : public ContextMenuModel {
 public:
     typedef std::function<void(int)> ActionCallback;
     typedef std::function<bool(int)> ItemEnabledCallback;
 
+    ContextMenu() = default;
+
     ContextMenu(
-        ContextMenuPage &contextMenuPage,
         const Item items[],
         int itemCount,
         ActionCallback actionCallback,
         ItemEnabledCallback itemEnabledCallback = [] (int) { return true; }
     ) :
-        _contextMenuPage(contextMenuPage),
         _items(items),
         _itemCount(itemCount),
         _actionCallback(actionCallback),
@@ -26,13 +24,7 @@ public:
     {
     }
 
-    void show() {
-        _contextMenuPage.show(*this, [this] (int index) {
-            if (_actionCallback) {
-                _actionCallback(index);
-            }
-        });
-    }
+    const ActionCallback &actionCallback() const { return _actionCallback; }
 
 private:
     virtual int itemCount() const override {
@@ -47,7 +39,6 @@ private:
         return _itemEnabledCallback(index);
     }
 
-    ContextMenuPage &_contextMenuPage;
     const Item *_items;
     int _itemCount;
     ActionCallback _actionCallback;

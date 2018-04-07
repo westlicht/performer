@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BasePage.h"
-#include "ContextMenu.h"
 
 class PatternPage : public BasePage {
 public:
@@ -19,14 +18,13 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
     void initPattern();
     void copyPattern();
     void pastePattern();
     void duplicatePattern();
-
-    ContextMenu _contextMenu;
 
     bool _latching;
 };

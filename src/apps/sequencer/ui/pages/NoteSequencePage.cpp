@@ -24,14 +24,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
 
 
 NoteSequencePage::NoteSequencePage(PageManager &manager, PageContext &context) :
-    ListPage(manager, context, _listModel),
-    _contextMenu(
-        manager.pages().contextMenu,
-        contextMenuItems,
-        int(ContextAction::Last),
-        [&] (int index) { contextAction(index); },
-        [&] (int index) { return contextActionEnabled(index); }
-    )
+    ListPage(manager, context, _listModel)
 {}
 
 void NoteSequencePage::enter() {
@@ -74,7 +67,7 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
     auto &sequence = _project.selectedNoteSequence();
 
     if (key.isContextMenu()) {
-        _contextMenu.show();
+        contextShow();
         event.consume();
         return;
     }
@@ -99,6 +92,15 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
     if (!event.consumed()) {
         ListPage::keyPress(event);
     }
+}
+
+void NoteSequencePage::contextShow() {
+    showContextMenu(ContextMenu(
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    ));
 }
 
 void NoteSequencePage::contextAction(int index) {

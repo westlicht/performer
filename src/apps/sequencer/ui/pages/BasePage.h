@@ -4,6 +4,7 @@
 #include "ui/Page.h"
 #include "ui/PageManager.h"
 #include "ui/Key.h"
+#include "ui/pages/ContextMenu.h"
 
 #include "model/Model.h"
 
@@ -16,23 +17,17 @@ struct PageContext {
     KeyState &keyState;
     Model &model;
     Engine &engine;
+
+    ContextMenu contextMenu;
 };
 
 class BasePage : public Page {
 public:
-    BasePage(PageManager &manager, PageContext &context) :
-        Page(manager),
-        _context(context),
-        _keyState(context.keyState),
-        _model(context.model),
-        _project(context.model.project()),
-        _engine(context.engine)
-    {}
+    BasePage(PageManager &manager, PageContext &context);
 
 protected:
-    void showMessage(const char *text, uint32_t duration = 1000) {
-        _context.messageManager.showMessage(text, duration);
-    }
+    void showMessage(const char *text, uint32_t duration = 1000);
+    void showContextMenu(const ContextMenu &contextMenu);
 
     PageContext &_context;
     KeyState &_keyState;

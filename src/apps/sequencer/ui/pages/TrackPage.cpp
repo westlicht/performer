@@ -23,14 +23,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
 };
 
 TrackPage::TrackPage(PageManager &manager, PageContext &context) :
-    ListPage(manager, context, _noteTrackListModel),
-    _contextMenu(
-        manager.pages().contextMenu,
-        contextMenuItems,
-        int(ContextAction::Last),
-        [&] (int index) { contextAction(index); },
-        [&] (int index) { return contextActionEnabled(index); }
-    )
+    ListPage(manager, context, _noteTrackListModel)
 {}
 
 void TrackPage::enter() {
@@ -57,7 +50,7 @@ void TrackPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isContextMenu()) {
-        _contextMenu.show();
+        contextShow();
         event.consume();
         return;
     }
@@ -93,6 +86,15 @@ void TrackPage::setTrack(Track &track) {
         break;
     }
     setListModel(*_listModel);
+}
+
+void TrackPage::contextShow() {
+    showContextMenu(ContextMenu(
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    ));
 }
 
 void TrackPage::contextAction(int index) {

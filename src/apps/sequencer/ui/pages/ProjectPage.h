@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ListPage.h"
-#include "ContextMenu.h"
 
 #include "ui/model/ProjectListModel.h"
 
@@ -19,6 +18,7 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    void contextShow();
     void contextAction(int index);
     void initProject();
     void loadProject();
@@ -30,5 +30,4 @@ private:
     void loadProjectFromSlot(int slot);
 
     ProjectListModel _listModel;
-    ContextMenu _contextMenu;
 };

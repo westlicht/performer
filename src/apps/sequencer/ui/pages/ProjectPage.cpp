@@ -28,13 +28,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
 
 ProjectPage::ProjectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel),
-    _listModel(context.model.project()),
-    _contextMenu(
-        manager.pages().contextMenu,
-        contextMenuItems,
-        int(ContextAction::Last),
-        [&] (int index) { contextAction(index); }
-    )
+    _listModel(context.model.project())
 {}
 
 void ProjectPage::enter() {
@@ -59,7 +53,7 @@ void ProjectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isContextMenu()) {
-        _contextMenu.show();
+        contextShow();
         event.consume();
         return;
     }
@@ -85,6 +79,13 @@ void ProjectPage::encoder(EncoderEvent &event) {
     ListPage::encoder(event);
 }
 
+void ProjectPage::contextShow() {
+    showContextMenu(ContextMenu(
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); }
+    ));
+}
 void ProjectPage::contextAction(int index) {
     switch (ContextAction(index)) {
     case ContextAction::Init:

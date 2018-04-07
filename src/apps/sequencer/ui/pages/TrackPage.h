@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ListPage.h"
-#include "ContextMenu.h"
 
 #include "ui/model/NoteTrackListModel.h"
 #include "ui/model/CurveTrackListModel.h"
@@ -22,6 +21,7 @@ public:
 private:
     void setTrack(Track &track);
 
+    void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
     void initTrackSetup();
@@ -33,5 +33,4 @@ private:
     NoteTrackListModel _noteTrackListModel;
     CurveTrackListModel _curveTrackListModel;
     MidiCvTrackListModel _midiCvTrackListModel;
-    ContextMenu _contextMenu;
 };

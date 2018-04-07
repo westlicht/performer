@@ -23,14 +23,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
 };
 
 CurveSequencePage::CurveSequencePage(PageManager &manager, PageContext &context) :
-    ListPage(manager, context, _listModel),
-    _contextMenu(
-        manager.pages().contextMenu,
-        contextMenuItems,
-        int(ContextAction::Last),
-        [&] (int index) { contextAction(index); },
-        [&] (int index) { return contextActionEnabled(index); }
-    )
+    ListPage(manager, context, _listModel)
 {}
 
 void CurveSequencePage::enter() {
@@ -56,7 +49,7 @@ void CurveSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isContextMenu()) {
-        _contextMenu.show();
+        contextShow();
         event.consume();
         return;
     }
@@ -68,6 +61,15 @@ void CurveSequencePage::keyPress(KeyPressEvent &event) {
     if (!event.consumed()) {
         ListPage::keyPress(event);
     }
+}
+
+void CurveSequencePage::contextShow() {
+    showContextMenu(ContextMenu(
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    ));
 }
 
 void CurveSequencePage::contextAction(int index) {
