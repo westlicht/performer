@@ -30,16 +30,13 @@ void PerformerPage::exit() {
 }
 
 void PerformerPage::draw(Canvas &canvas) {
-
     const auto &playState = _project.playState();
-
-    WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "PERFORMER");
-
     bool hasCancel = playState.hasSyncedRequests() || playState.hasLatchedRequests();
     const char *functionNames[] = { "LATCH", "MUTE", "UNMUTE", "FILL", hasCancel ? "CANCEL" : nullptr };
 
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    WindowPainter::clear(canvas);
+    WindowPainter::drawHeader(canvas, _model, _engine, "PERFORMER");
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     constexpr int Border = 4;
     constexpr int BorderRequested = 6;

@@ -20,7 +20,7 @@ ClockSetupPage::ClockSetupPage(PageManager &manager, PageContext &context) :
 void ClockSetupPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "CLOCK");
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
 }

@@ -109,3 +109,13 @@ void WindowPainter::drawHeader(Canvas &canvas, Model &model, Engine &engine, con
     canvas.setColor(0x7);
     canvas.hline(0, HeaderHeight, PageWidth);
 }
+
+void WindowPainter::drawFooter(Canvas &canvas) {
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0x7);
+    canvas.hline(0, PageHeight - FooterHeight - 1, PageWidth);
+}
+
+void WindowPainter::drawFooter(Canvas &canvas, const char *names[], KeyState &keyState) {
+    drawFunctionKeys(canvas, names, keyState);
+}

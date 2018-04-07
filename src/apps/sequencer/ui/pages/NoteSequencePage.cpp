@@ -45,9 +45,7 @@ void NoteSequencePage::exit() {
 void NoteSequencePage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE");
-
-    const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, nullptr };
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas);
 
     ListPage::draw(canvas);
 }

@@ -74,11 +74,10 @@ void CurveSequenceEditPage::exit() {
 }
 
 void CurveSequenceEditPage::draw(Canvas &canvas) {
-
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE EDIT");
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
     const auto &sequence = _project.selectedCurveSequence();

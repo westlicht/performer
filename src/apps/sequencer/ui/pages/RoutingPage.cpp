@@ -20,6 +20,7 @@ void RoutingPage::initRoute(Routing::Param param, int trackIndex) {
 void RoutingPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "ROUTING");
+    WindowPainter::drawFooter(canvas);
 
     ListPage::draw(canvas);
 }

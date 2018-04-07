@@ -51,16 +51,13 @@ void PatternPage::exit() {
 }
 
 void PatternPage::draw(Canvas &canvas) {
-
     const auto &playState = _project.playState();
-
-    WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
-
     bool hasCancel = playState.hasSyncedRequests() || playState.hasLatchedRequests();
     const char *functionNames[] = { "LATCH", "EDIT", nullptr, nullptr, hasCancel ? "CANCEL" : nullptr };
 
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    WindowPainter::clear(canvas);
+    WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     constexpr int Border = 4;
 

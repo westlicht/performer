@@ -49,9 +49,8 @@ void TextInputPage::exit() {
 }
 
 void TextInputPage::draw(Canvas &canvas) {
-
     WindowPainter::clear(canvas);
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);

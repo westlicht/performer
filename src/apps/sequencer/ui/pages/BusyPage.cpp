@@ -31,7 +31,6 @@ void BusyPage::exit() {
 }
 
 void BusyPage::draw(Canvas &canvas) {
-
     WindowPainter::clear(canvas);
 
     canvas.setFont(Font::Tiny);

@@ -25,6 +25,8 @@ public:
     static void drawActiveFunction(Canvas &canvas, const char *function);
 
     static void drawHeader(Canvas &canvas, Model &model, Engine &engine, const char *mode);
+    static void drawFooter(Canvas &canvas);
+    static void drawFooter(Canvas &canvas, const char *names[], KeyState &keyState);
 
 private:
     const static int PageWidth = CONFIG_LCD_WIDTH;

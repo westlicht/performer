@@ -23,9 +23,8 @@ void EuclideanPage::exit() {
 }
 
 void EuclideanPage::draw(Canvas &canvas) {
-
     WindowPainter::clear(canvas);
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     canvas.setFont(Font::Small);
     canvas.setBlendMode(BlendMode::Set);

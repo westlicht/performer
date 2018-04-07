@@ -26,8 +26,8 @@ void LayoutPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "LAYOUT");
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
 }

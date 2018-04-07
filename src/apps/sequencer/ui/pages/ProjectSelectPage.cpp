@@ -29,10 +29,9 @@ void ProjectSelectPage::exit() {
 }
 
 void ProjectSelectPage::draw(Canvas &canvas) {
-
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, _title);
-    WindowPainter::drawFunctionKeys(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     ListPage::draw(canvas);
 }
