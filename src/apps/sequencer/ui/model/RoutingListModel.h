@@ -6,8 +6,6 @@
 
 #include "model/Routing.h"
 
-#include <array>
-
 class RoutingListModel : public ListModel {
 public:
     RoutingListModel(Routing &routing) :

@@ -6,8 +6,6 @@
 
 #include "model/Routing.h"
 
-#include <array>
-
 class RouteListModel : public ListModel {
 public:
     enum Item {

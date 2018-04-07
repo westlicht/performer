@@ -20,7 +20,6 @@ static const uint8_t prometheusNotes[] = { 1, 2, 3, S|4, 6, F|7 };
 static const uint8_t bluesNotes[] = { 1, F|3, 4, F|5, 5, F|7 };
 static const uint8_t tritoneNotes[] = { 1, F|2, 3, F|5, 5, F|7 };
 
-
 #undef S
 #undef F
 
