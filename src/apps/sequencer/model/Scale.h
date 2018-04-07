@@ -15,6 +15,8 @@ public:
 
     const char *name() const { return _name; }
 
+    virtual bool isChromatic() const = 0;
+
     virtual void shortName(int note, int line, StringBuilder &str) const = 0;
     virtual void longName(int note, StringBuilder &str) const = 0;
 
@@ -36,6 +38,8 @@ public:
         _interval(interval)
     {
     }
+
+    bool isChromatic() const override { return false; }
 
     void shortName(int note, int line, StringBuilder &str) const override {
         if (line == 0) {
@@ -66,6 +70,8 @@ class ChromaticScale : public Scale {
 public:
     static constexpr uint8_t Flat = 0x40;
     static constexpr uint8_t Sharp = 0x80;
+
+    bool isChromatic() const override { return true; }
 
     ChromaticScale(const char *name, const uint8_t *notes, uint8_t noteCount) :
         Scale(name),
@@ -123,6 +129,8 @@ public:
     UserScale(const char *name) :
         Scale(name)
     {}
+
+    bool isChromatic() const override { return false; }
 
     void shortName(int note, int line, StringBuilder &str) const override {
     }

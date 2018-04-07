@@ -11,6 +11,7 @@ class NoteSequenceListModel : public ListModel {
 public:
     enum Item {
         Scale,
+        RootNote,
         Divisor,
         ResetMeasure,
         RunMode,
@@ -52,6 +53,7 @@ private:
     static const char *itemName(Item item) {
         switch (item) {
         case Scale:             return "Scale";
+        case RootNote:          return "Root Note";
         case Divisor:           return "Divisor";
         case ResetMeasure:      return "Reset Measure";
         case RunMode:           return "Run Mode";
@@ -70,6 +72,9 @@ private:
         switch (item) {
         case Scale:
             _sequence->printScale(str);
+            break;
+        case RootNote:
+            _sequence->printRootNote(str);
             break;
         case Divisor:
             _sequence->printDivisor(str);
@@ -95,6 +100,9 @@ private:
         switch (item) {
         case Scale:
             _sequence->editScale(value, shift);
+            break;
+        case RootNote:
+            _sequence->editRootNote(value, shift);
             break;
         case Divisor:
             _sequence->editDivisor(value, shift);

@@ -42,8 +42,9 @@ static int evalStepLength(const NoteSequence::Step &step, int lengthOffset) {
     return length;
 }
 
-static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, int octave, int transpose) {
-    return scale.noteVolts(step.note() + octave * scale.octave() + transpose);
+static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, int rootNote, int octave, int transpose) {
+    int note = step.note() + (scale.isChromatic() ? rootNote : 0) + octave * scale.octave() + transpose;
+    return scale.noteVolts(note);
 }
 
 
@@ -140,10 +141,11 @@ void NoteTrackEngine::setIdleStep(int index) {
     _idleOutput = true;
     const auto &sequence = *_sequence;
     const auto &step = sequence.step(index);
-    const auto &scale = Scale::get(sequence.scale());
+    const auto &scale = sequence.selectedScale();
+    int rootNote = sequence.selectedRootNote();
     int octave = _noteTrack.octave();
     int transpose = _noteTrack.transpose();
-    _idleCvOutput = evalStepNote(step, scale, octave, transpose);
+    _idleCvOutput = evalStepNote(step, scale, rootNote, octave, transpose);
 }
 
 void NoteTrackEngine::setIdleGate(bool gate) {
@@ -178,8 +180,9 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
             _gateQueue.push({ applySwing(tick + stepLength), false });
         }
 
-        const auto &scale = Scale::get(evalSequence.scale());
-        _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, octave, transpose), step.slide() });
+        const auto &scale = evalSequence.selectedScale();
+        int rootNote = evalSequence.selectedRootNote();
+        _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, rootNote, octave, transpose), step.slide() });
     }
 }
 

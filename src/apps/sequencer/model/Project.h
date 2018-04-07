@@ -92,6 +92,42 @@ public:
         str("%d", syncMeasure());
     }
 
+    // scale
+
+    int scale() const { return _scale; }
+    void setScale(int scale) {
+        _scale = clamp(scale, 0, Scale::Count - 1);
+        NoteSequence::_defaultScale = _scale;
+    }
+
+    void editScale(int value, bool shift) {
+        setScale(scale() + value);
+    }
+
+    void printScale(StringBuilder &str) const {
+        str(Scale::get(scale()).name());
+    }
+
+    const Scale &selectedScale() const {
+        return Scale::get(scale());
+    }
+
+    // rootNote
+
+    int rootNote() const { return _rootNote; }
+    void setRootNote(int rootNote) {
+        _rootNote = clamp(rootNote, 0, 11);
+        NoteSequence::_defaultRootNote = _rootNote;
+    }
+
+    void editRootNote(int value, bool shift) {
+        setRootNote(rootNote() + value);
+    }
+
+    void printRootNote(StringBuilder &str) const {
+        Types::printNote(str, _rootNote);
+    }
+
     // clockSetup
 
     const ClockSetup &clockSetup() const { return _clockSetup; }
@@ -182,7 +218,6 @@ public:
     const CurveSequence &selectedCurveSequence() const { return curveSequence(_selectedTrackIndex, _selectedPatternIndex); }
           CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, _selectedPatternIndex); }
 
-
     void clear();
     void clearPattern(int patternIndex);
 
@@ -200,6 +235,8 @@ private:
     float _bpm = 120.f;
     uint8_t _swing = 50;
     uint8_t _syncMeasure = 1;
+    uint8_t _scale;
+    uint8_t _rootNote;
 
     ClockSetup _clockSetup;
     TrackArray _tracks;

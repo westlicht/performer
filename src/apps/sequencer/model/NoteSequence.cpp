@@ -2,6 +2,10 @@
 
 #include "ModelUtils.h"
 
+uint8_t NoteSequence::_defaultScale;
+uint8_t NoteSequence::_defaultRootNote;
+
+
 void NoteSequence::Step::clear() {
     setGate(false);
     setSlide(false);
@@ -87,7 +91,8 @@ void NoteSequence::Step::read(ReadContext &context) {
 }
 
 void NoteSequence::clear() {
-    setScale(0);
+    setScale(-1);
+    setRootNote(-1);
     setDivisor(12);
     setResetMeasure(0);
     setRunMode(Types::RunMode::Forward);
@@ -132,6 +137,7 @@ void NoteSequence::duplicateSteps() {
 void NoteSequence::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_scale);
+    writer.write(_rootNote);
     writer.write(_divisor);
     writer.write(_resetMeasure);
     writer.write(_runMode);
@@ -144,6 +150,7 @@ void NoteSequence::write(WriteContext &context) const {
 void NoteSequence::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_scale);
+    reader.read(_rootNote);
     reader.read(_divisor);
     reader.read(_resetMeasure);
     reader.read(_runMode);

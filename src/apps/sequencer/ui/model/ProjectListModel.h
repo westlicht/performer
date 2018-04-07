@@ -40,6 +40,8 @@ private:
         BPM,
         Swing,
         SyncMeasure,
+        Scale,
+        RootNote,
         Last
     };
 
@@ -49,6 +51,8 @@ private:
         case BPM:               return "BPM";
         case Swing:             return "Swing";
         case SyncMeasure:       return "Sync Measure";
+        case Scale:             return "Scale";
+        case RootNote:          return "Root Note";
         case Last:              break;
         }
         return nullptr;
@@ -72,6 +76,11 @@ private:
         case SyncMeasure:
             _project.printSyncMeasure(str);
             break;
+        case Scale:
+            _project.printScale(str);
+            break;
+        case RootNote:
+            _project.printRootNote(str);
         case Last:
             break;
         }
@@ -89,6 +98,12 @@ private:
             break;
         case SyncMeasure:
             _project.editSyncMeasure(value, shift);
+            break;
+        case Scale:
+            _project.editScale(value, shift);
+            break;
+        case RootNote:
+            _project.editRootNote(value, shift);
             break;
         case Last:
             break;

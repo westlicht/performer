@@ -126,7 +126,7 @@ public:
 
     int scale() const { return _scale; }
     void setScale(int scale) {
-        _scale = clamp(scale, 0, Scale::Count - 1);
+        _scale = clamp(scale, -1, Scale::Count - 1);
     }
 
     void editScale(int value, bool shift) {
@@ -134,7 +134,34 @@ public:
     }
 
     void printScale(StringBuilder &str) const {
-        str(Scale::get(scale()).name());
+        str(scale() < 0 ? "Default" : Scale::get(scale()).name());
+    }
+
+    const Scale &selectedScale() const {
+        return Scale::get(scale() < 0 ? _defaultScale : scale());
+    }
+
+    // rootNote
+
+    int rootNote() const { return _rootNote; }
+    void setRootNote(int rootNote) {
+        _rootNote = clamp(rootNote, -1, 11);
+    }
+
+    void editRootNote(int value, bool shift) {
+        setRootNote(rootNote() + value);
+    }
+
+    void printRootNote(StringBuilder &str) const {
+        if (rootNote() < 0) {
+            str("Default");
+        } else {
+            Types::printNote(str, rootNote());
+        }
+    }
+
+    int selectedRootNote() const {
+        return rootNote() < 0 ? _defaultRootNote : rootNote();
     }
 
     // divisor
@@ -251,11 +278,17 @@ public:
     void read(ReadContext &context);
 
 private:
-    uint8_t _scale;
+    int8_t _scale;
+    int8_t _rootNote;
     uint8_t _divisor;
     uint8_t _resetMeasure;
     Types::RunMode _runMode;
     uint8_t _firstStep;
     uint8_t _lastStep;
     StepArray _steps;
+
+    static uint8_t _defaultScale;
+    static uint8_t _defaultRootNote;
+
+    friend class Project;
 };

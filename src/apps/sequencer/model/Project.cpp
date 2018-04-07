@@ -14,9 +14,11 @@ Project::Project() :
 void Project::clear() {
     _slot = uint8_t(-1);
     StringUtils::copy(_name, "INIT", sizeof(_name));
-    _bpm = 120.f;
-    _swing = 50;
-    _syncMeasure = 1;
+    setBpm(120.f);
+    setSwing(50);
+    setSyncMeasure(1);
+    setScale(0);
+    setRootNote(0);
 
     _clockSetup.clear();
 
@@ -32,8 +34,8 @@ void Project::clear() {
     _playState.clear();
     _routing.clear();
 
-    _selectedTrackIndex = 0;
-    _selectedPatternIndex = 0;
+    setSelectedTrackIndex(0);
+    setSelectedPatternIndex(0);
 
     // TODO remove
     demoProject();
@@ -84,6 +86,8 @@ void Project::write(WriteContext &context) const {
     writer.write(_bpm);
     writer.write(_swing);
     writer.write(_syncMeasure);
+    writer.write(_scale);
+    writer.write(_rootNote);
 
     _clockSetup.write(context);
 
@@ -104,6 +108,8 @@ void Project::read(ReadContext &context) {
     reader.read(_bpm);
     reader.read(_swing);
     reader.read(_syncMeasure);
+    reader.read(_scale);
+    reader.read(_rootNote);
 
     _clockSetup.read(context);
 

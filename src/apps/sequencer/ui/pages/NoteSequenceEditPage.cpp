@@ -57,9 +57,8 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
     const auto &sequence = _project.selectedNoteSequence();
+    const auto &scale = sequence.selectedScale();
     int currentStep = trackEngine.isActiveSequence(sequence) ? trackEngine.currentStep() : -1;
-
-    const auto &scale = Scale::get(sequence.scale());
 
     const int stepWidth = Width / StepCount;
     const int stepOffset = this->stepOffset();
@@ -269,7 +268,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
 
 void NoteSequenceEditPage::encoder(EncoderEvent &event) {
     auto &sequence = _project.selectedNoteSequence();
-    const auto &scale = Scale::get(sequence.scale());
+    const auto &scale = sequence.selectedScale();
 
     if (_stepSelection.any()) {
         _showDetail = true;
@@ -364,7 +363,7 @@ void NoteSequenceEditPage::updateIdleOutput() {
 
 void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &step) {
 
-    const auto &scale = Scale::get(_project.selectedNoteSequence().scale());
+    const auto &scale = _project.selectedNoteSequence().selectedScale();
 
     FixedStringBuilder<16> str;
 
