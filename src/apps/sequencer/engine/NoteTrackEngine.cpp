@@ -120,7 +120,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
 }
 
 void NoteTrackEngine::update(float dt) {
-    if (_slideActive) {
+    if (_slideActive && _noteTrack.slideTime() > 0) {
         _cvOutput += (_cvOutputTarget - _cvOutput) * std::min(1.f, dt * (200 - 2 * _noteTrack.slideTime()));
     } else {
         _cvOutput = _cvOutputTarget;
