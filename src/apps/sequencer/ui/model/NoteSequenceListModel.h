@@ -5,8 +5,7 @@
 #include "ListModel.h"
 
 #include "model/NoteSequence.h"
-
-#include "engine/Scale.h"
+#include "model/Scale.h"
 
 class NoteSequenceListModel : public ListModel {
 public:

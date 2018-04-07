@@ -1,13 +1,13 @@
 #include "NoteTrackEngine.h"
 
-#include "Scale.h"
 #include "Groove.h"
+#include "SequenceUtils.h"
 
 #include "core/Debug.h"
 #include "core/utils/Random.h"
 #include "core/math/Math.h"
 
-#include "engine/SequenceUtils.h"
+#include "model/Scale.h"
 
 static Random rng;
 

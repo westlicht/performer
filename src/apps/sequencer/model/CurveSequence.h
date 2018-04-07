@@ -5,8 +5,7 @@
 #include "Serialize.h"
 #include "ModelUtils.h"
 #include "Types.h"
-
-#include "engine/Curve.h"
+#include "Curve.h"
 
 #include "core/math/Math.h"
 #include "core/utils/StringBuilder.h"

@@ -6,8 +6,6 @@
 
 #include "model/CurveSequence.h"
 
-#include "engine/Scale.h"
-
 class CurveSequenceListModel : public ListModel {
 public:
     CurveSequenceListModel()

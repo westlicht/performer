@@ -5,7 +5,6 @@ set(sources
     # engine
     engine/Clock.cpp
     engine/Controller.cpp
-    engine/Curve.cpp
     engine/CurveTrackEngine.cpp
     engine/CvInput.cpp
     engine/CvOutput.cpp
@@ -14,7 +13,6 @@ set(sources
     engine/MidiLearn.cpp
     engine/NoteTrackEngine.cpp
     engine/RoutingEngine.cpp
-    engine/Scale.cpp
     engine/SequenceState.cpp
     engine/TrackEngine.cpp
     # engine/controllers
@@ -24,6 +22,7 @@ set(sources
     # model
     model/ClipBoard.cpp
     model/ClockSetup.cpp
+    model/Curve.cpp
     model/CurveSequence.cpp
     model/CurveTrack.cpp
     model/MidiCvTrack.cpp
@@ -35,6 +34,7 @@ set(sources
     model/Project.cpp
     model/ProjectManager.cpp
     model/Routing.cpp
+    model/Scale.cpp
     model/Settings.cpp
     model/Track.cpp
     # ui

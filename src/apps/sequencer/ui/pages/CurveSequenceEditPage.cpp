@@ -6,7 +6,7 @@
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
-#include "engine/Curve.h"
+#include "model/Curve.h"
 
 #include "core/utils/StringBuilder.h"
 

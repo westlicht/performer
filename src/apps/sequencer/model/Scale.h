@@ -117,3 +117,26 @@ private:
     const uint8_t *_notes;
     uint8_t _noteCount;
 };
+
+class UserScale : public Scale {
+public:
+    UserScale(const char *name) :
+        Scale(name)
+    {}
+
+    void shortName(int note, int line, StringBuilder &str) const override {
+    }
+
+    void longName(int note, StringBuilder &str) const override {
+    }
+
+    float noteVolts(int note) const override {
+        return 0.f;
+    }
+
+    int octave() const override {
+        return 1;
+    }
+
+private:
+};

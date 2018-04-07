@@ -6,7 +6,7 @@
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
-#include "engine/Scale.h"
+#include "model/Scale.h"
 
 #include "os/os.h"
 
