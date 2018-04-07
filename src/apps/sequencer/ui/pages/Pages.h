@@ -7,21 +7,22 @@
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
 #include "ContextMenuPage.h"
-#include "CurveSequencePage.h"
 #include "CurveSequenceEditPage.h"
+#include "CurveSequencePage.h"
+#include "LayoutPage.h"
 #include "MonitorPage.h"
-#include "NoteSequencePage.h"
 #include "NoteSequenceEditPage.h"
+#include "NoteSequencePage.h"
 #include "PatternPage.h"
 #include "PerformerPage.h"
 #include "ProjectPage.h"
 #include "ProjectSelectPage.h"
-#include "RoutingPage.h"
 #include "RoutePage.h"
+#include "RoutingPage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
-#include "LayoutPage.h"
 #include "TrackPage.h"
+#include "UserScalePage.h"
 
 #include "EuclideanPage.h"
 
@@ -43,6 +44,7 @@ struct Pages {
     PerformerPage performer;
     RoutingPage routing;
     RoutePage route;
+    UserScalePage userScale;
     // modal pages
     BpmPage bpm;
     ClockSetupPage clockSetup;
@@ -74,6 +76,7 @@ struct Pages {
         performer(manager, context),
         routing(manager, context),
         route(manager, context),
+        userScale(manager, context),
         // modal pages
         bpm(manager, context),
         clockSetup(manager, context),

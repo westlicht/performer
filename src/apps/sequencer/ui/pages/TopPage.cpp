@@ -160,6 +160,9 @@ void TopPage::setMode(Mode mode) {
     case Mode::Routing:
         setMainPage(pages.routing);
         break;
+    case Mode::UserScale:
+        setMainPage(pages.userScale);
+        break;
     case Mode::Monitor:
         setMainPage(pages.monitor);
         break;

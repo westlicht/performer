@@ -40,7 +40,7 @@ void ClipBoard::copyCurveSequenceSteps(const CurveSequence &curveSequence, const
     curveSequenceSteps.selected = selectedSteps;
 }
 
-void ClipBoard::copyPattern(Project &project, int patternIndex) {
+void ClipBoard::copyPattern(const Project &project, int patternIndex) {
     _type = Type::Pattern;
     auto &pattern = _container.as<Pattern>();
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
@@ -57,6 +57,11 @@ void ClipBoard::copyPattern(Project &project, int patternIndex) {
             break;
         }
     }
+}
+
+void ClipBoard::copyUserScale(const UserScale &userScale) {
+    _type = Type::UserScale;
+    _container.as<UserScale>() = userScale;
 }
 
 void ClipBoard::pasteTrack(Track &track) const {
@@ -116,6 +121,12 @@ void ClipBoard::pastePattern(Project &project, int patternIndex) const {
     }
 }
 
+void ClipBoard::pasteUserScale(UserScale &userScale) const {
+    if (canPasteUserScale()) {
+        userScale = _container.as<UserScale>();
+    }
+}
+
 bool ClipBoard::canPasteTrack() const {
     return _type == Type::Track;
 }
@@ -138,4 +149,8 @@ bool ClipBoard::canPasteCurveSequenceSteps() const {
 
 bool ClipBoard::canPastePattern() const {
     return _type == Type::Pattern;
+}
+
+bool ClipBoard::canPasteUserScale() const {
+    return _type == Type::UserScale;
 }

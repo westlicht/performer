@@ -37,6 +37,7 @@ set(sources
     model/Scale.cpp
     model/Settings.cpp
     model/Track.cpp
+    model/UserScale.cpp
     # ui
     ui/LedPainter.cpp
     ui/MessageManager.cpp
@@ -68,6 +69,7 @@ set(sources
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp
+    ui/pages/UserScalePage.cpp
     # ui/painters
     ui/painters/SequencePainter.cpp
     ui/painters/WindowPainter.cpp

@@ -5,6 +5,7 @@
 #include "ClockSetup.h"
 #include "Track.h"
 #include "PlayState.h"
+#include "UserScale.h"
 #include "Routing.h"
 #include "Serialize.h"
 
@@ -169,6 +170,14 @@ public:
 
     const PlayState &playState() const { return _playState; }
           PlayState &playState()       { return _playState; }
+
+    // userScales
+
+    const UserScale::Array &userScales() const { return UserScale::userScales; }
+          UserScale::Array &userScales()       { return UserScale::userScales; }
+
+    const UserScale &userScale(int index) const { return UserScale::userScales[index]; }
+          UserScale &userScale(int index)       { return UserScale::userScales[index]; }
 
     // routing
 

@@ -6,6 +6,7 @@
 #include "NoteSequence.h"
 #include "CurveSequence.h"
 #include "Project.h"
+#include "UserScale.h"
 
 #include "core/utils/Container.h"
 
@@ -24,7 +25,8 @@ public:
     void copyNoteSequenceSteps(const NoteSequence &noteSequence, const SelectedSteps &selectedSteps);
     void copyCurveSequence(const CurveSequence &curveSequence);
     void copyCurveSequenceSteps(const CurveSequence &curveSequence, const SelectedSteps &selectedSteps);
-    void copyPattern(Project &project, int patternIndex);
+    void copyPattern(const Project &project, int patternIndex);
+    void copyUserScale(const UserScale &userScale);
 
     void pasteTrack(Track &track) const;
     void pasteNoteSequence(NoteSequence &noteSequence) const;
@@ -32,6 +34,7 @@ public:
     void pasteCurveSequence(CurveSequence &curveSequence) const;
     void pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps);
     void pastePattern(Project &project, int patternIndex) const;
+    void pasteUserScale(UserScale &userScale) const;
 
     bool canPasteTrack() const;
     bool canPasteNoteSequence() const;
@@ -39,6 +42,7 @@ public:
     bool canPasteCurveSequence() const;
     bool canPasteCurveSequenceSteps() const;
     bool canPastePattern() const;
+    bool canPasteUserScale() const;
 
 private:
     enum class Type : uint8_t {
@@ -49,6 +53,7 @@ private:
         CurveSequence,
         CurveSequenceSteps,
         Pattern,
+        UserScale,
     };
 
     struct NoteSequenceSteps {
@@ -72,5 +77,5 @@ private:
     };
 
     Type _type = Type::None;
-    Container<Track, NoteSequence, NoteSequenceSteps, CurveSequence, CurveSequenceSteps, Pattern> _container;
+    Container<Track, NoteSequence, NoteSequenceSteps, CurveSequence, CurveSequenceSteps, Pattern, UserScale> _container;
 };
