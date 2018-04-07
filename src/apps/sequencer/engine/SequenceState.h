@@ -17,6 +17,8 @@ public:
     void advanceAligned(int absoluteStep, Types::RunMode runMode, int firstStep, int lastStep, Random &rng);
 
 private:
+    void advanceRandomWalk(int firstStep, int lastStep, Random &rng);
+
     int8_t _step;
     int8_t _direction;
 };

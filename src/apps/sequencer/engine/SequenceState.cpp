@@ -27,6 +27,7 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
         case Types::RunMode::Random:
             _step = randomStep();
             break;
+        case Types::RunMode::RandomWalk:
         case Types::RunMode::Last:
             break;
         }
@@ -57,6 +58,9 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
         case Types::RunMode::Random:
             _step = randomStep();
             break;
+        case Types::RunMode::RandomWalk:
+            advanceRandomWalk(firstStep, lastStep, rng);
+            break;
         case Types::RunMode::Last:
             break;
         }
@@ -84,7 +88,23 @@ void SequenceState::advanceAligned(int absoluteStep, Types::RunMode runMode, int
     case Types::RunMode::Random:
         _step = firstStep + rng.nextRange(stepCount);
         break;
+    case Types::RunMode::RandomWalk:
+        advanceRandomWalk(firstStep, lastStep, rng);
+        break;
     case Types::RunMode::Last:
         break;
+    }
+}
+
+void SequenceState::advanceRandomWalk(int firstStep, int lastStep, Random &rng) {
+    if (_step == -1) {
+        _step = firstStep;
+    } else {
+        int dir = rng.nextRange(2);
+        if (dir == 0) {
+            _step = _step == firstStep ? lastStep : _step - 1;
+        } else {
+            _step = _step == lastStep ? firstStep : _step + 1;
+        }
     }
 }

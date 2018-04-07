@@ -44,17 +44,19 @@ public:
         PingPong,
         Pendulum,
         Random,
+        RandomWalk,
         Last
     };
 
     static const char *runModeName(RunMode runMode) {
         switch (runMode) {
-        case RunMode::Forward:  return "Forward";
-        case RunMode::Backward: return "Backward";
-        case RunMode::PingPong: return "PingPong";
-        case RunMode::Pendulum: return "Pendulum";
-        case RunMode::Random:   return "Random";
-        case RunMode::Last:     break;
+        case RunMode::Forward:      return "Forward";
+        case RunMode::Backward:     return "Backward";
+        case RunMode::PingPong:     return "PingPong";
+        case RunMode::Pendulum:     return "Pendulum";
+        case RunMode::Random:       return "Random";
+        case RunMode::RandomWalk:   return "Random Walk";
+        case RunMode::Last:         break;
         }
         return nullptr;
     }
