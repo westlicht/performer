@@ -45,6 +45,7 @@ set(sources
     ui/Ui.cpp
     # ui/pages
     ui/pages/AsteroidsPage.cpp
+    ui/pages/BasePage.cpp
     ui/pages/BpmPage.cpp
     ui/pages/BusyPage.cpp
     ui/pages/ClockSetupPage.cpp
