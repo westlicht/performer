@@ -9,6 +9,12 @@
 
 class Scale {
 public:
+    enum Format {
+        Short1,
+        Short2,
+        Long,
+    };
+
     Scale(const char *name) :
         _name(name)
     {}
@@ -17,12 +23,10 @@ public:
 
     virtual bool isChromatic() const = 0;
 
-    virtual void shortName(int note, int line, StringBuilder &str) const = 0;
-    virtual void longName(int note, StringBuilder &str) const = 0;
-
+    virtual void noteName(StringBuilder &str, int note, Format format = Long) const = 0;
     virtual float noteVolts(int note) const = 0;
 
-    virtual int octave() const = 0;
+    virtual int notesPerOctave() const = 0;
 
     static int Count;
     static const Scale &get(int index);
@@ -41,24 +45,25 @@ public:
 
     bool isChromatic() const override { return false; }
 
-    void shortName(int note, int line, StringBuilder &str) const override {
-        if (line == 0) {
+    void noteName(StringBuilder &str, int note, Format format) const override {
+        switch (format) {
+        case Short1:
             str("%c", note < 0 ? '-' : '+');
-        } else {
+            break;
+        case Short2:
             str("%.1f", std::abs(note * _interval));
+            break;
+        case Long:
+            str("%+.3fV", note * _interval);
+            break;
         }
-
-    }
-
-    void longName(int note, StringBuilder &str) const override {
-        str("%+.3fV", note * _interval);
     }
 
     float noteVolts(int note) const override {
         return note * _interval;
     }
 
-    int octave() const override {
+    int notesPerOctave() const override {
         return std::max(1, int(1.f / _interval));
     }
 
@@ -79,26 +84,24 @@ public:
         _noteCount(noteCount)
     {}
 
-    void shortName(int note, int line, StringBuilder &str) const override {
-        int octave = note >= 0 ? (note / _noteCount) : (note - _noteCount + 1) / _noteCount;
-        if (line == 0) {
-            int index = note - octave * _noteCount;
-            uint8_t noteInfo = _notes[index];
-            int wholeNote = noteInfo & 0xf;
-            const char *intonation = noteInfo & Flat ? "b" : (noteInfo & Sharp ? "#" : "");
-            str("%s%d", intonation, wholeNote);
-        } else if (line == 1) {
-            str("%+d", octave);
-        }
-    }
-
-    void longName(int note, StringBuilder &str) const override {
+    void noteName(StringBuilder &str, int note, Format format) const override {
         int octave = note >= 0 ? (note / _noteCount) : (note - _noteCount + 1) / _noteCount;
         int index = note - octave * _noteCount;
         uint8_t noteInfo = _notes[index];
         int wholeNote = noteInfo & 0xf;
         const char *intonation = (noteInfo & Flat) ? "b" : ((noteInfo & Sharp) ? "#" : "");
-        str("%s%d%+d", intonation, wholeNote, octave);
+
+        switch (format) {
+        case Short1:
+            str("%s%d", intonation, wholeNote);
+            break;
+        case Short2:
+            str("%+d", octave);
+            break;
+        case Long:
+            str("%s%d%+d", intonation, wholeNote, octave);
+            break;
+        }
     }
 
     float noteVolts(int note) const override {
@@ -107,7 +110,7 @@ public:
         return octave + toSemiNotes(_notes[index]) * (1.f / 12.f);
     }
 
-    int octave() const override {
+    int notesPerOctave() const override {
         return _noteCount;
     }
 

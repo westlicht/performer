@@ -43,7 +43,7 @@ static int evalStepLength(const NoteSequence::Step &step, int lengthOffset) {
 }
 
 static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, int rootNote, int octave, int transpose) {
-    int note = step.note() + (scale.isChromatic() ? rootNote : 0) + octave * scale.octave() + transpose;
+    int note = step.note() + (scale.isChromatic() ? rootNote : 0) + octave * scale.notesPerOctave() + transpose;
     return scale.noteVolts(note);
 }
 

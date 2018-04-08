@@ -1,4 +1,5 @@
 #include "Scale.h"
+#include "UserScale.h"
 
 #define S ChromaticScale::Sharp
 #define F ChromaticScale::Flat
@@ -71,8 +72,15 @@ static const Scale *scales[] = {
     &Scale1V
 };
 
-int Scale::Count = sizeof(scales) / sizeof(Scale *);
+static const int BuiltinCount = sizeof(scales) / sizeof(Scale *);
+static const int UserCount = UserScale::userScales.size();
+
+int Scale::Count = BuiltinCount + UserCount;
 
 const Scale &Scale::get(int index) {
-    return *scales[index];
+    if (index < BuiltinCount) {
+        return *scales[index];
+    } else {
+        return UserScale::userScales[index - BuiltinCount];
+    }
 }

@@ -10,7 +10,15 @@ UserScale::UserScale() :
 
 void UserScale::clear() {
     setMode(Mode::Note);
+    clearItems();
+}
+
+void UserScale::clearItems() {
     setSize(1);
+    _items.fill(0);
+    if (_mode == Mode::Voltage) {
+        _items[1] = 1000;
+    }
 }
 
 void UserScale::write(WriteContext &context) const {

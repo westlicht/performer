@@ -33,7 +33,7 @@ public:
         } else {
             int index = row - int(Item::Last);
             if (column == 0) {
-                str("Entry%d", index + 1);
+                str("Item%d", index + 1);
             } else if (column == 1) {
                 _userScale->printItem(index, str);
             }
