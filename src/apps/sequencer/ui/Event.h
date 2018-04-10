@@ -2,6 +2,10 @@
 
 #include "Key.h"
 
+#include "engine/MidiPort.h"
+
+#include "core/midi/MidiMessage.h"
+
 class Event {
 public:
     enum Type {
@@ -9,6 +13,7 @@ public:
         KeyDown,
         KeyPress,
         Encoder,
+        Midi,
     };
 
     Event(Type type) :
@@ -58,8 +63,8 @@ private:
 
 class EncoderEvent : public Event {
 public:
-    EncoderEvent(Type type, int value, bool pressed) :
-        Event(type),
+    EncoderEvent(int value, bool pressed) :
+        Event(Event::Encoder),
         _value(value),
         _pressed(pressed)
     {}
@@ -70,4 +75,21 @@ public:
 private:
     int _value;
     bool _pressed;
+};
+
+class MidiEvent : public Event {
+public:
+    MidiEvent(MidiPort port, const MidiMessage &message) :
+        Event(Event::Midi),
+        _port(port),
+        _message(message)
+    {}
+
+    MidiPort port() const { return _port; }
+
+    const MidiMessage &message() const { return _message; }
+
+private:
+    MidiPort _port;
+    MidiMessage _message;
 };

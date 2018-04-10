@@ -33,5 +33,8 @@ void Page::dispatchEvent(Event &event) {
     case Event::Encoder:
         encoder(event.as<EncoderEvent>());
         break;
+    case Event::Midi:
+        midi(event.as<MidiEvent>());
+        break;
     }
 }

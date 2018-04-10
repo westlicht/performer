@@ -326,6 +326,10 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
     _midiLearn.receiveMidi(port, message);
     _routingEngine.receiveMidi(port, message);
 
+    if (_midiReceiveHandler) {
+        _midiReceiveHandler(port, message);
+    }
+
     int channel = message.channel();
     for (auto trackEngine : _trackEngines) {
         trackEngine->receiveMidi(port, channel, message);

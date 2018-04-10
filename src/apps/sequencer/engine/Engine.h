@@ -34,6 +34,8 @@ public:
     typedef std::array<TrackEngineContainer, CONFIG_TRACK_COUNT> TrackEngineContainerArray;
     typedef std::array<TrackEngine *, CONFIG_TRACK_COUNT> TrackEngineArray;
 
+    typedef std::function<void(MidiPort port, const MidiMessage &message)> MidiReceiveHandler;
+
     typedef std::function<void(const char *text, uint32_t duration)> MessageHandler;
 
     enum ClockSource {
@@ -97,6 +99,8 @@ public:
 
     MidiLearn &midiLearn() { return _midiLearn; }
 
+    void setMidiReceiveHandler(MidiReceiveHandler handler) { _midiReceiveHandler = handler; }
+
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
     void setMessageHandler(MessageHandler handler);
@@ -133,6 +137,7 @@ private:
 
     RoutingEngine _routingEngine;
     MidiLearn _midiLearn;
+    MidiReceiveHandler _midiReceiveHandler;
 
     ControllerManager _controllerManager;
 

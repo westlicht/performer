@@ -33,6 +33,14 @@ void Ui::init() {
     _pages.top.init();
 #endif
 
+    _engine.setMidiReceiveHandler([this] (MidiPort port, const MidiMessage &message) {
+        if (!_midiMessages.writable()) {
+            DBG("ui midi buffer overflow");
+            _midiMessages.read();
+        }
+        _midiMessages.write({port, message});
+    });
+
     _engine.setMessageHandler([this] (const char *text, uint32_t duration) {
         _messageManager.showMessage(text, duration);
     });
@@ -43,6 +51,7 @@ void Ui::init() {
 void Ui::update() {
     handleKeys();
     handleEncoder();
+    handleMidi();
 
     _leds.clear();
     _pageManager.updateLeds(_leds);
@@ -81,7 +90,7 @@ void Ui::handleEncoder() {
         switch (event) {
         case Encoder::Left:
         case Encoder::Right: {
-            EncoderEvent encoderEvent(Event::Encoder, event == Encoder::Left ? -1 : 1, _keyState[Key::Encoder]);
+            EncoderEvent encoderEvent(event == Encoder::Left ? -1 : 1, _keyState[Key::Encoder]);
             _pageManager.dispatchEvent(encoderEvent);
             break;
         }
@@ -99,5 +108,13 @@ void Ui::handleEncoder() {
             break;
         }
         }
+    }
+}
+
+void Ui::handleMidi() {
+    while (_midiMessages.readable()) {
+        auto item = _midiMessages.read();
+        MidiEvent midiEvent(item.first, item.second);
+        _pageManager.dispatchEvent(midiEvent);
     }
 }

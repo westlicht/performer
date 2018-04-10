@@ -16,6 +16,8 @@
 
 #include "core/gfx/FrameBuffer.h"
 #include "core/gfx/Canvas.h"
+#include "core/utils/RingBuffer.h"
+#include "core/midi/MidiMessage.h"
 
 #include "engine/Engine.h"
 
@@ -33,6 +35,7 @@ public:
 private:
     void handleKeys();
     void handleEncoder();
+    void handleMidi();
 
     Model &_model;
     Engine &_engine;
@@ -40,6 +43,7 @@ private:
     Lcd &_lcd;
     ButtonLedMatrix &_blm;
     Encoder &_encoder;
+    RingBuffer<std::pair<MidiPort, MidiMessage>, 16> _midiMessages;
 
     uint8_t _frameBufferData[CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT];
     FrameBuffer8bit _frameBuffer;
