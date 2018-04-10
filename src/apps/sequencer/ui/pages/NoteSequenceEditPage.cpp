@@ -350,6 +350,32 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
     event.consume();
 }
 
+void NoteSequenceEditPage::midi(MidiEvent &event) {
+    if (_mode == Mode::Note && _stepSelection.any()) {
+        auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
+        auto &sequence = _project.selectedNoteSequence();
+        const auto &scale = sequence.selectedScale();
+        const auto &message = event.message();
+
+        if (message.isNoteOn()) {
+            float volts = (message.note() - 60) * (1.f / 12.f);
+            int note = scale.noteFromVolts(volts);
+
+            for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+                if (_stepSelection[stepIndex]) {
+                    auto &step = sequence.step(stepIndex);
+                    step.setNote(note);
+                }
+            }
+
+            trackEngine.setIdleStep(_stepSelection.first());
+            trackEngine.setIdleGate(true);
+        } else if (message.isNoteOff()) {
+            trackEngine.setIdleGate(false);
+        }
+    }
+}
+
 void NoteSequenceEditPage::updateIdleOutput() {
     auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
 

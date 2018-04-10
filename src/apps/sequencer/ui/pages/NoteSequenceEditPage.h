@@ -18,6 +18,7 @@ public:
     virtual void keyUp(KeyEvent &event) override;
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
+    virtual void midi(MidiEvent &event) override;
 
 private:
     static const int StepCount = 16;
