@@ -25,6 +25,7 @@ public:
 
     void update();
     void render();
+    void delay(int ms);
 
     double ticks();
 

@@ -66,6 +66,10 @@ void Simulator::render() {
     _window.render();
 }
 
+void Simulator::delay(int ms) {
+    SDL_Delay(ms);
+}
+
 double Simulator::ticks() {
     double delta = SDL_GetPerformanceCounter() - _timerStart;
     return delta / _timerFrequency * 1000.0;

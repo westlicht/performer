@@ -69,6 +69,9 @@ struct Environment {
         engine.update();
         ui.update();
         simulator.render();
+#ifndef __EMSCRIPTEN__
+        simulator.delay(1);
+#endif // __EMSCRIPTEN__
     }
 
 };
