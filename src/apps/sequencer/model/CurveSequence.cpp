@@ -23,7 +23,7 @@ void CurveSequence::Step::read(ReadContext &context) {
 }
 
 void CurveSequence::clear() {
-    setRange(Range::Bipolar5V);
+    setRange(Types::VoltageRange::Bipolar5V);
     setDivisor(12);
     setResetMeasure(0);
     setRunMode(Types::RunMode::Forward);

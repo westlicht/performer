@@ -45,6 +45,6 @@ private:
 
     float _cvOutput;
 
-    CurveSequence::Range _lastRange;
+    Types::VoltageRange _lastRange;
     std::array<float, 2> _range;
 };

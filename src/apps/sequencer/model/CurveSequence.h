@@ -64,62 +64,14 @@ public:
 
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
 
-    enum class Range : uint8_t {
-        Unipolar1V,
-        Unipolar2V,
-        Unipolar3V,
-        Unipolar4V,
-        Unipolar5V,
-        Bipolar1V,
-        Bipolar2V,
-        Bipolar3V,
-        Bipolar4V,
-        Bipolar5V,
-        Last
-    };
-
-    static const char *rangeName(Range range) {
-        switch (range) {
-        case Range::Unipolar1V: return "1V Unipolar";
-        case Range::Unipolar2V: return "2V Unipolar";
-        case Range::Unipolar3V: return "3V Unipolar";
-        case Range::Unipolar4V: return "4V Unipolar";
-        case Range::Unipolar5V: return "5V Unipolar";
-        case Range::Bipolar1V:  return "1V Bipolar";
-        case Range::Bipolar2V:  return "2V Bipolar";
-        case Range::Bipolar3V:  return "3V Bipolar";
-        case Range::Bipolar4V:  return "4V Bipolar";
-        case Range::Bipolar5V:  return "5V Bipolar";
-        case Range::Last:       break;
-        }
-        return nullptr;
-    }
-
-    static std::array<float, 2> rangeValues(Range range) {
-        switch (range) {
-        case Range::Unipolar1V: return {{ 0.f, 1.f }};
-        case Range::Unipolar2V: return {{ 0.f, 2.f }};
-        case Range::Unipolar3V: return {{ 0.f, 3.f }};
-        case Range::Unipolar4V: return {{ 0.f, 4.f }};
-        case Range::Unipolar5V: return {{ 0.f, 5.f }};
-        case Range::Bipolar1V:  return {{ -1.f, 1.f }};
-        case Range::Bipolar2V:  return {{ -2.f, 2.f }};
-        case Range::Bipolar3V:  return {{ -3.f, 3.f }};
-        case Range::Bipolar4V:  return {{ -4.f, 4.f }};
-        case Range::Bipolar5V:  return {{ -5.f, 5.f }};
-        case Range::Last:       break;
-        }
-        return {{ 0.f, 0.f }};
-    }
-
     //----------------------------------------
     // Properties
     //----------------------------------------
 
     // range
 
-    Range range() const { return _range; }
-    void setRange(Range range) {
+    Types::VoltageRange range() const { return _range; }
+    void setRange(Types::VoltageRange range) {
         _range = range;
     }
 
@@ -128,7 +80,7 @@ public:
     }
 
     void printRange(StringBuilder &str) const {
-        str(rangeName(range()));
+        str(Types::voltageRangeName(range()));
     }
 
     // divisor
@@ -235,7 +187,7 @@ public:
     void read(ReadContext &context);
 
 private:
-    Range _range;
+    Types::VoltageRange _range;
     uint8_t _divisor;
     uint8_t _resetMeasure;
     Types::RunMode _runMode;

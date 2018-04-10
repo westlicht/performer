@@ -7,6 +7,7 @@
 #include "core/math/Math.h"
 
 #include "model/Curve.h"
+#include "model/Types.h"
 
 static Random rng;
 
@@ -22,7 +23,7 @@ void CurveTrackEngine::reset() {
     _sequenceState.reset();
     _currentStep = -1;
     _currentStepFraction = 0.f;
-    _lastRange = CurveSequence::Range::Last;
+    _lastRange = Types::VoltageRange::Last;
     changePattern();
 }
 
@@ -33,7 +34,7 @@ void CurveTrackEngine::tick(uint32_t tick) {
 
     // update range values
     if (sequence.range() != _lastRange) {
-        _range = CurveSequence::rangeValues(sequence.range());
+        _range = Types::voltageRangeValues(sequence.range());
         _lastRange = sequence.range();
     }
 
