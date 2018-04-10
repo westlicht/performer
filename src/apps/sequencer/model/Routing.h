@@ -26,8 +26,8 @@ public:
     enum class Param : uint8_t {
         None,
         // Global parameters
-        GlobalFirst,
-        BPM = GlobalFirst,
+        BPM,
+        GlobalFirst = BPM,
         Swing,
         GlobalLast = Swing,
 
@@ -43,8 +43,8 @@ public:
         // GlobalModLast = SequenceShift,
 
         // Track parameters
-        TrackFirst,
-        TrackSlideTime = TrackFirst,
+        TrackSlideTime,
+        TrackFirst = TrackSlideTime,
         TrackOctave,
         TrackTranspose,
         TrackRotate,
@@ -53,8 +53,8 @@ public:
         TrackLast = TrackStepLengthBias,
 
         // Sequence parameters
-        SequenceFirst,
-        FirstStep = SequenceFirst,
+        FirstStep,
+        SequenceFirst = FirstStep,
         LastStep,
         SequenceLast = LastStep,
 
@@ -93,6 +93,7 @@ public:
     enum class Source : uint8_t {
         None,
         CvIn1,
+        CvFirst = CvIn1,
         CvIn2,
         CvIn3,
         CvIn4,
@@ -104,9 +105,13 @@ public:
         CvOut6,
         CvOut7,
         CvOut8,
+        CvLast = CvOut8,
         Midi,
         Last
     };
+
+    static bool isCvSource(Source source) { return source >= Source::CvFirst && source <= Source::CvLast; }
+    static bool isMidiSource(Source source) { return source == Source::Midi; }
 
     static void printSource(Source source, StringBuilder &str) {
         switch (source) {
@@ -135,6 +140,32 @@ public:
             break;
         }
     }
+
+    class CvSource {
+    public:
+        // range
+
+        Types::VoltageRange range() const { return _range; }
+        void setRange(Types::VoltageRange range) { _range = range; }
+
+        void editRange(int value, bool shift) {
+            setRange(ModelUtils::adjustedEnum(range(), value));
+        }
+
+        void printRange(StringBuilder &str) const {
+            str(Types::voltageRangeName(range()));
+        }
+
+        void clear();
+
+        void write(WriteContext &context) const;
+        void read(ReadContext &context);
+
+        bool operator==(const CvSource &other) const;
+
+    private:
+        Types::VoltageRange _range;
+    };
 
     class MidiSource {
     public:
@@ -320,6 +351,11 @@ public:
             Routing::printSource(source(), str);
         }
 
+        // cvSource
+
+        const CvSource &cvSource() const { return _cvSource; }
+              CvSource &cvSource()       { return _cvSource; }
+
         // midiSource
 
         const MidiSource &midiSource() const { return _midiSource; }
@@ -347,6 +383,7 @@ public:
         float _min; // TODO make these int16_t
         float _max;
         Source _source;
+        CvSource _cvSource;
         MidiSource _midiSource;
 
         friend class Routing;

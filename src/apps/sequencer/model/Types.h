@@ -102,21 +102,13 @@ public:
         return nullptr;
     }
 
-    static std::array<float, 2> voltageRangeValues(VoltageRange voltageRange) {
-        switch (voltageRange) {
-        case VoltageRange::Unipolar1V:  return {{ 0.f, 1.f }};
-        case VoltageRange::Unipolar2V:  return {{ 0.f, 2.f }};
-        case VoltageRange::Unipolar3V:  return {{ 0.f, 3.f }};
-        case VoltageRange::Unipolar4V:  return {{ 0.f, 4.f }};
-        case VoltageRange::Unipolar5V:  return {{ 0.f, 5.f }};
-        case VoltageRange::Bipolar1V:   return {{ -1.f, 1.f }};
-        case VoltageRange::Bipolar2V:   return {{ -2.f, 2.f }};
-        case VoltageRange::Bipolar3V:   return {{ -3.f, 3.f }};
-        case VoltageRange::Bipolar4V:   return {{ -4.f, 4.f }};
-        case VoltageRange::Bipolar5V:   return {{ -5.f, 5.f }};
-        case VoltageRange::Last:        break;
-        }
-        return {{ 0.f, 0.f }};
+    struct VoltageRangeInfo {
+        float lo;
+        float hi;
+    };
+
+    static const VoltageRangeInfo *voltageRangeInfo(VoltageRange voltageRange) {
+        return &voltageRangeInfos[int(voltageRange)];
     }
 
     // MidiPort
@@ -158,5 +150,7 @@ public:
         str("%d", octave);
     }
 
+private:
+    static const VoltageRangeInfo voltageRangeInfos[];
 
 }; // namespace Types

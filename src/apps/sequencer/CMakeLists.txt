@@ -37,6 +37,7 @@ set(sources
     model/Scale.cpp
     model/Settings.cpp
     model/Track.cpp
+    model/Types.cpp
     model/UserScale.cpp
     # ui
     ui/LedPainter.cpp

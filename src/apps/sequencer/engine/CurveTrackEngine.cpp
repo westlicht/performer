@@ -23,7 +23,6 @@ void CurveTrackEngine::reset() {
     _sequenceState.reset();
     _currentStep = -1;
     _currentStepFraction = 0.f;
-    _lastRange = Types::VoltageRange::Last;
     changePattern();
 }
 
@@ -31,12 +30,6 @@ void CurveTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
     const auto *linkData = _linkedTrackEngine ? _linkedTrackEngine->linkData() : nullptr;
-
-    // update range values
-    if (sequence.range() != _lastRange) {
-        _range = Types::voltageRangeValues(sequence.range());
-        _lastRange = sequence.range();
-    }
 
     if (linkData) {
         _linkData = *linkData;
@@ -97,6 +90,7 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     _currentStepFraction = float(relativeTick) / divisor;
 
     float value = evalStepShape(step, _currentStepFraction);
-    value = _range[0] + value * (_range[1] - _range[0]);
+    const auto range = Types::voltageRangeInfo(sequence.range());
+    value = range->lo + value * (range->hi - range->lo);
     _cvOutput = value;
 }

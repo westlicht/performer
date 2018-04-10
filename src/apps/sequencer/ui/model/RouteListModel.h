@@ -14,11 +14,13 @@ public:
         Max,
         Tracks,
         Source,
-        FirstMidi,
-        MidiPort = FirstMidi,
+        FirstSource,
+        CvRange = FirstSource,
+        MidiPort = CvRange,
         MidiChannel,
         MidiEvent,
-        MidiControlNumberOrNote,
+        MidiControlNumber,
+        MidiNote = MidiControlNumber,
         Last
     };
 
@@ -27,9 +29,16 @@ public:
     {}
 
     virtual int rows() const override {
-        bool isMidi = _route.source() == Routing::Source::Midi;
+        bool isCvSource = Routing::isCvSource(_route.source());
+        bool isMidiSource = Routing::isMidiSource(_route.source());
         bool hasNoteOrController = _route.midiSource().event() != Routing::MidiSource::Event::PitchBend;
-        return isMidi ? (hasNoteOrController ? Last : (int(Last) - 1)) : FirstMidi;
+        if (isCvSource) {
+            return FirstSource + 1;
+        } else if (isMidiSource) {
+            return hasNoteOrController ? Last : int(Last) - 1;
+        } else {
+            return FirstSource;
+        }
     }
 
     virtual int columns() const override {
@@ -58,15 +67,13 @@ private:
         case Max:           return "Max";
         case Tracks:        return "Tracks";
         case Source:        return "Source";
-        case MidiPort:      return "MIDI Port";
+        // case CvRange:
+        case MidiPort:      return Routing::isCvSource(_route.source()) ? "Range" : "MIDI Port";
         case MidiChannel:   return "MIDI Channel";
         case MidiEvent:     return "MIDI Event";
-        case MidiControlNumberOrNote:
-            if (_route.midiSource().isControlEvent()) {
-                            return "CC Number";
-            } else {
-                            return "Note";
-            }
+        // case MidiControlNumber:
+        case MidiNote:
+                            return _route.midiSource().isControlEvent() ? "CC Number" : "Note";
         case Last:          break;
         }
         return nullptr;
@@ -93,8 +100,13 @@ private:
         case Source:
             _route.printSource(str);
             break;
+        // case CvRange:
         case MidiPort:
-            _route.midiSource().printPort(str);
+            if (Routing::isCvSource(_route.source())) {
+                _route.cvSource().printRange(str);
+            } else {
+                _route.midiSource().printPort(str);
+            }
             break;
         case MidiChannel:
             _route.midiSource().printChannel(str);
@@ -102,7 +114,8 @@ private:
         case MidiEvent:
             _route.midiSource().printEvent(str);
             break;
-        case MidiControlNumberOrNote:
+        // case MidiControlNumber:
+        case MidiNote:
             if (_route.midiSource().isControlEvent()) {
                 _route.midiSource().printControlNumber(str);
             } else {
@@ -131,8 +144,13 @@ private:
         case Source:
             _route.editSource(value, shift);
             break;
+        // case CvRange:
         case MidiPort:
-            _route.midiSource().editPort(value, shift);
+            if (Routing::isCvSource(_route.source())) {
+                _route.cvSource().editRange(value, shift);
+            } else {
+                _route.midiSource().editPort(value, shift);
+            }
             break;
         case MidiChannel:
             _route.midiSource().editChannel(value, shift);
@@ -140,7 +158,8 @@ private:
         case MidiEvent:
             _route.midiSource().editEvent(value, shift);
             break;
-        case MidiControlNumberOrNote:
+        // case MidiControlNumber:
+        case MidiNote:
             if (_route.midiSource().isControlEvent()) {
                 _route.midiSource().editControlNumber(value, shift);
             } else {

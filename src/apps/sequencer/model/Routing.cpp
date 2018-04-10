@@ -5,6 +5,28 @@
 #include <cmath>
 
 //----------------------------------------
+// Routing::CvSource
+//----------------------------------------
+
+void Routing::CvSource::clear() {
+    _range = Types::VoltageRange::Bipolar5V;
+}
+
+void Routing::CvSource::write(WriteContext &context) const {
+    auto &writer = context.writer;
+    writer.write(_range);
+}
+
+void Routing::CvSource::read(ReadContext &context) {
+    auto &reader = context.reader;
+    reader.read(_range);
+}
+
+bool Routing::CvSource::operator==(const CvSource &other) const {
+    return _range == other._range;
+}
+
+//----------------------------------------
 // Routing::MidiSource
 //----------------------------------------
 
@@ -54,6 +76,7 @@ void Routing::Route::clear() {
     _min = 0.f;
     _max = 1.f;
     _source = Source::None;
+    _cvSource.clear();
     _midiSource.clear();
 }
 
@@ -69,7 +92,10 @@ void Routing::Route::write(WriteContext &context) const {
     writer.write(_min);
     writer.write(_max);
     writer.write(_source);
-    if (_source == Source::Midi) {
+    if (isCvSource(_source)) {
+        _cvSource.write(context);
+    }
+    if (isMidiSource(_source)) {
         _midiSource.write(context);
     }
 }
@@ -81,7 +107,10 @@ void Routing::Route::read(ReadContext &context) {
     reader.read(_min);
     reader.read(_max);
     reader.read(_source);
-    if (_source == Source::Midi) {
+    if (isCvSource(_source)) {
+        _cvSource.read(context);
+    }
+    if (isMidiSource(_source)) {
         _midiSource.read(context);
     }
 }
@@ -93,7 +122,8 @@ bool Routing::Route::operator==(const Route &other) const {
         _min == other._min &&
         _max == other._max &&
         _source == other._source &&
-        _midiSource == other._midiSource
+        (!isCvSource(_source) || _cvSource == other._cvSource) &&
+        (!isMidiSource(_source) || _midiSource == other._midiSource)
     );
 }
 

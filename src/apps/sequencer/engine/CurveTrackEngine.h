@@ -44,7 +44,4 @@ private:
     float _currentStepFraction;
 
     float _cvOutput;
-
-    Types::VoltageRange _lastRange;
-    std::array<float, 2> _range;
 };
