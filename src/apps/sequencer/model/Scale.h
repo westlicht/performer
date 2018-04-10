@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/utils/StringBuilder.h"
+#include "core/math/Math.h"
 
 #include <algorithm>
 
@@ -25,6 +26,7 @@ public:
 
     virtual void noteName(StringBuilder &str, int note, Format format = Long) const = 0;
     virtual float noteVolts(int note) const = 0;
+    virtual int noteFromVolts(float volts) const = 0;
 
     virtual int notesPerOctave() const = 0;
 
@@ -61,6 +63,10 @@ public:
 
     float noteVolts(int note) const override {
         return note * _interval;
+    }
+
+    int noteFromVolts(float volts) const override {
+        return int(std::floor(volts / _interval));
     }
 
     int notesPerOctave() const override {
@@ -105,9 +111,31 @@ public:
     }
 
     float noteVolts(int note) const override {
-        int octave = note >= 0 ? (note / _noteCount) : (note - _noteCount + 1) / _noteCount;
+        int octave = roundDownDivide(note, _noteCount);
         int index = note - octave * _noteCount;
         return octave + toSemiNotes(_notes[index]) * (1.f / 12.f);
+    }
+
+    int noteFromVolts(float volts) const override {
+        int semiNotes = std::floor(volts * 12.f + 0.01f);
+        int octave = roundDownDivide(semiNotes, 12);
+        semiNotes -= octave * 12;
+
+        int index = -1;
+        for (int i = 0; i < _noteCount; ++i) {
+            int noteSemiNotes = toSemiNotes(_notes[i]);
+            if (semiNotes < noteSemiNotes) {
+                break;
+            }
+            index = i;
+        }
+
+        if (index == -1) {
+            index = _noteCount -1;
+            --octave;
+        }
+
+        return octave * _noteCount + index;
     }
 
     int notesPerOctave() const override {

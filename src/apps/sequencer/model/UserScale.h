@@ -137,40 +137,13 @@ public:
     bool isChromatic() const override { return mode() == Mode::Note; }
 
     void noteName(StringBuilder &str, int note, Format format) const override {
-        static const char *names[] = { "1", "1#", "2", "2#", "3", "4", "4#", "5", "5#", "6", "6#", "7" };
-
         switch (_mode) {
-        case Mode::Note: {
-            int octave = note >= 0 ? (note / _size) : (note - _size + 1) / _size;
-            int index = note - octave * _size;
-            switch (format) {
-            case Short1:
-                str(names[index]);
-                break;
-            case Short2:
-                str("%+d", octave);
-                break;
-            case Long:
-                str("%s%+d", names[index], octave);
-                break;
-            }
+        case Mode::Note:
+            noteNameNoteMode(str, note, format);
             break;
-        }
-        case Mode::Voltage: {
-            float volts = noteVolts(note);
-            switch (format) {
-            case Short1:
-                str("%c", volts < 0.f ? '-' : '+');
-                break;
-            case Short2:
-                str("%.1f", std::abs(volts));
-                break;
-            case Long:
-                str("%+.3fV", volts);
-                break;
-            }
+        case Mode::Voltage:
+            noteNameVoltageMode(str, note, format);
             break;
-        }
         case Mode::Last:
             break;
         }
@@ -178,17 +151,29 @@ public:
 
     float noteVolts(int note) const override {
         int notesPerOctave_ = notesPerOctave();
-        int octave = note >= 0 ? (note / notesPerOctave_) : (note - notesPerOctave_ + 1) / notesPerOctave_;
+        int octave = roundDownDivide(note, notesPerOctave_);
         int index = note - octave * notesPerOctave_;
         switch (_mode) {
         case Mode::Note:
             return octave + _items[index] * (1.f / 12.f);
         case Mode::Voltage:
-            return (octave * (_items[_size - 1] - _items[0]) + _items[index]) * (1.f / 1000.f);
+            return octave * octaveRangeVolts() + _items[index] * (1.f / 1000.f);
         case Mode::Last:
             break;
         }
         return 0.f;
+    }
+
+    int noteFromVolts(float volts) const override {
+        switch (_mode) {
+        case Mode::Note:
+            return noteFromVoltsNoteMode(volts);
+        case Mode::Voltage:
+            return noteFromVoltsVoltageMode(volts);
+        case Mode::Last:
+            break;
+        }
+        return 0;
     }
 
     int notesPerOctave() const override {
@@ -198,6 +183,86 @@ public:
     static Array userScales;
 
 private:
+    void noteNameNoteMode(StringBuilder &str, int note, Format format) const {
+        static const char *names[] = { "1", "1#", "2", "2#", "3", "4", "4#", "5", "5#", "6", "6#", "7" };
+
+        int octave = roundDownDivide(note, _size);
+        int index = note - octave * _size;
+        switch (format) {
+        case Short1:
+            str(names[index]);
+            break;
+        case Short2:
+            str("%+d", octave);
+            break;
+        case Long:
+            str("%s%+d", names[index], octave);
+            break;
+        }
+    }
+
+    void noteNameVoltageMode(StringBuilder &str, int note, Format format) const {
+        float volts = noteVolts(note);
+        switch (format) {
+        case Short1:
+            str("%c", volts < 0.f ? '-' : '+');
+            break;
+        case Short2:
+            str("%.1f", std::abs(volts));
+            break;
+        case Long:
+            str("%+.3fV", volts);
+            break;
+        }
+    }
+
+    int noteFromVoltsNoteMode(float volts) const {
+        int semiNotes = std::floor(volts * 12.f + 0.01f);
+        int octave = roundDownDivide(semiNotes, 12);
+        semiNotes -= octave * 12;
+
+        int index = -1;
+        for (int i = 0; i < _size; ++i) {
+            if (semiNotes < _items[i]) {
+                break;
+            }
+            index = i;
+        }
+
+        if (index == -1) {
+            index = _size -1;
+            --octave;
+        }
+
+        return octave * _size + index;
+    }
+
+    int noteFromVoltsVoltageMode(float volts) const {
+        float octaveRange = octaveRangeVolts();
+        int octave = int(std::floor(volts / octaveRange));
+        volts -= octave * octaveRange;
+        int itemValue = int(std::floor(volts * 1000.f));
+
+        int index = -1;
+        for (int i = 0; i < _size; ++i) {
+            if (itemValue < _items[i]) {
+                break;
+            }
+            index = i;
+        }
+
+        if (index == -1) {
+            index = _size -1;
+            --octave;
+        }
+
+        return octave * (_size - 1) + index;
+    }
+
+    float octaveRangeVolts() const {
+        return (_items[_size - 1] - _items[0]) * (1.f / 1000.f);
+    }
+
     Mode _mode;
     uint8_t _size;
     ItemArray _items;
