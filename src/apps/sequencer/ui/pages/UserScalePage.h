@@ -4,7 +4,7 @@
 
 #include "ui/model/UserScaleListModel.h"
 
-// #include "model/Scale.h"
+#include "model/UserScale.h"
 
 class UserScalePage : public ListPage {
 public:

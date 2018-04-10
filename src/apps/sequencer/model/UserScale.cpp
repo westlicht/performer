@@ -1,11 +1,16 @@
 #include "UserScale.h"
 
-UserScale::Array UserScale::userScales;
+UserScale::Array UserScale::userScales = {{ "USER1", "USER2", "USER3", "USER4" }};
 
-UserScale::UserScale() :
-    Scale("User")
+UserScale::UserScale(const char *name) :
+    Scale(name)
 {
     clear();
+}
+
+UserScale::UserScale() :
+    UserScale("User")
+{
 }
 
 void UserScale::clear() {

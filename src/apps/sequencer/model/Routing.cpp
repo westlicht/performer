@@ -275,17 +275,17 @@ struct ParamInfo {
 };
 
 const ParamInfo paramInfos[int(Routing::Param::Last)] = {
-    [int(Routing::Param::None)]             = { 0,      0   },
-    [int(Routing::Param::BPM)]              = { 20,     500 },
-    [int(Routing::Param::Swing)]            = { 50,     75  },
-    [int(Routing::Param::TrackSlideTime)]   = { 0,      100 },
-    [int(Routing::Param::TrackOctave)]      = { -10,    10  },
-    [int(Routing::Param::TrackTranspose)]   = { -12,    12  },
-    [int(Routing::Param::TrackRotate)]      = { -64,    64  },
-    [int(Routing::Param::TrackStepProbabilityBias)] = { -8,    8  },
-    [int(Routing::Param::TrackStepLengthBias)] = { -8,     8   },
-    [int(Routing::Param::FirstStep)]        = { 0,      63  },
-    [int(Routing::Param::LastStep)]         = { 0,      63  },
+    [int(Routing::Param::None)]                     = { 0,      0   },
+    [int(Routing::Param::BPM)]                      = { 20,     500 },
+    [int(Routing::Param::Swing)]                    = { 50,     75  },
+    [int(Routing::Param::TrackSlideTime)]           = { 0,      100 },
+    [int(Routing::Param::TrackOctave)]              = { -10,    10  },
+    [int(Routing::Param::TrackTranspose)]           = { -12,    12  },
+    [int(Routing::Param::TrackRotate)]              = { -64,    64  },
+    [int(Routing::Param::TrackStepProbabilityBias)] = { -8,     8   },
+    [int(Routing::Param::TrackStepLengthBias)]      = { -8,     8   },
+    [int(Routing::Param::FirstStep)]                = { 0,      63  },
+    [int(Routing::Param::LastStep)]                 = { 0,      63  },
 };
 
 float Routing::normalizeParamValue(Routing::Param param, float value) {

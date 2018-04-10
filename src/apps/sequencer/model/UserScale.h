@@ -121,6 +121,7 @@ public:
     // Methods
     //----------------------------------------
 
+    UserScale(const char *name);
     UserScale();
 
     void clear();
