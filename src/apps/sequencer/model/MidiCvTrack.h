@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Config.h"
-#include "NoteSequence.h"
+#include "Types.h"
+#include "ModelUtils.h"
 #include "Serialize.h"
 
 #include "core/math/Math.h"
@@ -102,6 +103,19 @@ public:
         }
     }
 
+    // modulationRange
+
+    Types::VoltageRange modulationRange() const { return _modulationRange; }
+    void setModulationRange(Types::VoltageRange modulationRange) { _modulationRange = modulationRange; }
+
+    void editModulationRange(int value, bool shift) {
+        setModulationRange(ModelUtils::adjustedEnum(modulationRange(), value));
+    }
+
+    void printModulationRange(StringBuilder &str) const {
+        str(Types::voltageRangeName(modulationRange()));
+    }
+
     // retrigger
 
     bool retrigger() const { return _retrigger; }
@@ -139,5 +153,6 @@ private:
     uint8_t _voices;
     VoiceConfig _voiceConfig;
     uint8_t _pitchBendRange;
+    Types::VoltageRange _modulationRange;
     bool _retrigger;
 };

@@ -1,12 +1,13 @@
 #include "MidiCvTrack.h"
 
 void MidiCvTrack::clear() {
-    _port = Types::MidiPort::Midi;
-    _channel = -1;
-    _voices = 1;
-    _voiceConfig = VoiceConfig::Pitch;
-    _pitchBendRange = 2;
-    _retrigger = false;
+    setPort(Types::MidiPort::Midi);
+    setChannel(-1);
+    setVoices(1);
+    setVoiceConfig(VoiceConfig::Pitch);
+    setPitchBendRange(2);
+    setModulationRange(Types::VoltageRange::Unipolar5V);
+    setRetrigger(false);
 }
 
 void MidiCvTrack::gateOutputName(int index, StringBuilder &str) const {
@@ -33,6 +34,7 @@ void MidiCvTrack::write(WriteContext &context) const {
     writer.write(_voices);
     writer.write(_voiceConfig);
     writer.write(_pitchBendRange);
+    writer.write(_modulationRange);
     writer.write(_retrigger);
 }
 
@@ -43,5 +45,6 @@ void MidiCvTrack::read(ReadContext &context) {
     reader.read(_voices);
     reader.read(_voiceConfig);
     reader.read(_pitchBendRange);
+    reader.read(_modulationRange);
     reader.read(_retrigger);
 }

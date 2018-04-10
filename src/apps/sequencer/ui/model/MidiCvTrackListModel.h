@@ -45,6 +45,7 @@ private:
         Voices,
         VoiceConfig,
         PitchBendRange,
+        ModulationRange,
         Retrigger,
         Last
     };
@@ -56,6 +57,7 @@ private:
         case Voices:            return "Voices";
         case VoiceConfig:       return "Voice Config";
         case PitchBendRange:    return "Pitch Bend";
+        case ModulationRange:   return "Mod Range";
         case Retrigger:         return "Retrigger";
         case Last:              break;
         }
@@ -83,6 +85,9 @@ private:
         case PitchBendRange:
             _track->printPitchBendRange(str);
             break;
+        case ModulationRange:
+            _track->printModulationRange(str);
+            break;
         case Retrigger:
             _track->printRetrigger(str);
             break;
@@ -107,6 +112,9 @@ private:
             break;
         case PitchBendRange:
             _track->editPitchBendRange(value, shift);
+            break;
+        case ModulationRange:
+            _track->editModulationRange(value, shift);
             break;
         case Retrigger:
             _track->editRetrigger(value, shift);
