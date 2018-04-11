@@ -14,8 +14,8 @@ struct Vec2 {
         set(c);
     }
 
-    Vec2(float x_, float y_) {
-        set(x_, y_);
+    Vec2(float x, float y) {
+        set(x, y);
     }
 
     Vec2(const Vec2 &v) {
@@ -30,9 +30,9 @@ struct Vec2 {
         set(c, c);
     }
 
-    void set(float x_, float y_) {
-        x = x_;
-        y = y_;
+    void set(float x, float y) {
+        this->x = x;
+        this->y = y;
     }
 
     void invert() {
@@ -52,7 +52,7 @@ struct Vec2 {
     }
 
     float length() const {
-        return std::sqrt(x*x + y*y);
+        return std::sqrt(lengthSqr());
     }
 
     float lengthSqr() const {
@@ -64,8 +64,8 @@ struct Vec2 {
     }
 
     Vec2 normalized() const {
-        float invSqrt = 1.f / std::sqrt(x*x + y*y);
-        return Vec2(x * invSqrt, y * invSqrt);
+        float invLength = 1.f / length();
+        return Vec2(x * invLength, y * invLength);
     }
 
     Vec2 abs() const {

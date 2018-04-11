@@ -26,6 +26,9 @@
 
 #include "EuclideanPage.h"
 
+#ifdef CONFIG_ENABLE_INTRO
+#include "IntroPage.h"
+#endif
 #ifdef CONFIG_ENABLE_ASTEROIDS
 #include "AsteroidsPage.h"
 #endif
@@ -58,6 +61,9 @@ struct Pages {
     // misc
     EuclideanPage euclidean;
 
+#ifdef CONFIG_ENABLE_INTRO
+    IntroPage intro;
+#endif
 #ifdef CONFIG_ENABLE_ASTEROIDS
     AsteroidsPage asteroids;
 #endif
@@ -89,6 +95,9 @@ struct Pages {
         busy(manager, context),
         // misc
         euclidean(manager, context)
+#ifdef CONFIG_ENABLE_INTRO
+        ,intro(manager, context)
+#endif
 #ifdef CONFIG_ENABLE_ASTEROIDS
         ,asteroids(manager, context)
 #endif

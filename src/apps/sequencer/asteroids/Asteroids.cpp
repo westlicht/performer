@@ -215,7 +215,7 @@ void Player::draw(Canvas &canvas) {
         return;
     }
     canvas.setColor(0xf);
-    Mat3 transform = Mat3::transform(_position, _angle, 1.f);
+    Mat3 transform = Mat3::transform2D(_position, _angle, 1.f);
     drawShape(canvas, transform, playerShape);
 }
 
@@ -238,7 +238,7 @@ void Asteroid::update(float dt) {
 
 void Asteroid::draw(Canvas &canvas) {
     canvas.setColor(0x7);
-    Mat3 transform = Mat3::transform(_position, _angle, _scale);
+    Mat3 transform = Mat3::transform2D(_position, _angle, _scale);
     drawShape(canvas, transform, asteroidShapes[_shape]);
 }
 

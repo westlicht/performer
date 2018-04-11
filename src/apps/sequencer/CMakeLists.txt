@@ -19,6 +19,8 @@ set(sources
     engine/controllers/LaunchpadController.cpp
     # engine/generators
     engine/generators/Rhythm.cpp
+    # intro
+    intro/Intro.cpp
     # model
     model/ClipBoard.cpp
     model/ClockSetup.cpp
@@ -56,6 +58,7 @@ set(sources
     ui/pages/CurveSequencePage.cpp
     ui/pages/CurveSequenceEditPage.cpp
     ui/pages/EuclideanPage.cpp
+    ui/pages/IntroPage.cpp
     ui/pages/LayoutPage.cpp
     ui/pages/ListPage.cpp
     ui/pages/MonitorPage.cpp

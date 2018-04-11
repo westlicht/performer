@@ -56,7 +56,45 @@ Mat3 Mat3::transposed() const {
     return m;
 }
 
-Mat3 Mat3::transform(const Vec2 &translate, float rotate, float scale) {
+Mat3 Mat3::scale(float scale) {
+    return Mat3(
+        scale, 0.f, 0.f,
+        0.f, scale, 0.f,
+        0.f, 0.f, scale
+    );
+}
+
+Mat3 Mat3::rotateX(float theta) {
+    float cosTheta = std::cos(theta);
+    float sinTheta = std::sin(theta);
+    return Mat3(
+        1.f, 0.f, 0.f,
+        0.f, cosTheta, -sinTheta,
+        0.f, sinTheta, cosTheta
+    );
+}
+
+Mat3 Mat3::rotateY(float theta) {
+    float cosTheta = std::cos(theta);
+    float sinTheta = std::sin(theta);
+    return Mat3(
+        cosTheta, 0.f, sinTheta,
+        0.f, 1.f, 0.f,
+        -sinTheta, 0.f, cosTheta
+    );
+}
+
+Mat3 Mat3::rotateZ(float theta) {
+    float cosTheta = std::cos(theta);
+    float sinTheta = std::sin(theta);
+    return Mat3(
+        cosTheta, -sinTheta, 0.f,
+        sinTheta, cosTheta, 0.f,
+        0.f, 0.f, 1.f
+    );
+}
+
+Mat3 Mat3::transform2D(const Vec2 &translate, float rotate, float scale) {
     float sinTheta = std::sin(rotate);
     float cosTheta = std::cos(rotate);
     return Mat3(

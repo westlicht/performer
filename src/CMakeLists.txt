@@ -34,8 +34,11 @@ set(core_sources
     core/fs/Volume.cpp
     core/gfx/Canvas.cpp
     core/math/Mat3.cpp
+    core/math/Mat4.cpp
     core/math/Math.cpp
     core/math/Vec2.cpp
+    core/math/Vec3.cpp
+    core/math/Vec4.cpp
     core/midi/MidiMessage.cpp
     core/midi/MidiParser.cpp
     core/profiler/Profiler.cpp

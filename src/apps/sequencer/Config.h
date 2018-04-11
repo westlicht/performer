@@ -30,3 +30,4 @@
 
 
 // #define CONFIG_ENABLE_ASTEROIDS
+// #define CONFIG_ENABLE_INTRO

@@ -15,7 +15,11 @@ struct Mat3 {
     void transpose();
     Mat3 transposed() const;
 
-    static Mat3 transform(const Vec2 &translate, float rotate, float scale);
+    static Mat3 scale(float scale);
+    static Mat3 rotateX(float theta);
+    static Mat3 rotateY(float theta);
+    static Mat3 rotateZ(float theta);
+    static Mat3 transform2D(const Vec2 &translate, float rotate, float scale);
 
     union {
          struct {
