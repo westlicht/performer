@@ -4,6 +4,10 @@
 
 #include "ui/StepSelection.h"
 
+#include "engine/generators/NoteSequenceBuilder.h"
+
+#include "core/utils/Container.h"
+
 class NoteSequenceEditPage : public BasePage {
 public:
     NoteSequenceEditPage(PageManager &manager, PageContext &context);
@@ -64,10 +68,13 @@ private:
     void copySequence();
     void pasteSequence();
     void duplicateSequence();
+    void generateSequence();
 
     Mode _mode = Mode::Gate;
     int _page = 0;
     bool _showDetail;
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
+
+    Container<NoteSequenceBuilder> _builderContainer;
 };

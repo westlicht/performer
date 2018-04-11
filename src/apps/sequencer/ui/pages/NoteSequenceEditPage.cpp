@@ -17,6 +17,7 @@ enum class ContextAction {
     Copy,
     Paste,
     Duplicate,
+    Generate,
     Last
 };
 
@@ -25,6 +26,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "COPY" },
     { "PASTE" },
     { "DUPL" },
+    { "GEN" },
 };
 
 enum class Function {
@@ -508,6 +510,9 @@ void NoteSequenceEditPage::contextAction(int index) {
     case ContextAction::Duplicate:
         duplicateSequence();
         break;
+    case ContextAction::Generate:
+        generateSequence();
+        break;
     case ContextAction::Last:
         break;
     }
@@ -542,3 +547,12 @@ void NoteSequenceEditPage::duplicateSequence() {
     showMessage("STEPS DUPLICATED");
 }
 
+void NoteSequenceEditPage::generateSequence() {
+    _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
+        if (success) {
+            auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence());
+            auto generator = Generator::create(mode, *builder);
+            _manager.pages().generator.show(generator);
+        }
+    });
+}

@@ -18,6 +18,8 @@ set(sources
     # engine/controllers
     engine/controllers/LaunchpadController.cpp
     # engine/generators
+    engine/generators/EuclideanGenerator.cpp
+    engine/generators/Generator.cpp
     engine/generators/Rhythm.cpp
     # intro
     intro/Intro.cpp
@@ -57,6 +59,8 @@ set(sources
     ui/pages/ContextMenuPage.cpp
     ui/pages/CurveSequencePage.cpp
     ui/pages/CurveSequenceEditPage.cpp
+    ui/pages/GeneratorPage.cpp
+    ui/pages/GeneratorSelectPage.cpp
     ui/pages/IntroPage.cpp
     ui/pages/LayoutPage.cpp
     ui/pages/ListPage.cpp

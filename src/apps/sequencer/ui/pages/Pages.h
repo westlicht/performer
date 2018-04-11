@@ -23,6 +23,8 @@
 #include "TopPage.h"
 #include "TrackPage.h"
 #include "UserScalePage.h"
+#include "GeneratorPage.h"
+#include "GeneratorSelectPage.h"
 
 #ifdef CONFIG_ENABLE_INTRO
 #include "IntroPage.h"
@@ -52,6 +54,9 @@ struct Pages {
     MonitorPage monitor;
     ProjectSelectPage projectSelect;
     ContextMenuPage contextMenu;
+    // generator pages
+    GeneratorPage generator;
+    GeneratorSelectPage generatorSelect;
     // helper pages
     TextInputPage textInput;
     ConfirmationPage confirmation;
@@ -85,6 +90,9 @@ struct Pages {
         monitor(manager, context),
         projectSelect(manager, context),
         contextMenu(manager, context),
+        // generator pages
+        generator(manager, context),
+        generatorSelect(manager, context),
         // helper pages
         textInput(manager, context),
         confirmation(manager, context),

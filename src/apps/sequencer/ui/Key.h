@@ -92,6 +92,8 @@ public:
 
     bool isEncoder() const { return is(Encoder); }
 
+    bool isGlobal() const { return is(Start) || is(BPM); }
+
 private:
     int _code;
     const KeyState &_state;
