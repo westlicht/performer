@@ -154,9 +154,6 @@ void TopPage::setMode(Mode mode) {
         setSequencePage(4);
         break;
 
-    case Mode::Euclidean:
-        setMainPage(pages.euclidean);
-        break;
     case Mode::Routing:
         setMainPage(pages.routing);
         break;

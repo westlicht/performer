@@ -24,8 +24,6 @@
 #include "TrackPage.h"
 #include "UserScalePage.h"
 
-#include "EuclideanPage.h"
-
 #ifdef CONFIG_ENABLE_INTRO
 #include "IntroPage.h"
 #endif
@@ -59,8 +57,6 @@ struct Pages {
     ConfirmationPage confirmation;
     BusyPage busy;
     // misc
-    EuclideanPage euclidean;
-
 #ifdef CONFIG_ENABLE_INTRO
     IntroPage intro;
 #endif
@@ -92,9 +88,8 @@ struct Pages {
         // helper pages
         textInput(manager, context),
         confirmation(manager, context),
-        busy(manager, context),
+        busy(manager, context)
         // misc
-        euclidean(manager, context)
 #ifdef CONFIG_ENABLE_INTRO
         ,intro(manager, context)
 #endif

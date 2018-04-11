@@ -57,7 +57,6 @@ set(sources
     ui/pages/ContextMenuPage.cpp
     ui/pages/CurveSequencePage.cpp
     ui/pages/CurveSequenceEditPage.cpp
-    ui/pages/EuclideanPage.cpp
     ui/pages/IntroPage.cpp
     ui/pages/LayoutPage.cpp
     ui/pages/ListPage.cpp

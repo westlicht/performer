@@ -38,7 +38,6 @@ private:
         FirstStep       = 12,
 
         // aux modes
-        Euclidean       = 20,
         Routing         = 21,
         UserScale       = 22,
         Monitor         = 23,
