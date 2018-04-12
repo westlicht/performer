@@ -1,6 +1,11 @@
 #include "SequenceState.h"
 
 #include "core/Debug.h"
+#include "core/math/Math.h"
+
+static int randomStep(int firstStep, int lastStep, Random &rng) {
+    return rng.nextRange(lastStep - firstStep + 1) + firstStep;
+}
 
 void SequenceState::reset() {
     _step = -1;
@@ -8,10 +13,6 @@ void SequenceState::reset() {
 }
 
 void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastStep, Random &rng) {
-
-    auto randomStep = [&] () {
-        return rng.nextRange(lastStep - firstStep + 1) + firstStep;
-    };
 
     if (_step == -1) {
         // first step
@@ -25,14 +26,16 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
             _step = lastStep;
             break;
         case Types::RunMode::Random:
-            _step = randomStep();
-            break;
         case Types::RunMode::RandomWalk:
+            _step = randomStep(firstStep, lastStep, rng);
+            break;
         case Types::RunMode::Last:
             break;
         }
     } else {
         // advance step
+        _step = clamp(int(_step), firstStep, lastStep);
+
         switch (runMode) {
         case Types::RunMode::Forward:
             _step = _step >= lastStep ? firstStep : _step + 1;
@@ -56,7 +59,7 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
             }
             break;
         case Types::RunMode::Random:
-            _step = randomStep();
+            _step = randomStep(firstStep, lastStep, rng);
             break;
         case Types::RunMode::RandomWalk:
             advanceRandomWalk(firstStep, lastStep, rng);
@@ -98,7 +101,7 @@ void SequenceState::advanceAligned(int absoluteStep, Types::RunMode runMode, int
 
 void SequenceState::advanceRandomWalk(int firstStep, int lastStep, Random &rng) {
     if (_step == -1) {
-        _step = firstStep;
+        _step = randomStep(firstStep, lastStep, rng);
     } else {
         int dir = rng.nextRange(2);
         if (dir == 0) {
