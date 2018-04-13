@@ -10,12 +10,6 @@
 template<size_t N>
 class StepSelection {
 public:
-    enum class Mode : uint8_t {
-        Immediate,
-        Persist,
-    };
-
-
     void keyDown(KeyEvent &event, int stepOffset) {
         const auto &key = event.key();
 
@@ -70,29 +64,30 @@ public:
         }
 
         if (key.isStep()) {
+            int stepIndex = stepOffset + key.step();
+
             // switch to persist mode
             if (_mode == Mode::Immediate) {
                 _selected.reset();
                 _mode = Mode::Persist;
+                _first = stepIndex;
             }
 
-            int stepIndex = stepOffset + key.step();
             int count = event.count();
 
             if (count == 1) {
-                if (!otherStepKeyPressed(key.state(), key.step())) {
-                    _selected.reset();
-                    _first = stepIndex;
+                _selected[stepIndex] = !_selected[stepIndex];
+                if (_first == stepIndex) {
+                    _first = firstSetIndex();
                 }
-                _selected[stepIndex] = true;
             } else if (count == 2) {
-                if (_selected.count() == 2) {
-                    int interval = stepIndex - _first;
-                    for (int i = stepIndex; i >= 0 && i < int(_selected.size()); i += interval) {
+                int otherStep = otherPressedStepKey(key.state(), key.step());
+                if (otherStep >= 0) {
+                    int firstIndex = stepOffset + otherStep;
+                    int interval = stepIndex - firstIndex;
+                    for (int i = firstIndex; i >= 0 && i < int(_selected.size()); i += interval) {
                         _selected[i] = true;
                     }
-                } else if (stepIndex == 0) {
-                    _selected.set();
                 }
             }
 
@@ -103,6 +98,10 @@ public:
     void clear() {
         _selected.reset();
         _mode = Mode::Immediate;
+    }
+
+    bool isPersisted() const {
+        return _mode == Mode::Persist;
     }
 
     int first() const {
@@ -128,13 +127,20 @@ public:
     }
 
 private:
-    bool otherStepKeyPressed(const KeyState &keyState, int step) const {
+    int otherPressedStepKey(const KeyState &keyState, int step) const {
+        bool found = false;
+        int other = -1;
         for (int i = 0; i < 16; ++i) {
             if (i != step && keyState[MatrixMap::fromStep(i)]) {
-                return true;
+                if (found) {
+                    return -1;
+                } else {
+                    other = i;
+                    found = true;
+                }
             }
         }
-        return false;
+        return other;
     }
 
     int firstSetIndex() const {
@@ -143,10 +149,16 @@ private:
                 return i;
             }
         }
-        return 0;
+        return -1;
     }
+
+    enum class Mode : uint8_t {
+        Immediate,
+        Persist,
+    };
 
     Mode _mode = Mode::Immediate;
     std::bitset<N> _selected;
-    int _first = 0;
+    int _first = -1;
+    int8_t _lastPressedIndex;
 };

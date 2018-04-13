@@ -73,6 +73,7 @@ private:
     Mode _mode = Mode::Gate;
     int _page = 0;
     bool _showDetail;
+    uint32_t _showDetailTicks;
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 

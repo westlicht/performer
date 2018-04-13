@@ -164,10 +164,19 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         }
     }
 
-    if (_showDetail && _mode != Mode::Gate && _mode != Mode::NoteSlide && _stepSelection.any()) {
+    // handle detail display
+
+    if (_showDetail) {
+        if (_mode == Mode::Gate || _mode == Mode::NoteSlide || _stepSelection.none()) {
+            _showDetail = false;
+        }
+        if (_stepSelection.isPersisted() && os::ticks() > _showDetailTicks + os::time::ms(500)) {
+            _showDetail = false;
+        }
+    }
+
+    if (_showDetail) {
         drawDetail(canvas, sequence.step(_stepSelection.first()));
-    } else {
-        _showDetail = false;
     }
 }
 
@@ -248,6 +257,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
 
     if (key.isEncoder()) {
         _showDetail = true;
+        _showDetailTicks = os::ticks();
     }
 
     if (key.is(Key::Left)) {
@@ -274,6 +284,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
 
     if (_stepSelection.any()) {
         _showDetail = true;
+        _showDetailTicks = os::ticks();
     } else {
         return;
     }
