@@ -2,6 +2,53 @@
 
 #include "ModelUtils.h"
 
+Types::LayerRange CurveSequence::layerRange(Layer layer) {
+    #define CASE(_name_) \
+    case Layer::_name_: \
+        return { _name_::Min, _name_::Max };
+
+    switch (layer) {
+    case Layer::Shape: return { 0, int(Curve::Last) - 1 };
+    CASE(Min)
+    CASE(Max)
+    }
+
+    #undef CASE
+
+    return { 0, 0 };
+}
+
+int CurveSequence::Step::layerValue(Layer layer) const {
+    #define CASE(_layer_, _data_) \
+    case Layer::_layer_: \
+        return _data_;
+
+    switch (layer) {
+    CASE(Shape, _shape)
+    CASE(Min, _min)
+    CASE(Max, _max)
+    }
+
+    #undef CASE
+
+    return 0;
+}
+
+void CurveSequence::Step::setLayerValue(Layer layer, int value) {
+    #define CASE(_layer_, _data_) \
+    case Layer::_layer_: \
+        _data_ = value; \
+        break;
+
+    switch (layer) {
+    CASE(Shape, _shape)
+    CASE(Min, _min)
+    CASE(Max, _max)
+    }
+
+    #undef CASE
+}
+
 void CurveSequence::Step::clear() {
     setShape(0);
     setMin(0);

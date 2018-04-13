@@ -30,6 +30,22 @@ public:
     typedef SignedValue<7> NoteVariationRange;
     typedef UnsignedValue<3> NoteVariationProbability;
 
+    enum class Layer {
+        Gate,
+        GateProbability,
+        Retrigger,
+        RetriggerProbability,
+        Length,
+        LengthVariationRange,
+        LengthVariationProbability,
+        Note,
+        NoteVariationRange,
+        NoteVariationProbability,
+        Slide
+    };
+
+    static Types::LayerRange layerRange(Layer layer);
+
     class Step {
     public:
         // gate
@@ -89,6 +105,8 @@ public:
         int noteVariationProbability() const { return _data0.noteVariationProbability; }
         void setNoteVariationProbability(int noteVariationProbability) { _data0.noteVariationProbability = noteVariationProbability; }
 
+        int layerValue(Layer layer) const;
+        void setLayerValue(Layer layer, int value);
 
         void clear();
 

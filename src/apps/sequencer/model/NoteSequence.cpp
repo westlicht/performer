@@ -5,6 +5,76 @@
 uint8_t NoteSequence::_defaultScale;
 uint8_t NoteSequence::_defaultRootNote;
 
+Types::LayerRange NoteSequence::layerRange(Layer layer) {
+    #define CASE(_layer_) \
+    case Layer::_layer_: \
+        return { _layer_::Min, _layer_::Max };
+
+    switch (layer) {
+    case Layer::Gate: return { 0, 1 };
+    case Layer::Slide: return { 0, 1 };
+    CASE(GateProbability)
+    CASE(Retrigger)
+    CASE(RetriggerProbability)
+    CASE(Length)
+    CASE(LengthVariationRange)
+    CASE(LengthVariationProbability)
+    CASE(Note)
+    CASE(NoteVariationRange)
+    CASE(NoteVariationProbability)
+    }
+
+    #undef CASE
+
+    return { 0, 0 };
+}
+
+int NoteSequence::Step::layerValue(Layer layer) const {
+    #define CASE(_layer_, _data_) \
+    case Layer::_layer_: \
+        return _data_;
+
+    switch (layer) {
+    case Layer::Gate: return _data0.gate ? 1 : 0;
+    case Layer::Slide: return _data0.slide ? 1 : 0;
+    CASE(GateProbability, _data0.gateProbability)
+    CASE(Retrigger, _data1.retrigger)
+    CASE(RetriggerProbability, _data1.retriggerProbability)
+    CASE(Length, _data0.length)
+    CASE(LengthVariationRange, _data0.lengthVariationRange)
+    CASE(LengthVariationProbability, _data0.lengthVariationProbability)
+    CASE(Note, _data0.note)
+    CASE(NoteVariationRange, _data0.noteVariationRange)
+    CASE(NoteVariationProbability, _data0.noteVariationProbability)
+    }
+
+    #undef CASE
+
+    return 0;
+}
+
+void NoteSequence::Step::setLayerValue(Layer layer, int value) {
+    #define CASE(_layer_, _data_) \
+    case Layer::_layer_: \
+        _data_ = value; \
+        break;
+
+    switch (layer) {
+    case Layer::Gate: _data0.gate = value; break;
+    case Layer::Slide: _data0.slide = value; break;
+    CASE(GateProbability, _data0.gateProbability)
+    CASE(Retrigger, _data1.retrigger)
+    CASE(RetriggerProbability, _data1.retriggerProbability)
+    CASE(Length, _data0.length)
+    CASE(LengthVariationRange, _data0.lengthVariationRange)
+    CASE(LengthVariationProbability, _data0.lengthVariationProbability)
+    CASE(Note, _data0.note)
+    CASE(NoteVariationRange, _data0.noteVariationRange)
+    CASE(NoteVariationProbability, _data0.noteVariationProbability)
+    }
+
+    #undef CASE
+}
 
 void NoteSequence::Step::clear() {
     setGate(false);

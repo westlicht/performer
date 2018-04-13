@@ -24,6 +24,14 @@ public:
     typedef UnsignedValue<8> Min;
     typedef UnsignedValue<8> Max;
 
+    enum class Layer {
+        Shape,
+        Min,
+        Max
+    };
+
+    static Types::LayerRange layerRange(Layer layer);
+
     class Step {
     public:
         // shape
@@ -40,6 +48,7 @@ public:
             _min = min;
             _max = std::max(_max, _min);
         }
+
         float minNormalized() const { return float(_min) / CurveSequence::Min::Max; }
 
         // max
@@ -49,7 +58,12 @@ public:
             _max = max;
             _min = std::min(_min, _max);
         }
+
         float maxNormalized() const { return float(_max) / CurveSequence::Max::Max; }
+
+
+        int layerValue(Layer layer) const;
+        void setLayerValue(Layer layer, int value);
 
         void clear();
 

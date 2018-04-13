@@ -128,6 +128,13 @@ public:
         return nullptr;
     }
 
+    // Misc types
+
+    struct LayerRange {
+        int min;
+        int max;
+    };
+
     // Utilities
     // TODO maybe move these
 
