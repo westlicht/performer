@@ -54,7 +54,7 @@ void NoteSequenceEditPage::exit() {
 void NoteSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE EDIT");
-    WindowPainter::drawActiveFunction(canvas, modeName(_mode));
+    WindowPainter::drawActiveFunction(canvas, NoteSequence::layerName(_layer));
     WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
@@ -101,48 +101,50 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
         }
 
-        switch (_mode) {
-        case Mode::GateVariation:
+        switch (_layer) {
+        case Layer::GateProbability:
             SequencePainter::drawProbability(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 2,
                 step.gateProbability() + 1, NoteSequence::GateProbability::Range
             );
             break;
-        case Mode::Retrigger:
+        case Layer::Retrigger:
             SequencePainter::drawRetrigger(
                 canvas,
                 x, y + 18, stepWidth, 2,
                 step.retrigger() + 1, NoteSequence::Retrigger::Range
             );
             break;
-        case Mode::RetriggerVariation:
+        case Layer::RetriggerProbability:
             SequencePainter::drawProbability(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 2,
                 step.retriggerProbability() + 1, NoteSequence::RetriggerProbability::Range
             );
             break;
-        case Mode::Length:
+        case Layer::Length:
             SequencePainter::drawLength(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 6,
                 step.length() + 1, NoteSequence::Length::Range
             );
             break;
-        case Mode::LengthVariation:
+        case Layer::LengthVariationRange:
             SequencePainter::drawLengthRange(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 6,
                 step.length() + 1, step.lengthVariationRange(), NoteSequence::Length::Range
             );
+            break;
+        case Layer::LengthVariationProbability:
             SequencePainter::drawProbability(
                 canvas,
-                x + 2, y + 28, stepWidth - 4, 2,
+                x + 2, y + 18, stepWidth - 4, 2,
                 step.lengthVariationProbability(), NoteSequence::LengthVariationProbability::Max
             );
             break;
-        case Mode::Note: {
+        case Layer::Note: {
             canvas.setColor(0xf);
             FixedStringBuilder<8> str;
             scale.noteName(str, step.note(), Scale::Short1);
@@ -152,7 +154,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
             break;
         }
-        case Mode::NoteSlide:
+        case Layer::Slide:
             SequencePainter::drawSlide(
                 canvas,
                 x + 4, y + 18, stepWidth - 8, 4,
@@ -167,7 +169,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
     // handle detail display
 
     if (_showDetail) {
-        if (_mode == Mode::Gate || _mode == Mode::NoteSlide || _stepSelection.none()) {
+        if (_layer == Layer::Gate || _layer == Layer::Slide || _stepSelection.none()) {
             _showDetail = false;
         }
         if (_stepSelection.isPersisted() && os::ticks() > _showDetailTicks + os::time::ms(500)) {
@@ -224,8 +226,8 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
 
     if (!key.shiftModifier() && key.isStep()) {
         int stepIndex = stepOffset() + key.step();
-        switch (_mode) {
-        case Mode::Gate:
+        switch (_layer) {
+        case Layer::Gate:
             sequence.step(stepIndex).toggleGate();
             event.consume();
             break;
@@ -237,19 +239,20 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Gate:
-            _mode = _mode == Mode::Gate ? Mode::GateVariation : Mode::Gate;
+            _layer = _layer == Layer::Gate ? Layer::GateProbability : Layer::Gate;
             break;
         case Function::Retrigger:
-            _mode = _mode == Mode::Retrigger ? Mode::RetriggerVariation : Mode::Retrigger;
+            _layer = _layer == Layer::Retrigger ? Layer::RetriggerProbability : Layer::Retrigger;
             break;
         case Function::Length:
-            _mode = _mode == Mode::Length ? Mode::LengthVariation : Mode::Length;
+            _layer = _layer == Layer::Length ? Layer::LengthVariationRange : (_layer == Layer::LengthVariationRange ? Layer::LengthVariationProbability : Layer::Length);
             break;
         case Function::Note:
-            _mode = _mode == Mode::Note ? Mode::NoteVariation : (_mode == Mode::NoteVariation ? Mode::NoteSlide : Mode::Note);
+            // _layer = _layer == Layer::Note ? Layer::NoteVariation : (_layer == Layer::NoteVariation ? Layer::NoteSlide : Layer::Note);
+            _layer = _layer == Layer::Note ? Layer::Slide : Layer::Note;
             break;
         case Function::Condition:
-            _mode = Mode::TrigCondition;
+            // _layer = Layer::TrigCondition;
             break;
         }
         event.consume();
@@ -295,60 +298,61 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool setToFirst = int(stepIndex) != _stepSelection.first() && _keyState[Key::Shift];
-            switch (_mode) {
-            case Mode::Gate:
+            switch (_layer) {
+            case Layer::Gate:
                 step.setGate(
                     setToFirst ? firstStep.gate() :
                     event.value() > 0
                 );
                 break;
-            case Mode::GateVariation:
+            case Layer::GateProbability:
                 step.setGateProbability(
                     setToFirst ? firstStep.gateProbability() :
                     NoteSequence::GateProbability::clamp(step.gateProbability() + event.value())
                 );
                 break;
-            case Mode::Retrigger:
+            case Layer::Retrigger:
                 step.setRetrigger(
                     setToFirst ? firstStep.retrigger() :
                     NoteSequence::Retrigger::clamp(step.retrigger() + event.value())
                 );
                 break;
-            case Mode::RetriggerVariation:
+            case Layer::RetriggerProbability:
                 step.setRetriggerProbability(
                     setToFirst ? firstStep.retriggerProbability() :
                     NoteSequence::RetriggerProbability::clamp(step.retriggerProbability() + event.value())
                 );
                 break;
-            case Mode::Length:
+            case Layer::Length:
                 step.setLength(
                     setToFirst ? firstStep.length() :
                     NoteSequence::Length::clamp(step.length() + event.value())
                 );
                 break;
-            case Mode::LengthVariation:
-                if (event.pressed()) {
-                    step.setLengthVariationProbability(
-                        setToFirst ? firstStep.lengthVariationProbability() :
-                        NoteSequence::LengthVariationProbability::clamp(step.lengthVariationProbability() + event.value())
-                    );
-                } else {
-                    step.setLengthVariationRange(
-                        setToFirst ? firstStep.lengthVariationRange() :
-                        NoteSequence::LengthVariationRange::clamp(step.lengthVariationRange() + event.value())
-                    );
-                }
+            case Layer::LengthVariationRange:
+                step.setLengthVariationRange(
+                    setToFirst ? firstStep.lengthVariationRange() :
+                    NoteSequence::LengthVariationRange::clamp(step.lengthVariationRange() + event.value())
+                );
                 break;
-            case Mode::Note:
+            case Layer::LengthVariationProbability:
+                step.setLengthVariationProbability(
+                    setToFirst ? firstStep.lengthVariationProbability() :
+                    NoteSequence::LengthVariationProbability::clamp(step.lengthVariationProbability() + event.value())
+                );
+                break;
+            case Layer::Note:
                 step.setNote(
                     setToFirst ? firstStep.note() :
                     NoteSequence::Note::clamp(step.note() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1))
                 );
                 updateIdleOutput();
                 break;
-            case Mode::NoteVariation:
+            case Layer::NoteVariationRange:
                 break;
-            case Mode::NoteSlide:
+            case Layer::NoteVariationProbability:
+                break;
+            case Layer::Slide:
                 step.setSlide(
                     setToFirst ? firstStep.slide() :
                     event.value() > 0
@@ -364,7 +368,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
 }
 
 void NoteSequenceEditPage::midi(MidiEvent &event) {
-    if (_mode == Mode::Note && _stepSelection.any()) {
+    if (_layer == Layer::Note && _stepSelection.any()) {
         auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
         auto &sequence = _project.selectedNoteSequence();
         const auto &scale = sequence.selectedScale();
@@ -392,7 +396,7 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
 void NoteSequenceEditPage::updateIdleOutput() {
     auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
 
-    if (_mode == Mode::Note && _stepSelection.any()) {
+    if (_layer == Layer::Note && _stepSelection.any()) {
         trackEngine.setIdleStep(_stepSelection.first());
         trackEngine.setIdleGate(true);
     } else {
@@ -421,8 +425,8 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
 
     canvas.setFont(Font::Tiny);
 
-    switch (_mode) {
-    case Mode::GateVariation:
+    switch (_layer) {
+    case Layer::GateProbability:
         SequencePainter::drawProbability(
             canvas,
             64 + 32 + 8, 32 - 4, 64 - 16, 8,
@@ -433,7 +437,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
-    case Mode::Retrigger:
+    case Layer::Retrigger:
         SequencePainter::drawRetrigger(
             canvas,
             64+ 32 + 8, 32 - 4, 64 - 16, 8,
@@ -444,7 +448,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
-    case Mode::RetriggerVariation:
+    case Layer::RetriggerProbability:
         SequencePainter::drawProbability(
             canvas,
             64 + 32 + 8, 32 - 4, 64 - 16, 8,
@@ -455,7 +459,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
-    case Mode::Length:
+    case Layer::Length:
         SequencePainter::drawLength(
             canvas,
             64 + 32 + 8, 32 - 4, 64 - 16, 8,
@@ -466,28 +470,29 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
-    case Mode::LengthVariation:
+    case Layer::LengthVariationRange:
         SequencePainter::drawLengthRange(
             canvas,
-            64 + 32 + 8, 32 - 12, 64 - 16, 8,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
             step.length() + 1, step.lengthVariationRange(), NoteSequence::Length::Range
         );
         str.reset();
         str("%.1f%%", 100.f * (step.lengthVariationRange()) / NoteSequence::Length::Range);
         canvas.setColor(0xf);
-        canvas.drawTextCentered(64 + 32 + 64, 32 - 12, 32, 8, str);
-
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+    case Layer::LengthVariationProbability:
         SequencePainter::drawProbability(
             canvas,
-            64 + 32 + 8, 32 + 4, 64 - 16, 8,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
             step.lengthVariationProbability(), NoteSequence::LengthVariationProbability::Max
         );
         str.reset();
         str("%.1f%%", 100.f * (step.lengthVariationProbability()) / NoteSequence::LengthVariationProbability::Max);
         canvas.setColor(0xf);
-        canvas.drawTextCentered(64 + 32 + 64, 32 + 4, 32, 8, str);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
-    case Mode::Note:
+    case Layer::Note:
         str.reset();
         scale.noteName(str, step.note(), Scale::Long);
         canvas.setFont(Font::Small);

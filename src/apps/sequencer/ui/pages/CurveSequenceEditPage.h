@@ -20,22 +20,9 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    typedef CurveSequence::Layer Layer;
+
     static const int StepCount = 16;
-
-    enum class Mode : uint8_t {
-        Shape,
-        Min,
-        Max,
-    };
-
-    static const char *modeName(Mode mode) {
-        switch (mode) {
-        case Mode::Shape:           return "SHAPE"; break;
-        case Mode::Min:             return "MIN"; break;
-        case Mode::Max:             return "MAX"; break;
-        }
-        return nullptr;
-    }
 
     int stepOffset() const { return _page * StepCount; }
 
@@ -49,7 +36,7 @@ private:
 
     ContextMenu _contextMenu;
 
-    Mode _mode = Mode::Shape;
+    Layer _layer = Layer::Shape;
     int _page = 0;
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;

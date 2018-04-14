@@ -33,9 +33,9 @@ public:
 
     static const char *layerName(Layer layer) {
         switch (layer) {
-        case Layer::Shape:  return "Shape";
-        case Layer::Min:    return "Min";
-        case Layer::Max:    return "Max";
+        case Layer::Shape:  return "SHAPE";
+        case Layer::Min:    return "MIN";
+        case Layer::Max:    return "MAX";
         case Layer::Last:   break;
         }
         return nullptr;

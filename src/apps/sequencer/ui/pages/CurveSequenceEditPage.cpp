@@ -69,7 +69,7 @@ void CurveSequenceEditPage::exit() {
 void CurveSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE EDIT");
-    WindowPainter::drawActiveFunction(canvas, modeName(_mode));
+    WindowPainter::drawActiveFunction(canvas, CurveSequence::layerName(_layer));
     WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
@@ -175,13 +175,13 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Shape:
-            _mode = Mode::Shape;
+            _layer = Layer::Shape;
             break;
         case Function::Min:
-            _mode = Mode::Min;
+            _layer = Layer::Min;
             break;
         case Function::Max:
-            _mode = Mode::Max;
+            _layer = Layer::Max;
             break;
         }
         event.consume();
@@ -218,20 +218,20 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool setToFirst = int(stepIndex) != _stepSelection.first() && _keyState[Key::Shift];
-            switch (_mode) {
-            case Mode::Shape:
+            switch (_layer) {
+            case Layer::Shape:
                 step.setShape(
                     setToFirst ? firstStep.shape() :
                     CurveSequence::Shape::clamp(step.shape() + event.value())
                 );
                 break;
-            case Mode::Min:
+            case Layer::Min:
                 step.setMin(
                     setToFirst ? firstStep.min() :
                     CurveSequence::Min::clamp(step.min() + event.value() * (event.pressed() ? 1 : 8))
                 );
                 break;
-            case Mode::Max:
+            case Layer::Max:
                 step.setMax(
                     setToFirst ? firstStep.max() :
                     CurveSequence::Max::clamp(step.max() + event.value() * (event.pressed() ? 1 : 8))
