@@ -27,8 +27,19 @@ public:
     enum class Layer {
         Shape,
         Min,
-        Max
+        Max,
+        Last
     };
+
+    static const char *layerName(Layer layer) {
+        switch (layer) {
+        case Layer::Shape:  return "Shape";
+        case Layer::Min:    return "Min";
+        case Layer::Max:    return "Max";
+        case Layer::Last:   break;
+        }
+        return nullptr;
+    }
 
     static Types::LayerRange layerRange(Layer layer);
 

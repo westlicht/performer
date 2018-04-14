@@ -22,6 +22,7 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
     CASE(Note)
     CASE(NoteVariationRange)
     CASE(NoteVariationProbability)
+    case Layer::Last: break;
     }
 
     #undef CASE
@@ -46,6 +47,7 @@ int NoteSequence::Step::layerValue(Layer layer) const {
     CASE(Note, _data0.note)
     CASE(NoteVariationRange, _data0.noteVariationRange)
     CASE(NoteVariationProbability, _data0.noteVariationProbability)
+    case Layer::Last: break;
     }
 
     #undef CASE
@@ -71,6 +73,7 @@ void NoteSequence::Step::setLayerValue(Layer layer, int value) {
     CASE(Note, _data0.note)
     CASE(NoteVariationRange, _data0.noteVariationRange)
     CASE(NoteVariationProbability, _data0.noteVariationProbability)
+    case Layer::Last: break;
     }
 
     #undef CASE

@@ -11,6 +11,7 @@ Types::LayerRange CurveSequence::layerRange(Layer layer) {
     case Layer::Shape: return { 0, int(Curve::Last) - 1 };
     CASE(Min)
     CASE(Max)
+    case Layer::Last: break;
     }
 
     #undef CASE
@@ -27,6 +28,7 @@ int CurveSequence::Step::layerValue(Layer layer) const {
     CASE(Shape, _shape)
     CASE(Min, _min)
     CASE(Max, _max)
+    case Layer::Last: break;
     }
 
     #undef CASE
@@ -44,6 +46,7 @@ void CurveSequence::Step::setLayerValue(Layer layer, int value) {
     CASE(Shape, _shape)
     CASE(Min, _min)
     CASE(Max, _max)
+    case Layer::Last: break;
     }
 
     #undef CASE

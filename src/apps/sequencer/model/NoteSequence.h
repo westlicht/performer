@@ -41,8 +41,27 @@ public:
         Note,
         NoteVariationRange,
         NoteVariationProbability,
-        Slide
+        Slide,
+        Last
     };
+
+    static const char *layerName(Layer layer) {
+        switch (layer) {
+        case Layer::Gate:                       return "Gate";
+        case Layer::GateProbability:            return "Gate Prob.";
+        case Layer::Retrigger:                  return "Retrigger";
+        case Layer::RetriggerProbability:       return "Retrigger Prob.";
+        case Layer::Length:                     return "Length";
+        case Layer::LengthVariationRange:       return "Length Var. Range";
+        case Layer::LengthVariationProbability: return "Length Var. Prob.";
+        case Layer::Note:                       return "Note";
+        case Layer::NoteVariationRange:         return "Note Var. Range";
+        case Layer::NoteVariationProbability:   return "Note Var. Prob.";
+        case Layer::Slide:                      return "Slide";
+        case Layer::Last:                       break;
+        }
+        return nullptr;
+    }
 
     static Types::LayerRange layerRange(Layer layer);
 
