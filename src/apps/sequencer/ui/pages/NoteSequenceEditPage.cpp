@@ -566,7 +566,7 @@ void NoteSequenceEditPage::duplicateSequence() {
 void NoteSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
         if (success) {
-            auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence());
+            auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), _layer);
             auto generator = Generator::create(mode, *builder);
             _manager.pages().generator.show(generator);
         }

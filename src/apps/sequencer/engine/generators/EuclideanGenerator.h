@@ -20,7 +20,7 @@ public:
 
     Mode mode() const override { return Mode::Euclidean; }
 
-    int paramCount() const override;
+    int paramCount() const override { return int(Param::Last); }
     const char *paramName(int index) const override;
     void editParam(int index, int value, bool shift) override;
     void printParam(int index, StringBuilder &str) const override;

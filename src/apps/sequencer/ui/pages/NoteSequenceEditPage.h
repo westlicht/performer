@@ -4,7 +4,7 @@
 
 #include "ui/StepSelection.h"
 
-#include "engine/generators/NoteSequenceBuilder.h"
+#include "engine/generators/SequenceBuilder.h"
 
 #include "core/utils/Container.h"
 

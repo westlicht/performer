@@ -13,6 +13,15 @@ public:
         return _state;
     }
 
+    float nextFloat() {
+        union {
+            uint32_t u;
+            float f;
+        } x;
+        x.u = (next() >> 9) | 0x3f800000u;
+        return x.f - 1.f;
+    }
+
     inline bool nextBinary() {
         return next() < 0x80000000;
     }

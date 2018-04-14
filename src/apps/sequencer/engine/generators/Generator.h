@@ -1,19 +1,27 @@
 #pragma once
 
+#include "Config.h"
+
 #include "SequenceBuilder.h"
 
 #include "core/utils/StringBuilder.h"
+
+#include <array>
+
+typedef std::array<uint8_t, CONFIG_STEP_COUNT> GeneratorPattern;
 
 class Generator {
 public:
     enum class Mode {
         Euclidean,
+        Random,
         Last
     };
 
     static const char *modeName(Mode mode) {
         switch (mode) {
         case Mode::Euclidean:   return "Euclidean";
+        case Mode::Random:      return "Random";
         case Mode::Last:        break;
         }
         return nullptr;

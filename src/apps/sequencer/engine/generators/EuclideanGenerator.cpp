@@ -6,10 +6,6 @@ EuclideanGenerator::EuclideanGenerator(SequenceBuilder &builder) :
     update();
 }
 
-int EuclideanGenerator::paramCount() const {
-    return int(Param::Last);
-}
-
 const char *EuclideanGenerator::paramName(int index) const {
     switch (Param(index)) {
     case Param::Steps:  return "Steps";
@@ -31,9 +27,9 @@ void EuclideanGenerator::editParam(int index, int value, bool shift) {
 
 void EuclideanGenerator::printParam(int index, StringBuilder &str) const {
     switch (Param(index)) {
-    case Param::Steps:  str("%d", _steps); break;
-    case Param::Beats:  str("%d", _beats); break;
-    case Param::Offset: str("%d", _offset); break;
+    case Param::Steps:  str("%d", steps()); break;
+    case Param::Beats:  str("%d", beats()); break;
+    case Param::Offset: str("%d", offset()); break;
     case Param::Last:   break;
     }
 }
@@ -45,6 +41,6 @@ void EuclideanGenerator::update()  {
     _builder.setLength(_steps);
 
     for (size_t i = 0; i < _pattern.size(); ++i) {
-        _builder.setGate(i, _pattern[i]);
+        _builder.setValue(i, _pattern[i] ? 1.f : 0.f);
     }
 }

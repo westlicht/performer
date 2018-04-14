@@ -4,6 +4,7 @@
 
 class Generator;
 class EuclideanGenerator;
+class RandomGenerator;
 
 class GeneratorPage : public BasePage {
 public:
@@ -31,6 +32,9 @@ public:
 
 private:
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;
+    void drawRandomGenerator(Canvas &canvas, const RandomGenerator &generator) const;
 
     Generator *_generator;
+
+    std::pair<uint8_t, uint8_t> _valueRange;
 };
