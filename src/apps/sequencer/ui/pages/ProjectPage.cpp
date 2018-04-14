@@ -162,7 +162,7 @@ void ProjectPage::formatSDCard() {
             _manager.pages().busy.show("FORMATTING ...");
             auto result = ProjectManager::format();
             if (result != fs::OK) {
-                showMessage(FixedStringBuilder<32>("FORMAT FAILED (%s)", fs::errorToString(result)));
+                showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
             }
             _manager.pages().busy.close();
         }
@@ -174,7 +174,7 @@ void ProjectPage::saveProjectToSlot(int slot) {
     if (result == fs::OK) {
         showMessage(FixedStringBuilder<32>("SAVED PROJECT!"));
     } else {
-        showMessage(FixedStringBuilder<32>("SAVING PROJECT FAILED (%s)", fs::errorToString(result)));
+        showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
     }
 }
 
@@ -183,7 +183,7 @@ void ProjectPage::loadProjectFromSlot(int slot) {
     if (result == fs::OK) {
         showMessage(FixedStringBuilder<32>("LOADED PROJECT!"));
     } else {
-        showMessage(FixedStringBuilder<32>("LOADING PROJECT FAILED (%s)", fs::errorToString(result)));
+        showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
     }
 }
 
