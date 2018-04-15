@@ -396,7 +396,7 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
 void NoteSequenceEditPage::updateIdleOutput() {
     auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
 
-    if (_layer == Layer::Note && _stepSelection.any()) {
+    if (_layer == Layer::Note && !_stepSelection.isPersisted() && _stepSelection.any()) {
         trackEngine.setIdleStep(_stepSelection.first());
         trackEngine.setIdleGate(true);
     } else {
