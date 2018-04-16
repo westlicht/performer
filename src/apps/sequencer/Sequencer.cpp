@@ -27,45 +27,52 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 
-static ClockTimer clockTimer;
-static ShiftRegister shiftRegister;
-static ButtonLedMatrix blm(shiftRegister);
-static Encoder encoder;
+// There are two RAM regions on the STM32F405:
+// - 128kB SRAM at 0x20000000
+// - 64kB CCMRAM at 0x10000000
+// CCMRAM (core-coupled-memory) may be faster than SRAM but cannot be used for DMA tranfers!
+// We use CCMRAM for all the drivers not using DMA, all tasks and some of the application objects (engine, ui).
+// This leaves most of the SRAM for the model, which needs a large contiguous block of memory.
+
+static CCMRAM_BSS ClockTimer clockTimer;
+static CCMRAM_BSS ShiftRegister shiftRegister;
+static CCMRAM_BSS ButtonLedMatrix blm(shiftRegister);
+static CCMRAM_BSS Encoder encoder;
 static Lcd lcd;
 static Adc adc;
-static Dac dac;
-static Dio dio;
-static GateOutput gateOutput(shiftRegister);
-static Midi midi;
-static UsbMidi usbMidi;
+static CCMRAM_BSS Dac dac;
+static CCMRAM_BSS Dio dio;
+static CCMRAM_BSS GateOutput gateOutput(shiftRegister);
+static CCMRAM_BSS Midi midi;
+static CCMRAM_BSS UsbMidi usbMidi;
 static UsbH usbh(usbMidi);
 
-static Profiler profiler;
+static CCMRAM_BSS Profiler profiler;
 
 static Model model;
-static Engine engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi);
-static Ui ui(model, engine, lcd, blm, encoder);
+static CCMRAM_BSS Engine engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi);
+static CCMRAM_BSS Ui ui(model, engine, lcd, blm, encoder);
 
-static os::PeriodicTask<1024> driverTask("driver", 5, os::time::ms(1), [] () {
+static CCMRAM_BSS os::PeriodicTask<1024> driverTask("driver", 5, os::time::ms(1), [] () {
     shiftRegister.process();
     blm.process();
     encoder.process();
 });
 
-static os::PeriodicTask<2048> usbhTask("usbh", 1, os::time::ms(1), [] () {
+static CCMRAM_BSS os::PeriodicTask<2048> usbhTask("usbh", 1, os::time::ms(1), [] () {
     usbh.process();
 });
 
-static os::PeriodicTask<4096> engineTask("engine", 4, os::time::ms(1), [] () {
+static CCMRAM_BSS os::PeriodicTask<4096> engineTask("engine", 4, os::time::ms(1), [] () {
     engine.update();
 });
 
-static os::PeriodicTask<4096> uiTask("ui", 3, os::time::ms(1), [] () {
+static CCMRAM_BSS os::PeriodicTask<4096> uiTask("ui", 3, os::time::ms(1), [] () {
     ui.update();
 });
 
 #if CONFIG_ENABLE_PROFILER || CONFIG_ENABLE_TASK_PROFILER
-static os::PeriodicTask<2048> profilerTask("profiler", 0, os::time::ms(5000), [&] () {
+static CCMRAM_BSS os::PeriodicTask<2048> profilerTask("profiler", 0, os::time::ms(5000), [&] () {
 #if CONFIG_ENABLE_PROFILER
     profiler.dump();
 #endif // CONFIG_ENABLE_PROFILE
