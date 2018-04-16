@@ -24,8 +24,8 @@ void HighResolutionTimer::init() {
     timer_set_period(TIMER, 10);
 
     timer_enable_update_event(TIMER);
-    timer_enable_counter(TIMER);
     timer_enable_irq(TIMER, TIM_DIER_UIE);
+    timer_enable_counter(TIMER);
 }
 
 void tim2_isr() {
