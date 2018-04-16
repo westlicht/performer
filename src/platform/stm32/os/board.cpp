@@ -14,6 +14,19 @@ void __cxa_pure_virtual() {
   while (1) {}
 }
 
+/* Initialize ccmram_bss section with zeros */
+
+extern unsigned _sccmram_bss, _eccmram_bss;
+
+static void init_ccmram_bss(void) {
+    unsigned *dst = &_sccmram_bss;
+    while (dst < &_eccmram_bss) {
+        *dst++ = 0;
+    }
+}
+
+__attribute__((used)) __attribute__((section(".preinit_array"))) static void (*g_handler[])(void) = { &init_ccmram_bss };
+
 /* configSUPPORT_STATIC_ALLOCATION is set to 1, so the application must provide an
 implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
 used by the Idle task. */

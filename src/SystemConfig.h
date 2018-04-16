@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Platform.h"
+
 // CPU
 #define CONFIG_CPU_FREQUENCY            168000000
 #define CONFIG_TICK_FREQUENCY           1000
