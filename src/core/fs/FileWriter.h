@@ -40,15 +40,16 @@ public:
 
     Error write(const void *data, size_t len) {
         const uint8_t *src = static_cast<const uint8_t *>(data);
+        uint8_t *buffer = reinterpret_cast<uint8_t *>(_buffer);
         while (_error == OK && len > 0) {
             size_t chunk = std::min(len, BufferSize - _pos);
-            memcpy(&_buffer[_pos], src, chunk);
+            memcpy(&buffer[_pos], src, chunk);
             _pos += chunk;
             src += chunk;
             len -= chunk;
             if (_pos == BufferSize) {
                 _pos = 0;
-                _error = _file.write(_buffer, BufferSize);
+                _error = _file.write(buffer, BufferSize);
             }
         }
         return _error;
@@ -59,7 +60,7 @@ private:
 
     File _file;
     Error _error;
-    uint8_t _buffer[BufferSize];
+    uint32_t _buffer[BufferSize / 4];
     size_t _pos = 0;
 };
 

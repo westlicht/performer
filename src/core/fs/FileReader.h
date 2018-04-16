@@ -35,16 +35,17 @@ public:
 
     Error read(void *data, size_t len) {
         uint8_t *dst = static_cast<uint8_t *>(data);
+        uint8_t *buffer = reinterpret_cast<uint8_t *>(_buffer);
         while (_error == OK && len > 0) {
             if (_pos == 0 || _pos == BufferSize) {
-                _error = _file.read(_buffer, BufferSize, &_bufferSize);
+                _error = _file.read(buffer, BufferSize, &_bufferSize);
                 if (_error != OK) {
                     continue;
                 }
                 _pos = 0;
             }
             size_t chunk = std::min(len, _bufferSize - _pos);
-            memcpy(dst, &_buffer[_pos], chunk);
+            memcpy(dst, &buffer[_pos], chunk);
             _pos += chunk;
             dst += chunk;
             len -= chunk;
@@ -57,7 +58,7 @@ private:
 
     File _file;
     Error _error;
-    uint8_t _buffer[BufferSize];
+    uint32_t _buffer[BufferSize / 4];
     size_t _bufferSize = 0;
     size_t _pos = 0;
 };
