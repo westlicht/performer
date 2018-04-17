@@ -1,6 +1,8 @@
 #include "IntegrationTest.h"
 
 #include "core/fs/FileSystem.h"
+#include "core/fs/FileWriter.h"
+#include "core/fs/FileReader.h"
 
 #include "core/utils/Random.h"
 #include "core/utils/StringBuilder.h"
@@ -23,8 +25,9 @@ public:
     }
 
     void once() override {
-        testFileWriteRead();
-        testDirectoryList();
+        // testFileWriteRead();
+        // testDirectoryList();
+        testFileWriterReader();
     }
 
     void fsAssert(fs::Error actual, fs::Error expected, const char *msg) {
@@ -34,11 +37,14 @@ public:
     template<typename Func>
     void test(const char *name, Func func) {
         DBG("Test: %s", name);
+        DBG("format");
         fsAssert(volume.format(), fs::OK, "failed to format volume");
+        DBG("mount");
         fsAssert(volume.mount(), fs::OK, "failed to mount volume");
         dumpStats();
         func();
         dumpStats();
+        DBG("unmount");
         fsAssert(volume.unmount(), fs::OK, "failed to unmount volume");
     }
 
@@ -107,6 +113,40 @@ public:
             fs::Directory dir("");
             while (dir.next()) {
                 DBG("%s (%zd bytes)", dir.info().name(), dir.info().size());
+            }
+        });
+    }
+
+    void testFileWriterReader() {
+        test("FileWriter/FileReader", [this] () {
+            for (int i = 0; i < 10; ++i) {
+                DBG("writing file %d ...", i);
+                fs::FileWriter writer(FixedStringBuilder<8>("%d.dat", i));
+                const char text[8] = { 'T', 'E', 'S', 'T', char('0' + i), 0, 0, 0 };
+                fsAssert(writer.write(text, 8), fs::OK, "failed to write");
+                for (int j = 0; j < 500; ++j) {
+                    uint32_t data = i * 512 + j;
+                    fsAssert(writer.write(&data, sizeof(data)), fs::OK, "failed to write");
+                }
+                fsAssert(writer.finish(), fs::OK, "failed to finish writing");
+            }
+
+            for (int i = 0; i < 10; ++i) {
+                DBG("reading file %d ...", i);
+                fs::FileReader reader(FixedStringBuilder<8>("%d.dat", i));
+                char text[8];
+                const char expected_text[8] = { 'T', 'E', 'S', 'T', char('0' + i), 0, 0, 0 };
+                fsAssert(reader.read(text, 8), fs::OK, "failed to read");
+                for (int j = 0; j < 8; ++j) {
+                    EXPECT(text[j] == expected_text[j], "read invalid data (text)");
+                }
+                for (int j = 0; j < 500; ++j) {
+                    uint32_t data;
+                    uint32_t expected = i * 512 + j;
+                    fsAssert(reader.read(&data, sizeof(data)), fs::OK, "failed to read");
+                    EXPECT(data == expected, "read invalid data");
+                }
+                fsAssert(reader.finish(), fs::OK, "failed to finish writing");
             }
         });
     }
