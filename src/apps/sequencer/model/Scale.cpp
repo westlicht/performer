@@ -84,3 +84,17 @@ const Scale &Scale::get(int index) {
         return UserScale::userScales[index - BuiltinCount];
     }
 }
+
+const char *Scale::name(int index) {
+    if (index < BuiltinCount) {
+        return get(index).displayName();
+    } else {
+        switch (index - BuiltinCount) {
+        case 0: return "USER1";
+        case 1: return "USER2";
+        case 2: return "USER3";
+        case 3: return "USER4";
+        }
+    }
+    return nullptr;
+}

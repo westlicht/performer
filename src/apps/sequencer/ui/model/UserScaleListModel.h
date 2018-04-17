@@ -78,7 +78,7 @@ private:
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
         case Name:
-            str(_userScale->userName());
+            str(_userScale->name());
             break;
         case Mode:
             _userScale->printMode(str);

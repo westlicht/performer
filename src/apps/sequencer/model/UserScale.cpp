@@ -1,20 +1,15 @@
 #include "UserScale.h"
 
-UserScale::Array UserScale::userScales = {{ "USER1", "USER2", "USER3", "USER4" }};
+UserScale::Array UserScale::userScales;
 
-UserScale::UserScale(const char *name) :
-    Scale(name)
+UserScale::UserScale() :
+    Scale("")
 {
     clear();
 }
 
-UserScale::UserScale() :
-    UserScale("User")
-{
-}
-
 void UserScale::clear() {
-    StringUtils::copy(_userName, "INIT", sizeof(_userName));
+    StringUtils::copy(_name, "INIT", sizeof(_name));
     setMode(Mode::Note);
     clearItems();
 }
@@ -54,7 +49,7 @@ fs::Error UserScale::write(const char *path) const {
     }
 
     Writer writer(fileWriter);
-    FileHeader header(FileType::UserScale, 0, _userName);
+    FileHeader header(FileType::UserScale, 0, _name);
     writer.write(&header, sizeof(header));
 
     WriteContext context = { writer };
@@ -74,7 +69,7 @@ fs::Error UserScale::read(const char *path) {
     FileHeader header;
     reader.read(&header, sizeof(header));
 
-    header.readName(_userName, sizeof(_userName));
+    header.readName(_name, sizeof(_name));
 
     ReadContext context = { reader };
     read(context);

@@ -65,7 +65,7 @@ void UserScalePage::keyPress(KeyPressEvent &event) {
     if (key.is(Key::Encoder) && selectedRow() == 0) {
         _manager.pages().textInput.show("NAME:", _userScale->name(), UserScale::NameLength, [this] (bool result, const char *text) {
             if (result) {
-                // _userScale->setName(text);
+                _userScale->setName(text);
             }
         });
 

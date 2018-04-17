@@ -17,10 +17,8 @@ public:
     };
 
     Scale(const char *name) :
-        _name(name)
+        _displayName(name)
     {}
-
-    const char *name() const { return _name; }
 
     virtual bool isChromatic() const = 0;
 
@@ -32,9 +30,12 @@ public:
 
     static int Count;
     static const Scale &get(int index);
+    static const char *name(int index);
 
 private:
-    const char *_name;
+    const char *displayName() const { return _displayName; }
+
+    const char *_displayName;
 };
 
 class VoltScale : public Scale {

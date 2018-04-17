@@ -45,11 +45,11 @@ public:
     // Properties
     //----------------------------------------
 
-    // userName
+    // name
 
-    const char *userName() const { return _userName; }
-    void setUserName(const char *userName) {
-        StringUtils::copy(_userName, userName, sizeof(_userName));
+    const char *name() const { return _name; }
+    void setName(const char *name) {
+        StringUtils::copy(_name, name, sizeof(_name));
     }
 
     // mode
@@ -132,7 +132,6 @@ public:
     // Methods
     //----------------------------------------
 
-    UserScale(const char *name);
     UserScale();
 
     void clear();
@@ -277,7 +276,7 @@ private:
         return (_items[_size - 1] - _items[0]) * (1.f / 1000.f);
     }
 
-    char _userName[NameLength + 1];
+    char _name[NameLength + 1];
     Mode _mode;
     uint8_t _size;
     ItemArray _items;

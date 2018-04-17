@@ -107,7 +107,7 @@ public:
     }
 
     void printScale(StringBuilder &str) const {
-        str(Scale::get(scale()).name());
+        str(Scale::name(scale()));
     }
 
     const Scale &selectedScale() const {

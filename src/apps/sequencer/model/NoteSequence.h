@@ -171,7 +171,7 @@ public:
     }
 
     void printScale(StringBuilder &str) const {
-        str(scale() < 0 ? "Default" : Scale::get(scale()).name());
+        str(scale() < 0 ? "Default" : Scale::name(scale()));
     }
 
     const Scale &selectedScale() const {
