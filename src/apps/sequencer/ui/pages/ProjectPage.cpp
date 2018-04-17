@@ -118,7 +118,7 @@ void ProjectPage::initProject() {
 }
 
 void ProjectPage::loadProject() {
-    _manager.pages().fileSelect.show("LOAD PROJECT", _project.slotAssigned() ? _project.slot() : 0, false, [this] (bool result, int slot) {
+    _manager.pages().fileSelect.show("LOAD PROJECT", FileType::Project, _project.slotAssigned() ? _project.slot() : 0, false, [this] (bool result, int slot) {
         if (result) {
             _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
                 if (result) {
@@ -139,10 +139,10 @@ void ProjectPage::saveProject() {
 }
 
 void ProjectPage::saveAsProject() {
-    _manager.pages().fileSelect.show("SAVE PROJECT", 0, true, [this] (bool result, int slot) {
+    _manager.pages().fileSelect.show("SAVE PROJECT", FileType::Project, 0, true, [this] (bool result, int slot) {
         if (result) {
             FileManager::SlotInfo info;
-            FileManager::slotInfo(slot, info);
+            FileManager::slotInfo(FileType::Project, slot, info);
             if (info.used) {
                 _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
                     if (result) {

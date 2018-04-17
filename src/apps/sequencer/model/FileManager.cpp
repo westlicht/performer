@@ -4,11 +4,24 @@
 
 #include <algorithm>
 
+#include <cstring>
+
 std::array<FileManager::CachedSlotInfo, 4> FileManager::_cachedSlotInfos;
 uint32_t FileManager::_cachedSlotInfoTicket = 0;
 
-static void projectFilename(StringBuilder &str, int slot) {
-    str("%03d.pro", slot + 1);
+struct FileTypeInfo {
+    const char *dir;
+    const char *ext;
+};
+
+FileTypeInfo fileTypeInfos[int(FileType::Last)] = {
+    { "PROJECTS", "PRO" },
+    { "SCALES", "SCA" },
+};
+
+static void slotPath(StringBuilder &str, FileType type, int slot) {
+    const auto &info = fileTypeInfos[int(type)];
+    str("%s/%03d.%s", info.dir, slot, info.ext);
 }
 
 fs::Error FileManager::format() {
@@ -17,50 +30,39 @@ fs::Error FileManager::format() {
 }
 
 fs::Error FileManager::saveProject(Project &project, int slot) {
-    auto result = fs::volume().mount();
-    if (result != fs::OK) {
+    return saveFile(FileType::Project, slot, [&] (const char *path) {
+        auto result = project.write(path);
+        if (result == fs::OK) {
+            project.setSlot(slot);
+        }
         return result;
-    }
-
-    FixedStringBuilder<16> filename;
-    projectFilename(filename, slot);
-
-    result = project.write(filename);
-    if (result == fs::OK) {
-        project.setSlot(slot);
-        invalidateSlot(slot);
-    }
-
-    return result;
+    });
 }
 
 fs::Error FileManager::loadProject(Project &project, int slot) {
-    auto result = fs::volume().mount();
-    if (result != fs::OK) {
+    return loadFile(FileType::Project, slot, [&] (const char *path) {
+        auto result = project.read(path);
+        if (result == fs::OK) {
+            project.setSlot(slot);
+        }
         return result;
-    }
-
-    FixedStringBuilder<16> filename;
-    projectFilename(filename, slot);
-
-    result = project.read(filename);
-    if (result == fs::OK) {
-        project.setSlot(slot);
-    }
-
-    return result;
+    });
 }
 
 fs::Error FileManager::saveUserScale(UserScale &userScale, int slot) {
-    return fs::DENIED;
+    return saveFile(FileType::UserScale, slot, [&] (const char *path) {
+        return userScale.write(path);
+    });
 }
 
 fs::Error FileManager::loadUserScale(UserScale &userScale, int slot) {
-    return fs::DENIED;
+    return loadFile(FileType::UserScale, slot, [&] (const char *path) {
+        return userScale.read(path);
+    });
 }
 
-void FileManager::slotInfo(int slot, SlotInfo &info) {
-    if (cachedSlot(slot, info)) {
+void FileManager::slotInfo(FileType type, int slot, SlotInfo &info) {
+    if (cachedSlot(type, slot, info)) {
         return;
     }
 
@@ -70,23 +72,66 @@ void FileManager::slotInfo(int slot, SlotInfo &info) {
         return;
     }
 
-    FixedStringBuilder<16> filename;
-    projectFilename(filename, slot);
+    FixedStringBuilder<16> path;
+    slotPath(path, type, slot);
 
-    if (fs::exists(filename)) {
-        fs::File file(filename, fs::File::Read);
+    if (fs::exists(path)) {
+        fs::File file(path, fs::File::Read);
+        FileHeader header;
         size_t lenRead;
-        if (file.read(info.name, Project::NameLength + 1, &lenRead) == fs::OK && lenRead == Project::NameLength + 1) {
+        if (file.read(&header, sizeof(header), &lenRead) == fs::OK && lenRead == sizeof(header)) {
+            header.readName(info.name, sizeof(info.name));
             info.used = true;
         }
     }
 
-    cacheSlot(slot, info);
+    cacheSlot(type, slot, info);
 }
 
-bool FileManager::cachedSlot(int slot, SlotInfo &info) {
+fs::Error FileManager::saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write) {
+    auto result = fs::volume().mount();
+    if (result != fs::OK) {
+        return result;
+    }
+
+    const auto &info = fileTypeInfos[int(type)];
+    if (!fs::exists(info.dir)) {
+        fs::mkdir(info.dir);
+    }
+
+    FixedStringBuilder<16> path;
+    slotPath(path, type, slot);
+
+    result = write(path);
+    if (result == fs::OK) {
+        invalidateSlot(type, slot);
+    }
+
+    return result;
+}
+
+fs::Error FileManager::loadFile(FileType type, int slot, std::function<fs::Error(const char *)> read) {
+    auto result = fs::volume().mount();
+    if (result != fs::OK) {
+        return result;
+    }
+
+    const auto &info = fileTypeInfos[int(type)];
+    if (!fs::exists(info.dir)) {
+        fs::mkdir(info.dir);
+    }
+
+    FixedStringBuilder<16> path;
+    slotPath(path, type, slot);
+
+    result = read(path);
+
+    return result;
+}
+
+bool FileManager::cachedSlot(FileType type, int slot, SlotInfo &info) {
     for (auto &cachedSlotInfo : _cachedSlotInfos) {
-        if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.slot == slot) {
+        if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.type == type && cachedSlotInfo.slot == slot) {
             info = cachedSlotInfo.info;
             cachedSlotInfo.ticket = nextCachedSlotTicket();
             return true;
@@ -95,16 +140,17 @@ bool FileManager::cachedSlot(int slot, SlotInfo &info) {
     return false;
 }
 
-void FileManager::cacheSlot(int slot, const SlotInfo &info) {
+void FileManager::cacheSlot(FileType type, int slot, const SlotInfo &info) {
     auto cachedSlotInfo = std::min_element(_cachedSlotInfos.begin(), _cachedSlotInfos.end());
+    cachedSlotInfo->type = type;
     cachedSlotInfo->slot = slot;
     cachedSlotInfo->info = info;
     cachedSlotInfo->ticket = nextCachedSlotTicket();
 }
 
-void FileManager::invalidateSlot(int slot) {
+void FileManager::invalidateSlot(FileType type, int slot) {
     for (auto &cachedSlotInfo : _cachedSlotInfos) {
-        if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.slot == slot) {
+        if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.type == type && cachedSlotInfo.slot == slot) {
             cachedSlotInfo.ticket = 0;
         }
     }
@@ -120,4 +166,3 @@ uint32_t FileManager::nextCachedSlotTicket() {
     _cachedSlotInfoTicket = std::max(uint32_t(1), _cachedSlotInfoTicket + 1);
     return _cachedSlotInfoTicket;
 }
-

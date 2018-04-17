@@ -82,7 +82,10 @@ void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
 
 void Project::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_name, NameLength + 1);
+
+    FileHeader header(FileType::Project, 0, _name);
+    writer.write(&header, sizeof(header));
+
     writer.write(_bpm);
     writer.write(_swing);
     writer.write(_syncMeasure);
@@ -104,7 +107,12 @@ void Project::write(WriteContext &context) const {
 
 void Project::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_name, NameLength + 1);
+
+    FileHeader header;
+    reader.read(&header, sizeof(header));
+
+    header.readName(_name, sizeof(_name));
+
     reader.read(_bpm);
     reader.read(_swing);
     reader.read(_syncMeasure);

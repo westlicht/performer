@@ -8,6 +8,10 @@
 
 class FileSelectListModel : public ListModel {
 public:
+    void setType(FileType type) {
+        _type = type;
+    }
+
     virtual int rows() const override {
         return 128;
     }
@@ -28,7 +32,9 @@ public:
 private:
     void formatName(int row, StringBuilder &str) const {
         FileManager::SlotInfo info;
-        FileManager::slotInfo(row, info);
+        FileManager::slotInfo(_type, row, info);
         str("%d: %s", row + 1, info.used ? info.name : "(empty)");
     }
+
+    FileType _type;
 };

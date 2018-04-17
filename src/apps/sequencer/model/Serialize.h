@@ -22,16 +22,6 @@ struct ReadContext {
     Reader &reader;
 };
 
-enum class FileType : uint8_t {
-    Project     = 0,
-    UserScale   = 1,
-};
-
-struct FileHeader {
-    FileType type;
-    char name[9];
-};
-
 template<typename T, size_t N>
 static void writeArray(WriteContext &context, const std::array<T, N> &array) {
     for (size_t i = 0; i < array.size(); ++i) {

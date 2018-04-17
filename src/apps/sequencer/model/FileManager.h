@@ -1,10 +1,15 @@
 #pragma once
 
+#include "FileDefs.h"
 #include "Project.h"
+#include "UserScale.h"
 
 #include "core/fs/FileSystem.h"
 
 #include <array>
+#include <functional>
+
+#include <cstdint>
 
 class FileManager {
 public:
@@ -18,20 +23,24 @@ public:
 
     struct SlotInfo {
         bool used;
-        char name[Project::NameLength + 1];
+        char name[FileHeader::NameLength + 1];
     };
 
-    static void slotInfo(int slot, SlotInfo &info);
+    static void slotInfo(FileType type, int slot, SlotInfo &info);
 
 private:
-    static bool cachedSlot(int slot, SlotInfo &info);
-    static void cacheSlot(int slot, const SlotInfo &info);
-    static void invalidateSlot(int slot);
+    static fs::Error saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write);
+    static fs::Error loadFile(FileType type, int slot, std::function<fs::Error(const char *)> read);
+
+    static bool cachedSlot(FileType type, int slot, SlotInfo &info);
+    static void cacheSlot(FileType type, int slot, const SlotInfo &info);
+    static void invalidateSlot(FileType type, int slot);
     static void invalidateAllSlots();
     static uint32_t nextCachedSlotTicket();
 
     struct CachedSlotInfo {
         uint32_t ticket = 0;
+        FileType type;
         uint8_t slot;
         SlotInfo info;
 

@@ -14,10 +14,12 @@ FileSelectPage::FileSelectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel)
 {}
 
-void FileSelectPage::show(const char *title, int selectedSlot, bool allowEmpty, ResultCallback callback) {
+void FileSelectPage::show(const char *title, FileType type, int selectedSlot, bool allowEmpty, ResultCallback callback) {
     _title = title;
+    _type = type;
     _allowEmpty = allowEmpty;
     _callback = callback;
+    _listModel.setType(type);
     setSelectedRow(clamp(selectedSlot, 0, _listModel.rows() - 1));
     ListPage::show();
 }
@@ -65,7 +67,7 @@ void FileSelectPage::closeWithResult(bool result) {
     // cancel if empty slot is selected but not allowed to be
     if (result && !_allowEmpty) {
         FileManager::SlotInfo info;
-        FileManager::slotInfo(selectedRow(), info);
+        FileManager::slotInfo(_type, selectedRow(), info);
         if (!info.used) {
             return;
         }

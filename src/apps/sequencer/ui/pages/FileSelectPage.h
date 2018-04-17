@@ -4,6 +4,8 @@
 
 #include "ui/model/FileSelectListModel.h"
 
+#include "model/FileManager.h"
+
 class FileSelectPage : public ListPage {
 public:
     FileSelectPage(PageManager &manager, PageContext &context);
@@ -11,7 +13,7 @@ public:
     typedef std::function<void(bool, int)> ResultCallback;
 
     using ListPage::show;
-    void show(const char *title, int selectedSlot, bool allowEmpty, ResultCallback callback);
+    void show(const char *title, FileType type, int selectedSlot, bool allowEmpty, ResultCallback callback);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -27,6 +29,7 @@ private:
     void closeWithResult(bool result);
 
     const char *_title;
+    FileType _type;
     bool _allowEmpty;
     ResultCallback _callback;
 
