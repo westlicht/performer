@@ -24,7 +24,7 @@ private:
     void loadProject();
     void saveProject();
     void saveAsProject();
-    void formatSDCard();
+    void formatSdCard();
 
     void saveProjectToSlot(int slot);
     void loadProjectFromSlot(int slot);

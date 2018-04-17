@@ -7,7 +7,7 @@
 #include "core/utils/Random.h"
 #include "core/utils/StringBuilder.h"
 
-#include "drivers/SDCard.h"
+#include "drivers/SdCard.h"
 
 #include <cstring>
 
@@ -17,11 +17,11 @@ class FileSystemTest : public IntegrationTest {
 public:
     FileSystemTest() :
         IntegrationTest("FileSystem", false),
-        volume(sdcard)
+        volume(sdCard)
     {}
 
     void init() override {
-        sdcard.init();
+        sdCard.init();
     }
 
     void once() override {
@@ -96,6 +96,7 @@ public:
                     break;
                 }
             }
+            EXPECT(success, "invalid data")
         });
     }
 
@@ -153,7 +154,7 @@ public:
 
 
 private:
-    SDCard sdcard;
+    SdCard sdCard;
     fs::Volume volume;
 };
 

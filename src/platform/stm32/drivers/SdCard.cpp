@@ -1,4 +1,4 @@
-#include "SDCard.h"
+#include "SdCard.h"
 
 #include "os/os.h"
 
@@ -7,7 +7,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/sdio.h>
 
-void SDCard::init() {
+void SdCard::init() {
     rcc_periph_clock_enable(RCC_SDIO);
     rcc_periph_clock_enable(RCC_DMA2);
     powerOff();
@@ -30,7 +30,7 @@ void SDCard::init() {
     initCard();
 }
 
-bool SDCard::available() {
+bool SdCard::available() {
     if (_initialized) {
         _initialized = sendCommandRetry(0, 0) == Success;
     }
@@ -43,11 +43,11 @@ bool SDCard::available() {
     return true;
 }
 
-bool SDCard::writeProtected() {
+bool SdCard::writeProtected() {
     return false;
 }
 
-bool SDCard::read(uint8_t *buf, uint32_t sector, uint8_t count) {
+bool SdCard::read(uint8_t *buf, uint32_t sector, uint8_t count) {
     // DBG("read(sector=%d,count=%d)", sector, count);
     uint8_t *data = buf;
     for (uint32_t i = 0; i < count; ++i) {
@@ -59,7 +59,7 @@ bool SDCard::read(uint8_t *buf, uint32_t sector, uint8_t count) {
     return true;
 }
 
-bool SDCard::write(const uint8_t *buf, uint32_t sector, uint8_t count) {
+bool SdCard::write(const uint8_t *buf, uint32_t sector, uint8_t count) {
     // DBG("write(sector=%d,count=%d)", sector, count);
     const uint8_t *data = buf;
     for (uint32_t i = 0; i < count; ++i) {
@@ -71,17 +71,17 @@ bool SDCard::write(const uint8_t *buf, uint32_t sector, uint8_t count) {
     return true;
 }
 
-void SDCard::powerOn() {
+void SdCard::powerOn() {
     SDIO_POWER = SDIO_POWER_PWRCTRL_PWRON;
     while (SDIO_POWER != SDIO_POWER_PWRCTRL_PWRON);
     SDIO_CLKCR = SDIO_CLKCR_CLKEN | 118;
 }
 
-void SDCard::powerOff() {
+void SdCard::powerOff() {
     SDIO_POWER = SDIO_POWER_PWRCTRL_PWROFF;
 }
 
-void SDCard::sendCommand(uint32_t cmd, uint32_t arg) {
+void SdCard::sendCommand(uint32_t cmd, uint32_t arg) {
     cmd &= SDIO_CMD_CMDINDEX_MSK;
     uint32_t waitresp = SDIO_CMD_WAITRESP_SHORT;
     if (cmd == 0) {
@@ -104,7 +104,7 @@ void SDCard::sendCommand(uint32_t cmd, uint32_t arg) {
     SDIO_CMD = (cmd | SDIO_CMD_CPSMEN | waitresp);
 }
 
-SDCard::Error SDCard::commandResult() {
+SdCard::Error SdCard::commandResult() {
     uint32_t status = SDIO_STA & 0xfff;
 
     if (status & SDIO_STA_CMDACT) {
@@ -134,7 +134,7 @@ SDCard::Error SDCard::commandResult() {
     return Unknown;
 }
 
-SDCard::Error SDCard::sendCommandWait(uint32_t cmd, uint32_t arg) {
+SdCard::Error SdCard::sendCommandWait(uint32_t cmd, uint32_t arg) {
     // DBG("sendCommandWait cmd=0x%x arg=0x%x", cmd, arg);
     Error result;
     sendCommand(cmd, arg);
@@ -146,7 +146,7 @@ SDCard::Error SDCard::sendCommandWait(uint32_t cmd, uint32_t arg) {
     return result;
 }
 
-SDCard::Error SDCard::sendCommandRetry(uint32_t cmd, uint32_t arg, int maxRetries) {
+SdCard::Error SdCard::sendCommandRetry(uint32_t cmd, uint32_t arg, int maxRetries) {
     Error result = Unknown;
     for (int i = 0; i < maxRetries; ++i) {
         result = sendCommandWait(cmd, arg);
@@ -157,11 +157,11 @@ SDCard::Error SDCard::sendCommandRetry(uint32_t cmd, uint32_t arg, int maxRetrie
     return result;
 }
 
-// SDCard::Error SDCard::select() {
+// SdCard::Error SdCard::select() {
 //     return sendCommandRetry(7, sd_card_info.rca << 16);
 // }
 
-SDCard::Error SDCard::sendAppCommand(uint32_t cmd, uint32_t arg, int maxRetries) {
+SdCard::Error SdCard::sendAppCommand(uint32_t cmd, uint32_t arg, int maxRetries) {
     Error result = Unknown;
     Error expected = (cmd == 41) ? CRCFail : Success;
     for (int i = 0; i < maxRetries; ++i) {
@@ -177,7 +177,7 @@ SDCard::Error SDCard::sendAppCommand(uint32_t cmd, uint32_t arg, int maxRetries)
     return result;
 }
 
-bool SDCard::initCard() {
+bool SdCard::initCard() {
     powerOn();
 
     if (sendCommandRetry(0, 0) != Success) {
@@ -271,13 +271,13 @@ bool SDCard::initCard() {
         return false;
     }
 
-    DBG("card size = %d", _cardInfo.size);
+    DBG("card size = %lu", _cardInfo.size);
 
     return true;
 }
 
 
-bool SDCard::waitDataReady() {
+bool SdCard::waitDataReady() {
     uint32_t timeout = os::ticks() + os::time::ms(1000);
     while (os::ticks() < timeout) {
         if (sendCommandWait(13, _cardInfo.rca << 16) == Success && (SDIO_RESP1 & 0x100) != 0) {
@@ -287,7 +287,7 @@ bool SDCard::waitDataReady() {
     return false;
 }
 
-bool SDCard::readBlock(uint32_t address, void *buffer) {
+bool SdCard::readBlock(uint32_t address, void *buffer) {
     ASSERT(buffer >= (void *)0x20000000, "buffer not in RAM");
     // DBG("readBlock(address=%lu, buffer=%p)", address, buffer);
     if (!waitDataReady()) {
@@ -372,7 +372,7 @@ bool SDCard::readBlock(uint32_t address, void *buffer) {
     return true;
 }
 
-bool SDCard::writeBlock(uint32_t address, const void *buffer) {
+bool SdCard::writeBlock(uint32_t address, const void *buffer) {
     ASSERT(buffer >= (void *)0x20000000, "buffer not in RAM");
     // DBG("writeBlock(address=%lu, buffer=%p)", address, buffer);
     if (!waitDataReady()) {

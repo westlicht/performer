@@ -15,10 +15,12 @@
 #include "drivers/UsbH.h"
 #include "drivers/UsbMidi.h"
 #include "drivers/ClockTimer.h"
+#include "drivers/SdCard.h"
 
 #include "os/os.h"
 
 #include "core/profiler/Profiler.h"
+#include "core/fs/Volume.h"
 
 #include "model/Model.h"
 #include "engine/Engine.h"
@@ -46,6 +48,9 @@ static CCMRAM_BSS GateOutput gateOutput(shiftRegister);
 static CCMRAM_BSS Midi midi;
 static CCMRAM_BSS UsbMidi usbMidi;
 static UsbH usbh(usbMidi);
+static SdCard sdCard;
+
+static fs::Volume volume(sdCard);
 
 static CCMRAM_BSS Profiler profiler;
 
@@ -102,6 +107,7 @@ int main(void) {
     usbMidi.init();
     usbh.init();
     usbh.powerOn();
+    sdCard.init();
 
     model.init();
     engine.init();

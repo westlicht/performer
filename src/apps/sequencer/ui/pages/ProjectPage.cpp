@@ -101,7 +101,7 @@ void ProjectPage::contextAction(int index) {
         saveAsProject();
         break;
     case ContextAction::Format:
-        formatSDCard();
+        formatSdCard();
         break;
     case ContextAction::Last:
         break;
@@ -156,7 +156,7 @@ void ProjectPage::saveAsProject() {
     });
 }
 
-void ProjectPage::formatSDCard() {
+void ProjectPage::formatSdCard() {
     _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
         if (result) {
             _manager.pages().busy.show("FORMATTING ...");

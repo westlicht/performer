@@ -10,7 +10,7 @@
 #include "drivers/GateOutput.h"
 #include "drivers/Lcd.h"
 #include "drivers/Midi.h"
-#include "drivers/SDCard.h"
+#include "drivers/SdCard.h"
 #include "drivers/UsbMidi.h"
 
 #include "core/fs/Volume.h"
@@ -37,7 +37,7 @@ struct Environment {
     GateOutput gateOutput;
     Midi midi;
     UsbMidi usbMidi;
-    SDCard sdcard;
+    SdCard sdCard;
 
     // filesystem
     fs::Volume volume;
@@ -50,7 +50,7 @@ struct Environment {
     Environment() :
         simulator(sim::Simulator::instance()),
 
-        volume(sdcard),
+        volume(sdCard),
 
         engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
         ui(model, engine, lcd, blm, encoder)

@@ -2,33 +2,33 @@
 
 #include "core/utils/Random.h"
 
-#include "drivers/SDCard.h"
+#include "drivers/SdCard.h"
 
-class TestSDCard : public IntegrationTest {
+class TestSdCard : public IntegrationTest {
 public:
-    TestSDCard() :
-        IntegrationTest("SDCard", false)
+    TestSdCard() :
+        IntegrationTest("SdCard", false)
     {}
 
     void init() override {
-        sdcard.init();
+        sdCard.init();
     }
 
     void once() override {
-        while (!sdcard.available()) {
-            DBG("Waiting for SDCard ...");
+        while (!sdCard.available()) {
+            DBG("Waiting for SdCard ...");
         }
 
-        if (sdcard.writeProtected()) {
-            DBG("SDCard is write protected -> aborting");
+        if (sdCard.writeProtected()) {
+            DBG("SdCard is write protected -> aborting");
             return;
         }
 
-        DBG("sectorCount = %zd", sdcard.sectorCount());
-        DBG("sectorSize = %zd", sdcard.sectorSize());
+        DBG("sectorCount = %zd", sdCard.sectorCount());
+        DBG("sectorSize = %zd", sdCard.sectorSize());
 
-        if (sdcard.sectorSize() != 512) {
-            DBG("SDCard has unsupported sector size -> aborting");
+        if (sdCard.sectorSize() != 512) {
+            DBG("SdCard has unsupported sector size -> aborting");
             return;
         }
 
@@ -54,16 +54,16 @@ public:
 
             // write data
             timer.reset();
-            if (!sdcard.write(data, 0, SectorCount)) {
+            if (!sdCard.write(data, 0, SectorCount)) {
                 DBG("write failed");
             }
             writeTime += timer.elapsed();
 
-            sdcard.sync();
+            sdCard.sync();
 
             // read data
             timer.reset();
-            if (!sdcard.read(buf, 0, SectorCount)) {
+            if (!sdCard.read(buf, 0, SectorCount)) {
                 DBG("read failed");
             }
             readTime += timer.elapsed();
@@ -77,6 +77,7 @@ public:
                     break;
                 }
             }
+            EXPECT(success, "invalid data");
         }
 
         // report throughput
@@ -85,7 +86,7 @@ public:
     }
 
 private:
-    SDCard sdcard;
+    SdCard sdCard;
 };
 
-INTEGRATION_TEST(TestSDCard)
+INTEGRATION_TEST(TestSdCard)

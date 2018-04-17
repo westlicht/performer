@@ -9,9 +9,9 @@
 #include <cstddef>
 #include <cstdint>
 
-class SDCard {
+class SdCard {
 public:
-    SDCard() :
+    SdCard() :
         _data(new uint8_t[SectorCount * SectorSize])
     {
         std::ifstream ifs("sdcard.iso");
@@ -55,5 +55,4 @@ private:
     static constexpr size_t SectorSize = 512;
 
     std::unique_ptr<uint8_t[]> _data;
-
 };

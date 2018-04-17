@@ -9,7 +9,7 @@ extern "C" {
 
 namespace fs {
 
-Volume::Volume(SDCard &sdcard) :
+Volume::Volume(SdCard &sdcard) :
     _sdcard(sdcard)
 {
     setVolume(*this);

@@ -2,7 +2,7 @@
 
 #include "Error.h"
 
-#include "drivers/SDCard.h"
+#include "drivers/SdCard.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -11,9 +11,9 @@ namespace fs {
 
 class Volume {
 public:
-    Volume(SDCard &sdcard);
+    Volume(SdCard &sdcard);
 
-    SDCard &sdcard() { return _sdcard; }
+    SdCard &sdcard() { return _sdcard; }
 
     bool available();
 
@@ -27,7 +27,7 @@ public:
     size_t sizeFree() const;
 
 private:
-    SDCard &_sdcard;
+    SdCard &_sdcard;
     FATFS _fs;
 };
 

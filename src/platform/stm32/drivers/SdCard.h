@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 
-class SDCard {
+class SdCard {
 public:
     void init();
 
