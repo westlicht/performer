@@ -141,9 +141,7 @@ void ProjectPage::saveProject() {
 void ProjectPage::saveAsProject() {
     _manager.pages().fileSelect.show("SAVE PROJECT", FileType::Project, 0, true, [this] (bool result, int slot) {
         if (result) {
-            FileManager::SlotInfo info;
-            FileManager::slotInfo(FileType::Project, slot, info);
-            if (info.used) {
+            if (FileManager::slotUsed(FileType::Project, slot)) {
                 _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
                     if (result) {
                         saveProjectToSlot(slot);

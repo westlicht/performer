@@ -26,6 +26,11 @@ private:
     void initUserScale();
     void copyUserScale();
     void pasteUserScale();
+    void loadUserScale();
+    void saveUserScale();
+
+    void saveUserScaleToSlot(int slot);
+    void loadUserScaleFromSlot(int slot);
 
     int _selectedIndex;
     UserScale *_userScale;

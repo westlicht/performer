@@ -1,5 +1,6 @@
 #include "UserScalePage.h"
 
+#include "ui/pages/Pages.h"
 #include "ui/painters/WindowPainter.h"
 
 #include "core/utils/StringBuilder.h"
@@ -8,6 +9,8 @@ enum class ContextAction {
     Init,
     Copy,
     Paste,
+    Load,
+    Save,
     Last
 };
 
@@ -15,6 +18,8 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
     { "COPY" },
     { "PASTE" },
+    { "LOAD" },
+    { "SAVE" },
 };
 
 static const char *functionNames[] = { "USER1", "USER2", "USER3", "USER4", nullptr };
@@ -57,11 +62,15 @@ void UserScalePage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    // if (key.isEncoder()) {
-    //     _manager.pages().route.show(selectedRow());
-    //     event.consume();
-    //     return;
-    // }
+    if (key.is(Key::Encoder) && selectedRow() == 0) {
+        _manager.pages().textInput.show("NAME:", _userScale->name(), UserScale::NameLength, [this] (bool result, const char *text) {
+            if (result) {
+                // _userScale->setName(text);
+            }
+        });
+
+        return;
+    }
 
     ListPage::keyPress(event);
 }
@@ -92,6 +101,12 @@ void UserScalePage::contextAction(int index) {
     case ContextAction::Paste:
         pasteUserScale();
         break;
+    case ContextAction::Load:
+        loadUserScale();
+        break;
+    case ContextAction::Save:
+        saveUserScale();
+        break;
     case ContextAction::Last:
         break;
     }
@@ -119,4 +134,50 @@ void UserScalePage::copyUserScale() {
 void UserScalePage::pasteUserScale() {
     _model.clipBoard().pasteUserScale(*_userScale);
     showMessage("USER SCALE PASTED");
+}
+
+void UserScalePage::loadUserScale() {
+    _manager.pages().fileSelect.show("LOAD SCALE", FileType::UserScale, 0, false, [this] (bool result, int slot) {
+        if (result) {
+            _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
+                if (result) {
+                    loadUserScaleFromSlot(slot);
+                }
+            });
+        }
+    });
+}
+
+void UserScalePage::saveUserScale() {
+    _manager.pages().fileSelect.show("SAVE SCALE", FileType::UserScale, 0, true, [this] (bool result, int slot) {
+        if (result) {
+            if (FileManager::slotUsed(FileType::UserScale, slot)) {
+                _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
+                    if (result) {
+                        saveUserScaleToSlot(slot);
+                    }
+                });
+            } else {
+                saveUserScaleToSlot(slot);
+            }
+        }
+    });
+}
+
+void UserScalePage::saveUserScaleToSlot(int slot) {
+    auto result = FileManager::saveUserScale(*_userScale, slot);
+    if (result == fs::OK) {
+        showMessage(FixedStringBuilder<32>("SAVED SACLE!"));
+    } else {
+        showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+    }
+}
+
+void UserScalePage::loadUserScaleFromSlot(int slot) {
+    auto result = FileManager::loadUserScale(*_userScale, slot);
+    if (result == fs::OK) {
+        showMessage(FixedStringBuilder<32>("LOADED SCALE!"));
+    } else {
+        showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+    }
 }

@@ -9,6 +9,8 @@ Project::Project() :
     for (size_t i = 0; i < _tracks.size(); ++i) {
         _tracks[i].setTrackIndex(i);
     }
+
+    clear();
 }
 
 void Project::clear() {
@@ -82,10 +84,6 @@ void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
 
 void Project::write(WriteContext &context) const {
     auto &writer = context.writer;
-
-    FileHeader header(FileType::Project, 0, _name);
-    writer.write(&header, sizeof(header));
-
     writer.write(_bpm);
     writer.write(_swing);
     writer.write(_syncMeasure);
@@ -106,13 +104,9 @@ void Project::write(WriteContext &context) const {
 }
 
 void Project::read(ReadContext &context) {
+    clear();
+
     auto &reader = context.reader;
-
-    FileHeader header;
-    reader.read(&header, sizeof(header));
-
-    header.readName(_name, sizeof(_name));
-
     reader.read(_bpm);
     reader.read(_swing);
     reader.read(_syncMeasure);
@@ -139,8 +133,10 @@ fs::Error Project::write(const char *path) const {
     }
 
     Writer writer(fileWriter);
-    WriteContext context = { writer };
+    FileHeader header(FileType::Project, 0, _name);
+    writer.write(&header, sizeof(header));
 
+    WriteContext context = { writer };
     write(context);
 
     return fileWriter.finish();
@@ -153,8 +149,13 @@ fs::Error Project::read(const char *path) {
     }
 
     Reader reader(fileReader);
-    ReadContext context = { reader };
 
+    FileHeader header;
+    reader.read(&header, sizeof(header));
+
+    header.readName(_name, sizeof(_name));
+
+    ReadContext context = { reader };
     read(context);
 
     return fileReader.finish();

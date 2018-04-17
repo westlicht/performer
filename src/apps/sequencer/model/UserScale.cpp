@@ -14,6 +14,7 @@ UserScale::UserScale() :
 }
 
 void UserScale::clear() {
+    StringUtils::copy(_userName, "INIT", sizeof(_userName));
     setMode(Mode::Note);
     clearItems();
 }
@@ -29,11 +30,21 @@ void UserScale::clearItems() {
 void UserScale::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_mode);
+    writer.write(_size);
+    for (int i = 0; i < _size; ++i) {
+        writer.write(_items[i]);
+    }
 }
 
 void UserScale::read(ReadContext &context) {
+    clear();
+
     auto &reader = context.reader;
     reader.read(_mode);
+    reader.read(_size);
+    for (int i = 0; i < _size; ++i) {
+        reader.read(_items[i]);
+    }
 }
 
 fs::Error UserScale::write(const char *path) const {
@@ -43,8 +54,10 @@ fs::Error UserScale::write(const char *path) const {
     }
 
     Writer writer(fileWriter);
-    WriteContext context = { writer };
+    FileHeader header(FileType::UserScale, 0, _userName);
+    writer.write(&header, sizeof(header));
 
+    WriteContext context = { writer };
     write(context);
 
     return fileWriter.finish();
@@ -57,8 +70,13 @@ fs::Error UserScale::read(const char *path) {
     }
 
     Reader reader(fileReader);
-    ReadContext context = { reader };
 
+    FileHeader header;
+    reader.read(&header, sizeof(header));
+
+    header.readName(_userName, sizeof(_userName));
+
+    ReadContext context = { reader };
     read(context);
 
     return fileReader.finish();

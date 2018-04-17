@@ -55,6 +55,7 @@ public:
 
 private:
     enum Item {
+        Name,
         Mode,
         Size,
         Last
@@ -62,9 +63,10 @@ private:
 
     const char *itemName(Item item) const {
         switch (item) {
-        case Mode:          return "Mode";
-        case Size:          return "Size";
-        case Last:          break;
+        case Name:  return "Name";
+        case Mode:  return "Mode";
+        case Size:  return "Size";
+        case Last:  break;
         }
         return nullptr;
     }
@@ -75,6 +77,9 @@ private:
 
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
+        case Name:
+            str(_userScale->userName());
+            break;
         case Mode:
             _userScale->printMode(str);
             break;
@@ -88,6 +93,8 @@ private:
 
     void editValue(Item item, int value, bool shift) {
         switch (item) {
+        case Name:
+            break;
         case Mode:
             _userScale->editMode(value, shift);
             break;

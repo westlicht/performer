@@ -241,10 +241,10 @@ public:
 
 private:
     uint8_t _slot = uint8_t(-1);
-    char _name[NameLength + 1] = { 'I', 'N', 'I', 'T', '\0' };
-    float _bpm = 120.f;
-    uint8_t _swing = 50;
-    uint8_t _syncMeasure = 1;
+    char _name[NameLength + 1];
+    float _bpm;
+    uint8_t _swing;
+    uint8_t _syncMeasure;
     uint8_t _scale;
     uint8_t _rootNote;
 

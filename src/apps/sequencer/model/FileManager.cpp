@@ -88,6 +88,13 @@ void FileManager::slotInfo(FileType type, int slot, SlotInfo &info) {
     cacheSlot(type, slot, info);
 }
 
+bool FileManager::slotUsed(FileType type, int slot) {
+    SlotInfo info;
+    slotInfo(type, slot, info);
+    return info.used;
+}
+
+
 fs::Error FileManager::saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write) {
     auto result = fs::volume().mount();
     if (result != fs::OK) {

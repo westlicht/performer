@@ -27,6 +27,7 @@ public:
     };
 
     static void slotInfo(FileType type, int slot, SlotInfo &info);
+    static bool slotUsed(FileType type, int slot);
 
 private:
     static fs::Error saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write);

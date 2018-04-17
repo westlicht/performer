@@ -6,8 +6,10 @@
 #include "Serialize.h"
 #include "ModelUtils.h"
 #include "Types.h"
+#include "FileDefs.h"
 
 #include "core/math/Math.h"
+#include "core/utils/StringUtils.h"
 
 #include <array>
 
@@ -18,6 +20,8 @@ public:
     //----------------------------------------
     // Types
     //----------------------------------------
+
+    static constexpr size_t NameLength = FileHeader::NameLength;
 
     typedef std::array<UserScale, CONFIG_USER_SCALE_COUNT> Array;
     typedef std::array<int16_t, CONFIG_USER_SCALE_SIZE> ItemArray;
@@ -40,6 +44,13 @@ public:
     //----------------------------------------
     // Properties
     //----------------------------------------
+
+    // userName
+
+    const char *userName() const { return _userName; }
+    void setUserName(const char *userName) {
+        StringUtils::copy(_userName, userName, sizeof(_userName));
+    }
 
     // mode
 
@@ -266,6 +277,7 @@ private:
         return (_items[_size - 1] - _items[0]) * (1.f / 1000.f);
     }
 
+    char _userName[NameLength + 1];
     Mode _mode;
     uint8_t _size;
     ItemArray _items;
