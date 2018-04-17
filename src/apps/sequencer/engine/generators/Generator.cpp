@@ -5,7 +5,7 @@
 
 #include "core/utils/Container.h"
 
-static Container<EuclideanGenerator> generatorContainer;
+static Container<EuclideanGenerator, RandomGenerator> generatorContainer;
 
 Generator *Generator::create(Generator::Mode mode, SequenceBuilder &builder) {
     switch (mode) {
