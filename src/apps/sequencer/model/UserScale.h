@@ -118,7 +118,7 @@ public:
     void printItem(int index, StringBuilder &str) const {
         switch (_mode) {
         case Mode::Note:
-            noteName(str, index, Scale::Short1);
+            noteNameNoteMode(str, index, Scale::Short1);
             break;
         case Mode::Voltage:
             str("%+.3fV", _items[index] * (1.f / 1000.f));
@@ -203,7 +203,7 @@ private:
         int index = note - octave * _size;
         switch (format) {
         case Short1:
-            str(names[index]);
+            str(names[_items[index]]);
             break;
         case Short2:
             str("%+d", octave);
