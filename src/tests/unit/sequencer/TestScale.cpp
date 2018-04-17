@@ -16,7 +16,7 @@ UNIT_TEST("Scale") {
             int notesPerOctave = scale.notesPerOctave();
 
             DBG("----------------------------------------");
-            DBG("%s", scale.name());
+            DBG("%s", Scale::name(i));
             DBG("octave has %d notes", notesPerOctave);
             DBG("----------------------------------------");
             DBG("%-8s %-8s %-8s %-8s %-8s", "note", "volts", "short1", "short2", "long");
@@ -41,7 +41,7 @@ UNIT_TEST("Scale") {
             int notesPerOctave = scale.notesPerOctave();
 
             DBG("----------------------------------------");
-            DBG("%s", scale.name());
+            DBG("%s", Scale::name(i));
             DBG("octave has %d notes", notesPerOctave);
             DBG("----------------------------------------");
             DBG("%-8s %-8s %-8s %-8s %-8s %-8s", "voltsin", "note", "volts", "short1", "short2", "long");
