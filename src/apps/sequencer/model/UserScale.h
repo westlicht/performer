@@ -130,6 +130,9 @@ public:
     void write(WriteContext &context) const;
     void read(ReadContext &context);
 
+    fs::Error write(const char *path) const;
+    fs::Error read(const char *path);
+
     //----------------------------------------
     // Scale implementation
     //----------------------------------------

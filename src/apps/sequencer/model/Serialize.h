@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/fs/FileSystem.h"
 #include "core/fs/FileWriter.h"
 #include "core/fs/FileReader.h"
 #include "core/io/SerializedWriter.h"
@@ -8,20 +9,27 @@
 #include <array>
 
 #include <cstdlib>
+#include <cstdint>
 
-typedef SerializedWriter<fs::FileWriter> ProjectWriter;
-typedef SerializedReader<fs::FileReader> ProjectReader;
-
-class Project;
+typedef SerializedWriter<fs::FileWriter> Writer;
+typedef SerializedReader<fs::FileReader> Reader;
 
 struct WriteContext {
-    const Project &project;
-    ProjectWriter &writer;
+    Writer &writer;
 };
 
 struct ReadContext {
-    Project &project;
-    ProjectReader &reader;
+    Reader &reader;
+};
+
+enum class FileType : uint8_t {
+    Project     = 0,
+    UserScale   = 1,
+};
+
+struct FileHeader {
+    FileType type;
+    char name[9];
 };
 
 template<typename T, size_t N>

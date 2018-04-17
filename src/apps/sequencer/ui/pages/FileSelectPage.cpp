@@ -1,4 +1,4 @@
-#include "ProjectSelectPage.h"
+#include "FileSelectPage.h"
 
 #include "ui/painters/WindowPainter.h"
 
@@ -10,11 +10,11 @@ enum class Function {
 static const char *functionNames[] = { nullptr, nullptr, nullptr, "CANCEL", "OK" };
 
 
-ProjectSelectPage::ProjectSelectPage(PageManager &manager, PageContext &context) :
+FileSelectPage::FileSelectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel)
 {}
 
-void ProjectSelectPage::show(const char *title, int selectedSlot, bool allowEmpty, ResultCallback callback) {
+void FileSelectPage::show(const char *title, int selectedSlot, bool allowEmpty, ResultCallback callback) {
     _title = title;
     _allowEmpty = allowEmpty;
     _callback = callback;
@@ -22,13 +22,13 @@ void ProjectSelectPage::show(const char *title, int selectedSlot, bool allowEmpt
     ListPage::show();
 }
 
-void ProjectSelectPage::enter() {
+void FileSelectPage::enter() {
 }
 
-void ProjectSelectPage::exit() {
+void FileSelectPage::exit() {
 }
 
-void ProjectSelectPage::draw(Canvas &canvas) {
+void FileSelectPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, _title);
     WindowPainter::drawFooter(canvas, functionNames, _keyState);
@@ -36,10 +36,10 @@ void ProjectSelectPage::draw(Canvas &canvas) {
     ListPage::draw(canvas);
 }
 
-void ProjectSelectPage::updateLeds(Leds &leds) {
+void FileSelectPage::updateLeds(Leds &leds) {
 }
 
-void ProjectSelectPage::keyPress(KeyPressEvent &event) {
+void FileSelectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
@@ -61,11 +61,11 @@ void ProjectSelectPage::keyPress(KeyPressEvent &event) {
     ListPage::keyPress(event);
 }
 
-void ProjectSelectPage::closeWithResult(bool result) {
+void FileSelectPage::closeWithResult(bool result) {
     // cancel if empty slot is selected but not allowed to be
     if (result && !_allowEmpty) {
-        ProjectManager::SlotInfo info;
-        ProjectManager::slotInfo(selectedRow(), info);
+        FileManager::SlotInfo info;
+        FileManager::slotInfo(selectedRow(), info);
         if (!info.used) {
             return;
         }

@@ -9,6 +9,7 @@
 #include "ContextMenuPage.h"
 #include "CurveSequenceEditPage.h"
 #include "CurveSequencePage.h"
+#include "FileSelectPage.h"
 #include "LayoutPage.h"
 #include "MonitorPage.h"
 #include "NoteSequenceEditPage.h"
@@ -16,7 +17,6 @@
 #include "PatternPage.h"
 #include "PerformerPage.h"
 #include "ProjectPage.h"
-#include "ProjectSelectPage.h"
 #include "RoutePage.h"
 #include "RoutingPage.h"
 #include "TextInputPage.h"
@@ -52,7 +52,7 @@ struct Pages {
     BpmPage bpm;
     ClockSetupPage clockSetup;
     MonitorPage monitor;
-    ProjectSelectPage projectSelect;
+    FileSelectPage fileSelect;
     ContextMenuPage contextMenu;
     // generator pages
     GeneratorPage generator;
@@ -88,7 +88,7 @@ struct Pages {
         bpm(manager, context),
         clockSetup(manager, context),
         monitor(manager, context),
-        projectSelect(manager, context),
+        fileSelect(manager, context),
         contextMenu(manager, context),
         // generator pages
         generator(manager, context),

@@ -30,6 +30,7 @@ set(sources
     model/Curve.cpp
     model/CurveSequence.cpp
     model/CurveTrack.cpp
+    model/FileManager.cpp
     model/MidiCvTrack.cpp
     model/Model.cpp
     model/ModelUtils.cpp
@@ -37,7 +38,6 @@ set(sources
     model/NoteTrack.cpp
     model/PlayState.cpp
     model/Project.cpp
-    model/ProjectManager.cpp
     model/Routing.cpp
     model/Scale.cpp
     model/Settings.cpp
@@ -60,6 +60,7 @@ set(sources
     ui/pages/ContextMenuPage.cpp
     ui/pages/CurveSequencePage.cpp
     ui/pages/CurveSequenceEditPage.cpp
+    ui/pages/FileSelectPage.cpp
     ui/pages/GeneratorPage.cpp
     ui/pages/GeneratorSelectPage.cpp
     ui/pages/IntroPage.cpp
@@ -71,7 +72,6 @@ set(sources
     ui/pages/PatternPage.cpp
     ui/pages/PerformerPage.cpp
     ui/pages/ProjectPage.cpp
-    ui/pages/ProjectSelectPage.cpp
     ui/pages/RoutePage.cpp
     ui/pages/RoutingPage.cpp
     ui/pages/TextInputPage.cpp

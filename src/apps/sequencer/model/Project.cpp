@@ -130,8 +130,8 @@ fs::Error Project::write(const char *path) const {
         fileWriter.error();
     }
 
-    ProjectWriter projectWriter(fileWriter);
-    WriteContext context = { *this, projectWriter };
+    Writer writer(fileWriter);
+    WriteContext context = { writer };
 
     write(context);
 
@@ -144,8 +144,8 @@ fs::Error Project::read(const char *path) {
         fileReader.error();
     }
 
-    ProjectReader projectReader(fileReader);
-    ReadContext context = { *this, projectReader };
+    Reader reader(fileReader);
+    ReadContext context = { reader };
 
     read(context);
 

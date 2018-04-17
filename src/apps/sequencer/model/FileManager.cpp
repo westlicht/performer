@@ -1,22 +1,22 @@
-#include "ProjectManager.h"
+#include "FileManager.h"
 
 #include "core/utils/StringBuilder.h"
 
 #include <algorithm>
 
-std::array<ProjectManager::CachedSlotInfo, 4> ProjectManager::_cachedSlotInfos;
-uint32_t ProjectManager::_cachedSlotInfoTicket = 0;
+std::array<FileManager::CachedSlotInfo, 4> FileManager::_cachedSlotInfos;
+uint32_t FileManager::_cachedSlotInfoTicket = 0;
 
 static void projectFilename(StringBuilder &str, int slot) {
     str("%03d.pro", slot + 1);
 }
 
-fs::Error ProjectManager::format() {
+fs::Error FileManager::format() {
     invalidateAllSlots();
     return fs::volume().format();
 }
 
-fs::Error ProjectManager::saveProject(Project &project, int slot) {
+fs::Error FileManager::saveProject(Project &project, int slot) {
     auto result = fs::volume().mount();
     if (result != fs::OK) {
         return result;
@@ -34,7 +34,7 @@ fs::Error ProjectManager::saveProject(Project &project, int slot) {
     return result;
 }
 
-fs::Error ProjectManager::loadProject(Project &project, int slot) {
+fs::Error FileManager::loadProject(Project &project, int slot) {
     auto result = fs::volume().mount();
     if (result != fs::OK) {
         return result;
@@ -51,7 +51,15 @@ fs::Error ProjectManager::loadProject(Project &project, int slot) {
     return result;
 }
 
-void ProjectManager::slotInfo(int slot, SlotInfo &info) {
+fs::Error FileManager::saveUserScale(UserScale &userScale, int slot) {
+    return fs::DENIED;
+}
+
+fs::Error FileManager::loadUserScale(UserScale &userScale, int slot) {
+    return fs::DENIED;
+}
+
+void FileManager::slotInfo(int slot, SlotInfo &info) {
     if (cachedSlot(slot, info)) {
         return;
     }
@@ -76,7 +84,7 @@ void ProjectManager::slotInfo(int slot, SlotInfo &info) {
     cacheSlot(slot, info);
 }
 
-bool ProjectManager::cachedSlot(int slot, SlotInfo &info) {
+bool FileManager::cachedSlot(int slot, SlotInfo &info) {
     for (auto &cachedSlotInfo : _cachedSlotInfos) {
         if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.slot == slot) {
             info = cachedSlotInfo.info;
@@ -87,14 +95,14 @@ bool ProjectManager::cachedSlot(int slot, SlotInfo &info) {
     return false;
 }
 
-void ProjectManager::cacheSlot(int slot, const SlotInfo &info) {
+void FileManager::cacheSlot(int slot, const SlotInfo &info) {
     auto cachedSlotInfo = std::min_element(_cachedSlotInfos.begin(), _cachedSlotInfos.end());
     cachedSlotInfo->slot = slot;
     cachedSlotInfo->info = info;
     cachedSlotInfo->ticket = nextCachedSlotTicket();
 }
 
-void ProjectManager::invalidateSlot(int slot) {
+void FileManager::invalidateSlot(int slot) {
     for (auto &cachedSlotInfo : _cachedSlotInfos) {
         if (cachedSlotInfo.ticket != 0 && cachedSlotInfo.slot == slot) {
             cachedSlotInfo.ticket = 0;
@@ -102,13 +110,13 @@ void ProjectManager::invalidateSlot(int slot) {
     }
 }
 
-void ProjectManager::invalidateAllSlots() {
+void FileManager::invalidateAllSlots() {
     for (auto &cachedSlotInfo : _cachedSlotInfos) {
         cachedSlotInfo.ticket = 0;
     }
 }
 
-uint32_t ProjectManager::nextCachedSlotTicket() {
+uint32_t FileManager::nextCachedSlotTicket() {
     _cachedSlotInfoTicket = std::max(uint32_t(1), _cachedSlotInfoTicket + 1);
     return _cachedSlotInfoTicket;
 }

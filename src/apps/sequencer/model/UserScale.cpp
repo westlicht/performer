@@ -35,3 +35,31 @@ void UserScale::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_mode);
 }
+
+fs::Error UserScale::write(const char *path) const {
+    fs::FileWriter fileWriter(path);
+    if (fileWriter.error() != fs::OK) {
+        fileWriter.error();
+    }
+
+    Writer writer(fileWriter);
+    WriteContext context = { writer };
+
+    write(context);
+
+    return fileWriter.finish();
+}
+
+fs::Error UserScale::read(const char *path) {
+    fs::FileReader fileReader(path);
+    if (fileReader.error() != fs::OK) {
+        fileReader.error();
+    }
+
+    Reader reader(fileReader);
+    ReadContext context = { reader };
+
+    read(context);
+
+    return fileReader.finish();
+}

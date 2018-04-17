@@ -6,12 +6,15 @@
 
 #include <array>
 
-class ProjectManager {
+class FileManager {
 public:
     static fs::Error format();
 
     static fs::Error saveProject(Project &project, int slot);
     static fs::Error loadProject(Project &project, int slot);
+
+    static fs::Error saveUserScale(UserScale &userScale, int slot);
+    static fs::Error loadUserScale(UserScale &userScale, int slot);
 
     struct SlotInfo {
         bool used;

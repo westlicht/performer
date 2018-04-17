@@ -4,9 +4,9 @@
 
 #include "ListModel.h"
 
-#include "model/ProjectManager.h"
+#include "model/FileManager.h"
 
-class ProjectSelectListModel : public ListModel {
+class FileSelectListModel : public ListModel {
 public:
     virtual int rows() const override {
         return 128;
@@ -27,8 +27,8 @@ public:
 
 private:
     void formatName(int row, StringBuilder &str) const {
-        ProjectManager::SlotInfo info;
-        ProjectManager::slotInfo(row, info);
+        FileManager::SlotInfo info;
+        FileManager::slotInfo(row, info);
         str("%d: %s", row + 1, info.used ? info.name : "(empty)");
     }
 };

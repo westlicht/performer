@@ -2,11 +2,11 @@
 
 #include "ListPage.h"
 
-#include "ui/model/ProjectSelectListModel.h"
+#include "ui/model/FileSelectListModel.h"
 
-class ProjectSelectPage : public ListPage {
+class FileSelectPage : public ListPage {
 public:
-    ProjectSelectPage(PageManager &manager, PageContext &context);
+    FileSelectPage(PageManager &manager, PageContext &context);
 
     typedef std::function<void(bool, int)> ResultCallback;
 
@@ -30,5 +30,5 @@ private:
     bool _allowEmpty;
     ResultCallback _callback;
 
-    ProjectSelectListModel _listModel;
+    FileSelectListModel _listModel;
 };

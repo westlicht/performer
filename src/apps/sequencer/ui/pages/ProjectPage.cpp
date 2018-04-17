@@ -4,7 +4,7 @@
 #include "ui/pages/Pages.h"
 #include "ui/painters/WindowPainter.h"
 
-#include "model/ProjectManager.h"
+#include "model/FileManager.h"
 
 #include "core/fs/FileSystem.h"
 #include "core/utils/StringBuilder.h"
@@ -118,7 +118,7 @@ void ProjectPage::initProject() {
 }
 
 void ProjectPage::loadProject() {
-    _manager.pages().projectSelect.show("LOAD PROJECT", _project.slotAssigned() ? _project.slot() : 0, false, [this] (bool result, int slot) {
+    _manager.pages().fileSelect.show("LOAD PROJECT", _project.slotAssigned() ? _project.slot() : 0, false, [this] (bool result, int slot) {
         if (result) {
             _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
                 if (result) {
@@ -139,10 +139,10 @@ void ProjectPage::saveProject() {
 }
 
 void ProjectPage::saveAsProject() {
-    _manager.pages().projectSelect.show("SAVE PROJECT", 0, true, [this] (bool result, int slot) {
+    _manager.pages().fileSelect.show("SAVE PROJECT", 0, true, [this] (bool result, int slot) {
         if (result) {
-            ProjectManager::SlotInfo info;
-            ProjectManager::slotInfo(slot, info);
+            FileManager::SlotInfo info;
+            FileManager::slotInfo(slot, info);
             if (info.used) {
                 _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {
                     if (result) {
@@ -160,7 +160,7 @@ void ProjectPage::formatSdCard() {
     _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
         if (result) {
             _manager.pages().busy.show("FORMATTING ...");
-            auto result = ProjectManager::format();
+            auto result = FileManager::format();
             if (result != fs::OK) {
                 showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
             }
@@ -170,7 +170,7 @@ void ProjectPage::formatSdCard() {
 }
 
 void ProjectPage::saveProjectToSlot(int slot) {
-    auto result = ProjectManager::saveProject(_project, slot);
+    auto result = FileManager::saveProject(_project, slot);
     if (result == fs::OK) {
         showMessage(FixedStringBuilder<32>("SAVED PROJECT!"));
     } else {
@@ -179,7 +179,7 @@ void ProjectPage::saveProjectToSlot(int slot) {
 }
 
 void ProjectPage::loadProjectFromSlot(int slot) {
-    auto result = ProjectManager::loadProject(_project, slot);
+    auto result = FileManager::loadProject(_project, slot);
     if (result == fs::OK) {
         showMessage(FixedStringBuilder<32>("LOADED PROJECT!"));
     } else {
