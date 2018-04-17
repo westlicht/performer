@@ -13,7 +13,10 @@ class SDCard {
 public:
     SDCard() :
         _data(new uint8_t[SectorCount * SectorSize])
-    {}
+    {
+        std::ifstream ifs("sdcard.iso");
+        ifs.read(reinterpret_cast<char *>(_data.get()), SectorCount * SectorSize);
+    }
 
     void init() {
     }
