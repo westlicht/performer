@@ -25,6 +25,7 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/HighResolutionTimer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Lcd.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Midi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/SDCard.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ShiftRegister.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/System.cpp
     # ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Timer.cpp
