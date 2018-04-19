@@ -20,7 +20,7 @@ bool Volume::available() {
 }
 
 Error Volume::format() {
-    uint8_t workArea[FF_MAX_SS];
+    uint32_t workArea[FF_MAX_SS / 4];
 
     DWORD plist[] = { 100, 0, 0, 0 };
     Error result = Error(f_fdisk(0, plist, workArea));
