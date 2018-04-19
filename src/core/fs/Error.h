@@ -25,6 +25,7 @@ enum Error {
     NOT_ENOUGH_CORE = FR_NOT_ENOUGH_CORE,
     TOO_MANY_OPEN_FILES = FR_TOO_MANY_OPEN_FILES,
     INVALID_PARAMETER = FR_INVALID_PARAMETER,
+    DISK_FULL
 };
 
 const char *errorToString(Error error);

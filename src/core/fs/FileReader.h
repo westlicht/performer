@@ -25,10 +25,13 @@ public:
     Error error() const { return _error; }
 
     Error finish() {
-        if (_error == OK) {
-            _error = _file.close();
-        } else {
-            _file.close();
+        if (!_finished) {
+            if (_error == OK) {
+                _error = _file.close();
+            } else {
+                _file.close();
+            }
+            _finished = true;
         }
         return _error;
     }
@@ -57,6 +60,7 @@ private:
     static constexpr size_t BufferSize = 512;
 
     File _file;
+    bool _finished = false;
     Error _error;
     uint32_t _buffer[BufferSize / 4];
     size_t _bufferSize = 0;

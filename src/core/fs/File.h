@@ -51,6 +51,15 @@ public:
         return _error;
     }
 
+    Error writeAll(const void *buf, size_t len) {
+        size_t lenWritten;
+        write(buf, len, &lenWritten);
+        if (_error == OK && len != lenWritten) {
+            _error = DISK_FULL;
+        }
+        return _error;
+    }
+
     Error read(void *buf, size_t len, size_t *lenRead = nullptr) {
         UINT br;
         _error = Error(f_read(&_file, buf, len, &br));
