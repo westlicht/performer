@@ -2,6 +2,14 @@
 
 #include "SystemConfig.h"
 
+// Task priorities
+#define CONFIG_DRIVER_TASK_PRIORITY     5
+#define CONFIG_ENGINE_TASK_PRIORITY     4
+#define CONFIG_USBH_TASK_PRIORITY       3
+#define CONFIG_UI_TASK_PRIORITY         2
+#define CONFIG_FILE_TASK_PRIORITY       1
+#define CONFIG_PROFILER_TASK_PRIORITY   0
+
 // Parts per quarter note
 #define CONFIG_PPQN                     192
 
