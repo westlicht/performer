@@ -9,6 +9,8 @@
 
 namespace os {
 
+    std::vector<std::function<void(void)>> &updateCallbacks();
+
     typedef int TaskHandle;
 
     template<size_t StackSize>
@@ -29,9 +31,7 @@ namespace os {
     class PeriodicTask {
     public:
         PeriodicTask(const char *name, uint8_t priority, uint32_t interval, std::function<void(void)> func) {
-            sim::Simulator::instance().addUpdateCallback([func] {
-                func();
-            });
+            os::updateCallbacks().emplace_back(func);
         }
     };
 

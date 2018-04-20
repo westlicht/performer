@@ -1,5 +1,7 @@
 #include "Simulator.h"
 
+#include "os/os.h"
+
 #include "widgets/Button.h"
 #include "widgets/Led.h"
 
@@ -50,7 +52,10 @@ bool Simulator::terminate() const {
 }
 
 void Simulator::update() {
-    for (auto &callback : _updateCallbacks) {
+    for (const auto &callback : os::updateCallbacks()) {
+        callback();
+    }
+    for (const auto &callback : _updateCallbacks) {
         callback();
     }
 

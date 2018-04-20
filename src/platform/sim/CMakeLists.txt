@@ -59,6 +59,8 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/instruments/DrumSampler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/instruments/Synth.cpp
+    # os
+    ${CMAKE_CURRENT_SOURCE_DIR}/os/os.cpp
 
     PARENT_SCOPE
 )
