@@ -2,12 +2,18 @@
 
 #include "core/utils/StringBuilder.h"
 
+#include "os/os.h"
+
 #include <algorithm>
 
 #include <cstring>
 
 std::array<FileManager::CachedSlotInfo, 4> FileManager::_cachedSlotInfos;
 uint32_t FileManager::_cachedSlotInfoTicket = 0;
+
+FileManager::TaskExecuteCallback FileManager::_taskExecuteCallback;
+FileManager::TaskResultCallback FileManager::_taskResultCallback;
+volatile uint32_t FileManager::_taskPending;
 
 struct FileTypeInfo {
     const char *dir;
@@ -22,6 +28,20 @@ FileTypeInfo fileTypeInfos[int(FileType::Last)] = {
 static void slotPath(StringBuilder &str, FileType type, int slot) {
     const auto &info = fileTypeInfos[int(type)];
     str("%s/%03d.%s", info.dir, slot, info.ext);
+}
+
+void FileManager::task(TaskExecuteCallback executeCallback, TaskResultCallback resultCallback) {
+    _taskExecuteCallback = executeCallback;
+    _taskResultCallback = resultCallback;
+    _taskPending = 1;
+}
+
+void FileManager::processTask() {
+    if (_taskPending) {
+        fs::Error result = _taskExecuteCallback();
+        _taskPending = 0;
+        _taskResultCallback(result);
+    }
 }
 
 fs::Error FileManager::format() {

@@ -23,6 +23,7 @@
 #include "core/fs/Volume.h"
 
 #include "model/Model.h"
+#include "model/FileManager.h"
 #include "engine/Engine.h"
 #include "ui/Ui.h"
 
@@ -74,6 +75,10 @@ static CCMRAM_BSS os::PeriodicTask<2048> usbhTask("usbh", CONFIG_USBH_TASK_PRIOR
 
 static os::PeriodicTask<4096> uiTask("ui", CONFIG_UI_TASK_PRIORITY, os::time::ms(1), [] () {
     ui.update();
+});
+
+static os::PeriodicTask<1024> fsTask("file", CONFIG_FILE_TASK_PRIORITY, os::time::ms(10), [] () {
+    FileManager::processTask();
 });
 
 #if CONFIG_ENABLE_PROFILER || CONFIG_ENABLE_TASK_PROFILER

@@ -13,6 +13,13 @@
 
 class FileManager {
 public:
+    typedef std::function<fs::Error(void)> TaskExecuteCallback;
+    typedef std::function<void(fs::Error)> TaskResultCallback;
+
+    static void task(TaskExecuteCallback executeCallback, TaskResultCallback resultCallback);
+    static void processTask();
+
+
     static fs::Error format();
 
     static fs::Error saveProject(Project &project, int slot);
@@ -52,4 +59,8 @@ private:
 
     static std::array<CachedSlotInfo, 4> _cachedSlotInfos;
     static uint32_t _cachedSlotInfoTicket;
+
+    static TaskExecuteCallback _taskExecuteCallback;
+    static TaskResultCallback _taskResultCallback;
+    static volatile uint32_t _taskPending;
 };

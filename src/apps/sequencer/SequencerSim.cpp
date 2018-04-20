@@ -1,3 +1,4 @@
+#include "Config.h"
 
 #include "sim/Simulator.h"
 
@@ -16,12 +17,19 @@
 #include "core/fs/Volume.h"
 
 #include "model/Model.h"
+#include "model/FileManager.h"
 #include "engine/Engine.h"
 #include "ui/Ui.h"
+
+#include "os/os.h"
 
 #ifdef __EMSCRIPTEN__
 # include <emscripten.h>
 #endif
+
+static os::PeriodicTask<1024> fsTask("file", CONFIG_FILE_TASK_PRIORITY, os::time::ms(10), [] () {
+    FileManager::processTask();
+});
 
 struct Environment {
     sim::Simulator &simulator;
