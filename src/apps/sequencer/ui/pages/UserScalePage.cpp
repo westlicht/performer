@@ -165,19 +165,33 @@ void UserScalePage::saveUserScale() {
 }
 
 void UserScalePage::saveUserScaleToSlot(int slot) {
-    auto result = FileManager::saveUserScale(*_userScale, slot);
-    if (result == fs::OK) {
-        showMessage(FixedStringBuilder<32>("SAVED SACLE!"));
-    } else {
-        showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
-    }
+    _manager.pages().busy.show("SAVING USER SCALE ...");
+
+    FileManager::task([this, slot] () {
+        return FileManager::saveUserScale(*_userScale, slot);
+    }, [this] (fs::Error result) {
+        // TODO lock ui mutex
+        if (result == fs::OK) {
+            showMessage(FixedStringBuilder<32>("SAVED SACLE!"));
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+        }
+        _manager.pages().busy.close();
+    });
 }
 
 void UserScalePage::loadUserScaleFromSlot(int slot) {
-    auto result = FileManager::loadUserScale(*_userScale, slot);
-    if (result == fs::OK) {
-        showMessage(FixedStringBuilder<32>("LOADED SCALE!"));
-    } else {
-        showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
-    }
+    _manager.pages().busy.show("LOADING USER SCALE ...");
+
+    FileManager::task([this, slot] () {
+        return FileManager::loadUserScale(*_userScale, slot);
+    }, [this] (fs::Error result) {
+        // TODO lock ui mutex
+        if (result == fs::OK) {
+            showMessage(FixedStringBuilder<32>("LOADED SCALE!"));
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+        }
+        _manager.pages().busy.close();
+    });
 }

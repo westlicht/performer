@@ -4,6 +4,7 @@
 
 #include "sim/Simulator.h"
 
+#include <vector>
 #include <functional>
 #include <mutex>
 

@@ -158,30 +158,50 @@ void ProjectPage::formatSdCard() {
     _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
         if (result) {
             _manager.pages().busy.show("FORMATTING ...");
-            auto result = FileManager::format();
-            if (result != fs::OK) {
-                showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
-            }
-            _manager.pages().busy.close();
+
+            FileManager::task([] () {
+                return FileManager::format();
+            }, [this] (fs::Error result) {
+                // TODO lock ui mutex
+                if (result == fs::OK) {
+                    showMessage(FixedStringBuilder<32>("SDCARD FORMATTED!"));
+                } else {
+                    showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+                }
+                _manager.pages().busy.close();
+            });
         }
     });
 }
 
 void ProjectPage::saveProjectToSlot(int slot) {
-    auto result = FileManager::saveProject(_project, slot);
-    if (result == fs::OK) {
-        showMessage(FixedStringBuilder<32>("SAVED PROJECT!"));
-    } else {
-        showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
-    }
+    _manager.pages().busy.show("SAVING PROJECT ...");
+
+    FileManager::task([this, slot] () {
+        return FileManager::saveProject(_project, slot);
+    }, [this] (fs::Error result) {
+        // TODO lock ui mutex
+        if (result == fs::OK) {
+            showMessage(FixedStringBuilder<32>("SAVED PROJECT!"));
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+        }
+        _manager.pages().busy.close();
+    });
 }
 
 void ProjectPage::loadProjectFromSlot(int slot) {
-    auto result = FileManager::loadProject(_project, slot);
-    if (result == fs::OK) {
-        showMessage(FixedStringBuilder<32>("LOADED PROJECT!"));
-    } else {
-        showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
-    }
-}
+    _manager.pages().busy.show("LOADING PROJECT ...");
 
+    FileManager::task([this, slot] () {
+        return FileManager::loadProject(_project, slot);
+    }, [this] (fs::Error result) {
+        // TODO lock ui mutex
+        if (result == fs::OK) {
+            showMessage(FixedStringBuilder<32>("LOADED PROJECT!"));
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+        }
+        _manager.pages().busy.close();
+    });
+}
