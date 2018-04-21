@@ -155,7 +155,7 @@ fs::Error Project::read(const char *path) {
 
     ReadContext context = { reader };
     read(context);
-    header.readName(_name, NameLength + 1);
+    header.readName(_name, sizeof(_name));
 
     return fileReader.finish();
 }

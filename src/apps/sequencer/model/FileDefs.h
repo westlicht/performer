@@ -12,7 +12,7 @@ enum class FileType : uint8_t {
 };
 
 struct FileHeader {
-    static const size_t NameLength = 8;
+    static constexpr size_t NameLength = 8;
 
     FileType type;
     uint8_t version;
@@ -24,13 +24,13 @@ struct FileHeader {
         this->type = type;
         this->version = version;
         size_t len = strlen(name);
-        std::memset(this->name, 0, NameLength);
-        std::memcpy(this->name, name, std::min(NameLength, len));
+        std::memset(this->name, 0, sizeof(this->name));
+        std::memcpy(this->name, name, std::min(sizeof(this->name), len));
     }
 
     void readName(char *name, size_t len) {
-        std::memcpy(name, this->name, std::min(NameLength, len));
-        name[std::min(NameLength, len - 1)] = '\0';
+        std::memcpy(name, this->name, std::min(sizeof(this->name), len));
+        name[std::min(sizeof(this->name), len - 1)] = '\0';
     }
 
 } __attribute__((packed));
