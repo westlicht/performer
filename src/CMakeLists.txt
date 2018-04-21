@@ -30,6 +30,7 @@ set(core_sources
     # core
     core/Debug.cpp
     core/fs/Error.cpp
+    core/fs/File.cpp
     core/fs/FileSystem.cpp
     core/fs/Volume.cpp
     core/gfx/Canvas.cpp
