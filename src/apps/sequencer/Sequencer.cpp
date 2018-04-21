@@ -59,30 +59,30 @@ static Model model;
 static CCMRAM_BSS Engine engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi);
 static CCMRAM_BSS Ui ui(model, engine, lcd, blm, encoder);
 
-static CCMRAM_BSS os::PeriodicTask<1024> driverTask("driver", CONFIG_DRIVER_TASK_PRIORITY, os::time::ms(1), [] () {
+static CCMRAM_BSS os::PeriodicTask<CONFIG_DRIVER_TASK_STACK_SIZE> driverTask("driver", CONFIG_DRIVER_TASK_PRIORITY, os::time::ms(1), [] () {
     shiftRegister.process();
     blm.process();
     encoder.process();
 });
 
-static CCMRAM_BSS os::PeriodicTask<4096> engineTask("engine", CONFIG_ENGINE_TASK_PRIORITY, os::time::ms(1), [] () {
+static CCMRAM_BSS os::PeriodicTask<CONFIG_ENGINE_TASK_STACK_SIZE> engineTask("engine", CONFIG_ENGINE_TASK_PRIORITY, os::time::ms(1), [] () {
     engine.update();
 });
 
-static CCMRAM_BSS os::PeriodicTask<2048> usbhTask("usbh", CONFIG_USBH_TASK_PRIORITY, os::time::ms(1), [] () {
+static CCMRAM_BSS os::PeriodicTask<CONFIG_USBH_TASK_STACK_SIZE> usbhTask("usbh", CONFIG_USBH_TASK_PRIORITY, os::time::ms(1), [] () {
     usbh.process();
 });
 
-static os::PeriodicTask<4096> uiTask("ui", CONFIG_UI_TASK_PRIORITY, os::time::ms(1), [] () {
+static CCMRAM_BSS os::PeriodicTask<CONFIG_UI_TASK_STACK_SIZE> uiTask("ui", CONFIG_UI_TASK_PRIORITY, os::time::ms(1), [] () {
     ui.update();
 });
 
-static os::PeriodicTask<1024> fsTask("file", CONFIG_FILE_TASK_PRIORITY, os::time::ms(10), [] () {
+static os::PeriodicTask<CONFIG_FILE_TASK_STACK_SIZE> fsTask("file", CONFIG_FILE_TASK_PRIORITY, os::time::ms(10), [] () {
     FileManager::processTask();
 });
 
 #if CONFIG_ENABLE_PROFILER || CONFIG_ENABLE_TASK_PROFILER
-static CCMRAM_BSS os::PeriodicTask<2048> profilerTask("profiler", 0, os::time::ms(5000), [&] () {
+static CCMRAM_BSS os::PeriodicTask<CONFIG_PROFILER_TASK_STACK_SIZE> profilerTask("profiler", 0, os::time::ms(5000), [&] () {
 #if CONFIG_ENABLE_PROFILER
     profiler.dump();
 #endif // CONFIG_ENABLE_PROFILE
