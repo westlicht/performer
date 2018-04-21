@@ -12,7 +12,7 @@ enum class FileType : uint8_t {
 };
 
 struct FileHeader {
-    static constexpr size_t NameLength = 8;
+    static const size_t NameLength = 8;
 
     FileType type;
     uint8_t version;
