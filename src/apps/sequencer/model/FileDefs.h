@@ -24,13 +24,13 @@ struct FileHeader {
         this->type = type;
         this->version = version;
         size_t len = strlen(name);
-        std::memset(this->name, 0, sizeof(name));
-        std::memcpy(this->name, name, std::min(sizeof(name), len));
+        std::memset(this->name, 0, NameLength);
+        std::memcpy(this->name, name, std::min(NameLength, len));
     }
 
     void readName(char *name, size_t len) {
-        std::memcpy(name, this->name, std::min(sizeof(name), len));
-        name[std::min(sizeof(name), len - 1)] = '\0';
+        std::memcpy(name, this->name, std::min(NameLength, len));
+        name[std::min(NameLength, len - 1)] = '\0';
     }
 
 } __attribute__((packed));

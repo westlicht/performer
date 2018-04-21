@@ -153,10 +153,9 @@ fs::Error Project::read(const char *path) {
     FileHeader header;
     reader.read(&header, sizeof(header));
 
-    header.readName(_name, sizeof(_name));
-
     ReadContext context = { reader };
     read(context);
+    header.readName(_name, NameLength + 1);
 
     return fileReader.finish();
 }
