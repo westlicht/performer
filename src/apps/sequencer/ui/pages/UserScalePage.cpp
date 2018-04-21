@@ -170,12 +170,12 @@ void UserScalePage::saveUserScaleToSlot(int slot) {
     FileManager::task([this, slot] () {
         return FileManager::saveUserScale(*_userScale, slot);
     }, [this] (fs::Error result) {
-        // TODO lock ui mutex
         if (result == fs::OK) {
             showMessage(FixedStringBuilder<32>("SAVED SACLE!"));
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
+        // TODO lock ui mutex
         _manager.pages().busy.close();
     });
 }
@@ -186,12 +186,12 @@ void UserScalePage::loadUserScaleFromSlot(int slot) {
     FileManager::task([this, slot] () {
         return FileManager::loadUserScale(*_userScale, slot);
     }, [this] (fs::Error result) {
-        // TODO lock ui mutex
         if (result == fs::OK) {
             showMessage(FixedStringBuilder<32>("LOADED SCALE!"));
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
+        // TODO lock ui mutex
         _manager.pages().busy.close();
     });
 }

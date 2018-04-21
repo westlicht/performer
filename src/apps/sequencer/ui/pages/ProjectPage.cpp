@@ -162,12 +162,12 @@ void ProjectPage::formatSdCard() {
             FileManager::task([] () {
                 return FileManager::format();
             }, [this] (fs::Error result) {
-                // TODO lock ui mutex
                 if (result == fs::OK) {
                     showMessage(FixedStringBuilder<32>("SDCARD FORMATTED!"));
                 } else {
                     showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
                 }
+                // TODO lock ui mutex
                 _manager.pages().busy.close();
             });
         }
@@ -180,12 +180,12 @@ void ProjectPage::saveProjectToSlot(int slot) {
     FileManager::task([this, slot] () {
         return FileManager::saveProject(_project, slot);
     }, [this] (fs::Error result) {
-        // TODO lock ui mutex
         if (result == fs::OK) {
             showMessage(FixedStringBuilder<32>("SAVED PROJECT!"));
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
+        // TODO lock ui mutex
         _manager.pages().busy.close();
     });
 }
@@ -196,12 +196,12 @@ void ProjectPage::loadProjectFromSlot(int slot) {
     FileManager::task([this, slot] () {
         return FileManager::loadProject(_project, slot);
     }, [this] (fs::Error result) {
-        // TODO lock ui mutex
         if (result == fs::OK) {
             showMessage(FixedStringBuilder<32>("LOADED PROJECT!"));
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
+        // TODO lock ui mutex
         _manager.pages().busy.close();
     });
 }
