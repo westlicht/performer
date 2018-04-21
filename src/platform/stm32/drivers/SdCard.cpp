@@ -25,22 +25,18 @@ void SdCard::init() {
     gpio_set_output_options(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO2);
     gpio_set_af(GPIOC, GPIO_AF12, GPIO8 | GPIO12);
     gpio_set_af(GPIOD, GPIO_AF12, GPIO2);
-
-    powerOn();
-    initCard();
 }
 
 bool SdCard::available() {
     if (_initialized) {
-        _initialized = sendCommandRetry(0, 0) == Success;
+        _initialized = waitDataReady();
     }
 
     if (!_initialized) {
         _initialized = initCard();
-        return _initialized;
     }
 
-    return true;
+    return _initialized;
 }
 
 bool SdCard::writeProtected() {
@@ -135,14 +131,12 @@ SdCard::Error SdCard::commandResult() {
 }
 
 SdCard::Error SdCard::sendCommandWait(uint32_t cmd, uint32_t arg) {
-    // DBG("sendCommandWait cmd=0x%x arg=0x%x", cmd, arg);
     Error result;
     sendCommand(cmd, arg);
     while ((result = commandResult()) == InProgress) {
         // TODO should only yield if this busy loop takes up too much time
         // os::this_task::yield();
     }
-    // DBG("result = %d", result);
     return result;
 }
 
@@ -288,7 +282,7 @@ bool SdCard::waitDataReady() {
 }
 
 bool SdCard::readBlock(uint32_t address, void *buffer) {
-    ASSERT(buffer >= (void *)0x20000000, "buffer not in RAM");
+    ASSERT(buffer >= (void *)0x20000000, "buffer not in SRAM");
     // DBG("readBlock(address=%lu, buffer=%p)", address, buffer);
     if (!waitDataReady()) {
         return false;
@@ -373,7 +367,7 @@ bool SdCard::readBlock(uint32_t address, void *buffer) {
 }
 
 bool SdCard::writeBlock(uint32_t address, const void *buffer) {
-    ASSERT(buffer >= (void *)0x20000000, "buffer not in RAM");
+    ASSERT(buffer >= (void *)0x20000000, "buffer not in SRAM");
     // DBG("writeBlock(address=%lu, buffer=%p)", address, buffer);
     if (!waitDataReady()) {
         return false;
