@@ -163,6 +163,9 @@ void TopPage::setMode(Mode mode) {
     case Mode::Monitor:
         setMainPage(pages.monitor);
         break;
+    case Mode::Calibration:
+        setMainPage(pages.calibration);
+        break;
     default:
         return;
     }

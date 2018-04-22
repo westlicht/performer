@@ -14,7 +14,7 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &di
     _midi(midi),
     _usbMidi(usbMidi),
     _cvInput(adc),
-    _cvOutput(dac),
+    _cvOutput(dac, model.settings().calibration()),
     _clock(clockTimer),
     _routingEngine(*this, model),
     _controllerManager(usbMidi)
@@ -238,16 +238,20 @@ void Engine::updateTrackOutputs() {
 
     for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
         int gateOutputTrack = gateOutputTracks[i];
-        if (isIdle && _trackEngines[gateOutputTrack]->idleOutput()) {
-            _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->idleGateOutput(trackGateIndex[gateOutputTrack]++));
-        } else {
-            _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
+        if (!_gateOutputOverride) {
+            if (isIdle && _trackEngines[gateOutputTrack]->idleOutput()) {
+                _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->idleGateOutput(trackGateIndex[gateOutputTrack]++));
+            } else {
+                _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
+            }
         }
         int cvOutputTrack = cvOutputTracks[i];
-        if (isIdle && _trackEngines[cvOutputTrack]->idleOutput()) {
-            _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->idleCvOutput(trackCvIndex[cvOutputTrack]++));
-        } else {
-            _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
+        if (!_cvOutputOverride) {
+            if (isIdle && _trackEngines[cvOutputTrack]->idleOutput()) {
+                _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->idleCvOutput(trackCvIndex[cvOutputTrack]++));
+            } else {
+                _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
+            }
         }
     }
 }

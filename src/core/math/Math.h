@@ -14,6 +14,11 @@ static T clamp(T value, T min, T max) {
     return std::max(min, std::min(max, value));
 }
 
+template<typename T, typename S>
+static S lerp(T t, S a, S b) {
+    return (T(1) - t) * a + t * b;
+}
+
 uint32_t nextPowerOfTwo(uint32_t value, bool strict = true);
 uint32_t prevPowerOfTwo(uint32_t value, bool strict = true);
 

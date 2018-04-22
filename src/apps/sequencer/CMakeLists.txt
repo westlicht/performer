@@ -25,6 +25,7 @@ set(sources
     # intro
     intro/Intro.cpp
     # model
+    model/Calibration.cpp
     model/ClipBoard.cpp
     model/ClockSetup.cpp
     model/Curve.cpp
@@ -55,6 +56,7 @@ set(sources
     ui/pages/BasePage.cpp
     ui/pages/BpmPage.cpp
     ui/pages/BusyPage.cpp
+    ui/pages/CalibrationPage.cpp
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
     ui/pages/ContextMenuPage.cpp

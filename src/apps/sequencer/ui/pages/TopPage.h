@@ -38,9 +38,10 @@ private:
         FirstStep       = 12,
 
         // aux modes
-        Routing         = 21,
-        UserScale       = 22,
-        Monitor         = 23,
+        Routing         = 20,
+        UserScale       = 21,
+        Monitor         = 22,
+        Calibration     = 23,
 
         Last,
     };

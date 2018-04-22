@@ -78,6 +78,7 @@ public:
     void setGateOutputOverride(bool enabled) { _gateOutputOverride = enabled; }
     void setGateOutput(uint8_t gates) { _gateOutputOverrideValue = gates; }
 
+    // cv overrides
     bool cvOutputOverride() const { return _cvOutputOverride; }
     void setCvOutputOverride(bool enabled) { _cvOutputOverride = enabled; }
     void setCvOutput(int channel, float value) { _cvOutputOverrideValues[channel] = value; }

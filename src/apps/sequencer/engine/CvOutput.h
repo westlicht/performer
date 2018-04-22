@@ -2,6 +2,8 @@
 
 #include "Config.h"
 
+#include "model/Calibration.h"
+
 #include "drivers/Dac.h"
 
 #include <array>
@@ -10,7 +12,7 @@ class CvOutput {
 public:
     static constexpr int Channels = CONFIG_CV_OUTPUT_CHANNELS;
 
-    CvOutput(Dac &dac);
+    CvOutput(Dac &dac, const Calibration &calibration);
 
     void init();
 
@@ -26,6 +28,6 @@ public:
 
 private:
     Dac &_dac;
-
+    const Calibration &_calibration;
     std::array<float, Channels> _channels;
 };

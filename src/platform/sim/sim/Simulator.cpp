@@ -106,9 +106,21 @@ void Simulator::writeGate(int channel, bool value) {
 }
 
 void Simulator::writeDac(int channel, uint16_t value) {
+    auto valueToVolts = [] (uint16_t value) {
+        // In ideal DAC/OpAmp configuration we get:
+        // 0     ->  5.17V
+        // 32768 -> -5.25V
+        // it follows:
+        // 534   ->  5.00V
+        // 31981 -> -5.00V
+        static constexpr float value0 = 31981.f;
+        static constexpr float value1 = 534.f;
+        return (value - value0) / (value1 - value0) * 10.f - 5.f;
+    };
+
     if (channel >= 0 && channel < int(_dac.size())) {
         _dac[channel] = value;
-        _instruments->setCv(channel, 10.f - value / 3276.75f);
+        _instruments->setCv(channel, valueToVolts(value));
     }
 }
 
