@@ -8,6 +8,16 @@
 
 class CurveSequenceListModel : public ListModel {
 public:
+    enum Item {
+        Range,
+        Divisor,
+        ResetMeasure,
+        RunMode,
+        FirstStep,
+        LastStep,
+        Last
+    };
+
     CurveSequenceListModel()
     {}
 
@@ -38,16 +48,6 @@ public:
     }
 
 private:
-    enum Item {
-        Range,
-        Divisor,
-        ResetMeasure,
-        RunMode,
-        FirstStep,
-        LastStep,
-        Last
-    };
-
     static const char *itemName(Item item) {
         switch (item) {
         case Range:             return "Range";

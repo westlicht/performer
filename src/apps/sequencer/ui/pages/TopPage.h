@@ -30,12 +30,14 @@ private:
         Pattern         = 6,
         Performer       = 7,
 
-        // sequence setup shortcuts
+        // sequence parameters
         Scale           = 8,
-        Divisor         = 9,
-        ResetMeasure    = 10,
-        PlayMode        = 11,
-        FirstStep       = 12,
+        RootNote        = 9,
+        Divisor         = 10,
+        ResetMeasure    = 11,
+        RunMode         = 12,
+        FirstStep       = 13,
+        LastStep        = 14,
 
         // aux modes
         Routing         = 20,
@@ -50,8 +52,8 @@ private:
     void switchMode(int direction);
     void setMainPage(Page &page);
 
-    void setSequencePage();
-    void setSequencePage(int row);
+    void setSequencePage(bool edit = false);
+    void setSequencePage(Mode mode);
     void setSequenceEditPage();
 
     Mode _mode;

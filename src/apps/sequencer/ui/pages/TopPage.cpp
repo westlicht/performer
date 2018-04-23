@@ -2,6 +2,9 @@
 
 #include "Pages.h"
 
+#include "ui/model/NoteSequenceListModel.h"
+#include "ui/model/CurveSequenceListModel.h"
+
 #include "ui/LedPainter.h"
 
 TopPage::TopPage(PageManager &manager, PageContext &context) :
@@ -138,20 +141,15 @@ void TopPage::setMode(Mode mode) {
     case Mode::Performer:
         setMainPage(pages.performer);
         break;
+
     case Mode::Scale:
-        setSequencePage(0);
-        break;
+    case Mode::RootNote:
     case Mode::Divisor:
-        setSequencePage(1);
-        break;
     case Mode::ResetMeasure:
-        setSequencePage(2);
-        break;
-    case Mode::PlayMode:
-        setSequencePage(3);
-        break;
+    case Mode::RunMode:
     case Mode::FirstStep:
-        setSequencePage(4);
+    case Mode::LastStep:
+        setSequencePage(mode);
         break;
 
     case Mode::Routing:
@@ -169,6 +167,7 @@ void TopPage::setMode(Mode mode) {
     default:
         return;
     }
+
     _mode = mode;
 }
 
@@ -187,14 +186,16 @@ void TopPage::setMainPage(Page &page) {
     _manager.push(&page);
 }
 
-void TopPage::setSequencePage() {
+void TopPage::setSequencePage(bool edit) {
     auto &pages = _manager.pages();
 
     switch (_project.selectedTrack().trackMode()) {
     case Track::TrackMode::Note:
+        pages.noteSequence.setEdit(edit);
         setMainPage(pages.noteSequence);
         break;
     case Track::TrackMode::Curve:
+        pages.curveSequence.setEdit(edit);
         setMainPage(pages.curveSequence);
         break;
     case Track::TrackMode::MidiCv:
@@ -205,15 +206,45 @@ void TopPage::setSequencePage() {
     }
 }
 
-void TopPage::setSequencePage(int row) {
+void TopPage::setSequencePage(Mode mode) {
     auto &pages = _manager.pages();
 
-    pages.noteSequence.setSelectedRow(row);
-    pages.noteSequence.setEdit(true);
-    pages.curveSequence.setSelectedRow(row);
-    pages.curveSequence.setEdit(true);
+    auto setSequenceParameter = [&pages] (
+        NoteSequenceListModel::Item noteSequenceItem,
+        CurveSequenceListModel::Item curveSequenceItem)
+    {
+        pages.noteSequence.setSelectedRow(int(noteSequenceItem));
+        pages.curveSequence.setSelectedRow(int(curveSequenceItem));
+    };
 
-    setSequencePage();
+    switch (mode) {
+    case Mode::Scale:
+        setSequenceParameter(NoteSequenceListModel::Item::Scale, CurveSequenceListModel::Item::Range);
+        break;
+    case Mode::RootNote:
+        setSequenceParameter(NoteSequenceListModel::Item::RootNote, CurveSequenceListModel::Item::Range);
+        break;
+    case Mode::Divisor:
+        setSequenceParameter(NoteSequenceListModel::Item::Divisor, CurveSequenceListModel::Item::Divisor);
+        break;
+    case Mode::ResetMeasure:
+        setSequenceParameter(NoteSequenceListModel::Item::ResetMeasure, CurveSequenceListModel::Item::ResetMeasure);
+        break;
+    case Mode::RunMode:
+        setSequenceParameter(NoteSequenceListModel::Item::RunMode, CurveSequenceListModel::Item::RunMode);
+        break;
+    case Mode::FirstStep:
+        setSequenceParameter(NoteSequenceListModel::Item::FirstStep, CurveSequenceListModel::Item::FirstStep);
+        break;
+    case Mode::LastStep:
+        setSequenceParameter(NoteSequenceListModel::Item::LastStep, CurveSequenceListModel::Item::LastStep);
+        break;
+    default:
+        setSequencePage();
+        return;
+    }
+
+    setSequencePage(true);
 }
 
 void TopPage::setSequenceEditPage() {

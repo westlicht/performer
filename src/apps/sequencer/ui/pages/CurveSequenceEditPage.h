@@ -29,6 +29,7 @@ private:
     void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
+
     void initSequence();
     void copySequence();
     void pasteSequence();
