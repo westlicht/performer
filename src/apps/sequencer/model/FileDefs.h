@@ -6,8 +6,9 @@
 #include <cstdint>
 
 enum class FileType : uint8_t {
-    Project     = 0,
-    UserScale   = 1,
+    Settings    = 0,
+    Project     = 1,
+    UserScale   = 2,
     Last
 };
 

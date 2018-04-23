@@ -30,6 +30,9 @@ private:
     void saveCalibration();
     void fillCalibration();
 
+    void loadCalibrationFromFile();
+    void saveCalibrationToFile();
+
     int _outputIndex;
     Calibration &_calibration;
     CalibrationCvOutputListModel _cvOutputListModel;

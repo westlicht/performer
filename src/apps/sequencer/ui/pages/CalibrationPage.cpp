@@ -28,7 +28,6 @@ CalibrationPage::CalibrationPage(PageManager &manager, PageContext &context) :
 }
 
 void CalibrationPage::enter() {
-    DBG("enter");
     _engine.setGateOutput(0xff);
     _engine.setGateOutputOverride(true);
     _engine.setCvOutputOverride(true);
@@ -37,7 +36,6 @@ void CalibrationPage::enter() {
 }
 
 void CalibrationPage::exit() {
-    DBG("exit");
     _engine.setGateOutputOverride(false);
     _engine.setCvOutputOverride(false);
 }
@@ -121,16 +119,60 @@ bool CalibrationPage::contextActionEnabled(int index) const {
 }
 
 void CalibrationPage::initCalibration() {
-    _calibration.clear();
-    showMessage("CALIBRATION INITIALIZED");
+    _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
+        if (result) {
+            _calibration.clear();
+            showMessage("SETTINGS INITIALIZED");
+        }
+    });
 }
 
 void CalibrationPage::loadCalibration() {
+    if (fs::exists(Settings::filename)) {
+        _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
+            if (result) {
+                loadCalibrationFromFile();
+            }
+        });
+    }
 }
 
 void CalibrationPage::saveCalibration() {
+    _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
+        if (result) {
+            saveCalibrationToFile();
+        }
+    });
 }
 
 void CalibrationPage::fillCalibration() {
     _calibration.cvOutput(_outputIndex).autoFill();
+}
+
+void CalibrationPage::loadCalibrationFromFile() {
+    FileManager::task([this] () {
+        return _model.settings().read(Settings::filename);
+    }, [this] (fs::Error result) {
+        if (result == fs::OK) {
+            showMessage(FixedStringBuilder<32>("LOADED SETTINGS!"));
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+        }
+        // TODO lock ui mutex
+        _manager.pages().busy.close();
+    });
+}
+
+void CalibrationPage::saveCalibrationToFile() {
+    FileManager::task([this] () {
+        return _model.settings().write(Settings::filename);
+    }, [this] (fs::Error result) {
+        if (result == fs::OK) {
+            showMessage(FixedStringBuilder<32>("SAVED SETTINGS!"));
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+        }
+        // TODO lock ui mutex
+        _manager.pages().busy.close();
+    });
 }
