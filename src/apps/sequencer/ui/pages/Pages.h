@@ -25,7 +25,7 @@
 #include "UserScalePage.h"
 #include "GeneratorPage.h"
 #include "GeneratorSelectPage.h"
-#include "CalibrationPage.h"
+#include "SettingsPage.h"
 
 #ifdef CONFIG_ENABLE_INTRO
 #include "IntroPage.h"
@@ -49,7 +49,7 @@ struct Pages {
     RoutingPage routing;
     RoutePage route;
     UserScalePage userScale;
-    CalibrationPage calibration;
+    SettingsPage settings;
     // modal pages
     BpmPage bpm;
     ClockSetupPage clockSetup;
@@ -86,7 +86,7 @@ struct Pages {
         routing(manager, context),
         route(manager, context),
         userScale(manager, context),
-        calibration(manager, context),
+        settings(manager, context),
         // modal pages
         bpm(manager, context),
         clockSetup(manager, context),

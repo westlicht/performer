@@ -56,7 +56,6 @@ set(sources
     ui/pages/BasePage.cpp
     ui/pages/BpmPage.cpp
     ui/pages/BusyPage.cpp
-    ui/pages/CalibrationPage.cpp
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
     ui/pages/ContextMenuPage.cpp
@@ -76,6 +75,7 @@ set(sources
     ui/pages/ProjectPage.cpp
     ui/pages/RoutePage.cpp
     ui/pages/RoutingPage.cpp
+    ui/pages/SettingsPage.cpp
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp

@@ -1,4 +1,4 @@
-#include "CalibrationPage.h"
+#include "SettingsPage.h"
 
 #include "ui/pages/Pages.h"
 #include "ui/painters/WindowPainter.h"
@@ -20,14 +20,14 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "FILL" },
 };
 
-CalibrationPage::CalibrationPage(PageManager &manager, PageContext &context) :
+SettingsPage::SettingsPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _cvOutputListModel),
-    _calibration(context.model.settings().calibration())
+    _settings(context.model.settings())
 {
     setOutputIndex(_project.selectedTrackIndex());
 }
 
-void CalibrationPage::enter() {
+void SettingsPage::enter() {
     _engine.setGateOutput(0xff);
     _engine.setGateOutputOverride(true);
     _engine.setCvOutputOverride(true);
@@ -35,14 +35,14 @@ void CalibrationPage::enter() {
     updateOutputs();
 }
 
-void CalibrationPage::exit() {
+void SettingsPage::exit() {
     _engine.setGateOutputOverride(false);
     _engine.setCvOutputOverride(false);
 }
 
-void CalibrationPage::draw(Canvas &canvas) {
+void SettingsPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "CALIBRATION");
+    WindowPainter::drawHeader(canvas, _model, _engine, "SETTINGS");
     FixedStringBuilder<8> str("CV%d", _outputIndex + 1);
     WindowPainter::drawActiveFunction(canvas, str);
     WindowPainter::drawFooter(canvas);
@@ -50,7 +50,7 @@ void CalibrationPage::draw(Canvas &canvas) {
     ListPage::draw(canvas);
 }
 
-void CalibrationPage::keyPress(KeyPressEvent &event) {
+void SettingsPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isContextMenu()) {
@@ -68,25 +68,25 @@ void CalibrationPage::keyPress(KeyPressEvent &event) {
     updateOutputs();
 }
 
-void CalibrationPage::encoder(EncoderEvent &event) {
+void SettingsPage::encoder(EncoderEvent &event) {
     ListPage::encoder(event);
 
     updateOutputs();
 }
 
-void CalibrationPage::setOutputIndex(int index) {
+void SettingsPage::setOutputIndex(int index) {
     _outputIndex = index;
-    _cvOutputListModel.setCvOutput(_calibration.cvOutput(index));
+    _cvOutputListModel.setCvOutput(_settings.calibration().cvOutput(index));
 }
 
-void CalibrationPage::updateOutputs() {
+void SettingsPage::updateOutputs() {
     float volts = Calibration::CvOutput::itemToVolts(selectedRow());
     for (int i = 0; i < CONFIG_CV_OUTPUT_CHANNELS; ++i) {
         _engine.setCvOutput(i, volts);
     }
 }
 
-void CalibrationPage::contextShow() {
+void SettingsPage::contextShow() {
     showContextMenu(ContextMenu(
         contextMenuItems,
         int(ContextAction::Last),
@@ -95,16 +95,16 @@ void CalibrationPage::contextShow() {
     ));
 }
 
-void CalibrationPage::contextAction(int index) {
+void SettingsPage::contextAction(int index) {
     switch (ContextAction(index)) {
     case ContextAction::Init:
-        initCalibration();
+        initSettings();
         break;
     case ContextAction::Load:
-        loadCalibration();
+        loadSettings();
         break;
     case ContextAction::Save:
-        saveCalibration();
+        saveSettings();
         break;
     case ContextAction::Fill:
         fillCalibration();
@@ -114,7 +114,7 @@ void CalibrationPage::contextAction(int index) {
     }
 }
 
-bool CalibrationPage::contextActionEnabled(int index) const {
+bool SettingsPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Load:
     case ContextAction::Save:
@@ -124,38 +124,38 @@ bool CalibrationPage::contextActionEnabled(int index) const {
     }
 }
 
-void CalibrationPage::initCalibration() {
+void SettingsPage::initSettings() {
     _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
         if (result) {
-            _calibration.clear();
+            _settings.clear();
             showMessage("SETTINGS INITIALIZED");
         }
     });
 }
 
-void CalibrationPage::loadCalibration() {
+void SettingsPage::loadSettings() {
     if (fs::exists(Settings::filename)) {
         _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
             if (result) {
-                loadCalibrationFromFile();
+                loadSettingsFromFile();
             }
         });
     }
 }
 
-void CalibrationPage::saveCalibration() {
+void SettingsPage::saveSettings() {
     _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
         if (result) {
-            saveCalibrationToFile();
+            saveSettingsToFile();
         }
     });
 }
 
-void CalibrationPage::fillCalibration() {
-    _calibration.cvOutput(_outputIndex).autoFill();
+void SettingsPage::fillCalibration() {
+    _settings.calibration().cvOutput(_outputIndex).autoFill();
 }
 
-void CalibrationPage::loadCalibrationFromFile() {
+void SettingsPage::loadSettingsFromFile() {
     _manager.pages().busy.show("LOADING SETTINGS ...");
 
     FileManager::task([this] () {
@@ -171,7 +171,7 @@ void CalibrationPage::loadCalibrationFromFile() {
     });
 }
 
-void CalibrationPage::saveCalibrationToFile() {
+void SettingsPage::saveSettingsToFile() {
     _manager.pages().busy.show("SAVING SETTINGS ...");
 
     FileManager::task([this] () {

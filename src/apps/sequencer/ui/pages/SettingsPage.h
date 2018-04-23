@@ -4,11 +4,11 @@
 
 #include "ui/model/CalibrationCvOutputListModel.h"
 
-#include "model/Calibration.h"
+#include "model/Settings.h"
 
-class CalibrationPage : public ListPage {
+class SettingsPage : public ListPage {
 public:
-    CalibrationPage(PageManager &manager, PageContext &context);
+    SettingsPage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -25,15 +25,17 @@ private:
     void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
-    void initCalibration();
-    void loadCalibration();
-    void saveCalibration();
+
+    void initSettings();
+    void loadSettings();
+    void saveSettings();
     void fillCalibration();
 
-    void loadCalibrationFromFile();
-    void saveCalibrationToFile();
+    void loadSettingsFromFile();
+    void saveSettingsToFile();
+
+    Settings &_settings;
 
     int _outputIndex;
-    Calibration &_calibration;
     CalibrationCvOutputListModel _cvOutputListModel;
 };

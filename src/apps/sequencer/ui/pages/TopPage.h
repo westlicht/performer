@@ -41,7 +41,7 @@ private:
         Routing         = 20,
         UserScale       = 21,
         Monitor         = 22,
-        Calibration     = 23,
+        Settings        = 23,
 
         Last,
     };
