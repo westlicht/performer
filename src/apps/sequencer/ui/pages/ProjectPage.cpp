@@ -14,7 +14,7 @@ enum class ContextAction {
     Load,
     Save,
     SaveAs,
-    Format,
+    Route,
     Last
 };
 
@@ -23,7 +23,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "LOAD" },
     { "SAVE" },
     { "SAVE AS" },
-    { "FORMAT" }
+    { "ROUTE" }
 };
 
 ProjectPage::ProjectPage(PageManager &manager, PageContext &context) :
@@ -102,8 +102,8 @@ void ProjectPage::contextAction(int index) {
     case ContextAction::SaveAs:
         saveAsProject();
         break;
-    case ContextAction::Format:
-        formatSdCard();
+    case ContextAction::Route:
+        initRoute();
         break;
     case ContextAction::Last:
         break;
@@ -115,8 +115,9 @@ bool ProjectPage::contextActionEnabled(int index) const {
     case ContextAction::Load:
     case ContextAction::Save:
     case ContextAction::SaveAs:
-    case ContextAction::Format:
         return FileManager::isReady();
+    case ContextAction::Route:
+        return _listModel.routingParam(selectedRow()) != Routing::Param::None;
     default:
         return true;
     }
@@ -168,24 +169,8 @@ void ProjectPage::saveAsProject() {
     });
 }
 
-void ProjectPage::formatSdCard() {
-    _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
-        if (result) {
-            _manager.pages().busy.show("FORMATTING ...");
-
-            FileManager::task([] () {
-                return FileManager::format();
-            }, [this] (fs::Error result) {
-                if (result == fs::OK) {
-                    showMessage(FixedStringBuilder<32>("SDCARD FORMATTED"));
-                } else {
-                    showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
-                }
-                // TODO lock ui mutex
-                _manager.pages().busy.close();
-            });
-        }
-    });
+void ProjectPage::initRoute() {
+    _manager.pages().top.editRoute(_listModel.routingParam(selectedRow()), 0);
 }
 
 void ProjectPage::saveProjectToSlot(int slot) {

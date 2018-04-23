@@ -29,7 +29,7 @@ private:
     void initSettings();
     void loadSettings();
     void saveSettings();
-    void fillCalibration();
+    void formatSdCard();
 
     void loadSettingsFromFile();
     void saveSettingsToFile();

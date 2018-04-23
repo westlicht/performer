@@ -2,11 +2,11 @@
 
 #include "Config.h"
 
-#include "ListModel.h"
+#include "ParamListModel.h"
 
 #include "model/Project.h"
 
-class ProjectListModel : public ListModel {
+class ProjectListModel : public ParamListModel {
 public:
     ProjectListModel(Project &project) :
         _project(project)
@@ -34,10 +34,21 @@ public:
         }
     }
 
+    virtual Routing::Param routingParam(int row) const override {
+        switch (Item(row)) {
+        case Bpm:
+            return Routing::Param::Bpm;
+        case Swing:
+            return Routing::Param::Swing;
+        default:
+            return Routing::Param::None;
+        }
+    }
+
 private:
     enum Item {
         Name,
-        BPM,
+        Bpm,
         Swing,
         SyncMeasure,
         Scale,
@@ -48,7 +59,7 @@ private:
     static const char *itemName(Item item) {
         switch (item) {
         case Name:              return "Name";
-        case BPM:               return "BPM";
+        case Bpm:               return "BPM";
         case Swing:             return "Swing";
         case SyncMeasure:       return "Sync Measure";
         case Scale:             return "Scale";
@@ -67,7 +78,7 @@ private:
         case Name:
             str(_project.name());
             break;
-        case BPM:
+        case Bpm:
             _project.printBpm(str);
             break;
         case Swing:
@@ -90,7 +101,7 @@ private:
         switch (item) {
         case Name:
             break;
-        case BPM:
+        case Bpm:
             _project.editBpm(value, shift);
             break;
         case Swing:

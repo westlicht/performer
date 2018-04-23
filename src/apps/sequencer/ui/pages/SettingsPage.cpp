@@ -9,7 +9,7 @@ enum class ContextAction {
     Init,
     Load,
     Save,
-    Fill,
+    Format,
     Last
 };
 
@@ -17,7 +17,7 @@ const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
     { "LOAD" },
     { "SAVE" },
-    { "FILL" },
+    { "FORMAT" },
 };
 
 SettingsPage::SettingsPage(PageManager &manager, PageContext &context) :
@@ -106,8 +106,8 @@ void SettingsPage::contextAction(int index) {
     case ContextAction::Save:
         saveSettings();
         break;
-    case ContextAction::Fill:
-        fillCalibration();
+    case ContextAction::Format:
+        formatSdCard();
         break;
     case ContextAction::Last:
         break;
@@ -151,8 +151,24 @@ void SettingsPage::saveSettings() {
     });
 }
 
-void SettingsPage::fillCalibration() {
-    _settings.calibration().cvOutput(_outputIndex).autoFill();
+void SettingsPage::formatSdCard() {
+    _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
+        if (result) {
+            _manager.pages().busy.show("FORMATTING ...");
+
+            FileManager::task([] () {
+                return FileManager::format();
+            }, [this] (fs::Error result) {
+                if (result == fs::OK) {
+                    showMessage(FixedStringBuilder<32>("SDCARD FORMATTED"));
+                } else {
+                    showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+                }
+                // TODO lock ui mutex
+                _manager.pages().busy.close();
+            });
+        }
+    });
 }
 
 void SettingsPage::loadSettingsFromFile() {
