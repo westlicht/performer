@@ -13,12 +13,7 @@
 
 class FileManager {
 public:
-    typedef std::function<fs::Error(void)> TaskExecuteCallback;
-    typedef std::function<void(fs::Error)> TaskResultCallback;
-
-    static void task(TaskExecuteCallback executeCallback, TaskResultCallback resultCallback);
-    static void processTask();
-
+    static bool isReady();
 
     static fs::Error format();
 
@@ -28,6 +23,8 @@ public:
     static fs::Error saveUserScale(UserScale &userScale, int slot);
     static fs::Error loadUserScale(UserScale &userScale, int slot);
 
+    // Slot information
+
     struct SlotInfo {
         bool used;
         char name[FileHeader::NameLength + 1];
@@ -35,6 +32,14 @@ public:
 
     static void slotInfo(FileType type, int slot, SlotInfo &info);
     static bool slotUsed(FileType type, int slot);
+
+    // File tasks
+
+    typedef std::function<fs::Error(void)> TaskExecuteCallback;
+    typedef std::function<void(fs::Error)> TaskResultCallback;
+
+    static void task(TaskExecuteCallback executeCallback, TaskResultCallback resultCallback);
+    static void processTask();
 
 private:
     static fs::Error saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write);
@@ -56,6 +61,9 @@ private:
             return ticket < other.ticket;
         }
     };
+
+    static bool _ready;
+    static uint32_t _nextReadyCheckTicks;
 
     static std::array<CachedSlotInfo, 4> _cachedSlotInfos;
     static uint32_t _cachedSlotInfoTicket;

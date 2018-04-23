@@ -116,6 +116,9 @@ bool UserScalePage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
         return _model.clipBoard().canPasteUserScale();
+    case ContextAction::Load:
+    case ContextAction::Save:
+        return FileManager::isReady();
     default:
         return true;
     }

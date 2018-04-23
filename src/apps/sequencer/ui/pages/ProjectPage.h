@@ -20,6 +20,8 @@ public:
 private:
     void contextShow();
     void contextAction(int index);
+    bool contextActionEnabled(int index) const;
+
     void initProject();
     void loadProject();
     void saveProject();

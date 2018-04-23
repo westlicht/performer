@@ -115,7 +115,13 @@ void CalibrationPage::contextAction(int index) {
 }
 
 bool CalibrationPage::contextActionEnabled(int index) const {
-    return true;
+    switch (ContextAction(index)) {
+    case ContextAction::Load:
+    case ContextAction::Save:
+        return FileManager::isReady();
+    default:
+        return true;
+    }
 }
 
 void CalibrationPage::initCalibration() {
@@ -150,6 +156,8 @@ void CalibrationPage::fillCalibration() {
 }
 
 void CalibrationPage::loadCalibrationFromFile() {
+    _manager.pages().busy.show("LOADING SETTINGS ...");
+
     FileManager::task([this] () {
         return _model.settings().read(Settings::filename);
     }, [this] (fs::Error result) {
@@ -164,6 +172,8 @@ void CalibrationPage::loadCalibrationFromFile() {
 }
 
 void CalibrationPage::saveCalibrationToFile() {
+    _manager.pages().busy.show("SAVING SETTINGS ...");
+
     FileManager::task([this] () {
         return _model.settings().write(Settings::filename);
     }, [this] (fs::Error result) {

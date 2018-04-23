@@ -83,9 +83,11 @@ void ProjectPage::contextShow() {
     showContextMenu(ContextMenu(
         contextMenuItems,
         int(ContextAction::Last),
-        [&] (int index) { contextAction(index); }
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
     ));
 }
+
 void ProjectPage::contextAction(int index) {
     switch (ContextAction(index)) {
     case ContextAction::Init:
@@ -105,6 +107,18 @@ void ProjectPage::contextAction(int index) {
         break;
     case ContextAction::Last:
         break;
+    }
+}
+
+bool ProjectPage::contextActionEnabled(int index) const {
+    switch (ContextAction(index)) {
+    case ContextAction::Load:
+    case ContextAction::Save:
+    case ContextAction::SaveAs:
+    case ContextAction::Format:
+        return FileManager::isReady();
+    default:
+        return true;
     }
 }
 

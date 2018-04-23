@@ -8,6 +8,9 @@
 
 #include <cstring>
 
+bool FileManager::_ready = false;
+uint32_t FileManager::_nextReadyCheckTicks = 0;
+
 std::array<FileManager::CachedSlotInfo, 4> FileManager::_cachedSlotInfos;
 uint32_t FileManager::_cachedSlotInfoTicket = 0;
 
@@ -30,18 +33,8 @@ static void slotPath(StringBuilder &str, FileType type, int slot) {
     str("%s/%03d.%s", info.dir, slot, info.ext);
 }
 
-void FileManager::task(TaskExecuteCallback executeCallback, TaskResultCallback resultCallback) {
-    _taskExecuteCallback = executeCallback;
-    _taskResultCallback = resultCallback;
-    _taskPending = 1;
-}
-
-void FileManager::processTask() {
-    if (_taskPending) {
-        fs::Error result = _taskExecuteCallback();
-        _taskPending = 0;
-        _taskResultCallback(result);
-    }
+bool FileManager::isReady() {
+    return _ready;
 }
 
 fs::Error FileManager::format() {
@@ -88,10 +81,6 @@ void FileManager::slotInfo(FileType type, int slot, SlotInfo &info) {
 
     info.used = false;
 
-    if (fs::volume().mount() != fs::OK) {
-        return;
-    }
-
     FixedStringBuilder<16> path;
     slotPath(path, type, slot);
 
@@ -114,13 +103,32 @@ bool FileManager::slotUsed(FileType type, int slot) {
     return info.used;
 }
 
+void FileManager::task(TaskExecuteCallback executeCallback, TaskResultCallback resultCallback) {
+    _taskExecuteCallback = executeCallback;
+    _taskResultCallback = resultCallback;
+    _taskPending = 1;
+}
 
-fs::Error FileManager::saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write) {
-    auto result = fs::volume().mount();
-    if (result != fs::OK) {
-        return result;
+void FileManager::processTask() {
+    uint32_t ticks = os::ticks();
+    if (ticks >= _nextReadyCheckTicks) {
+        _nextReadyCheckTicks = ticks + os::time::ms(1000);
+        bool ready = fs::volume().available();
+        if (!_ready && ready) {
+            ready = fs::volume().mount() == fs::OK;
+        }
+        _ready = ready;
     }
 
+    if (_taskPending) {
+        fs::Error result = _taskExecuteCallback();
+        _taskPending = 0;
+        _taskResultCallback(result);
+    }
+}
+
+
+fs::Error FileManager::saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write) {
     const auto &info = fileTypeInfos[int(type)];
     if (!fs::exists(info.dir)) {
         fs::mkdir(info.dir);
@@ -129,7 +137,7 @@ fs::Error FileManager::saveFile(FileType type, int slot, std::function<fs::Error
     FixedStringBuilder<16> path;
     slotPath(path, type, slot);
 
-    result = write(path);
+    auto result = write(path);
     if (result == fs::OK) {
         invalidateSlot(type, slot);
     }
@@ -138,11 +146,6 @@ fs::Error FileManager::saveFile(FileType type, int slot, std::function<fs::Error
 }
 
 fs::Error FileManager::loadFile(FileType type, int slot, std::function<fs::Error(const char *)> read) {
-    auto result = fs::volume().mount();
-    if (result != fs::OK) {
-        return result;
-    }
-
     const auto &info = fileTypeInfos[int(type)];
     if (!fs::exists(info.dir)) {
         fs::mkdir(info.dir);
@@ -151,7 +154,7 @@ fs::Error FileManager::loadFile(FileType type, int slot, std::function<fs::Error
     FixedStringBuilder<16> path;
     slotPath(path, type, slot);
 
-    result = read(path);
+    auto result = read(path);
 
     return result;
 }
