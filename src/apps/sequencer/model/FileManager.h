@@ -13,7 +13,8 @@
 
 class FileManager {
 public:
-    static bool isReady();
+    static bool volumeAvailable();
+    static bool volumeMounted();
 
     static fs::Error format();
 
@@ -62,8 +63,13 @@ private:
         }
     };
 
-    static bool _ready;
-    static uint32_t _nextReadyCheckTicks;
+    enum VolumeState {
+        Available   = (1<<0),
+        Mounted     = (1<<1),
+    };
+
+    static uint32_t _volumeState;
+    static uint32_t _nextVolumeStateCheckTicks;
 
     static std::array<CachedSlotInfo, 4> _cachedSlotInfos;
     static uint32_t _cachedSlotInfoTicket;

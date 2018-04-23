@@ -8,8 +8,8 @@
 
 #include <cstring>
 
-bool FileManager::_ready = false;
-uint32_t FileManager::_nextReadyCheckTicks = 0;
+uint32_t FileManager::_volumeState = 0;
+uint32_t FileManager::_nextVolumeStateCheckTicks = 0;
 
 std::array<FileManager::CachedSlotInfo, 4> FileManager::_cachedSlotInfos;
 uint32_t FileManager::_cachedSlotInfoTicket = 0;
@@ -33,8 +33,12 @@ static void slotPath(StringBuilder &str, FileType type, int slot) {
     str("%s/%03d.%s", info.dir, slot, info.ext);
 }
 
-bool FileManager::isReady() {
-    return _ready;
+bool FileManager::volumeAvailable() {
+    return _volumeState & Available;
+}
+
+bool FileManager::volumeMounted() {
+    return _volumeState & Mounted;
 }
 
 fs::Error FileManager::format() {
@@ -110,14 +114,19 @@ void FileManager::task(TaskExecuteCallback executeCallback, TaskResultCallback r
 }
 
 void FileManager::processTask() {
+    // check volume availability & mount
     uint32_t ticks = os::ticks();
-    if (ticks >= _nextReadyCheckTicks) {
-        _nextReadyCheckTicks = ticks + os::time::ms(1000);
-        bool ready = fs::volume().available();
-        if (!_ready && ready) {
-            ready = fs::volume().mount() == fs::OK;
+    if (ticks >= _nextVolumeStateCheckTicks) {
+        _nextVolumeStateCheckTicks = ticks + os::time::ms(1000);
+
+        uint32_t newVolumeState = fs::volume().available() ? Available : 0;
+        if ((newVolumeState & Available) && !(_volumeState & Mounted)) {
+            newVolumeState |= (fs::volume().mount() == fs::OK) ? Mounted : 0;
+        } else {
+            newVolumeState |= Mounted;
         }
-        _ready = ready;
+
+        _volumeState = newVolumeState;
     }
 
     if (_taskPending) {

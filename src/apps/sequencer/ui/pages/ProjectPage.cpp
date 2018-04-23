@@ -115,7 +115,7 @@ bool ProjectPage::contextActionEnabled(int index) const {
     case ContextAction::Load:
     case ContextAction::Save:
     case ContextAction::SaveAs:
-        return FileManager::isReady();
+        return FileManager::volumeMounted();
     case ContextAction::Route:
         return _listModel.routingParam(selectedRow()) != Routing::Param::None;
     default:

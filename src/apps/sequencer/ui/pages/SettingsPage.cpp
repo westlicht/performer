@@ -118,7 +118,9 @@ bool SettingsPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Load:
     case ContextAction::Save:
-        return FileManager::isReady();
+        return FileManager::volumeMounted();
+    case ContextAction::Format:
+        return FileManager::volumeAvailable();
     default:
         return true;
     }
