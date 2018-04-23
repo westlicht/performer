@@ -13,7 +13,7 @@ public:
     void keyDown(KeyEvent &event, int stepOffset) {
         const auto &key = event.key();
 
-        if (key.shiftModifier()) {
+        if (key.pageModifier() || key.shiftModifier()) {
             return;
         }
 
@@ -39,7 +39,7 @@ public:
     void keyUp(KeyEvent &event, int stepOffset) {
         const auto &key = event.key();
 
-        if (key.shiftModifier()) {
+        if (key.pageModifier() || key.shiftModifier()) {
             return;
         }
 
@@ -59,7 +59,7 @@ public:
     void keyPress(KeyPressEvent &event, int stepOffset) {
         const auto &key = event.key();
 
-        if (!key.shiftModifier()) {
+        if (key.pageModifier() || !key.shiftModifier()) {
             return;
         }
 
