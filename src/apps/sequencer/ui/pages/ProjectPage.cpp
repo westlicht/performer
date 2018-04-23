@@ -177,7 +177,7 @@ void ProjectPage::formatSdCard() {
                 return FileManager::format();
             }, [this] (fs::Error result) {
                 if (result == fs::OK) {
-                    showMessage(FixedStringBuilder<32>("SDCARD FORMATTED!"));
+                    showMessage(FixedStringBuilder<32>("SDCARD FORMATTED"));
                 } else {
                     showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
                 }
@@ -195,7 +195,7 @@ void ProjectPage::saveProjectToSlot(int slot) {
         return FileManager::saveProject(_project, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("SAVED PROJECT!"));
+            showMessage(FixedStringBuilder<32>("SAVED PROJECT"));
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
@@ -211,7 +211,7 @@ void ProjectPage::loadProjectFromSlot(int slot) {
         return FileManager::loadProject(_project, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("LOADED PROJECT!"));
+            showMessage(FixedStringBuilder<32>("LOADED PROJECT"));
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }

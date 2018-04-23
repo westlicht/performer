@@ -162,7 +162,7 @@ void SettingsPage::loadSettingsFromFile() {
         return _model.settings().read(Settings::filename);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("LOADED SETTINGS!"));
+            showMessage(FixedStringBuilder<32>("LOADED SETTINGS"));
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
@@ -178,7 +178,7 @@ void SettingsPage::saveSettingsToFile() {
         return _model.settings().write(Settings::filename);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("SAVED SETTINGS!"));
+            showMessage(FixedStringBuilder<32>("SAVED SETTINGS"));
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
