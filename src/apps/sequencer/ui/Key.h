@@ -78,7 +78,7 @@ public:
     bool isTrackSelect() const { return !pageModifier() && isTrack(); }
     int trackSelect() const { return track(); }
 
-    bool isPageSelect() const { return pageModifier() && (isTrack() || isStep()); }
+    bool isPageSelect() const { return pageModifier() && (isTrack() || (isStep() && step() < 8)); }
     int pageSelect() const {
         if (isTrack()) {
             return track();
@@ -87,6 +87,9 @@ public:
         }
         return -1;
     }
+
+    bool isQuickEdit() const { return pageModifier() && isStep() && step() >= 8; }
+    int quickEdit() const { return step() - 8; }
 
     bool isContextMenu() const { return (is(Page) && shiftModifier()) || (is(Shift) && pageModifier()); }
 

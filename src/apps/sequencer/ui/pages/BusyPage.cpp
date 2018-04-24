@@ -21,7 +21,7 @@ BusyPage::BusyPage(PageManager &manager, PageContext &context) :
 
 void BusyPage::show(const char *text) {
     _text = text;
-    Page::show();
+    BasePage::show();
 }
 
 void BusyPage::enter() {

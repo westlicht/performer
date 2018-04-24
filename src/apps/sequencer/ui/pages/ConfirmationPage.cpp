@@ -17,7 +17,7 @@ ConfirmationPage::ConfirmationPage(PageManager &manager, PageContext &context) :
 void ConfirmationPage::show(const char *text, ResultCallback callback) {
     _text = text;
     _callback = callback;
-    Page::show();
+    BasePage::show();
 }
 
 void ConfirmationPage::enter() {
