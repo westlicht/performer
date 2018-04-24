@@ -310,8 +310,19 @@ void CurveSequenceEditPage::duplicateSequence() {
 }
 
 void CurveSequenceEditPage::quickEdit(int index) {
+    static const CurveSequenceListModel::Item itemMap[8] = {
+        CurveSequenceListModel::Item::Range,
+        CurveSequenceListModel::Item::Last,
+        CurveSequenceListModel::Item::Divisor,
+        CurveSequenceListModel::Item::ResetMeasure,
+        CurveSequenceListModel::Item::RunMode,
+        CurveSequenceListModel::Item::FirstStep,
+        CurveSequenceListModel::Item::LastStep,
+        CurveSequenceListModel::Item::Last
+    };
+
     _listModel.setSequence(&_project.selectedCurveSequence());
-    if (index < int(CurveSequenceListModel::Last)) {
-        _manager.pages().quickEdit.show(_listModel, index);
+    if (itemMap[index] != CurveSequenceListModel::Item::Last) {
+        _manager.pages().quickEdit.show(_listModel, int(itemMap[index]));
     }
 }

@@ -35,7 +35,7 @@ void QuickEditPage::draw(Canvas &canvas) {
 
     str.reset();
     _listModel->cell(_row, 1, str);
-    canvas.drawText(128+32, 34, str);
+    canvas.drawText(128 + 16, 34, str);
 }
 
 void QuickEditPage::updateLeds(Leds &leds) {
