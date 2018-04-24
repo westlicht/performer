@@ -119,6 +119,8 @@ void TopPage::encoder(EncoderEvent &event) {
 void TopPage::setMode(Mode mode) {
     auto &pages = _manager.pages();
 
+    _lastMode = _mode;
+
     switch (mode) {
     case Mode::Project:
         setMainPage(pages.project);
@@ -152,7 +154,15 @@ void TopPage::setMode(Mode mode) {
         setMainPage(pages.monitor);
         break;
     case Mode::Settings:
-        setMainPage(pages.settings);
+        if (mode != _lastMode) {
+            _manager.pages().confirmation.show("DO YOU REALLY WANT TO ENTER SETTINGS?", [this] (bool result) {
+                if (result) {
+                    setMainPage(_manager.pages().settings);
+                } else {
+                    setMode(_lastMode);
+                }
+            });
+        }
         break;
     default:
         return;
@@ -162,8 +172,12 @@ void TopPage::setMode(Mode mode) {
 }
 
 void TopPage::navigateMode(int direction) {
+    if (_mode > int(Mode::NavigateLast)) {
+        return;
+    }
+
     int newMode = _mode;
-    while ((direction > 0 && ++newMode < int(Mode::Last)) || (direction < 0 && --newMode >= 0)) {
+    while ((direction > 0 && ++newMode <= int(Mode::NavigateLast)) || (direction < 0 && --newMode >= 0)) {
         setMode(Mode(newMode));
         if (_mode == Mode(newMode)) {
             break;

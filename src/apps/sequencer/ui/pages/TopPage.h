@@ -34,7 +34,8 @@ private:
         Routing         = 8,
         UserScale       = 9,
         Monitor         = 10,
-        Settings        = 11,
+        NavigateLast    = Monitor,
+        Settings        = 15,
 
         Last,
     };
@@ -47,4 +48,5 @@ private:
     void setSequenceEditPage();
 
     Mode _mode;
+    Mode _lastMode;
 };
