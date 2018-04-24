@@ -305,8 +305,10 @@ public:
         }
 
         void printTracks(StringBuilder &str) const {
-            for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-                str("%c", (_tracks & (1<<i)) ? 'X' : '-');
+            if (isTrackParam(_param)) {
+                for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
+                    str("%c", (_tracks & (1<<i)) ? 'X' : '-');
+                }
             }
         }
 
