@@ -30,30 +30,20 @@ private:
         Pattern         = 6,
         Performer       = 7,
 
-        // sequence parameters
-        Scale           = 8,
-        RootNote        = 9,
-        Divisor         = 10,
-        ResetMeasure    = 11,
-        RunMode         = 12,
-        FirstStep       = 13,
-        LastStep        = 14,
-
         // aux modes
-        Routing         = 20,
-        UserScale       = 21,
-        Monitor         = 22,
-        Settings        = 23,
+        Routing         = 8,
+        UserScale       = 9,
+        Monitor         = 10,
+        Settings        = 11,
 
         Last,
     };
 
     void setMode(Mode mode);
-    void switchMode(int direction);
+    void navigateMode(int direction);
     void setMainPage(Page &page);
 
-    void setSequencePage(bool edit = false);
-    void setSequencePage(Mode mode);
+    void setSequencePage();
     void setSequenceEditPage();
 
     Mode _mode;
