@@ -28,6 +28,7 @@ SettingsPage::SettingsPage(PageManager &manager, PageContext &context) :
 }
 
 void SettingsPage::enter() {
+    _engine.lock();
     _engine.setGateOutput(0xff);
     _engine.setGateOutputOverride(true);
     _engine.setCvOutputOverride(true);
@@ -38,6 +39,7 @@ void SettingsPage::enter() {
 void SettingsPage::exit() {
     _engine.setGateOutputOverride(false);
     _engine.setCvOutputOverride(false);
+    _engine.unlock();
 }
 
 void SettingsPage::draw(Canvas &canvas) {
@@ -174,6 +176,7 @@ void SettingsPage::formatSdCard() {
 }
 
 void SettingsPage::loadSettingsFromFile() {
+    _engine.lock();
     _manager.pages().busy.show("LOADING SETTINGS ...");
 
     FileManager::task([this] () {
@@ -186,10 +189,12 @@ void SettingsPage::loadSettingsFromFile() {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
+        _engine.unlock();
     });
 }
 
 void SettingsPage::saveSettingsToFile() {
+    _engine.lock();
     _manager.pages().busy.show("SAVING SETTINGS ...");
 
     FileManager::task([this] () {
@@ -202,5 +207,6 @@ void SettingsPage::saveSettingsToFile() {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
+        _engine.unlock();
     });
 }

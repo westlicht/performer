@@ -49,6 +49,11 @@ public:
     void init();
     void update();
 
+    // locking
+    void lock();
+    void unlock();
+    bool isLocked();
+
     // transport control
     void start();
     void stop();
@@ -113,6 +118,7 @@ private:
     void updateTrackOutputs();
     void resetTrackEngines();
     void updatePlayState();
+    void updateOverrides();
 
     void receiveMidi();
     void receiveMidi(MidiPort port, const MidiMessage &message);
@@ -141,6 +147,11 @@ private:
     MidiReceiveHandler _midiReceiveHandler;
 
     ControllerManager _controllerManager;
+
+    // locking
+    volatile uint32_t _requestLock = 0;
+    volatile uint32_t _requestUnlock = 0;
+    volatile uint32_t _locked = 0;
 
     bool _running = false;
     uint32_t _tick = 0;

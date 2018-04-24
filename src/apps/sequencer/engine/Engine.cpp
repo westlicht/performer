@@ -45,6 +45,32 @@ void Engine::update() {
     float dt = (0.001f * (systemTicks - _lastSystemTicks)) / os::time::ms(1);
     _lastSystemTicks = systemTicks;
 
+    // locking
+    if (_requestLock) {
+        _clock.masterStop();
+        _requestLock = 0;
+        _locked = 1;
+    }
+    if (_requestUnlock) {
+        _requestUnlock = 0;
+        _locked = 0;
+    }
+
+    if (_locked) {
+        // consume ticks
+        uint32_t tick;
+        while (_clock.checkTick(&tick)) {}
+
+        // consume midi events
+        MidiMessage message;
+        while (_midi.recv(&message)) {}
+        while (_usbMidi.recv(&message)) {}
+
+        updateOverrides();
+        _cvOutput.update();
+        return;
+    }
+
     // process clock requests
     if (_clock.checkStart()) {
         DBG("START");
@@ -107,21 +133,35 @@ void Engine::update() {
         trackEngine->update(dt);
     }
 
-    // overrides
-    if (_gateOutputOverride) {
-        _gateOutput.setGates(_gateOutputOverrideValue);
-    }
-    if (_cvOutputOverride) {
-        for (size_t i = 0; i < _cvOutputOverrideValues.size(); ++i) {
-            _cvOutput.setChannel(i, _cvOutputOverrideValues[i]);
-        }
-    }
+    updateOverrides();
 
     // update cv outputs
     _cvOutput.update();
 
     // update midi controller
     // _controllerManager.update();
+}
+
+void Engine::lock() {
+    while (!isLocked()) {
+        _requestLock = 1;
+#ifdef PLATFORM_SIM
+        update();
+#endif
+    }
+}
+
+void Engine::unlock() {
+    while (isLocked()) {
+        _requestUnlock = 1;
+#ifdef PLATFORM_SIM
+        update();
+#endif
+    }
+}
+
+bool Engine::isLocked() {
+    return _locked == 1;
 }
 
 void Engine::start() {
@@ -313,6 +353,18 @@ void Engine::updatePlayState() {
     }
     if (handleLatchedRequests) {
         playState.clearLatchedRequests();
+    }
+}
+
+void Engine::updateOverrides() {
+    // overrides
+    if (_gateOutputOverride) {
+        _gateOutput.setGates(_gateOutputOverrideValue);
+    }
+    if (_cvOutputOverride) {
+        for (size_t i = 0; i < _cvOutputOverrideValues.size(); ++i) {
+            _cvOutput.setChannel(i, _cvOutputOverrideValues[i]);
+        }
     }
 }
 

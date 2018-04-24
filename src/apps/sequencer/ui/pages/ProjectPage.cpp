@@ -174,6 +174,7 @@ void ProjectPage::initRoute() {
 }
 
 void ProjectPage::saveProjectToSlot(int slot) {
+    _engine.lock();
     _manager.pages().busy.show("SAVING PROJECT ...");
 
     FileManager::task([this, slot] () {
@@ -186,10 +187,12 @@ void ProjectPage::saveProjectToSlot(int slot) {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
+        _engine.unlock();
     });
 }
 
 void ProjectPage::loadProjectFromSlot(int slot) {
+    _engine.lock();
     _manager.pages().busy.show("LOADING PROJECT ...");
 
     FileManager::task([this, slot] () {
@@ -202,5 +205,6 @@ void ProjectPage::loadProjectFromSlot(int slot) {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
+        _engine.unlock();
     });
 }
