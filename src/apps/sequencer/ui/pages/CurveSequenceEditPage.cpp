@@ -166,6 +166,12 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.isQuickEdit()) {
+        quickEdit(key.quickEdit());
+        event.consume();
+        return;
+    }
+
     if (key.pageModifier()) {
         return;
     }
@@ -301,4 +307,11 @@ void CurveSequenceEditPage::pasteSequence() {
 void CurveSequenceEditPage::duplicateSequence() {
     _project.selectedCurveSequence().duplicateSteps();
     showMessage("STEPS DUPLICATED");
+}
+
+void CurveSequenceEditPage::quickEdit(int index) {
+    _listModel.setSequence(&_project.selectedCurveSequence());
+    if (index < int(CurveSequenceListModel::Last)) {
+        _manager.pages().quickEdit.show(_listModel, index);
+    }
 }

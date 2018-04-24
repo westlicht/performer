@@ -3,6 +3,7 @@
 #include "BasePage.h"
 
 #include "ui/StepSelection.h"
+#include "ui/model/CurveSequenceListModel.h"
 
 class CurveSequenceEditPage : public BasePage {
 public:
@@ -35,10 +36,14 @@ private:
     void pasteSequence();
     void duplicateSequence();
 
+    void quickEdit(int index);
+
     ContextMenu _contextMenu;
 
     Layer _layer = Layer::Shape;
     int _page = 0;
+
+    CurveSequenceListModel _listModel;
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 };

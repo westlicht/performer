@@ -73,6 +73,7 @@ set(sources
     ui/pages/PatternPage.cpp
     ui/pages/PerformerPage.cpp
     ui/pages/ProjectPage.cpp
+    ui/pages/QuickEditPage.cpp
     ui/pages/RoutePage.cpp
     ui/pages/RoutingPage.cpp
     ui/pages/SettingsPage.cpp

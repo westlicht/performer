@@ -26,6 +26,7 @@
 #include "GeneratorPage.h"
 #include "GeneratorSelectPage.h"
 #include "SettingsPage.h"
+#include "QuickEditPage.h"
 
 #ifdef CONFIG_ENABLE_INTRO
 #include "IntroPage.h"
@@ -56,6 +57,7 @@ struct Pages {
     MonitorPage monitor;
     FileSelectPage fileSelect;
     ContextMenuPage contextMenu;
+    QuickEditPage quickEdit;
     // generator pages
     GeneratorPage generator;
     GeneratorSelectPage generatorSelect;
@@ -93,6 +95,7 @@ struct Pages {
         monitor(manager, context),
         fileSelect(manager, context),
         contextMenu(manager, context),
+        quickEdit(manager, context),
         // generator pages
         generator(manager, context),
         generatorSelect(manager, context),

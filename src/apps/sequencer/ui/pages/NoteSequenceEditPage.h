@@ -3,6 +3,7 @@
 #include "BasePage.h"
 
 #include "ui/StepSelection.h"
+#include "ui/model/NoteSequenceListModel.h"
 
 #include "engine/generators/SequenceBuilder.h"
 
@@ -44,10 +45,14 @@ private:
     void duplicateSequence();
     void generateSequence();
 
+    void quickEdit(int index);
+
     Layer _layer = Layer::Gate;
     int _page = 0;
     bool _showDetail;
     uint32_t _showDetailTicks;
+
+    NoteSequenceListModel _listModel;
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 

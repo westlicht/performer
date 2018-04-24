@@ -217,6 +217,12 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.isQuickEdit()) {
+        quickEdit(key.quickEdit());
+        event.consume();
+        return;
+    }
+
     if (key.pageModifier()) {
         return;
     }
@@ -571,4 +577,11 @@ void NoteSequenceEditPage::generateSequence() {
             _manager.pages().generator.show(generator);
         }
     });
+}
+
+void NoteSequenceEditPage::quickEdit(int index) {
+    _listModel.setSequence(&_project.selectedNoteSequence());
+    if (index < int(NoteSequenceListModel::Last)) {
+        _manager.pages().quickEdit.show(_listModel, index);
+    }
 }
