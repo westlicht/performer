@@ -126,6 +126,8 @@ void FileManager::processTask() {
             } else {
                 newVolumeState |= Mounted;
             }
+        } else {
+            invalidateAllSlots();
         }
 
         _volumeState = newVolumeState;
