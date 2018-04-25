@@ -70,11 +70,12 @@ bool SdCard::write(const uint8_t *buf, uint32_t sector, uint8_t count) {
 void SdCard::powerOn() {
     SDIO_POWER = SDIO_POWER_PWRCTRL_PWRON;
     while (SDIO_POWER != SDIO_POWER_PWRCTRL_PWRON);
-    SDIO_CLKCR = SDIO_CLKCR_CLKEN | 118;
+    SDIO_CLKCR = SDIO_CLKCR_CLKEN | SDIO_CLKCR_WIDBUS_1 | 118;
 }
 
 void SdCard::powerOff() {
     SDIO_POWER = SDIO_POWER_PWRCTRL_PWROFF;
+    rcc_periph_reset_pulse(RST_SDIO);
 }
 
 void SdCard::sendCommand(uint32_t cmd, uint32_t arg) {
@@ -173,6 +174,8 @@ SdCard::Error SdCard::sendAppCommand(uint32_t cmd, uint32_t arg, int maxRetries)
 
 bool SdCard::initCard() {
     powerOn();
+
+    _cardInfo = CardInfo();
 
     if (sendCommandRetry(0, 0) != Success) {
         return false;

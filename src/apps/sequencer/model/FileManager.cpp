@@ -120,10 +120,12 @@ void FileManager::processTask() {
         _nextVolumeStateCheckTicks = ticks + os::time::ms(1000);
 
         uint32_t newVolumeState = fs::volume().available() ? Available : 0;
-        if ((newVolumeState & Available) && !(_volumeState & Mounted)) {
-            newVolumeState |= (fs::volume().mount() == fs::OK) ? Mounted : 0;
-        } else {
-            newVolumeState |= Mounted;
+        if (newVolumeState & Available) {
+            if (!(_volumeState & Mounted)) {
+                newVolumeState |= (fs::volume().mount() == fs::OK) ? Mounted : 0;
+            } else {
+                newVolumeState |= Mounted;
+            }
         }
 
         _volumeState = newVolumeState;
