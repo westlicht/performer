@@ -84,9 +84,6 @@ void TopPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.snapshotModifier()) {
-    }
-
     if (key.isStart()) {
         if (key.shiftModifier()) {
             // restart
