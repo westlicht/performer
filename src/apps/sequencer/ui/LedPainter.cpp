@@ -7,9 +7,23 @@
 
 #include "model/NoteSequence.h"
 
+// color guidelines:
+// yellow -> selection
+// green -> active
+// red -> inactive
+
 void LedPainter::drawTracksGateAndSelected(Leds &leds, const Engine &engine, int selectedTrack) {
     for (int track = 0; track < 8; ++track) {
-        leds.set(MatrixMap::fromTrack(track), engine.trackEngine(track).activity(), track == selectedTrack);
+        // leds.set(MatrixMap::fromTrack(track), engine.trackEngine(track).activity(), track == selectedTrack);
+        const auto &trackEngine = engine.trackEngine(track);
+        bool unmutedActivity = trackEngine.activity() && !trackEngine.mute();
+        bool mutedActivity = trackEngine.activity() && trackEngine.mute();
+        bool selected = track == selectedTrack;
+        leds.set(
+            MatrixMap::fromTrack(track),
+            mutedActivity || (selected && !unmutedActivity),
+            unmutedActivity || (selected && !mutedActivity)
+        );
     }
 }
 
@@ -27,14 +41,21 @@ void LedPainter::drawStepIndex(Leds &leds, int index) {
 }
 
 void LedPainter::drawSelectedPage(Leds &leds, int page) {
+    auto setLed = [&] (int code) {
+        bool selected = page == code;
+        leds.set(code, selected, selected);
+        leds.mask(code);
+    };
+
     for (int i = 0; i < 8; ++i) {
-        leds.set(MatrixMap::fromTrack(i), false, i == page);
-        leds.mask(MatrixMap::fromTrack(i));
+        setLed(MatrixMap::fromTrack(i));
     }
     for (int i = 0; i < 16; ++i) {
-        leds.set(MatrixMap::fromStep(i), false, (i + 8) == page);
-        leds.mask(MatrixMap::fromStep(i));
+        setLed(MatrixMap::fromStep(i));
     }
+    setLed(Key::Code::Pattern);
+    setLed(Key::Code::Performer);
+    setLed(Key::Code::Bpm);
 }
 
 void LedPainter::drawSelectedSequencePage(Leds &leds, int page) {
@@ -59,6 +80,7 @@ void LedPainter::drawSelectedPatterns(Leds &leds, uint16_t activePatterns, uint1
 void LedPainter::drawMutes(Leds &leds, uint8_t activeMutes, uint8_t requestedMutes) {
     for (int i = 0; i < 8; ++i) {
         leds.set(MatrixMap::fromStep(i), requestedMutes & (1<<i), activeMutes & (1<<i));
+        leds.set(MatrixMap::fromStep(i + 8), false, false);
     }
 }
 

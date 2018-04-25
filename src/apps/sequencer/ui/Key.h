@@ -39,7 +39,7 @@ public:
         Step15 = MatrixMap::fromStep(15),
         Start = 24,
         Bpm = 25,
-        Snapshot = 26,
+        Pattern = 26,
         Performer = 27,
         Left = 28,
         Right = 29,
@@ -69,7 +69,7 @@ public:
 
     bool isStart() const { return _code == Start; }
     bool isBpm() const { return _code == Bpm; }
-    bool isSnapshot() const { return _code == Snapshot; }
+    bool isPattern() const { return _code == Pattern; }
     bool isPerformer() const { return _code == Performer; }
     bool isLeft() const { return _code == Left; }
     bool isRight() const { return _code == Right; }

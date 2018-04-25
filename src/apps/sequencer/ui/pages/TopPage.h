@@ -22,26 +22,25 @@ public:
 private:
     enum Mode : uint8_t {
         // main modes
-        Project         = 0,
-        Layout          = 1,
-        Track           = 2,
-        Sequence        = 3,
-        SequenceEdit    = 4,
-        Pattern         = 6,
-        Performer       = 7,
+        Project         = Key::Code::Track0,
+        Layout          = Key::Code::Track1,
+        Track           = Key::Code::Track2,
+        Sequence        = Key::Code::Track3,
+        SequenceEdit    = Key::Code::Track4,
+        Routing         = Key::Code::Track7,
+        Pattern         = Key::Code::Pattern,
+        Performer       = Key::Code::Performer,
+        ClockSetup      = Key::Code::Bpm,
 
         // aux modes
-        Routing         = 8,
-        UserScale       = 9,
-        Monitor         = 10,
-        NavigateLast    = Monitor,
-        Settings        = 15,
+        UserScale       = Key::Code::Step0,
+        Monitor         = Key::Code::Step1,
+        Settings        = Key::Code::Step7,
 
         Last,
     };
 
     void setMode(Mode mode);
-    void navigateMode(int direction);
     void setMainPage(Page &page);
 
     void setSequencePage();

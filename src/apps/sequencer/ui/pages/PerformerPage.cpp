@@ -124,6 +124,11 @@ void PerformerPage::keyDown(KeyEvent &event) {
 void PerformerPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
 
+    if (_modal && key.isPerformer()) {
+        event.consume();
+        close();
+    }
+
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Latch:

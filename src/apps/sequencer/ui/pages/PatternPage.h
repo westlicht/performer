@@ -6,11 +6,15 @@ class PatternPage : public BasePage {
 public:
     PatternPage(PageManager &manager, PageContext &context);
 
+    void setModal(bool modal) { _modal = modal; }
+
     virtual void enter() override;
     virtual void exit() override;
 
     virtual void draw(Canvas &canvas) override;
     virtual void updateLeds(Leds &leds) override;
+
+    virtual bool isModal() const override { return _modal; }
 
     virtual void keyDown(KeyEvent &event) override;
     virtual void keyUp(KeyEvent &event) override;
@@ -27,5 +31,6 @@ private:
     void pastePattern();
     void duplicatePattern();
 
-    bool _latching;
+    bool _modal = false;
+    bool _latching = false;
 };

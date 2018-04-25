@@ -21,10 +21,10 @@ void ButtonLedMatrix::process() {
     for (int col = 0; col < ColsLed; ++col) {
         int index = col * Rows + _row;
         if (_ledState[index].red.update()) {
-            ledData |= (1 << (col * 2));
+            ledData |= (1 << (col * 2 + 1));
         }
         if (_ledState[index].green.update()) {
-            ledData |= (1 << (col * 2 + 1));
+            ledData |= (1 << (col * 2));
         }
     }
 

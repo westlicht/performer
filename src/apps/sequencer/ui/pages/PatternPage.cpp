@@ -149,6 +149,11 @@ void PatternPage::keyDown(KeyEvent &event) {
 void PatternPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
 
+    if (_modal && key.isPattern()) {
+        event.consume();
+        close();
+    }
+
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Latch:

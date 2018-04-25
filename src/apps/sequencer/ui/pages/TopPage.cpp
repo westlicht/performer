@@ -62,6 +62,7 @@ void TopPage::keyUp(KeyEvent &event) {
 }
 
 void TopPage::keyPress(KeyPressEvent &event) {
+    auto &pages = _manager.pages();
     const auto &key = event.key();
 
     if (key.isTrackSelect()) {
@@ -70,18 +71,20 @@ void TopPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.pageModifier() && key.isLeft()) {
-        navigateMode(-1);
+    if (key.pageModifier()) {
+        setMode(Mode(key.code()));
         event.consume();
-    }
-    if (key.pageModifier() && key.isRight()) {
-        navigateMode(1);
-        event.consume();
-    }
-
-    if (key.isPageSelect()) {
-        setMode(Mode(key.pageSelect()));
-        event.consume();
+    } else {
+        if (key.isPattern() && _mode != Mode::Pattern) {
+            pages.pattern.setModal(true);
+            pages.pattern.show();
+            event.consume();
+        }
+        if (key.isPerformer() && _mode != Mode::Performer) {
+            pages.performer.setModal(true);
+            pages.performer.show();
+            event.consume();
+        }
     }
 
     if (key.isStart()) {
@@ -100,12 +103,9 @@ void TopPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isBpm()) {
-        if (key.pageModifier()) {
-            // clock setup page
-            _manager.pages().clockSetup.show();
-        } else {
+        if (!key.pageModifier()) {
             // bpm page
-            _manager.pages().bpm.show();
+            pages.bpm.show();
         }
     }
 
@@ -138,12 +138,16 @@ void TopPage::setMode(Mode mode) {
         setSequenceEditPage();
         break;
     case Mode::Pattern:
+        pages.pattern.setModal(false);
         setMainPage(pages.pattern);
         break;
     case Mode::Performer:
+        pages.performer.setModal(false);
         setMainPage(pages.performer);
         break;
-
+    case Mode::ClockSetup:
+        setMainPage(pages.clockSetup);
+        break;
     case Mode::Routing:
         setMainPage(pages.routing);
         break;
@@ -169,20 +173,6 @@ void TopPage::setMode(Mode mode) {
     }
 
     _mode = mode;
-}
-
-void TopPage::navigateMode(int direction) {
-    if (_mode > int(Mode::NavigateLast)) {
-        return;
-    }
-
-    int newMode = _mode;
-    while ((direction > 0 && ++newMode <= int(Mode::NavigateLast)) || (direction < 0 && --newMode >= 0)) {
-        setMode(Mode(newMode));
-        if (_mode == Mode(newMode)) {
-            break;
-        }
-    }
 }
 
 void TopPage::setMainPage(Page &page) {

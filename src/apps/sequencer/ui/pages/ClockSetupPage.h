@@ -10,10 +10,6 @@ public:
 
     virtual void draw(Canvas &canvas) override;
 
-    virtual bool isModal() const override { return true; }
-
-    virtual void keyPress(KeyPressEvent &event) override;
-
 private:
     ClockSetupListModel _listModel;
 };
