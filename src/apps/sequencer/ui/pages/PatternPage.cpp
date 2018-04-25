@@ -220,11 +220,11 @@ void PatternPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.is(Key::Left)) {
+    if (key.isLeft()) {
         _project.editSelectedPatternIndex(-1, false);
         event.consume();
     }
-    if (key.is(Key::Right)) {
+    if (key.isRight()) {
         _project.editSelectedPatternIndex(1, false);
         event.consume();
     }

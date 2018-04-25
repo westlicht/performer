@@ -70,11 +70,11 @@ void TopPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.pageModifier() && key.is(Key::Left)) {
+    if (key.pageModifier() && key.isLeft()) {
         navigateMode(-1);
         event.consume();
     }
-    if (key.pageModifier() && key.is(Key::Right)) {
+    if (key.pageModifier() && key.isRight()) {
         navigateMode(1);
         event.consume();
     }
@@ -84,7 +84,10 @@ void TopPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.is(Key::Start)) {
+    if (key.snapshotModifier()) {
+    }
+
+    if (key.isStart()) {
         if (key.shiftModifier()) {
             // restart
             _engine.start();
@@ -99,7 +102,7 @@ void TopPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.is(Key::BPM)) {
+    if (key.isBpm()) {
         if (key.pageModifier()) {
             // clock setup page
             _manager.pages().clockSetup.show();

@@ -269,7 +269,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         _showDetailTicks = os::ticks();
     }
 
-    if (key.is(Key::Left)) {
+    if (key.isLeft()) {
         if (key.shiftModifier()) {
             sequence.shiftSteps(-1);
         } else {
@@ -277,7 +277,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         }
         event.consume();
     }
-    if (key.is(Key::Right)) {
+    if (key.isRight()) {
         if (key.shiftModifier()) {
             sequence.shiftSteps(1);
         } else {

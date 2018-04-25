@@ -38,8 +38,9 @@ public:
         Step14 = MatrixMap::fromStep(14),
         Step15 = MatrixMap::fromStep(15),
         Start = 24,
-        BPM = 25,
-        Mute = 26,
+        Bpm = 25,
+        Snapshot = 26,
+        Performer = 27,
         Left = 28,
         Right = 29,
         Page = 30,
@@ -64,6 +65,19 @@ public:
 
     bool is(int code) const { return _code == code; }
 
+    // individual buttons
+
+    bool isStart() const { return _code == Start; }
+    bool isBpm() const { return _code == Bpm; }
+    bool isSnapshot() const { return _code == Snapshot; }
+    bool isPerformer() const { return _code == Performer; }
+    bool isLeft() const { return _code == Left; }
+    bool isRight() const { return _code == Right; }
+    bool isPage() const { return _code == Page; };
+    bool isShift() const { return _code == Shift; }
+
+    // button groups
+
     bool isTrack() const { return MatrixMap::isTrack(_code); }
     int track() const { return MatrixMap::toTrack(_code); }
 
@@ -73,7 +87,7 @@ public:
     bool isFunction() const { return MatrixMap::isFunction(_code); }
     int function() const { return MatrixMap::toFunction(_code); }
 
-    bool isPage() const { return _code == Page; };
+    // combined buttons
 
     bool isTrackSelect() const { return !pageModifier() && isTrack(); }
     int trackSelect() const { return track(); }
@@ -95,7 +109,7 @@ public:
 
     bool isEncoder() const { return is(Encoder); }
 
-    bool isGlobal() const { return is(Start) || is(BPM); }
+    bool isGlobal() const { return isStart() || isBpm(); }
 
 private:
     int _code;

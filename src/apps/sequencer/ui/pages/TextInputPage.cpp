@@ -123,11 +123,11 @@ void TextInputPage::keyPress(KeyPressEvent &event) {
         }
     }
 
-    if (key.is(Key::Left)) {
+    if (key.isLeft()) {
         moveLeft();
     }
 
-    if (key.is(Key::Right)) {
+    if (key.isRight()) {
         moveRight();
     }
 

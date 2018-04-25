@@ -42,13 +42,13 @@ void BpmPage::updateLeds(Leds &leds) {
 void BpmPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.is(Key::Start)) {
+    if (key.isStart()) {
         // tap tempo
         _engine.tapTempoTap();
-    } else if (key.is(Key::Left)) {
+    } else if (key.isLeft()) {
         // nudge tempo down
         _engine.nudgeTempoSetDirection(-1);
-    } else if (key.is(Key::Right)) {
+    } else if (key.isRight()) {
         // nudge tempo up
         _engine.nudgeTempoSetDirection(1);
     }
@@ -59,9 +59,9 @@ void BpmPage::keyDown(KeyEvent &event) {
 void BpmPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.is(Key::BPM)) {
+    if (key.isBpm()) {
         close();
-    } else if (key.is(Key::Left) || key.is(Key::Right)) {
+    } else if (key.isLeft() || key.isRight()) {
         // reset nudge
         _engine.nudgeTempoSetDirection(0);
     }

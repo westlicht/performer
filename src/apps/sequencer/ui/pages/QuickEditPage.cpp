@@ -46,23 +46,26 @@ void QuickEditPage::keyDown(KeyEvent &event) {
 }
 
 void QuickEditPage::keyUp(KeyEvent &event) {
-    const auto &key = event.key();
+    event.consume();
 
-    // TODO
-    if (key.isPage() || key.isStep()) {
-        close();
+    if (_keyState[Key::Page]) {
         return;
     }
+    for (int i = 8; i < 16; ++i) {
+        if (_keyState[MatrixMap::fromStep(i)]) {
+            return;
+        }
+    }
 
-    event.consume();
+    close();
 }
 
 void QuickEditPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
-    if (key.is(Key::Left)) {
+    if (key.isLeft()) {
         _listModel->edit(_row, 1, -1, key.shiftModifier());
-    } else if (key.is(Key::Right)) {
+    } else if (key.isRight()) {
         _listModel->edit(_row, 1, 1, key.shiftModifier());
     }
 }
