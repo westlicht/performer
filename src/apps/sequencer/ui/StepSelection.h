@@ -88,6 +88,8 @@ public:
                     for (int i = firstIndex; i >= 0 && i < int(_selected.size()); i += interval) {
                         _selected[i] = true;
                     }
+                } else {
+                    // TODO select all "equal" steps
                 }
             }
 

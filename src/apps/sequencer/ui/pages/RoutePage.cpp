@@ -66,6 +66,7 @@ void RoutePage::keyPress(KeyPressEvent &event) {
         switch (Function(key.function())) {
         case Function::Learn:
             _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
+                // TODO this might be unsafe as callback is called from engine thread
                 assignMidiLearn(result);
                 _engine.midiLearn().stop();
             });

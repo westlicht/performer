@@ -20,10 +20,12 @@ public:
     }
 
     StringBuilder &printf(const char *fmt, ...) {
-        va_list va;
-        va_start(va, fmt);
-        _pos += stbsp_vsnprintf(_pos, _len - (_pos - _buf), fmt, va);
-        va_end(va);
+        if (fmt) {
+            va_list va;
+            va_start(va, fmt);
+            _pos += stbsp_vsnprintf(_pos, _len - (_pos - _buf), fmt, va);
+            va_end(va);
+        }
         return *this;
     }
 

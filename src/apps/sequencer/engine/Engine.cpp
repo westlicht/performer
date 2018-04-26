@@ -73,18 +73,18 @@ void Engine::update() {
 
     // process clock requests
     if (_clock.checkStart()) {
-        DBG("START");
+        // DBG("START");
         resetTrackEngines();
         _running = true;
     }
 
     if (_clock.checkStop()) {
-        DBG("STOP");
+        // DBG("STOP");
         _running = false;
     }
 
     if (_clock.checkResume()) {
-        DBG("RESUME");
+        // DBG("RESUME");
         _running = true;
     }
 

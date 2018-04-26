@@ -50,6 +50,7 @@ void Project::clearPattern(int patternIndex) {
 }
 
 void Project::demoProject() {
+#if 1
     noteSequence(0, 0).setLastStep(15);
     noteSequence(0, 0).setGates({ 1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0 });
     noteSequence(1, 0).setLastStep(15);
@@ -63,17 +64,9 @@ void Project::demoProject() {
     noteSequence(5, 0).setLastStep(15);
     noteSequence(5, 0).setGates({ 0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0 });
     noteSequence(7, 0).setLastStep(15);
-    noteSequence(7, 0).setGates({ 1,0,1,0,1,0,1,1,1,1,1,0,1,1,0,1 });
-    noteSequence(7, 0).setNotes({ 36,36,36,36,48,36,48,37,60,61,58,36,39,42,48,37 });
-
-    // setTrackMode(0, Track::TrackMode::Curve);
-    // sequence(0, 0).curveSequence().setLastStep(7);
-
-    setTrackMode(7, Track::TrackMode::MidiCv);
-    for (int i = 4; i < 8; ++i) {
-        setGateOutputTrack(i, 7);
-        setCvOutputTrack(i, 7);
-    }
+    noteSequence(7, 0).setGates({ 1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1 });
+    noteSequence(7, 0).setNotes({ 0,0,0,0,12,0,12,1,24,21,22,0,3,6,12,1 });
+#endif
 }
 
 void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {

@@ -42,8 +42,8 @@ void TopPage::editRoute(Routing::Param param, int trackIndex) {
 void TopPage::updateLeds(Leds &leds) {
     leds.set(
         Key::Start,
-        _engine.running() && _engine.tick() % CONFIG_PPQN < (CONFIG_PPQN / 8),
-        false // _engine.running()
+        false,
+        _engine.running() && _engine.tick() % CONFIG_PPQN < (CONFIG_PPQN / 8)
     );
 
     if (_keyState[Key::Page]) {

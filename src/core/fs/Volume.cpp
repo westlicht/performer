@@ -20,6 +20,7 @@ bool Volume::available() {
 }
 
 Error Volume::format() {
+    // TODO we might want to reuse file object pool memory for this
     uint32_t workArea[FF_MAX_SS / 4];
 
     DWORD plist[] = { 100, 0, 0, 0 };

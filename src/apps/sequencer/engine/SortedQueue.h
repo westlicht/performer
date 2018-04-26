@@ -45,12 +45,22 @@ public:
         _write = increase(_write);
     }
 
-    const T &front() const {
-        return _queue[_read];
-    }
+    const T &front() const { return _queue[_read]; }
+          T &front()       { return _queue[_read]; }
+
+    const T &back() const { return _queue[_write]; }
+          T &back()       { return _queue[_write]; }
 
     void pop() {
-        _read = increase(_read);
+        if (size() > 0) {
+            _read = increase(_read);
+        }
+    }
+
+    void popBack() {
+        if (size() > 0) {
+            _write = decrease(_write);
+        }
     }
 
 private:
