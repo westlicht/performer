@@ -43,6 +43,7 @@ void CurveSequencePage::draw(Canvas &canvas) {
 }
 
 void CurveSequencePage::updateLeds(Leds &leds) {
+    ListPage::updateLeds(leds);
 }
 
 void CurveSequencePage::keyPress(KeyPressEvent &event) {
