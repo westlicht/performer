@@ -20,7 +20,7 @@ void WindowPainter::drawFrame(Canvas &canvas, int x, int y, int w, int h) {
     canvas.drawRect(x, y, w, h);
 }
 
-void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], KeyState &keyState) {
+void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], const KeyState &keyState) {
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0x7);
     canvas.hline(0, PageHeight - FooterHeight - 1, PageWidth);
@@ -55,7 +55,7 @@ void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], KeySta
     }
 }
 
-void WindowPainter::drawClock(Canvas &canvas, Engine &engine) {
+void WindowPainter::drawClock(Canvas &canvas, const Engine &engine) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
@@ -71,18 +71,13 @@ void WindowPainter::drawClock(Canvas &canvas, Engine &engine) {
     canvas.drawText(10, 8 - 2, FixedStringBuilder<8>("%.1f", engine.bpm()));
 }
 
-void WindowPainter::drawActiveTrack(Canvas &canvas, int track) {
+void WindowPainter::drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    canvas.drawText(48, 8 - 2, FixedStringBuilder<8>("T%d", track + 1));
-}
-
-void WindowPainter::drawActivePattern(Canvas &canvas, int edit, int play) {
-    canvas.setFont(Font::Tiny);
-    canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
-    canvas.drawText(64, 8 - 2, FixedStringBuilder<8>("P%d", edit + 1));
+    canvas.drawText(40, 8 - 2, FixedStringBuilder<8>("T%d", track + 1));
+    canvas.drawText(56, 8 - 2, FixedStringBuilder<8>("P%d", playPattern + 1));
+    canvas.drawText(76, 8 - 2, FixedStringBuilder<8>("E%d", editPattern + 1));
 }
 
 void WindowPainter::drawActiveMode(Canvas &canvas, const char *mode) {
@@ -96,13 +91,17 @@ void WindowPainter::drawActiveFunction(Canvas &canvas, const char *function) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    canvas.drawText(96, 8 - 2, function);
+    canvas.drawText(100, 8 - 2, function);
 }
 
-void WindowPainter::drawHeader(Canvas &canvas, Model &model, Engine &engine, const char *mode) {
+void WindowPainter::drawHeader(Canvas &canvas, const Model &model, const Engine &engine, const char *mode) {
+    const auto &project = model.project();
+    int track = project.selectedTrackIndex();
+    int playPattern = project.playState().trackState(track).pattern();
+    int editPattern = project.selectedPatternIndex();
+
     drawClock(canvas, engine);
-    drawActiveTrack(canvas, model.project().selectedTrackIndex());
-    drawActivePattern(canvas, model.project().selectedPatternIndex(), 0);
+    drawActiveState(canvas, track, playPattern, editPattern);
     drawActiveMode(canvas, mode);
 
     canvas.setBlendMode(BlendMode::Set);
@@ -116,6 +115,6 @@ void WindowPainter::drawFooter(Canvas &canvas) {
     canvas.hline(0, PageHeight - FooterHeight - 1, PageWidth);
 }
 
-void WindowPainter::drawFooter(Canvas &canvas, const char *names[], KeyState &keyState) {
+void WindowPainter::drawFooter(Canvas &canvas, const char *names[], const KeyState &keyState) {
     drawFunctionKeys(canvas, names, keyState);
 }

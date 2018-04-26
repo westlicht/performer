@@ -29,7 +29,7 @@ void Clock::setMode(Mode mode) {
     }
 }
 
-Clock::Mode Clock::activeMode() {
+Clock::Mode Clock::activeMode() const {
     switch (_state) {
     case MasterRunning: return ModeMaster;
     case SlaveRunning:  return ModeSlave;

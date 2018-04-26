@@ -30,7 +30,7 @@ public:
     Mode mode() const { return _mode; }
     void setMode(Mode mode);
 
-    Mode activeMode();
+    Mode activeMode() const;
 
     bool isIdle() const { return _state == Idle; }
     bool isRunning() const { return _state != Idle; }
