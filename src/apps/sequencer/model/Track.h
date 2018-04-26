@@ -59,6 +59,7 @@ public:
 
     TrackMode trackMode() const { return _trackMode; }
     void setTrackMode(TrackMode trackMode) {
+        trackMode = ModelUtils::clampedEnum(trackMode);
         if (trackMode != _trackMode) {
             _trackMode = trackMode;
             setupTrack();

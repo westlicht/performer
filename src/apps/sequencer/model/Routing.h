@@ -146,7 +146,9 @@ public:
         // range
 
         Types::VoltageRange range() const { return _range; }
-        void setRange(Types::VoltageRange range) { _range = range; }
+        void setRange(Types::VoltageRange range) {
+            _range = ModelUtils::clampedEnum(range);
+        }
 
         void editRange(int value, bool shift) {
             setRange(ModelUtils::adjustedEnum(range(), value));
@@ -196,7 +198,9 @@ public:
         // port
 
         Types::MidiPort port() const { return _port; }
-        void setPort(Types::MidiPort port) { _port = port; }
+        void setPort(Types::MidiPort port) {
+            _port = ModelUtils::clampedEnum(port);
+        }
 
         void editPort(int value, bool shift) {
             setPort(ModelUtils::adjustedEnum(port(), value));
@@ -209,10 +213,12 @@ public:
         // channel
 
         int channel() const { return _channel; }
-        void setChannel(int channel) { _channel = channel; }
+        void setChannel(int channel) {
+            _channel = clamp(channel, -1, 15);
+        }
 
         void editChannel(int value, bool shift) {
-            setChannel(clamp(channel() + value, -1, 15));
+            setChannel(channel() + value);
         }
 
         void printChannel(StringBuilder &str) const {
@@ -222,7 +228,9 @@ public:
         // event
 
         Event event() const { return _event; }
-        void setEvent(Event event) { _event = event; }
+        void setEvent(Event event) {
+            _event = ModelUtils::clampedEnum(event);
+        }
 
         void editEvent(int value, bool shift) {
             setEvent(ModelUtils::adjustedEnum(event(), value));
@@ -239,10 +247,12 @@ public:
         // note
 
         int note() const { return _controlNumberOrNote; }
-        void setNote(int note) { _controlNumberOrNote  = note; }
+        void setNote(int note) {
+            _controlNumberOrNote = clamp(note, 0, 127);
+        }
 
         void editNote(int value, bool shift) {
-            setNote(clamp(note() + value, 0, 127));
+            setNote(note() + value);
         }
 
         void printNote(StringBuilder &str) const {
@@ -252,10 +262,12 @@ public:
         // controlNumber
 
         int controlNumber() const { return _controlNumberOrNote; }
-        void setControlNumber(int controlNumber) { _controlNumberOrNote = controlNumber; }
+        void setControlNumber(int controlNumber) {
+            _controlNumberOrNote = clamp(controlNumber, 0, 127);
+        }
 
         void editControlNumber(int value, bool shift) {
-            setControlNumber(clamp(controlNumber() + value, 0, 127));
+            setControlNumber(controlNumber() + value);
         }
 
         void printControlNumber(StringBuilder &str) const {
@@ -281,7 +293,9 @@ public:
         // param
 
         Param param() const { return _param; }
-        void setParam(Param param) { _param = param; }
+        void setParam(Param param) {
+            _param = ModelUtils::clampedEnum(param);
+        }
 
         void editParam(int value, bool shift) {
             setParam(ModelUtils::adjustedEnum(param(), value));
@@ -294,7 +308,9 @@ public:
         // tracks
 
         uint8_t tracks() const { return _tracks; }
-        void setTracks(uint8_t tracks) { _tracks = tracks; }
+        void setTracks(uint8_t tracks) {
+            _tracks = tracks;
+        }
 
         void toggleTrack(int trackIndex) {
             if (tracks() & (1<<trackIndex)) {
@@ -315,11 +331,13 @@ public:
         // min
 
         float min() const { return _min; }
-        void setMin(float min) { _min = min; }
+        void setMin(float min) {
+            _min = clamp(min, 0.f, 1.f);
+            setMax(std::max(max(), _min));
+        }
 
         void editMin(int value, bool shift) {
-            setMin(clamp(min() + value * paramValueStep(_param), 0.f, 1.f));
-            setMax(std::max(max(), _min));
+            setMin(min() + value * paramValueStep(_param));
         }
 
         void printMin(StringBuilder &str) const {
@@ -329,11 +347,13 @@ public:
         // max
 
         float max() const { return _max; }
-        void setMax(float max) { _max = max; }
+        void setMax(float max) {
+            _max = clamp(max, 0.f, 1.f);
+            setMin(std::min(min(), _max));
+        }
 
         void editMax(int value, bool shift) {
-            setMax(clamp(max() + value * paramValueStep(_param), 0.f, 1.f));
-            setMin(std::min(min(), _max));
+            setMax(max() + value);
         }
 
         void printMax(StringBuilder &str) const {
@@ -343,7 +363,9 @@ public:
         // source
 
         Source source() const { return _source; }
-        void setSource(Source source) { _source = source; }
+        void setSource(Source source) {
+            _source = ModelUtils::clampedEnum(source);
+        }
 
         void editSource(int value, bool shift) {
             setSource(ModelUtils::adjustedEnum(source(), value));

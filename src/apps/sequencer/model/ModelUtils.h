@@ -9,6 +9,11 @@
 
 namespace ModelUtils {
 
+template<typename Enum>
+static Enum clampedEnum(Enum value) {
+    return Enum(clamp(int(value), 0, int(Enum::Last) - 1));
+}
+
 static int adjusted(int value, int offset, int min, int max) {
     return clamp(value + offset, min, max);
 }

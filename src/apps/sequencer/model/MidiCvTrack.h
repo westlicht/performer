@@ -37,7 +37,9 @@ public:
     // port
 
     Types::MidiPort port() const { return _port; }
-    void setPort(Types::MidiPort port) { _port = port; }
+    void setPort(Types::MidiPort port) {
+        _port = ModelUtils::clampedEnum(port);
+    }
 
     void editPort(int value, bool shift) {
         setPort(ModelUtils::adjustedEnum(port(), value));
@@ -50,7 +52,9 @@ public:
     // channel
 
     int channel() const { return _channel; }
-    void setChannel(int channel) { _channel = clamp(channel, -1, 15); }
+    void setChannel(int channel) {
+        _channel = clamp(channel, -1, 15);
+    }
 
     void editChannel(int value, bool shift) {
         setChannel(channel() + value);
@@ -63,7 +67,9 @@ public:
     // voices
 
     int voices() const { return _voices; }
-    void setVoices(int voices) { _voices = clamp(voices, 1, 8); }
+    void setVoices(int voices) {
+        _voices = clamp(voices, 1, 8);
+    }
 
     void editVoices(int value, bool shift) {
         setVoices(voices() + value);
@@ -76,7 +82,9 @@ public:
     // voiceConfig
 
     VoiceConfig voiceConfig() const { return _voiceConfig; }
-    void setVoiceConfig(VoiceConfig voiceConfig) { _voiceConfig = voiceConfig; }
+    void setVoiceConfig(VoiceConfig voiceConfig) {
+        _voiceConfig = ModelUtils::clampedEnum(voiceConfig);
+    }
 
     void editVoiceConfig(int value, bool shift) {
         setVoiceConfig(ModelUtils::adjustedEnum(voiceConfig(), value));
@@ -89,7 +97,9 @@ public:
     // pitchBendRange
 
     int pitchBendRange() const { return _pitchBendRange; }
-    void setPitchBendRange(int pitchBendRange) { _pitchBendRange = clamp(pitchBendRange, 0, 48); }
+    void setPitchBendRange(int pitchBendRange) {
+        _pitchBendRange = clamp(pitchBendRange, 0, 48);
+    }
 
     void editPitchBendRange(int value, bool shift) {
         setPitchBendRange(pitchBendRange() + value);
@@ -106,7 +116,9 @@ public:
     // modulationRange
 
     Types::VoltageRange modulationRange() const { return _modulationRange; }
-    void setModulationRange(Types::VoltageRange modulationRange) { _modulationRange = modulationRange; }
+    void setModulationRange(Types::VoltageRange modulationRange) {
+        _modulationRange = ModelUtils::clampedEnum(modulationRange);
+    }
 
     void editModulationRange(int value, bool shift) {
         setModulationRange(ModelUtils::adjustedEnum(modulationRange(), value));
@@ -119,7 +131,9 @@ public:
     // retrigger
 
     bool retrigger() const { return _retrigger; }
-    void setRetrigger(bool retrigger) { _retrigger = retrigger; }
+    void setRetrigger(bool retrigger) {
+        _retrigger = retrigger;
+    }
 
     void editRetrigger(int value, bool shift) {
         setRetrigger(value > 0);

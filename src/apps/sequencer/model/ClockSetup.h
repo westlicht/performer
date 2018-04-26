@@ -54,6 +54,7 @@ public:
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) {
+        mode = ModelUtils::clampedEnum(mode);
         if (mode != _mode) {
             _mode = mode;
             _dirty = true;
@@ -91,6 +92,7 @@ public:
 
     ClockMode clockInputMode() const { return _clockInputMode; }
     void setClockInputMode(ClockMode mode) {
+        mode = ModelUtils::clampedEnum(mode);
         if (mode != _clockInputMode) {
             _clockInputMode = mode;
             _dirty = true;
@@ -147,6 +149,7 @@ public:
 
     ClockMode clockOutputMode() const { return _clockOutputMode; }
     void setClockOutputMode(ClockMode mode) {
+        mode = ModelUtils::clampedEnum(mode);
         if (mode != _clockOutputMode) {
             _clockOutputMode = mode;
             _dirty = true;

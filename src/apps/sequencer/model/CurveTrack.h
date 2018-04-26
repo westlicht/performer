@@ -20,7 +20,9 @@ public:
     // playMode
 
     Types::PlayMode playMode() const { return _playMode; }
-    void setPlayMode(Types::PlayMode playMode) { _playMode = playMode; }
+    void setPlayMode(Types::PlayMode playMode) {
+        _playMode = ModelUtils::clampedEnum(playMode);
+    }
 
     void editPlayMode(int value, bool shift) {
         setPlayMode(ModelUtils::adjustedEnum(playMode(), value));
@@ -33,7 +35,9 @@ public:
     // fillMode
 
     Types::FillMode fillMode() const { return _fillMode; }
-    void setFillMode(Types::FillMode fillMode) { _fillMode = fillMode; }
+    void setFillMode(Types::FillMode fillMode) {
+        _fillMode = ModelUtils::clampedEnum(fillMode);
+    }
 
     void editFillMode(int value, bool shift) {
         setFillMode(ModelUtils::adjustedEnum(fillMode(), value));

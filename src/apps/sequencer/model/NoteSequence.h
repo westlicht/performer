@@ -248,7 +248,7 @@ public:
 
     Types::RunMode runMode() const { return _runMode; }
     void setRunMode(Types::RunMode runMode) {
-        _runMode = runMode;
+        _runMode = ModelUtils::clampedEnum(runMode);
     }
 
     void editRunMode(int value, bool shift) {

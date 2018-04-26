@@ -20,7 +20,9 @@ public:
     // playMode
 
     Types::PlayMode playMode() const { return _playMode; }
-    void setPlayMode(Types::PlayMode playMode) { _playMode = playMode; }
+    void setPlayMode(Types::PlayMode playMode) {
+        _playMode = ModelUtils::clampedEnum(playMode);
+    }
 
     void editPlayMode(int value, bool shift) {
         setPlayMode(ModelUtils::adjustedEnum(playMode(), value));
@@ -33,7 +35,9 @@ public:
     // fillMode
 
     Types::FillMode fillMode() const { return _fillMode; }
-    void setFillMode(Types::FillMode fillMode) { _fillMode = fillMode; }
+    void setFillMode(Types::FillMode fillMode) {
+        _fillMode = ModelUtils::clampedEnum(fillMode);
+    }
 
     void editFillMode(int value, bool shift) {
         setFillMode(ModelUtils::adjustedEnum(fillMode(), value));
@@ -46,7 +50,9 @@ public:
     // slideTime
 
     int slideTime() const { return _slideTime; }
-    void setSlideTime(int slideTime) { _slideTime = clamp(slideTime, 0, 100); }
+    void setSlideTime(int slideTime) {
+        _slideTime = clamp(slideTime, 0, 100);
+    }
 
     void editSlideTime(int value, bool shift) {
         setSlideTime(ModelUtils::adjustedByStep(slideTime(), value, 5, !shift));
@@ -59,7 +65,9 @@ public:
     // octave
 
     int octave() const { return _octave; }
-    void setOctave(int octave) { _octave = clamp(octave, -10, 10); }
+    void setOctave(int octave) {
+        _octave = clamp(octave, -10, 10);
+    }
 
     void editOctave(int value, bool shift) {
         setOctave(octave() + value);
@@ -72,7 +80,9 @@ public:
     // transpose
 
     int transpose() const { return _transpose; }
-    void setTranspose(int transpose) { _transpose = clamp(transpose, -100, 100); }
+    void setTranspose(int transpose) {
+        _transpose = clamp(transpose, -100, 100);
+    }
 
     void editTranspose(int value, bool shift) {
         setTranspose(transpose() + value);
@@ -85,7 +95,9 @@ public:
     // rotate
 
     int rotate() const { return _rotate; }
-    void setRotate(int rotate) { _rotate = clamp(rotate, -64, 64); }
+    void setRotate(int rotate) {
+        _rotate = clamp(rotate, -64, 64);
+    }
 
     void editRotate(int value, bool shift) {
         setRotate(rotate() + value);

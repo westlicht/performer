@@ -97,7 +97,7 @@ public:
 
     Types::VoltageRange range() const { return _range; }
     void setRange(Types::VoltageRange range) {
-        _range = range;
+        _range = ModelUtils::clampedEnum(range);
     }
 
     void editRange(int value, bool shift) {
@@ -146,7 +146,7 @@ public:
 
     Types::RunMode runMode() const { return _runMode; }
     void setRunMode(Types::RunMode runMode) {
-        _runMode = runMode;
+        _runMode = ModelUtils::clampedEnum(runMode);
     }
 
     void editRunMode(int value, bool shift) {

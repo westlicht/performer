@@ -56,6 +56,7 @@ public:
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) {
+        mode = ModelUtils::clampedEnum(mode);
         if (mode != _mode) {
             _mode = mode;
             clearItems();
@@ -73,7 +74,9 @@ public:
     // size
 
     int size() const { return _size; }
-    void setSize(int size) { _size = clamp(size, _mode == Mode::Note ? 1 : 2, CONFIG_USER_SCALE_SIZE); }
+    void setSize(int size) {
+        _size = clamp(size, _mode == Mode::Note ? 1 : 2, CONFIG_USER_SCALE_SIZE);
+    }
 
     void editSize(int value, bool shift) {
         setSize(size() + value);
