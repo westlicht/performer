@@ -10,9 +10,78 @@
 enum class Function {
     CvIn    = 0,
     CvOut   = 1,
+    Midi    = 2,
 };
 
-static const char *functionNames[] = { "CV IN", "CV OUT", nullptr, nullptr, nullptr };
+static const char *functionNames[] = { "CV IN", "CV OUT", "MIDI", nullptr, nullptr };
+
+static void formatMidiPort(StringBuilder &str, MidiPort port) {
+    switch (port) {
+    case MidiPort::Midi:
+        str("MIDI");
+        break;
+    case MidiPort::UsbMidi:
+        str("USB MIDI");
+        break;
+    }
+}
+
+static void formatMidiMessage(StringBuilder &str1, StringBuilder &str2, const MidiMessage &msg) {
+    if (msg.isChannelMessage()) {
+        switch (msg.channelMessage()) {
+        case MidiMessage::NoteOff:
+            str1("NOTE OFF");
+            str2("CH=%d NOTE=%d VEL=%d", msg.channel(), msg.note(), msg.velocity());
+            return;
+        case MidiMessage::NoteOn:
+            str1("NOTE ON");
+            str2("CH=%d NOTE=%d VEL=%d", msg.channel(), msg.note(), msg.velocity());
+            return;
+        case MidiMessage::KeyPressure:
+            str1("KEY PRESSURE");
+            str2("CH=%d NOTE=%d PRE=%d", msg.channel(), msg.note(), msg.keyPressure());
+            return;
+        case MidiMessage::ControlChange:
+            str1("CONTROL CHANGE");
+            str2("CH=%d NUM=%d VAL=%d", msg.channel(), msg.controlNumber(), msg.controlValue());
+            return;
+        case MidiMessage::ProgramChange:
+            str1("PROGRAM CHANGE");
+            str2("CH=%d NUM=%d", msg.channel(), msg.programNumber());
+            return;
+        case MidiMessage::ChannelPressure:
+            str1("CHANNEL PRESSURE");
+            str2("CH=%d PRE=%d", msg.channel(), msg.channelPressure());
+            return;
+        case MidiMessage::PitchBend:
+            str1("PITCH BEND");
+            str2("CH=%d VAL=%d", msg.channel(), msg.pitchBend());
+            return;
+        }
+    } else if (msg.isSystemMessage()) {
+        switch (msg.systemMessage()) {
+        case MidiMessage::SystemExclusive:
+            str1("SYSEX");
+            return;
+        case MidiMessage::TimeCode:
+            str1("TIME CODE");
+            str2("DATA=%02x", msg.data0());
+            return;
+        case MidiMessage::SongPosition:
+            str1("SONG POSITION");
+            str2("POS=%d", msg.songPosition());
+            return;
+        case MidiMessage::SongSelect:
+            str1("SONG SELECT");
+            str2("NUM=%d", msg.songNumber());
+            return;
+        case MidiMessage::TuneRequest:
+            str1("TUNE REQUEST");
+            return;
+        default: break;
+        }
+    }
+}
 
 
 MonitorPage::MonitorPage(PageManager &manager, PageContext &context) :
@@ -36,8 +105,15 @@ void MonitorPage::draw(Canvas &canvas) {
     canvas.setColor(0xf);
 
     switch (_mode) {
-    case Mode::CvIn: drawCvIn(canvas); break;
-    case Mode::CvOut: drawCvOut(canvas); break;
+    case Mode::CvIn:
+        drawCvIn(canvas);
+        break;
+    case Mode::CvOut:
+        drawCvOut(canvas);
+        break;
+    case Mode::Midi:
+        drawMidi(canvas);
+        break;
     }
 }
 
@@ -59,11 +135,20 @@ void MonitorPage::keyPress(KeyPressEvent &event) {
         case Function::CvOut:
             _mode = Mode::CvOut;
             break;
+        case Function::Midi:
+            _mode = Mode::Midi;
+            break;
         }
     }
 }
 
 void MonitorPage::encoder(EncoderEvent &event) {
+}
+
+void MonitorPage::midi(MidiEvent &event) {
+    _lastMidiMessage = event.message();
+    _lastMidiMessagePort = event.port();
+    _lastMidiMessageTicks = os::ticks();
 }
 
 void MonitorPage::drawCvIn(Canvas &canvas) {
@@ -94,7 +179,7 @@ void MonitorPage::drawCvOut(Canvas &canvas) {
 
     for (size_t i = 0; i < CvOutput::Channels; ++i) {
         int x = (i % 4) * w;
-        int y = 24 + (i / 4) * 20;
+        int y = 20 + (i / 4) * 20;
 
         str.reset();
         str("CV%d", i + 1);
@@ -103,5 +188,22 @@ void MonitorPage::drawCvOut(Canvas &canvas) {
         str.reset();
         str("%.2fV", _engine.cvOutput().channel(i));
         canvas.drawTextCentered(x, y, w, h, str);
+    }
+}
+
+void MonitorPage::drawMidi(Canvas &canvas) {
+
+    if (os::ticks() - _lastMidiMessageTicks < os::time::ms(1000)) {
+        FixedStringBuilder<32> str1;
+
+        formatMidiPort(str1, _lastMidiMessagePort);
+        canvas.drawTextCentered(0, 24 - 8, Width, 16, str1);
+
+        str1.reset();
+        FixedStringBuilder<32> str2;
+
+        formatMidiMessage(str1, str2, _lastMidiMessage);
+        canvas.drawTextCentered(0, 32 - 8, Width, 16, str1);
+        canvas.drawTextCentered(0, 40 - 8, Width, 16, str2);
     }
 }
