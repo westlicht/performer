@@ -1,5 +1,6 @@
 #include "QuickEditPage.h"
 
+#include "ui/LedPainter.h"
 #include "ui/painters/WindowPainter.h"
 
 #include "core/utils/StringBuilder.h"
@@ -39,6 +40,8 @@ void QuickEditPage::draw(Canvas &canvas) {
 }
 
 void QuickEditPage::updateLeds(Leds &leds) {
+    LedPainter::unmaskSteps(leds);
+    LedPainter::drawStepIndex(leds, _listModel->indexed(_row));
 }
 
 void QuickEditPage::keyDown(KeyEvent &event) {
@@ -67,6 +70,8 @@ void QuickEditPage::keyPress(KeyPressEvent &event) {
         _listModel->edit(_row, 1, -1, key.shiftModifier());
     } else if (key.isRight()) {
         _listModel->edit(_row, 1, 1, key.shiftModifier());
+    } else if (key.isStep()) {
+        _listModel->setIndexed(_row, key.step());
     }
 }
 

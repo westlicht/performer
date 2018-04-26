@@ -44,27 +44,11 @@ void NoteSequencePage::draw(Canvas &canvas) {
 }
 
 void NoteSequencePage::updateLeds(Leds &leds) {
-    const auto &sequence = _project.selectedNoteSequence();
-
-    switch (selectedRow()) {
-    case NoteSequenceListModel::Scale:
-        LedPainter::drawStepIndex(leds, sequence.scale());
-        break;
-    case NoteSequenceListModel::Divisor:
-        LedPainter::drawStepIndex(leds, sequence.indexedDivisor());
-        break;
-    case NoteSequenceListModel::FirstStep:
-        LedPainter::drawStepIndex(leds, sequence.firstStep());
-        break;
-    case NoteSequenceListModel::LastStep:
-        LedPainter::drawStepIndex(leds, sequence.lastStep());
-        break;
-    }
+    ListPage::updateLeds(leds);
 }
 
 void NoteSequencePage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
-    auto &sequence = _project.selectedNoteSequence();
 
     if (key.isContextMenu()) {
         contextShow();
@@ -74,19 +58,6 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
 
     if (key.pageModifier()) {
         return;
-    }
-
-    if (key.isStep()) {
-        int step = key.step();
-        switch (selectedRow()) {
-        case NoteSequenceListModel::Scale:
-            sequence.setScale(step);
-            break;
-        case NoteSequenceListModel::Divisor:
-            sequence.setIndexedDivisor(step);
-            break;
-        }
-        event.consume();
     }
 
     if (!event.consumed()) {
@@ -147,6 +118,7 @@ void NoteSequencePage::pasteSequence() {
 }
 
 void NoteSequencePage::duplicateSequence() {
+    // TODO
     // _project.selectedNoteSequence().duplicate();
     showMessage("SEQUENCE DUPLICATED");
 }

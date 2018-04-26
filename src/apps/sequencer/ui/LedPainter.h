@@ -23,4 +23,6 @@ public:
 
     static void drawMode(Leds &leds, int index, int count);
     static void drawValue(Leds &leds, int index, int count);
+
+    static void unmaskSteps(Leds &leds);
 };

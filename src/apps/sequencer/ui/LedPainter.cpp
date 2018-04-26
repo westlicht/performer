@@ -95,3 +95,9 @@ void LedPainter::drawValue(Leds &leds, int index, int count) {
         leds.set(MatrixMap::fromStep(i + 8), i < count, i == index);
     }
 }
+
+void LedPainter::unmaskSteps(Leds &leds) {
+    for (int i = 0; i < 16; ++i) {
+        leds.unmask(MatrixMap::fromStep(i));
+    }
+}

@@ -1,5 +1,6 @@
 #include "ListPage.h"
 
+#include "ui/LedPainter.h"
 #include "ui/painters/WindowPainter.h"
 
 #include "core/math/Math.h"
@@ -59,6 +60,7 @@ void ListPage::draw(Canvas &canvas) {
 }
 
 void ListPage::updateLeds(Leds &leds) {
+    LedPainter::drawStepIndex(leds,_listModel->indexed(_selectedRow));
 }
 
 void ListPage::keyPress(KeyPressEvent &event) {
@@ -68,28 +70,27 @@ void ListPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-
-    switch (key.code()) {
-    case Key::Left:
+    if (key.isLeft()) {
         if (_edit) {
             _listModel->edit(_selectedRow, 1, -1, _keyState[Key::Shift]);
         } else {
             setSelectedRow(selectedRow() - 1);
         }
         event.consume();
-        break;
-    case Key::Right:
+    }
+    else if (key.isRight()) {
         if (_edit) {
             _listModel->edit(_selectedRow, 1, 1, _keyState[Key::Shift]);
         } else {
             setSelectedRow(selectedRow() + 1);
         }
         event.consume();
-        break;
-    case Key::Encoder:
+    } else if (key.isEncoder()) {
         _edit = !_edit;
         event.consume();
-        break;
+    } else if (key.isStep()) {
+        _listModel->setIndexed(_selectedRow, key.step());
+        event.consume();
     }
 }
 

@@ -49,6 +49,14 @@ public:
         }
     }
 
+    virtual int indexed(int row) const override {
+        return indexedValue(Item(row));
+    }
+
+    virtual void setIndexed(int row, int index) override {
+        setIndexedValue(Item(row), index);
+    }
+
 private:
     static const char *itemName(Item item) {
         switch (item) {
@@ -119,6 +127,49 @@ private:
         case LastStep:
             _sequence->editLastStep(value, shift);
             break;
+        case Last:
+            break;
+        }
+    }
+
+    int indexedValue(Item item) const {
+        switch (item) {
+        case Scale:
+            return _sequence->scale();
+        case RootNote:
+            return _sequence->rootNote();
+        case Divisor:
+            return _sequence->indexedDivisor();
+        case ResetMeasure:
+            return _sequence->resetMeasure();
+        case RunMode:
+            return int(_sequence->runMode());
+        case FirstStep:
+            return _sequence->firstStep();
+        case LastStep:
+            return _sequence->lastStep();
+        case Last:
+            break;
+        }
+        return -1;
+    }
+
+    void setIndexedValue(Item item, int index) {
+        switch (item) {
+        case Scale:
+            return _sequence->setScale(index);
+        case RootNote:
+            return _sequence->setRootNote(index);
+        case Divisor:
+            return _sequence->setIndexedDivisor(index);
+        case ResetMeasure:
+            return _sequence->setResetMeasure(index);
+        case RunMode:
+            return _sequence->setRunMode(Types::RunMode(index));
+        case FirstStep:
+            return _sequence->setFirstStep(index);
+        case LastStep:
+            return _sequence->setLastStep(index);
         case Last:
             break;
         }
