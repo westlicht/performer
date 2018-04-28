@@ -70,15 +70,22 @@ public:
             if (_mode == Mode::Immediate) {
                 _selected.reset();
                 _mode = Mode::Persist;
-                _first = stepIndex;
+                _first = -1;
             }
 
             int count = event.count();
 
             if (count == 1) {
-                _selected[stepIndex] = !_selected[stepIndex];
-                if (_first == stepIndex) {
-                    _first = firstSetIndex();
+                if (_selected[stepIndex]) {
+                    _selected[stepIndex] = false;
+                    if (_first == stepIndex) {
+                        _first = firstSetIndex();
+                    }
+                } else {
+                    _selected[stepIndex] = true;
+                    if (_first == -1) {
+                        _first = stepIndex;
+                    }
                 }
             } else if (count == 2) {
                 int otherStep = otherPressedStepKey(key.state(), key.step());
