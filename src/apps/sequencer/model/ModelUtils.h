@@ -62,31 +62,23 @@ static void copySteps(
     const std::array<Step, N> &src, const std::bitset<N> &srcSelected,
     std::array<Step, N> &dst, const std::bitset<N> &dstSelected
 ) {
-    if (srcSelected.none() || dstSelected.none()) {
-        return;
-    }
-
-    size_t srcFirstIndex = 0;
-    for (size_t srcIndex = 0; srcIndex < dst.size(); ++srcIndex) {
-        if (srcSelected[srcIndex]) {
-            srcFirstIndex = srcIndex;
-            break;
+    auto nextSelected = [] (const std::bitset<N> &selected, int index) {
+        if (selected.none()) {
+            return (index + 1) % int(N);
+        } else {
+            do {
+                index = (index + 1) % int(N);
+            } while (!selected[index]);
+            return index;
         }
-    }
+    };
 
-    bool copy = false;
-    for (size_t dstIndex = 0; dstIndex < dst.size(); ++dstIndex) {
-        size_t srcIndex;
-        if (dstSelected[dstIndex]) {
-            copy = true;
-            srcIndex = srcFirstIndex;
-        }
-        if (copy) {
+    int srcIndex = -1;
+
+    for (size_t dstIndex = 0; dstIndex < N; ++dstIndex) {
+        if (dstSelected.none() || dstSelected[dstIndex]) {
+            srcIndex = nextSelected(srcSelected, srcIndex);
             dst[dstIndex] = src[srcIndex];
-            ++srcIndex;
-            if (srcIndex >= N) {
-                break;
-            }
         }
     }
 }
