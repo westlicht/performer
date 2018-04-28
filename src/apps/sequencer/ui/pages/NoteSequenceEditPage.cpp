@@ -154,6 +154,19 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
             break;
         }
+        case Layer::NoteVariationRange: {
+            canvas.setColor(0xf);
+            FixedStringBuilder<8> str("%d", step.noteVariationRange());
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
+            break;
+        }
+        case Layer::NoteVariationProbability:
+            SequencePainter::drawProbability(
+                canvas,
+                x + 2, y + 18, stepWidth - 4, 2,
+                step.noteVariationProbability(), NoteSequence::NoteVariationProbability::Max
+            );
+            break;
         case Layer::Slide:
             SequencePainter::drawSlide(
                 canvas,
@@ -254,8 +267,8 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
             _layer = _layer == Layer::Length ? Layer::LengthVariationRange : (_layer == Layer::LengthVariationRange ? Layer::LengthVariationProbability : Layer::Length);
             break;
         case Function::Note:
-            // _layer = _layer == Layer::Note ? Layer::NoteVariation : (_layer == Layer::NoteVariation ? Layer::NoteSlide : Layer::Note);
-            _layer = _layer == Layer::Note ? Layer::Slide : Layer::Note;
+            _layer = _layer == Layer::Note ? Layer::NoteVariationRange : (_layer == Layer::NoteVariationRange ? Layer::NoteVariationProbability : (_layer == Layer::NoteVariationProbability ? Layer::Slide : Layer::Note));
+            // _layer = _layer == Layer::Note ? Layer::Slide : Layer::Note;
             break;
         case Function::Condition:
             // _layer = Layer::TrigCondition;
@@ -355,8 +368,17 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
                 updateIdleOutput();
                 break;
             case Layer::NoteVariationRange:
+                step.setNoteVariationRange(
+                    setToFirst ? firstStep.noteVariationRange() :
+                    NoteSequence::NoteVariationRange::clamp(step.noteVariationRange() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1))
+                );
+                updateIdleOutput();
                 break;
             case Layer::NoteVariationProbability:
+                step.setNoteVariationProbability(
+                    setToFirst ? firstStep.noteVariationProbability() :
+                    NoteSequence::NoteVariationProbability::clamp(step.noteVariationProbability() + event.value())
+                );
                 break;
             case Layer::Slide:
                 step.setSlide(
@@ -494,7 +516,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
             step.lengthVariationProbability(), NoteSequence::LengthVariationProbability::Max
         );
         str.reset();
-        str("%.1f%%", 100.f * (step.lengthVariationProbability()) / NoteSequence::LengthVariationProbability::Max);
+        str("%.1f%%", 100.f * step.lengthVariationProbability() / NoteSequence::LengthVariationProbability::Max);
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
@@ -504,6 +526,24 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         canvas.setFont(Font::Small);
         canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
         break;
+    case Layer::NoteVariationRange:
+        str.reset();
+        str("%d", step.noteVariationRange());
+        canvas.setFont(Font::Small);
+        canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
+        break;
+    case Layer::NoteVariationProbability:
+        SequencePainter::drawProbability(
+            canvas,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
+            step.noteVariationProbability(), NoteSequence::NoteVariationProbability::Max
+        );
+        str.reset();
+        str("%.1f%%", 100.f * step.noteVariationProbability() / NoteSequence::NoteVariationProbability::Max);
+        canvas.setColor(0xf);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+
     default:
         break;
     }

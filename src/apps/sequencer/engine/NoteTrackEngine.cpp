@@ -32,7 +32,7 @@ static int evalStepLength(const NoteSequence::Step &step, int lengthOffset) {
     int length = NoteSequence::Length::clamp(step.length() + lengthOffset) + 1;
     if (step.lengthVariationProbability() > 0) {
         if (int(rng.nextRange(NoteSequence::LengthVariationProbability::Range)) < step.lengthVariationProbability()) {
-            int offset = step.lengthVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.lengthVariationRange()));
+            int offset = step.lengthVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.lengthVariationRange()) + 1);
             if (step.lengthVariationRange() < 0) {
                 offset = -offset;
             }
@@ -42,8 +42,18 @@ static int evalStepLength(const NoteSequence::Step &step, int lengthOffset) {
     return length;
 }
 
+// evaluate note voltage
 static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, int rootNote, int octave, int transpose) {
     int note = step.note() + (scale.isChromatic() ? rootNote : 0) + octave * scale.notesPerOctave() + transpose;
+    if (step.noteVariationProbability() > 0) {
+        if (int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) < step.noteVariationProbability()) {
+            int offset =step.noteVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.noteVariationRange()) + 1);
+            if (step.noteVariationRange() < 0) {
+                offset = -offset;
+            }
+            note = NoteSequence::Note::clamp(note + offset);
+        }
+    }
     return scale.noteVolts(note);
 }
 

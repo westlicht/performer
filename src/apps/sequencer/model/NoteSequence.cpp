@@ -89,6 +89,8 @@ void NoteSequence::Step::clear() {
     setLengthVariationRange(0);
     setLengthVariationProbability(0);
     setNote(0);
+    setNoteVariationRange(0);
+    setNoteVariationProbability(NoteVariationProbability::Max);
 }
 
 void NoteSequence::Step::write(WriteContext &context) const {
