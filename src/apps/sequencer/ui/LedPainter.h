@@ -20,6 +20,7 @@ public:
     static void drawSelectedPatterns(Leds &leds, uint16_t activePatterns, uint16_t requestedPatterns);
 
     static void drawMutes(Leds &leds, uint8_t activeMutes, uint8_t requestedMutes);
+    static void drawFills(Leds &leds, uint8_t activeFills);
 
     static void drawMode(Leds &leds, int index, int count);
     static void drawValue(Leds &leds, int index, int count);

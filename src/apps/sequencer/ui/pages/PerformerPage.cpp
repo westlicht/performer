@@ -11,7 +11,7 @@
 
 enum class Function {
     Latch   = 0,
-    Mute    = 1,
+    Sync    = 1,
     Unmute  = 2,
     Fill    = 3,
     Cancel  = 4
@@ -32,7 +32,7 @@ void PerformerPage::exit() {
 void PerformerPage::draw(Canvas &canvas) {
     const auto &playState = _project.playState();
     bool hasCancel = playState.hasSyncedRequests() || playState.hasLatchedRequests();
-    const char *functionNames[] = { "LATCH", "MUTE", "UNMUTE", "FILL", hasCancel ? "CANCEL" : nullptr };
+    const char *functionNames[] = { "LATCH", "SYNC", "UNMUTE", "FILL", hasCancel ? "CANCEL" : nullptr };
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PERFORMER");
@@ -88,14 +88,17 @@ void PerformerPage::updateLeds(Leds &leds) {
 
     uint8_t activeMutes = 0;
     uint8_t requestedMutes = 0;
+    uint8_t activeFills = 0;
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &trackState = playState.trackState(trackIndex);
         activeMutes |= trackState.mute() ? (1<<trackIndex) : 0;
         requestedMutes |= trackState.requestedMute() ? (1<<trackIndex) : 0;
+        activeFills |= trackState.fill() ? (1<<trackIndex) : 0;
     }
 
     LedPainter::drawMutes(leds, activeMutes, requestedMutes);
+    LedPainter::drawFills(leds, activeFills);
 }
 
 void PerformerPage::keyDown(KeyEvent &event) {
@@ -115,7 +118,7 @@ void PerformerPage::keyDown(KeyEvent &event) {
         event.consume();
     }
 
-    if (key.isTrackSelect()) {
+    if (key.isStep()) {
         updateFills();
         event.consume();
     }
@@ -144,7 +147,7 @@ void PerformerPage::keyUp(KeyEvent &event) {
         event.consume();
     }
 
-    if (key.isTrackSelect()) {
+    if (key.isStep()) {
         updateFills();
         event.consume();
     }
@@ -163,16 +166,16 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
     }
 
     // use immediate by default
-    // use synced when SHIFT is pressed
     // use latched when LATCH is pressed
-    PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (key.shiftModifier() ? PlayState::Synced : PlayState::Immediate);
+    // use synced when SYNC is pressed
+    bool syncPressed = _keyState[MatrixMap::fromFunction(int(Function::Sync))];
+    PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (syncPressed ? PlayState::Synced : PlayState::Immediate);
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Latch:
             break;
-        case Function::Mute:
-            playState.muteAll(executeType);
+        case Function::Sync:
             break;
         case Function::Unmute:
             playState.unmuteAll(executeType);
@@ -187,15 +190,11 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.isStep()) {
-
-        if (key.step() < 8) {
-            int track = key.step();
-            playState.toggleMuteTrack(track, executeType);
-        } else {
-            int track = key.step() - 8;
-            playState.soloTrack(track, executeType);
-        }
+    if (key.isTrackSelect()) {
+        playState.toggleMuteTrack(key.track(), executeType);
+        event.consume();
+    } else if (key.isStep() && key.step() < 8) {
+        playState.soloTrack(key.step(), executeType);
         event.consume();
     }
 }
@@ -205,10 +204,10 @@ void PerformerPage::encoder(EncoderEvent &event) {
 
 void PerformerPage::updateFills() {
     auto &playState = _project.playState();
-    bool globalFill = _keyState[MatrixMap::fromFunction(int(Function::Fill))];
+    bool fillPressed = _keyState[MatrixMap::fromFunction(int(Function::Fill))];
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        bool trackFill = _keyState[MatrixMap::fromTrack(trackIndex)];
-        playState.fillTrack(trackIndex, trackFill || globalFill);
+        bool trackFill = _keyState[MatrixMap::fromStep(8 + trackIndex)];
+        playState.fillTrack(trackIndex, trackFill || fillPressed);
     }
 }
