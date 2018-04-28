@@ -20,5 +20,4 @@ void BasePage::showMessage(const char *text, uint32_t duration) {
 void BasePage::showContextMenu(const ContextMenu &contextMenu) {
     _context.contextMenu = contextMenu;
     _manager.pages().contextMenu.show(_context.contextMenu, _context.contextMenu.actionCallback());
-
 }

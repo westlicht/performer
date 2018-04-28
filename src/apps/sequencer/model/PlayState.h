@@ -8,6 +8,8 @@
 
 #include <cstdint>
 
+class Project;
+
 class PlayState {
 public:
     //----------------------------------------
@@ -129,6 +131,8 @@ public:
     // Methods
     //----------------------------------------
 
+    PlayState(Project &project);
+
     // mutes
 
     void muteTrack(int track, ExecuteType executeType = Immediate);
@@ -153,6 +157,14 @@ public:
     void selectTrackPattern(int track, int pattern, ExecuteType executeType = Immediate);
     void selectPattern(int pattern, ExecuteType executeType = Immediate);
 
+    // snapshots
+
+    void createSnapshot();
+    void revertSnapshot(int targetPattern = -1);
+    void commitSnapshot(int targetPattern = -1);
+    bool snapshotActive() const;
+
+    // requests
 
     void cancelMuteRequests();
     void cancelPatternRequests();
@@ -180,11 +192,21 @@ private:
     void clearSyncedRequests() { _hasSyncedRequests = false; }
     void clearLatchedRequests() { _hasLatchedRequests = false; _executeLatchedRequests = false; }
 
+    Project &_project;
+
     std::array<TrackState, CONFIG_TRACK_COUNT> _trackStates;
     bool _executeLatchedRequests;
     bool _hasImmediateRequests;
     bool _hasSyncedRequests;
     bool _hasLatchedRequests;
+
+    static constexpr int SnapshotPatternIndex = CONFIG_PATTERN_COUNT;
+
+    struct {
+        bool active;
+        uint8_t lastSelectedPatternIndex;
+        uint8_t lastTrackPatternIndex[CONFIG_TRACK_COUNT];
+    } _snapshot;
 
     friend class Engine;
 };

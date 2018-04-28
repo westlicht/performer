@@ -38,6 +38,7 @@
 
 // Model
 #define CONFIG_PATTERN_COUNT            16
+#define CONFIG_SNAPSHOT_COUNT           1
 #define CONFIG_TRACK_COUNT              8
 #define CONFIG_STEP_COUNT               64
 #define CONFIG_ROUTE_COUNT              16

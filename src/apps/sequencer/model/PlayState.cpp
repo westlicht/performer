@@ -1,5 +1,7 @@
 #include "PlayState.h"
 
+#include "Project.h"
+
 void PlayState::TrackState::clear() {
     _state = 0;
     _pattern = 0;
@@ -20,6 +22,11 @@ void PlayState::TrackState::read(ReadContext &context) {
     setMute(muteValue);
     reader.read(_pattern);
 }
+
+PlayState::PlayState(Project &project) :
+    _project(project)
+{}
+
 
 void PlayState::muteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
@@ -118,6 +125,60 @@ void PlayState::selectPattern(int pattern, ExecuteType executeType) {
     }
 }
 
+void PlayState::createSnapshot() {
+    if (_snapshot.active) {
+        return;
+    }
+
+    cancelPatternRequests();
+
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        int trackPatternIndex = trackState(trackIndex).pattern();
+        _snapshot.lastTrackPatternIndex[trackIndex] = trackPatternIndex;
+        _project.track(trackIndex).copyPattern(trackPatternIndex, SnapshotPatternIndex);
+        selectTrackPattern(trackIndex, SnapshotPatternIndex);
+    }
+
+    _snapshot.lastSelectedPatternIndex = _project.selectedPatternIndex();
+    _project.setSelectedPatternIndexUnsafe(SnapshotPatternIndex);
+
+    _snapshot.active = true;
+}
+
+void PlayState::revertSnapshot(int targetPattern) {
+    if (!_snapshot.active) {
+        return;
+    }
+
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        selectTrackPattern(trackIndex, targetPattern >= 0 ? targetPattern : _snapshot.lastTrackPatternIndex[trackIndex]);
+    }
+
+    _project.setSelectedPatternIndex(targetPattern >= 0 ? targetPattern : _snapshot.lastSelectedPatternIndex);
+
+    _snapshot.active = false;
+}
+
+void PlayState::commitSnapshot(int targetPattern) {
+    if (!_snapshot.active) {
+        return;
+    }
+
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        int trackPatternIndex = targetPattern >= 0 ? targetPattern : _snapshot.lastTrackPatternIndex[trackIndex];
+        _project.track(trackIndex).copyPattern(SnapshotPatternIndex, trackPatternIndex);
+        selectTrackPattern(trackIndex, trackPatternIndex);
+    }
+
+    _project.setSelectedPatternIndex(targetPattern >= 0 ? targetPattern : _snapshot.lastSelectedPatternIndex);
+
+    _snapshot.active = false;
+}
+
+bool PlayState::snapshotActive() const {
+    return _snapshot.active;
+}
+
 void PlayState::cancelMuteRequests() {
     for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
         auto &trackState = _trackStates[track];
@@ -143,6 +204,8 @@ void PlayState::clear() {
     _hasImmediateRequests = false;
     _hasSyncedRequests = false;
     _hasLatchedRequests = false;
+
+    _snapshot.active = false;
 }
 
 void PlayState::write(WriteContext &context) const {

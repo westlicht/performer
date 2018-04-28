@@ -4,6 +4,7 @@
 #include "core/fs/FileReader.h"
 
 Project::Project() :
+    _playState(*this),
     _routing(*this)
 {
     for (size_t i = 0; i < _tracks.size(); ++i) {

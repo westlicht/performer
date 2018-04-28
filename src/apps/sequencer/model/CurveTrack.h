@@ -11,7 +11,7 @@ public:
     // Types
     //----------------------------------------
 
-    typedef std::array<CurveSequence, CONFIG_PATTERN_COUNT> CurveSequenceArray;
+    typedef std::array<CurveSequence, CONFIG_PATTERN_COUNT + CONFIG_SNAPSHOT_COUNT> CurveSequenceArray;
 
     //----------------------------------------
     // Properties

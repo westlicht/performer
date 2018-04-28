@@ -33,4 +33,5 @@ private:
 
     bool _modal = false;
     bool _latching = false;
+    int8_t _snapshotTargetPattern = -1;
 };

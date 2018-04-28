@@ -201,6 +201,10 @@ public:
         _selectedPatternIndex = clamp(index, 0, CONFIG_PATTERN_COUNT - 1);
     }
 
+    void setSelectedPatternIndexUnsafe(int index) {
+        _selectedPatternIndex = index;
+    }
+
     bool isSelectedPattern(int index) const { return _selectedPatternIndex == index; }
 
     void editSelectedPatternIndex(int value, bool shift) {

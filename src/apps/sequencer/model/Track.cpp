@@ -22,6 +22,21 @@ void Track::clearPattern(int patternIndex) {
     }
 }
 
+void Track::copyPattern(int src, int dst) {
+    switch (_trackMode) {
+    case TrackMode::Note:
+        _track.note->sequence(dst) = _track.note->sequence(src);
+        break;
+    case TrackMode::Curve:
+        _track.curve->sequence(dst) = _track.curve->sequence(src);
+        break;
+    case TrackMode::MidiCv:
+        break;
+    case TrackMode::Last:
+        break;
+    }
+}
+
 void Track::gateOutputName(int index, StringBuilder &str) const {
     switch (_trackMode) {
     case TrackMode::Note:

@@ -71,13 +71,13 @@ void WindowPainter::drawClock(Canvas &canvas, const Engine &engine) {
     canvas.drawText(10, 8 - 2, FixedStringBuilder<8>("%.1f", engine.bpm()));
 }
 
-void WindowPainter::drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern) {
+void WindowPainter::drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern, bool snapshotActive) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
     canvas.drawText(40, 8 - 2, FixedStringBuilder<8>("T%d", track + 1));
-    canvas.drawText(56, 8 - 2, FixedStringBuilder<8>("P%d", playPattern + 1));
-    canvas.drawText(76, 8 - 2, FixedStringBuilder<8>("E%d", editPattern + 1));
+    canvas.drawText(56, 8 - 2, snapshotActive ? "S" : FixedStringBuilder<8>("P%d", playPattern + 1));
+    canvas.drawText(76, 8 - 2, snapshotActive ? "S" : FixedStringBuilder<8>("E%d", editPattern + 1));
 }
 
 void WindowPainter::drawActiveMode(Canvas &canvas, const char *mode) {
@@ -99,9 +99,10 @@ void WindowPainter::drawHeader(Canvas &canvas, const Model &model, const Engine 
     int track = project.selectedTrackIndex();
     int playPattern = project.playState().trackState(track).pattern();
     int editPattern = project.selectedPatternIndex();
+    int snapshotActive = project.playState().snapshotActive();
 
     drawClock(canvas, engine);
-    drawActiveState(canvas, track, playPattern, editPattern);
+    drawActiveState(canvas, track, playPattern, editPattern, snapshotActive);
     drawActiveMode(canvas, mode);
 
     canvas.setBlendMode(BlendMode::Set);

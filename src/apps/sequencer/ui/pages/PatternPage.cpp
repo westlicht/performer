@@ -10,9 +10,11 @@
 #include "core/utils/StringBuilder.h"
 
 enum class Function {
-    Latch   = 0,
-    Edit    = 1,
-    Cancel  = 4,
+    Latch       = 0,
+    Sync        = 1,
+    SnapRevert  = 2,
+    SnapCommit  = 3,
+    Cancel      = 4,
 };
 
 enum class ContextAction {
@@ -46,14 +48,20 @@ void PatternPage::exit() {
 void PatternPage::draw(Canvas &canvas) {
     const auto &playState = _project.playState();
     bool hasCancel = playState.hasSyncedRequests() || playState.hasLatchedRequests();
-    const char *functionNames[] = { "LATCH", "EDIT", nullptr, nullptr, hasCancel ? "CANCEL" : nullptr };
+    bool snapshotActive = playState.snapshotActive();
+    const char *functionNames[] = {
+        "LATCH",
+        "SYNC",
+        snapshotActive ? "REVERT" : "SNAP",
+        snapshotActive ? "COMMIT" : nullptr,
+        hasCancel ? "CANCEL" : nullptr
+    };
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
     WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
     constexpr int Border = 4;
-
 
     float syncMeasureFraction = _engine.syncMeasureFraction();
     bool hasRequested = false;
@@ -89,7 +97,7 @@ void PatternPage::draw(Canvas &canvas) {
         y += 8;
 
         canvas.setColor(trackSelected ? 0xf : 0x7);
-        canvas.drawTextCentered(x, y + 10, w, 8, FixedStringBuilder<8>("P%d", trackState.pattern() + 1));
+        canvas.drawTextCentered(x, y + 10, w, 8, snapshotActive ? "S" : FixedStringBuilder<8>("P%d", trackState.pattern() + 1));
 
         if (trackState.pattern() != trackState.requestedPattern()) {
             hasRequested = true;
@@ -105,7 +113,9 @@ void PatternPage::draw(Canvas &canvas) {
 void PatternPage::updateLeds(Leds &leds) {
     const auto &playState = _project.playState();
 
-    if (_keyState[MatrixMap::fromFunction(int(Function::Edit))]) {
+    if (playState.snapshotActive()) {
+        LedPainter::drawSelectedPattern(leds, _snapshotTargetPattern, _snapshotTargetPattern);
+    } else if (_keyState[Key::Shift]) {
         LedPainter::drawSelectedPattern(leds, _project.selectedPatternIndex(), _project.selectedPatternIndex());
     } else {
         uint16_t allActivePatterns = 0;
@@ -144,6 +154,11 @@ void PatternPage::keyDown(KeyEvent &event) {
         }
         event.consume();
     }
+
+    if (_project.playState().snapshotActive() && key.isStep()) {
+        _snapshotTargetPattern = key.step();
+        event.consume();
+    }
 }
 
 void PatternPage::keyUp(KeyEvent &event) {
@@ -165,13 +180,18 @@ void PatternPage::keyUp(KeyEvent &event) {
         }
         event.consume();
     }
+
+    if (_project.playState().snapshotActive() && key.isStep()) {
+        _snapshotTargetPattern = -1;
+        event.consume();
+    }
 }
 
 void PatternPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &playState = _project.playState();
 
-    if (key.isContextMenu()) {
+    if (key.isContextMenu() && !_modal) {
         contextShow();
         event.consume();
         return;
@@ -187,6 +207,17 @@ void PatternPage::keyPress(KeyPressEvent &event) {
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
+        case Function::SnapRevert:
+            if (playState.snapshotActive()) {
+                playState.revertSnapshot(_snapshotTargetPattern);
+            } else {
+                playState.createSnapshot();
+                _snapshotTargetPattern = -1;
+            }
+            break;
+        case Function::SnapCommit:
+            playState.commitSnapshot(_snapshotTargetPattern);
+            break;
         case Function::Cancel:
             playState.cancelPatternRequests();
             break;
@@ -199,29 +230,32 @@ void PatternPage::keyPress(KeyPressEvent &event) {
     if (key.isStep()) {
         int pattern = key.step();
 
-        if (_keyState[MatrixMap::fromFunction(int(Function::Edit))]) {
-            // select edit pattern
-            _project.setSelectedPatternIndex(pattern);
-        } else {
-            // select playing pattern
+        if (!playState.snapshotActive()) {
+            if (key.shiftModifier()) {
+                // select edit pattern
+                _project.setSelectedPatternIndex(pattern);
+            } else {
+                // select playing pattern
 
-            // use immediate by default
-            // use synced when SHIFT is pressed
-            // use latched when LATCH is pressed
-            PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (key.shiftModifier() ? PlayState::Synced : PlayState::Immediate);
+                // use immediate by default
+                // use latched when LATCH is pressed
+                // use synced when SYNC is pressed
+                bool syncPressed = _keyState[MatrixMap::fromFunction(int(Function::Sync))];
+                PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (syncPressed ? PlayState::Synced : PlayState::Immediate);
 
-            bool globalChange = true;
-            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                if (_keyState[MatrixMap::fromTrack(trackIndex)]) {
-                    playState.selectTrackPattern(trackIndex, pattern, executeType);
-                    globalChange = false;
+                bool globalChange = true;
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    if (_keyState[MatrixMap::fromTrack(trackIndex)]) {
+                        playState.selectTrackPattern(trackIndex, pattern, executeType);
+                        globalChange = false;
+                    }
+                }
+                if (globalChange) {
+                    playState.selectPattern(pattern, executeType);
+                    _project.setSelectedPatternIndex(pattern);
                 }
             }
-            if (globalChange) {
-                playState.selectPattern(pattern, executeType);
-            }
         }
-
         event.consume();
     }
 

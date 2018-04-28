@@ -19,7 +19,7 @@ public:
     static void drawFunctionKeys(Canvas &canvas, const char *names[], const KeyState &keyState);
 
     static void drawClock(Canvas &canvas, const Engine &engine);
-    static void drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern);
+    static void drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern, bool snapshotActive);
     static void drawActiveMode(Canvas &canvas, const char *mode);
     static void drawActiveFunction(Canvas &canvas, const char *function);
 

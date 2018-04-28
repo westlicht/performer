@@ -11,7 +11,7 @@ public:
     // Types
     //----------------------------------------
 
-    typedef std::array<NoteSequence, CONFIG_PATTERN_COUNT> NoteSequenceArray;
+    typedef std::array<NoteSequence, CONFIG_PATTERN_COUNT + CONFIG_SNAPSHOT_COUNT> NoteSequenceArray;
 
     //----------------------------------------
     // Properties
