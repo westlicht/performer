@@ -234,9 +234,10 @@ void Clock::outputConfigure(int divisor, int pulse) {
     _output.pulse = pulse;
 }
 
-void Clock::outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset) {
+void Clock::outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset, std::function<void(bool)> run) {
     _output.clock = clock;
     _output.reset = reset;
+    _output.run = run;
 }
 
 void Clock::outputMidi(std::function<void(uint8_t)> midi) {
@@ -281,22 +282,32 @@ void Clock::resetTicks() {
 void Clock::requestStart() {
     _requestStart = 1;
     outputMidiMessage(MidiMessage::Start);
+    outputRun(true);
 }
 
 void Clock::requestStop() {
     _requestStop = 1;
     outputMidiMessage(MidiMessage::Stop);
+    outputRun(false);
 }
 
 void Clock::requestResume() {
     _requestResume = 1;
     outputMidiMessage(MidiMessage::Continue);
+    outputRun(true);
 }
 
 void Clock::setupMasterTimer() {
+    _elapsedUs = 0;
     uint32_t us = (60 * 1000000) / (_masterBpm * _ppqn);
     _timer.setPeriod(us);
-    _timer.setHandler([&] () { outputTick(_tick); ++_tick; });
+    _timer.setHandler([&, us] () {
+        outputTick(_tick); ++_tick;
+        _elapsedUs += us;
+        if (_output.clock && _elapsedUs >= _output.nextClockOffUs) {
+            _output.clock(false);
+        }
+    });
 }
 
 void Clock::setupSlaveTimer() {
@@ -330,5 +341,11 @@ void Clock::outputTick(uint32_t tick) {
         } else if (tick % divisor == divisor - 1) {
             _output.clock(false);
         }
+    }
+}
+
+void Clock::outputRun(bool run) {
+    if (_output.run) {
+        _output.run(run);
     }
 }

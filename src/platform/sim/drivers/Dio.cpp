@@ -1,6 +1,7 @@
 #include "Dio.h"
 
 #include "sim/widgets/Button.h"
+#include "sim/widgets/Led.h"
 
 #include <functional>
 
@@ -58,8 +59,9 @@ Dio::Dio() :
         clockInput.set(false);
     }));
 
+    // clock input
     auto button = _simulator.window().createWidget<sim::Button>(
-        sim::Vector2i(600,100),
+        sim::Vector2i(600, 100),
         sim::Vector2i(20, 20),
         SDLK_F10
     );
@@ -69,13 +71,34 @@ Dio::Dio() :
         }
     });
 
+    // reset input
     button = _simulator.window().createWidget<sim::Button>(
-        sim::Vector2i(600,130),
+        sim::Vector2i(600, 130),
         sim::Vector2i(20, 20),
         SDLK_F11
     );
     button->setCallback([this] (bool pressed) {
         resetInput.set(pressed);
+    });
+
+    // clock output
+    auto led = _simulator.window().createWidget<sim::Led>(
+        sim::Vector2i(630, 100),
+        sim::Vector2i(20, 20),
+        sim::Color(0.f, 1.f)
+    );
+    clockOutput.setHandler([led] (bool value) {
+        led->color() = sim::Color(value ? 1.f : 0.f, 1.f);
+    });
+
+    // reset output
+    led = _simulator.window().createWidget<sim::Led>(
+        sim::Vector2i(630, 130),
+        sim::Vector2i(20, 20),
+        sim::Color(0.f, 1.f)
+    );
+    resetOutput.setHandler([led] (bool value) {
+        led->color() = sim::Color(value ? 1.f : 0.f, 1.f);
     });
 }
 

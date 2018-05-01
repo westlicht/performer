@@ -386,9 +386,24 @@ void Engine::initClockSources() {
             _clock.slaveTick(ClockSourceExternal);
         }
     });
+
+    // Handle reset or start/stop input
     _dio.resetInput.setHandler([&] (bool value) {
-        if (value) {
-            _clock.slaveReset(ClockSourceExternal);
+        switch (_model.project().clockSetup().clockInputMode()) {
+        case ClockSetup::ClockMode::Reset:
+            if (value) {
+                _clock.slaveReset(ClockSourceExternal);
+            }
+            break;
+        case ClockSetup::ClockMode::StartStop:
+            if (value) {
+                _clock.slaveStart(ClockSourceExternal);
+            } else {
+                _clock.slaveStop(ClockSourceExternal);
+            }
+            break;
+        case ClockSetup::ClockMode::Last:
+            break;
         }
     });
 
@@ -426,7 +441,16 @@ void Engine::initClockOutputs() {
             _dio.clockOutput.set(value);
         },
         [this] (bool value) {
-            _dio.resetOutput.set(value);
+            // if in reset mode
+            if (_model.project().clockSetup().clockOutputMode() == ClockSetup::ClockMode::Reset) {
+                _dio.resetOutput.set(value);
+            }
+        },
+        [this] (bool value) {
+            // if in start/stop mode
+            if (_model.project().clockSetup().clockOutputMode() == ClockSetup::ClockMode::StartStop) {
+                _dio.resetOutput.set(value);
+            }
         }
     );
 }
@@ -439,12 +463,19 @@ void Engine::updateClockSetup() {
     }
 
     // Configure clock slaves
-    _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputDivisor(), Clock::SlaveEnabled | Clock::SlaveFreeRunning);
+    _clock.slaveConfigure(
+        ClockSourceExternal,
+        clockSetup.clockInputDivisor(),
+        Clock::SlaveEnabled | (clockSetup.clockInputMode() == ClockSetup::ClockMode::Reset ? Clock::SlaveFreeRunning : 0)
+    );
     _clock.slaveConfigure(ClockSourceMidi, CONFIG_PPQN / 24, clockSetup.midiRx() ? Clock::SlaveEnabled : 0);
     _clock.slaveConfigure(ClockSourceUsbMidi, CONFIG_PPQN / 24, clockSetup.usbRx() ? Clock::SlaveEnabled : 0);
 
     // Configure clock outputs
     _clock.outputConfigure(clockSetup.clockOutputDivisor(), clockSetup.clockOutputPulse());
+
+    _dio.clockOutput.set(false);
+    _dio.resetOutput.set(clockSetup.clockOutputMode() == ClockSetup::ClockMode::StartStop ? _clock.isRunning() : false);
 
     clockSetup.clearDirty();
 }

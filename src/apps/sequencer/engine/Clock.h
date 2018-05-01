@@ -59,7 +59,7 @@ public:
 
     // Clock output
     void outputConfigure(int divisor, int pulse);
-    void outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset);
+    void outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset, std::function<void(bool)> run);
     void outputMidi(std::function<void(uint8_t)> midi);
 
     // Sequencer interface
@@ -79,6 +79,7 @@ private:
 
     void outputMidiMessage(uint8_t msg);
     void outputTick(uint32_t tick);
+    void outputRun(bool run);
 
     bool slaveEnabled(int slave) const { return _slaves[slave].flags & SlaveEnabled; }
 
@@ -103,6 +104,7 @@ private:
         uint32_t nextClockOffUs;
         std::function<void(bool)> clock;
         std::function<void(bool)> reset;
+        std::function<void(bool)> run;
         std::function<void(uint8_t)> midi;
     };
     Output _output;

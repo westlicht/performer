@@ -30,7 +30,20 @@ public:
     };
 
     struct Output {
-        void set(bool value) {}
+        void set(bool value) {
+            if (_handler) {
+                _handler(value);
+            }
+        }
+
+    private:
+        typedef std::function<void(bool)> Handler;
+
+        void setHandler(Handler handler) { _handler = handler; }
+
+        Handler _handler;
+
+        friend class Dio;
     };
 
     Dio();
