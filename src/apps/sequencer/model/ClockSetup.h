@@ -69,23 +69,31 @@ public:
         str(modeName(mode()));
     }
 
-    // clockInputPPQN
+    // clockInputDivisor
 
-    int clockInputPPQN() const { return _clockInputPPQN; }
-    void setClockInputPPQN(int clockInputPPQN) {
-        clockInputPPQN = clamp(clockInputPPQN, 1, 48);
-        if (clockInputPPQN != _clockInputPPQN) {
-            _clockInputPPQN = clockInputPPQN;
+    int clockInputDivisor() const { return _clockInputDivisor; }
+    void setClockInputDivisor(int clockInputDivisor) {
+        clockInputDivisor = clamp(clockInputDivisor, 1, 192);
+        if (clockInputDivisor != _clockInputDivisor) {
+            _clockInputDivisor = clockInputDivisor;
             _dirty = true;
         }
     }
 
-    void editClockInputPPQN(int value, int shift) {
-        setClockInputPPQN(ModelUtils::adjustedByPowerOfTwo(clockInputPPQN(), value, shift));
+    int indexedClockInputDivisor() const { return ModelUtils::divisorToIndex(clockInputDivisor()); }
+    void setIndexedClockInputDivisor(int index) {
+        int divisor = ModelUtils::indexToDivisor(index);
+        if (divisor > 0) {
+            setClockInputDivisor(divisor);
+        }
     }
 
-    void printClockInputPPQN(StringBuilder &str) const {
-        str("%d", clockInputPPQN());
+    void editClockInputDivisor(int value, int shift) {
+        setClockInputDivisor(ModelUtils::adjustedByDivisor(clockInputDivisor(), value, shift));
+    }
+
+    void printClockInputDivisor(StringBuilder &str) const {
+        ModelUtils::printDivisor(str, clockInputDivisor());
     }
 
     // clockInputMode
@@ -107,23 +115,31 @@ public:
         str(clockModeName(clockInputMode()));
     }
 
-    // clockOutputPPQN
+    // clockOutputDivisor
 
-    int clockOutputPPQN() const { return _clockOutputPPQN; }
-    void setClockOutputPPQN(int clockOutputPPQN) {
-        clockOutputPPQN = clamp(clockOutputPPQN, 1, 48);
-        if (clockOutputPPQN != _clockOutputPPQN) {
-            _clockOutputPPQN = clockOutputPPQN;
+    int clockOutputDivisor() const { return _clockOutputDivisor; }
+    void setClockOutputDivisor(int clockOutputDivisor) {
+        clockOutputDivisor = clamp(clockOutputDivisor, 1, 192);
+        if (clockOutputDivisor != _clockOutputDivisor) {
+            _clockOutputDivisor = clockOutputDivisor;
             _dirty = true;
         }
     }
 
-    void editClockOutputPPQN(int value, int shift) {
-        setClockOutputPPQN(ModelUtils::adjustedByPowerOfTwo(clockOutputPPQN(), value, shift));
+    int indexedClockOutputDivisor() const { return ModelUtils::divisorToIndex(clockOutputDivisor()); }
+    void setIndexedClockOutputDivisor(int index) {
+        int divisor = ModelUtils::indexToDivisor(index);
+        if (divisor > 0) {
+            setClockOutputDivisor(divisor);
+        }
     }
 
-    void printClockOutputPPQN(StringBuilder &str) const {
-        str("%d", clockOutputPPQN());
+    void editClockOutputDivisor(int value, int shift) {
+        setClockOutputDivisor(ModelUtils::adjustedByDivisor(clockOutputDivisor(), value, shift));
+    }
+
+    void printClockOutputDivisor(StringBuilder &str) const {
+        ModelUtils::printDivisor(str, clockOutputDivisor());
     }
 
     // clockOutputPulse
@@ -250,9 +266,9 @@ public:
 
 private:
     Mode _mode;
-    uint8_t _clockInputPPQN;
+    uint8_t _clockInputDivisor;
     ClockMode _clockInputMode;
-    uint8_t _clockOutputPPQN;
+    uint8_t _clockOutputDivisor;
     uint8_t _clockOutputPulse;
     ClockMode _clockOutputMode;
     bool _midiRx;

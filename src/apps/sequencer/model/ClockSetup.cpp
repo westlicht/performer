@@ -2,9 +2,9 @@
 
 void ClockSetup::clear() {
     _mode = Mode::Auto;
-    _clockInputPPQN = 16;
+    _clockInputDivisor = 12;
     _clockInputMode = ClockMode::Reset;
-    _clockOutputPPQN = 16;
+    _clockOutputDivisor = 12;
     _clockOutputPulse = 1;
     _clockOutputMode = ClockMode::Reset;
     _midiRx = true;
@@ -17,9 +17,9 @@ void ClockSetup::clear() {
 void ClockSetup::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_mode);
-    writer.write(_clockInputPPQN);
+    writer.write(_clockInputDivisor);
     writer.write(_clockInputMode);
-    writer.write(_clockOutputPPQN);
+    writer.write(_clockOutputDivisor);
     writer.write(_clockOutputPulse);
     writer.write(_clockOutputMode);
     writer.write(_midiRx);
@@ -31,9 +31,9 @@ void ClockSetup::write(WriteContext &context) const {
 void ClockSetup::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_mode);
-    reader.read(_clockInputPPQN);
+    reader.read(_clockInputDivisor);
     reader.read(_clockInputMode);
-    reader.read(_clockOutputPPQN);
+    reader.read(_clockOutputDivisor);
     reader.read(_clockOutputPulse);
     reader.read(_clockOutputMode);
     reader.read(_midiRx);

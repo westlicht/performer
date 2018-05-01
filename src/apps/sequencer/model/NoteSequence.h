@@ -222,7 +222,6 @@ public:
 
     void printDivisor(StringBuilder &str) const {
         ModelUtils::printDivisor(str, divisor());
-        // str("%d", divisor());
     }
 
     // resetMeasure

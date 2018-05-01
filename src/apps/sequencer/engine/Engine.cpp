@@ -215,8 +215,8 @@ void Engine::updateClockSetup() {
         return;
     }
 
-    _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputPPQN(), Clock::SlaveFreeRunning);
-    _clock.outputConfigure(clockSetup.clockOutputPPQN());
+    // _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputPPQN(), Clock::SlaveFreeRunning);
+    // _clock.outputConfigure(clockSetup.clockOutputPPQN());
 
     clockSetup.clearDirty();
 }

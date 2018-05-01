@@ -43,9 +43,9 @@ public:
 private:
     enum Item {
         Mode,
-        ClockInputPPQN,
+        ClockInputDivisor,
         ClockInputMode,
-        ClockOutputPPQN,
+        ClockOutputDivisor,
         ClockOutputPulse,
         ClockOutputMode,
         MidiRx,
@@ -58,9 +58,9 @@ private:
     static const char *itemName(Item item) {
         switch (item) {
         case Mode:              return "Mode";
-        case ClockInputPPQN:    return "Input PPQN";
+        case ClockInputDivisor: return "Input Divisor";
         case ClockInputMode:    return "Input Mode";
-        case ClockOutputPPQN:   return "Output PPQN";
+        case ClockOutputDivisor:return "Output Divisor";
         case ClockOutputPulse:  return "Output Pulse";
         case ClockOutputMode:   return "Output Mode";
         case MidiRx:            return "MIDI RX";
@@ -81,14 +81,14 @@ private:
         case Mode:
             _clockSetup.printMode(str);
             break;
-        case ClockInputPPQN:
-            _clockSetup.printClockInputPPQN(str);
+        case ClockInputDivisor:
+            _clockSetup.printClockInputDivisor(str);
             break;
         case ClockInputMode:
             _clockSetup.printClockInputMode(str);
             break;
-        case ClockOutputPPQN:
-            _clockSetup.printClockOutputPPQN(str);
+        case ClockOutputDivisor:
+            _clockSetup.printClockOutputDivisor(str);
             break;
         case ClockOutputPulse:
             _clockSetup.printClockOutputPulse(str);
@@ -118,14 +118,14 @@ private:
         case Mode:
             _clockSetup.editMode(value, shift);
             break;
-        case ClockInputPPQN:
-            _clockSetup.editClockInputPPQN(value, shift);
+        case ClockInputDivisor:
+            _clockSetup.editClockInputDivisor(value, shift);
             break;
         case ClockInputMode:
             _clockSetup.editClockInputMode(value, shift);
             break;
-        case ClockOutputPPQN:
-            _clockSetup.editClockOutputPPQN(value, shift);
+        case ClockOutputDivisor:
+            _clockSetup.editClockOutputDivisor(value, shift);
             break;
         case ClockOutputPulse:
             _clockSetup.editClockOutputPulse(value, shift);
@@ -154,12 +154,12 @@ private:
         switch (item) {
         case Mode:
             return int(_clockSetup.mode());
-        case ClockInputPPQN:
-            return _clockSetup.clockInputPPQN();
+        case ClockInputDivisor:
+            return _clockSetup.indexedClockInputDivisor();
         case ClockInputMode:
             return int(_clockSetup.clockInputMode());
-        case ClockOutputPPQN:
-            return _clockSetup.clockOutputPPQN();
+        case ClockOutputDivisor:
+            return _clockSetup.indexedClockOutputDivisor();
         case ClockOutputPulse:
             return _clockSetup.clockOutputPulse() - 1;
         case ClockOutputMode:
@@ -182,12 +182,12 @@ private:
         switch (item) {
         case Mode:
             return _clockSetup.setMode(ClockSetup::Mode(index));
-        case ClockInputPPQN:
-            return _clockSetup.setClockInputPPQN(index);
+        case ClockInputDivisor:
+            return _clockSetup.setIndexedClockInputDivisor(index);
         case ClockInputMode:
             return _clockSetup.setClockInputMode(ClockSetup::ClockMode(index));
-        case ClockOutputPPQN:
-            return _clockSetup.setClockOutputPPQN(index);
+        case ClockOutputDivisor:
+            return _clockSetup.setIndexedClockOutputDivisor(index);
         case ClockOutputPulse:
             return _clockSetup.setClockOutputPulse(index + 1);
         case ClockOutputMode:
