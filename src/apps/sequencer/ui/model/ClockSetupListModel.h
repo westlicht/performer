@@ -32,6 +32,14 @@ public:
         }
     }
 
+    virtual int indexed(int row) const override {
+        return indexedValue(Item(row));
+    }
+
+    virtual void setIndexed(int row, int index) override {
+        setIndexedValue(Item(row), index);
+    }
+
 private:
     enum Item {
         Mode,
@@ -137,6 +145,61 @@ private:
         case UsbTx:
             _clockSetup.editUsbTx(value, shift);
             break;
+        case Last:
+            break;
+        }
+    }
+
+    int indexedValue(Item item) const {
+        switch (item) {
+        case Mode:
+            return int(_clockSetup.mode());
+        case ClockInputPPQN:
+            return _clockSetup.clockInputPPQN();
+        case ClockInputMode:
+            return int(_clockSetup.clockInputMode());
+        case ClockOutputPPQN:
+            return _clockSetup.clockOutputPPQN();
+        case ClockOutputPulse:
+            return _clockSetup.clockOutputPulse() - 1;
+        case ClockOutputMode:
+            return int(_clockSetup.clockOutputMode());
+        case MidiRx:
+            return int(_clockSetup.midiRx());
+        case MidiTx:
+            return int(_clockSetup.midiTx());
+        case UsbRx:
+            return int(_clockSetup.usbRx());
+        case UsbTx:
+            return int(_clockSetup.usbTx());
+        case Last:
+            break;
+        }
+        return -1;
+    }
+
+    void setIndexedValue(Item item, int index) {
+        switch (item) {
+        case Mode:
+            return _clockSetup.setMode(ClockSetup::Mode(index));
+        case ClockInputPPQN:
+            return _clockSetup.setClockInputPPQN(index);
+        case ClockInputMode:
+            return _clockSetup.setClockInputMode(ClockSetup::ClockMode(index));
+        case ClockOutputPPQN:
+            return _clockSetup.setClockOutputPPQN(index);
+        case ClockOutputPulse:
+            return _clockSetup.setClockOutputPulse(index + 1);
+        case ClockOutputMode:
+            return _clockSetup.setClockOutputMode(ClockSetup::ClockMode(index));
+        case MidiRx:
+            return _clockSetup.setMidiRx(bool(index));
+        case MidiTx:
+            return _clockSetup.setMidiTx(bool(index));
+        case UsbRx:
+            return _clockSetup.setUsbRx(bool(index));
+        case UsbTx:
+            return _clockSetup.setUsbTx(bool(index));
         case Last:
             break;
         }
