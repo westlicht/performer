@@ -208,19 +208,6 @@ void Engine::setMessageHandler(MessageHandler handler) {
     _messageHandler = handler;
 }
 
-void Engine::updateClockSetup() {
-    auto &clockSetup = _model.project().clockSetup();
-
-    if (!clockSetup.isDirty()) {
-        return;
-    }
-
-    // _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputPPQN(), Clock::SlaveFreeRunning);
-    // _clock.outputConfigure(clockSetup.clockOutputPPQN());
-
-    clockSetup.clearDirty();
-}
-
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &track = _model.project().track(trackIndex);
@@ -393,11 +380,6 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
 }
 
 void Engine::initClockSources() {
-    // Configure slaves
-    _clock.slaveConfigure(ClockSourceExternal, 16, Clock::SlaveFreeRunning);
-    _clock.slaveConfigure(ClockSourceMidi, 24);
-    _clock.slaveConfigure(ClockSourceUsbMidi, 24);
-
     // Forward external clock signals to clock
     _dio.clockInput.setHandler([&] (bool value) {
         if (value) {
@@ -430,7 +412,13 @@ void Engine::initClockSources() {
 void Engine::initClockOutputs() {
     _clock.outputMidi([this] (uint8_t msg) {
         // TODO we should send a single byte with priority
-        _midi.send(MidiMessage(msg));
+        const auto &clockSetup = _model.project().clockSetup();
+        if (clockSetup.midiTx()) {
+            _midi.send(MidiMessage(msg));
+        }
+        if (clockSetup.usbTx()) {
+            _usbMidi.send(MidiMessage(msg));
+        }
     });
 
     _clock.outputClock(
@@ -441,5 +429,22 @@ void Engine::initClockOutputs() {
             _dio.resetOutput.set(value);
         }
     );
+}
 
+void Engine::updateClockSetup() {
+    auto &clockSetup = _model.project().clockSetup();
+
+    if (!clockSetup.isDirty()) {
+        return;
+    }
+
+    // Configure clock slaves
+    _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputDivisor(), Clock::SlaveEnabled | Clock::SlaveFreeRunning);
+    _clock.slaveConfigure(ClockSourceMidi, CONFIG_PPQN / 24, clockSetup.midiRx() ? Clock::SlaveEnabled : 0);
+    _clock.slaveConfigure(ClockSourceUsbMidi, CONFIG_PPQN / 24, clockSetup.usbRx() ? Clock::SlaveEnabled : 0);
+
+    // Configure clock outputs
+    _clock.outputConfigure(clockSetup.clockOutputDivisor(), clockSetup.clockOutputPulse());
+
+    clockSetup.clearDirty();
 }

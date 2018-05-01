@@ -119,7 +119,7 @@ public:
 
     int clockOutputDivisor() const { return _clockOutputDivisor; }
     void setClockOutputDivisor(int clockOutputDivisor) {
-        clockOutputDivisor = clamp(clockOutputDivisor, 1, 192);
+        clockOutputDivisor = clamp(clockOutputDivisor, 2, 192);
         if (clockOutputDivisor != _clockOutputDivisor) {
             _clockOutputDivisor = clockOutputDivisor;
             _dirty = true;

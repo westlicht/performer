@@ -112,7 +112,6 @@ public:
     void setMessageHandler(MessageHandler handler);
 
 private:
-    void updateClockSetup();
     void updateTrackSetups();
     void updateTrackSequences();
     void updateTrackOutputs();
@@ -125,6 +124,7 @@ private:
 
     void initClockSources();
     void initClockOutputs();
+    void updateClockSetup();
 
     Model &_model;
     Dio &_dio;

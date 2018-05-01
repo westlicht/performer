@@ -20,7 +20,8 @@ public:
     };
 
     enum SlaveFlags {
-        SlaveFreeRunning = (1<<0),
+        SlaveEnabled        = (1<<0),
+        SlaveFreeRunning    = (1<<1),
     };
 
     Clock(ClockTimer &timer);
@@ -48,7 +49,7 @@ public:
     void setMasterBpm(float bpm);
 
     // Slave clock control
-    void slaveConfigure(int slave, int ppqn, int flags = 0);
+    void slaveConfigure(int slave, int divisor, int flags = 0);
     void slaveTick(int slave);
     void slaveStart(int slave);
     void slaveStop(int slave);
@@ -57,7 +58,7 @@ public:
     void slaveHandleMidi(int slave, uint8_t msg);
 
     // Clock output
-    void outputConfigure(int ppqn);
+    void outputConfigure(int divisor, int pulse);
     void outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset);
     void outputMidi(std::function<void(uint8_t)> midi);
 
@@ -79,6 +80,8 @@ private:
     void outputMidiMessage(uint8_t msg);
     void outputTick(uint32_t tick);
 
+    bool slaveEnabled(int slave) const { return _slaves[slave].flags & SlaveEnabled; }
+
     static constexpr size_t SlaveCount = 4;
 
     ClockTimer &_timer;
@@ -89,13 +92,15 @@ private:
     float _masterBpm = 120.f;
 
     struct Slave {
-        int ppqn;
+        int divisor;
         int flags;
     };
     std::array<Slave, SlaveCount> _slaves;
 
     struct Output {
-        int ppqn;
+        int divisor;
+        int pulse;
+        uint32_t nextClockOffUs;
         std::function<void(bool)> clock;
         std::function<void(bool)> reset;
         std::function<void(uint8_t)> midi;

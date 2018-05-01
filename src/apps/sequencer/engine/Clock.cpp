@@ -90,11 +90,15 @@ void Clock::setMasterBpm(float bpm) {
     }
 }
 
-void Clock::slaveConfigure(int slave, int ppqn, int flags) {
-    _slaves[slave] = { ppqn, flags };
+void Clock::slaveConfigure(int slave, int divisor, int flags) {
+    _slaves[slave] = { divisor, flags };
 }
 
 void Clock::slaveTick(int slave) {
+    if (!slaveEnabled(slave)) {
+        return;
+    }
+
     // free running slaves start the clock with the first pulse
     if ((_slaves[slave].flags & SlaveFreeRunning) && _state == Idle && _mode != ModeMaster) {
         slaveStart(slave);
@@ -103,8 +107,8 @@ void Clock::slaveTick(int slave) {
     {
         os::InterruptLock lock;
         if (_state == SlaveRunning && _activeSlave == slave) {
-            // _tick += _ppqn / _slaves[slave].ppqn;
-            for (int i = 0; i < _ppqn / _slaves[slave].ppqn; ++i) {
+            int divisor = _slaves[slave].divisor;
+            for (int i = 0; i < divisor; ++i) {
                 outputTick(_tick);
                 ++_tick;
             }
@@ -113,7 +117,8 @@ void Clock::slaveTick(int slave) {
             uint32_t tickUs = _elapsedUs - _lastTickUs;
 
             if (tickUs > 0 && _lastTickUs > 0) {
-                float bpm = (60.f * 1000000) / (tickUs * _slaves[slave].ppqn);
+                // float bpm = (60.f * 1000000) / (tickUs * (_ppqn / divisor));
+                float bpm = (60.f * 1000000 * divisor) / (tickUs * _ppqn);
                 _slaveBpmFiltered = 0.9f * _slaveBpmFiltered + 0.1f * bpm;
                 // if (std::abs(bpm - _slaveBpm) > 5.f) {
                 //     _slaveBpm = 0.5f * _slaveBpm + 0.5f * bpm;
@@ -128,6 +133,10 @@ void Clock::slaveTick(int slave) {
 }
 
 void Clock::slaveStart(int slave) {
+    if (!slaveEnabled(slave)) {
+        return;
+    }
+
     os::InterruptLock lock;
 
     if (_state == MasterRunning || _mode == ModeMaster || (_state == SlaveRunning && _activeSlave != slave)) {
@@ -146,6 +155,10 @@ void Clock::slaveStart(int slave) {
 }
 
 void Clock::slaveStop(int slave) {
+    if (!slaveEnabled(slave)) {
+        return;
+    }
+
     os::InterruptLock lock;
 
     if (_state != SlaveRunning || _mode == ModeMaster || _activeSlave != slave) {
@@ -160,6 +173,10 @@ void Clock::slaveStop(int slave) {
 }
 
 void Clock::slaveResume(int slave) {
+    if (!slaveEnabled(slave)) {
+        return;
+    }
+
     os::InterruptLock lock;
 
     if (_state != Idle || _mode == ModeMaster) {
@@ -175,6 +192,10 @@ void Clock::slaveResume(int slave) {
 }
 
 void Clock::slaveReset(int slave) {
+    if (!slaveEnabled(slave)) {
+        return;
+    }
+
     os::InterruptLock lock;
 
     if (_state == MasterRunning || _mode == ModeMaster || (_state == SlaveRunning && _activeSlave != slave)) {
@@ -208,8 +229,9 @@ void Clock::slaveHandleMidi(int slave, uint8_t msg) {
     }
 }
 
-void Clock::outputConfigure(int ppqn) {
-    _output.ppqn = ppqn;
+void Clock::outputConfigure(int divisor, int pulse) {
+    _output.divisor = divisor;
+    _output.pulse = pulse;
 }
 
 void Clock::outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset) {
@@ -282,7 +304,12 @@ void Clock::setupSlaveTimer() {
     _lastTickUs = 0;
 
     _timer.setPeriod(250);
-    _timer.setHandler([&] () { _elapsedUs += 250; });
+    _timer.setHandler([&] () {
+        _elapsedUs += 250;
+        if (_output.clock && _elapsedUs >= _output.nextClockOffUs) {
+            _output.clock(false);
+        }
+    });
 }
 
 void Clock::outputMidiMessage(uint8_t msg) {
@@ -296,6 +323,12 @@ void Clock::outputTick(uint32_t tick) {
         outputMidiMessage(MidiMessage::Tick);
     }
     if (_output.clock) {
-        _output.clock((tick % 2) < 1);
+        uint32_t divisor = _output.divisor;
+        if (tick % divisor == 0) {
+            _output.nextClockOffUs = _elapsedUs + _output.pulse * 1000;
+            _output.clock(true);
+        } else if (tick % divisor == divisor - 1) {
+            _output.clock(false);
+        }
     }
 }
