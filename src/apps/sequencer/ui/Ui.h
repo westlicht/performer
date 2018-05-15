@@ -7,6 +7,7 @@
 #include "Key.h"
 #include "KeyPressEventTracker.h"
 #include "Leds.h"
+#include "ControllerManager.h"
 
 #include "pages/Pages.h"
 
@@ -59,4 +60,6 @@ private:
     PageManager _pageManager;
     PageContext _pageContext;
     Pages _pages;
+
+    ControllerManager _controllerManager;
 };

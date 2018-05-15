@@ -43,11 +43,16 @@ set(sources
     model/Types.cpp
     model/UserScale.cpp
     # ui
+    ui/Controller.cpp
+    ui/ControllerManager.cpp
     ui/LedPainter.cpp
     ui/MessageManager.cpp
     ui/Page.cpp
     ui/PageManager.cpp
     ui/Ui.cpp
+    # ui/controllers/launchpad
+    ui/controllers/launchpad/LaunchpadController.cpp
+    ui/controllers/launchpad/LaunchpadDevice.cpp
     # ui/pages
     ui/pages/AsteroidsPage.cpp
     ui/pages/BasePage.cpp

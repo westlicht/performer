@@ -19,7 +19,8 @@ Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &en
     _canvas(_frameBuffer),
     _pageManager(_pages),
     _pageContext({ _messageManager, _keyState, _model, _engine }),
-    _pages(_pageManager, _pageContext)
+    _pages(_pageManager, _pageContext),
+    _controllerManager(model, engine)
 {
 }
 
@@ -69,6 +70,8 @@ void Ui::update() {
         _lcd.draw(_frameBuffer.data());
         _lastUpdateTicks += intervalTicks;
     }
+
+    _controllerManager.update();
 }
 
 void Ui::handleKeys() {
@@ -116,7 +119,9 @@ void Ui::handleEncoder() {
 void Ui::handleMidi() {
     while (_midiMessages.readable()) {
         auto item = _midiMessages.read();
-        MidiEvent midiEvent(item.first, item.second);
-        _pageManager.dispatchEvent(midiEvent);
+        if (!_controllerManager.recvMidi(item.first, item.second)) {
+            MidiEvent midiEvent(item.first, item.second);
+            _pageManager.dispatchEvent(midiEvent);
+        }
     }
 }

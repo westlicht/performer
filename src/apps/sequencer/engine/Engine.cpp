@@ -194,6 +194,17 @@ float Engine::syncMeasureFraction() const {
     return float(_tick % measureDivisor) / measureDivisor;
 }
 
+void Engine::sendMidi(MidiPort port, const MidiMessage &message) {
+    switch (port) {
+    case MidiPort::Midi:
+        _midi.send(message);
+        break;
+    case MidiPort::UsbMidi:
+        _usbMidi.send(message);
+        break;
+    }
+}
+
 void Engine::showMessage(const char *text, uint32_t duration) {
     if (_messageHandler) {
         _messageHandler(text, duration);

@@ -104,6 +104,7 @@ public:
 
     MidiLearn &midiLearn() { return _midiLearn; }
 
+    void sendMidi(MidiPort port, const MidiMessage &message);
     void setMidiReceiveHandler(MidiReceiveHandler handler) { _midiReceiveHandler = handler; }
 
     // message handling
