@@ -4,7 +4,6 @@ set(sources
     asteroids/Asteroids.cpp
     # engine
     engine/Clock.cpp
-    engine/Controller.cpp
     engine/CurveTrackEngine.cpp
     engine/CvInput.cpp
     engine/CvOutput.cpp
@@ -15,8 +14,6 @@ set(sources
     engine/RoutingEngine.cpp
     engine/SequenceState.cpp
     engine/TrackEngine.cpp
-    # engine/controllers
-    engine/controllers/LaunchpadController.cpp
     # engine/generators
     engine/generators/EuclideanGenerator.cpp
     engine/generators/Generator.cpp

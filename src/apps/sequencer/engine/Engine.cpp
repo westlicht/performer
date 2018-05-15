@@ -16,8 +16,7 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &di
     _cvInput(adc),
     _cvOutput(dac, model.settings().calibration()),
     _clock(clockTimer),
-    _routingEngine(*this, model),
-    _controllerManager(usbMidi)
+    _routingEngine(*this, model)
 {
     _cvOutputOverrideValues.fill(0.f);
     _trackEngines.fill(nullptr);
@@ -137,9 +136,6 @@ void Engine::update() {
 
     // update cv outputs
     _cvOutput.update();
-
-    // update midi controller
-    // _controllerManager.update();
 }
 
 void Engine::lock() {

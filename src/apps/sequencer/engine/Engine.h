@@ -7,7 +7,6 @@
 #include "NoteTrackEngine.h"
 #include "CurveTrackEngine.h"
 #include "MidiCvTrackEngine.h"
-#include "Controller.h"
 #include "CvInput.h"
 #include "CvOutput.h"
 #include "RoutingEngine.h"
@@ -145,8 +144,6 @@ private:
     RoutingEngine _routingEngine;
     MidiLearn _midiLearn;
     MidiReceiveHandler _midiReceiveHandler;
-
-    ControllerManager _controllerManager;
 
     // locking
     volatile uint32_t _requestLock = 0;
