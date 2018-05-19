@@ -2,6 +2,13 @@
 
 #include "SystemConfig.h"
 
+// Version tag
+#define CONFIG_VERSION_MAGIC            0xfadebabe
+#define CONFIG_VERSION_NAME             "PER|FORMER SEQUENCER"
+#define CONFIG_VERSION_MAJOR            0
+#define CONFIG_VERSION_MINOR            1
+#define CONFIG_VERSION_REVISION         1
+
 // Task priorities
 #define CONFIG_DRIVER_TASK_PRIORITY     5
 #define CONFIG_ENGINE_TASK_PRIORITY     4

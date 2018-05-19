@@ -37,6 +37,18 @@
 // We use CCMRAM for all the drivers not using DMA, all tasks and some of the application objects (engine, ui).
 // This leaves most of the SRAM for the model, which needs a large contiguous block of memory.
 
+extern "C" {
+__attribute__ ((section(".version")))
+struct {
+    uint32_t magic = CONFIG_VERSION_MAGIC;
+    char name[24] = CONFIG_VERSION_NAME;
+    uint8_t major = CONFIG_VERSION_MAJOR;
+    uint8_t minor = CONFIG_VERSION_MINOR;
+    uint16_t revision = CONFIG_VERSION_REVISION;
+} version_tag;
+} // extern "C"
+
+
 static CCMRAM_BSS ClockTimer clockTimer;
 static CCMRAM_BSS ShiftRegister shiftRegister;
 static CCMRAM_BSS ButtonLedMatrix blm(shiftRegister);
