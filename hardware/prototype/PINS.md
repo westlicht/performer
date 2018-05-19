@@ -69,6 +69,7 @@ STM32F405RGT6
 | MIDI_TX       | USART6    | PC6   | AF8   | 37     |
 | MIDI_RX       | USART6    | PC7   | AF8   | 38     |
 | **BLM/GATE**  |           |       |       |        |
+| SR_OE         | GPIO      | PA4   |       | 20     |
 | SR_SCK        | SPI1      | PA5   | AF5   | 21     |
 | SR_MISO       | SPI1      | PA6   | AF5   | 22     |
 | SR_MOSI       | SPI1      | PA7   | AF5   | 23     |
