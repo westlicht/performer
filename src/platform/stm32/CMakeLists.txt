@@ -7,7 +7,7 @@ add_custom_target(libopencm3 make AR=${CMAKE_AR} CC=${CMAKE_C_COMPILER} WORKING_
 
 set(platform_dependencies libopencm3 PARENT_SCOPE)
 set(platform_compiler_flags "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb-interwork -funroll-loops -fshort-enums" PARENT_SCOPE)
-set(platform_linker_flags "-T ${CMAKE_CURRENT_SOURCE_DIR}/stm32f405.ld -nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
+set(platform_linker_flags "-nostartfiles --specs=nano.specs --specs=nosys.specs -Wl,--gc-sections" PARENT_SCOPE)
 
 set(platform_sources
     # os
@@ -103,6 +103,8 @@ endfunction(add_openocd_targets)
 
 function(platform_postprocess_executable executable)
     # set_target_properties(${executable} PROPERTIES COMPILE_FLAGS "-save-temps")
+    set_target_properties(${executable} PROPERTIES LINK_FLAGS "-T ${CMAKE_SOURCE_DIR}/src/platform/stm32/stm32f405.ld")
+
     add_custom_target(${executable}.bin ALL ${OBJCOPY} -Obinary ${executable} ${executable}.bin DEPENDS ${executable})
     add_custom_target(${executable}.hex ALL ${OBJCOPY} -Oihex ${executable} ${executable}.hex DEPENDS ${executable})
     add_custom_target(${executable}.srec ALL ${OBJCOPY} -Osrec ${executable} ${executable}.srec DEPENDS ${executable})
