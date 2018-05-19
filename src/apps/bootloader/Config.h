@@ -1,0 +1,21 @@
+#pragma once
+
+#define CONFIG_VERSION_MAJOR        0
+#define CONFIG_VERSION_MINOR        1
+
+#define CONFIG_CPU_FREQUENCY        168000000
+#define CONFIG_TICK_FREQUENCY       1000
+
+#define CONFIG_PRINTF_BUFFER        128
+
+#define CONFIG_LCD_WIDTH            256
+#define CONFIG_LCD_HEIGHT           64
+
+#define CONFIG_ENABLE_DEBUG         1
+
+#define CONFIG_UPDATE_FILENAME      "UPDATE.DAT"
+
+#define CONFIG_APPLICATION_ADDR     0x08008000
+#define CONFIG_APPLICATION_SIZE     0xF8000
+#define CONFIG_VERSION_TAG_OFFSET   0x400
+#define CONFIG_VERSION_TAG_MAGIC    0xfadebabe
