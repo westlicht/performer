@@ -18,7 +18,8 @@ jobs:
       # Deploy to github releases
       deploy:
         provider: releases
-        api_key: "h+/G8sNYseKnvkuI3hnMX2XPF5Nw+vucYI66FFZ1lY1NHH8WKqjwg/R76M1gaLMWVHNOytA16G7IUJgDsqBfHgxoS5ALvLr/Tmc2ETL2Qk31fN0EPDUSBgOGVFKZpN3bw/++R9m7Npp/7jnKFRIhUwWPCWow6JHxqY4awiqPSFXct1JZs4O9WSJMalcJcypbf7ygJxWhdEvjEUI6+KogY8qhncT/rOZTqYUzJzlYAPE7Oe2H7HW26lrgAKBWjyFcS0H5Bpz8hiSZqI2AInOjNUwqm91zA0YlJt5jEr1Q2ZsraOcEPnuq1yurnbLb5dE+EV35U29MDmJeyJseLBcubC7OPdOOCcewrRB1n5yxGU93oe4oGUx7f8YaSoSva3eN9XnBmGAfG+XMWazhr/7vqp3qWmA4LMP5nAyRl2Npz4TtJEc8ip8QUXEFxE19o9/YD8YWCUK/MB8NNCbzceCOYH5hoc6spxcaJq8qLbVrUVbZV2E4v6SIzwFohS7EGKYd/XXKmlvpiQ+CEr+y0osJ0PPuLV0EyQShqBFGBFmDmvjcVNdfbTZuclBvuDewgyffo0STKZ9rIp+TYf/z1bCeJLodAhnZIxMPCcfe+JfwhE36PKkaTgauV/FsjaAXdZI6Y8MuDEtxUAJbPkNvJYXHHAEnutWofSDw7X8KDbbgcys="
+        api_key:
+          secure: "gf6iPMxWpPAWpqXpLQB7723Z4zDYh9lIEG/4ZNzzdj2U0euDldjfXo3jjNINkf2E+1uflfge02d3uFqAfyvxFevqYuSubRimstNrYIXqEKGGONN4OyMUBrAtyQnTetkHGxO2PrroovpvTJWuWa1DB0vGdbeziy1IbtY7HVStBI4id5W97Nd6pWDkbbHVFlx5yeSA153MPo5pCJpd2bxMcRGYcSrLMwxmQmoHxawjK/TuuAKh+HfNLvlQE8aaNSIr2+3Ys1rwm94fHM/PVZVBCwaVJRNzNX/0IxJ1yQpQdRyLY7ez6tLFBnhTxXc9RMIivg/gqUEn3CEHD589FRSkWpQawcjV19jPTy9D6eL5dlcGQ9QHy7TPfnfpx6eoZxERDDJH2wwJL2Nk46mtY6tOYG5Ywr37QWSlDyKYgfEY/hcyMONYmYluxH21Cu9HjEL2ck9/b86CSKCkyzkaINvLsEeylwDgR/mosxMfhb+MAwl8STWBL42FsX1APRdQR6KJblki8IuXyswlAI9mukch3s2J3j8CoU+bu/Cam0ZKcwPui5EjL67DPLMB23qcprTdbL7/a39LiWnR3cJbbomnLp8A+/MOVlR0QFbLay7Bv3qSYe+BASLkFIQPd97Fr36thjaIvG3nj8e3HIN4Te1NjS6tLlPTwtS8L6Bi3mEeD7Y="
         file_glob: true
         file: build/deploy/*
         skip_cleanup: true
