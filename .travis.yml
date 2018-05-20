@@ -14,7 +14,14 @@ jobs:
   include:
     - stage: Hardware Platform (STM32)
       script:
-      - make setup_stm32 && (cd build/stm32/debug && make) && (cd build/stm32/release && make)
+      - make setup_stm32 && (cd build/stm32/debug && make) && (cd build/stm32/release && make) && make deploy
+      # Deploy to github releases
+      deploy:
+        provider: releases
+        api_key: "h+/G8sNYseKnvkuI3hnMX2XPF5Nw+vucYI66FFZ1lY1NHH8WKqjwg/R76M1gaLMWVHNOytA16G7IUJgDsqBfHgxoS5ALvLr/Tmc2ETL2Qk31fN0EPDUSBgOGVFKZpN3bw/++R9m7Npp/7jnKFRIhUwWPCWow6JHxqY4awiqPSFXct1JZs4O9WSJMalcJcypbf7ygJxWhdEvjEUI6+KogY8qhncT/rOZTqYUzJzlYAPE7Oe2H7HW26lrgAKBWjyFcS0H5Bpz8hiSZqI2AInOjNUwqm91zA0YlJt5jEr1Q2ZsraOcEPnuq1yurnbLb5dE+EV35U29MDmJeyJseLBcubC7OPdOOCcewrRB1n5yxGU93oe4oGUx7f8YaSoSva3eN9XnBmGAfG+XMWazhr/7vqp3qWmA4LMP5nAyRl2Npz4TtJEc8ip8QUXEFxE19o9/YD8YWCUK/MB8NNCbzceCOYH5hoc6spxcaJq8qLbVrUVbZV2E4v6SIzwFohS7EGKYd/XXKmlvpiQ+CEr+y0osJ0PPuLV0EyQShqBFGBFmDmvjcVNdfbTZuclBvuDewgyffo0STKZ9rIp+TYf/z1bCeJLodAhnZIxMPCcfe+JfwhE36PKkaTgauV/FsjaAXdZI6Y8MuDEtxUAJbPkNvJYXHHAEnutWofSDw7X8KDbbgcys="
+        file_glob: true
+        file: build/deploy/*
+        skip_cleanup: true
     - stage: Simulation Platform (Linux)
       script:
       # Simulation target requires recent versions of SDL2, SDL2_image and SDL2_ttf not available as packages
