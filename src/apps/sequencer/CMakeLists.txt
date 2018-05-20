@@ -91,14 +91,17 @@ set(sources
 include_directories(.)
 
 if(${PLATFORM} MATCHES "stm32")
-    add_executable(sequencer Sequencer.cpp ${sources})
-    target_link_libraries(sequencer core)
+    add_library(sequencer_shared ${sources})
+    target_link_libraries(sequencer_shared core)
+
+    add_executable(sequencer Sequencer.cpp)
+    target_link_libraries(sequencer sequencer_shared)
     platform_postprocess_executable(sequencer)
     # override linker script
     set_target_properties(sequencer PROPERTIES LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/sequencer.ld")
 
-    add_executable(sequencer_standalone Sequencer.cpp ${sources})
-    target_link_libraries(sequencer_standalone core)
+    add_executable(sequencer_standalone Sequencer.cpp)
+    target_link_libraries(sequencer_standalone sequencer_shared)
     platform_postprocess_executable(sequencer_standalone)
     # override linker script
     set_target_properties(sequencer_standalone PROPERTIES LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/sequencer_standalone.ld")
