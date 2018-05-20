@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import os
+import glob
+import shutil
+
+DEPLOY_DIR = 'build/deploy'
+
+items = [
+    {
+        'name': 'Bootloader',
+        'srcs': ['build/stm32/release/src/apps/bootloader/bootloader' + ext for ext in ['.bin', '.hex', '.size', '.srec']],
+        'dst': 'bootloader'
+    },
+    {
+        'name': 'Sequencer',
+        'srcs': ['build/stm32/release/src/apps/sequencer/sequencer' + ext for ext in ['.bin', '.hex', '.size', '.srec']],
+        'dst': 'sequencer'
+    },
+    {
+        'name': 'Update',
+        'srcs': ['build/stm32/release/src/apps/sequencer/UPDATE.DAT'],
+        'dst': 'update'
+    }
+]
+
+if os.path.exists(DEPLOY_DIR):
+    shutil.rmtree(DEPLOY_DIR)
+
+os.makedirs(DEPLOY_DIR)
+
+for item in items:
+    print('deploying ' + item['name'] + ' ...')
+
+    dst_dir = os.path.join(DEPLOY_DIR, item['dst'])
+    os.makedirs(dst_dir)
+
+    files = []
+    for src in item['srcs']:
+        files += glob.glob(src)
+
+    for file in files:
+        shutil.copy(file, dst_dir)
