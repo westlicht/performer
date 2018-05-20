@@ -12,7 +12,7 @@ enum class ContextAction {
     Last
 };
 
-const ContextMenuModel::Item contextMenuItems[] = {
+static const ContextMenuModel::Item contextMenuItems[] = {
     { "COMMIT" },
     { "REVERT" },
 };
