@@ -5,6 +5,18 @@
 
 #include "core/utils/StringBuilder.h"
 
+#ifdef PLATFORM_STM32
+#include "drivers/System.h"
+#endif
+
+enum Function {
+    Calibration = 0,
+    Controller  = 1,
+    Update      = 4,
+};
+
+static const char *functionNames[] = { "CAL", "CTRL", nullptr, nullptr, "UPDATE" };
+
 enum class ContextAction {
     Init,
     Load,
@@ -13,7 +25,7 @@ enum class ContextAction {
     Last
 };
 
-const ContextMenuModel::Item contextMenuItems[] = {
+static const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
     { "LOAD" },
     { "SAVE" },
@@ -33,6 +45,8 @@ void SettingsPage::enter() {
     _engine.setGateOutputOverride(true);
     _engine.setCvOutputOverride(true);
 
+    _encoderDownTicks = 0;
+
     updateOutputs();
 }
 
@@ -45,11 +59,63 @@ void SettingsPage::exit() {
 void SettingsPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SETTINGS");
-    FixedStringBuilder<8> str("CV%d", _outputIndex + 1);
-    WindowPainter::drawActiveFunction(canvas, str);
-    WindowPainter::drawFooter(canvas);
+    WindowPainter::drawFooter(canvas, functionNames, _keyState);
 
-    ListPage::draw(canvas);
+    switch (_mode) {
+    case Mode::Calibration: {
+        FixedStringBuilder<8> str("CV%d", _outputIndex + 1);
+        WindowPainter::drawActiveFunction(canvas, str);
+        ListPage::draw(canvas);
+        break;
+    }
+    case Mode::Controller:
+        WindowPainter::drawActiveFunction(canvas, "CONTROLLER");
+        break;
+    case Mode::Update: {
+        WindowPainter::drawActiveFunction(canvas, "UPDATE");
+        canvas.setColor(0xf);
+        canvas.drawText(4, 24, "CURRENT VERSION:");
+        FixedStringBuilder<16> str("%d.%d.%d", CONFIG_VERSION_MAJOR, CONFIG_VERSION_MINOR, CONFIG_VERSION_REVISION);
+        canvas.drawText(100, 24, str);
+        canvas.drawText(4, 40, "PRESS AND HOLD ENCODER TO RESET TO BOOTLOADER");
+
+#ifdef PLATFORM_STM32
+        if (_encoderDownTicks != 0 && os::ticks() - _encoderDownTicks > os::time::ms(2000)) {
+            System::reset();
+        }
+#endif
+
+        break;
+    }
+    }
+}
+
+void SettingsPage::keyDown(KeyEvent &event) {
+    const auto &key = event.key();
+
+    switch (_mode) {
+    case Mode::Update:
+        if (key.isEncoder()) {
+            _encoderDownTicks = os::ticks();
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void SettingsPage::keyUp(KeyEvent &event) {
+    const auto &key = event.key();
+
+    switch (_mode) {
+    case Mode::Update:
+        if (key.isEncoder()) {
+            _encoderDownTicks = 0;
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 void SettingsPage::keyPress(KeyPressEvent &event) {
@@ -61,19 +127,50 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-    if (key.isTrack()) {
-        setOutputIndex(key.track());
+    if (key.isFunction()) {
+        switch (Function(key.function())) {
+        case Function::Calibration:
+            setMode(Mode::Calibration);
+            break;
+        case Function::Controller:
+            setMode(Mode::Controller);
+            break;
+        case Function::Update:
+            setMode(Mode::Update);
+            break;
+        }
     }
 
-    ListPage::keyPress(event);
-
-    updateOutputs();
+    switch (_mode) {
+    case Mode::Calibration:
+        if (key.isTrack()) {
+            setOutputIndex(key.track());
+        }
+        ListPage::keyPress(event);
+        updateOutputs();
+        break;
+    case Mode::Controller:
+        break;
+    case Mode::Update:
+        break;
+    }
 }
 
 void SettingsPage::encoder(EncoderEvent &event) {
-    ListPage::encoder(event);
+    switch (_mode) {
+    case Mode::Calibration:
+        ListPage::encoder(event);
+        updateOutputs();
+        break;
+    case Mode::Controller:
+        break;
+    case Mode::Update:
+        break;
+    }
+}
 
-    updateOutputs();
+void SettingsPage::setMode(Mode mode) {
+    _mode = mode;
 }
 
 void SettingsPage::setOutputIndex(int index) {

@@ -1,7 +1,7 @@
 #include "System.h"
 
 #include <libopencm3/stm32/rcc.h>
-#include <libopencm3/cm3/nvic.h>
+#include <libopencm3/stm32/iwdg.h>
 #include <libopencm3/cm3/systick.h>
 
 volatile uint32_t System::_ticks;
@@ -19,6 +19,10 @@ void System::init() {
     systick_set_reload(168000000 / 1000);
     systick_set_clocksource(STK_CSR_CLKSOURCE_AHB);
     systick_counter_enable();
+}
+
+void System::reset() {
+    iwdg_start();
 }
 
 void System::tick() {

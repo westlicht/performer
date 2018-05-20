@@ -7,7 +7,9 @@ class System {
 
 public:
     static void init();
-    static uint32_t ticks() { return _ticks; }
 
+    static void reset();
+
+    static uint32_t ticks() { return _ticks; }
     static void tick();
 };
