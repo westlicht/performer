@@ -21,7 +21,7 @@ jobs:
         api_key:
           secure: "gf6iPMxWpPAWpqXpLQB7723Z4zDYh9lIEG/4ZNzzdj2U0euDldjfXo3jjNINkf2E+1uflfge02d3uFqAfyvxFevqYuSubRimstNrYIXqEKGGONN4OyMUBrAtyQnTetkHGxO2PrroovpvTJWuWa1DB0vGdbeziy1IbtY7HVStBI4id5W97Nd6pWDkbbHVFlx5yeSA153MPo5pCJpd2bxMcRGYcSrLMwxmQmoHxawjK/TuuAKh+HfNLvlQE8aaNSIr2+3Ys1rwm94fHM/PVZVBCwaVJRNzNX/0IxJ1yQpQdRyLY7ez6tLFBnhTxXc9RMIivg/gqUEn3CEHD589FRSkWpQawcjV19jPTy9D6eL5dlcGQ9QHy7TPfnfpx6eoZxERDDJH2wwJL2Nk46mtY6tOYG5Ywr37QWSlDyKYgfEY/hcyMONYmYluxH21Cu9HjEL2ck9/b86CSKCkyzkaINvLsEeylwDgR/mosxMfhb+MAwl8STWBL42FsX1APRdQR6KJblki8IuXyswlAI9mukch3s2J3j8CoU+bu/Cam0ZKcwPui5EjL67DPLMB23qcprTdbL7/a39LiWnR3cJbbomnLp8A+/MOVlR0QFbLay7Bv3qSYe+BASLkFIQPd97Fr36thjaIvG3nj8e3HIN4Te1NjS6tLlPTwtS8L6Bi3mEeD7Y="
         file_glob: true
-        file: build/deploy/*
+        file: build/deploy/**/*
         skip_cleanup: true
     - stage: Simulation Platform (Linux)
       script:
