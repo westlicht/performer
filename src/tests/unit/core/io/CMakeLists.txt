@@ -1,0 +1,2 @@
+register_test(TestSerialization TestSerialization.cpp)
+register_test(TestVersionedSerialization TestVersionedSerialization.cpp)
