@@ -6,6 +6,8 @@
 
 class Settings {
 public:
+    static constexpr uint32_t Version = 1;
+
     static const char *filename;
 
     Settings();

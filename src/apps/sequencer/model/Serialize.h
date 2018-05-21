@@ -3,16 +3,16 @@
 #include "core/fs/FileSystem.h"
 #include "core/fs/FileWriter.h"
 #include "core/fs/FileReader.h"
-#include "core/io/SerializedWriter.h"
-#include "core/io/SerializedReader.h"
+#include "core/io/VersionedSerializedWriter.h"
+#include "core/io/VersionedSerializedReader.h"
 
 #include <array>
 
 #include <cstdlib>
 #include <cstdint>
 
-typedef SerializedWriter<fs::FileWriter> Writer;
-typedef SerializedReader<fs::FileReader> Reader;
+typedef VersionedSerializedWriter<fs::FileWriter> Writer;
+typedef VersionedSerializedReader<fs::FileReader> Reader;
 
 struct WriteContext {
     Writer &writer;

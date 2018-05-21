@@ -24,10 +24,10 @@ fs::Error Settings::write(const char *path) const {
         fileWriter.error();
     }
 
-    Writer writer(fileWriter);
     FileHeader header(FileType::Settings, 0, "SETTINGS");
-    writer.write(&header, sizeof(header));
+    fileWriter.write(&header, sizeof(header));
 
+    Writer writer(fileWriter, Version);
     WriteContext context = { writer };
     write(context);
 
@@ -40,11 +40,10 @@ fs::Error Settings::read(const char *path) {
         fileReader.error();
     }
 
-    Reader reader(fileReader);
-
     FileHeader header;
-    reader.read(&header, sizeof(header));
+    fileReader.read(&header, sizeof(header));
 
+    Reader reader(fileReader, Version);
     ReadContext context = { reader };
     read(context);
 

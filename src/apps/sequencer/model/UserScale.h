@@ -17,6 +17,8 @@
 
 class UserScale : public Scale {
 public:
+    static constexpr uint32_t Version = 1;
+
     //----------------------------------------
     // Types
     //----------------------------------------

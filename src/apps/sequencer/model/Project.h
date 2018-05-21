@@ -16,6 +16,8 @@
 
 class Project {
 public:
+    static constexpr uint32_t Version = 1;
+
     //----------------------------------------
     // Types
     //----------------------------------------

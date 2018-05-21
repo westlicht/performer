@@ -126,10 +126,10 @@ fs::Error Project::write(const char *path) const {
         fileWriter.error();
     }
 
-    Writer writer(fileWriter);
     FileHeader header(FileType::Project, 0, _name);
-    writer.write(&header, sizeof(header));
+    fileWriter.write(&header, sizeof(header));
 
+    Writer writer(fileWriter, Version);
     WriteContext context = { writer };
     write(context);
 
@@ -142,14 +142,13 @@ fs::Error Project::read(const char *path) {
         fileReader.error();
     }
 
-    Reader reader(fileReader);
-
     FileHeader header;
-    reader.read(&header, sizeof(header));
+    fileReader.read(&header, sizeof(header));
+    header.readName(_name, sizeof(_name));
 
+    Reader reader(fileReader, Version);
     ReadContext context = { reader };
     read(context);
-    header.readName(_name, sizeof(_name));
 
     return fileReader.finish();
 }
