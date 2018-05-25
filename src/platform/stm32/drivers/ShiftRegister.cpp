@@ -16,6 +16,9 @@
 #define SR_LOAD GPIO4
 #define SR_GPIO (SR_LATCH | SR_LOAD)
 
+#define SR_OE_PORT GPIOA
+#define SR_OE GPIO4
+
 #define SR_SPI SPI1
 
 #define SPI_PORT GPIOA
@@ -55,6 +58,11 @@ void ShiftRegister::init() {
 
     gpio_clear(SR_PORT, SR_LATCH);
     gpio_set(SR_PORT, SR_LOAD);
+
+    // output enable
+    gpio_mode_setup(SR_OE_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, SR_OE);
+    gpio_set_output_options(SR_OE_PORT, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ, SR_OE);
+    gpio_set(SR_OE_PORT, SR_OE);
 }
 
 void ShiftRegister::process() {
