@@ -124,7 +124,7 @@ static BitmapFontGlyph tiny5x5_glyphs[] = {
 };
 
 static BitmapFont tiny5x5 = {
-    1, tiny5x5_bitmap, tiny5x5_glyphs, 32, 126, 15
+    1, tiny5x5_bitmap, tiny5x5_glyphs, 32, 126, 8
 };
 
 #endif // __TINY5X5_H__

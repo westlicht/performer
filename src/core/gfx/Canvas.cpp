@@ -104,8 +104,6 @@ void Canvas::drawText(int x, int y, const char *str) {
     const auto &font = bitmapFont(_font);
 
     int ox = x;
-    // for (int i = 0; i < 2; ++i) {
-    //     char c = str[i];
     while (*str != '\0') {
         auto c = *str++;
         if (c == '\n') {
@@ -138,7 +136,36 @@ void Canvas::drawTextCentered(int x, int y, int w, int h, const char *str) {
 }
 
 void Canvas::drawTextAligned(int x, int y, int w, int h, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign, const char *str) {
+}
 
+void Canvas::drawTextMultiline(int x, int y, int w, const char *str) {
+    const auto &font = bitmapFont(_font);
+
+    int ox = x;
+    while (*str != '\0') {
+        auto c = *str++;
+        if (c == '\n') {
+            x = ox;
+            y += font.yAdvance;
+            continue;
+        }
+        if (c < font.first || c > font.last) {
+            continue;
+        }
+        const auto &g = font.glyphs[c - font.first];
+        if (x + g.xAdvance >= ox + w) {
+            x = ox;
+            y += font.yAdvance;
+            str--;
+            continue;
+        }
+        const uint8_t *bitmap = &font.bitmap[g.offset];
+        switch (font.bpp) {
+        case 1: drawBitmap1bit(x + g.xOffset, y + g.yOffset, g.width, g.height, bitmap); break;
+        case 4: drawBitmap4bit(x + g.xOffset, y + g.yOffset, g.width, g.height, bitmap); break;
+        }
+        x += g.xAdvance;
+    }
 }
 
 int Canvas::textWidth(const char *str) {

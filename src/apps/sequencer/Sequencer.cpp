@@ -104,10 +104,16 @@ static CCMRAM_BSS os::PeriodicTask<CONFIG_PROFILER_TASK_STACK_SIZE> profilerTask
 });
 #endif // CONFIG_ENABLE_PROFILER || CONFIG_ENABLE_TASK_PROFILER
 
+static void assert_handler(const char *filename, int line, const char *msg) {
+    ui.showAssert(filename, line, msg);
+}
+
 int main(void) {
     System::init();
     Console::init();
     HighResolutionTimer::init();
+
+    dbg_set_assert_handler(&assert_handler);
 
     profiler.init();
 

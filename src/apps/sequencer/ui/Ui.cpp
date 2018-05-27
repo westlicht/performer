@@ -74,6 +74,25 @@ void Ui::update() {
     _controllerManager.update();
 }
 
+void Ui::showAssert(const char *filename, int line, const char *msg) {
+    _canvas.setColor(0);
+    _canvas.fill();
+
+    _canvas.setColor(0xf);
+    _canvas.setFont(Font::Small);
+    _canvas.drawText(4, 10, "FATAL ERROR");
+
+    _canvas.setFont(Font::Tiny);
+    _canvas.drawTextMultiline(4, 20, CONFIG_LCD_WIDTH - 8, msg);
+
+    if (filename) {
+        FixedStringBuilder<128> str("%s:%d", filename, line);
+        _canvas.drawTextMultiline(4, 40, CONFIG_LCD_WIDTH - 8, str);
+    }
+
+    _lcd.draw(_frameBuffer.data());
+}
+
 void Ui::handleKeys() {
     ButtonLedMatrix::Event event;
     while (_blm.nextEvent(event)) {

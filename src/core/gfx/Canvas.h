@@ -67,6 +67,7 @@ public:
     void drawText(int x, int y, const char *str);
     void drawTextCentered(int x, int y, int w, int h, const char *str);
     void drawTextAligned(int x, int y, int w, int h, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign, const char *str);
+    void drawTextMultiline(int x, int y, int w, const char *str);
 
     int textWidth(const char *str);
     int textHeight(const char *str);

@@ -33,6 +33,8 @@ public:
     void init();
     void update();
 
+    void showAssert(const char *filename, int line, const char *msg);
+
 private:
     void handleKeys();
     void handleEncoder();
