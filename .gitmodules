@@ -13,6 +13,3 @@
 [submodule "src/platform/sim/libs/soloud"]
 	path = src/platform/sim/libs/soloud
 	url = https://github.com/jarikomppa/soloud.git
-[submodule "src/platform/stm32/libs/CrashCatcher"]
-	path = src/platform/stm32/libs/CrashCatcher
-	url = https://github.com/adamgreen/CrashCatcher.git
