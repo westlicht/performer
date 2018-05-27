@@ -56,7 +56,7 @@ void Encoder::process() {
     updateEncoder(1, encoderDebouncer[1].debounce(!gpio_get(ENC_PORT, ENC_B)));
 }
 
-bool Encoder::reset() {
+void Encoder::reset() {
     InterruptLock lock;
     _pressed = false;
     _released = false;

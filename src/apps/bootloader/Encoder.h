@@ -9,7 +9,7 @@ public:
 
     static bool down() { return _down; }
 
-    static bool reset();
+    static void reset();
     static bool pressed();
     static bool released();
     static int value();
