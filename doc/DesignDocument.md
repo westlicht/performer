@@ -1,4 +1,4 @@
-# DESIGN DOCUMENT
+# Design Document
 
 This is a preliminary design document for the **PER|FORMER** eurorack sequencer.
 
@@ -43,7 +43,12 @@ The user interface is based on the following inputs/outputs:
 
 ## Global Controls
 
-Global buttons are `PLAY`, `CLOCK`, `<`, `>`, `SNAPSHOT`, `FILL`, `GLOBAL`, `SHIFT`
+Global buttons are `PLAY`, `CLOCK`, `SNAPSHOT`, `PERFORMER`, `<`, `>`, `PAGE`, `SHIFT`
+
+### Page Selection
+
+- [x] hold `PAGE` and press `<` or `>` to navigate through pages
+- [x] hold `PAGE` and press `TRACK[1-8]` or `STEP[1-16]` to select specific page
 
 ### Clock Control
 
@@ -53,6 +58,11 @@ Global buttons are `PLAY`, `CLOCK`, `<`, `>`, `SNAPSHOT`, `FILL`, `GLOBAL`, `SHI
 - [x] hold `CLOCK` and tap `PLAY` multiple times to set tempo by tapping
 - [x] hold `CLOCK` and hold `<` or `>` to nudge playhead (temporary decrease/increase tempo)
 - [x] press `SHIFT` + `CLOCK` to open the _clock setup_ page
+
+**Idea:**
+- [ ] press `PLAY` to start/stop+reset the sequencer
+- [ ] press `SHIFT` + `PLAY` to pause/resume the sequencer
+- [ ] maybe use `PAGE` + `CLOCK` to open _clock setup_ page for consistency
 
 ### Snapshot Control
 
@@ -194,6 +204,9 @@ TBD
 
 ### LFO
 
+## Step Selection
+
+TBD
 
 ## Step Variations
 
@@ -209,10 +222,13 @@ Variations are defined by a _range_ and a _probability_. The _range_ defines the
 
 ## Data Model
 
-- `root`
+- `model`
   - `project`
+    - `slot ` : Project slot
+    - `name` : Project name
     - `bpm` : Master tempo
     - `swing` : Master swing amount
+    - `syncMeasure` : Master sync measure
     - `clockSetup`
       - `mode` : `Auto` | `Master` | `Slave`
       - `clockInputPPQN` : Parts Per Quarter Note
@@ -225,34 +241,53 @@ Variations are defined by a _range_ and a _probability_. The _range_ defines the
       - `usbRx` : Receive USB MIDI Clock (`on` | `off`)
       - `usbTx` : Transmit USB MIDI Clock (`on` | `off`)
     - `track[1-8]`
-      - `mode` : `Note` | `Function`
-    - `pattern[1-16]`
-      - `sequence[1-8]`
-        - `playMode` : `Forward` | `Backward` | `PingPong` | `Pendulum` | `Random`
-        - `firstStep`
-        - `lastStep`
-        - `divider`
-        - `stepData`
+      - `trackMode` : `Note` | `Curve`
+      - `playMode` : `Free` | `Aligned`
+      - `fillMode` : `None`
+      - `linkTrack` : `None` | `Track[1-8]`
+      - `noteTrack`
+        - `sequence[1-16+4]`
+          - `scale`
+          - `divisor`
+          - `resetMeasure`
+          - `runMode` : `Forward` | `Backward` | `PingPong` | `Pendulum` | `Random`
+          - `firstStep`
+          - `lastStep`
+          - `steps[1-64]`
+            - `gate` `1b`
+            - `gateProbability` `4b`
+            - `length` `1B`
+            - `lengthVariation` `1B`
+              - `range` `4b`
+              - `probability` `4b`
+            - `repeats`
+            - `repeatsVariation`
+              - `range`
+              - `probability`
+            - `note` `1B`
+            - `noteVariation` `1B`
+              - `range` `4b`
+              - `probability` `4b`
+      - `curveTrack`
+        - `sequence[1-16+4]`
+          - `range`
+          - `divisor`
+          - `resetMeasure`
+          - `runMode` : `Forward` | `Backward` | `PingPong` | `Pendulum` | `Random`
+          - `firstStep`
+          - `lastStep`
+          - `steps[1-64]`
+            - `shape`
+            - `min`
+            - `max`
+    - `routing`
+        - TODO
   - `settings`
 
 ### Note Step Data
 
 - `stepData`
     - `step[1-16]`
-        - `gate` `1b`
-        - `gateProbability` `4b`
-        - `length` `1B`
-        - `lengthVariation` `1B`
-            - `range` `4b`
-            - `probability` `4b`
-        - `repeats`
-        - `repeatsVariation`
-            - `range`
-            - `probability`
-        - `note` `1B`
-        - `noteVariation` `1B`
-            - `range` `4b`
-            - `probability` `4b`
 
 ### Function Step Data
 
