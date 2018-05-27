@@ -81,14 +81,14 @@ static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
 
 void vAssertCalled(const char *filename, unsigned long line) {
 #if CONFIG_ENABLE_DEBUG
-    dbg_assert(false, "ASSERT in %s:%ld", filename, line);
+    dbg_assert(false, filename, line, "OS");
 #endif
 	while (1);
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t task, const char *name) {
 #if CONFIG_ENABLE_DEBUG
-    dbg_assert(false, "STACK OVERFLOW in %s", name);
+    dbg_assert(false, nullptr, 0, "STACK OVERFLOW in %s", name);
 #endif
 	while (1);
 }

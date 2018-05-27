@@ -22,6 +22,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -fdata-sections -ffunction-sections
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wno-unused-function --std=c++11 -fdata-sections -ffunction-sections ${platform_compiler_flags}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${platform_linker_flags}")
 
+string(LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_SIZE)
+add_definitions("-DSOURCE_PATH_SIZE=${SOURCE_PATH_SIZE}")
+
 set(core_sources
     # stb
     libs/stb/stb_sprintf.c
