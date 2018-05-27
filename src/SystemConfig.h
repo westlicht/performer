@@ -42,3 +42,6 @@
 
 // SdCard
 #define CONFIG_SDCARD_USE_CARD_DETECT   1
+
+// Encoder
+#define CONFIG_ENCODER_REVERSE          1
