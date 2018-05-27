@@ -39,3 +39,6 @@
 
 // DAC
 #define CONFIG_DAC_CHANNELS             8
+
+// SdCard
+#define CONFIG_SDCARD_USE_CARD_DETECT   1

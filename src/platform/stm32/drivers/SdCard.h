@@ -41,6 +41,8 @@ private:
         uint32_t size = 0;
     };
 
+    bool cardDetect() const;
+
     void powerOn();
     void powerOff();
 

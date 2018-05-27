@@ -1,5 +1,7 @@
 #include "SdCard.h"
 
+#include "SystemConfig.h"
+
 #include "os/os.h"
 
 #include <libopencm3/stm32/dma.h>
@@ -16,6 +18,7 @@ void SdCard::init() {
     // PC8 - SDIO_D0
     // PC12 - SDIO_CK
     // PD2 - SDIO_CMD
+    // PC11 - SDIO_CD
 
     rcc_periph_clock_enable(RCC_GPIOC);
     rcc_periph_clock_enable(RCC_GPIOD);
@@ -25,9 +28,18 @@ void SdCard::init() {
     gpio_set_output_options(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO2);
     gpio_set_af(GPIOC, GPIO_AF12, GPIO8 | GPIO12);
     gpio_set_af(GPIOD, GPIO_AF12, GPIO2);
+
+    // card detect pin
+    gpio_mode_setup(GPIOC, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO11);
 }
 
 bool SdCard::available() {
+#if CONFIG_SDCARD_USE_CARD_DETECT
+    if (_initialized) {
+        _initialized = cardDetect();
+    }
+#endif
+
     if (_initialized) {
         _initialized = waitDataReady();
     }
@@ -65,6 +77,10 @@ bool SdCard::write(const uint8_t *buf, uint32_t sector, uint8_t count) {
         data += 512;
     }
     return true;
+}
+
+bool SdCard::cardDetect() const {
+    return gpio_get(GPIOC, GPIO11);
 }
 
 void SdCard::powerOn() {
@@ -174,6 +190,13 @@ SdCard::Error SdCard::sendAppCommand(uint32_t cmd, uint32_t arg, int maxRetries)
 
 bool SdCard::initCard() {
     powerOn();
+
+#if CONFIG_SDCARD_USE_CARD_DETECT
+    if (!cardDetect()) {
+        powerOff();
+        return false;
+    }
+#endif
 
     _cardInfo = CardInfo();
 
