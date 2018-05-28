@@ -25,7 +25,7 @@ Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &en
 }
 
 void Ui::init() {
-    _keyState.fill(false);
+    _keyState.reset();
 
     _pageManager.push(&_pages.top);
     _pages.top.init();

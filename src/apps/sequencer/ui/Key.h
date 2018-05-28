@@ -4,9 +4,9 @@
 
 #include "MatrixMap.h"
 
-#include <array>
+#include <bitset>
 
-typedef std::array<bool, CONFIG_BLM_ROWS * CONFIG_BLM_COLS_BUTTON + 1> KeyState;
+typedef std::bitset<CONFIG_BLM_ROWS * CONFIG_BLM_COLS_BUTTON + 1> KeyState;
 
 class Key {
 public:
