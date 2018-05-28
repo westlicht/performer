@@ -48,7 +48,7 @@ public:
 
             _selected.reset(stepIndex);
 
-            if (!_selected[_first]) {
+            if (_first >= 0 && !_selected[_first]) {
                 _first = firstSetIndex();
             }
 
