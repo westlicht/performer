@@ -14,6 +14,7 @@ void BpmPage::enter() {
 }
 
 void BpmPage::exit() {
+    _engine.nudgeTempoSetDirection(0);
 }
 
 void BpmPage::draw(Canvas &canvas) {
