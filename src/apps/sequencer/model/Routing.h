@@ -333,7 +333,9 @@ public:
         float min() const { return _min; }
         void setMin(float min) {
             _min = clamp(min, 0.f, 1.f);
-            setMax(std::max(max(), _min));
+            if (max() < _min) {
+                setMax(_min);
+            }
         }
 
         void editMin(int value, bool shift) {
@@ -349,11 +351,13 @@ public:
         float max() const { return _max; }
         void setMax(float max) {
             _max = clamp(max, 0.f, 1.f);
-            setMin(std::min(min(), _max));
+            if (min() > _max) {
+                setMin(_max);
+            }
         }
 
         void editMax(int value, bool shift) {
-            setMax(max() + value);
+            setMax(max() + value * paramValueStep(_param));
         }
 
         void printMax(StringBuilder &str) const {
