@@ -28,13 +28,13 @@ public:
     virtual bool idleOutput() const override { return _idleOutput; }
     virtual bool idleGateOutput(int index) const override { return _idleGateOutput; }
     virtual float idleCvOutput(int index) const override { return _idleCvOutput; }
+    virtual void clearIdleOutput() override { _idleOutput = false; }
 
     const NoteSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
 
     int currentStep() const { return _currentStep; }
 
-    void clearIdleOutput();
     void setIdleStep(int index);
     void setIdleGate(bool gate);
 

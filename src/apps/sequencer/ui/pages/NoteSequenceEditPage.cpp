@@ -48,7 +48,6 @@ void NoteSequenceEditPage::enter() {
 }
 
 void NoteSequenceEditPage::exit() {
-    _engine.selectedTrackEngine().as<NoteTrackEngine>().clearIdleOutput();
 }
 
 void NoteSequenceEditPage::draw(Canvas &canvas) {

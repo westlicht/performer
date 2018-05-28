@@ -265,26 +265,29 @@ void Engine::updateTrackOutputs() {
     int trackGateIndex[CONFIG_TRACK_COUNT];
     int trackCvIndex[CONFIG_TRACK_COUNT];
 
-    for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-        trackGateIndex[i] = 0;
-        trackCvIndex[i] = 0;
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        trackGateIndex[trackIndex] = 0;
+        trackCvIndex[trackIndex] = 0;
     }
 
-    for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-        int gateOutputTrack = gateOutputTracks[i];
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        if (trackIndex != _model.project().selectedTrackIndex()) {
+            _trackEngines[trackIndex]->clearIdleOutput();
+        }
+        int gateOutputTrack = gateOutputTracks[trackIndex];
         if (!_gateOutputOverride) {
             if (isIdle && _trackEngines[gateOutputTrack]->idleOutput()) {
-                _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->idleGateOutput(trackGateIndex[gateOutputTrack]++));
+                _gateOutput.setGate(trackIndex, _trackEngines[gateOutputTrack]->idleGateOutput(trackGateIndex[gateOutputTrack]++));
             } else {
-                _gateOutput.setGate(i, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
+                _gateOutput.setGate(trackIndex, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
             }
         }
-        int cvOutputTrack = cvOutputTracks[i];
+        int cvOutputTrack = cvOutputTracks[trackIndex];
         if (!_cvOutputOverride) {
             if (isIdle && _trackEngines[cvOutputTrack]->idleOutput()) {
-                _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->idleCvOutput(trackCvIndex[cvOutputTrack]++));
+                _cvOutput.setChannel(trackIndex, _trackEngines[cvOutputTrack]->idleCvOutput(trackCvIndex[cvOutputTrack]++));
             } else {
-                _cvOutput.setChannel(i, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
+                _cvOutput.setChannel(trackIndex, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
             }
         }
     }

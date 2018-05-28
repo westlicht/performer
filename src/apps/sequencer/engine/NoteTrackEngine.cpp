@@ -143,10 +143,6 @@ void NoteTrackEngine::changePattern() {
     _fillSequence = &_noteTrack.sequence(std::min(_pattern + 1, CONFIG_PATTERN_COUNT - 1));
 }
 
-void NoteTrackEngine::clearIdleOutput() {
-    _idleOutput = false;
-}
-
 void NoteTrackEngine::setIdleStep(int index) {
     _idleOutput = true;
     const auto &sequence = *_sequence;
