@@ -59,10 +59,10 @@ void LedPainter::drawSelectedPage(Leds &leds, int page) {
 }
 
 void LedPainter::drawSelectedSequencePage(Leds &leds, int page) {
-    leds.set(Key::Code::Left, page == 0, page == 0);
-    leds.set(Key::Code::Right, page == 1, page == 1);
-    leds.set(Key::Code::Page, page == 2, page == 2);
-    leds.set(Key::Code::Shift, page == 3, page == 3);
+    leds.set(Key::Code::Global4, page == 0, page == 0);
+    leds.set(Key::Code::Global5, page == 1, page == 1);
+    leds.set(Key::Code::Global6, page == 2, page == 2);
+    leds.set(Key::Code::Global7, page == 3, page == 3);
 }
 
 void LedPainter::drawSelectedPattern(Leds &leds, int activePattern, int requestedPattern) {

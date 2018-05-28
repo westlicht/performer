@@ -34,7 +34,7 @@ private:
 
         // aux modes
         UserScale       = Key::Code::Step0,
-        Monitor         = Key::Code::Step1,
+        Monitor         = Key::Code::Step6,
         Settings        = Key::Code::Step7,
 
         Last,
