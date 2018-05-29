@@ -11,15 +11,12 @@
 #include <cstdlib>
 #include <cstdint>
 
-typedef VersionedSerializedWriter<fs::FileWriter> Writer;
-typedef VersionedSerializedReader<fs::FileReader> Reader;
-
 struct WriteContext {
-    Writer &writer;
+    VersionedSerializedWriter &writer;
 };
 
 struct ReadContext {
-    Reader &reader;
+    VersionedSerializedReader &reader;
 };
 
 template<typename T, size_t N>

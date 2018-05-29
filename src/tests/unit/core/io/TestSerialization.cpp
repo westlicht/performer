@@ -11,7 +11,7 @@ UNIT_TEST("Serialization") {
 
     CASE("write/read") {
         MemoryWriter memoryWriter(buf, sizeof(buf));
-        SerializedWriter<MemoryWriter> writer(memoryWriter);
+        SerializedWriter writer([&memoryWriter] (const void *data, size_t len) { memoryWriter.write(data, len); });
 
         for (int i = 0; i < 10; ++i) {
             int8_t i8 = -i;
@@ -29,7 +29,7 @@ UNIT_TEST("Serialization") {
         }
 
         MemoryReader memoryReader(buf, sizeof(buf));
-        SerializedReader<MemoryReader> reader(memoryReader);
+        SerializedReader reader([&memoryReader] (void *data, size_t len) { memoryReader.read(data, len); });
 
         for (int i = 0; i < 10; ++i) {
             int8_t i8;

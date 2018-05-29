@@ -2,15 +2,17 @@
 
 #include <cstdlib>
 #include <cstdint>
+#include <functional>
 
-template<typename Reader>
 class VersionedSerializedReader {
 public:
-    VersionedSerializedReader(Reader &reader, uint32_t readerVersion) :
+    typedef std::function<void(void *, size_t)> Reader;
+
+    VersionedSerializedReader(Reader reader, uint32_t readerVersion) :
         _reader(reader),
         _readerVersion(readerVersion)
     {
-        _reader.read(&_dataVersion, sizeof(_dataVersion));
+        _reader(&_dataVersion, sizeof(_dataVersion));
     }
 
     uint32_t readerVersion() const { return _readerVersion; }
@@ -23,7 +25,7 @@ public:
 
     void read(void *data, size_t len, uint32_t addedInVersion) {
         if (_dataVersion >= addedInVersion) {
-            _reader.read(data, len);
+            _reader(data, len);
         }
     }
 
@@ -35,12 +37,12 @@ public:
     void skip(size_t len, uint32_t addedInVersion, uint32_t removedInVersion) {
         if (_dataVersion >= addedInVersion && _dataVersion < removedInVersion) {
             uint8_t dummy[len];
-            _reader.read(dummy, len);
+            _reader(dummy, len);
         }
     }
 
 private:
-    Reader &_reader;
+    Reader _reader;
     uint32_t _readerVersion;
     uint32_t _dataVersion;
 };

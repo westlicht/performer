@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 
-template<typename Writer>
 class SerializedWriter {
 public:
-    SerializedWriter(Writer &writer) :
+    typedef std::function<void(const void *, size_t)> Writer;
+
+    SerializedWriter(Writer writer) :
         _writer(writer)
     {}
 
@@ -15,9 +17,9 @@ public:
     }
 
     void write(const void *data, size_t len) {
-        _writer.write(data, len);
+        _writer(data, len);
     }
 
 private:
-    Writer &_writer;
+    Writer _writer;
 };

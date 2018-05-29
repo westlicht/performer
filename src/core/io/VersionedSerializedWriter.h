@@ -2,15 +2,17 @@
 
 #include <cstdlib>
 #include <cstdint>
+#include <functional>
 
-template<typename Writer>
 class VersionedSerializedWriter {
 public:
-    VersionedSerializedWriter(Writer &writer, uint32_t writerVersion) :
+    typedef std::function<void(const void *, size_t)> Writer;
+
+    VersionedSerializedWriter(Writer writer, uint32_t writerVersion) :
         _writer(writer),
         _writerVersion(writerVersion)
     {
-        _writer.write(&_writerVersion, sizeof(_writerVersion));
+        _writer(&_writerVersion, sizeof(_writerVersion));
     }
 
     uint32_t writerVersion() const { return _writerVersion; }
@@ -21,10 +23,10 @@ public:
     }
 
     void write(const void *data, size_t len) {
-        _writer.write(data, len);
+        _writer(data, len);
     }
 
 private:
-    Writer &_writer;
+    Writer _writer;
     uint32_t _writerVersion;
 };

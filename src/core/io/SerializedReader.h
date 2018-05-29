@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 
-template<typename Reader>
 class SerializedReader {
 public:
-    SerializedReader(Reader &reader) :
+    typedef std::function<void(void *, size_t)> Reader;
+
+    SerializedReader(Reader reader) :
         _reader(reader)
     {}
 
@@ -15,9 +17,9 @@ public:
     }
 
     void read(void *data, size_t len) {
-        _reader.read(data, len);
+        _reader(data, len);
     }
 
 private:
-    Reader &_reader;
+    Reader _reader;
 };

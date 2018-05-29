@@ -38,7 +38,7 @@ struct Data4 {
 
 static void writeVersion1(void *buf, size_t len) {
     MemoryWriter memoryWriter(buf, len);
-    VersionedSerializedWriter<MemoryWriter> writer(memoryWriter, 1);
+    VersionedSerializedWriter writer([&memoryWriter] (const void *data, size_t len) { memoryWriter.write(data, len); }, 1);
     Data1 data;
     writer.write(data.field1);
     writer.write(data.field2);
@@ -47,7 +47,7 @@ static void writeVersion1(void *buf, size_t len) {
 
 static void writeVersion2(void *buf, size_t len) {
     MemoryWriter memoryWriter(buf, len);
-    VersionedSerializedWriter<MemoryWriter> writer(memoryWriter, 2);
+    VersionedSerializedWriter writer([&memoryWriter] (const void *data, size_t len) { memoryWriter.write(data, len); }, 2);
     Data2 data;
     writer.write(data.field1);
     writer.write(data.field2);
@@ -57,7 +57,7 @@ static void writeVersion2(void *buf, size_t len) {
 
 static Data3 writeVersion3(void *buf, size_t len) {
     MemoryWriter memoryWriter(buf, len);
-    VersionedSerializedWriter<MemoryWriter> writer(memoryWriter, 3);
+    VersionedSerializedWriter writer([&memoryWriter] (const void *data, size_t len) { memoryWriter.write(data, len); }, 3);
     Data3 data;
     writer.write(data.field1);
     writer.write(data.field2);
@@ -68,7 +68,7 @@ static Data3 writeVersion3(void *buf, size_t len) {
 
 static void writeVersion4(void *buf, size_t len) {
     MemoryWriter memoryWriter(buf, len);
-    VersionedSerializedWriter<MemoryWriter> writer(memoryWriter, 4);
+    VersionedSerializedWriter writer([&memoryWriter] (const void *data, size_t len) { memoryWriter.write(data, len); }, 4);
     Data4 data;
     writer.write(data.field1);
     writer.write(data.field2);
@@ -78,7 +78,7 @@ static void writeVersion4(void *buf, size_t len) {
 
 static void readVersion1(const void *buf, size_t len) {
     MemoryReader memoryReader(buf, len);
-    VersionedSerializedReader<MemoryReader> reader(memoryReader, 1);
+    VersionedSerializedReader reader([&memoryReader] (void *data, size_t len) { memoryReader.read(data, len); }, 1);
     Data1 data;
     std::memset(&data, 0, sizeof(data));
     reader.read(data.field1);
@@ -92,7 +92,7 @@ static void readVersion1(const void *buf, size_t len) {
 
 static void readVersion2(const void *buf, size_t len) {
     MemoryReader memoryReader(buf, len);
-    VersionedSerializedReader<MemoryReader> reader(memoryReader, 2);
+    VersionedSerializedReader reader([&memoryReader] (void *data, size_t len) { memoryReader.read(data, len); }, 2);
     Data2 data;
     std::memset(&data, 0, sizeof(data));
     reader.read(data.field1);
@@ -108,7 +108,7 @@ static void readVersion2(const void *buf, size_t len) {
 
 static void readVersion3(const void *buf, size_t len) {
     MemoryReader memoryReader(buf, len);
-    VersionedSerializedReader<MemoryReader> reader(memoryReader, 3);
+    VersionedSerializedReader reader([&memoryReader] (void *data, size_t len) { memoryReader.read(data, len); }, 3);
     Data3 data;
     std::memset(&data, 0, sizeof(data));
     reader.read(data.field1);
@@ -126,7 +126,7 @@ static void readVersion3(const void *buf, size_t len) {
 
 static void readVersion4(const void *buf, size_t len) {
     MemoryReader memoryReader(buf, len);
-    VersionedSerializedReader<MemoryReader> reader(memoryReader, 4);
+    VersionedSerializedReader reader([&memoryReader] (void *data, size_t len) { memoryReader.read(data, len); }, 4);
     Data4 data;
     std::memset(&data, 0, sizeof(data));
     reader.read(data.field1);

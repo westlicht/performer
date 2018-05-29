@@ -27,7 +27,11 @@ fs::Error Settings::write(const char *path) const {
     FileHeader header(FileType::Settings, 0, "SETTINGS");
     fileWriter.write(&header, sizeof(header));
 
-    Writer writer(fileWriter, Version);
+    VersionedSerializedWriter writer(
+        [&fileWriter] (const void *data, size_t len) { fileWriter.write(data, len); },
+        Version
+    );
+
     WriteContext context = { writer };
     write(context);
 
@@ -43,7 +47,11 @@ fs::Error Settings::read(const char *path) {
     FileHeader header;
     fileReader.read(&header, sizeof(header));
 
-    Reader reader(fileReader, Version);
+    VersionedSerializedReader reader(
+        [&fileReader] (void *data, size_t len) { fileReader.read(data, len); },
+        Version
+    );
+
     ReadContext context = { reader };
     read(context);
 

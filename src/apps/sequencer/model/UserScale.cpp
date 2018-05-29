@@ -51,7 +51,11 @@ fs::Error UserScale::write(const char *path) const {
     FileHeader header(FileType::UserScale, 0, _name);
     fileWriter.write(&header, sizeof(header));
 
-    Writer writer(fileWriter, Version);
+    VersionedSerializedWriter writer(
+        [&fileWriter] (const void *data, size_t len) { fileWriter.write(data, len); },
+        Version
+    );
+
     WriteContext context = { writer };
     write(context);
 
@@ -68,7 +72,11 @@ fs::Error UserScale::read(const char *path) {
     fileReader.read(&header, sizeof(header));
     header.readName(_name, sizeof(_name));
 
-    Reader reader(fileReader, Version);
+    VersionedSerializedReader reader(
+        [&fileReader] (void *data, size_t len) { fileReader.read(data, len); },
+        Version
+    );
+
     ReadContext context = { reader };
     read(context);
 
