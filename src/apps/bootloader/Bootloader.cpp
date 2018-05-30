@@ -81,6 +81,7 @@ static void formatVersion(const VersionTag &version, char *str, size_t len) {
     }
 }
 
+
 static void jumpToApplication(void) {
     deinit();
 
@@ -97,7 +98,7 @@ static void jumpToApplication(void) {
 	// BKP_DR3 = VERSION >> 16;
 
 	// set vector table base address
-	SCB_VTOR = CONFIG_APPLICATION_ADDR & 0xFFFF;
+	SCB_VTOR = CONFIG_APPLICATION_ADDR;
 	// initialise master stack pointer
 	asm volatile("msr msp, %0" :: "g" (*reinterpret_cast<volatile uint32_t *>(CONFIG_APPLICATION_ADDR)));
 	// jump to application
