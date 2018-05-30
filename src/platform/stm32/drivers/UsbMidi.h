@@ -48,6 +48,6 @@ public:
 private:
     std::function<bool(uint8_t)> _filter;
 
-    RingBuffer<MidiMessage, 16> _txQueue;
+    RingBuffer<MidiMessage, 128> _txQueue;
     RingBuffer<MidiMessage, 16> _rxQueue;
 };

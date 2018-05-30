@@ -104,13 +104,6 @@ struct MidiDriverHandler {
     }
 
     static void writeCallback(uint8_t bytes_written) {
-        uint8_t device;
-        MidiMessage message;
-        if (g_usbh->midiDequeueMessage(&device, &message)) {
-            if (g_usbh->midiDeviceConnected(device)) {
-                write(device, message);
-            }
-        }
     }
 };
 
@@ -140,52 +133,16 @@ void UsbH::init() {
     // USB_PWR_FAULT
 	gpio_mode_setup(USB_PWR_FAULT_PORT, GPIO_MODE_INPUT, GPIO_PUPD_NONE, USB_PWR_FAULT_PIN);
 
-
-
-	// rcc_periph_clock_enable(RCC_GPIOB); // OTG_HS
-	// rcc_periph_clock_enable(RCC_GPIOG); // USB OTG Power Up
-	// rcc_periph_clock_enable(RCC_GPIOC); // USART + OTG_FS charge pump
-	// rcc_periph_clock_enable(RCC_GPIOD); // LEDS
-
 	// periphery
-	// rcc_periph_clock_enable(RCC_USART6); // USART
 	rcc_periph_clock_enable(RCC_OTGFS); // OTG_FS
-	// rcc_periph_clock_enable(RCC_OTGHS); // OTG_HS
-	// rcc_periph_clock_enable(RCC_TIM6); // TIM6
-
-    // gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO6);
-    // gpio_set(GPIOG, GPIO6);
-
-
-	// /* Set GPIO12-15 (in GPIO port D) to 'output push-pull'. */
-	// gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT,
-	// 		GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
-
-	/* Set	 */
-	// gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO0);
-	// gpio_clear(GPIOC, GPIO0);
-
-	// gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE,
-	// 		GPIO13 | GPIO14 | GPIO15);
-	// gpio_set_af(GPIOB, GPIO_AF12, GPIO13 | GPIO14 | GPIO15);
-
 
 	// OTG_FS
 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO11 | GPIO12);
 	gpio_set_af(GPIOA, GPIO_AF10, GPIO11 | GPIO12);
 
-	// OTG_HS
-	// gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO15 | GPIO14);
-	// gpio_set_af(GPIOB, GPIO_AF12, GPIO14 | GPIO15);
-
-	// hid_driver_init(&hid_config);
 	hub_driver_init();
 	midi_driver_init(&midi_config);
-
-
-	// gpio_set(GPIOD,  GPIO13);
 	usbh_init(lld_drivers, device_drivers);
-	// gpio_clear(GPIOD,  GPIO13);
 }
 
 void UsbH::process() {
