@@ -41,7 +41,6 @@ set(platform_sources
     # libusbhost
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_core.c
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_ac_midi.c
-    # ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_hid.c
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_driver_hub.c
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/libusbhost/src/usbh_lld_stm32f4.c
     PARENT_SCOPE

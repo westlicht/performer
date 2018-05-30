@@ -8,7 +8,6 @@
 
 #include "usbh_core.h"				/// provides usbh_init() and usbh_poll()
 #include "usbh_lld_stm32f4.h"		/// provides low level usb host driver for stm32f4 platform
-// #include "usbh_driver_hid.h"		/// provides generic usb device driver for Human Interface Device (HID)
 #include "usbh_driver_hub.h"		/// provides usb full speed hub driver (Low speed devices on hub are not supported)
 #include "usbh_driver_ac_midi.h"	/// provides usb device driver for midi class devices
 
@@ -28,7 +27,6 @@ static UsbH *g_usbh;
 
 static const usbh_dev_driver_t *device_drivers[] = {
 	&usbh_hub_driver,
-	// &usbh_hid_driver,
 	&usbh_midi_driver,
 	nullptr
 };
@@ -43,38 +41,6 @@ static const usbh_low_level_driver_t * const lld_drivers[] = {
 #endif
 	nullptr
 };
-
-// static void hid_in_message_handler(uint8_t device_id, const uint8_t *data, uint32_t length)
-// {
-// 	(void)device_id;
-// 	(void)data;
-// 	if (length < 4) {
-// 		DBG("data too short, type=%d", hid_get_type(device_id));
-// 		return;
-// 	}
-
-// 	// print only first 4 bytes, since every mouse should have at least these four set.
-// 	// Report descriptors are not read by driver for now, so we do not know what each byte means
-// 	// DBG("HID EVENT %02X %02X %02X %02X", data[0], data[1], data[2], data[3]);
-// 	if (hid_get_type(device_id) == HID_TYPE_KEYBOARD) {
-// 		static int x = 0;
-// 		if (x != data[2]) {
-// 			x = data[2];
-// 			hid_set_report(device_id, x);
-// 		}
-// 	}
-//     if (hid_get_type(device_id) == HID_TYPE_MOUSE) {
-//         static int x, y;
-//         x += (int8_t) data[1];
-//         y += (int8_t) data[2];
-//         g_usbh->setMousePos(x, y);
-//         DBG("mouse x = %d, y = %d", x, y);
-//     }
-// }
-
-// static const hid_config_t hid_config = {
-// 	.hid_in_message_handler = &hid_in_message_handler
-// };
 
 struct MidiDriverHandler {
 
