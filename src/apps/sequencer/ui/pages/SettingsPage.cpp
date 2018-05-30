@@ -63,7 +63,7 @@ void SettingsPage::draw(Canvas &canvas) {
 
     switch (_mode) {
     case Mode::Calibration: {
-        FixedStringBuilder<8> str("CV%d", _outputIndex + 1);
+        FixedStringBuilder<8> str("CAL CV%d", _outputIndex + 1);
         WindowPainter::drawActiveFunction(canvas, str);
         ListPage::draw(canvas);
         break;
