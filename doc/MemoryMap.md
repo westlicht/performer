@@ -26,8 +26,9 @@
 
 ## Flash Memory Map
 
-| Region                  | Size   | Description |
-| :---                    | :---   | :---        |
-| 0x08000000 - 0x08007FFF | 32 KB  | Bootloader  |
-| 0x08008000 - 0x080DFFFF | 992 KB | Application |
-
+| Region                  | Size   | Description          |
+| :---                    | :---   | :---                 |
+| 0x08000000 - 0x08007FFF | 32 KB  | Bootloader           |
+| 0x08008000 - 0x0800BFFF | 16 KB  | Hardware Settings    |
+| 0x0800C000 - 0x0800FFFF | 16 KB  | Application Settings |
+| 0x08010000 - 0x080DFFFF | 960 KB | Application          |
