@@ -33,10 +33,12 @@ void Midi::init() {
     nvic_enable_irq(NVIC_USART6_IRQ);
 }
 
-void Midi::send(const MidiMessage &message) {
+bool Midi::send(const MidiMessage &message) {
     for (uint8_t i = 0; i < message.length(); ++i) {
         send(message.raw()[i]);
     }
+
+    return true;
 }
 
 bool Midi::recv(MidiMessage *message) {

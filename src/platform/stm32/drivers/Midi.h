@@ -12,7 +12,7 @@ class Midi {
 public:
     void init();
 
-    void send(const MidiMessage &message);
+    bool send(const MidiMessage &message);
     bool recv(MidiMessage *message);
 
     void setRecvFilter(std::function<bool(uint8_t)> filter);

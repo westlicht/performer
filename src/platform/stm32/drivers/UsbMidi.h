@@ -11,8 +11,12 @@ class UsbMidi {
 public:
     void init() {}
 
-    void send(const MidiMessage &message) {
+    bool send(const MidiMessage &message) {
+        if (_txQueue.full()) {
+            return false;
+        }
         _txQueue.write(message);
+        return true;
     }
 
     bool recv(MidiMessage *message) {

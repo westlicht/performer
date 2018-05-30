@@ -26,8 +26,9 @@ public:
 
     void init() {}
 
-    void send(const MidiMessage &message) {
+    bool send(const MidiMessage &message) {
         _simulator.sendMidi(sim::Simulator::MidiUsbHostPort, message.raw(), message.length());
+        return true;
     }
 
     bool recv(MidiMessage *message) {
