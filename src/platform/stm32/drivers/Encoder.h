@@ -16,6 +16,8 @@ public:
         Up,     // encoder released
     };
 
+    Encoder(bool reverse = false);
+
     void init();
 
     void process();
@@ -29,6 +31,8 @@ public:
     }
 
 private:
+    bool _reverse;
+
     RingBuffer<uint8_t, 16> _events;
 
     Debouncer<3> _encoderSwitchDebouncer;

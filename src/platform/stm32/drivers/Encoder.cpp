@@ -1,7 +1,5 @@
 #include "Encoder.h"
 
-#include "SystemConfig.h"
-
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 
@@ -10,6 +8,10 @@
 #define ENC_A GPIO13
 #define ENC_B GPIO14
 #define ENC_GPIO (ENC_SWITCH | ENC_A | ENC_B)
+
+Encoder::Encoder(bool reverse) :
+    _reverse(reverse)
+{}
 
 void Encoder::init() {
     rcc_periph_clock_enable(RCC_GPIOC);
@@ -21,11 +23,11 @@ void Encoder::process() {
         if (state != _encoderState[pin]) {
             _encoderState[pin] = state;
             if (!_encoderState[0] && !_encoderState[1]) {
-#ifdef CONFIG_ENCODER_REVERSE
-                _events.write(pin ? Event::Right : Event::Left);
-#else
-                _events.write(pin ? Event::Left : Event::Right);
-#endif
+                if (_reverse) {
+                    _events.write(pin ? Event::Right : Event::Left);
+                } else {
+                    _events.write(pin ? Event::Left : Event::Right);
+                }
             }
         }
     };

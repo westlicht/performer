@@ -27,6 +27,8 @@
 #include "engine/Engine.h"
 #include "ui/Ui.h"
 
+#include "../hwconfig/HardwareConfig.h"
+
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 
@@ -52,7 +54,7 @@ struct {
 static CCMRAM_BSS ClockTimer clockTimer;
 static CCMRAM_BSS ShiftRegister shiftRegister;
 static CCMRAM_BSS ButtonLedMatrix blm(shiftRegister);
-static CCMRAM_BSS Encoder encoder;
+static CCMRAM_BSS Encoder encoder(HardwareConfig::reversedEncoder());
 static Lcd lcd;
 static Adc adc;
 static CCMRAM_BSS Dac dac;
