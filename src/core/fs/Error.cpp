@@ -25,6 +25,8 @@ const char *errorToString(Error error) {
     case TOO_MANY_OPEN_FILES:   return "TOO_MANY_OPEN_FILES";
     case INVALID_PARAMETER:     return "INVALID_PARAMETER";
     case DISK_FULL:             return "DISK_FULL";
+    case END_OF_FILE:           return "END_OF_FILE";
+    case INVALID_CHECKSUM:      return "INVALID_CHECKSUM";
     default:                    return "unknown";
     }
 }

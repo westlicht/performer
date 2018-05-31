@@ -175,7 +175,7 @@ void UserScalePage::saveUserScaleToSlot(int slot) {
         return FileManager::saveUserScale(*_userScale, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("SAVED USER SACLE"));
+            showMessage("USER SCALE SAVED");
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
@@ -193,7 +193,9 @@ void UserScalePage::loadUserScaleFromSlot(int slot) {
         return FileManager::loadUserScale(*_userScale, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("LOADED USER SCALE"));
+            showMessage("USER SCALE LOADED");
+        } else if (result == fs::INVALID_CHECKSUM) {
+            showMessage("INVALID USER SCALE FILE");
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }

@@ -43,11 +43,15 @@ public:
             if (_pos == 0 || _pos == BufferSize) {
                 _error = _file.read(buffer, BufferSize, &_bufferSize);
                 if (_error != OK) {
-                    continue;
+                    break;
                 }
                 _pos = 0;
             }
             size_t chunk = std::min(len, _bufferSize - _pos);
+            if (chunk == 0) {
+                _error = END_OF_FILE;
+                break;
+            }
             memcpy(dst, &buffer[_pos], chunk);
             _pos += chunk;
             dst += chunk;

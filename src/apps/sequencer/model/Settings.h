@@ -3,12 +3,14 @@
 #include "Calibration.h"
 #include "Serialize.h"
 #include "FileDefs.h"
+#include "FlashWriter.h"
+#include "FlashReader.h"
 
 class Settings {
 public:
     static constexpr uint32_t Version = 1;
 
-    static const char *filename;
+    static const char *Filename;
 
     Settings();
 
@@ -18,10 +20,16 @@ public:
     void clear();
 
     void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    bool read(ReadContext &context);
 
     fs::Error write(const char *path) const;
     fs::Error read(const char *path);
+
+    void write(FlashWriter &flashWriter) const;
+    bool read(FlashReader &flashReader);
+
+    void writeToFlash() const;
+    bool readFromFlash();
 
 private:
     Calibration _calibration;

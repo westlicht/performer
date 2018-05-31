@@ -95,9 +95,11 @@ void Project::write(WriteContext &context) const {
 
     writer.write(_selectedTrackIndex);
     writer.write(_selectedPatternIndex);
+
+    writer.writeHash();
 }
 
-void Project::read(ReadContext &context) {
+bool Project::read(ReadContext &context) {
     clear();
 
     auto &reader = context.reader;
@@ -118,6 +120,13 @@ void Project::read(ReadContext &context) {
 
     reader.read(_selectedTrackIndex);
     reader.read(_selectedPatternIndex);
+
+    bool success = reader.checkHash();
+    if (!success) {
+        clear();
+    }
+
+    return success;
 }
 
 fs::Error Project::write(const char *path) const {
@@ -156,7 +165,12 @@ fs::Error Project::read(const char *path) {
     );
 
     ReadContext context = { reader };
-    read(context);
+    bool success = read(context);
 
-    return fileReader.finish();
+    auto error = fileReader.finish();
+    if (error == fs::OK && !success) {
+        error = fs::INVALID_CHECKSUM;
+    }
+
+    return error;
 }

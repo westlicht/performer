@@ -135,6 +135,8 @@ int main(void) {
     sdCard.init();
 
     model.init();
+    model.settings().readFromFlash();
+
     engine.init();
     ui.init();
 

@@ -25,6 +25,10 @@
 #define CONFIG_FILE_TASK_STACK_SIZE     2048
 #define CONFIG_PROFILER_TASK_STACK_SIZE 2048
 
+// Settings flash storage
+#define CONFIG_SETTINGS_FLASH_SECTOR    3
+#define CONFIG_SETTINGS_FLASH_ADDR      0x0800C000
+
 // Parts per quarter note
 #define CONFIG_PPQN                     192
 

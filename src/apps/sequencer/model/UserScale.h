@@ -143,7 +143,7 @@ public:
     void clearItems();
 
     void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    bool read(ReadContext &context);
 
     fs::Error write(const char *path) const;
     fs::Error read(const char *path);

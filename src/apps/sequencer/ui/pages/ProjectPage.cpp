@@ -181,7 +181,7 @@ void ProjectPage::saveProjectToSlot(int slot) {
         return FileManager::saveProject(_project, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("SAVED PROJECT"));
+            showMessage("PROJECT SAVED");
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
@@ -199,7 +199,9 @@ void ProjectPage::loadProjectFromSlot(int slot) {
         return FileManager::loadProject(_project, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("LOADED PROJECT"));
+            showMessage("PROJECT LOADED");
+        } else if (result == fs::INVALID_CHECKSUM) {
+            showMessage("INVALID PROJECT FILE");
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }

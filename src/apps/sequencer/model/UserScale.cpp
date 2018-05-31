@@ -24,22 +24,35 @@ void UserScale::clearItems() {
 
 void UserScale::write(WriteContext &context) const {
     auto &writer = context.writer;
+
     writer.write(_mode);
     writer.write(_size);
+
     for (int i = 0; i < _size; ++i) {
         writer.write(_items[i]);
     }
+
+    writer.writeHash();
 }
 
-void UserScale::read(ReadContext &context) {
+bool UserScale::read(ReadContext &context) {
     clear();
 
     auto &reader = context.reader;
+
     reader.read(_mode);
     reader.read(_size);
+
     for (int i = 0; i < _size; ++i) {
         reader.read(_items[i]);
     }
+
+    bool success = reader.checkHash();
+    if (!success) {
+        clear();
+    }
+
+    return success;
 }
 
 fs::Error UserScale::write(const char *path) const {
@@ -78,7 +91,12 @@ fs::Error UserScale::read(const char *path) {
     );
 
     ReadContext context = { reader };
-    read(context);
+    bool success = read(context);
 
-    return fileReader.finish();
+    auto error = fileReader.finish();
+    if (error == fs::OK && !success) {
+        error = fs::INVALID_CHECKSUM;
+    }
+
+    return error;
 }

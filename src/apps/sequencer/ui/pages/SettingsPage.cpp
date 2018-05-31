@@ -11,24 +11,25 @@
 
 enum Function {
     Calibration = 0,
-    Controller  = 1,
     Update      = 4,
 };
 
-static const char *functionNames[] = { "CAL", "CTRL", nullptr, nullptr, "UPDATE" };
+static const char *functionNames[] = { "CAL", nullptr, nullptr, nullptr, "UPDATE" };
 
 enum class ContextAction {
     Init,
-    Load,
     Save,
+    Backup,
+    Restore,
     Format,
     Last
 };
 
 static const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
-    { "LOAD" },
     { "SAVE" },
+    { "BACKUP" },
+    { "RESTORE" },
     { "FORMAT" },
 };
 
@@ -68,9 +69,6 @@ void SettingsPage::draw(Canvas &canvas) {
         ListPage::draw(canvas);
         break;
     }
-    case Mode::Controller:
-        WindowPainter::drawActiveFunction(canvas, "CONTROLLER");
-        break;
     case Mode::Update: {
         WindowPainter::drawActiveFunction(canvas, "UPDATE");
         canvas.setColor(0xf);
@@ -132,9 +130,6 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
         case Function::Calibration:
             setMode(Mode::Calibration);
             break;
-        case Function::Controller:
-            setMode(Mode::Controller);
-            break;
         case Function::Update:
             setMode(Mode::Update);
             break;
@@ -149,8 +144,6 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
         ListPage::keyPress(event);
         updateOutputs();
         break;
-    case Mode::Controller:
-        break;
     case Mode::Update:
         break;
     }
@@ -161,8 +154,6 @@ void SettingsPage::encoder(EncoderEvent &event) {
     case Mode::Calibration:
         ListPage::encoder(event);
         updateOutputs();
-        break;
-    case Mode::Controller:
         break;
     case Mode::Update:
         break;
@@ -199,11 +190,14 @@ void SettingsPage::contextAction(int index) {
     case ContextAction::Init:
         initSettings();
         break;
-    case ContextAction::Load:
-        loadSettings();
-        break;
     case ContextAction::Save:
         saveSettings();
+        break;
+    case ContextAction::Backup:
+        backupSettings();
+        break;
+    case ContextAction::Restore:
+        restoreSettings();
         break;
     case ContextAction::Format:
         formatSdCard();
@@ -215,8 +209,8 @@ void SettingsPage::contextAction(int index) {
 
 bool SettingsPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
-    case ContextAction::Load:
-    case ContextAction::Save:
+    case ContextAction::Backup:
+    case ContextAction::Restore:
         return FileManager::volumeMounted();
     case ContextAction::Format:
         return FileManager::volumeAvailable();
@@ -234,34 +228,97 @@ void SettingsPage::initSettings() {
     });
 }
 
-void SettingsPage::loadSettings() {
-    if (fs::exists(Settings::filename)) {
+void SettingsPage::saveSettings() {
+    _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
+        if (result) {
+            saveSettingsToFlash();
+        }
+    });
+}
+
+void SettingsPage::backupSettings() {
+    _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
+        if (result) {
+            backupSettingsToFile();
+        }
+    });
+}
+
+void SettingsPage::restoreSettings() {
+    if (fs::exists(Settings::Filename)) {
         _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
             if (result) {
-                loadSettingsFromFile();
+                restoreSettingsFromFile();
             }
         });
     }
 }
 
-void SettingsPage::saveSettings() {
-    _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
-        if (result) {
-            saveSettingsToFile();
+void SettingsPage::saveSettingsToFlash() {
+    _engine.lock();
+    _manager.pages().busy.show("SAVING SETTINGS ...");
+
+    FileManager::task([this] () {
+        _model.settings().writeToFlash();
+        return fs::OK;
+    }, [this] (fs::Error result) {
+        showMessage("SETTINGS SAVED");
+        // TODO lock ui mutex
+        _manager.pages().busy.close();
+        _engine.unlock();
+    });
+}
+
+void SettingsPage::backupSettingsToFile() {
+    _engine.lock();
+    _manager.pages().busy.show("BACKING UP SETTINGS ...");
+
+    FileManager::task([this] () {
+        return _model.settings().write(Settings::Filename);
+    }, [this] (fs::Error result) {
+        if (result == fs::OK) {
+            showMessage("SETTINGS BACKED UP");
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
+        // TODO lock ui mutex
+        _manager.pages().busy.close();
+        _engine.unlock();
+    });
+}
+
+void SettingsPage::restoreSettingsFromFile() {
+    _engine.lock();
+    _manager.pages().busy.show("RESTORING SETTINGS ...");
+
+    FileManager::task([this] () {
+        return _model.settings().read(Settings::Filename);
+    }, [this] (fs::Error result) {
+        if (result == fs::OK) {
+            showMessage("SETTINGS RESTORED");
+        } else if (result == fs::INVALID_CHECKSUM) {
+            showMessage("INVALID SETTINGS FILE");
+            _model.settings().readFromFlash();
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+            _model.settings().readFromFlash();
+        }
+        // TODO lock ui mutex
+        _manager.pages().busy.close();
+        _engine.unlock();
     });
 }
 
 void SettingsPage::formatSdCard() {
     _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
         if (result) {
-            _manager.pages().busy.show("FORMATTING ...");
+            _manager.pages().busy.show("FORMATTING SDCARD ...");
 
             FileManager::task([] () {
                 return FileManager::format();
             }, [this] (fs::Error result) {
                 if (result == fs::OK) {
-                    showMessage(FixedStringBuilder<32>("SDCARD FORMATTED"));
+                    showMessage("SDCARD FORMATTED");
                 } else {
                     showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
                 }
@@ -269,41 +326,5 @@ void SettingsPage::formatSdCard() {
                 _manager.pages().busy.close();
             });
         }
-    });
-}
-
-void SettingsPage::loadSettingsFromFile() {
-    _engine.lock();
-    _manager.pages().busy.show("LOADING SETTINGS ...");
-
-    FileManager::task([this] () {
-        return _model.settings().read(Settings::filename);
-    }, [this] (fs::Error result) {
-        if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("LOADED SETTINGS"));
-        } else {
-            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
-        }
-        // TODO lock ui mutex
-        _manager.pages().busy.close();
-        _engine.unlock();
-    });
-}
-
-void SettingsPage::saveSettingsToFile() {
-    _engine.lock();
-    _manager.pages().busy.show("SAVING SETTINGS ...");
-
-    FileManager::task([this] () {
-        return _model.settings().write(Settings::filename);
-    }, [this] (fs::Error result) {
-        if (result == fs::OK) {
-            showMessage(FixedStringBuilder<32>("SAVED SETTINGS"));
-        } else {
-            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
-        }
-        // TODO lock ui mutex
-        _manager.pages().busy.close();
-        _engine.unlock();
     });
 }

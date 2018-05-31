@@ -23,7 +23,6 @@ public:
 private:
     enum class Mode : uint8_t {
         Calibration,
-        Controller,
         Update
     };
 
@@ -36,12 +35,14 @@ private:
     bool contextActionEnabled(int index) const;
 
     void initSettings();
-    void loadSettings();
     void saveSettings();
+    void backupSettings();
+    void restoreSettings();
     void formatSdCard();
 
-    void loadSettingsFromFile();
-    void saveSettingsToFile();
+    void saveSettingsToFlash();
+    void backupSettingsToFile();
+    void restoreSettingsFromFile();
 
     Mode _mode = Mode::Calibration;
     Settings &_settings;
