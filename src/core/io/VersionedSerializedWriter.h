@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/hash/FnvHash.h"
+
 #include <cstdlib>
 #include <cstdint>
 #include <functional>
@@ -23,10 +25,17 @@ public:
     }
 
     void write(const void *data, size_t len) {
+        _hash(data, len);
         _writer(data, len);
+    }
+
+    void writeHash() {
+        uint32_t hash = _hash.result();
+        _writer(&hash, sizeof(hash));
     }
 
 private:
     Writer _writer;
     uint32_t _writerVersion;
+    FnvHash _hash;
 };

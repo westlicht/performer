@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/hash/FnvHash.h"
+
 #include <cstdlib>
 #include <cstdint>
 #include <functional>
@@ -26,6 +28,7 @@ public:
     void read(void *data, size_t len, uint32_t addedInVersion) {
         if (_dataVersion >= addedInVersion) {
             _reader(data, len);
+            _hash(data, len);
         }
     }
 
@@ -38,11 +41,19 @@ public:
         if (_dataVersion >= addedInVersion && _dataVersion < removedInVersion) {
             uint8_t dummy[len];
             _reader(dummy, len);
+            _hash(dummy, len);
         }
+    }
+
+    bool checkHash() {
+        uint32_t hash;
+        _reader(&hash, sizeof(hash));
+        return _hash.result() == hash;
     }
 
 private:
     Reader _reader;
     uint32_t _readerVersion;
     uint32_t _dataVersion;
+    FnvHash _hash;
 };

@@ -43,6 +43,7 @@ static void writeVersion1(void *buf, size_t len) {
     writer.write(data.field1);
     writer.write(data.field2);
     writer.write(data.field3);
+    writer.writeHash();
 }
 
 static void writeVersion2(void *buf, size_t len) {
@@ -53,6 +54,7 @@ static void writeVersion2(void *buf, size_t len) {
     writer.write(data.field2);
     writer.write(data.field4);
     writer.write(data.field3);
+    writer.writeHash();
 }
 
 static Data3 writeVersion3(void *buf, size_t len) {
@@ -64,6 +66,7 @@ static Data3 writeVersion3(void *buf, size_t len) {
     writer.write(data.field4);
     writer.write(data.field5);
     writer.write(data.field3);
+    writer.writeHash();
 }
 
 static void writeVersion4(void *buf, size_t len) {
@@ -74,6 +77,7 @@ static void writeVersion4(void *buf, size_t len) {
     writer.write(data.field2);
     writer.write(data.field5);
     writer.write(data.field3);
+    writer.writeHash();
 }
 
 static void readVersion1(const void *buf, size_t len) {
@@ -84,6 +88,7 @@ static void readVersion1(const void *buf, size_t len) {
     reader.read(data.field1);
     reader.read(data.field2);
     reader.read(data.field3);
+    expectTrue(reader.checkHash());
     Data1 expected;
     expectEqual(data.field1, expected.field1);
     expectEqual(data.field2, expected.field2);
@@ -99,6 +104,7 @@ static void readVersion2(const void *buf, size_t len) {
     reader.read(data.field2);
     reader.read(data.field4, VERSION(2));
     reader.read(data.field3);
+    expectTrue(reader.checkHash());
     Data2 expected;
     expectEqual(data.field1, expected.field1);
     expectEqual(data.field2, expected.field2);
@@ -116,6 +122,7 @@ static void readVersion3(const void *buf, size_t len) {
     reader.read(data.field4, VERSION(2));
     reader.read(data.field5, VERSION(3));
     reader.read(data.field3);
+    expectTrue(reader.checkHash());
     Data3 expected;
     expectEqual(data.field1, expected.field1);
     expectEqual(data.field2, expected.field2);
@@ -134,6 +141,7 @@ static void readVersion4(const void *buf, size_t len) {
     reader.skip<int8_t>(VERSION(2), VERSION(4));
     reader.read(data.field5, VERSION(3));
     reader.read(data.field3);
+    expectTrue(reader.checkHash());
     Data4 expected;
     expectEqual(data.field1, expected.field1);
     expectEqual(data.field2, expected.field2);
