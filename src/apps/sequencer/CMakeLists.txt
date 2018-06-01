@@ -41,6 +41,7 @@ set(sources
     model/Routing.cpp
     model/Scale.cpp
     model/Settings.cpp
+    model/Song.cpp
     model/Track.cpp
     model/Types.cpp
     model/UserScale.cpp
@@ -81,6 +82,7 @@ set(sources
     ui/pages/RoutePage.cpp
     ui/pages/RoutingPage.cpp
     ui/pages/SettingsPage.cpp
+    ui/pages/SongPage.cpp
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp

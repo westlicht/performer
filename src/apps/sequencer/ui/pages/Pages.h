@@ -19,6 +19,7 @@
 #include "ProjectPage.h"
 #include "RoutePage.h"
 #include "RoutingPage.h"
+#include "SongPage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
 #include "TrackPage.h"

@@ -90,6 +90,7 @@ void Project::write(WriteContext &context) const {
     writeArray(context, _cvOutputTracks);
     writeArray(context, _gateOutputTracks);
 
+    _song.write(context);
     _playState.write(context);
     _routing.write(context);
 
@@ -115,6 +116,7 @@ bool Project::read(ReadContext &context) {
     readArray(context, _cvOutputTracks);
     readArray(context, _gateOutputTracks);
 
+    _song.read(context);
     _playState.read(context);
     _routing.read(context);
 

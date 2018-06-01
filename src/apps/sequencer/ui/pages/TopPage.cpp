@@ -148,6 +148,9 @@ void TopPage::setMode(Mode mode) {
     case Mode::ClockSetup:
         setMainPage(pages.clockSetup);
         break;
+    case Mode::Song:
+        setMainPage(pages.song);
+        break;
     case Mode::Routing:
         setMainPage(pages.routing);
         break;

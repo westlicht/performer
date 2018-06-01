@@ -4,6 +4,7 @@
 #include "Types.h"
 #include "ClockSetup.h"
 #include "Track.h"
+#include "Song.h"
 #include "PlayState.h"
 #include "UserScale.h"
 #include "Routing.h"
@@ -169,6 +170,11 @@ public:
         setGateOutputTrack(index, gateOutputTrack(index) + value);
     }
 
+    // song
+
+    const Song &song() const { return _song; }
+          Song &song()       { return _song; }
+
     // playState
 
     const PlayState &playState() const { return _playState; }
@@ -258,6 +264,7 @@ private:
     TrackArray _tracks;
     CvOutputTrackArray _cvOutputTracks;
     GateOutputArray _gateOutputTracks;
+    Song _song;
     PlayState _playState;
     Routing _routing;
 

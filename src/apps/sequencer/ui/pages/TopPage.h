@@ -27,6 +27,7 @@ private:
         Track           = Key::Code::Track2,
         Sequence        = Key::Code::Track3,
         SequenceEdit    = Key::Code::Track4,
+        Song            = Key::Code::Track6,
         Routing         = Key::Code::Track7,
         Pattern         = Key::Code::Pattern,
         Performer       = Key::Code::Performer,

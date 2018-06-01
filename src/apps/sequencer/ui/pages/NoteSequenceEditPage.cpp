@@ -70,7 +70,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
     SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
-    SequencePainter::drawLoopEnd(canvas, (sequence.lastStep()  - stepOffset)* stepWidth + 1, loopY, stepWidth - 2);
+    SequencePainter::drawLoopEnd(canvas, (sequence.lastStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
 
     for (int i = 0; i < StepCount; ++i) {
         int stepIndex = stepOffset + i;

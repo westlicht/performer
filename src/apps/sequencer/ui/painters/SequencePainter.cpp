@@ -11,6 +11,13 @@ void SequencePainter::drawLoopEnd(Canvas &canvas, int x, int y, int w) {
     canvas.point(x - 1, y);
 }
 
+void SequencePainter::drawCursor(Canvas &canvas, int x, int y, int w) {
+    x += w / 2;
+    canvas.vline(x, y, 2);
+    canvas.point(x - 1, y);
+    canvas.point(x + 1, y);
+}
+
 void SequencePainter::drawRetrigger(Canvas &canvas, int x, int y, int w, int h, int retrigger, int maxRetrigger) {
     canvas.setBlendMode(BlendMode::Set);
 
