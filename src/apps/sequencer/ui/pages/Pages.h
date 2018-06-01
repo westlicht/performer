@@ -48,6 +48,7 @@ struct Pages {
     CurveSequenceEditPage curveSequenceEdit;
     PatternPage pattern;
     PerformerPage performer;
+    SongPage song;
     RoutingPage routing;
     RoutePage route;
     UserScalePage userScale;
@@ -86,6 +87,7 @@ struct Pages {
         curveSequenceEdit(manager, context),
         pattern(manager, context),
         performer(manager, context),
+        song(manager, context),
         routing(manager, context),
         route(manager, context),
         userScale(manager, context),
