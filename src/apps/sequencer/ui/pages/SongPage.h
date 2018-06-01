@@ -21,7 +21,7 @@ private:
     static const int SlotCount = 16;
 
     void setSelectedSlot(int slot);
-    void moveSelectedSlot(int offset);
+    void moveSelectedSlot(int offset, bool moveSlot);
 
     enum class Mode : uint8_t {
         Idle,

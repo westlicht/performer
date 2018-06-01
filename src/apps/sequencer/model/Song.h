@@ -4,9 +4,13 @@
 
 #include "Serialize.h"
 
+#include "core/math/Math.h"
+
 #include <array>
 
 #include <cstdint>
+
+class Project;
 
 class Song {
 public:
@@ -20,12 +24,22 @@ public:
             return (_patterns >> (trackIndex << 2)) & 0xf;
         }
 
+        int repeats() const { return _repeats; }
+
         void clear();
 
         void write(WriteContext &context) const;
         void read(ReadContext &context);
 
     private:
+        static uint32_t fillPatterns(int pattern) {
+            uint32_t patterns = pattern & 0xf;
+            patterns |= patterns << 4;
+            patterns |= patterns << 8;
+            patterns |= patterns << 16;
+            return patterns;
+        }
+
         void setPattern(int trackIndex, int pattern) {
             uint32_t patterns = _patterns & ~(0xf << (trackIndex << 2));
             patterns |= (pattern & 0xf) << (trackIndex << 2);
@@ -33,14 +47,15 @@ public:
         }
 
         void setPattern(int pattern) {
-            uint32_t patterns = pattern & 0xf;
-            patterns |= patterns << 4;
-            patterns |= patterns << 8;
-            patterns |= patterns << 16;
-            _patterns = patterns;
+            _patterns = fillPatterns(pattern);
+        }
+
+        void setRepeats(int repeats) {
+            _repeats = clamp(repeats, 0, 8);
         }
 
         uint32_t _patterns;
+        uint8_t _repeats;
 
         friend class Song;
     };
@@ -56,17 +71,23 @@ public:
 
     int slotCount() const { return _slotCount; }
     bool isFull() const { return _slotCount >= _slots.size(); }
+    bool isActiveSlot(int slotIndex) const { return slotIndex >= 0 && slotIndex < _slotCount; }
 
     //----------------------------------------
     // Methods
     //----------------------------------------
 
+    Song(Project &project);
+
     void chainPattern(int pattern);
     void insertSlot(int slotIndex);
     void removeSlot(int slotIndex);
+    void swapSlot(int fromIndex, int toIndex);
+
     void setPattern(int slotIndex, int trackIndex, int pattern);
     void setPattern(int slotIndex, int pattern);
-    void swapSlot(int fromIndex, int toIndex);
+    void setRepeats(int slotIndex, int repeats);
+    void editRepeats(int slotIndex, int value);
 
     void clear();
 
@@ -74,6 +95,7 @@ public:
     void read(ReadContext &context);
 
 private:
+    Project &_project;
     std::array<Slot, CONFIG_SONG_SLOT_COUNT> _slots;
     uint8_t _slotCount;
 };

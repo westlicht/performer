@@ -63,6 +63,10 @@ void SongPage::draw(Canvas &canvas) {
             canvas.setColor(0xf);
             FixedStringBuilder<8> patternStr("%d", slot.pattern(_project.selectedTrackIndex()) + 1);
             canvas.drawText(x + (slotWidth - canvas.textWidth(patternStr) + 1) / 2, y + 9, patternStr);
+            if (slot.repeats() > 0) {
+                FixedStringBuilder<8> repeatsStr("*%d", slot.repeats());
+                canvas.drawText(x + (slotWidth - canvas.textWidth(repeatsStr) + 1) / 2, y + 20, repeatsStr);
+            }
         }
     }
 }
@@ -113,8 +117,13 @@ void SongPage::keyPress(KeyPressEvent &event) {
             setSelectedSlot(_selectedSlot);
             break;
         case Function::Add:
-            song.insertSlot(std::max(0, _selectedSlot));
-            setSelectedSlot(_selectedSlot);
+            if (key.shiftModifier()) {
+                song.insertSlot(std::max(0, _selectedSlot));
+                setSelectedSlot(_selectedSlot);
+            } else {
+                song.insertSlot(song.slotCount());
+                setSelectedSlot(song.slotCount());
+            }
             break;
         case Function::Remove:
             song.removeSlot(_selectedSlot);
@@ -157,25 +166,21 @@ void SongPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isLeft()) {
-        if (key.shiftModifier()) {
-            song.swapSlot(_selectedSlot, _selectedSlot - 1);
-        }
-        moveSelectedSlot(-1);
-
+        moveSelectedSlot(-1, key.shiftModifier());
         event.consume();
     }
     if (key.isRight()) {
-        if (key.shiftModifier()) {
-            song.swapSlot(_selectedSlot, _selectedSlot + 1);
-        }
-        moveSelectedSlot(1);
-
+        moveSelectedSlot(1, key.shiftModifier());
         event.consume();
     }
 }
 
 void SongPage::encoder(EncoderEvent &event) {
-    moveSelectedSlot(event.value());
+    if (event.pressed()) {
+        _project.song().editRepeats(_selectedSlot, event.value());
+    } else {
+        moveSelectedSlot(event.value(), _keyState[Key::Shift]);
+    }
 }
 
 void SongPage::setSelectedSlot(int slot) {
@@ -183,6 +188,9 @@ void SongPage::setSelectedSlot(int slot) {
     _selectedSlot = slotCount > 0 ? clamp(slot, 0, slotCount - 1) : -1;
 }
 
-void SongPage::moveSelectedSlot(int offset) {
+void SongPage::moveSelectedSlot(int offset, bool moveSlot) {
+    if (moveSlot) {
+        _project.song().swapSlot(_selectedSlot, _selectedSlot + offset);
+    }
     setSelectedSlot(_selectedSlot + offset);
 }

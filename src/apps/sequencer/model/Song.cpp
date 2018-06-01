@@ -2,24 +2,37 @@
 
 void Song::Slot::clear() {
     _patterns = 0;
+    _repeats = 1;
 }
 
 void Song::Slot::write(WriteContext &context) const {
     auto &writer = context.writer;
 
     writer.write(_patterns);
+    writer.write(_repeats);
 }
 
 void Song::Slot::read(ReadContext &context) {
     auto &reader = context.reader;
 
     reader.read(_patterns);
+    reader.read(_repeats);
 }
+
+
+Song::Song(Project &project) :
+    _project(project)
+{}
 
 void Song::chainPattern(int pattern) {
     if (!isFull()) {
-        slot(_slotCount).setPattern(pattern);
-        ++_slotCount;
+        if (_slotCount > 0 && slot(_slotCount - 1)._patterns == Slot::fillPatterns(pattern)) {
+            editRepeats(_slotCount - 1, 1);
+        } else {
+            slot(_slotCount).clear();
+            slot(_slotCount).setPattern(pattern);
+            ++_slotCount;
+        }
     }
 }
 
@@ -34,7 +47,7 @@ void Song::insertSlot(int slotIndex) {
 }
 
 void Song::removeSlot(int slotIndex) {
-    if (slotIndex >= 0 && slotIndex < _slotCount) {
+    if (isActiveSlot(slotIndex)) {
         for (int i = slotIndex; i < int(_slots.size()) - 1; ++i) {
             slot(i) = slot(i + 1);
         }
@@ -43,21 +56,33 @@ void Song::removeSlot(int slotIndex) {
     }
 }
 
+void Song::swapSlot(int fromIndex, int toIndex) {
+    if (fromIndex >= 0 && fromIndex < _slotCount && toIndex >= 0 && toIndex < _slotCount) {
+        std::swap(slot(fromIndex), slot(toIndex));
+    }
+}
+
 void Song::setPattern(int slotIndex, int trackIndex, int pattern) {
-    if (slotIndex >= 0 && slotIndex < _slotCount) {
+    if (isActiveSlot(slotIndex)) {
         slot(slotIndex).setPattern(trackIndex, pattern);
     }
 }
 
 void Song::setPattern(int slotIndex, int pattern) {
-    if (slotIndex >= 0 && slotIndex < _slotCount) {
+    if (isActiveSlot(slotIndex)) {
         slot(slotIndex).setPattern(pattern);
     }
 }
 
-void Song::swapSlot(int fromIndex, int toIndex) {
-    if (fromIndex >= 0 && fromIndex < _slotCount && toIndex >= 0 && toIndex < _slotCount) {
-        std::swap(slot(fromIndex), slot(toIndex));
+void Song::setRepeats(int slotIndex, int repeats) {
+    if (isActiveSlot(slotIndex)) {
+        slot(slotIndex).setRepeats(repeats);
+    }
+}
+
+void Song::editRepeats(int slotIndex, int value) {
+    if (isActiveSlot(slotIndex)) {
+        slot(slotIndex).setRepeats(slot(slotIndex).repeats() + value);
     }
 }
 
