@@ -46,7 +46,7 @@ ButtonLedMatrix::ButtonLedMatrix() :
         SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA,
         SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,
         SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,
-        SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_LEFT, SDLK_RIGHT, SDLK_LALT, SDLK_LSHIFT,
+        SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_LEFT, SDLK_RIGHT, SDLK_LSHIFT, SDLK_LALT,
         SDLK_F1, SDLK_F2, SDLK_F3, SDLK_F4, SDLK_F5
     });
 
@@ -54,7 +54,7 @@ ButtonLedMatrix::ButtonLedMatrix() :
         "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16",
         "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8",
         "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8",
-        "PLAY", "TEMPO", "PATT", "PERF", "<", ">", "PAGE", "SHIFT",
+        "PLAY", "TEMPO", "PATT", "PERF", "<", ">", "SHIFT", "PAGE",
         "", "", "", "", ""
     });
 
