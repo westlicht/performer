@@ -6,6 +6,19 @@
 
 #include "ui/layouts/PartitionLayout.h"
 
+static void drawInvertedText(Canvas &canvas, int x, int y, const char *text, bool inverted = true) {
+    canvas.setFont(Font::Tiny);
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+
+    if (inverted) {
+        canvas.fillRect(x - 1, y - 5, canvas.textWidth(text) + 1, 7);
+        canvas.setBlendMode(BlendMode::Sub);
+    }
+
+    canvas.drawText(x, y, text);
+}
+
 void WindowPainter::clear(Canvas &canvas) {
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0);
@@ -56,28 +69,27 @@ void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], const 
 }
 
 void WindowPainter::drawClock(Canvas &canvas, const Engine &engine) {
-    canvas.setFont(Font::Tiny);
-    canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
-    canvas.fillRect(1, 1, 7, 7);
-
-    canvas.setBlendMode(BlendMode::Sub);
-    canvas.setColor(0xf);
     static const char *clockModeName[] = { "A", "M", "S" };
-    canvas.drawText(2, 8 - 2, clockModeName[engine.clock().activeMode()]);
+    drawInvertedText(canvas, 2, 8 - 2, clockModeName[engine.clock().activeMode()]);
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
     canvas.drawText(10, 8 - 2, FixedStringBuilder<8>("%.1f", engine.bpm()));
 }
 
-void WindowPainter::drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern, bool snapshotActive) {
+void WindowPainter::drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern, bool snapshotActive, bool songActive) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
+
+    // draw selected track
     canvas.drawText(40, 8 - 2, FixedStringBuilder<8>("T%d", track + 1));
-    canvas.drawText(56, 8 - 2, snapshotActive ? "S" : FixedStringBuilder<8>("P%d", playPattern + 1));
-    canvas.drawText(76, 8 - 2, snapshotActive ? "S" : FixedStringBuilder<8>("E%d", editPattern + 1));
+
+    // draw active pattern
+    drawInvertedText(canvas, 56, 8 - 2, snapshotActive ? "S" : FixedStringBuilder<8>("P%d", playPattern + 1), songActive);
+
+    // draw edit pattern
+    drawInvertedText(canvas, 75, 8 - 2, snapshotActive ? "S" : FixedStringBuilder<8>("E%d", editPattern + 1), playPattern == editPattern);
 }
 
 void WindowPainter::drawActiveMode(Canvas &canvas, const char *mode) {
@@ -99,10 +111,11 @@ void WindowPainter::drawHeader(Canvas &canvas, const Model &model, const Engine 
     int track = project.selectedTrackIndex();
     int playPattern = project.playState().trackState(track).pattern();
     int editPattern = project.selectedPatternIndex();
-    int snapshotActive = project.playState().snapshotActive();
+    bool snapshotActive = project.playState().snapshotActive();
+    bool songActive = project.playState().songState().playing();
 
     drawClock(canvas, engine);
-    drawActiveState(canvas, track, playPattern, editPattern, snapshotActive);
+    drawActiveState(canvas, track, playPattern, editPattern, snapshotActive, songActive);
     drawActiveMode(canvas, mode);
 
     canvas.setBlendMode(BlendMode::Set);

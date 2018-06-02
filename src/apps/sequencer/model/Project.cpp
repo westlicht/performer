@@ -4,7 +4,6 @@
 #include "core/fs/FileReader.h"
 
 Project::Project() :
-    _song(*this),
     _playState(*this),
     _routing(*this)
 {

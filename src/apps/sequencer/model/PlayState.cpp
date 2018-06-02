@@ -2,6 +2,8 @@
 
 #include "Project.h"
 
+// PlayState::TrackState
+
 void PlayState::TrackState::clear() {
     _state = 0;
     _pattern = 0;
@@ -23,10 +25,17 @@ void PlayState::TrackState::read(ReadContext &context) {
     reader.read(_pattern);
 }
 
+// PlayState::SongState
+
+void PlayState::SongState::clear() {
+    _state = false;
+}
+
+// PlayState
+
 PlayState::PlayState(Project &project) :
     _project(project)
 {}
-
 
 void PlayState::muteTrack(int track, ExecuteType executeType) {
     auto &trackState = _trackStates[track];
@@ -175,10 +184,6 @@ void PlayState::commitSnapshot(int targetPattern) {
     _snapshot.active = false;
 }
 
-bool PlayState::snapshotActive() const {
-    return _snapshot.active;
-}
-
 void PlayState::cancelMuteRequests() {
     for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
         auto &trackState = _trackStates[track];
@@ -195,10 +200,23 @@ void PlayState::cancelPatternRequests() {
     }
 }
 
+void PlayState::playSong(int slot, ExecuteType executeType) {
+    _songState.setRequestedSlot(slot);
+    _songState.setRequests(SongState::playRequestFromExecuteType(executeType));
+    notify(executeType);
+}
+
+void PlayState::stopSong(ExecuteType executeType) {
+    _songState.setRequests(SongState::stopRequestFromExecuteType(executeType));
+    notify(executeType);
+}
+
 void PlayState::clear() {
     for (auto &trackState : _trackStates) {
         trackState.clear();
     }
+
+    _songState.clear();
 
     _executeLatchedRequests = false;
     _hasImmediateRequests = false;

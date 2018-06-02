@@ -15,10 +15,8 @@ enum class Function {
     Chain       = 1,
     Add         = 2,
     Remove      = 3,
-    Play        = 4,
+    PlayStop    = 4,
 };
-
-static const char *functionNames[] = { "CLEAR", "CHAIN", "ADD", "REMOVE", "PLAY" };
 
 SongPage::SongPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
@@ -34,6 +32,10 @@ void SongPage::exit() {
 
 void SongPage::draw(Canvas &canvas) {
     const auto &song = _project.song();
+    const auto &songState = _project.playState().songState();
+
+    bool isPlaying = _project.playState().songState().playing();
+    const char *functionNames[] = { "CLEAR", "CHAIN", "ADD", "REMOVE", isPlaying ? "STOP" : "PLAY" };
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SONG");
@@ -41,10 +43,15 @@ void SongPage::draw(Canvas &canvas) {
 
     const int slotWidth = Width / SlotCount;
 
-    // draw cursor
+    // draw selection cursor
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
     SequencePainter::drawCursor(canvas, _selectedSlot * slotWidth + 1, 16, slotWidth - 2);
+
+    // draw play cursor
+    if (songState.playing()) {
+        SequencePainter::drawCursor(canvas, songState.currentSlot() * slotWidth + 1, 48, slotWidth - 2);
+    }
 
     for (int i = 0; i < SlotCount; ++i) {
         int slotIndex = i;
@@ -55,7 +62,7 @@ void SongPage::draw(Canvas &canvas) {
         int y = 20;
 
         // pattern block
-        canvas.setColor(active ? 0x7 : 0x3);
+        canvas.setColor(active ? 0xf : 0x7);
         canvas.drawRect(x + 2, y + 2, slotWidth - 4, slotWidth - 4);
 
         // details
@@ -128,6 +135,13 @@ void SongPage::keyPress(KeyPressEvent &event) {
         case Function::Remove:
             song.removeSlot(_selectedSlot);
             setSelectedSlot(_selectedSlot);
+            break;
+        case Function::PlayStop:
+            if (_project.playState().songState().playing()) {
+                _project.playState().stopSong();
+            } else {
+                _project.playState().playSong(_selectedSlot);
+            }
             break;
         default:
             break;

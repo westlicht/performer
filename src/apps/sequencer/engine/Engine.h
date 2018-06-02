@@ -116,7 +116,7 @@ private:
     void updateTrackSequences();
     void updateTrackOutputs();
     void resetTrackEngines();
-    void updatePlayState();
+    void updatePlayState(bool ticked);
     void updateOverrides();
 
     void receiveMidi();

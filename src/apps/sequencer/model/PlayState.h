@@ -118,6 +118,83 @@ public:
         friend class Engine;
     };
 
+    class SongState {
+    public:
+        bool playing() const { return _state & Playing; }
+        int currentSlot() const { return _currentSlot; }
+        int currentRepeat() const { return _currentRepeat; }
+        int requestedSlot() const { return _requestedSlot; }
+
+        void clear();
+
+    private:
+        enum State {
+            Playing                 = 1<<0,
+
+            ImmediatePlayRequest    = 1<<1,
+            SyncedPlayRequest       = 1<<2,
+            LatchedPlayRequest      = 1<<3,
+
+            ImmediateStopRequest    = 1<<4,
+            SyncedStopRequest       = 1<<5,
+            LatchedStopRequest      = 1<<6,
+
+            PlayRequests = ImmediatePlayRequest | SyncedPlayRequest | LatchedPlayRequest,
+            StopRequests = ImmediateStopRequest | SyncedStopRequest | LatchedStopRequest,
+            ImmediateRequests = ImmediatePlayRequest | ImmediateStopRequest,
+            SyncedRequests = SyncedPlayRequest | SyncedStopRequest,
+            LatchedRequests = LatchedPlayRequest | LatchedStopRequest
+        };
+
+        static State playRequestFromExecuteType(ExecuteType type) {
+            return State(1<<(1 + type));
+        }
+
+        static State stopRequestFromExecuteType(ExecuteType type) {
+            return State(1<<(4 + type));
+        }
+
+        void setRequests(int requests) {
+            _state |= uint8_t(requests);
+        }
+
+        void clearRequests(int requests) {
+            _state &= ~uint8_t(requests);
+        }
+
+        bool hasRequests(int requests) const {
+            return _state & uint8_t(requests);
+        }
+
+        void setPlaying(bool playing) {
+            if (playing) {
+                _state |= Playing;
+            } else {
+                _state &= ~Playing;
+            }
+        }
+
+        void setRequestedSlot(int slot) {
+            _requestedSlot = slot;
+        }
+
+        void setCurrentSlot(int slot) {
+            _currentSlot = slot;
+        }
+
+        void setCurrentRepeat(int slot) {
+            _currentRepeat = slot;
+        }
+
+        uint8_t _state;
+        uint8_t _requestedSlot;
+        uint8_t _currentSlot;
+        uint8_t _currentRepeat;
+
+        friend class PlayState;
+        friend class Engine;
+    };
+
     //----------------------------------------
     // Properties
     //----------------------------------------
@@ -126,6 +203,11 @@ public:
 
     const TrackState &trackState(int track) const { return _trackStates[track]; }
           TrackState &trackState(int track)       { return _trackStates[track]; }
+
+    // song state
+
+    const SongState &songState() const { return _songState; }
+          SongState &songState()       { return _songState; }
 
     //----------------------------------------
     // Methods
@@ -162,7 +244,7 @@ public:
     void createSnapshot();
     void revertSnapshot(int targetPattern = -1);
     void commitSnapshot(int targetPattern = -1);
-    bool snapshotActive() const;
+    bool snapshotActive() const { return _snapshot.active; }
 
     // requests
 
@@ -173,6 +255,11 @@ public:
     bool hasImmediateRequests() const { return _hasImmediateRequests; }
     bool hasSyncedRequests() const { return _hasSyncedRequests; }
     bool hasLatchedRequests() const { return _hasLatchedRequests; }
+
+    // song
+
+    void playSong(int slot, ExecuteType executeType = Immediate);
+    void stopSong(ExecuteType executeType = Immediate);
 
     void clear();
 
@@ -195,6 +282,8 @@ private:
     Project &_project;
 
     std::array<TrackState, CONFIG_TRACK_COUNT> _trackStates;
+    SongState _songState;
+
     bool _executeLatchedRequests;
     bool _hasImmediateRequests;
     bool _hasSyncedRequests;

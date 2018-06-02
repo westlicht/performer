@@ -10,8 +10,6 @@
 
 #include <cstdint>
 
-class Project;
-
 class Song {
 public:
     //----------------------------------------
@@ -77,8 +75,6 @@ public:
     // Methods
     //----------------------------------------
 
-    Song(Project &project);
-
     void chainPattern(int pattern);
     void insertSlot(int slotIndex);
     void removeSlot(int slotIndex);
@@ -95,7 +91,6 @@ public:
     void read(ReadContext &context);
 
 private:
-    Project &_project;
     std::array<Slot, CONFIG_SONG_SLOT_COUNT> _slots;
     uint8_t _slotCount;
 };

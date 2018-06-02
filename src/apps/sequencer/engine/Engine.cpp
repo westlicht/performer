@@ -100,7 +100,7 @@ void Engine::update() {
     updateTrackSetups();
 
     // update play state
-    updatePlayState();
+    updatePlayState(false);
 
     // update cv inputs
     _cvInput.update();
@@ -114,7 +114,7 @@ void Engine::update() {
         _tick = tick;
 
         // update play state
-        updatePlayState();
+        updatePlayState(true);
 
         for (auto trackEngine : _trackEngines) {
             trackEngine->tick(tick);
@@ -298,57 +298,136 @@ void Engine::resetTrackEngines() {
     }
 }
 
-void Engine::updatePlayState() {
+void Engine::updatePlayState(bool ticked) {
     auto &playState = _model.project().playState();
+    auto &songState = playState.songState();
+    const auto &song = _model.project().song();
 
     bool hasImmediateRequests = playState.hasImmediateRequests();
     bool hasSyncedRequests = playState.hasSyncedRequests();
     bool handleLatchedRequests = playState.executeLatchedRequests();
-
-    if (!(hasImmediateRequests || hasSyncedRequests || handleLatchedRequests)) {
-        return;
-    }
+    bool hasRequests = hasImmediateRequests || hasSyncedRequests || handleLatchedRequests;
 
     uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
     bool handleSyncedRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
+    bool switchToNextSlot = ticked && (_tick % measureDivisor == measureDivisor - 1);
 
-    int muteRequests = PlayState::TrackState::ImmediateMuteRequest |
-        (handleSyncedRequests ? PlayState::TrackState::SyncedMuteRequest : 0) |
-        (handleLatchedRequests ? PlayState::TrackState::LatchedMuteRequest : 0);
+    // handle mute & pattern requests
 
-    int patternRequests = PlayState::TrackState::ImmediatePatternRequest |
-        (handleSyncedRequests ? PlayState::TrackState::SyncedPatternRequest : 0) |
-        (handleLatchedRequests ? PlayState::TrackState::LatchedPatternRequest : 0);
+    bool changedPatterns = false;
 
-    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        auto &trackState = playState.trackState(trackIndex);
-        auto trackEngine = _trackEngines[trackIndex];
+    if (hasRequests) {
+        int muteRequests = PlayState::TrackState::ImmediateMuteRequest |
+            (handleSyncedRequests ? PlayState::TrackState::SyncedMuteRequest : 0) |
+            (handleLatchedRequests ? PlayState::TrackState::LatchedMuteRequest : 0);
 
-        // handle mute requests
-        if (trackState.hasRequests(muteRequests)) {
-            trackState.setMute(trackState.requestedMute());
+        int patternRequests = PlayState::TrackState::ImmediatePatternRequest |
+            (handleSyncedRequests ? PlayState::TrackState::SyncedPatternRequest : 0) |
+            (handleLatchedRequests ? PlayState::TrackState::LatchedPatternRequest : 0);
+
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            auto &trackState = playState.trackState(trackIndex);
+
+            // handle mute requests
+            if (trackState.hasRequests(muteRequests)) {
+                trackState.setMute(trackState.requestedMute());
+            }
+
+            // handle pattern requests
+            if (trackState.hasRequests(patternRequests)) {
+                trackState.setPattern(trackState.requestedPattern());
+                changedPatterns = true;
+            }
+
+            // clear requests
+            trackState.clearRequests(muteRequests | patternRequests);
         }
-
-        // handle pattern requests
-        if (trackState.hasRequests(patternRequests)) {
-            trackState.setPattern(trackState.requestedPattern());
-        }
-
-        // clear requests
-        trackState.clearRequests(muteRequests | patternRequests);
-
-        // update track engine
-        trackEngine->setMute(trackState.mute());
-        trackEngine->setFill(trackState.fill());
-        trackEngine->setPattern(trackState.pattern());
     }
 
-    playState.clearImmediateRequests();
-    if (handleSyncedRequests) {
-        playState.clearSyncedRequests();
+    // handle song requests
+
+    if (hasRequests) {
+        int playRequests = PlayState::SongState::ImmediatePlayRequest |
+            (handleSyncedRequests ? PlayState::SongState::SyncedPlayRequest : 0) |
+            (handleLatchedRequests ? PlayState::SongState::LatchedPlayRequest : 0);
+
+        int stopRequests = PlayState::SongState::ImmediateStopRequest |
+            (handleSyncedRequests ? PlayState::SongState::SyncedStopRequest : 0) |
+            (handleLatchedRequests ? PlayState::SongState::LatchedStopRequest : 0);
+
+        if (songState.hasRequests(playRequests)) {
+            int requestedSlot = songState.requestedSlot();
+            if (requestedSlot >= 0 && requestedSlot < song.slotCount()) {
+                const auto &slot = song.slot(requestedSlot);
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    playState.trackState(trackIndex).setPattern(slot.pattern(trackIndex));
+                }
+
+                songState.setCurrentSlot(requestedSlot);
+                songState.setCurrentRepeat(0);
+                songState.setPlaying(true);
+                switchToNextSlot = false;
+            }
+        }
+
+        if (changedPatterns || songState.hasRequests(stopRequests)) {
+            songState.setPlaying(false);
+        }
+
+        songState.clearRequests(playRequests | stopRequests);
     }
-    if (handleLatchedRequests) {
-        playState.clearLatchedRequests();
+
+    // clear pending requests
+
+    if (hasRequests) {
+        playState.clearImmediateRequests();
+        if (handleSyncedRequests) {
+            playState.clearSyncedRequests();
+        }
+        if (handleLatchedRequests) {
+            playState.clearLatchedRequests();
+        }
+    }
+
+    // handle song slot change
+
+    if (songState.playing() && switchToNextSlot) {
+        const auto &slot = song.slot(songState.currentSlot());
+        int currentSlot = songState.currentSlot();
+        int currentRepeat = songState.currentRepeat();
+
+        if (currentRepeat + 1 < slot.repeats()) {
+            // next repeat
+            songState.setCurrentRepeat(currentRepeat + 1);
+        } else {
+            // next slot
+            songState.setCurrentRepeat(0);
+            if (currentSlot + 1 < song.slotCount()) {
+                songState.setCurrentSlot(currentSlot + 1);
+            } else {
+                songState.setCurrentSlot(0);
+            }
+        }
+
+        // update patterns
+        {
+            const auto &slot = song.slot(songState.currentSlot());
+            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                playState.trackState(trackIndex).setPattern(slot.pattern(trackIndex));
+                _trackEngines[trackIndex]->reset();
+            }
+        }
+    }
+
+    if (hasRequests | switchToNextSlot) {
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            auto &trackState = playState.trackState(trackIndex);
+            auto &trackEngine = *_trackEngines[trackIndex];
+
+            trackEngine.setMute(trackState.mute());
+            trackEngine.setFill(trackState.fill());
+            trackEngine.setPattern(trackState.pattern());
+        }
     }
 }
 

@@ -1,5 +1,7 @@
 #include "Song.h"
 
+// Song::Slot
+
 void Song::Slot::clear() {
     _patterns = 0;
     _repeats = 1;
@@ -19,10 +21,7 @@ void Song::Slot::read(ReadContext &context) {
     reader.read(_repeats);
 }
 
-
-Song::Song(Project &project) :
-    _project(project)
-{}
+// Song
 
 void Song::chainPattern(int pattern) {
     if (!isFull()) {
