@@ -46,7 +46,7 @@ void TopPage::updateLeds(Leds &leds) {
         _engine.running() && _engine.tick() % CONFIG_PPQN < (CONFIG_PPQN / 8)
     );
 
-    if (_keyState[Key::Page]) {
+    if (globalKeyState()[Key::Page]) {
         LedPainter::drawSelectedPage(leds, _mode);
     } else {
         LedPainter::drawTracksGateAndSelected(leds, _engine, _project.selectedTrackIndex());

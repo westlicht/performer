@@ -28,6 +28,8 @@ void GeneratorPage::show(Generator *generator) {
 }
 
 void GeneratorPage::enter() {
+    resetKeyState();
+
     _valueRange.first = 0;
     _valueRange.second = 7;
 }
@@ -44,7 +46,7 @@ void GeneratorPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "GENERATOR");
     WindowPainter::drawActiveFunction(canvas, _generator->name());
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     canvas.setFont(Font::Small);
     canvas.setBlendMode(BlendMode::Set);
@@ -155,7 +157,7 @@ void GeneratorPage::encoder(EncoderEvent &event) {
     bool changed = false;
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
-        if (_keyState[Key::F0 + i]) {
+        if (keyState()[Key::F0 + i]) {
             _generator->editParam(i, event.value(), event.pressed());
             changed = true;
         }

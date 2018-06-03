@@ -10,7 +10,8 @@ class RoutingPage : public ListPage {
 public:
     RoutingPage(PageManager &manager, PageContext &context);
 
-    void initRoute(Routing::Param param, int trackIndex);
+    virtual void enter() override;
+    virtual void exit() override;
 
     virtual void draw(Canvas &canvas) override;
 

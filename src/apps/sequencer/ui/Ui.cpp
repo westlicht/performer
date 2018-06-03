@@ -18,7 +18,7 @@ Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &en
     _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
     _canvas(_frameBuffer),
     _pageManager(_pages),
-    _pageContext({ _messageManager, _keyState, _model, _engine }),
+    _pageContext({ _messageManager, _keyState, _globalKeyState, _model, _engine }),
     _pages(_pageManager, _pageContext),
     _controllerManager(model, engine)
 {
@@ -26,6 +26,7 @@ Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &en
 
 void Ui::init() {
     _keyState.reset();
+    _globalKeyState.reset();
 
     _pageManager.push(&_pages.top);
     _pages.top.init();
@@ -98,7 +99,8 @@ void Ui::handleKeys() {
     while (_blm.nextEvent(event)) {
         bool isDown = event.action() == ButtonLedMatrix::Event::KeyDown;
         _keyState[event.value()] = isDown;
-        Key key(event.value(), _keyState);
+        _globalKeyState[event.value()] = isDown;
+        Key key(event.value(), _globalKeyState);
         KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
         _pageManager.dispatchEvent(keyEvent);
         if (isDown) {
@@ -122,7 +124,8 @@ void Ui::handleEncoder() {
         case Encoder::Up: {
             bool isDown = event == Encoder::Down;
             _keyState[Key::Encoder] = isDown ? 1 : 0;
-            Key key(Key::Code::Encoder, _keyState);
+            _globalKeyState[Key::Encoder] = isDown ? 1 : 0;
+            Key key(Key::Code::Encoder, _globalKeyState);
             KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
             _pageManager.dispatchEvent(keyEvent);
             if (isDown) {

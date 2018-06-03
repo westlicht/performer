@@ -61,6 +61,7 @@ CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &
 {}
 
 void CurveSequenceEditPage::enter() {
+    resetKeyState();
 }
 
 void CurveSequenceEditPage::exit() {
@@ -70,7 +71,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE EDIT");
     WindowPainter::drawActiveFunction(canvas, CurveSequence::layerName(_layer));
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
     const auto &sequence = _project.selectedCurveSequence();
@@ -223,7 +224,7 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
     for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
-            bool setToFirst = int(stepIndex) != _stepSelection.first() && _keyState[Key::Shift];
+            bool setToFirst = int(stepIndex) != _stepSelection.first() && globalKeyState()[Key::Shift];
             switch (_layer) {
             case Layer::Shape:
                 step.setShape(

@@ -17,6 +17,8 @@ LayoutPage::LayoutPage(PageManager &manager, PageContext &context) :
 }
 
 void LayoutPage::enter() {
+    resetKeyState();
+
     _trackModeListModel.fromProject(_project);
 }
 
@@ -27,7 +29,7 @@ void LayoutPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "LAYOUT");
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     ListPage::draw(canvas);
 }

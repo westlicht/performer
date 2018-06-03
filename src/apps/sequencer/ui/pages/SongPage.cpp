@@ -23,6 +23,8 @@ SongPage::SongPage(PageManager &manager, PageContext &context) :
 {}
 
 void SongPage::enter() {
+    resetKeyState();
+
     _mode = Mode::Idle;
     setSelectedSlot(_selectedSlot);
 }
@@ -39,7 +41,7 @@ void SongPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SONG");
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     const int slotWidth = Width / SlotCount;
 
@@ -158,7 +160,7 @@ void SongPage::keyPress(KeyPressEvent &event) {
             if (_selectedSlot >= 0) {
                 bool globalChange = true;
                 for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
-                    if (_keyState[MatrixMap::fromTrack(trackIndex)]) {
+                    if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
                         song.setPattern(_selectedSlot, trackIndex, pattern);
                         globalChange = false;
                     }
@@ -193,7 +195,7 @@ void SongPage::encoder(EncoderEvent &event) {
     if (event.pressed()) {
         _project.song().editRepeats(_selectedSlot, event.value());
     } else {
-        moveSelectedSlot(event.value(), _keyState[Key::Shift]);
+        moveSelectedSlot(event.value(), globalKeyState()[Key::Shift]);
     }
 }
 

@@ -21,6 +21,7 @@ void ConfirmationPage::show(const char *text, ResultCallback callback) {
 }
 
 void ConfirmationPage::enter() {
+    resetKeyState();
 }
 
 void ConfirmationPage::exit() {
@@ -28,7 +29,7 @@ void ConfirmationPage::exit() {
 
 void ConfirmationPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);

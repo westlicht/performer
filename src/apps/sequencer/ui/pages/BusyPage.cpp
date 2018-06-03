@@ -25,6 +25,7 @@ void BusyPage::show(const char *text) {
 }
 
 void BusyPage::enter() {
+    resetKeyState();
 }
 
 void BusyPage::exit() {

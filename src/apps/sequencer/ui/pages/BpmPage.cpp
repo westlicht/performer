@@ -71,7 +71,7 @@ void BpmPage::keyUp(KeyEvent &event) {
 }
 
 void BpmPage::encoder(EncoderEvent &event) {
-    _project.setBpm(_project.bpm() + event.value() * (event.pressed() ? 0.1f : 1.f) * (_keyState[Key::Shift] ? 10.f : 1.f));
+    _project.setBpm(_project.bpm() + event.value() * (event.pressed() ? 0.1f : 1.f) * (globalKeyState()[Key::Shift] ? 10.f : 1.f));
 
     event.consume();
 }

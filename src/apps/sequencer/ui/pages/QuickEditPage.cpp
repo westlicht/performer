@@ -51,11 +51,11 @@ void QuickEditPage::keyDown(KeyEvent &event) {
 void QuickEditPage::keyUp(KeyEvent &event) {
     event.consume();
 
-    if (_keyState[Key::Page]) {
+    if (keyState()[Key::Page]) {
         return;
     }
     for (int i = 8; i < 16; ++i) {
-        if (_keyState[MatrixMap::fromStep(i)]) {
+        if (keyState()[MatrixMap::fromStep(i)]) {
             return;
         }
     }
@@ -76,6 +76,6 @@ void QuickEditPage::keyPress(KeyPressEvent &event) {
 }
 
 void QuickEditPage::encoder(EncoderEvent &event) {
-    _listModel->edit(_row, 1, event.value(), event.pressed() | _keyState[Key::Shift]);
+    _listModel->edit(_row, 1, event.value(), event.pressed() | globalKeyState()[Key::Shift]);
     event.consume();
 }

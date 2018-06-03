@@ -25,6 +25,7 @@ void FileSelectPage::show(const char *title, FileType type, int selectedSlot, bo
 }
 
 void FileSelectPage::enter() {
+    resetKeyState();
 }
 
 void FileSelectPage::exit() {
@@ -33,7 +34,7 @@ void FileSelectPage::exit() {
 void FileSelectPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, _title);
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     ListPage::draw(canvas);
 }

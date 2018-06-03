@@ -27,6 +27,8 @@ TrackPage::TrackPage(PageManager &manager, PageContext &context) :
 {}
 
 void TrackPage::enter() {
+    resetKeyState();
+
     setTrack(_project.selectedTrack());
 }
 

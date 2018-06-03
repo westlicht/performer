@@ -54,6 +54,7 @@ private:
     uint32_t _lastUpdateTicks;
 
     KeyState _keyState;
+    KeyState _globalKeyState;
     KeyPressEventTracker _keyPressEventTracker;
     Leds _leds;
 

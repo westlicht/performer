@@ -32,6 +32,7 @@ ProjectPage::ProjectPage(PageManager &manager, PageContext &context) :
 {}
 
 void ProjectPage::enter() {
+    resetKeyState();
 }
 
 void ProjectPage::exit() {

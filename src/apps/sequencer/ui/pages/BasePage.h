@@ -15,6 +15,7 @@
 struct PageContext {
     MessageManager &messageManager;
     KeyState &keyState;
+    KeyState &globalKeyState;
     Model &model;
     Engine &engine;
 
@@ -29,8 +30,12 @@ protected:
     void showMessage(const char *text, uint32_t duration = 1000);
     void showContextMenu(const ContextMenu &contextMenu);
 
+    const KeyState &keyState() const { return _context.keyState; }
+    const KeyState &globalKeyState() const { return _context.globalKeyState; }
+
+    void resetKeyState() { _context.keyState.reset(); }
+
     PageContext &_context;
-    KeyState &_keyState;
     Model &_model;
     Project &_project;
     Engine &_engine;

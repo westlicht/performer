@@ -20,6 +20,7 @@ void GeneratorSelectPage::show(ResultCallback callback) {
 }
 
 void GeneratorSelectPage::enter() {
+    resetKeyState();
 }
 
 void GeneratorSelectPage::exit() {
@@ -28,7 +29,7 @@ void GeneratorSelectPage::exit() {
 void GeneratorSelectPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "GENERATOR");
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     ListPage::draw(canvas);
 }

@@ -7,7 +7,6 @@
 BasePage::BasePage(PageManager &manager, PageContext &context) :
     Page(manager),
     _context(context),
-    _keyState(context.keyState),
     _model(context.model),
     _project(context.model.project()),
     _engine(context.engine)

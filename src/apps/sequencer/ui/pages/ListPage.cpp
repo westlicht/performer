@@ -37,6 +37,8 @@ void ListPage::show() {
 }
 
 void ListPage::enter() {
+    resetKeyState();
+
     scrollTo(_selectedRow);
 }
 
@@ -72,7 +74,7 @@ void ListPage::keyPress(KeyPressEvent &event) {
 
     if (key.isLeft()) {
         if (_edit) {
-            _listModel->edit(_selectedRow, 1, -1, _keyState[Key::Shift]);
+            _listModel->edit(_selectedRow, 1, -1, globalKeyState()[Key::Shift]);
         } else {
             setSelectedRow(selectedRow() - 1);
         }
@@ -80,7 +82,7 @@ void ListPage::keyPress(KeyPressEvent &event) {
     }
     else if (key.isRight()) {
         if (_edit) {
-            _listModel->edit(_selectedRow, 1, 1, _keyState[Key::Shift]);
+            _listModel->edit(_selectedRow, 1, 1, globalKeyState()[Key::Shift]);
         } else {
             setSelectedRow(selectedRow() + 1);
         }
@@ -96,7 +98,7 @@ void ListPage::keyPress(KeyPressEvent &event) {
 
 void ListPage::encoder(EncoderEvent &event) {
     if (_edit) {
-        _listModel->edit(_selectedRow, 1, event.value(), event.pressed() | _keyState[Key::Shift]);
+        _listModel->edit(_selectedRow, 1, event.value(), event.pressed() | globalKeyState()[Key::Shift]);
     } else {
         setSelectedRow(selectedRow() + event.value());
     }

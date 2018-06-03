@@ -41,6 +41,8 @@ SettingsPage::SettingsPage(PageManager &manager, PageContext &context) :
 }
 
 void SettingsPage::enter() {
+    resetKeyState();
+
     _engine.lock();
     _engine.setGateOutput(0xff);
     _engine.setGateOutputOverride(true);
@@ -60,7 +62,7 @@ void SettingsPage::exit() {
 void SettingsPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SETTINGS");
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     switch (_mode) {
     case Mode::Calibration: {

@@ -22,6 +22,8 @@ PerformerPage::PerformerPage(PageManager &manager, PageContext &context) :
 {}
 
 void PerformerPage::enter() {
+    resetKeyState();
+
     _latching = false;
 }
 
@@ -36,7 +38,7 @@ void PerformerPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PERFORMER");
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     constexpr int Border = 4;
     constexpr int BorderRequested = 6;
@@ -168,7 +170,7 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
     // use immediate by default
     // use latched when LATCH is pressed
     // use synced when SYNC is pressed
-    bool syncPressed = _keyState[MatrixMap::fromFunction(int(Function::Sync))];
+    bool syncPressed = keyState()[MatrixMap::fromFunction(int(Function::Sync))];
     PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (syncPressed ? PlayState::Synced : PlayState::Immediate);
 
     if (key.isFunction()) {
@@ -204,10 +206,10 @@ void PerformerPage::encoder(EncoderEvent &event) {
 
 void PerformerPage::updateFills() {
     auto &playState = _project.playState();
-    bool fillPressed = _keyState[MatrixMap::fromFunction(int(Function::Fill))];
+    bool fillPressed = keyState()[MatrixMap::fromFunction(int(Function::Fill))];
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        bool trackFill = _keyState[MatrixMap::fromStep(8 + trackIndex)];
+        bool trackFill = keyState()[MatrixMap::fromStep(8 + trackIndex)];
         playState.fillTrack(trackIndex, trackFill || fillPressed);
     }
 }

@@ -38,6 +38,8 @@ PatternPage::PatternPage(PageManager &manager, PageContext &context) :
 {}
 
 void PatternPage::enter() {
+    resetKeyState();
+
     _latching = false;
 }
 
@@ -59,7 +61,7 @@ void PatternPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     constexpr int Border = 4;
 
@@ -72,7 +74,7 @@ void PatternPage::draw(Canvas &canvas) {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &trackEngine = _engine.trackEngine(trackIndex);
         const auto &trackState = playState.trackState(trackIndex);
-        bool trackSelected = _keyState[MatrixMap::fromTrack(trackIndex)];
+        bool trackSelected = keyState()[MatrixMap::fromTrack(trackIndex)];
 
         int x = trackIndex * 32;
         int y = 16;
@@ -115,7 +117,7 @@ void PatternPage::updateLeds(Leds &leds) {
 
     if (playState.snapshotActive()) {
         LedPainter::drawSelectedPattern(leds, _snapshotTargetPattern, _snapshotTargetPattern);
-    } else if (_keyState[Key::Shift]) {
+    } else if (globalKeyState()[Key::Shift]) {
         LedPainter::drawSelectedPattern(leds, _project.selectedPatternIndex(), _project.selectedPatternIndex());
     } else {
         uint16_t allActivePatterns = 0;
@@ -127,7 +129,7 @@ void PatternPage::updateLeds(Leds &leds) {
             const auto &trackState = playState.trackState(trackIndex);
             allActivePatterns |= (trackState.pattern() < 16) ? (1<<trackState.pattern()) : 0;
             allRequestedPatterns |= (trackState.requestedPattern() < 16) ? (1<<trackState.requestedPattern()) : 0;
-            if (_keyState[MatrixMap::fromTrack(trackIndex)]) {
+            if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
                 selectedActivePatterns |= (trackState.pattern() < 16) ? (1<<trackState.pattern()) : 0;
                 selectedRequestedPatterns |= (trackState.requestedPattern() < 16) ? (1<<trackState.requestedPattern()) : 0;
             }
@@ -240,12 +242,12 @@ void PatternPage::keyPress(KeyPressEvent &event) {
                 // use immediate by default
                 // use latched when LATCH is pressed
                 // use synced when SYNC is pressed
-                bool syncPressed = _keyState[MatrixMap::fromFunction(int(Function::Sync))];
+                bool syncPressed = keyState()[MatrixMap::fromFunction(int(Function::Sync))];
                 PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (syncPressed ? PlayState::Synced : PlayState::Immediate);
 
                 bool globalChange = true;
                 for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                    if (_keyState[MatrixMap::fromTrack(trackIndex)]) {
+                    if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
                         playState.selectTrackPattern(trackIndex, pattern, executeType);
                         globalChange = false;
                     }

@@ -89,6 +89,7 @@ MonitorPage::MonitorPage(PageManager &manager, PageContext &context) :
 {}
 
 void MonitorPage::enter() {
+    resetKeyState();
 }
 
 void MonitorPage::exit() {
@@ -98,7 +99,7 @@ void MonitorPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "MONITOR");
     WindowPainter::drawActiveFunction(canvas, functionNames[int(_mode)]);
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setFont(Font::Tiny);

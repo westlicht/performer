@@ -13,8 +13,11 @@ RoutingPage::RoutingPage(PageManager &manager, PageContext &context) :
 {
 }
 
-void RoutingPage::initRoute(Routing::Param param, int trackIndex) {
+void RoutingPage::enter() {
+    resetKeyState();
+}
 
+void RoutingPage::exit() {
 }
 
 void RoutingPage::draw(Canvas &canvas) {

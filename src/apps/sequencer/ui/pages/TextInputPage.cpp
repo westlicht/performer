@@ -43,6 +43,7 @@ void TextInputPage::show(const char *title, const char *text, size_t maxTextLeng
 }
 
 void TextInputPage::enter() {
+    resetKeyState();
 }
 
 void TextInputPage::exit() {
@@ -50,7 +51,7 @@ void TextInputPage::exit() {
 
 void TextInputPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawFooter(canvas, functionNames, _keyState);
+    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
@@ -84,7 +85,7 @@ void TextInputPage::draw(Canvas &canvas) {
     for (int i = 0; i < int(sizeof(characterSet)); ++i) {
         canvas.drawTextCentered(28 + ix * 10, 16 + iy * 10, 10, 10, FixedStringBuilder<2>("%c", characterSet[i]));
         if (_selectedIndex == i) {
-            canvas.setColor(_keyState[Key::Encoder] ? 0xf : 0x7);
+            canvas.setColor(keyState()[Key::Encoder] ? 0xf : 0x7);
             canvas.drawRect(28 + ix * 10, 16 + iy * 10 + 1, 9, 9);
             canvas.setColor(0xf);
         }
