@@ -125,7 +125,7 @@ void Ui::handleEncoder() {
             bool isDown = event == Encoder::Down;
             _keyState[Key::Encoder] = isDown ? 1 : 0;
             _globalKeyState[Key::Encoder] = isDown ? 1 : 0;
-            Key key(Key::Code::Encoder, _globalKeyState);
+            Key key(Key::Encoder, _globalKeyState);
             KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
             _pageManager.dispatchEvent(keyEvent);
             if (isDown) {

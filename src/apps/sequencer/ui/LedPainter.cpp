@@ -53,16 +53,16 @@ void LedPainter::drawSelectedPage(Leds &leds, int page) {
     for (int i = 0; i < 16; ++i) {
         setLed(MatrixMap::fromStep(i));
     }
-    setLed(Key::Code::Pattern);
-    setLed(Key::Code::Performer);
-    setLed(Key::Code::Bpm);
+    setLed(Key::Pattern);
+    setLed(Key::Performer);
+    setLed(Key::Bpm);
 }
 
 void LedPainter::drawSelectedSequencePage(Leds &leds, int page) {
-    leds.set(Key::Code::Global4, page == 0, page == 0);
-    leds.set(Key::Code::Global5, page == 1, page == 1);
-    leds.set(Key::Code::Global6, page == 2, page == 2);
-    leds.set(Key::Code::Global7, page == 3, page == 3);
+    leds.set(Key::Global4, page == 0, page == 0);
+    leds.set(Key::Global5, page == 1, page == 1);
+    leds.set(Key::Global6, page == 2, page == 2);
+    leds.set(Key::Global7, page == 3, page == 3);
 }
 
 void LedPainter::drawSelectedPattern(Leds &leds, int activePattern, int requestedPattern) {

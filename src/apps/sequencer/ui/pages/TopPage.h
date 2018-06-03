@@ -22,21 +22,21 @@ public:
 private:
     enum Mode : uint8_t {
         // main modes
-        Project         = Key::Code::Track0,
-        Layout          = Key::Code::Track1,
-        Track           = Key::Code::Track2,
-        Sequence        = Key::Code::Track3,
-        SequenceEdit    = Key::Code::Track4,
-        Song            = Key::Code::Track6,
-        Routing         = Key::Code::Track7,
-        Pattern         = Key::Code::Pattern,
-        Performer       = Key::Code::Performer,
-        ClockSetup      = Key::Code::Bpm,
+        Project         = Key::Track0,
+        Layout          = Key::Track1,
+        Track           = Key::Track2,
+        Sequence        = Key::Track3,
+        SequenceEdit    = Key::Track4,
+        Song            = Key::Track6,
+        Routing         = Key::Track7,
+        Pattern         = Key::Pattern,
+        Performer       = Key::Performer,
+        ClockSetup      = Key::Bpm,
 
         // aux modes
-        UserScale       = Key::Code::Step0,
-        Monitor         = Key::Code::Step6,
-        Settings        = Key::Code::Step7,
+        UserScale       = Key::Step0,
+        Monitor         = Key::Step6,
+        Settings        = Key::Step7,
 
         Last,
     };
