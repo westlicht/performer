@@ -50,8 +50,8 @@ public:
 
     typedef std::function<void(uint8_t)> MidiRecvCallback;
 
-    void sendMidi(int port, uint8_t data);
-    void sendMidi(int port, const uint8_t *data, size_t length);
+    bool sendMidi(int port, uint8_t data);
+    bool sendMidi(int port, const uint8_t *data, size_t length);
     void recvMidi(int port, MidiRecvCallback callback);
 
     static Simulator &instance();

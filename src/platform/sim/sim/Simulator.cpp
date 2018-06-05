@@ -124,14 +124,17 @@ void Simulator::writeDac(int channel, uint16_t value) {
     }
 }
 
-void Simulator::sendMidi(int port, uint8_t data) {
-    _midi.send(_midiPortName[port], data);
+bool Simulator::sendMidi(int port, uint8_t data) {
+    return _midi.send(_midiPortName[port], data);
 }
 
-void Simulator::sendMidi(int port, const uint8_t *data, size_t length) {
+bool Simulator::sendMidi(int port, const uint8_t *data, size_t length) {
     for (size_t i = 0; i < length; ++i) {
-        _midi.send(_midiPortName[port], data[i]);
+        if (!_midi.send(_midiPortName[port], data[i])) {
+            return false;
+        }
     }
+    return true;
 }
 
 void Simulator::recvMidi(int port, MidiRecvCallback callback) {

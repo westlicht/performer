@@ -16,7 +16,7 @@ public:
     typedef std::function<void(uint8_t)> RecvCallback;
 
     void recv(const std::string &port, RecvCallback callback);
-    void send(const std::string &port, uint8_t data);
+    bool send(const std::string &port, uint8_t data);
 
 private:
     void dumpPorts();

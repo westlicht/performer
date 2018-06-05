@@ -53,7 +53,7 @@ void Midi::recv(const std::string &port, RecvCallback callback) {
     }
 }
 
-void Midi::send(const std::string &port, uint8_t data) {
+bool Midi::send(const std::string &port, uint8_t data) {
     // open port on first send
     if (_outputPorts.find(port) == _outputPorts.end()) {
         std::unique_ptr<RtMidiOut> output;
@@ -71,6 +71,7 @@ void Midi::send(const std::string &port, uint8_t data) {
             std::cout << "Failed to open MIDI output port '" << port << "'" << std::endl;
             error.printMessage();
             output.reset();
+            return false;
         }
         _outputPorts[port] = std::move(output);
     }
@@ -80,6 +81,8 @@ void Midi::send(const std::string &port, uint8_t data) {
         std::vector<uint8_t> message = { data };
         output->sendMessage(&message);
     }
+
+    return true;
 }
 
 void Midi::dumpPorts() {
