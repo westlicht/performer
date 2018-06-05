@@ -33,7 +33,7 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
 int NoteSequence::Step::layerValue(Layer layer) const {
     #define CASE(_layer_, _data_) \
     case Layer::_layer_: \
-        return _data_;
+        return _data_ + _layer_::Min;
 
     switch (layer) {
     case Layer::Gate: return _data0.gate ? 1 : 0;
@@ -58,7 +58,7 @@ int NoteSequence::Step::layerValue(Layer layer) const {
 void NoteSequence::Step::setLayerValue(Layer layer, int value) {
     #define CASE(_layer_, _data_) \
     case Layer::_layer_: \
-        _data_ = value; \
+        _data_ = value - _layer_::Min; \
         break;
 
     switch (layer) {

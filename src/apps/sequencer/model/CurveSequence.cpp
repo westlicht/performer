@@ -22,7 +22,7 @@ Types::LayerRange CurveSequence::layerRange(Layer layer) {
 int CurveSequence::Step::layerValue(Layer layer) const {
     #define CASE(_layer_, _data_) \
     case Layer::_layer_: \
-        return _data_;
+        return _data_ + _layer_::Min;
 
     switch (layer) {
     CASE(Shape, _shape)
@@ -39,7 +39,7 @@ int CurveSequence::Step::layerValue(Layer layer) const {
 void CurveSequence::Step::setLayerValue(Layer layer, int value) {
     #define CASE(_layer_, _data_) \
     case Layer::_layer_: \
-        _data_ = value; \
+        _data_ = value - _layer_::Min; \
         break;
 
     switch (layer) {
