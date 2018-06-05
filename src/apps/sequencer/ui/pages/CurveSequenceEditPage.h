@@ -38,9 +38,11 @@ private:
 
     void quickEdit(int index);
 
+    CurveSequence::Layer layer() const { return _project.selectedCurveSequenceLayer(); }
+    void setLayer(CurveSequence::Layer layer) { _project.setSelectedCurveSequenceLayer(layer); }
+
     ContextMenu _contextMenu;
 
-    Layer _layer = Layer::Shape;
     int _page = 0;
 
     CurveSequenceListModel _listModel;

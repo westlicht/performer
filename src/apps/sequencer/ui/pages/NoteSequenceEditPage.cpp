@@ -55,7 +55,7 @@ void NoteSequenceEditPage::exit() {
 void NoteSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE EDIT");
-    WindowPainter::drawActiveFunction(canvas, NoteSequence::layerName(_layer));
+    WindowPainter::drawActiveFunction(canvas, NoteSequence::layerName(layer()));
     WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
@@ -102,7 +102,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
         }
 
-        switch (_layer) {
+        switch (layer()) {
         case Layer::GateProbability:
             SequencePainter::drawProbability(
                 canvas,
@@ -183,7 +183,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
     // handle detail display
 
     if (_showDetail) {
-        if (_layer == Layer::Gate || _layer == Layer::Slide || _stepSelection.none()) {
+        if (layer() == Layer::Gate || layer() == Layer::Slide || _stepSelection.none()) {
             _showDetail = false;
         }
         if (_stepSelection.isPersisted() && os::ticks() > _showDetailTicks + os::time::ms(500)) {
@@ -246,7 +246,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
 
     if (!key.shiftModifier() && key.isStep()) {
         int stepIndex = stepOffset() + key.step();
-        switch (_layer) {
+        switch (layer()) {
         case Layer::Gate:
             sequence.step(stepIndex).toggleGate();
             event.consume();
@@ -259,16 +259,16 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Gate:
-            _layer = _layer == Layer::Gate ? Layer::GateProbability : Layer::Gate;
+            setLayer(layer() == Layer::Gate ? Layer::GateProbability : Layer::Gate);
             break;
         case Function::Retrigger:
-            _layer = _layer == Layer::Retrigger ? Layer::RetriggerProbability : Layer::Retrigger;
+            setLayer(layer() == Layer::Retrigger ? Layer::RetriggerProbability : Layer::Retrigger);
             break;
         case Function::Length:
-            _layer = _layer == Layer::Length ? Layer::LengthVariationRange : (_layer == Layer::LengthVariationRange ? Layer::LengthVariationProbability : Layer::Length);
+            setLayer(layer() == Layer::Length ? Layer::LengthVariationRange : (layer() == Layer::LengthVariationRange ? Layer::LengthVariationProbability : Layer::Length));
             break;
         case Function::Note:
-            _layer = _layer == Layer::Note ? Layer::NoteVariationRange : (_layer == Layer::NoteVariationRange ? Layer::NoteVariationProbability : (_layer == Layer::NoteVariationProbability ? Layer::Slide : Layer::Note));
+            setLayer(layer() == Layer::Note ? Layer::NoteVariationRange : (layer() == Layer::NoteVariationRange ? Layer::NoteVariationProbability : (layer() == Layer::NoteVariationProbability ? Layer::Slide : Layer::Note)));
             // _layer = _layer == Layer::Note ? Layer::Slide : Layer::Note;
             break;
         case Function::Condition:
@@ -318,7 +318,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool setToFirst = int(stepIndex) != _stepSelection.first() && globalKeyState()[Key::Shift];
-            switch (_layer) {
+            switch (layer()) {
             case Layer::Gate:
                 step.setGate(
                     setToFirst ? firstStep.gate() :
@@ -397,7 +397,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
 }
 
 void NoteSequenceEditPage::midi(MidiEvent &event) {
-    if (_layer == Layer::Note && _stepSelection.any()) {
+    if (layer() == Layer::Note && _stepSelection.any()) {
         auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
         auto &sequence = _project.selectedNoteSequence();
         const auto &scale = sequence.selectedScale();
@@ -425,7 +425,7 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
 void NoteSequenceEditPage::updateIdleOutput() {
     auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
 
-    if (_layer == Layer::Note && !_stepSelection.isPersisted() && _stepSelection.any()) {
+    if (layer() == Layer::Note && !_stepSelection.isPersisted() && _stepSelection.any()) {
         trackEngine.setIdleStep(_stepSelection.first());
         trackEngine.setIdleGate(true);
     } else {
@@ -454,7 +454,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
 
     canvas.setFont(Font::Tiny);
 
-    switch (_layer) {
+    switch (layer()) {
     case Layer::GateProbability:
         SequencePainter::drawProbability(
             canvas,
@@ -613,7 +613,7 @@ void NoteSequenceEditPage::duplicateSequence() {
 void NoteSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
         if (success) {
-            auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), _layer);
+            auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
             auto generator = Generator::create(mode, *builder);
             _manager.pages().generator.show(generator);
         }

@@ -219,6 +219,16 @@ public:
         setSelectedPatternIndex(selectedPatternIndex() + value);
     }
 
+    // selectedNoteSequenceLayer
+
+    NoteSequence::Layer selectedNoteSequenceLayer() const { return _selectedNoteSequenceLayer; }
+    void setSelectedNoteSequenceLayer(NoteSequence::Layer layer) { _selectedNoteSequenceLayer = layer; }
+
+    // selectedCurveSequenceLayer
+
+    CurveSequence::Layer selectedCurveSequenceLayer() const { return _selectedCurveSequenceLayer; }
+    void setSelectedCurveSequenceLayer(CurveSequence::Layer layer) { _selectedCurveSequenceLayer = layer; }
+
     //----------------------------------------
     // Methods
     //----------------------------------------
@@ -270,4 +280,6 @@ private:
 
     int _selectedTrackIndex = 0;
     int _selectedPatternIndex = 0;
+    NoteSequence::Layer _selectedNoteSequenceLayer = NoteSequence::Layer(0);
+    CurveSequence::Layer _selectedCurveSequenceLayer = CurveSequence::Layer(0);
 };

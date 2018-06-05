@@ -47,7 +47,9 @@ private:
 
     void quickEdit(int index);
 
-    Layer _layer = Layer::Gate;
+    NoteSequence::Layer layer() const { return _project.selectedNoteSequenceLayer(); };
+    void setLayer(NoteSequence::Layer layer) { _project.setSelectedNoteSequenceLayer(layer); }
+
     int _page = 0;
     bool _showDetail;
     uint32_t _showDetailTicks;
