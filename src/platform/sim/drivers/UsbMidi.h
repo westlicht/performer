@@ -13,11 +13,15 @@
 
 class UsbMidi {
 public:
+    typedef std::function<void(uint16_t vendorId, uint16_t productId)> ConnectHandler;
+    typedef std::function<void()> DisconnectHandler;
+    typedef std::function<bool(uint8_t)> RecvFilter;
+
     UsbMidi() :
         _simulator(sim::Simulator::instance())
     {
         _simulator.recvMidi(sim::Simulator::MidiUsbHostPort, [this] (uint8_t data) {
-            if (!_filter || !_filter(data)) {
+            if (!_recvFilter || !_recvFilter(data)) {
                 std::lock_guard<std::mutex> lock(_recvMutex);
                 _recvQueue.emplace_back(data);
             }
@@ -43,14 +47,25 @@ public:
         return false;
     }
 
-    void setRecvFilter(std::function<bool(uint8_t)> filter) {
-        _filter = filter;
+    void setConnectHandler(ConnectHandler handler) {
+        _connectHandler = handler;
+    }
+
+    void setDisconnectHandler(DisconnectHandler handler) {
+        _disconnectHandler = handler;
+    }
+
+    void setRecvFilter(RecvFilter filter) {
+        _recvFilter = filter;
     }
 
 private:
+    ConnectHandler _connectHandler;
+    DisconnectHandler _disconnectHandler;
+    RecvFilter _recvFilter;
+
     sim::Simulator &_simulator;
     std::deque<uint8_t> _recvQueue;
     std::mutex _recvMutex;
-    std::function<bool(uint8_t)> _filter;
     MidiParser _midiParser;
 };

@@ -242,7 +242,6 @@ struct _usbh_generic_data {
 };
 typedef struct _usbh_generic_data usbh_generic_data_t;
 
-
 /// set to -1 for unused items ("don't care" functionality) @see find_driver()
 struct _usbh_dev_driver_info {
 	int32_t deviceClass;
@@ -256,13 +255,14 @@ struct _usbh_dev_driver_info {
 };
 typedef struct _usbh_dev_driver_info usbh_dev_driver_info_t;
 
+
 struct _usbh_dev_driver {
 	/**
 	 * @brief init is initialization routine of the device driver
 	 *
 	 * This function is called during the initialization of the device driver
 	 */
-	void *(*init)(usbh_device_t *usbh_dev);
+	void *(*init)(usbh_device_t *usbh_dev, const usbh_dev_driver_info_t * device_info);
 
 	/**
 	 * @brief analyze descriptor

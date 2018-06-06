@@ -45,7 +45,7 @@ void hub_driver_init(void)
 	}
 }
 
-static void *init(usbh_device_t *usbh_dev)
+static void *init(usbh_device_t *usbh_dev, const usbh_dev_driver_info_t * device_info)
 {
 	if (!initialized) {
 		LOG_PRINTF("\n%s/%d : driver not initialized\n", __FILE__, __LINE__);

@@ -47,7 +47,7 @@ void midi_driver_init(const midi_config_t *config)
  *
  *
  */
-static void *init(usbh_device_t *usbh_dev)
+static void *init(usbh_device_t *usbh_dev, const usbh_dev_driver_info_t * device_info)
 {
 	if (!midi_config || !initialized) {
 		LOG_PRINTF("\n%s/%d : driver not initialized\n", __FILE__, __LINE__);
@@ -60,6 +60,8 @@ static void *init(usbh_device_t *usbh_dev)
 	for (i = 0; i < USBH_AC_MIDI_MAX_DEVICES; i++) {
 		if (midi_device[i].state == 0) {
 			drvdata = &midi_device[i];
+			drvdata->vendor_id = device_info->idVendor;
+			drvdata->product_id = device_info->idProduct;
 			drvdata->device_id = i;
 			drvdata->endpoint_in_address = 0;
 			drvdata->endpoint_out_address = 0;
@@ -265,7 +267,7 @@ static void poll(void *drvdata, uint32_t t_us)
 
 			// Notify user
 			if (midi_config->notify_connected) {
-				midi_config->notify_connected(midi->device_id);
+				midi_config->notify_connected(midi->device_id, midi->vendor_id, midi->product_id);
 			}
 		}
 		break;

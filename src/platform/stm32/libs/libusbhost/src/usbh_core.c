@@ -89,7 +89,7 @@ static bool find_driver(usbh_device_t *dev, const usbh_dev_driver_info_t * devic
 		CHECK_PARTIAL_COMPATIBILITY(idProduct);
 
 		dev->drv = usbh_data.dev_drivers[i];
-		dev->drvdata = dev->drv->init(dev);
+		dev->drvdata = dev->drv->init(dev, device_info);
 		if (!dev->drvdata) {
 			LOG_PRINTF("Unable to initialize device driver at index %d\n", i);
 			i++;

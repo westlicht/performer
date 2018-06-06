@@ -32,6 +32,8 @@
 #define MIDI_INITIAL_DELAY 	(100000)
 
 struct _midi_device {
+	uint16_t vendor_id;
+	uint16_t product_id;
 	usbh_device_t *usbh_device;
 	uint8_t buffer[USBH_AC_MIDI_BUFFER];
 	uint16_t endpoint_in_maxpacketsize;

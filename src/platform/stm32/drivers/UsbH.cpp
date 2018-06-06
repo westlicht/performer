@@ -44,9 +44,9 @@ static const usbh_low_level_driver_t * const lld_drivers[] = {
 
 struct MidiDriverHandler {
 
-    static void connectHandler(int device) {
-        DBG("MIDI device connected (id=%d)", device);
-        g_usbh->midiConnectDevice(device);
+    static void connectHandler(int device, uint16_t vendorId, uint16_t productId) {
+        DBG("MIDI device connected (id=%d, vendorId=%04x, productId=%04x)", device, vendorId, productId);
+        g_usbh->midiConnectDevice(device, vendorId, productId);
     }
 
     static void disconnectHandler(int device) {
@@ -54,7 +54,7 @@ struct MidiDriverHandler {
         g_usbh->midiDisconnectDevice(device);
     }
 
-    static void recvHandler(int device_id, uint8_t *data) {
+    static void recvHandler(int device, uint8_t *data) {
         // uint8_t cable = data[0] >> 4;
         uint8_t code = data[0] & 0xf;
         MidiMessage message;
@@ -69,13 +69,13 @@ struct MidiDriverHandler {
             return;
         case 0x5: // (1 bytes) Single-byte System Common Message or SysEx ends with following single byte.
             message = MidiMessage(data[1]);
-            g_usbh->midiEnqueueMessage(device_id, message);
+            g_usbh->midiEnqueueMessage(device, message);
             break;
         case 0x2: // (2 bytes) Two-byte System Common messages like MTC, SongSelect, etc.
         case 0xC: // (2 bytes) Program Change
         case 0xD: // (2 bytes) Channel Pressure
             message = MidiMessage(data[1], data[2]);
-            g_usbh->midiEnqueueMessage(device_id, message);
+            g_usbh->midiEnqueueMessage(device, message);
             break;
         case 0x3: // (3 bytes) Three-byte System Common messages like SPP, etc.
         case 0x8: // (3 bytes) Note-off
@@ -84,10 +84,10 @@ struct MidiDriverHandler {
         case 0xB: // (3 bytes) Control Change
         case 0xE: // (3 bytes) PitchBend Change
             message = MidiMessage(data[1], data[2], data[3]);
-            g_usbh->midiEnqueueMessage(device_id, message);
+            g_usbh->midiEnqueueMessage(device, message);
             break;
         case 0xF: // (1 bytes) Single Byte
-            g_usbh->midiEnqueueData(device_id, data[1]);
+            g_usbh->midiEnqueueData(device, data[1]);
             return;
         }
     }

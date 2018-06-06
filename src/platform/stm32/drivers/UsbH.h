@@ -17,12 +17,14 @@ public:
     bool powerFault();
 
 private:
-    void midiConnectDevice(uint8_t device) {
+    void midiConnectDevice(uint8_t device, uint16_t vendorId, uint16_t productId) {
         _midiDevices |= (1 << device);
+        _usbMidi.connect(vendorId, productId);
     }
 
     void midiDisconnectDevice(uint8_t device) {
         _midiDevices &= ~(1 << device);
+        _usbMidi.disconnect();
     }
 
     bool midiDeviceConnected(uint8_t device) {

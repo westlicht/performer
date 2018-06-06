@@ -93,7 +93,7 @@ void hid_driver_init(const hid_config_t *config)
 	}
 }
 
-static void *init(usbh_device_t *usbh_dev)
+static void *init(usbh_device_t *usbh_dev, const usbh_dev_driver_info_t * device_info)
 {
 	if (!initialized) {
 		LOG_PRINTF("\n%s/%d : driver not initialized\r\n", __FILE__, __LINE__);
@@ -107,6 +107,8 @@ static void *init(usbh_device_t *usbh_dev)
 	for (i = 0; i < USBH_HID_MAX_DEVICES; i++) {
 		if (hid_device[i].state_next == STATE_INACTIVE) {
 			drvdata = &hid_device[i];
+			drvdata->vendorId = device_info->vendorId;
+			drvdata->productId = device_info->productId;
 			drvdata->device_id = i;
 			drvdata->endpoint_in_address = 0;
 			drvdata->endpoint_in_toggle = 0;
