@@ -15,6 +15,9 @@ class ControllerManager {
 public:
     ControllerManager(Model &model, Engine &engine);
 
+    void connect(uint16_t vendorId, uint16_t productId);
+    void disconnect();
+
     void update();
 
     bool recvMidi(MidiPort port, const MidiMessage &message);

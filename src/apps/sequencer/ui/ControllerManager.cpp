@@ -1,12 +1,29 @@
 #include "ControllerManager.h"
+#include "ControllerRegistry.h"
 
 ControllerManager::ControllerManager(Model &model, Engine &engine) :
     _model(model),
     _engine(engine)
 {
     _port = MidiPort::UsbMidi;
-    // TODO get this from settings
-    _controller = _container.create<LaunchpadController>(*this, _model, _engine);
+}
+
+void ControllerManager::connect(uint16_t vendorId, uint16_t productId) {
+    auto info = findController(vendorId, productId);
+    if (info) {
+        switch (info->type) {
+        case ControllerInfo::Type::Launchpad:
+            _controller = _container.create<LaunchpadController>(*this, _model, _engine);
+            break;
+        }
+    }
+}
+
+void ControllerManager::disconnect() {
+    if (_controller) {
+        _container.destroy(_controller);
+        _controller = nullptr;
+    }
 }
 
 void ControllerManager::update() {

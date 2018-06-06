@@ -45,6 +45,16 @@ void Ui::init() {
         _midiMessages.write({port, message});
     });
 
+    _engine.setUsbMidiConnectHandler([this] (uint16_t vendorId, uint16_t productId) {
+        _messageManager.showMessage("USB MIDI DEVICE CONNECTED");
+        _controllerManager.connect(vendorId, productId);
+    });
+
+    _engine.setUsbMidiDisconnectHandler([this] () {
+        _messageManager.showMessage("USB MIDI DEVICE DISCONNECTED");
+        _controllerManager.disconnect();
+    });
+
     _engine.setMessageHandler([this] (const char *text, uint32_t duration) {
         _messageManager.showMessage(text, duration);
     });

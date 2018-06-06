@@ -20,6 +20,9 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &di
 {
     _cvOutputOverrideValues.fill(0.f);
     _trackEngines.fill(nullptr);
+
+    _usbMidi.setConnectHandler([this] (uint16_t vendorId, uint16_t productId) { usbMidiConnect(vendorId, productId); });
+    _usbMidi.setDisconnectHandler([this] () { usbMidiDisconnect(); });
 }
 
 void Engine::init() {
@@ -440,6 +443,18 @@ void Engine::updateOverrides() {
         for (size_t i = 0; i < _cvOutputOverrideValues.size(); ++i) {
             _cvOutput.setChannel(i, _cvOutputOverrideValues[i]);
         }
+    }
+}
+
+void Engine::usbMidiConnect(uint16_t vendorId, uint16_t productId) {
+    if (_usbMidiConnectHandler) {
+        _usbMidiConnectHandler(vendorId, productId);
+    }
+}
+
+void Engine::usbMidiDisconnect() {
+    if (_usbMidiDisconnectHandler) {
+        _usbMidiDisconnectHandler();
     }
 }
 

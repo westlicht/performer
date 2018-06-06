@@ -35,6 +35,9 @@ public:
 
     typedef std::function<void(MidiPort port, const MidiMessage &message)> MidiReceiveHandler;
 
+    typedef std::function<void(uint16_t vendorId, uint16_t productId)> UsbMidiConnectHandler;
+    typedef std::function<void()> UsbMidiDisconnectHandler;
+
     typedef std::function<void(const char *text, uint32_t duration)> MessageHandler;
 
     enum ClockSource {
@@ -106,6 +109,8 @@ public:
 
     bool sendMidi(MidiPort port, const MidiMessage &message);
     void setMidiReceiveHandler(MidiReceiveHandler handler) { _midiReceiveHandler = handler; }
+    void setUsbMidiConnectHandler(UsbMidiConnectHandler handler) { _usbMidiConnectHandler = handler; }
+    void setUsbMidiDisconnectHandler(UsbMidiDisconnectHandler handler) { _usbMidiDisconnectHandler = handler; }
 
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
@@ -118,6 +123,9 @@ private:
     void resetTrackEngines();
     void updatePlayState(bool ticked);
     void updateOverrides();
+
+    void usbMidiConnect(uint16_t vendorId, uint16_t productId);
+    void usbMidiDisconnect();
 
     void receiveMidi();
     void receiveMidi(MidiPort port, const MidiMessage &message);
@@ -145,6 +153,8 @@ private:
     RoutingEngine _routingEngine;
     MidiLearn _midiLearn;
     MidiReceiveHandler _midiReceiveHandler;
+    UsbMidiConnectHandler _usbMidiConnectHandler;
+    UsbMidiDisconnectHandler _usbMidiDisconnectHandler;
 
     // locking
     volatile uint32_t _requestLock = 0;
