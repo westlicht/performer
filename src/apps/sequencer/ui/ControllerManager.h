@@ -20,7 +20,7 @@ public:
     bool recvMidi(MidiPort port, const MidiMessage &message);
 
 private:
-    void sendMidi(const MidiMessage &message);
+    bool sendMidi(const MidiMessage &message);
 
     Model &_model;
     Engine &_engine;

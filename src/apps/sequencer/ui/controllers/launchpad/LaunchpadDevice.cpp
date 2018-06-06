@@ -30,8 +30,9 @@ void LaunchpadDevice::syncLeds() {
         for (int col = 0; col < Cols; ++col) {
             int index = row * Cols + col;
             if (_deviceLedState[index] != _ledState[index]) {
-                sendMidi(MidiMessage::makeNoteOn(0, row * 16 + col, _ledState[index]));
-                _deviceLedState[index] = _ledState[index];
+                if (sendMidi(MidiMessage::makeNoteOn(0, row * 16 + col, _ledState[index]))) {
+                    _deviceLedState[index] = _ledState[index];
+                }
             }
         }
     }
@@ -40,8 +41,9 @@ void LaunchpadDevice::syncLeds() {
     for (int col = 0; col < Cols; ++col) {
         int index = SceneRow * Cols + col;
         if (_deviceLedState[index] != _ledState[index]) {
-            sendMidi(MidiMessage::makeNoteOn(0, col * 16 + 8, _ledState[index]));
-            _deviceLedState[index] = _ledState[index];
+            if (sendMidi(MidiMessage::makeNoteOn(0, col * 16 + 8, _ledState[index]))) {
+                _deviceLedState[index] = _ledState[index];
+            }
         }
     }
 
@@ -49,8 +51,9 @@ void LaunchpadDevice::syncLeds() {
     for (int col = 0; col < Cols; ++col) {
         int index = FunctionRow * Cols + col;
         if (_deviceLedState[index] != _ledState[index]) {
-            sendMidi(MidiMessage::makeControlChange(0, 104 + col, _ledState[index]));
-            _deviceLedState[index] = _ledState[index];
+            if (sendMidi(MidiMessage::makeControlChange(0, 104 + col, _ledState[index]))) {
+                _deviceLedState[index] = _ledState[index];
+            }
         }
     }
 }

@@ -24,6 +24,6 @@ bool ControllerManager::recvMidi(MidiPort port, const MidiMessage &message) {
     return false;
 }
 
-void ControllerManager::sendMidi(const MidiMessage &message) {
-    _engine.sendMidi(_port, message);
+bool ControllerManager::sendMidi(const MidiMessage &message) {
+    return _engine.sendMidi(_port, message);
 }

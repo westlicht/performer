@@ -16,8 +16,20 @@ public:
     static constexpr int SceneRow = 8;
     static constexpr int FunctionRow = 9;
 
-    typedef std::function<void(const MidiMessage &)> SendMidiHandler;
+    typedef std::function<bool(const MidiMessage &)> SendMidiHandler;
     typedef std::function<void(int, int, bool)> ButtonHandler;
+
+    struct Color {
+        union {
+            struct {
+                uint8_t red: 4;
+                uint8_t green: 4;
+            };
+            uint8_t data;
+        };
+
+        Color(int red, int green) : red(red), green(green) {}
+    };
 
     LaunchpadDevice();
 
@@ -45,6 +57,10 @@ public:
         std::fill(_ledState.begin(), _ledState.end(), 0);
     }
 
+    void setLed(int row, int col, Color color) {
+        _ledState[row * Cols + col] = color.data;
+    }
+
     void setLed(int row, int col, int red, int green) {
         uint8_t state = (red & 0x3) | ((green & 0x3) << 4);
         _ledState[row * Cols + col] = state;
@@ -53,10 +69,11 @@ public:
     void syncLeds();
 
 private:
-    void sendMidi(const MidiMessage &message) {
+    bool sendMidi(const MidiMessage &message) {
         if (_sendMidiHandler) {
-            _sendMidiHandler(message);
+            return _sendMidiHandler(message);
         }
+        return false;
     }
 
     void setButtonState(int row, int col, bool state) {

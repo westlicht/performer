@@ -17,7 +17,7 @@ public:
     virtual void recvMidi(const MidiMessage &message) = 0;
 
 protected:
-    void sendMidi(const MidiMessage &message);
+    bool sendMidi(const MidiMessage &message);
 
     ControllerManager &_manager;
     Model &_model;
