@@ -14,11 +14,6 @@
 
 namespace sim {
 
-const std::vector<std::string> Simulator::_midiPortName = {
-    "SL MkII Port 1", // MidiHardwarePort
-    "SL MkII Port 2", // MidiUsbHostPort
-};
-
 Simulator::Simulator() :
     _window("Sequencer", Vector2i(800, 500))
 {
@@ -58,6 +53,8 @@ void Simulator::update() {
     for (const auto &callback : _updateCallbacks) {
         callback();
     }
+
+    _midi.update();
 
     _window.update();
 }
@@ -124,23 +121,6 @@ void Simulator::writeDac(int channel, uint16_t value) {
     }
 }
 
-bool Simulator::sendMidi(int port, uint8_t data) {
-    return _midi.send(_midiPortName[port], data);
-}
-
-bool Simulator::sendMidi(int port, const uint8_t *data, size_t length) {
-    for (size_t i = 0; i < length; ++i) {
-        if (!_midi.send(_midiPortName[port], data[i])) {
-            return false;
-        }
-    }
-    return true;
-}
-
-void Simulator::recvMidi(int port, MidiRecvCallback callback) {
-    _midi.recv(_midiPortName[port], [callback] (uint8_t data) { callback(data); });
-}
-
 Simulator &Simulator::instance() {
     static std::unique_ptr<Simulator> simulator;
     if (!simulator) {
@@ -157,6 +137,5 @@ void Simulator::setupInstruments() {
     // _instruments.reset(new SamplerSetup(_audio));
     _instruments.reset(new MixedSetup(_audio));
 }
-
 
 } // namespace sim

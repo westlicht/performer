@@ -43,16 +43,7 @@ public:
     void writeDac(int channel, uint16_t value);
 
     // MIDI emulation
-    enum MidiPort {
-        MidiHardwarePort,
-        MidiUsbHostPort,
-    };
-
-    typedef std::function<void(uint8_t)> MidiRecvCallback;
-
-    bool sendMidi(int port, uint8_t data);
-    bool sendMidi(int port, const uint8_t *data, size_t length);
-    void recvMidi(int port, MidiRecvCallback callback);
+    Midi &midi() { return _midi; }
 
     static Simulator &instance();
 
@@ -76,7 +67,6 @@ private:
     ScreenshotCallback _screenshotCallback;
     std::shared_ptr<Button> _screenshotButton;
 
-    static const std::vector<std::string> _midiPortName;
     Midi _midi;
 };
 

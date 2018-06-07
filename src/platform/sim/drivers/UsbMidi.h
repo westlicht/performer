@@ -4,10 +4,12 @@
 #include "core/midi/MidiParser.h"
 
 #include "sim/Simulator.h"
+#include "sim/MidiConfig.h"
 
 #include <functional>
 #include <deque>
 #include <mutex>
+#include <memory>
 
 #include <cstdint>
 
@@ -20,18 +22,33 @@ public:
     UsbMidi() :
         _simulator(sim::Simulator::instance())
     {
-        _simulator.recvMidi(sim::Simulator::MidiUsbHostPort, [this] (uint8_t data) {
-            if (!_recvFilter || !_recvFilter(data)) {
-                std::lock_guard<std::mutex> lock(_recvMutex);
-                _recvQueue.emplace_back(data);
+        _port = std::make_shared<sim::Midi::Port>(
+            sim::usbMidiPortConfig.port,
+            [this] (uint8_t data) {
+                if (!_recvFilter || !_recvFilter(data)) {
+                    std::lock_guard<std::mutex> lock(_recvMutex);
+                    _recvQueue.emplace_back(data);
+                }
+            },
+            [this] () {
+                if (_connectHandler) {
+                    _connectHandler(sim::usbMidiPortConfig.vendorId, sim::usbMidiPortConfig.productId);
+                }
+            },
+            [this] () {
+                if (_disconnectHandler) {
+                    _disconnectHandler();
+                }
             }
-        });
+        );
+
+        _simulator.midi().registerPort(_port);
     }
 
     void init() {}
 
     bool send(const MidiMessage &message) {
-        return _simulator.sendMidi(sim::Simulator::MidiUsbHostPort, message.raw(), message.length());
+        return _port->send(message.raw(), message.length());
     }
 
     bool recv(MidiMessage *message) {
@@ -65,6 +82,7 @@ private:
     RecvFilter _recvFilter;
 
     sim::Simulator &_simulator;
+    std::shared_ptr<sim::Midi::Port> _port;
     std::deque<uint8_t> _recvQueue;
     std::mutex _recvMutex;
     MidiParser _midiParser;
