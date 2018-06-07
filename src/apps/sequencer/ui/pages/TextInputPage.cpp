@@ -55,12 +55,18 @@ void TextInputPage::draw(Canvas &canvas) {
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    canvas.setFont(Font::Tiny);
+    canvas.setFont(Font::Small);
 
-    canvas.drawText(28, 8, _title);
+    const int titleX = 28;
+    const int titleY = 12;
+
+    const int charsX = 28;
+    const int charsY = 20;
+
+    canvas.drawText(titleX, titleY, _title);
     int titleWidth = canvas.textWidth(_title) + 8;
 
-    canvas.drawText(28 + titleWidth, 8, _text);
+    canvas.drawText(titleX + titleWidth, titleY, _text);
 
     int offset = 0;
     int width = 0;
@@ -73,20 +79,24 @@ void TextInputPage::draw(Canvas &canvas) {
     }
 
     if (os::ticks() % os::time::ms(300) < os::time::ms(150)) {
-        canvas.fillRect(28 + titleWidth + offset - 1, 8 - 5, width + 1, 7);
+        canvas.setColor(0x7);
+        canvas.fillRect(titleX + titleWidth + offset, titleY - 8, width - 1, 12);
         const char str[2] = { _text[_cursorIndex], '\0' };
         canvas.setBlendMode(BlendMode::Sub);
-        canvas.drawText(28 + titleWidth + offset, 8, str);
+        canvas.drawText(titleX + titleWidth + offset, titleY, str);
         canvas.setBlendMode(BlendMode::Set);
     }
+
+    canvas.setFont(Font::Tiny);
+    canvas.setColor(0xf);
 
     int ix = 0;
     int iy = 0;
     for (int i = 0; i < int(sizeof(characterSet)); ++i) {
-        canvas.drawTextCentered(28 + ix * 10, 16 + iy * 10, 10, 10, FixedStringBuilder<2>("%c", characterSet[i]));
+        canvas.drawTextCentered(charsX + ix * 10, charsY + iy * 10, 10, 10, FixedStringBuilder<2>("%c", characterSet[i]));
         if (_selectedIndex == i) {
             canvas.setColor(keyState()[Key::Encoder] ? 0xf : 0x7);
-            canvas.drawRect(28 + ix * 10, 16 + iy * 10 + 1, 9, 9);
+            canvas.drawRect(charsX + ix * 10, charsY + iy * 10 + 1, 9, 9);
             canvas.setColor(0xf);
         }
         ++ix;
@@ -95,7 +105,6 @@ void TextInputPage::draw(Canvas &canvas) {
             ++iy;
         }
     }
-
 }
 
 void TextInputPage::updateLeds(Leds &leds) {
