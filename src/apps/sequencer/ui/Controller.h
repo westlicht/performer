@@ -11,6 +11,7 @@ class ControllerManager;
 class Controller {
 public:
     Controller(ControllerManager &manager, Model &model, Engine &engine);
+    virtual ~Controller();
 
     virtual void update() = 0;
 

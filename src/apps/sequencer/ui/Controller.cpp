@@ -8,6 +8,9 @@ Controller::Controller(ControllerManager &manager, Model &model, Engine &engine)
     _engine(engine)
 {}
 
+Controller::~Controller() {
+}
+
 bool Controller::sendMidi(const MidiMessage &message) {
     return _manager.sendMidi(message);
 }
