@@ -9,7 +9,15 @@
 
 TopPage::TopPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
-{}
+{
+    context.model.project().watch([this] (Project::Property property) {
+        switch (property) {
+        case Project::Property::SelectedTrackIndex:
+            setMode(_mode);
+            break;
+        }
+    });
+}
 
 void TopPage::init() {
     setMode(Mode::Project);
@@ -67,7 +75,6 @@ void TopPage::keyPress(KeyPressEvent &event) {
 
     if (key.isTrackSelect()) {
         _project.setSelectedTrackIndex(key.trackSelect());
-        setMode(_mode);
         event.consume();
     }
 

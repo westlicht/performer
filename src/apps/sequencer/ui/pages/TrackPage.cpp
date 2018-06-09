@@ -70,24 +70,30 @@ void TrackPage::keyPress(KeyPressEvent &event) {
 }
 
 void TrackPage::setTrack(Track &track) {
+    ParamListModel *newListModel = _listModel;
+
     switch (track.trackMode()) {
     case Track::TrackMode::Note:
         _noteTrackListModel.setTrack(track.noteTrack());
-        _listModel = &_noteTrackListModel;
+        newListModel = &_noteTrackListModel;
         break;
     case Track::TrackMode::Curve:
         _curveTrackListModel.setTrack(track.curveTrack());
-        _listModel = &_curveTrackListModel;
+        newListModel = &_curveTrackListModel;
         break;
     case Track::TrackMode::MidiCv:
         _midiCvTrackListModel.setTrack(track.midiCvTrack());
-        _listModel = &_midiCvTrackListModel;
+        newListModel = &_midiCvTrackListModel;
         break;
     case Track::TrackMode::Last:
         ASSERT(false, "invalid track mode");
         break;
     }
-    setListModel(*_listModel);
+
+    if (newListModel != _listModel) {
+        _listModel = newListModel;
+        setListModel(*_listModel);
+    }
 }
 
 void TrackPage::contextShow() {

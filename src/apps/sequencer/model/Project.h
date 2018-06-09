@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Config.h"
+#include "Observable.h"
 #include "Types.h"
 #include "ClockSetup.h"
 #include "Track.h"
@@ -198,6 +199,7 @@ public:
     int selectedTrackIndex() const { return _selectedTrackIndex; }
     void setSelectedTrackIndex(int index) {
         _selectedTrackIndex = clamp(index, 0, CONFIG_TRACK_COUNT - 1);
+        _observable.notify(SelectedTrackIndex);
     }
 
     bool isSelectedTrack(int index) const { return _selectedTrackIndex == index; }
@@ -228,6 +230,18 @@ public:
 
     CurveSequence::Layer selectedCurveSequenceLayer() const { return _selectedCurveSequenceLayer; }
     void setSelectedCurveSequenceLayer(CurveSequence::Layer layer) { _selectedCurveSequenceLayer = layer; }
+
+    //----------------------------------------
+    // Observable
+    //----------------------------------------
+
+    enum Property {
+        SelectedTrackIndex = 0,
+    };
+
+    void watch(std::function<void(Property)> handler) {
+        _observable.watch(handler);
+    }
 
     //----------------------------------------
     // Methods
@@ -282,4 +296,6 @@ private:
     int _selectedPatternIndex = 0;
     NoteSequence::Layer _selectedNoteSequenceLayer = NoteSequence::Layer(0);
     CurveSequence::Layer _selectedCurveSequenceLayer = CurveSequence::Layer(0);
+
+    Observable<Property, 1> _observable;
 };

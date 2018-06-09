@@ -41,6 +41,7 @@ void LayoutPage::keyPress(KeyPressEvent &event) {
         if (_mode == Mode::TrackMode && key.function() == 4) {
             _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
                 if (result) {
+                    setEdit(false);
                     _trackModeListModel.toProject(_project);
                     showMessage("LAYOUT CHANGED");
                 }
