@@ -38,11 +38,14 @@ public:
               ItemArray &items()       { return _items; }
 
         int item(int index) const {
-            return _items[index];
+            return _items[index] & 0x7fff;
         }
 
-        void setItem(int index, int value) {
-            _items[index] = clamp(value, 0, 0x8000);
+        void setItem(int index, int value, bool doUpdate = true) {
+            _items[index] = (_items[index] & 0x8000) | clamp(value, 0, 0x7fff);
+            if (doUpdate) {
+                update();
+            }
         }
 
         void editItem(int index, int value, int shift) {
@@ -52,7 +55,20 @@ public:
 
         void printItem(int index, StringBuilder &str) const {
             // inverted to improve usability
-            str("%d%s", 0x8000 - item(index), item(index) == defaultItemValue(index) ? " (default)" : "");
+            if (userDefined(index)) {
+                str("%d", 0x7fff - item(index));
+            } else {
+                str("%d (auto)", 0x7fff - item(index));
+            }
+        }
+
+        bool userDefined(int index) const {
+            return _items[index] & 0x8000;
+        }
+
+        void setUserDefined(int index, bool value) {
+            _items[index] = (_items[index] & 0x7fff) | (value ? 0x8000 : 0);
+            update();
         }
 
         int defaultItemValue(int index) const {
@@ -64,7 +80,7 @@ public:
 
             float volts = itemToVolts(index);
 
-            return (volts - volts0) / (volts1 - volts0) * 32768;
+            return clamp(int((volts - volts0) / (volts1 - volts0) * 32768), 0, 0x7fff);
         }
 
         uint16_t voltsToValue(float volts) const {
@@ -73,13 +89,11 @@ public:
             int index = std::floor(fIndex);
             if (index < ItemCount - 1) {
                 float t = fIndex - index;
-                return lerp(t, _items[index], _items[index + 1]);
+                return lerp(t, item(index), item(index + 1));
             } else {
-                return _items[ItemCount - 1];
+                return item(ItemCount - 1);
             }
         }
-
-        void autoFill();
 
         void clear();
 
@@ -87,6 +101,8 @@ public:
         void read(ReadContext &context);
 
     private:
+        void update();
+
         ItemArray _items;
     };
 

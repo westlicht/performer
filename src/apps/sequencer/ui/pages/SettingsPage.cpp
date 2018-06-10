@@ -16,6 +16,12 @@ enum Function {
 
 static const char *functionNames[] = { "CAL", nullptr, nullptr, nullptr, "UPDATE" };
 
+enum CalibrationEditFunction {
+    Auto        = 0,
+};
+
+static const char *calibrationEditFunctionNames[] = { "AUTO", nullptr, nullptr, nullptr, nullptr };
+
 enum class ContextAction {
     Init,
     Save,
@@ -62,17 +68,22 @@ void SettingsPage::exit() {
 void SettingsPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SETTINGS");
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
 
     switch (_mode) {
     case Mode::Calibration: {
         FixedStringBuilder<8> str("CAL CV%d", _outputIndex + 1);
         WindowPainter::drawActiveFunction(canvas, str);
+        if (edit()) {
+            WindowPainter::drawFooter(canvas, calibrationEditFunctionNames, keyState());
+        } else {
+            WindowPainter::drawFooter(canvas, functionNames, keyState());
+        }
         ListPage::draw(canvas);
         break;
     }
     case Mode::Update: {
         WindowPainter::drawActiveFunction(canvas, "UPDATE");
+        WindowPainter::drawFooter(canvas, functionNames, keyState());
         canvas.setColor(0xf);
         canvas.drawText(4, 24, "CURRENT VERSION:");
         FixedStringBuilder<16> str("%d.%d.%d", CONFIG_VERSION_MAJOR, CONFIG_VERSION_MINOR, CONFIG_VERSION_REVISION);
@@ -84,7 +95,6 @@ void SettingsPage::draw(Canvas &canvas) {
             System::reset();
         }
 #endif
-
         break;
     }
     }
@@ -128,13 +138,20 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isFunction()) {
-        switch (Function(key.function())) {
-        case Function::Calibration:
-            setMode(Mode::Calibration);
-            break;
-        case Function::Update:
-            setMode(Mode::Update);
-            break;
+        if (_mode == Mode::Calibration && edit()) {
+            if (CalibrationEditFunction(key.function()) == CalibrationEditFunction::Auto) {
+                _settings.calibration().cvOutput(_project.selectedTrackIndex()).setUserDefined(selectedRow(), false);
+                setEdit(false);
+            }
+        } else {
+            switch (Function(key.function())) {
+            case Function::Calibration:
+                setMode(Mode::Calibration);
+                break;
+            case Function::Update:
+                setMode(Mode::Update);
+                break;
+            }
         }
     }
 
@@ -142,6 +159,9 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
     case Mode::Calibration:
         if (key.isTrack()) {
             setOutputIndex(key.track());
+        }
+        if (!edit() && key.isEncoder()) {
+            _settings.calibration().cvOutput(_project.selectedTrackIndex()).setUserDefined(selectedRow(), true);
         }
         ListPage::keyPress(event);
         updateOutputs();

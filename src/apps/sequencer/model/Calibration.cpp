@@ -1,33 +1,5 @@
 #include "Calibration.h"
 
-void Calibration::CvOutput::autoFill() {
-    auto fillRange = [this] (int first, int last) {
-        int count = last - first;
-        for (int i = first + 1; i < last; ++i) {
-            _items[i] = (_items[last] - _items[first]) * (i - first) * count;
-        }
-        DBG("fill %d - %d", first, last);
-    };
-
-    int first = -1;
-    int last = -1;
-
-    for (size_t i = 0; i < _items.size(); ++i) {
-        if (_items[i] != defaultItemValue(i)) {
-            if (first == -1) {
-                first = i;
-            } else if (last == -1) {
-                last = i;
-                fillRange(first, last);
-            } else {
-                first = last;
-                last = i;
-                fillRange(first, last);
-            }
-        }
-    }
-}
-
 void Calibration::CvOutput::clear() {
     for (size_t i = 0; i < _items.size(); ++i) {
         _items[i] = defaultItemValue(i);
@@ -45,6 +17,43 @@ void Calibration::CvOutput::read(ReadContext &context) {
     auto &reader = context.reader;
     for (size_t i = 0; i < _items.size(); ++i) {
         reader.read(_items[i]);
+    }
+}
+
+void Calibration::CvOutput::update() {
+    auto findNextUserDefined = [this] (int index, int direction) {
+        while (true) {
+            index += direction;
+            if (index < 0) {
+                return -1;
+            }
+            if (index >= int(_items.size())) {
+                return -1;
+            }
+            if (userDefined(index)) {
+                return index;
+            }
+        }
+    };
+
+    for (int index = 0; index < int(_items.size()); ++index) {
+        if (userDefined(index)) {
+            continue;
+        }
+
+        int prevIndex = findNextUserDefined(index, -1);
+        int nextIndex = findNextUserDefined(index,  1);
+
+        if (prevIndex != -1 && nextIndex != -1) {
+            float t = float(index - prevIndex) / (nextIndex - prevIndex);
+            setItem(index, std::round(lerp(t, float(item(prevIndex)), float(item(nextIndex)))), false);
+        } else if (prevIndex != -1) {
+            setItem(index, defaultItemValue(index) - defaultItemValue(prevIndex) + item(prevIndex), false);
+        } else if (nextIndex != -1) {
+            setItem(index, defaultItemValue(index) - defaultItemValue(nextIndex) + item(nextIndex), false);
+        } else {
+            setItem(index, defaultItemValue(index), false);
+        }
     }
 }
 
