@@ -1,7 +1,13 @@
-# eurorack-sequencer
-
 [![Build Status](https://travis-ci.org/westlicht/eurorack-sequencer.svg?branch=master)](https://travis-ci.org/westlicht/eurorack-sequencer)
 
-**PER|FORMER** Open Source Eurorack Hardware Sequencer
+# per|former eurorack sequencer
 
-See early design document [here](./DESIGNDOCUMENT.md).
+<a href="doc/sequencer.jpg"><img src="doc/sequencer.jpg"/></a>
+
+## Overview
+
+This repository contains the firmware for the **per|former eurorack sequencer**.
+
+**Disclaimer: This is work in progress**
+
+The hardware design files are hosted in a separate repository [here](https://github.com/westlicht/eurorack-sequencer-hardware).
