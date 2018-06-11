@@ -5,6 +5,10 @@
 #include "ui/StepSelection.h"
 #include "ui/model/CurveSequenceListModel.h"
 
+#include "engine/generators/SequenceBuilder.h"
+
+#include "core/utils/Container.h"
+
 class CurveSequenceEditPage : public BasePage {
 public:
     CurveSequenceEditPage(PageManager &manager, PageContext &context);
@@ -35,6 +39,7 @@ private:
     void copySequence();
     void pasteSequence();
     void duplicateSequence();
+    void generateSequence();
 
     void quickEdit(int index);
 
@@ -48,4 +53,6 @@ private:
     CurveSequenceListModel _listModel;
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
+
+    Container<CurveSequenceBuilder> _builderContainer;
 };
