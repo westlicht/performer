@@ -8,10 +8,12 @@ Types::LayerRange CurveSequence::layerRange(Layer layer) {
         return { _name_::Min, _name_::Max };
 
     switch (layer) {
-    case Layer::Shape: return { 0, int(Curve::Last) - 1 };
+    case Layer::Shape:
+        return { 0, int(Curve::Last) - 1 };
     CASE(Min)
     CASE(Max)
-    case Layer::Last: break;
+    case Layer::Last:
+        break;
     }
 
     #undef CASE
@@ -20,36 +22,34 @@ Types::LayerRange CurveSequence::layerRange(Layer layer) {
 }
 
 int CurveSequence::Step::layerValue(Layer layer) const {
-    #define CASE(_layer_, _data_) \
-    case Layer::_layer_: \
-        return _data_ + _layer_::Min;
-
     switch (layer) {
-    CASE(Shape, _shape)
-    CASE(Min, _min)
-    CASE(Max, _max)
-    case Layer::Last: break;
+    case Layer::Shape:
+        return shape();
+    case Layer::Min:
+        return min();
+    case Layer::Max:
+        return max();
+    case Layer::Last:
+        break;
     }
-
-    #undef CASE
 
     return 0;
 }
 
 void CurveSequence::Step::setLayerValue(Layer layer, int value) {
-    #define CASE(_layer_, _data_) \
-    case Layer::_layer_: \
-        _data_ = value - _layer_::Min; \
-        break;
-
     switch (layer) {
-    CASE(Shape, _shape)
-    CASE(Min, _min)
-    CASE(Max, _max)
-    case Layer::Last: break;
+    case Layer::Shape:
+        setShape(value);
+        break;
+    case Layer::Min:
+        setMin(value);
+        break;
+    case Layer::Max:
+        setMax(value);
+        break;
+    case Layer::Last:
+        break;
     }
-
-    #undef CASE
 }
 
 void CurveSequence::Step::clear() {

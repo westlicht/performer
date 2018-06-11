@@ -11,8 +11,10 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
         return { _layer_::Min, _layer_::Max };
 
     switch (layer) {
-    case Layer::Gate: return { 0, 1 };
-    case Layer::Slide: return { 0, 1 };
+    case Layer::Gate:
+        return { 0, 1 };
+    case Layer::Slide:
+        return { 0, 1 };
     CASE(GateProbability)
     CASE(Retrigger)
     CASE(RetriggerProbability)
@@ -22,7 +24,8 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
     CASE(Note)
     CASE(NoteVariationRange)
     CASE(NoteVariationProbability)
-    case Layer::Last: break;
+    case Layer::Last:
+        break;
     }
 
     #undef CASE
@@ -31,52 +34,74 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
 }
 
 int NoteSequence::Step::layerValue(Layer layer) const {
-    #define CASE(_layer_, _data_) \
-    case Layer::_layer_: \
-        return _data_ + _layer_::Min;
-
     switch (layer) {
-    case Layer::Gate: return _data0.gate ? 1 : 0;
-    case Layer::Slide: return _data0.slide ? 1 : 0;
-    CASE(GateProbability, _data0.gateProbability)
-    CASE(Retrigger, _data1.retrigger)
-    CASE(RetriggerProbability, _data1.retriggerProbability)
-    CASE(Length, _data0.length)
-    CASE(LengthVariationRange, _data0.lengthVariationRange)
-    CASE(LengthVariationProbability, _data0.lengthVariationProbability)
-    CASE(Note, _data0.note)
-    CASE(NoteVariationRange, _data0.noteVariationRange)
-    CASE(NoteVariationProbability, _data0.noteVariationProbability)
-    case Layer::Last: break;
+    case Layer::Gate:
+        return gate() ? 1 : 0;
+    case Layer::Slide:
+        return slide() ? 1 : 0;
+    case Layer::GateProbability:
+        return gateProbability();
+    case Layer::Retrigger:
+        return retrigger();
+    case Layer::RetriggerProbability:
+        return retriggerProbability();
+    case Layer::Length:
+        return length();
+    case Layer::LengthVariationRange:
+        return lengthVariationRange();
+    case Layer::LengthVariationProbability:
+        return lengthVariationProbability();
+    case Layer::Note:
+        return note();
+    case Layer::NoteVariationRange:
+        return noteVariationRange();
+    case Layer::NoteVariationProbability:
+        return noteVariationProbability();
+    case Layer::Last:
+        break;
     }
-
-    #undef CASE
 
     return 0;
 }
 
 void NoteSequence::Step::setLayerValue(Layer layer, int value) {
-    #define CASE(_layer_, _data_) \
-    case Layer::_layer_: \
-        _data_ = value - _layer_::Min; \
-        break;
-
     switch (layer) {
-    case Layer::Gate: _data0.gate = value; break;
-    case Layer::Slide: _data0.slide = value; break;
-    CASE(GateProbability, _data0.gateProbability)
-    CASE(Retrigger, _data1.retrigger)
-    CASE(RetriggerProbability, _data1.retriggerProbability)
-    CASE(Length, _data0.length)
-    CASE(LengthVariationRange, _data0.lengthVariationRange)
-    CASE(LengthVariationProbability, _data0.lengthVariationProbability)
-    CASE(Note, _data0.note)
-    CASE(NoteVariationRange, _data0.noteVariationRange)
-    CASE(NoteVariationProbability, _data0.noteVariationProbability)
-    case Layer::Last: break;
+    case Layer::Gate:
+        setGate(value);
+        break;
+    case Layer::Slide:
+        setSlide(value);
+        break;
+    case Layer::GateProbability:
+        setGateProbability(value);
+        break;
+    case Layer::Retrigger:
+        setRetrigger(value);
+        break;
+    case Layer::RetriggerProbability:
+        setRetriggerProbability(value);
+        break;
+    case Layer::Length:
+        setLength(value);
+        break;
+    case Layer::LengthVariationRange:
+        setLengthVariationRange(value);
+        break;
+    case Layer::LengthVariationProbability:
+        setLengthVariationProbability(value);
+        break;
+    case Layer::Note:
+        setNote(value);
+        break;
+    case Layer::NoteVariationRange:
+        setNoteVariationRange(value);
+        break;
+    case Layer::NoteVariationProbability:
+        setNoteVariationProbability(value);
+        break;
+    case Layer::Last:
+        break;
     }
-
-    #undef CASE
 }
 
 void NoteSequence::Step::clear() {

@@ -20,7 +20,6 @@ public:
     // Types
     //----------------------------------------
 
-    typedef UnsignedValue<4> Shape;
     typedef UnsignedValue<8> Min;
     typedef UnsignedValue<8> Max;
 
