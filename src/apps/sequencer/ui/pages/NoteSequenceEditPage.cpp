@@ -328,57 +328,57 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::GateProbability:
                 step.setGateProbability(
                     setToFirst ? firstStep.gateProbability() :
-                    NoteSequence::GateProbability::clamp(step.gateProbability() + event.value())
+                    step.gateProbability() + event.value()
                 );
                 break;
             case Layer::Retrigger:
                 step.setRetrigger(
                     setToFirst ? firstStep.retrigger() :
-                    NoteSequence::Retrigger::clamp(step.retrigger() + event.value())
+                    step.retrigger() + event.value()
                 );
                 break;
             case Layer::RetriggerProbability:
                 step.setRetriggerProbability(
                     setToFirst ? firstStep.retriggerProbability() :
-                    NoteSequence::RetriggerProbability::clamp(step.retriggerProbability() + event.value())
+                    step.retriggerProbability() + event.value()
                 );
                 break;
             case Layer::Length:
                 step.setLength(
                     setToFirst ? firstStep.length() :
-                    NoteSequence::Length::clamp(step.length() + event.value())
+                    step.length() + event.value()
                 );
                 break;
             case Layer::LengthVariationRange:
                 step.setLengthVariationRange(
                     setToFirst ? firstStep.lengthVariationRange() :
-                    NoteSequence::LengthVariationRange::clamp(step.lengthVariationRange() + event.value())
+                    step.lengthVariationRange() + event.value()
                 );
                 break;
             case Layer::LengthVariationProbability:
                 step.setLengthVariationProbability(
                     setToFirst ? firstStep.lengthVariationProbability() :
-                    NoteSequence::LengthVariationProbability::clamp(step.lengthVariationProbability() + event.value())
+                    step.lengthVariationProbability() + event.value()
                 );
                 break;
             case Layer::Note:
                 step.setNote(
                     setToFirst ? firstStep.note() :
-                    NoteSequence::Note::clamp(step.note() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1))
+                    step.note() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1)
                 );
                 updateIdleOutput();
                 break;
             case Layer::NoteVariationRange:
                 step.setNoteVariationRange(
                     setToFirst ? firstStep.noteVariationRange() :
-                    NoteSequence::NoteVariationRange::clamp(step.noteVariationRange() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1))
+                    step.noteVariationRange() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1)
                 );
                 updateIdleOutput();
                 break;
             case Layer::NoteVariationProbability:
                 step.setNoteVariationProbability(
                     setToFirst ? firstStep.noteVariationProbability() :
-                    NoteSequence::NoteVariationProbability::clamp(step.noteVariationProbability() + event.value())
+                    step.noteVariationProbability() + event.value()
                 );
                 break;
             case Layer::Slide:

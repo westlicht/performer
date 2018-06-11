@@ -229,19 +229,19 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Shape:
                 step.setShape(
                     setToFirst ? firstStep.shape() :
-                    CurveSequence::Shape::clamp(step.shape() + event.value())
+                    step.shape() + event.value()
                 );
                 break;
             case Layer::Min:
                 step.setMin(
                     setToFirst ? firstStep.min() :
-                    CurveSequence::Min::clamp(step.min() + event.value() * (event.pressed() ? 1 : 8))
+                    step.min() + event.value() * (event.pressed() ? 1 : 8)
                 );
                 break;
             case Layer::Max:
                 step.setMax(
                     setToFirst ? firstStep.max() :
-                    CurveSequence::Max::clamp(step.max() + event.value() * (event.pressed() ? 1 : 8))
+                    step.max() + event.value() * (event.pressed() ? 1 : 8)
                 );
                 break;
             default:

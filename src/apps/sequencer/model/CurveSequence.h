@@ -56,7 +56,7 @@ public:
 
         int min() const { return _min; }
         void setMin(int min) {
-            _min = min;
+            _min = Min::clamp(min);
             _max = std::max(_max, _min);
         }
 
@@ -66,7 +66,7 @@ public:
 
         int max() const { return _max; }
         void setMax(int max) {
-            _max = max;
+            _max = Max::clamp(max);
             _min = std::min(_min, _max);
         }
 
