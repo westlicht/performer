@@ -7,6 +7,8 @@ public:
     enum Type {
         High,
         Low,
+        StepUp,
+        StepDown,
         RampUp,
         RampDown,
         ExpUp,
@@ -15,6 +17,11 @@ public:
         LogDown,
         SmoothUp,
         SmoothDown,
+        Triangle,
+        Bell,
+        ExpDown2x,
+        ExpDown3x,
+        ExpDown4x,
         Last
     };
 

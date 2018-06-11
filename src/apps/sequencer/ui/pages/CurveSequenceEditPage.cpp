@@ -35,7 +35,7 @@ static const char *functionNames[] = { "SHAPE", "MIN", "MAX", nullptr, nullptr }
 
 
 static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, const Curve::Function function, float min, float max) {
-    const int Step = 2;
+    const int Step = 1;
 
     auto eval = [=] (float x) {
         return (1.f - (function(x) * (max - min) + min)) * h;
