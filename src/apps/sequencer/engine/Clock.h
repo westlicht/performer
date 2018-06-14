@@ -24,6 +24,12 @@ public:
         SlaveFreeRunning    = (1<<1),
     };
 
+    struct OutputState {
+        bool clock = false;
+        bool reset = false;
+        bool run = false;
+    };
+
     Clock(ClockTimer &timer);
 
     void init();
@@ -59,7 +65,8 @@ public:
 
     // Clock output
     void outputConfigure(int divisor, int pulse);
-    void outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset, std::function<void(bool)> run);
+    const OutputState &outputState() const { return _outputState; }
+    void outputHandler(std::function<void(const OutputState &state)> handler);
     void outputMidi(std::function<void(uint8_t)> midi);
 
     // Sequencer interface
@@ -69,16 +76,27 @@ public:
     bool checkTick(uint32_t *tick);
 
 private:
+    enum State {
+        Idle,
+        // Running,
+        MasterRunning,
+        SlaveRunning,
+    };
+
     void resetTicks();
     void requestStart();
     void requestStop();
     void requestResume();
+
+    void setState(State state);
 
     void setupMasterTimer();
     void setupSlaveTimer();
 
     void outputMidiMessage(uint8_t msg);
     void outputTick(uint32_t tick);
+    void outputClock(bool clock);
+    void outputReset(bool reset);
     void outputRun(bool run);
 
     bool slaveEnabled(int slave) const { return _slaves[slave].flags & SlaveEnabled; }
@@ -102,23 +120,15 @@ private:
         int divisor;
         int pulse;
         uint32_t nextClockOffUs;
-        std::function<void(bool)> clock;
-        std::function<void(bool)> reset;
-        std::function<void(bool)> run;
+        std::function<void(const OutputState &state)> handler;
         std::function<void(uint8_t)> midi;
     };
     Output _output;
+    OutputState _outputState;
 
     uint8_t _requestStart = 0;
     uint8_t _requestStop = 0;
     uint8_t _requestResume = 0;
-
-    enum State {
-        Idle,
-        // Running,
-        MasterRunning,
-        SlaveRunning,
-    };
 
     State _state = Idle;
 

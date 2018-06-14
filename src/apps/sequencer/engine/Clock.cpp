@@ -44,7 +44,7 @@ void Clock::masterStart() {
         return;
     }
 
-    _state = MasterRunning;
+    setState(MasterRunning);
     requestStart();
     resetTicks();
 
@@ -60,7 +60,7 @@ void Clock::masterStop() {
         return;
     }
 
-    _state = Idle;
+    setState(Idle);
     requestStop();
 
     _timer.disable();
@@ -73,7 +73,7 @@ void Clock::masterResume() {
         return;
     }
 
-    _state = MasterRunning;
+    setState(MasterRunning);
     requestResume();
 
     _timer.disable();
@@ -143,7 +143,7 @@ void Clock::slaveStart(int slave) {
         return;
     }
 
-    _state = SlaveRunning;
+    setState(SlaveRunning);
     _activeSlave = slave;
     requestStart();
 
@@ -165,7 +165,7 @@ void Clock::slaveStop(int slave) {
         return;
     }
 
-    _state = Idle;
+    setState(Idle);
     _activeSlave = -1;
     requestStop();
 
@@ -183,7 +183,7 @@ void Clock::slaveResume(int slave) {
         return;
     }
 
-    _state = SlaveRunning;
+    setState(SlaveRunning);
     _activeSlave = slave;
     requestResume();
 
@@ -202,7 +202,7 @@ void Clock::slaveReset(int slave) {
         return;
     }
 
-    _state = Idle;
+    setState(Idle);
     _activeSlave = -1;
     requestStart();
     requestStop();
@@ -234,10 +234,11 @@ void Clock::outputConfigure(int divisor, int pulse) {
     _output.pulse = pulse;
 }
 
-void Clock::outputClock(std::function<void(bool)> clock, std::function<void(bool)> reset, std::function<void(bool)> run) {
-    _output.clock = clock;
-    _output.reset = reset;
-    _output.run = run;
+void Clock::outputHandler(std::function<void(const OutputState &state)> handler) {
+    _output.handler = handler;
+    if (handler) {
+        handler(_outputState);
+    }
 }
 
 void Clock::outputMidi(std::function<void(uint8_t)> midi) {
@@ -297,16 +298,28 @@ void Clock::requestResume() {
     outputRun(true);
 }
 
+void Clock::setState(State state) {
+    _state = state;
+    switch (_state) {
+    case Idle:
+        outputReset(true);
+        break;
+    default:
+        outputReset(false);
+        break;
+    }
+}
+
 void Clock::setupMasterTimer() {
     _elapsedUs = 0;
     uint32_t us = (60 * 1000000) / (_masterBpm * _ppqn);
     _timer.setPeriod(us);
     _timer.setHandler([&, us] () {
         outputTick(_tick); ++_tick;
-        _elapsedUs += us;
-        if (_output.clock && _elapsedUs >= _output.nextClockOffUs) {
-            _output.clock(false);
+        if (_elapsedUs >= _output.nextClockOffUs) {
+            outputClock(false);
         }
+        _elapsedUs += us;
     });
 }
 
@@ -316,10 +329,10 @@ void Clock::setupSlaveTimer() {
 
     _timer.setPeriod(250);
     _timer.setHandler([&] () {
-        _elapsedUs += 250;
-        if (_output.clock && _elapsedUs >= _output.nextClockOffUs) {
-            _output.clock(false);
+        if (_elapsedUs >= _output.nextClockOffUs) {
+            outputClock(false);
         }
+        _elapsedUs += 250;
     });
 }
 
@@ -333,19 +346,33 @@ void Clock::outputTick(uint32_t tick) {
     if (tick % (_ppqn / 24) == 0) {
         outputMidiMessage(MidiMessage::Tick);
     }
-    if (_output.clock) {
-        uint32_t divisor = _output.divisor;
-        if (tick % divisor == 0) {
-            _output.nextClockOffUs = _elapsedUs + _output.pulse * 1000;
-            _output.clock(true);
-        } else if (tick % divisor == divisor - 1) {
-            _output.clock(false);
-        }
+
+    uint32_t divisor = _output.divisor;
+    if (tick % divisor == 0) {
+        _output.nextClockOffUs = _elapsedUs + _output.pulse * 1000;
+        outputClock(true);
+    } else if (tick % divisor == divisor - 1) {
+        outputClock(false);
+    }
+}
+
+void Clock::outputClock(bool clock) {
+    _outputState.clock = clock;
+    if (_output.handler) {
+        _output.handler(_outputState);
+    }
+}
+
+void Clock::outputReset(bool reset) {
+    _outputState.reset = reset;
+    if (_output.handler) {
+        _output.handler(_outputState);
     }
 }
 
 void Clock::outputRun(bool run) {
-    if (_output.run) {
-        _output.run(run);
+    _outputState.run = run;
+    if (_output.handler) {
+        _output.handler(_outputState);
     }
 }

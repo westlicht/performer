@@ -538,24 +538,6 @@ void Engine::initClockOutputs() {
             _usbMidi.send(MidiMessage(msg));
         }
     });
-
-    _clock.outputClock(
-        [this] (bool value) {
-            _dio.clockOutput.set(value);
-        },
-        [this] (bool value) {
-            // if in reset mode
-            if (_model.project().clockSetup().clockOutputMode() == ClockSetup::ClockMode::Reset) {
-                _dio.resetOutput.set(value);
-            }
-        },
-        [this] (bool value) {
-            // if in start/stop mode
-            if (_model.project().clockSetup().clockOutputMode() == ClockSetup::ClockMode::StartStop) {
-                _dio.resetOutput.set(value);
-            }
-        }
-    );
 }
 
 void Engine::updateClockSetup() {
@@ -576,9 +558,19 @@ void Engine::updateClockSetup() {
 
     // Configure clock outputs
     _clock.outputConfigure(clockSetup.clockOutputDivisor(), clockSetup.clockOutputPulse());
-
-    _dio.clockOutput.set(false);
-    _dio.resetOutput.set(clockSetup.clockOutputMode() == ClockSetup::ClockMode::StartStop ? _clock.isRunning() : false);
+    _clock.outputHandler([this] (const Clock::OutputState &state) {
+        _dio.clockOutput.set(state.clock);
+        switch (_model.project().clockSetup().clockOutputMode()) {
+        case ClockSetup::ClockMode::Reset:
+            _dio.resetOutput.set(state.reset);
+            break;
+        case ClockSetup::ClockMode::StartStop:
+            _dio.resetOutput.set(state.run);
+            break;
+        case ClockSetup::ClockMode::Last:
+            break;
+        }
+    });
 
     clockSetup.clearDirty();
 }
