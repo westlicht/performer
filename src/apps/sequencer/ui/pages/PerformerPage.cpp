@@ -86,21 +86,22 @@ void PerformerPage::draw(Canvas &canvas) {
 }
 
 void PerformerPage::updateLeds(Leds &leds) {
-    const auto &playState = _project.playState();
+    LedPainter::drawTrackGates(leds, _engine);
+    // const auto &playState = _project.playState();
 
-    uint8_t activeMutes = 0;
-    uint8_t requestedMutes = 0;
-    uint8_t activeFills = 0;
+    // uint8_t activeMutes = 0;
+    // uint8_t requestedMutes = 0;
+    // uint8_t activeFills = 0;
 
-    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        const auto &trackState = playState.trackState(trackIndex);
-        activeMutes |= trackState.mute() ? (1<<trackIndex) : 0;
-        requestedMutes |= trackState.requestedMute() ? (1<<trackIndex) : 0;
-        activeFills |= trackState.fill() ? (1<<trackIndex) : 0;
-    }
+    // for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+    //     const auto &trackState = playState.trackState(trackIndex);
+    //     activeMutes |= trackState.mute() ? (1<<trackIndex) : 0;
+    //     requestedMutes |= trackState.requestedMute() ? (1<<trackIndex) : 0;
+    //     activeFills |= trackState.fill() ? (1<<trackIndex) : 0;
+    // }
 
-    LedPainter::drawMutes(leds, activeMutes, requestedMutes);
-    LedPainter::drawFills(leds, activeFills);
+    // LedPainter::drawMutes(leds, activeMutes, requestedMutes);
+    // LedPainter::drawFills(leds, activeFills);
 }
 
 void PerformerPage::keyDown(KeyEvent &event) {

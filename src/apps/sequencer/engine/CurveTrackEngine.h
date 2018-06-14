@@ -19,7 +19,7 @@ public:
 
     virtual const TrackLinkData *linkData() const override { return &_linkData; }
 
-    virtual bool activity() const override { return true; }
+    virtual bool activity() const override { return false; }
     virtual bool gateOutput(int index) const override { return !_mute; }
     virtual float cvOutput(int index) const override { return _cvOutput; }
 

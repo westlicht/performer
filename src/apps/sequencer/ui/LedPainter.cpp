@@ -12,18 +12,47 @@
 // green -> active
 // red -> inactive
 
-void LedPainter::drawTracksGateAndSelected(Leds &leds, const Engine &engine, int selectedTrack) {
+void LedPainter::drawTrackGatesAndSelectedTrack(Leds &leds, const Engine &engine, int selectedTrack) {
     for (int track = 0; track < 8; ++track) {
         // leds.set(MatrixMap::fromTrack(track), engine.trackEngine(track).activity(), track == selectedTrack);
         const auto &trackEngine = engine.trackEngine(track);
-        bool unmutedActivity = trackEngine.activity() && !trackEngine.mute();
-        bool mutedActivity = trackEngine.activity() && trackEngine.mute();
+        // bool unmutedActivity = trackEngine.activity() && !trackEngine.mute();
+        // bool mutedActivity = trackEngine.activity() && trackEngine.mute();
+        // bool selected = track == selectedTrack;
+        // leds.set(
+        //     MatrixMap::fromTrack(track),
+        //     mutedActivity || (selected && !unmutedActivity),
+        //     unmutedActivity || (selected && !mutedActivity)
+        // );
+        bool activity = trackEngine.activity();
+        bool mute = trackEngine.mute();
         bool selected = track == selectedTrack;
-        leds.set(
-            MatrixMap::fromTrack(track),
-            mutedActivity || (selected && !unmutedActivity),
-            unmutedActivity || (selected && !mutedActivity)
-        );
+        if (selected) {
+            if (mute) {
+                leds.set(MatrixMap::fromTrack(track), true, !activity);
+            } else {
+                leds.set(MatrixMap::fromTrack(track), !activity, true);
+            }
+        } else {
+            if (mute) {
+                leds.set(MatrixMap::fromTrack(track), !activity, false);
+            } else {
+                leds.set(MatrixMap::fromTrack(track), false, activity);
+            }
+        }
+    }
+}
+
+void LedPainter::drawTrackGates(Leds &leds, const Engine &engine) {
+    for (int track = 0; track < 8; ++track) {
+        const auto &trackEngine = engine.trackEngine(track);
+        bool activity = trackEngine.activity();
+        bool mute = trackEngine.mute();
+        if (mute) {
+            leds.set(MatrixMap::fromTrack(track), !activity, false);
+        } else {
+            leds.set(MatrixMap::fromTrack(track), false, activity);
+        }
     }
 }
 
