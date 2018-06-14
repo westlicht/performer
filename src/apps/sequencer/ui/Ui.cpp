@@ -82,7 +82,9 @@ void Ui::update() {
         _lastUpdateTicks += intervalTicks;
     }
 
-    _controllerManager.update();
+    if (!_engine.isLocked()) {
+        _controllerManager.update();
+    }
 }
 
 void Ui::showAssert(const char *filename, int line, const char *msg) {

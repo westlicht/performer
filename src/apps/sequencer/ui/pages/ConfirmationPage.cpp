@@ -57,7 +57,7 @@ void ConfirmationPage::keyPress(KeyPressEvent &event) {
 }
 
 void ConfirmationPage::closeWithResult(bool result) {
-    Page::close();
+    BasePage::close();
     if (_callback) {
         _callback(result);
     }

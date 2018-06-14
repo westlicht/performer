@@ -13,7 +13,10 @@ TopPage::TopPage(PageManager &manager, PageContext &context) :
     context.model.project().watch([this] (Project::Property property) {
         switch (property) {
         case Project::Property::SelectedTrackIndex:
-            setMode(_mode);
+            // no need to update when in project mode (this would also hide the busy page when loading a project)
+            if (_mode != Mode::Project) {
+                setMode(_mode);
+            }
             break;
         }
     });
