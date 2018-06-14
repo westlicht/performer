@@ -34,10 +34,9 @@ enum class Function {
     Retrigger   = 1,
     Length      = 2,
     Note        = 3,
-    Condition   = 4,
 };
 
-static const char *functionNames[] = { "GATE", "RETRIG", "LENGTH", "NOTE", "COND" };
+static const char *functionNames[] = { "GATE", "RETRIG", "LENGTH", "NOTE", nullptr };
 
 NoteSequenceEditPage::NoteSequenceEditPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
@@ -257,30 +256,18 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isFunction()) {
-        switch (Function(key.function())) {
-        case Function::Gate:
-            setLayer(layer() == Layer::Gate ? Layer::GateProbability : Layer::Gate);
-            break;
-        case Function::Retrigger:
-            setLayer(layer() == Layer::Retrigger ? Layer::RetriggerProbability : Layer::Retrigger);
-            break;
-        case Function::Length:
-            setLayer(layer() == Layer::Length ? Layer::LengthVariationRange : (layer() == Layer::LengthVariationRange ? Layer::LengthVariationProbability : Layer::Length));
-            break;
-        case Function::Note:
-            setLayer(layer() == Layer::Note ? Layer::NoteVariationRange : (layer() == Layer::NoteVariationRange ? Layer::NoteVariationProbability : (layer() == Layer::NoteVariationProbability ? Layer::Slide : Layer::Note)));
-            // _layer = _layer == Layer::Note ? Layer::Slide : Layer::Note;
-            break;
-        case Function::Condition:
-            // _layer = Layer::TrigCondition;
-            break;
-        }
+        switchLayer(key.function());
         event.consume();
     }
 
     if (key.isEncoder()) {
-        _showDetail = true;
-        _showDetailTicks = os::ticks();
+        if (!_showDetail && _stepSelection.any() && allSelectedStepsActive()) {
+            setSelectedStepsGate(false);
+        } else {
+            setSelectedStepsGate(true);
+            _showDetail = true;
+            _showDetailTicks = os::ticks();
+        }
     }
 
     if (key.isLeft()) {
@@ -419,6 +406,59 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
         } else if (message.isNoteOff()) {
             trackEngine.setIdleGate(false);
         }
+    }
+}
+
+void NoteSequenceEditPage::switchLayer(int functionKey) {
+    switch (Function(functionKey)) {
+    case Function::Gate:
+        switch (layer()) {
+        case Layer::Gate: setLayer(Layer::GateProbability);
+            break;
+        case Layer::GateProbability:
+            setLayer(Layer::Slide);
+            break;
+        default:
+            setLayer(Layer::Gate);
+            break;
+        }
+        break;
+    case Function::Retrigger:
+        switch (layer()) {
+        case Layer::Retrigger:
+            setLayer(Layer::RetriggerProbability);
+            break;
+        default:
+            setLayer(Layer::Retrigger);
+            break;
+        }
+        break;
+    case Function::Length:
+        switch (layer()) {
+        case Layer::Length:
+            setLayer(Layer::LengthVariationRange);
+            break;
+        case Layer::LengthVariationRange:
+            setLayer(Layer::LengthVariationProbability);
+            break;
+        default:
+            setLayer(Layer::Length);
+            break;
+        }
+        break;
+    case Function::Note:
+        switch (layer()) {
+        case Layer::Note:
+            setLayer(Layer::NoteVariationRange);
+            break;
+        case Layer::NoteVariationRange:
+            setLayer(Layer::NoteVariationProbability);
+            break;
+        default:
+            setLayer(Layer::Note);
+            break;
+        }
+        break;
     }
 }
 
@@ -635,5 +675,24 @@ void NoteSequenceEditPage::quickEdit(int index) {
     _listModel.setSequence(&_project.selectedNoteSequence());
     if (itemMap[index] != NoteSequenceListModel::Item::Last) {
         _manager.pages().quickEdit.show(_listModel, int(itemMap[index]));
+    }
+}
+
+bool NoteSequenceEditPage::allSelectedStepsActive() const {
+    const auto &sequence = _project.selectedNoteSequence();
+    for (size_t stepIndex = 0; stepIndex < _stepSelection.size(); ++stepIndex) {
+        if (_stepSelection[stepIndex] && !sequence.step(stepIndex).gate()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void NoteSequenceEditPage::setSelectedStepsGate(bool gate) {
+    auto &sequence = _project.selectedNoteSequence();
+    for (size_t stepIndex = 0; stepIndex < _stepSelection.size(); ++stepIndex) {
+        if (_stepSelection[stepIndex]) {
+            sequence.step(stepIndex).setGate(gate);
+        }
     }
 }

@@ -125,6 +125,10 @@ public:
         return _selected.any();
     }
 
+    size_t size() const {
+        return _selected.size();
+    }
+
     size_t count() const {
         return _selected.count();
     }

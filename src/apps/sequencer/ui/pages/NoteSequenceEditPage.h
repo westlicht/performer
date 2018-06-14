@@ -32,6 +32,8 @@ private:
 
     int stepOffset() const { return _page * StepCount; }
 
+    void switchLayer(int functionKey);
+
     void updateIdleOutput();
     void drawDetail(Canvas &canvas, const NoteSequence::Step &step);
 
@@ -46,6 +48,9 @@ private:
     void generateSequence();
 
     void quickEdit(int index);
+
+    bool allSelectedStepsActive() const;
+    void setSelectedStepsGate(bool gate);
 
     NoteSequence::Layer layer() const { return _project.selectedNoteSequenceLayer(); };
     void setLayer(NoteSequence::Layer layer) { _project.setSelectedNoteSequenceLayer(layer); }
