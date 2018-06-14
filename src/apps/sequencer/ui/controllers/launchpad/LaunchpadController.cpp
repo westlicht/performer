@@ -245,8 +245,12 @@ void LaunchpadController::sequenceUpdateNavigation() {
         _sequence.navigation.bottom = (range.min - 7) / 8;
         break;
     }
-    case Track::TrackMode::Curve:
+    case Track::TrackMode::Curve: {
+        auto range = CurveSequence::layerRange(_project.selectedCurveSequenceLayer());
+        _sequence.navigation.top = range.max / 8;
+        _sequence.navigation.bottom = (range.min - 7) / 8;
         break;
+    }
     default:
         break;
     }
@@ -334,11 +338,16 @@ void LaunchpadController::sequenceEditNoteStep(int row, int col) {
         sequence.step(linearIndex).setLayerValue(layer, value);
         break;
     }
-
 }
 
 void LaunchpadController::sequenceEditCurveStep(int row, int col) {
+    auto &sequence = _project.selectedCurveSequence();
+    auto layer = _project.selectedCurveSequenceLayer();
 
+    int linearIndex = col + _sequence.navigation.col * 8;
+    int value = (7 - row) + _sequence.navigation.row * 8;
+
+    sequence.step(linearIndex).setLayerValue(layer, value);
 }
 
 void LaunchpadController::sequenceDrawLayer() {
@@ -409,11 +418,23 @@ void LaunchpadController::sequenceDrawNoteSequence() {
         drawNoteSequenceBars(sequence, layer, currentStep);
         break;
     }
-
 }
 
 void LaunchpadController::sequenceDrawCurveSequence() {
+    const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
+    const auto &sequence = _project.selectedCurveSequence();
+    auto layer = _project.selectedCurveSequenceLayer();
+    int currentStep = trackEngine.isActiveSequence(sequence) ? trackEngine.currentStep() : -1;
 
+    switch (layer) {
+    case CurveSequence::Layer::Shape:
+    case CurveSequence::Layer::Min:
+    case CurveSequence::Layer::Max:
+        drawCurveSequenceDots(sequence, layer, currentStep);
+        break;
+    default:
+        break;
+    }
 }
 
 //----------------------------------------
@@ -609,6 +630,15 @@ void LaunchpadController::drawNoteSequenceDots(const NoteSequence &sequence, Not
         int stepIndex = col + _sequence.navigation.col * 8;
         const auto &step = sequence.step(stepIndex);
         setGridLed((7 - step.layerValue(layer)) + ofs, col, stepColor(step.gate(), stepIndex == currentStep));
+    }
+}
+
+void LaunchpadController::drawCurveSequenceDots(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep) {
+    int ofs = _sequence.navigation.row * 8;
+    for (int col = 0; col < 8; ++col) {
+        int stepIndex = col + _sequence.navigation.col * 8;
+        const auto &step = sequence.step(stepIndex);
+        setGridLed((7 - step.layerValue(layer)) + ofs, col, stepColor(true, stepIndex == currentStep));
     }
 }
 
