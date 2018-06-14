@@ -100,13 +100,13 @@ public:
 
         switch (format) {
         case Short1:
-            str("%s%d", intonation, wholeNote);
+            str("%d%s", wholeNote, intonation);
             break;
         case Short2:
             str("%+d", octave);
             break;
         case Long:
-            str("%s%d%+d", intonation, wholeNote, octave);
+            str("%d%s%+d", wholeNote, intonation, octave);
             break;
         }
     }
