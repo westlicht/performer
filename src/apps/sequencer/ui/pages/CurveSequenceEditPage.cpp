@@ -73,7 +73,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE EDIT");
     WindowPainter::drawActiveFunction(canvas, CurveSequence::layerName(layer()));
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, keyState(), activeFunctionKey());
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
     const auto &sequence = _project.selectedCurveSequence();
@@ -182,17 +182,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     _stepSelection.keyPress(event, stepOffset());
 
     if (key.isFunction()) {
-        switch (Function(key.function())) {
-        case Function::Shape:
-            setLayer(Layer::Shape);
-            break;
-        case Function::Min:
-            setLayer(Layer::Min);
-            break;
-        case Function::Max:
-            setLayer(Layer::Max);
-            break;
-        }
+        switchLayer(key.function());
         event.consume();
     }
 
@@ -253,6 +243,33 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
     }
 
     event.consume();
+}
+
+void CurveSequenceEditPage::switchLayer(int functionKey) {
+    switch (Function(functionKey)) {
+    case Function::Shape:
+        setLayer(Layer::Shape);
+        break;
+    case Function::Min:
+        setLayer(Layer::Min);
+        break;
+    case Function::Max:
+        setLayer(Layer::Max);
+        break;
+    }
+}
+
+int CurveSequenceEditPage::activeFunctionKey() {
+    switch(layer()) {
+    case Layer::Shape:
+        return 0;
+    case Layer::Min:
+        return 1;
+    case Layer::Max:
+        return 2;
+    case Layer::Last:
+        return -1;
+    }
 }
 
 void CurveSequenceEditPage::contextShow() {

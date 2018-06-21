@@ -31,6 +31,9 @@ private:
 
     int stepOffset() const { return _page * StepCount; }
 
+    void switchLayer(int functionKey);
+    int activeFunctionKey();
+
     void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;

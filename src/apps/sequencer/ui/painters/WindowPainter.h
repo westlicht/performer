@@ -16,7 +16,7 @@ public:
 
     static void drawFrame(Canvas &canvas, int x, int y, int w, int h);
 
-    static void drawFunctionKeys(Canvas &canvas, const char *names[], const KeyState &keyState);
+    static void drawFunctionKeys(Canvas &canvas, const char *names[], const KeyState &keyState, int highlight = -1);
 
     static void drawClock(Canvas &canvas, const Engine &engine);
     static void drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern, bool snapshotActive, bool songActive);
@@ -25,7 +25,7 @@ public:
 
     static void drawHeader(Canvas &canvas, const Model &model, const Engine &engine, const char *mode);
     static void drawFooter(Canvas &canvas);
-    static void drawFooter(Canvas &canvas, const char *names[], const KeyState &keyState);
+    static void drawFooter(Canvas &canvas, const char *names[], const KeyState &keyState, int highlight = -1);
 
 private:
     const static int PageWidth = CONFIG_LCD_WIDTH;

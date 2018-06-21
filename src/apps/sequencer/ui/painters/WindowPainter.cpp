@@ -33,7 +33,7 @@ void WindowPainter::drawFrame(Canvas &canvas, int x, int y, int w, int h) {
     canvas.drawRect(x, y, w, h);
 }
 
-void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], const KeyState &keyState) {
+void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], const KeyState &keyState, int highlight) {
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0x7);
     canvas.hline(0, PageHeight - FooterHeight - 1, PageWidth);
@@ -51,6 +51,10 @@ void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], const 
     for (int i = 0; i < FunctionKeyCount; ++i) {
         if (names[i]) {
             bool pressed = keyState[Key::F0 + i];
+
+            if (highlight >= 0) {
+                pressed = i == highlight;
+            }
 
             int x0 = (PageWidth * i) / FunctionKeyCount;
             int x1 = (PageWidth * (i + 1)) / FunctionKeyCount;
@@ -129,6 +133,6 @@ void WindowPainter::drawFooter(Canvas &canvas) {
     canvas.hline(0, PageHeight - FooterHeight - 1, PageWidth);
 }
 
-void WindowPainter::drawFooter(Canvas &canvas, const char *names[], const KeyState &keyState) {
-    drawFunctionKeys(canvas, names, keyState);
+void WindowPainter::drawFooter(Canvas &canvas, const char *names[], const KeyState &keyState, int highlight) {
+    drawFunctionKeys(canvas, names, keyState, highlight);
 }

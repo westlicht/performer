@@ -99,7 +99,7 @@ void MonitorPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "MONITOR");
     WindowPainter::drawActiveFunction(canvas, functionNames[int(_mode)]);
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, keyState(), int(_mode));
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setFont(Font::Tiny);

@@ -33,6 +33,7 @@ private:
     int stepOffset() const { return _page * StepCount; }
 
     void switchLayer(int functionKey);
+    int activeFunctionKey();
 
     void updateIdleOutput();
     void drawDetail(Canvas &canvas, const NoteSequence::Step &step);

@@ -55,7 +55,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE EDIT");
     WindowPainter::drawActiveFunction(canvas, NoteSequence::layerName(layer()));
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, keyState(), activeFunctionKey());
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
     const auto &sequence = _project.selectedNoteSequence();
@@ -398,6 +398,7 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
                 if (_stepSelection[stepIndex]) {
                     auto &step = sequence.step(stepIndex);
                     step.setNote(note);
+                    step.setGate(true);
                 }
             }
 
@@ -459,6 +460,28 @@ void NoteSequenceEditPage::switchLayer(int functionKey) {
             break;
         }
         break;
+    }
+}
+
+int NoteSequenceEditPage::activeFunctionKey() {
+    switch (layer()) {
+    case Layer::Gate:
+    case Layer::GateProbability:
+    case Layer::Slide:
+        return 0;
+    case Layer::Retrigger:
+    case Layer::RetriggerProbability:
+        return 1;
+    case Layer::Length:
+    case Layer::LengthVariationRange:
+    case Layer::LengthVariationProbability:
+        return 2;
+    case Layer::Note:
+    case Layer::NoteVariationRange:
+    case Layer::NoteVariationProbability:
+        return 3;
+    case Layer::Last:
+        return -1;
     }
 }
 
