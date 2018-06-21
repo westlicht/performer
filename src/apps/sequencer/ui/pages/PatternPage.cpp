@@ -166,14 +166,17 @@ void PatternPage::keyDown(KeyEvent &event) {
 void PatternPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (_modal && key.isPattern()) {
+    bool closePage = false;
+
+    if (key.isPattern()) {
+        closePage = true;
         event.consume();
-        close();
     }
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Latch:
+            closePage = true;
             _latching = false;
             _project.playState().commitLatchedRequests();
             break;
@@ -186,6 +189,11 @@ void PatternPage::keyUp(KeyEvent &event) {
     if (_project.playState().snapshotActive() && key.isStep()) {
         _snapshotTargetPattern = -1;
         event.consume();
+    }
+
+    bool canClose = _modal && !_latching && !globalKeyState()[Key::Pattern];
+    if (canClose && closePage) {
+        close();
     }
 }
 

@@ -130,14 +130,17 @@ void PerformerPage::keyDown(KeyEvent &event) {
 void PerformerPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (_modal && key.isPerformer()) {
+    bool closePage = false;
+
+    if (key.isPerformer()) {
+        closePage = true;
         event.consume();
-        close();
     }
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Latch:
+            closePage = true;
             _latching = false;
             _project.playState().commitLatchedRequests();
             break;
@@ -153,6 +156,11 @@ void PerformerPage::keyUp(KeyEvent &event) {
     if (key.isStep()) {
         updateFills();
         event.consume();
+    }
+
+    bool canClose = _modal && !_latching && !globalKeyState()[Key::Performer];
+    if (canClose && closePage) {
+        close();
     }
 }
 
