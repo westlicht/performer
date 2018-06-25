@@ -12,7 +12,9 @@ void Page::show() {
 }
 
 void Page::close() {
-    _manager.pop();
+    if (_manager.top() == this) {
+        _manager.pop();
+    }
 }
 
 bool Page::isTop() {

@@ -17,7 +17,7 @@ public:
 
     Pages &pages() { return _pages; }
 
-    Page *top();
+    Page *top() const;
     void push(Page *page);
     void pop();
     void reset(Page *page);

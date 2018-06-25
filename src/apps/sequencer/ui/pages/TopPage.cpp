@@ -13,10 +13,8 @@ TopPage::TopPage(PageManager &manager, PageContext &context) :
     context.model.project().watch([this] (Project::Property property) {
         switch (property) {
         case Project::Property::SelectedTrackIndex:
-            // no need to update when in project mode (this would also hide the busy page when loading a project)
-            if (_mode != Mode::Project) {
-                setMode(_mode);
-            }
+        case Project::Property::SelectedPatternIndex:
+            setMode(_mode);
             break;
         }
     });
@@ -189,8 +187,14 @@ void TopPage::setMode(Mode mode) {
 }
 
 void TopPage::setMainPage(Page &page) {
+    Page *oldTop = _manager.top();
     _manager.reset(&_manager.pages().top);
     _manager.push(&page);
+
+    // restore modal page
+    if (oldTop->isModal()) {
+        _manager.push(oldTop);
+    }
 }
 
 void TopPage::setSequencePage() {

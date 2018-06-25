@@ -6,7 +6,7 @@ PageManager::PageManager(Pages &pages) :
     _pages(pages)
 {}
 
-Page *PageManager::top() {
+Page *PageManager::top() const {
     ASSERT(_pageStackPos >= 0, "accessing empty page stack");
     return _pageStack[_pageStackPos];
 }

@@ -209,6 +209,7 @@ public:
     int selectedPatternIndex() const { return _selectedPatternIndex; }
     void setSelectedPatternIndex(int index) {
         _selectedPatternIndex = clamp(index, 0, CONFIG_PATTERN_COUNT - 1);
+        _observable.notify(SelectedPatternIndex);
     }
 
     void setSelectedPatternIndexUnsafe(int index) {
@@ -236,7 +237,8 @@ public:
     //----------------------------------------
 
     enum Property {
-        SelectedTrackIndex = 0,
+        SelectedTrackIndex,
+        SelectedPatternIndex,
     };
 
     void watch(std::function<void(Property)> handler) {
