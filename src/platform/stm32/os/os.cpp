@@ -2,6 +2,8 @@
 
 namespace os {
 
+uint32_t InterruptLock::_nestedCount = 0;
+
 #if CONFIG_ENABLE_TASK_PROFILER
 TaskProfiler::TaskInfo *TaskProfiler::_taskInfos;
 TaskProfiler::TaskInfo TaskProfiler::_idleTaskInfo;

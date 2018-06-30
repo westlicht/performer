@@ -219,8 +219,19 @@ namespace os {
 
     class InterruptLock {
     public:
-        InterruptLock() { cm_disable_interrupts(); }
-        ~InterruptLock() { cm_enable_interrupts(); }
+        InterruptLock() {
+            cm_disable_interrupts();
+            ++_nestedCount;
+        }
+
+        ~InterruptLock() {
+            if (--_nestedCount == 0) {
+                cm_enable_interrupts();
+            }
+        }
+
+    private:
+        static uint32_t _nestedCount;
     };
 
     namespace time {
