@@ -15,5 +15,5 @@ public:
     }
 
 private:
-    static uint32_t _ticks;
+    static volatile uint32_t _ticks;
 };

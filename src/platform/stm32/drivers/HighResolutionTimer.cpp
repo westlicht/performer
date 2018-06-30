@@ -10,7 +10,7 @@
 
 #define TIMER TIM2
 
-uint32_t HighResolutionTimer::_ticks;
+volatile uint32_t HighResolutionTimer::_ticks;
 
 void HighResolutionTimer::init() {
     rcc_periph_clock_enable(RCC_TIM2);
