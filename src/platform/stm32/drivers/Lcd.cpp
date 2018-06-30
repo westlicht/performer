@@ -101,8 +101,8 @@ void Lcd::init() {
     // init dma
     rcc_periph_clock_enable(RCC_DMA1);
     dma_stream_reset(LCD_DMA, LCD_DMA_STREAM);
+    nvic_set_priority(NVIC_DMA1_STREAM4_IRQ, CONFIG_LCD_IRQ_PRIORITY);
     nvic_enable_irq(NVIC_DMA1_STREAM4_IRQ);
-    // nvic_set_priority(NVIC_DMA1_STREAM4_IRQ, 1);
 #endif // LCD_USE_DMA
 
     // init control pins

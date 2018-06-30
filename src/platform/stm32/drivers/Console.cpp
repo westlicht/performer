@@ -1,5 +1,7 @@
 #include "Console.h"
 
+#include "SystemConfig.h"
+
 #include "os/os.h"
 #include "core/utils/RingBuffer.h"
 
@@ -26,7 +28,7 @@ void Console::init() {
     usart_set_flow_control(CONSOLE_USART, USART_FLOWCONTROL_NONE);
     usart_enable(CONSOLE_USART);
 
-    // nvic_set_priority(CONSOLE_NVIC_IRQ, configMAX_SYSCALL_INTERRUPT_PRIORITY);
+    nvic_set_priority(NVIC_USART1_IRQ, CONFIG_CONSOLE_IRQ_PRIORITY);
     nvic_enable_irq(NVIC_USART1_IRQ);
 }
 

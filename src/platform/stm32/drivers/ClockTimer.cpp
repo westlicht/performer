@@ -1,5 +1,7 @@
 #include "ClockTimer.h"
 
+#include "SystemConfig.h"
+
 #include "core/Debug.h"
 
 #include <functional>
@@ -14,6 +16,7 @@ static std::function<void()> g_handler;
 
 void ClockTimer::init() {
     rcc_periph_clock_enable(RCC_TIM5);
+    nvic_set_priority(NVIC_TIM5_IRQ, CONFIG_CLOCKTIMER_IRQ_PRIORITY);
     nvic_enable_irq(NVIC_TIM5_IRQ);
     rcc_periph_reset_pulse(RST_TIM5);
 

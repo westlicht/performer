@@ -1,5 +1,7 @@
 #include "HighResolutionTimer.h"
 
+#include "SystemConfig.h"
+
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/cm3/nvic.h>
@@ -12,6 +14,7 @@ uint32_t HighResolutionTimer::_ticks;
 
 void HighResolutionTimer::init() {
     rcc_periph_clock_enable(RCC_TIM2);
+    nvic_set_priority(NVIC_TIM2_IRQ, CONFIG_HIGHRES_IRQ_PRIORITY);
     nvic_enable_irq(NVIC_TIM2_IRQ);
     rcc_periph_reset_pulse(RST_TIM2);
 

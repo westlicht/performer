@@ -1,5 +1,7 @@
 #include "Dio.h"
 
+#include "SystemConfig.h"
+
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/exti.h>
@@ -20,6 +22,7 @@ void Dio::init() {
 
     rcc_periph_clock_enable(RCC_SYSCFG);
 
+    nvic_set_priority(NVIC_EXTI15_10_IRQ, CONFIG_DIO_IRQ_PRIORITY);
     nvic_enable_irq(NVIC_EXTI15_10_IRQ);
 
     exti_select_source(EXTI10 | EXTI11, GPIOB);

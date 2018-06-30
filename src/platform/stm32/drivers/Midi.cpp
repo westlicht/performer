@@ -1,5 +1,7 @@
 #include "Midi.h"
 
+#include "SystemConfig.h"
+
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
@@ -30,6 +32,7 @@ void Midi::init() {
     usart_enable_rx_interrupt(MIDI_USART);
 
     // nvic_set_priority(CONSOLE_NVIC_IRQ, configMAX_SYSCALL_INTERRUPT_PRIORITY);
+    nvic_set_priority(NVIC_USART6_IRQ, CONFIG_MIDI_IRQ_PRIORITY);
     nvic_enable_irq(NVIC_USART6_IRQ);
 }
 
