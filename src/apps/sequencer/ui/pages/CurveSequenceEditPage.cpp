@@ -268,8 +268,10 @@ int CurveSequenceEditPage::activeFunctionKey() {
     case Layer::Max:
         return 2;
     case Layer::Last:
-        return -1;
+        break;
     }
+
+    return -1;
 }
 
 void CurveSequenceEditPage::contextShow() {

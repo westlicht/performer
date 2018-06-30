@@ -481,8 +481,10 @@ int NoteSequenceEditPage::activeFunctionKey() {
     case Layer::NoteVariationProbability:
         return 3;
     case Layer::Last:
-        return -1;
+        break;
     }
+
+    return -1;
 }
 
 void NoteSequenceEditPage::updateIdleOutput() {
