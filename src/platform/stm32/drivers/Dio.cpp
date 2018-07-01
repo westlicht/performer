@@ -32,11 +32,11 @@ void Dio::init() {
 
 void exti15_10_isr(void) {
     if (exti_get_flag_status(EXTI10)) {
-        exti_reset_request(EXTI10);
         g_dio->resetInput.interrupt();
+        exti_reset_request(EXTI10);
     }
     if (exti_get_flag_status(EXTI11)) {
-        exti_reset_request(EXTI11);
         g_dio->clockInput.interrupt();
+        exti_reset_request(EXTI11);
     }
 }
