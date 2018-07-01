@@ -27,7 +27,7 @@
 
 #include <cstdint>
 
-class Engine {
+class Engine : public Clock::Listener {
 public:
     typedef Container<NoteTrackEngine, CurveTrackEngine, MidiCvTrackEngine> TrackEngineContainer;
     typedef std::array<TrackEngineContainer, CONFIG_TRACK_COUNT> TrackEngineContainerArray;
@@ -115,6 +115,10 @@ public:
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
     void setMessageHandler(MessageHandler handler);
+
+    // Clock::Listener
+    virtual void onClockOutput(const Clock::OutputState &state) override;
+    virtual void onClockMidi(uint8_t data) override;
 
 private:
     void updateTrackSetups();

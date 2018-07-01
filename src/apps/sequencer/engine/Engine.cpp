@@ -217,6 +217,31 @@ void Engine::setMessageHandler(MessageHandler handler) {
     _messageHandler = handler;
 }
 
+void Engine::onClockOutput(const Clock::OutputState &state) {
+    _dio.clockOutput.set(state.clock);
+    switch (_model.project().clockSetup().clockOutputMode()) {
+    case ClockSetup::ClockMode::Reset:
+        _dio.resetOutput.set(state.reset);
+        break;
+    case ClockSetup::ClockMode::StartStop:
+        _dio.resetOutput.set(state.run);
+        break;
+    case ClockSetup::ClockMode::Last:
+        break;
+    }
+}
+
+void Engine::onClockMidi(uint8_t data) {
+    // TODO we should send a single byte with priority
+    const auto &clockSetup = _model.project().clockSetup();
+    if (clockSetup.midiTx()) {
+        _midi.send(MidiMessage(data));
+    }
+    if (clockSetup.usbTx()) {
+        _usbMidi.send(MidiMessage(data));
+    }
+}
+
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &track = _model.project().track(trackIndex);
@@ -528,16 +553,7 @@ void Engine::initClockSources() {
 }
 
 void Engine::initClockOutputs() {
-    _clock.outputMidi([this] (uint8_t msg) {
-        // TODO we should send a single byte with priority
-        const auto &clockSetup = _model.project().clockSetup();
-        if (clockSetup.midiTx()) {
-            _midi.send(MidiMessage(msg));
-        }
-        if (clockSetup.usbTx()) {
-            _usbMidi.send(MidiMessage(msg));
-        }
-    });
+    _clock.setListener(this);
 }
 
 void Engine::updateClockSetup() {
@@ -558,19 +574,6 @@ void Engine::updateClockSetup() {
 
     // Configure clock outputs
     _clock.outputConfigure(clockSetup.clockOutputDivisor(), clockSetup.clockOutputPulse());
-    _clock.outputHandler([this] (const Clock::OutputState &state) {
-        _dio.clockOutput.set(state.clock);
-        switch (_model.project().clockSetup().clockOutputMode()) {
-        case ClockSetup::ClockMode::Reset:
-            _dio.resetOutput.set(state.reset);
-            break;
-        case ClockSetup::ClockMode::StartStop:
-            _dio.resetOutput.set(state.run);
-            break;
-        case ClockSetup::ClockMode::Last:
-            break;
-        }
-    });
 
     clockSetup.clearDirty();
 }
