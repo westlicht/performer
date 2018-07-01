@@ -57,14 +57,21 @@ void Console::write(const std::string &s) {
     }
 }
 
-static RingBuffer<char, 256> txBuffer;
+static RingBuffer<char, 128> txBuffer;
 static volatile uint32_t txActive;
 
 void Console::send(char c) {
-    while (txBuffer.writable() == 0) {}
+    os::InterruptLock lock;
+
+    // block until there is space in the tx buffer
+    while (txBuffer.full()) {
+        usart_wait_send_ready(CONSOLE_USART);
+        usart_send(CONSOLE_USART, txBuffer.read());
+    }
 
     txBuffer.write(c);
 
+    // start transmission if necessary
     if (!txActive) {
         txActive = 1;
         usart_wait_send_ready(CONSOLE_USART);
@@ -74,13 +81,13 @@ void Console::send(char c) {
 }
 
 void usart1_isr() {
+    os::InterruptLock lock;
     if (usart_get_flag(CONSOLE_USART, USART_SR_TXE)) {
-        usart_disable_tx_interrupt(CONSOLE_USART);
-        if (txBuffer.readable() > 0) {
-            usart_send(CONSOLE_USART, txBuffer.read());
-            usart_enable_tx_interrupt(CONSOLE_USART);
-        } else {
+        if (txBuffer.empty()) {
+            usart_disable_tx_interrupt(CONSOLE_USART);
             txActive = 0;
+        } else {
+            usart_send(CONSOLE_USART, txBuffer.read());
         }
     }
 }

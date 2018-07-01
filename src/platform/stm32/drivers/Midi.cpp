@@ -2,6 +2,8 @@
 
 #include "SystemConfig.h"
 
+#include "os/os.h"
+
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
@@ -31,7 +33,6 @@ void Midi::init() {
 
     usart_enable_rx_interrupt(MIDI_USART);
 
-    // nvic_set_priority(CONSOLE_NVIC_IRQ, configMAX_SYSCALL_INTERRUPT_PRIORITY);
     nvic_set_priority(NVIC_USART6_IRQ, CONFIG_MIDI_IRQ_PRIORITY);
     nvic_enable_irq(NVIC_USART6_IRQ);
 }
@@ -59,12 +60,19 @@ void Midi::setRecvFilter(std::function<bool(uint8_t)> filter) {
 }
 
 void Midi::send(uint8_t data) {
-    while (_txBuffer.full()) {}
+    os::InterruptLock lock;
+
+    // block until there is space in the tx buffer
+    while (_txBuffer.full()) {
+        usart_wait_send_ready(MIDI_USART);
+        usart_send(MIDI_USART, _txBuffer.read());
+    }
 
     _txBuffer.write(data);
 
+    // start transmission if necessary
     if (!_txActive) {
-        _txActive = true;
+        _txActive = 1;
         usart_wait_send_ready(MIDI_USART);
         usart_send(MIDI_USART, _txBuffer.read());
         usart_enable_tx_interrupt(MIDI_USART);
@@ -72,19 +80,19 @@ void Midi::send(uint8_t data) {
 }
 
 void Midi::handleIrq() {
+    os::InterruptLock lock;
     if (usart_get_flag(MIDI_USART, USART_SR_TXE)) {
-        usart_disable_tx_interrupt(MIDI_USART);
-        if (_txBuffer.readable() > 0) {
-            usart_send(MIDI_USART, _txBuffer.read());
-            usart_enable_tx_interrupt(MIDI_USART);
-        } else {
+        if (_txBuffer.empty()) {
+            usart_disable_tx_interrupt(MIDI_USART);
             _txActive = 0;
+        } else {
+            usart_send(MIDI_USART, _txBuffer.read());
         }
     }
     if (usart_get_flag(MIDI_USART, USART_SR_RXNE)) {
         uint8_t data = usart_recv(MIDI_USART);
         if (!_filter || !_filter(data)) {
-            if (_rxBuffer.writable() == 0) {
+            if (_rxBuffer.full()) {
                 // overflow
             }
             _rxBuffer.write(data);
