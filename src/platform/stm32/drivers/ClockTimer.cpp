@@ -4,15 +4,17 @@
 
 #include "core/Debug.h"
 
-#include <functional>
+#include "os/os.h"
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/cm3/nvic.h>
 
+#include <functional>
+
 #define TIMER TIM5
 
-static std::function<void()> g_handler;
+static ClockTimer::Listener *g_listener;
 
 void ClockTimer::init() {
     rcc_periph_clock_enable(RCC_TIM5);
@@ -45,21 +47,21 @@ void ClockTimer::disable() {
 }
 
 void ClockTimer::setPeriod(uint32_t us) {
+    _period = us;
     timer_set_period(TIMER, us - 1);
     timer_set_counter(TIMER, std::min(timer_get_counter(TIMER), us - 1));
 }
 
-void ClockTimer::setHandler(std::function<void()> handler) {
-    timer_disable_irq(TIMER, TIM_DIER_UIE);
-    g_handler = handler;
-    timer_enable_irq(TIMER, TIM_DIER_UIE);
+void ClockTimer::setListener(Listener *listener) {
+    os::InterruptLock lock;
+    g_listener = listener;
 }
 
 void tim5_isr() {
     if (timer_get_flag(TIM5, TIM_SR_UIF)) {
         timer_clear_flag(TIM5, TIM_SR_UIF);
-        if (g_handler) {
-            g_handler();
+        if (g_listener) {
+            g_listener->onClockTimerTick();
         }
     }
 }

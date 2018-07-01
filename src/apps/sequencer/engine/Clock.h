@@ -4,14 +4,14 @@
 
 #include "core/utils/MovingAverage.h"
 
+#include "drivers/ClockTimer.h"
+
 #include <array>
 #include <functional>
 
 #include <cstdint>
 
-class ClockTimer;
-
-class Clock {
+class Clock : public ClockTimer::Listener {
 public:
     enum Mode {
         ModeAuto,
@@ -30,7 +30,14 @@ public:
         bool run = false;
     };
 
+    struct Listener {
+        virtual void onClockOutput(const OutputState &state) = 0;
+        virtual void onClockMidi(uint8_t) = 0;
+    };
+
     Clock(ClockTimer &timer);
+
+    void setListener(Listener *listener);
 
     void init();
 
@@ -66,14 +73,15 @@ public:
     // Clock output
     void outputConfigure(int divisor, int pulse);
     const OutputState &outputState() const { return _outputState; }
-    void outputHandler(std::function<void(const OutputState &state)> handler);
-    void outputMidi(std::function<void(uint8_t)> midi);
 
     // Sequencer interface
     bool checkStart();
     bool checkStop();
     bool checkResume();
     bool checkTick(uint32_t *tick);
+
+    // ClockTimer::Listener
+    void onClockTimerTick();
 
 private:
     enum State {
@@ -103,6 +111,8 @@ private:
 
     static constexpr size_t SlaveCount = 4;
 
+    Listener *_listener = nullptr;
+
     ClockTimer &_timer;
     int _ppqn = CONFIG_PPQN;
 
@@ -119,9 +129,6 @@ private:
     struct Output {
         int divisor;
         int pulse;
-        uint32_t nextClockOffUs;
-        std::function<void(const OutputState &state)> handler;
-        std::function<void(uint8_t)> midi;
     };
     Output _output;
     OutputState _outputState;

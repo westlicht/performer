@@ -2,6 +2,7 @@
 
 #include "os/os.h"
 #include "core/Debug.h"
+#include "core/math/Math.h"
 #include "core/midi/MidiMessage.h"
 #include "drivers/ClockTimer.h"
 
@@ -11,10 +12,17 @@ Clock::Clock(ClockTimer &timer) :
     _timer(timer)
 {
     resetTicks();
+
+    _timer.setListener(this);
 }
 
 void Clock::init() {
     _timer.disable();
+}
+
+void Clock::setListener(Listener *listener) {
+    os::InterruptLock lock;
+    _listener = listener;
 }
 
 void Clock::setMode(Mode mode) {
@@ -230,19 +238,9 @@ void Clock::slaveHandleMidi(int slave, uint8_t msg) {
 }
 
 void Clock::outputConfigure(int divisor, int pulse) {
+    os::InterruptLock lock;
     _output.divisor = divisor;
     _output.pulse = pulse;
-}
-
-void Clock::outputHandler(std::function<void(const OutputState &state)> handler) {
-    _output.handler = handler;
-    if (handler) {
-        handler(_outputState);
-    }
-}
-
-void Clock::outputMidi(std::function<void(uint8_t)> midi) {
-    _output.midi = midi;
 }
 
 bool Clock::checkStart() {
@@ -273,6 +271,23 @@ bool Clock::checkTick(uint32_t *tick) {
         return true;
     }
     return false;
+}
+
+void Clock::onClockTimerTick() {
+    switch (_state) {
+    case MasterRunning: {
+        outputTick(_tick);
+        ++_tick;
+        _elapsedUs += _timer.period();
+        break;
+    }
+    case SlaveRunning: {
+        _elapsedUs += _timer.period();
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void Clock::resetTicks() {
@@ -314,31 +329,18 @@ void Clock::setupMasterTimer() {
     _elapsedUs = 0;
     uint32_t us = (60 * 1000000) / (_masterBpm * _ppqn);
     _timer.setPeriod(us);
-    _timer.setHandler([&, us] () {
-        outputTick(_tick); ++_tick;
-        if (_elapsedUs >= _output.nextClockOffUs) {
-            outputClock(false);
-        }
-        _elapsedUs += us;
-    });
 }
 
 void Clock::setupSlaveTimer() {
     _elapsedUs = 0;
     _lastTickUs = 0;
-
     _timer.setPeriod(250);
-    _timer.setHandler([&] () {
-        if (_elapsedUs >= _output.nextClockOffUs) {
-            outputClock(false);
-        }
-        _elapsedUs += 250;
-    });
 }
 
 void Clock::outputMidiMessage(uint8_t msg) {
-    if (_output.midi) {
-        _output.midi(msg);
+    os::InterruptLock lock;
+    if (_listener) {
+        _listener->onClockMidi(msg);
     }
 }
 
@@ -348,31 +350,35 @@ void Clock::outputTick(uint32_t tick) {
     }
 
     uint32_t divisor = _output.divisor;
-    if (tick % divisor == 0) {
-        _output.nextClockOffUs = _elapsedUs + _output.pulse * 1000;
+    uint32_t clockTick = tick % divisor;
+    uint32_t clockDuration = clamp(uint32_t(_masterBpm * _ppqn * _output.pulse / (60 * 1000)), uint32_t(1), uint32_t(divisor - 1));
+    if (clockTick == 0) {
         outputClock(true);
-    } else if (tick % divisor == divisor - 1) {
+    } else if (clockTick == clockDuration) {
         outputClock(false);
     }
 }
 
 void Clock::outputClock(bool clock) {
+    os::InterruptLock lock;
     _outputState.clock = clock;
-    if (_output.handler) {
-        _output.handler(_outputState);
+    if (_listener) {
+        _listener->onClockOutput(_outputState);
     }
 }
 
 void Clock::outputReset(bool reset) {
+    os::InterruptLock lock;
     _outputState.reset = reset;
-    if (_output.handler) {
-        _output.handler(_outputState);
+    if (_listener) {
+        _listener->onClockOutput(_outputState);
     }
 }
 
 void Clock::outputRun(bool run) {
+    os::InterruptLock lock;
     _outputState.run = run;
-    if (_output.handler) {
-        _output.handler(_outputState);
+    if (_listener) {
+        _listener->onClockOutput(_outputState);
     }
 }

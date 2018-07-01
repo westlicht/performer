@@ -2,12 +2,14 @@
 
 #include "sim/Simulator.h"
 
-#include <functional>
-
 #include <cstdint>
 
 class ClockTimer {
 public:
+    struct Listener {
+        virtual void onClockTimerTick() = 0;
+    };
+
     ClockTimer() :
         _simulator(sim::Simulator::instance())
     {
@@ -30,9 +32,18 @@ public:
         _enabled = false;
     }
 
-    void setPeriod(uint32_t us) { _period = us * 0.001; }
+    uint32_t period() const {
+        return _period;
+    }
 
-    void setHandler(std::function<void()> handler) { _handler = handler; }
+    void setPeriod(uint32_t us) {
+        _period = us;
+        _periodTicks = us * 0.001;
+    }
+
+    void setListener(Listener *listener) {
+        _listener = listener;
+    }
 
 private:
     void update() {
@@ -40,17 +51,18 @@ private:
             return;
         }
         double ticks = _simulator.ticks();
-        while (ticks - _lastTicks >= _period) {
-            _lastTicks += _period;
-            if (_handler) {
-                _handler();
+        while (ticks - _lastTicks >= _periodTicks) {
+            _lastTicks += _periodTicks;
+            if (_listener) {
+                _listener->onClockTimerTick();
             }
         }
     }
 
     sim::Simulator &_simulator;
-    double _period = 0.0;
-    std::function<void()> _handler;
+    uint32_t _period = 0;
+    double _periodTicks = 0.0;
+    Listener *_listener = nullptr;
     bool _enabled = false;
     double _lastTicks;
 };
