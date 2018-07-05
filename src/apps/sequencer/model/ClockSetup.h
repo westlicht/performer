@@ -31,17 +31,34 @@ public:
         return nullptr;
     }
 
-    enum class ClockMode : uint8_t {
+    enum class ClockInputMode : uint8_t {
         Reset = 0,
+        Run,
         StartStop,
         Last
     };
 
-    static const char *clockModeName(ClockMode mode) {
+    static const char *clockInputModeName(ClockInputMode mode) {
         switch (mode) {
-        case ClockMode::Reset:       return "Reset";
-        case ClockMode::StartStop:   return "Start/Stop";
-        case ClockMode::Last:        break;
+        case ClockInputMode::Reset:     return "Reset";
+        case ClockInputMode::Run:       return "Run";
+        case ClockInputMode::StartStop: return "Start/Stop";
+        case ClockInputMode::Last:      break;
+        }
+        return nullptr;
+    }
+
+    enum class ClockOutputMode : uint8_t {
+        Reset = 0,
+        Run,
+        Last
+    };
+
+    static const char *clockOutputModeName(ClockOutputMode mode) {
+        switch (mode) {
+        case ClockOutputMode::Reset:    return "Reset";
+        case ClockOutputMode::Run:      return "Run";
+        case ClockOutputMode::Last:     break;
         }
         return nullptr;
     }
@@ -98,8 +115,8 @@ public:
 
     // clockInputMode
 
-    ClockMode clockInputMode() const { return _clockInputMode; }
-    void setClockInputMode(ClockMode mode) {
+    ClockInputMode clockInputMode() const { return _clockInputMode; }
+    void setClockInputMode(ClockInputMode mode) {
         mode = ModelUtils::clampedEnum(mode);
         if (mode != _clockInputMode) {
             _clockInputMode = mode;
@@ -112,7 +129,7 @@ public:
     }
 
     void printClockInputMode(StringBuilder &str) const {
-        str(clockModeName(clockInputMode()));
+        str(clockInputModeName(clockInputMode()));
     }
 
     // clockOutputDivisor
@@ -163,8 +180,8 @@ public:
 
     // clockOutputMode
 
-    ClockMode clockOutputMode() const { return _clockOutputMode; }
-    void setClockOutputMode(ClockMode mode) {
+    ClockOutputMode clockOutputMode() const { return _clockOutputMode; }
+    void setClockOutputMode(ClockOutputMode mode) {
         mode = ModelUtils::clampedEnum(mode);
         if (mode != _clockOutputMode) {
             _clockOutputMode = mode;
@@ -177,7 +194,7 @@ public:
     }
 
     void printClockOutputMode(StringBuilder &str) const {
-        str(clockModeName(clockOutputMode()));
+        str(clockOutputModeName(clockOutputMode()));
     }
 
     // midiRx
@@ -267,10 +284,10 @@ public:
 private:
     Mode _mode;
     uint8_t _clockInputDivisor;
-    ClockMode _clockInputMode;
+    ClockInputMode _clockInputMode;
     uint8_t _clockOutputDivisor;
     uint8_t _clockOutputPulse;
-    ClockMode _clockOutputMode;
+    ClockOutputMode _clockOutputMode;
     bool _midiRx;
     bool _midiTx;
     bool _usbRx;

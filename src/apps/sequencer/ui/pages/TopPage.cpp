@@ -52,7 +52,7 @@ void TopPage::updateLeds(Leds &leds) {
     leds.set(
         Key::Start,
         false,
-        _engine.running() && _engine.tick() % CONFIG_PPQN < (CONFIG_PPQN / 8)
+        _engine.clockRunning() && _engine.tick() % CONFIG_PPQN < (CONFIG_PPQN / 8)
     );
 
     if (globalKeyState()[Key::Page]) {
@@ -97,14 +97,19 @@ void TopPage::keyPress(KeyPressEvent &event) {
 
     if (key.isStart()) {
         if (key.shiftModifier()) {
+            // if (_engine.clockRunning()) {
+            //     _engine.clockStop();
+            // } else {
+            //     _engine.clockContinue();
+            // }
             // restart
-            _engine.start();
+            _engine.clockStart();
         } else {
             // start/stop
-            if (!_engine.running()) {
-                _engine.resume();
+            if (_engine.clockRunning()) {
+                _engine.clockReset();
             } else {
-                _engine.stop();
+                _engine.clockStart();
             }
         }
         event.consume();

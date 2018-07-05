@@ -11,17 +11,19 @@
 
 #include <cstdint>
 
-class Clock : public ClockTimer::Listener {
+class Clock : private ClockTimer::Listener {
 public:
-    enum Mode {
-        ModeAuto,
-        ModeMaster,
-        ModeSlave,
+    enum class Mode {
+        Auto,
+        Master,
+        Slave,
     };
 
-    enum SlaveFlags {
-        SlaveEnabled        = (1<<0),
-        SlaveFreeRunning    = (1<<1),
+    enum Event {
+        Start       = (1<<0),
+        Stop        = (1<<1),
+        Continue    = (1<<2),
+        Reset       = (1<<3),
     };
 
     struct OutputState {
@@ -46,27 +48,28 @@ public:
 
     Mode activeMode() const;
 
-    bool isIdle() const { return _state == Idle; }
-    bool isRunning() const { return _state != Idle; }
+    bool isIdle() const { return _state == State::Idle; }
+    bool isRunning() const { return _state != State::Idle; }
 
     int ppqn() const { return _ppqn; }
-    float bpm() const { return _state == SlaveRunning ? _slaveBpm : _masterBpm; }
+    float bpm() const { return _state == State::SlaveRunning ? _slaveBpm : _masterBpm; }
     uint32_t tick() const { return _tick; }
 
     // Master clock control
     void masterStart();
     void masterStop();
-    void masterResume();
+    void masterContinue();
+    void masterReset();
 
     float masterBpm() const { return _masterBpm; }
     void setMasterBpm(float bpm);
 
     // Slave clock control
-    void slaveConfigure(int slave, int divisor, int flags = 0);
+    void slaveConfigure(int slave, int divisor, bool enabled);
     void slaveTick(int slave);
     void slaveStart(int slave);
     void slaveStop(int slave);
-    void slaveResume(int slave);
+    void slaveContinue(int slave);
     void slaveReset(int slave);
     void slaveHandleMidi(int slave, uint8_t msg);
 
@@ -75,26 +78,26 @@ public:
     const OutputState &outputState() const { return _outputState; }
 
     // Sequencer interface
-    bool checkStart();
-    bool checkStop();
-    bool checkResume();
+    Event checkEvent();
     bool checkTick(uint32_t *tick);
 
-    // ClockTimer::Listener
-    void onClockTimerTick();
-
 private:
-    enum State {
+    enum class State {
         Idle,
         // Running,
         MasterRunning,
         SlaveRunning,
     };
 
+    // ClockTimer::Listener
+    void onClockTimerTick();
+
     void resetTicks();
     void requestStart();
     void requestStop();
-    void requestResume();
+    void requestContinue();
+    void requestReset();
+    void requestEvent(Event event);
 
     void setState(State state);
 
@@ -107,8 +110,9 @@ private:
     void outputReset(bool reset);
     void outputRun(bool run);
 
-    bool slaveEnabled(int slave) const { return _slaves[slave].flags & SlaveEnabled; }
+    bool slaveEnabled(int slave) const { return _slaves[slave].enabled; }
 
+    static constexpr uint32_t SlaveTimerPeriod = 100; // us
     static constexpr size_t SlaveCount = 4;
 
     Listener *_listener = nullptr;
@@ -116,13 +120,13 @@ private:
     ClockTimer &_timer;
     int _ppqn = CONFIG_PPQN;
 
-    Mode _mode = ModeAuto;
+    Mode _mode = Mode::Auto;
 
     float _masterBpm = 120.f;
 
     struct Slave {
         int divisor;
-        int flags;
+        bool enabled;
     };
     std::array<Slave, SlaveCount> _slaves;
 
@@ -133,19 +137,20 @@ private:
     Output _output;
     OutputState _outputState;
 
-    uint8_t _requestStart = 0;
-    uint8_t _requestStop = 0;
-    uint8_t _requestResume = 0;
-
-    State _state = Idle;
+    uint32_t _requestedEvents = Reset;
+    State _state = State::Idle;
 
     volatile uint32_t _tick;
     volatile uint32_t _tickProcessed;
 
     volatile int32_t _activeSlave = -1;
 
-    volatile uint32_t _elapsedUs;
-    volatile uint32_t _lastTickUs;
+    uint32_t _elapsedUs;
+    uint32_t _lastSlaveTickUs; // time of last call to slaveTick
+    uint32_t _slaveTickPeriodUs = 0; // slave tick period time
+    uint32_t _slaveSubTicksPending; // number of slave sub ticks pending
+    uint32_t _slaveSubTickPeriodUs = 0; // slave sub tick period time
+    uint32_t _nextSlaveSubTickUs; // time of next slave sub tick
 
     float _slaveBpmFiltered = 0.f;
     MovingAverage<float, 4> _slaveBpmAvg;

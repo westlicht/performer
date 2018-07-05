@@ -30,8 +30,7 @@ void Engine::init() {
     _cvOutput.init();
     _clock.init();
 
-    initClockSources();
-    initClockOutputs();
+    initClock();
     updateClockSetup();
 
     // setup track engines
@@ -73,21 +72,28 @@ void Engine::update() {
         return;
     }
 
-    // process clock requests
-    if (_clock.checkStart()) {
-        // DBG("START");
-        resetTrackEngines();
-        _running = true;
-    }
-
-    if (_clock.checkStop()) {
-        // DBG("STOP");
-        _running = false;
-    }
-
-    if (_clock.checkResume()) {
-        // DBG("RESUME");
-        _running = true;
+    // process clock events
+    while (Clock::Event event = _clock.checkEvent()) {
+        switch (event) {
+        case Clock::Start:
+            DBG("START");
+            _running = true;
+            resetTrackEngines();
+            break;
+        case Clock::Stop:
+            DBG("STOP");
+            _running = false;
+            break;
+        case Clock::Continue:
+            DBG("CONTINUE");
+            _running = true;
+            break;
+        case Clock::Reset:
+            DBG("RESET");
+            _running = false;
+            resetTrackEngines();
+            break;
+        }
     }
 
     receiveMidi();
@@ -142,6 +148,7 @@ void Engine::update() {
 }
 
 void Engine::lock() {
+    // TODO make re-entrant
     while (!isLocked()) {
         _requestLock = 1;
 #ifdef PLATFORM_SIM
@@ -163,16 +170,20 @@ bool Engine::isLocked() {
     return _locked == 1;
 }
 
-void Engine::start() {
+void Engine::clockStart() {
     _clock.masterStart();
 }
 
-void Engine::stop() {
+void Engine::clockStop() {
     _clock.masterStop();
 }
 
-void Engine::resume() {
-    _clock.masterResume();
+void Engine::clockContinue() {
+    _clock.masterContinue();
+}
+
+void Engine::clockReset() {
+    _clock.masterReset();
 }
 
 void Engine::tapTempoReset() {
@@ -220,13 +231,13 @@ void Engine::setMessageHandler(MessageHandler handler) {
 void Engine::onClockOutput(const Clock::OutputState &state) {
     _dio.clockOutput.set(state.clock);
     switch (_model.project().clockSetup().clockOutputMode()) {
-    case ClockSetup::ClockMode::Reset:
+    case ClockSetup::ClockOutputMode::Reset:
         _dio.resetOutput.set(state.reset);
         break;
-    case ClockSetup::ClockMode::StartStop:
+    case ClockSetup::ClockOutputMode::Run:
         _dio.resetOutput.set(state.run);
         break;
-    case ClockSetup::ClockMode::Last:
+    case ClockSetup::ClockOutputMode::Last:
         break;
     }
 }
@@ -507,9 +518,19 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
     }
 }
 
-void Engine::initClockSources() {
+void Engine::initClock() {
+    _clock.setListener(this);
+
+    const auto &clockSetup = _model.project().clockSetup();
+
     // Forward external clock signals to clock
     _dio.clockInput.setHandler([&] (bool value) {
+        // interrupt context
+
+        // start clock on first clock pulse if reset is not hold and clock is not running
+        if (clockSetup.clockInputMode() == ClockSetup::ClockInputMode::Reset && !_clock.isRunning() && !_dio.resetInput.get()) {
+            _clock.slaveStart(ClockSourceExternal);
+        }
         if (value) {
             _clock.slaveTick(ClockSourceExternal);
         }
@@ -517,20 +538,31 @@ void Engine::initClockSources() {
 
     // Handle reset or start/stop input
     _dio.resetInput.setHandler([&] (bool value) {
-        switch (_model.project().clockSetup().clockInputMode()) {
-        case ClockSetup::ClockMode::Reset:
+        // interrupt context
+        switch (clockSetup.clockInputMode()) {
+        case ClockSetup::ClockInputMode::Reset:
             if (value) {
                 _clock.slaveReset(ClockSourceExternal);
+            } else {
+                _clock.slaveStart(ClockSourceExternal);
             }
             break;
-        case ClockSetup::ClockMode::StartStop:
+        case ClockSetup::ClockInputMode::Run:
             if (value) {
-                _clock.slaveStart(ClockSourceExternal);
+                _clock.slaveContinue(ClockSourceExternal);
             } else {
                 _clock.slaveStop(ClockSourceExternal);
             }
             break;
-        case ClockSetup::ClockMode::Last:
+        case ClockSetup::ClockInputMode::StartStop:
+            if (value) {
+                _clock.slaveStart(ClockSourceExternal);
+            } else {
+                _clock.slaveStop(ClockSourceExternal);
+                _clock.slaveReset(ClockSourceExternal);
+            }
+            break;
+        case ClockSetup::ClockInputMode::Last:
             break;
         }
     });
@@ -543,6 +575,7 @@ void Engine::initClockSources() {
         }
         return false;
     });
+
     _usbMidi.setRecvFilter([this] (uint8_t data) {
         if (MidiMessage::isClockMessage(data)) {
             _clock.slaveHandleMidi(ClockSourceUsbMidi, data);
@@ -552,10 +585,6 @@ void Engine::initClockSources() {
     });
 }
 
-void Engine::initClockOutputs() {
-    _clock.setListener(this);
-}
-
 void Engine::updateClockSetup() {
     auto &clockSetup = _model.project().clockSetup();
 
@@ -563,17 +592,61 @@ void Engine::updateClockSetup() {
         return;
     }
 
+    // Configure clock mode
+    switch (clockSetup.mode()) {
+    case ClockSetup::Mode::Auto:
+        _clock.setMode(Clock::Mode::Auto);
+        break;
+    case ClockSetup::Mode::Master:
+        _clock.setMode(Clock::Mode::Master);
+        break;
+    case ClockSetup::Mode::Slave:
+        _clock.setMode(Clock::Mode::Slave);
+        break;
+    case ClockSetup::Mode::Last:
+        break;
+    }
+
     // Configure clock slaves
-    _clock.slaveConfigure(
-        ClockSourceExternal,
-        clockSetup.clockInputDivisor(),
-        Clock::SlaveEnabled | (clockSetup.clockInputMode() == ClockSetup::ClockMode::Reset ? Clock::SlaveFreeRunning : 0)
-    );
-    _clock.slaveConfigure(ClockSourceMidi, CONFIG_PPQN / 24, clockSetup.midiRx() ? Clock::SlaveEnabled : 0);
-    _clock.slaveConfigure(ClockSourceUsbMidi, CONFIG_PPQN / 24, clockSetup.usbRx() ? Clock::SlaveEnabled : 0);
+    _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputDivisor(), true);
+    _clock.slaveConfigure(ClockSourceMidi, CONFIG_PPQN / 24, clockSetup.midiRx());
+    _clock.slaveConfigure(ClockSourceUsbMidi, CONFIG_PPQN / 24, clockSetup.usbRx());
+
+    // Update from clock input signal
+    bool resetInput = _dio.resetInput.get();
+    bool running = _clock.isRunning();
+
+    switch (clockSetup.clockInputMode()) {
+    case ClockSetup::ClockInputMode::Reset:
+        if (resetInput && running) {
+            _clock.slaveReset(ClockSourceExternal);
+        } else if (!resetInput && !running) {
+            _clock.slaveStart(ClockSourceExternal);
+        }
+        break;
+    case ClockSetup::ClockInputMode::Run:
+        if (resetInput && !running) {
+            _clock.slaveContinue(ClockSourceExternal);
+        } else if (!resetInput && running) {
+            _clock.slaveStop(ClockSourceExternal);
+        }
+        break;
+    case ClockSetup::ClockInputMode::StartStop:
+        if (resetInput && !running) {
+            _clock.slaveStart(ClockSourceExternal);
+        } else if (!resetInput && running) {
+            _clock.slaveReset(ClockSourceExternal);
+        }
+        break;
+    case ClockSetup::ClockInputMode::Last:
+        break;
+    }
 
     // Configure clock outputs
     _clock.outputConfigure(clockSetup.clockOutputDivisor(), clockSetup.clockOutputPulse());
+
+    // Update clock outputs
+    onClockOutput(_clock.outputState());
 
     clockSetup.clearDirty();
 }

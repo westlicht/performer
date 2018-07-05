@@ -27,7 +27,7 @@
 
 #include <cstdint>
 
-class Engine : public Clock::Listener {
+class Engine : private Clock::Listener {
 public:
     typedef Container<NoteTrackEngine, CurveTrackEngine, MidiCvTrackEngine> TrackEngineContainer;
     typedef std::array<TrackEngineContainer, CONFIG_TRACK_COUNT> TrackEngineContainerArray;
@@ -56,11 +56,12 @@ public:
     void unlock();
     bool isLocked();
 
-    // transport control
-    void start();
-    void stop();
-    void resume();
-    bool running() const { return _running; }
+    // clock control
+    void clockStart();
+    void clockStop();
+    void clockContinue();
+    void clockReset();
+    bool clockRunning() const { return _running; }
 
     // tempo
     float bpm() const { return _clock.bpm(); }
@@ -116,11 +117,11 @@ public:
     void showMessage(const char *text, uint32_t duration = 1000);
     void setMessageHandler(MessageHandler handler);
 
+private:
     // Clock::Listener
     virtual void onClockOutput(const Clock::OutputState &state) override;
     virtual void onClockMidi(uint8_t data) override;
 
-private:
     void updateTrackSetups();
     void updateTrackSequences();
     void updateTrackOutputs();
@@ -134,8 +135,7 @@ private:
     void receiveMidi();
     void receiveMidi(MidiPort port, const MidiMessage &message);
 
-    void initClockSources();
-    void initClockOutputs();
+    void initClock();
     void updateClockSetup();
 
     Model &_model;

@@ -3,10 +3,10 @@
 void ClockSetup::clear() {
     _mode = Mode::Auto;
     _clockInputDivisor = 12;
-    _clockInputMode = ClockMode::Reset;
+    _clockInputMode = ClockInputMode::Reset;
     _clockOutputDivisor = 12;
     _clockOutputPulse = 1;
-    _clockOutputMode = ClockMode::Reset;
+    _clockOutputMode = ClockOutputMode::Reset;
     _midiRx = true;
     _midiTx = true;
     _usbRx = false;

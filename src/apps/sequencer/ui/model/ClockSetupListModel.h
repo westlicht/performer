@@ -185,13 +185,13 @@ private:
         case ClockInputDivisor:
             return _clockSetup.setIndexedClockInputDivisor(index);
         case ClockInputMode:
-            return _clockSetup.setClockInputMode(ClockSetup::ClockMode(index));
+            return _clockSetup.setClockInputMode(ClockSetup::ClockInputMode(index));
         case ClockOutputDivisor:
             return _clockSetup.setIndexedClockOutputDivisor(index);
         case ClockOutputPulse:
             return _clockSetup.setClockOutputPulse(index + 1);
         case ClockOutputMode:
-            return _clockSetup.setClockOutputMode(ClockSetup::ClockMode(index));
+            return _clockSetup.setClockOutputMode(ClockSetup::ClockOutputMode(index));
         case MidiRx:
             return _clockSetup.setMidiRx(bool(index));
         case MidiTx:

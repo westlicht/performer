@@ -23,14 +23,17 @@ void Clock::init() {
 void Clock::setListener(Listener *listener) {
     os::InterruptLock lock;
     _listener = listener;
+    if (_listener) {
+        _listener->onClockOutput(_outputState);
+    }
 }
 
 void Clock::setMode(Mode mode) {
     if (mode != _mode) {
-        if (mode == ModeMaster && _state == SlaveRunning) {
+        if (mode == Mode::Master && _state == State::SlaveRunning) {
             slaveStop(_activeSlave);
         }
-        if (mode == ModeSlave && _state == MasterRunning) {
+        if (mode == Mode::Slave && _state == State::MasterRunning) {
             masterStop();
         }
         _mode = mode;
@@ -39,20 +42,23 @@ void Clock::setMode(Mode mode) {
 
 Clock::Mode Clock::activeMode() const {
     switch (_state) {
-    case MasterRunning: return ModeMaster;
-    case SlaveRunning:  return ModeSlave;
-    default:            return _mode;
+    case State::MasterRunning:
+        return Mode::Master;
+    case State::SlaveRunning:
+        return Mode::Slave;
+    default:
+        return _mode;
     }
 }
 
 void Clock::masterStart() {
     os::InterruptLock lock;
 
-    if (_state == SlaveRunning || _mode == ModeSlave) {
+    if (_state == State::SlaveRunning || _mode == Mode::Slave) {
         return;
     }
 
-    setState(MasterRunning);
+    setState(State::MasterRunning);
     requestStart();
     resetTicks();
 
@@ -64,94 +70,117 @@ void Clock::masterStart() {
 void Clock::masterStop() {
     os::InterruptLock lock;
 
-    if (_state != MasterRunning) {
+    if (_state != State::MasterRunning) {
         return;
     }
 
-    setState(Idle);
+    setState(State::Idle);
     requestStop();
 
     _timer.disable();
 }
 
-void Clock::masterResume() {
+void Clock::masterContinue() {
     os::InterruptLock lock;
 
-    if (_state != Idle || _mode == ModeSlave) {
+    if (_state != State::Idle || _mode == Mode::Slave) {
         return;
     }
 
-    setState(MasterRunning);
-    requestResume();
+    setState(State::MasterRunning);
+    requestContinue();
 
     _timer.disable();
     setupMasterTimer();
     _timer.enable();
 }
 
+void Clock::masterReset() {
+    os::InterruptLock lock;
+
+    if (_state == State::SlaveRunning || _mode == Mode::Slave) {
+        return;
+    }
+
+    setState(State::Idle);
+    requestReset();
+
+    _timer.disable();
+}
+
 void Clock::setMasterBpm(float bpm) {
     os::InterruptLock lock;
 
     _masterBpm = bpm;
-    if (_state == MasterRunning) {
+    if (_state == State::MasterRunning) {
         setupMasterTimer();
     }
 }
 
-void Clock::slaveConfigure(int slave, int divisor, int flags) {
-    _slaves[slave] = { divisor, flags };
+void Clock::slaveConfigure(int slave, int divisor, bool enabled) {
+    _slaves[slave] = { divisor, enabled };
 }
 
 void Clock::slaveTick(int slave) {
+    os::InterruptLock lock;
+
     if (!slaveEnabled(slave)) {
         return;
     }
 
-    // free running slaves start the clock with the first pulse
-    if ((_slaves[slave].flags & SlaveFreeRunning) && _state == Idle && _mode != ModeMaster) {
-        slaveStart(slave);
-    }
+    if (_state == State::SlaveRunning && _activeSlave == slave) {
+        int divisor = _slaves[slave].divisor;
+        _slaveSubTicksPending += divisor;
+        // for (int i = 0; i < divisor; ++i) {
+        //     outputTick(_tick);
+        //     ++_tick;
+        // }
 
-    {
-        os::InterruptLock lock;
-        if (_state == SlaveRunning && _activeSlave == slave) {
-            int divisor = _slaves[slave].divisor;
-            for (int i = 0; i < divisor; ++i) {
-                outputTick(_tick);
-                ++_tick;
-            }
+        // time past since last tick
+        uint32_t periodUs = _elapsedUs - _lastSlaveTickUs;
 
-            // estimate BPM
-            uint32_t tickUs = _elapsedUs - _lastTickUs;
-
-            if (tickUs > 0 && _lastTickUs > 0) {
-                // float bpm = (60.f * 1000000) / (tickUs * (_ppqn / divisor));
-                float bpm = (60.f * 1000000 * divisor) / (tickUs * _ppqn);
-                _slaveBpmFiltered = 0.9f * _slaveBpmFiltered + 0.1f * bpm;
-                // if (std::abs(bpm - _slaveBpm) > 5.f) {
-                //     _slaveBpm = 0.5f * _slaveBpm + 0.5f * bpm;
-                // }
-                _slaveBpmAvg.push(_slaveBpmFiltered);
-                _slaveBpm = _slaveBpmAvg();
-            }
-
-            _lastTickUs = _elapsedUs;
+        // default tick period to 120 bpm
+        if (_slaveTickPeriodUs == 0) {
+            _slaveTickPeriodUs = (60 * 1000000 * divisor) / (120 * _ppqn);
         }
+
+        // update tick period if we have a valid measurement
+        if (periodUs > 0 && _lastSlaveTickUs > 0) {
+            _slaveTickPeriodUs = periodUs;
+        }
+
+        _slaveSubTickPeriodUs = _slaveTickPeriodUs / _slaveSubTicksPending;
+        if (_elapsedUs - _nextSlaveSubTickUs > 1000) {
+            _nextSlaveSubTickUs = _elapsedUs;
+        } else {
+            _nextSlaveSubTickUs += _slaveSubTickPeriodUs;
+        }
+        // _nextSlaveSubTickUs = std::max(_nextSlaveSubTickUs + _slaveSubTickPeriodUs, _elapsedUs);
+
+        // estimate slave BPM
+        if (periodUs > 0 && _lastSlaveTickUs > 0) {
+            float bpm = (60.f * 1000000 * divisor) / (periodUs * _ppqn);
+            _slaveBpmFiltered = 0.9f * _slaveBpmFiltered + 0.1f * bpm;
+            _slaveBpmAvg.push(_slaveBpmFiltered);
+            _slaveBpm = _slaveBpmAvg();
+        }
+
+        _lastSlaveTickUs = _elapsedUs;
     }
 }
 
 void Clock::slaveStart(int slave) {
+    os::InterruptLock lock;
+
     if (!slaveEnabled(slave)) {
         return;
     }
 
-    os::InterruptLock lock;
-
-    if (_state == MasterRunning || _mode == ModeMaster || (_state == SlaveRunning && _activeSlave != slave)) {
+    if (_state == State::MasterRunning || _mode == Mode::Master || (_state == State::SlaveRunning && _activeSlave != slave)) {
         return;
     }
 
-    setState(SlaveRunning);
+    setState(State::SlaveRunning);
     _activeSlave = slave;
     requestStart();
 
@@ -163,57 +192,56 @@ void Clock::slaveStart(int slave) {
 }
 
 void Clock::slaveStop(int slave) {
+    os::InterruptLock lock;
+
     if (!slaveEnabled(slave)) {
         return;
     }
 
-    os::InterruptLock lock;
-
-    if (_state != SlaveRunning || _mode == ModeMaster || _activeSlave != slave) {
+    if (_state != State::SlaveRunning || _mode == Mode::Master || _activeSlave != slave) {
         return;
     }
 
-    setState(Idle);
+    setState(State::Idle);
     _activeSlave = -1;
     requestStop();
 
     _timer.disable();
 }
 
-void Clock::slaveResume(int slave) {
+void Clock::slaveContinue(int slave) {
+    os::InterruptLock lock;
+
     if (!slaveEnabled(slave)) {
         return;
     }
 
-    os::InterruptLock lock;
-
-    if (_state != Idle || _mode == ModeMaster) {
+    if (_state != State::Idle || _mode == Mode::Master) {
         return;
     }
 
-    setState(SlaveRunning);
+    setState(State::SlaveRunning);
     _activeSlave = slave;
-    requestResume();
+    requestContinue();
 
     setupSlaveTimer();
     _timer.enable();
 }
 
 void Clock::slaveReset(int slave) {
+    os::InterruptLock lock;
+
     if (!slaveEnabled(slave)) {
         return;
     }
 
-    os::InterruptLock lock;
-
-    if (_state == MasterRunning || _mode == ModeMaster || (_state == SlaveRunning && _activeSlave != slave)) {
+    if (_state == State::MasterRunning || _mode == Mode::Master || (_state == State::SlaveRunning && _activeSlave != slave)) {
         return;
     }
 
-    setState(Idle);
+    setState(State::Idle);
     _activeSlave = -1;
-    requestStart();
-    requestStop();
+    requestReset();
 
     _timer.disable();
 }
@@ -230,7 +258,7 @@ void Clock::slaveHandleMidi(int slave, uint8_t msg) {
         slaveStop(slave);
         break;
     case MidiMessage::Continue:
-        slaveResume(slave);
+        slaveContinue(slave);
         break;
     default:
         break;
@@ -243,29 +271,33 @@ void Clock::outputConfigure(int divisor, int pulse) {
     _output.pulse = pulse;
 }
 
-bool Clock::checkStart() {
+#define CHECK(_event_)                  \
+    if (_requestedEvents & _event_) {   \
+        _requestedEvents &= ~_event_;   \
+        return _event_;                 \
+    }
+
+Clock::Event Clock::checkEvent() {
     os::InterruptLock lock;
-    bool result = _requestStart;
-    _requestStart = 0;
-    return result;
+
+    if (_requestedEvents) {
+        CHECK(Start)
+        CHECK(Stop)
+        CHECK(Continue)
+        CHECK(Reset)
+    }
+
+    return Event(0);
 }
 
-bool Clock::checkStop() {
-    os::InterruptLock lock;
-    bool result = _requestStop;
-    _requestStop = 0;
-    return result;
-}
-
-bool Clock::checkResume() {
-    os::InterruptLock lock;
-    bool result = _requestResume;
-    _requestResume = false;
-    return result;
-}
+#undef CHECK
 
 bool Clock::checkTick(uint32_t *tick) {
     os::InterruptLock lock;
+
+    if (_requestedEvents) {
+        return false;
+    }
     if (_tickProcessed < _tick) {
         *tick = _tickProcessed++;
         return true;
@@ -274,15 +306,28 @@ bool Clock::checkTick(uint32_t *tick) {
 }
 
 void Clock::onClockTimerTick() {
+    os::InterruptLock lock;
+
     switch (_state) {
-    case MasterRunning: {
+    case State::MasterRunning: {
         outputTick(_tick);
         ++_tick;
         _elapsedUs += _timer.period();
         break;
     }
-    case SlaveRunning: {
+    case State::SlaveRunning: {
         _elapsedUs += _timer.period();
+
+        if (_slaveSubTicksPending > 0 && _elapsedUs >= _nextSlaveSubTickUs) {
+            outputTick(_tick);
+            ++_tick;
+            --_slaveSubTicksPending;
+            _nextSlaveSubTickUs += _slaveSubTickPeriodUs;
+        }
+
+        if (_mode == Mode::Auto && (_elapsedUs - _lastSlaveTickUs) > 100000) {
+            slaveReset(_activeSlave);
+        }
         break;
     }
     default:
@@ -296,33 +341,41 @@ void Clock::resetTicks() {
 }
 
 void Clock::requestStart() {
-    _requestStart = 1;
+    requestEvent(Start);
     outputMidiMessage(MidiMessage::Start);
+    outputMidiMessage(MidiMessage::Tick); // TODO: this seems wrong
     outputRun(true);
+    outputReset(true);
 }
 
 void Clock::requestStop() {
-    _requestStop = 1;
+    requestEvent(Stop);
     outputMidiMessage(MidiMessage::Stop);
     outputRun(false);
+    outputReset(false);
 }
 
-void Clock::requestResume() {
-    _requestResume = 1;
+void Clock::requestContinue() {
+    requestEvent(Continue);
     outputMidiMessage(MidiMessage::Continue);
     outputRun(true);
+    outputReset(false);
+}
+
+void Clock::requestReset() {
+    requestEvent(Reset);
+    outputMidiMessage(MidiMessage::Stop);
+    outputRun(false);
+    outputReset(true);
+    outputClock(false);
+}
+
+void Clock::requestEvent(Event event) {
+    _requestedEvents |= event;
 }
 
 void Clock::setState(State state) {
     _state = state;
-    switch (_state) {
-    case Idle:
-        outputReset(true);
-        break;
-    default:
-        outputReset(false);
-        break;
-    }
 }
 
 void Clock::setupMasterTimer() {
@@ -333,8 +386,10 @@ void Clock::setupMasterTimer() {
 
 void Clock::setupSlaveTimer() {
     _elapsedUs = 0;
-    _lastTickUs = 0;
-    _timer.setPeriod(250);
+    _lastSlaveTickUs = 0;
+    _slaveSubTicksPending = 0;
+
+    _timer.setPeriod(SlaveTimerPeriod);
 }
 
 void Clock::outputMidiMessage(uint8_t msg) {
@@ -345,6 +400,8 @@ void Clock::outputMidiMessage(uint8_t msg) {
 }
 
 void Clock::outputTick(uint32_t tick) {
+    outputReset(false);
+
     if (tick % (_ppqn / 24) == 0) {
         outputMidiMessage(MidiMessage::Tick);
     }
@@ -361,24 +418,33 @@ void Clock::outputTick(uint32_t tick) {
 
 void Clock::outputClock(bool clock) {
     os::InterruptLock lock;
-    _outputState.clock = clock;
-    if (_listener) {
-        _listener->onClockOutput(_outputState);
+
+    if (clock != _outputState.clock) {
+        _outputState.clock = clock;
+        if (_listener) {
+            _listener->onClockOutput(_outputState);
+        }
     }
 }
 
 void Clock::outputReset(bool reset) {
     os::InterruptLock lock;
-    _outputState.reset = reset;
-    if (_listener) {
-        _listener->onClockOutput(_outputState);
+
+    if (reset != _outputState.reset) {
+        _outputState.reset = reset;
+        if (_listener) {
+            _listener->onClockOutput(_outputState);
+        }
     }
 }
 
 void Clock::outputRun(bool run) {
     os::InterruptLock lock;
-    _outputState.run = run;
-    if (_listener) {
-        _listener->onClockOutput(_outputState);
+
+    if (run != _outputState.run) {
+        _outputState.run = run;
+        if (_listener) {
+            _listener->onClockOutput(_outputState);
+        }
     }
 }

@@ -137,10 +137,10 @@ bool LaunchpadController::globalButtonDown(const Button &button) {
             setMode(Mode::Performer);
             break;
         case 6:
-            if (_engine.running()) {
-                _engine.stop();
+            if (_engine.clockRunning()) {
+                _engine.clockReset();
             } else {
-                _engine.start();
+                _engine.clockStart();
             }
             break;
         }
