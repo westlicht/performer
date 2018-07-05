@@ -74,7 +74,7 @@ void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], const 
 
 void WindowPainter::drawClock(Canvas &canvas, const Engine &engine) {
     static const char *clockModeName[] = { "A", "M", "S" };
-    drawInvertedText(canvas, 2, 8 - 2, clockModeName[engine.clock().activeMode()]);
+    drawInvertedText(canvas, 2, 8 - 2, clockModeName[int(engine.clock().activeMode())]);
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
