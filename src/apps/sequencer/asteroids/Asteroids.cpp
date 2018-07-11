@@ -468,11 +468,11 @@ void Game::draw(Canvas &canvas) {
 
     switch (_state) {
     case Intro:
-        drawTexts(canvas, "ASTEROIDS", "Press any key to continue");
+        drawTexts(canvas, "ASTEROIDS", "Press any f-key to continue");
         break;
     case Start: {
         FixedStringBuilder<16> str("LEVEL %d", _level);
-        drawTexts(canvas, str, "Press any key to continue");
+        drawTexts(canvas, str, "Press any f-key to continue");
         break;
     }
     case Play:

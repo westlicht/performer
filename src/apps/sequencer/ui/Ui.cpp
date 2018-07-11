@@ -30,9 +30,6 @@ void Ui::init() {
 
     _pageManager.push(&_pages.top);
     _pages.top.init();
-#ifdef CONFIG_ENABLE_ASTEROIDS
-    _pageManager.push(&_pages.asteroids);
-#endif
 #ifdef CONFIG_ENABLE_INTRO
     _pageManager.push(&_pages.intro);
 #endif

@@ -79,7 +79,7 @@ float MidiCvTrackEngine::noteToCv(int note) const {
 }
 
 float MidiCvTrackEngine::valueToCv(int value) const {
-    auto const range = Types::voltageRangeInfo(_midiCvTrack.modulationRange());
+    const auto range = Types::voltageRangeInfo(_midiCvTrack.modulationRange());
     return value * (1.f / 127.f) * (range->hi - range->lo) + range->lo;
 }
 

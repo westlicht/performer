@@ -12,10 +12,12 @@ void AsteroidsPage::enter() {
 
     _engine.setGateOutputOverride(true);
     _engine.setGateOutput(0);
+    _engine.lock();
 }
 
 void AsteroidsPage::exit() {
     _engine.setGateOutputOverride(false);
+    _engine.unlock();
 }
 
 void AsteroidsPage::draw(Canvas &canvas) {
@@ -23,14 +25,16 @@ void AsteroidsPage::draw(Canvas &canvas) {
     float dt = float(currentTicks - _lastTicks) / os::time::ms(1000);
     _lastTicks = currentTicks;
 
-    asteroids::Inputs inputs = _keyInputs;
-    asteroids::Outputs outputs;
+    asteroids::Inputs cvInputs;
+    const auto &cvInput = _engine.cvInput();
+    cvInputs.left     |= cvInput.channel(0) > 1.f;
+    cvInputs.right    |= cvInput.channel(1) > 1.f;
+    cvInputs.thrust   |= cvInput.channel(2) > 1.f;
+    cvInputs.shoot    |= cvInput.channel(3) > 1.f;
 
-    // const auto &adc = _engine.adc();
-    // inputs.left     |= adc.channel(0) > 0x1fff;
-    // inputs.right    |= adc.channel(1) > 0x1fff;
-    // inputs.thrust   |= adc.channel(2) > 0x1fff;
-    // inputs.shoot    |= adc.channel(3) > 0x1fff;
+    asteroids::Inputs inputs;
+    inputs.keys = _keyInputs.keys | cvInputs.keys;
+    asteroids::Outputs outputs;
 
     _game.update(dt, inputs, outputs);
     _game.draw(canvas);
@@ -43,7 +47,7 @@ void AsteroidsPage::updateLeds(Leds &leds) {
 }
 
 void AsteroidsPage::keyDown(KeyEvent &event) {
-    auto const &key = event.key();
+    const auto &key = event.key();
 
     _keyInputs.left |= key.is(Key::F0);
     _keyInputs.right |= key.is(Key::F2);
@@ -54,7 +58,7 @@ void AsteroidsPage::keyDown(KeyEvent &event) {
 }
 
 void AsteroidsPage::keyUp(KeyEvent &event) {
-    auto const &key = event.key();
+    const auto &key = event.key();
 
     _keyInputs.left &= !key.is(Key::F0);
     _keyInputs.right &= !key.is(Key::F2);
@@ -62,6 +66,14 @@ void AsteroidsPage::keyUp(KeyEvent &event) {
     _keyInputs.shoot &= !key.is(Key::F4);
 
     event.consume();
+}
+
+void AsteroidsPage::keyPress(KeyPressEvent &event) {
+    const auto &key = event.key();
+
+    if (key.pageModifier() && key.is(Key::Step15)) {
+        close();
+    }
 }
 
 void AsteroidsPage::encoder(EncoderEvent &event) {

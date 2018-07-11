@@ -60,6 +60,10 @@ void ProjectPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.pageModifier()) {
+        // easter egg
+        if (key.is(Key::Step15)) {
+            _manager.pages().asteroids.show();
+        }
         return;
     }
 
