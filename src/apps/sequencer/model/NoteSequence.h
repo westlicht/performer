@@ -188,6 +188,11 @@ public:
         _scale = clamp(scale, -1, Scale::Count - 1);
     }
 
+    int indexedScale() const { return _scale + 1; }
+    void setIndexedScale(int index) {
+        setScale(index - 1);
+    }
+
     void editScale(int value, bool shift) {
         setScale(scale() + value);
     }
@@ -205,6 +210,11 @@ public:
     int rootNote() const { return _rootNote; }
     void setRootNote(int rootNote) {
         _rootNote = clamp(rootNote, -1, 11);
+    }
+
+    int indexedRootNote() const { return _rootNote + 1; }
+    void setIndexedRootNote(int index) {
+        setRootNote(index - 1);
     }
 
     void editRootNote(int value, bool shift) {

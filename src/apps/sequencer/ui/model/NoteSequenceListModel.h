@@ -135,9 +135,9 @@ private:
     int indexedValue(Item item) const {
         switch (item) {
         case Scale:
-            return _sequence->scale();
+            return _sequence->indexedScale();
         case RootNote:
-            return _sequence->rootNote();
+            return _sequence->indexedRootNote();
         case Divisor:
             return _sequence->indexedDivisor();
         case ResetMeasure:
@@ -157,9 +157,9 @@ private:
     void setIndexedValue(Item item, int index) {
         switch (item) {
         case Scale:
-            return _sequence->setScale(index);
+            return _sequence->setIndexedScale(index);
         case RootNote:
-            return _sequence->setRootNote(index);
+            return _sequence->setIndexedRootNote(index);
         case Divisor:
             return _sequence->setIndexedDivisor(index);
         case ResetMeasure:
