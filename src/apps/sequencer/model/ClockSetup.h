@@ -127,14 +127,6 @@ public:
         }
     }
 
-    int indexedClockInputDivisor() const { return ModelUtils::divisorToIndex(clockInputDivisor()); }
-    void setIndexedClockInputDivisor(int index) {
-        int divisor = ModelUtils::indexToDivisor(index);
-        if (divisor > 0) {
-            setClockInputDivisor(divisor);
-        }
-    }
-
     void editClockInputDivisor(int value, int shift) {
         setClockInputDivisor(ModelUtils::adjustedByDivisor(clockInputDivisor(), value, shift));
     }
@@ -170,14 +162,6 @@ public:
         if (clockOutputDivisor != _clockOutputDivisor) {
             _clockOutputDivisor = clockOutputDivisor;
             _dirty = true;
-        }
-    }
-
-    int indexedClockOutputDivisor() const { return ModelUtils::divisorToIndex(clockOutputDivisor()); }
-    void setIndexedClockOutputDivisor(int index) {
-        int divisor = ModelUtils::indexToDivisor(index);
-        if (divisor > 0) {
-            setClockOutputDivisor(divisor);
         }
     }
 
