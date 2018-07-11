@@ -32,7 +32,7 @@ public:
 
 private:
     void setChannel(int index, float value) {
-        _channels[index] = uint16_t(std::floor(0xffff * value));
+        _channels[index] = uint16_t(std::floor(0xffff - 0xffff * value));
     }
 
     sim::Simulator &_simulator;
