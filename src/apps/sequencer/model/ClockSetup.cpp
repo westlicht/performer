@@ -2,6 +2,7 @@
 
 void ClockSetup::clear() {
     _mode = Mode::Auto;
+    _shiftMode = ShiftMode::Restart;
     _clockInputDivisor = 12;
     _clockInputMode = ClockInputMode::Reset;
     _clockOutputDivisor = 12;
@@ -17,6 +18,7 @@ void ClockSetup::clear() {
 void ClockSetup::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_mode);
+    writer.write(_shiftMode);
     writer.write(_clockInputDivisor);
     writer.write(_clockInputMode);
     writer.write(_clockOutputDivisor);
@@ -31,6 +33,7 @@ void ClockSetup::write(WriteContext &context) const {
 void ClockSetup::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_mode);
+    reader.read(_shiftMode, 2);
     reader.read(_clockInputDivisor);
     reader.read(_clockInputMode);
     reader.read(_clockOutputDivisor);

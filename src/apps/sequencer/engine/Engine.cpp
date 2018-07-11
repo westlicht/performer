@@ -170,6 +170,34 @@ bool Engine::isLocked() {
     return _locked == 1;
 }
 
+void Engine::togglePlay(bool shift) {
+    if (shift) {
+        switch (_model.project().clockSetup().shiftMode()) {
+        case ClockSetup::ShiftMode::Restart:
+            // restart
+            clockStart();
+            break;
+        case ClockSetup::ShiftMode::Pause:
+            // stop/continue
+            if (clockRunning()) {
+                clockStop();
+            } else {
+                clockContinue();
+            }
+            break;
+        case ClockSetup::ShiftMode::Last:
+            break;
+        }
+    } else {
+        // start/stop
+        if (clockRunning()) {
+            clockReset();
+        } else {
+            clockStart();
+        }
+    }
+}
+
 void Engine::clockStart() {
     _clock.masterStart();
 }

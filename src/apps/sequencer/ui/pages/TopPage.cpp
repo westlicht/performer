@@ -96,22 +96,7 @@ void TopPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isStart()) {
-        if (key.shiftModifier()) {
-            // if (_engine.clockRunning()) {
-            //     _engine.clockStop();
-            // } else {
-            //     _engine.clockContinue();
-            // }
-            // restart
-            _engine.clockStart();
-        } else {
-            // start/stop
-            if (_engine.clockRunning()) {
-                _engine.clockReset();
-            } else {
-                _engine.clockStart();
-            }
-        }
+        _engine.togglePlay(key.shiftModifier());
         event.consume();
     }
 

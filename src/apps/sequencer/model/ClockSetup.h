@@ -31,6 +31,21 @@ public:
         return nullptr;
     }
 
+    enum class ShiftMode : uint8_t {
+        Restart,
+        Pause,
+        Last
+    };
+
+    static const char *shiftModeName(ShiftMode mode) {
+        switch (mode) {
+        case ShiftMode::Restart:    return "Restart";
+        case ShiftMode::Pause:      return "Pause";
+        case ShiftMode::Last:       break;
+        }
+        return nullptr;
+    }
+
     enum class ClockInputMode : uint8_t {
         Reset = 0,
         Run,
@@ -84,6 +99,21 @@ public:
 
     void printMode(StringBuilder &str) const {
         str(modeName(mode()));
+    }
+
+    // shiftMode
+
+    ShiftMode shiftMode() const { return _shiftMode; }
+    void setShiftMode(ShiftMode shiftMode) {
+        _shiftMode = ModelUtils::clampedEnum(shiftMode);
+    }
+
+    void editShiftMode(int value, int shift) {
+        setShiftMode(ModelUtils::adjustedEnum(shiftMode(), value));
+    }
+
+    void printShiftMode(StringBuilder &str) const {
+        str(shiftModeName(shiftMode()));
     }
 
     // clockInputDivisor
@@ -283,6 +313,7 @@ public:
 
 private:
     Mode _mode;
+    ShiftMode _shiftMode;
     uint8_t _clockInputDivisor;
     ClockInputMode _clockInputMode;
     uint8_t _clockOutputDivisor;

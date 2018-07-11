@@ -57,6 +57,7 @@ public:
     bool isLocked();
 
     // clock control
+    void togglePlay(bool shift = false);
     void clockStart();
     void clockStop();
     void clockContinue();

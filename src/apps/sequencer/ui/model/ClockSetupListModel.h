@@ -43,6 +43,7 @@ public:
 private:
     enum Item {
         Mode,
+        ShiftMode,
         ClockInputDivisor,
         ClockInputMode,
         ClockOutputDivisor,
@@ -58,6 +59,7 @@ private:
     static const char *itemName(Item item) {
         switch (item) {
         case Mode:              return "Mode";
+        case ShiftMode:         return "Shift Mode";
         case ClockInputDivisor: return "Input Divisor";
         case ClockInputMode:    return "Input Mode";
         case ClockOutputDivisor:return "Output Divisor";
@@ -80,6 +82,9 @@ private:
         switch (item) {
         case Mode:
             _clockSetup.printMode(str);
+            break;
+        case ShiftMode:
+            _clockSetup.printShiftMode(str);
             break;
         case ClockInputDivisor:
             _clockSetup.printClockInputDivisor(str);
@@ -118,6 +123,9 @@ private:
         case Mode:
             _clockSetup.editMode(value, shift);
             break;
+        case ShiftMode:
+            _clockSetup.editShiftMode(value, shift);
+            break;
         case ClockInputDivisor:
             _clockSetup.editClockInputDivisor(value, shift);
             break;
@@ -154,6 +162,8 @@ private:
         switch (item) {
         case Mode:
             return int(_clockSetup.mode());
+        case ShiftMode:
+            return int(_clockSetup.shiftMode());
         case ClockInputDivisor:
             return _clockSetup.indexedClockInputDivisor();
         case ClockInputMode:
@@ -181,25 +191,27 @@ private:
     void setIndexedValue(Item item, int index) {
         switch (item) {
         case Mode:
-            return _clockSetup.setMode(ClockSetup::Mode(index));
+            _clockSetup.setMode(ClockSetup::Mode(index));
+        case ShiftMode:
+            _clockSetup.setShiftMode(ClockSetup::ShiftMode(index));
         case ClockInputDivisor:
-            return _clockSetup.setIndexedClockInputDivisor(index);
+            _clockSetup.setIndexedClockInputDivisor(index);
         case ClockInputMode:
-            return _clockSetup.setClockInputMode(ClockSetup::ClockInputMode(index));
+            _clockSetup.setClockInputMode(ClockSetup::ClockInputMode(index));
         case ClockOutputDivisor:
-            return _clockSetup.setIndexedClockOutputDivisor(index);
+            _clockSetup.setIndexedClockOutputDivisor(index);
         case ClockOutputPulse:
-            return _clockSetup.setClockOutputPulse(index + 1);
+            _clockSetup.setClockOutputPulse(index + 1);
         case ClockOutputMode:
-            return _clockSetup.setClockOutputMode(ClockSetup::ClockOutputMode(index));
+            _clockSetup.setClockOutputMode(ClockSetup::ClockOutputMode(index));
         case MidiRx:
-            return _clockSetup.setMidiRx(bool(index));
+            _clockSetup.setMidiRx(bool(index));
         case MidiTx:
-            return _clockSetup.setMidiTx(bool(index));
+            _clockSetup.setMidiTx(bool(index));
         case UsbRx:
-            return _clockSetup.setUsbRx(bool(index));
+            _clockSetup.setUsbRx(bool(index));
         case UsbTx:
-            return _clockSetup.setUsbTx(bool(index));
+            _clockSetup.setUsbTx(bool(index));
         case Last:
             break;
         }
