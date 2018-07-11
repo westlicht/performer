@@ -67,6 +67,7 @@ void Engine::update() {
         while (_midi.recv(&message)) {}
         while (_usbMidi.recv(&message)) {}
 
+        _cvInput.update();
         updateOverrides();
         _cvOutput.update();
         return;

@@ -25,8 +25,8 @@ void AsteroidsPage::draw(Canvas &canvas) {
     float dt = float(currentTicks - _lastTicks) / os::time::ms(1000);
     _lastTicks = currentTicks;
 
-    asteroids::Inputs cvInputs;
     const auto &cvInput = _engine.cvInput();
+    asteroids::Inputs cvInputs;
     cvInputs.left     |= cvInput.channel(0) > 1.f;
     cvInputs.right    |= cvInput.channel(1) > 1.f;
     cvInputs.thrust   |= cvInput.channel(2) > 1.f;
