@@ -6,10 +6,9 @@
 #include <cstdint>
 
 enum class FileType : uint8_t {
-    Settings    = 0,
-    Project     = 1,
-    UserScale   = 2,
-    Last
+    Project     = 0,
+    UserScale   = 1,
+    Settings    = 255
 };
 
 struct FileHeader {

@@ -23,7 +23,7 @@ struct FileTypeInfo {
     const char *ext;
 };
 
-FileTypeInfo fileTypeInfos[int(FileType::Last)] = {
+FileTypeInfo fileTypeInfos[] = {
     { "PROJECTS", "PRO" },
     { "SCALES", "SCA" },
 };
@@ -85,7 +85,7 @@ void FileManager::slotInfo(FileType type, int slot, SlotInfo &info) {
 
     info.used = false;
 
-    FixedStringBuilder<16> path;
+    FixedStringBuilder<32> path;
     slotPath(path, type, slot);
 
     if (fs::exists(path)) {
@@ -147,7 +147,7 @@ fs::Error FileManager::saveFile(FileType type, int slot, std::function<fs::Error
         fs::mkdir(info.dir);
     }
 
-    FixedStringBuilder<16> path;
+    FixedStringBuilder<32> path;
     slotPath(path, type, slot);
 
     auto result = write(path);
@@ -164,7 +164,7 @@ fs::Error FileManager::loadFile(FileType type, int slot, std::function<fs::Error
         fs::mkdir(info.dir);
     }
 
-    FixedStringBuilder<16> path;
+    FixedStringBuilder<32> path;
     slotPath(path, type, slot);
 
     auto result = read(path);
