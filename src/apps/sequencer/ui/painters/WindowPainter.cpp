@@ -89,11 +89,15 @@ void WindowPainter::drawActiveState(Canvas &canvas, int track, int playPattern, 
     // draw selected track
     canvas.drawText(40, 8 - 2, FixedStringBuilder<8>("T%d", track + 1));
 
-    // draw active pattern
-    drawInvertedText(canvas, 56, 8 - 2, snapshotActive ? "S" : FixedStringBuilder<8>("P%d", playPattern + 1), songActive);
+    if (snapshotActive) {
+        drawInvertedText(canvas, 56, 8 - 2, "SNAP", true);
+    } else {
+        // draw active pattern
+        drawInvertedText(canvas, 56, 8 - 2, FixedStringBuilder<8>("P%d", playPattern + 1), songActive);
 
-    // draw edit pattern
-    drawInvertedText(canvas, 75, 8 - 2, snapshotActive ? "S" : FixedStringBuilder<8>("E%d", editPattern + 1), playPattern == editPattern);
+        // draw edit pattern
+        drawInvertedText(canvas, 75, 8 - 2, FixedStringBuilder<8>("E%d", editPattern + 1), playPattern == editPattern);
+    }
 }
 
 void WindowPainter::drawActiveMode(Canvas &canvas, const char *mode) {
