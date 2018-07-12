@@ -11,9 +11,10 @@ enum class Function {
     CvIn    = 0,
     CvOut   = 1,
     Midi    = 2,
+    Stats   = 3,
 };
 
-static const char *functionNames[] = { "CV IN", "CV OUT", "MIDI", nullptr, nullptr };
+static const char *functionNames[] = { "CV IN", "CV OUT", "MIDI", "STATS", nullptr };
 
 static void formatMidiPort(StringBuilder &str, MidiPort port) {
     switch (port) {
@@ -83,7 +84,6 @@ static void formatMidiMessage(StringBuilder &str1, StringBuilder &str2, const Mi
     }
 }
 
-
 MonitorPage::MonitorPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
@@ -115,6 +115,9 @@ void MonitorPage::draw(Canvas &canvas) {
     case Mode::Midi:
         drawMidi(canvas);
         break;
+    case Mode::Stats:
+        drawStats(canvas);
+        break;
     }
 }
 
@@ -138,6 +141,9 @@ void MonitorPage::keyPress(KeyPressEvent &event) {
             break;
         case Function::Midi:
             _mode = Mode::Midi;
+            break;
+        case Function::Stats:
+            _mode = Mode::Stats;
             break;
         }
     }
@@ -207,4 +213,32 @@ void MonitorPage::drawMidi(Canvas &canvas) {
         canvas.drawTextCentered(0, 32 - 8, Width, 16, str1);
         canvas.drawTextCentered(0, 40 - 8, Width, 16, str2);
     }
+}
+
+void MonitorPage::drawStats(Canvas &canvas) {
+    auto stats = _engine.stats();
+
+    auto drawValue = [&] (int index, const char *name, const char *value) {
+        canvas.drawText(10, 20 + index * 10, name);
+        canvas.drawText(100, 20 + index * 10, value);
+    };
+
+    {
+        int seconds = stats.uptime;
+        int minutes = seconds / 60;
+        int hours = minutes / 60;
+        FixedStringBuilder<16> str("%d:%02d:%02d", hours, minutes % 60, seconds % 60);
+        drawValue(0, "UPTIME:", str);
+    }
+
+    {
+        FixedStringBuilder<16> str("%d", stats.midiRxOverflow);
+        drawValue(1, "MIDI OVF:", str);
+    }
+
+    {
+        FixedStringBuilder<16> str("%d", stats.usbMidiRxOverflow);
+        drawValue(2, "USBMIDI OVF:", str);
+    }
+
 }

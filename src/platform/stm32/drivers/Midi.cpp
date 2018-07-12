@@ -94,6 +94,7 @@ void Midi::handleIrq() {
         if (!_filter || !_filter(data)) {
             if (_rxBuffer.full()) {
                 // overflow
+                ++_rxOverflow;
             }
             _rxBuffer.write(data);
         }

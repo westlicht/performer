@@ -257,6 +257,14 @@ void Engine::setMessageHandler(MessageHandler handler) {
     _messageHandler = handler;
 }
 
+Engine::Stats Engine::stats() const {
+    return {
+        .uptime = os::ticks() / os::time::ms(1000),
+        .midiRxOverflow = _midi.rxOverflow(),
+        .usbMidiRxOverflow = _usbMidi.rxOverflow()
+    };
+}
+
 void Engine::onClockOutput(const Clock::OutputState &state) {
     _dio.clockOutput.set(state.clock);
     switch (_model.project().clockSetup().clockOutputMode()) {

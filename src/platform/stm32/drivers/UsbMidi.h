@@ -43,6 +43,8 @@ public:
         _recvFilter = filter;
     }
 
+    uint32_t rxOverflow() const { return 0; }
+
 private:
     void connect(uint16_t vendorId, uint16_t productId) {
         if (_connectHandler) {
@@ -57,6 +59,10 @@ private:
     }
 
     void enqueueMessage(MidiMessage &message) {
+        if (_rxQueue.full()) {
+            // overflow
+            ++_rxOverflow;
+        }
         _rxQueue.write(message);
     }
 
@@ -80,6 +86,7 @@ private:
 
     RingBuffer<MidiMessage, 128> _txQueue;
     RingBuffer<MidiMessage, 16> _rxQueue;
+    volatile uint32_t _rxOverflow = 0;
 
     friend class UsbH;
 };

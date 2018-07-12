@@ -54,6 +54,8 @@ public:
         _filter = filter;
     }
 
+    uint32_t rxOverflow() const { return 0; }
+
 private:
     sim::Simulator &_simulator;
     std::shared_ptr<sim::Midi::Port> _port;

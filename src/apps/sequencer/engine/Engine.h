@@ -46,6 +46,12 @@ public:
         ClockSourceUsbMidi,
     };
 
+    struct Stats {
+        uint32_t uptime;
+        uint32_t midiRxOverflow;
+        uint32_t usbMidiRxOverflow;
+    };
+
     Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi);
 
     void init();
@@ -117,6 +123,8 @@ public:
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
     void setMessageHandler(MessageHandler handler);
+
+    Stats stats() const;
 
 private:
     // Clock::Listener

@@ -76,6 +76,8 @@ public:
         _recvFilter = filter;
     }
 
+    uint32_t rxOverflow() const { return 0; }
+
 private:
     ConnectHandler _connectHandler;
     DisconnectHandler _disconnectHandler;
