@@ -386,7 +386,7 @@ void Engine::updatePlayState(bool ticked) {
 
     uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
     bool handleSyncedRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
-    bool switchToNextSlot = ticked && (_tick % measureDivisor == measureDivisor - 1);
+    bool handleSongAdvance = ticked && (_tick % measureDivisor == measureDivisor - 1);
 
     // handle mute & pattern requests
 
@@ -442,7 +442,7 @@ void Engine::updatePlayState(bool ticked) {
                 songState.setCurrentSlot(requestedSlot);
                 songState.setCurrentRepeat(0);
                 songState.setPlaying(true);
-                switchToNextSlot = false;
+                handleSongAdvance = false;
             }
         }
 
@@ -467,7 +467,7 @@ void Engine::updatePlayState(bool ticked) {
 
     // handle song slot change
 
-    if (songState.playing() && switchToNextSlot) {
+    if (songState.playing() && handleSongAdvance) {
         const auto &slot = song.slot(songState.currentSlot());
         int currentSlot = songState.currentSlot();
         int currentRepeat = songState.currentRepeat();
@@ -483,10 +483,8 @@ void Engine::updatePlayState(bool ticked) {
             } else {
                 songState.setCurrentSlot(0);
             }
-        }
 
-        // update patterns
-        {
+            // update patterns
             const auto &slot = song.slot(songState.currentSlot());
             for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
                 playState.trackState(trackIndex).setPattern(slot.pattern(trackIndex));
@@ -495,7 +493,7 @@ void Engine::updatePlayState(bool ticked) {
         }
     }
 
-    if (hasRequests | switchToNextSlot) {
+    if (hasRequests | handleSongAdvance) {
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             auto &trackState = playState.trackState(trackIndex);
             auto &trackEngine = *_trackEngines[trackIndex];
