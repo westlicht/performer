@@ -127,11 +127,14 @@ void PatternPage::updateLeds(Leds &leds) {
 
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             const auto &trackState = playState.trackState(trackIndex);
-            allActivePatterns |= (trackState.pattern() < 16) ? (1<<trackState.pattern()) : 0;
-            allRequestedPatterns |= (trackState.requestedPattern() < 16) ? (1<<trackState.requestedPattern()) : 0;
+            bool hasPatternRequest = trackState.hasPatternRequest();
+            int pattern = trackState.pattern();
+            int requestedPattern = trackState.requestedPattern();
+            allActivePatterns |= (pattern < 16) ? (1<<pattern) : 0;
+            allRequestedPatterns |= (hasPatternRequest && requestedPattern < 16) ? (1<<requestedPattern) : 0;
             if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
-                selectedActivePatterns |= (trackState.pattern() < 16) ? (1<<trackState.pattern()) : 0;
-                selectedRequestedPatterns |= (trackState.requestedPattern() < 16) ? (1<<trackState.requestedPattern()) : 0;
+                selectedActivePatterns |= (pattern < 16) ? (1<<pattern) : 0;
+                selectedRequestedPatterns |= (hasPatternRequest && requestedPattern < 16) ? (1<<requestedPattern) : 0;
             }
         }
 

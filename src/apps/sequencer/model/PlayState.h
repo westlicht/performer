@@ -31,6 +31,7 @@ public:
 
         int pattern() const { return _pattern; }
         int requestedPattern() const { return _requestedPattern; }
+        bool hasPatternRequest() const { return hasRequests(State::PatternRequests); }
 
         void clear();
 
