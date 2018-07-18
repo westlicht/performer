@@ -63,6 +63,12 @@ public:
             return;
         }
 
+        if (_mode == Mode::Persist && key.isShift() && event.count() == 2) {
+            clear();
+            event.consume();
+            return;
+        }
+
         if (key.isStep()) {
             int stepIndex = stepOffset + key.step();
 
