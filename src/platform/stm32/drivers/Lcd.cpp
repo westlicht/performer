@@ -124,7 +124,6 @@ void Lcd::init() {
 }
 
 void Lcd::draw(uint8_t *frameBuffer) {
-
 #ifdef LCD_USE_DMA
     // wait until previous frame is sent
     while (!txDone) {}
