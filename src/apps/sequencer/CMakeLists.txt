@@ -89,6 +89,7 @@ set(sources
     ui/pages/UserScalePage.cpp
     # ui/painters
     ui/painters/SequencePainter.cpp
+    ui/painters/SongPainter.cpp
     ui/painters/WindowPainter.cpp
 )
 

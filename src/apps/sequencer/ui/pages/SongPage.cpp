@@ -4,7 +4,7 @@
 
 #include "ui/LedPainter.h"
 #include "ui/painters/WindowPainter.h"
-#include "ui/painters/SequencePainter.h"
+#include "ui/painters/SongPainter.h"
 
 #include "model/PlayState.h"
 
@@ -48,11 +48,11 @@ void SongPage::draw(Canvas &canvas) {
     // draw selection cursor
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    SequencePainter::drawCursor(canvas, _selectedSlot * slotWidth + 1, 16, slotWidth - 2);
+    SongPainter::drawArrowDown(canvas, _selectedSlot * slotWidth + 1, 16, slotWidth - 2);
 
     // draw play cursor
     if (songState.playing()) {
-        SequencePainter::drawCursor(canvas, songState.currentSlot() * slotWidth + 1, 48, slotWidth - 2);
+        SongPainter::drawArrowUp(canvas, songState.currentSlot() * slotWidth + 1, 48, slotWidth - 2);
     }
 
     for (int i = 0; i < SlotCount; ++i) {
@@ -83,7 +83,11 @@ void SongPage::draw(Canvas &canvas) {
 void SongPage::updateLeds(Leds &leds) {
     if (_selectedSlot >= 0) {
         const auto &slot = _project.song().slot(_selectedSlot);
-        LedPainter::drawStepIndex(leds, slot.pattern(_project.selectedTrackIndex()));
+        uint16_t usedPatterns = 0;
+        for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+            usedPatterns |= (1<<slot.pattern(trackIndex));
+        }
+        LedPainter::drawSongSlot(leds, slot.pattern(_project.selectedTrackIndex()), usedPatterns);
     }
 }
 
@@ -114,6 +118,7 @@ void SongPage::keyUp(KeyEvent &event) {
 void SongPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &song = _project.song();
+    auto &playState = _project.playState();
 
     if (key.pageModifier()) {
         return;
@@ -122,6 +127,7 @@ void SongPage::keyPress(KeyPressEvent &event) {
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Clear:
+            playState.stopSong();
             song.clear();
             setSelectedSlot(_selectedSlot);
             break;
@@ -139,10 +145,10 @@ void SongPage::keyPress(KeyPressEvent &event) {
             setSelectedSlot(_selectedSlot);
             break;
         case Function::PlayStop:
-            if (_project.playState().songState().playing()) {
-                _project.playState().stopSong();
+            if (playState.songState().playing()) {
+                playState.stopSong();
             } else {
-                _project.playState().playSong(_selectedSlot);
+                playState.playSong(_selectedSlot);
             }
             break;
         default:
@@ -160,7 +166,7 @@ void SongPage::keyPress(KeyPressEvent &event) {
             if (_selectedSlot >= 0) {
                 bool globalChange = true;
                 for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
-                    if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
+                    if (globalKeyState()[MatrixMap::fromTrack(trackIndex)]) {
                         song.setPattern(_selectedSlot, trackIndex, pattern);
                         globalChange = false;
                     }
@@ -172,6 +178,9 @@ void SongPage::keyPress(KeyPressEvent &event) {
             break;
         case Mode::Chain:
             song.chainPattern(pattern);
+            if (!playState.songState().playing()) {
+                playState.playSong(0);
+            }
             setSelectedSlot(SlotCount);
             break;
         default:

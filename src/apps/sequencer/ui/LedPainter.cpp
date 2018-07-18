@@ -119,6 +119,12 @@ void LedPainter::drawFills(Leds &leds, uint8_t activeFills) {
     }
 }
 
+void LedPainter::drawSongSlot(Leds &leds, uint8_t activePattern, uint16_t usedPatterns) {
+    for (int i = 0; i < 16; ++ i) {
+        leds.set(MatrixMap::fromStep(i), activePattern == i, usedPatterns & (1<<i));
+    }
+}
+
 void LedPainter::drawMode(Leds &leds, int index, int count) {
     for (int i = 0; i < 8; ++i) {
         leds.set(MatrixMap::fromStep(i), i < count, i == index);
