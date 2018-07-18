@@ -59,7 +59,7 @@ DSTATUS disk_initialize(BYTE pdrv) {
 
 DSTATUS disk_status(BYTE pdrv) {
     ASSERT(pdrv == 0, "only one physical drive available");
-    DBG("disk_status(pdrv=%d)", pdrv);
+    // DBG("disk_status(pdrv=%d)", pdrv);
     if (!fs::g_sdCard->available()) {
         return STA_NODISK;
     }
