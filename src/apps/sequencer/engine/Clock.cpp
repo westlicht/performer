@@ -338,12 +338,13 @@ void Clock::onClockTimerTick() {
 void Clock::resetTicks() {
     _tick = 0;
     _tickProcessed = 0;
+    _slaveSubTicksPending = 0;
 }
 
 void Clock::requestStart() {
     requestEvent(Start);
     outputMidiMessage(MidiMessage::Start);
-    outputMidiMessage(MidiMessage::Tick); // TODO: this seems wrong
+    // outputMidiMessage(MidiMessage::Tick); // TODO: this seems wrong
     outputRun(true);
     outputReset(true);
 }
@@ -387,7 +388,6 @@ void Clock::setupMasterTimer() {
 void Clock::setupSlaveTimer() {
     _elapsedUs = 0;
     _lastSlaveTickUs = 0;
-    _slaveSubTicksPending = 0;
 
     _timer.setPeriod(SlaveTimerPeriod);
 }
