@@ -119,7 +119,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
 
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
         _gate = _gateQueue.front().gate;
-        _gateOutput = !_mute && _gate;
+        _gateOutput = (!_mute || _fill) && _gate;
         _gateQueue.pop();
     }
 
