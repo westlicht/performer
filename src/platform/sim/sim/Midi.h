@@ -51,6 +51,8 @@ public:
         bool _open = false;
         std::unique_ptr<RtMidiIn> _input;
         std::unique_ptr<RtMidiOut> _output;
+
+        int _firstOpenAttempt = true;
     };
 
     Midi();

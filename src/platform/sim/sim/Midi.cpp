@@ -80,8 +80,11 @@ void Midi::Port::open() {
             return;
         }
     } catch (RtMidiError &error) {
-        std::cout << "Failed to open MIDI input port '" << _port << "'" << std::endl;
-        error.printMessage();
+        if (_firstOpenAttempt) {
+            std::cout << "Failed to open MIDI input port '" << _port << "'" << std::endl;
+            error.printMessage();
+            _firstOpenAttempt = false;
+        }
         _input.reset();
         return;
     }
@@ -98,8 +101,11 @@ void Midi::Port::open() {
             return;
         }
     } catch (RtMidiError &error) {
-        std::cout << "Failed to open MIDI output port '" << _port << "'" << std::endl;
-        error.printMessage();
+        if (_firstOpenAttempt) {
+            std::cout << "Failed to open MIDI output port '" << _port << "'" << std::endl;
+            error.printMessage();
+            _firstOpenAttempt = false;
+        }
         _output.reset();
         return;
     }
@@ -124,6 +130,7 @@ void Midi::Port::close() {
     }
 
     _open = false;
+    _firstOpenAttempt = true;
 }
 
 
