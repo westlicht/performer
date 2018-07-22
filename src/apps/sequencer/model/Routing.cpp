@@ -168,8 +168,8 @@ void Routing::writeParam(Param param, int trackIndex, int patternIndex, float no
 
 float Routing::readParam(Param param, int patternIndex, int trackIndex) const {
     switch (param) {
-    case Param::Bpm:
-        return _project.bpm();
+    case Param::Tempo:
+        return _project.tempo();
     case Param::Swing:
         return _project.swing();
     default:
@@ -188,8 +188,8 @@ void Routing::read(ReadContext &context) {
 
 void Routing::writeParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue) {
     switch (param) {
-    case Param::Bpm:
-        _project.setBpm(floatValue);
+    case Param::Tempo:
+        _project.setTempo(floatValue);
         break;
     case Param::Swing:
         _project.setSwing(intValue);
@@ -276,7 +276,7 @@ struct ParamInfo {
 
 const ParamInfo paramInfos[int(Routing::Param::Last)] = {
     [int(Routing::Param::None)]                     = { 0,      0   },
-    [int(Routing::Param::Bpm)]                      = { 20,     500 },
+    [int(Routing::Param::Tempo)]                    = { 20,     500 },
     [int(Routing::Param::Swing)]                    = { 50,     75  },
     [int(Routing::Param::TrackSlideTime)]           = { 0,      100 },
     [int(Routing::Param::TrackOctave)]              = { -10,    10  },
@@ -309,7 +309,7 @@ void Routing::printParamValue(Routing::Param param, float normalized, StringBuil
     case Param::None:
         str("-");
         break;
-    case Param::Bpm:
+    case Param::Tempo:
         str("%.1f", value);
         break;
     case Param::Swing:

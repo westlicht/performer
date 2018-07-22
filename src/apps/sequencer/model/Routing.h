@@ -26,8 +26,8 @@ public:
     enum class Param : uint8_t {
         None,
         // Global parameters
-        Bpm,
-        GlobalFirst = Bpm,
+        Tempo,
+        GlobalFirst = Tempo,
         Swing,
         GlobalLast = Swing,
 
@@ -64,7 +64,7 @@ public:
     static const char *paramName(Param param) {
         switch (param) {
         case Param::None:           return "None";
-        case Param::Bpm:            return "BPM";
+        case Param::Tempo:          return "Tempo";
         case Param::Swing:          return "Swing";
 
         case Param::TrackSlideTime: return "Slide Time";

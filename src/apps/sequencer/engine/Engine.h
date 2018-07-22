@@ -71,7 +71,7 @@ public:
     bool clockRunning() const { return _running; }
 
     // tempo
-    float bpm() const { return _clock.bpm(); }
+    float tempo() const { return _clock.bpm(); }
 
     // tap tempo
     void tapTempoReset();

@@ -101,7 +101,7 @@ void Engine::update() {
 
     // update tempo
     _nudgeTempo.update(dt);
-    _clock.setMasterBpm(_model.project().bpm() + _nudgeTempo.strength() * 10.f);
+    _clock.setMasterBpm(_model.project().tempo() + _nudgeTempo.strength() * 10.f);
 
     // update clock setup
     updateClockSetup();
@@ -216,12 +216,12 @@ void Engine::clockReset() {
 }
 
 void Engine::tapTempoReset() {
-    _tapTempo.reset(_model.project().bpm());
+    _tapTempo.reset(_model.project().tempo());
 }
 
 void Engine::tapTempoTap() {
     _tapTempo.tap();
-    _model.project().setBpm(_tapTempo.bpm());
+    _model.project().setTempo(_tapTempo.bpm());
 }
 
 void Engine::nudgeTempoSetDirection(int direction) {

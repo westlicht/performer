@@ -78,7 +78,7 @@ void WindowPainter::drawClock(Canvas &canvas, const Engine &engine) {
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    canvas.drawText(10, 8 - 2, FixedStringBuilder<8>("%.1f", engine.bpm()));
+    canvas.drawText(10, 8 - 2, FixedStringBuilder<8>("%.1f", engine.tempo()));
 }
 
 void WindowPainter::drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern, bool snapshotActive, bool songActive) {

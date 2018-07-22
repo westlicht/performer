@@ -53,19 +53,19 @@ public:
         StringUtils::copy(_name, name, sizeof(_name));
     }
 
-    // bpm
+    // tempo
 
-    float bpm() const { return _bpm; }
-    void setBpm(float bpm) {
-        _bpm = clamp(bpm, 1.f, 1000.f);
+    float tempo() const { return _tempo; }
+    void setTempo(float tempo) {
+        _tempo = clamp(tempo, 1.f, 1000.f);
     }
 
-    void editBpm(int value, bool shift) {
-        setBpm(bpm() + value * (shift ? 0.1f : 1.f));
+    void editTempo(int value, bool shift) {
+        setTempo(tempo() + value * (shift ? 0.1f : 1.f));
     }
 
-    void printBpm(StringBuilder &str) const {
-        str("%.1f", bpm());
+    void printTempo(StringBuilder &str) const {
+        str("%.1f", tempo());
     }
 
     // swing
@@ -280,7 +280,7 @@ public:
 private:
     uint8_t _slot = uint8_t(-1);
     char _name[NameLength + 1];
-    float _bpm;
+    float _tempo;
     uint8_t _swing;
     uint8_t _syncMeasure;
     uint8_t _scale;

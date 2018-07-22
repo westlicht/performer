@@ -36,8 +36,8 @@ public:
 
     virtual Routing::Param routingParam(int row) const override {
         switch (Item(row)) {
-        case Bpm:
-            return Routing::Param::Bpm;
+        case Tempo:
+            return Routing::Param::Tempo;
         case Swing:
             return Routing::Param::Swing;
         default:
@@ -48,7 +48,7 @@ public:
 private:
     enum Item {
         Name,
-        Bpm,
+        Tempo,
         Swing,
         SyncMeasure,
         Scale,
@@ -59,7 +59,7 @@ private:
     static const char *itemName(Item item) {
         switch (item) {
         case Name:              return "Name";
-        case Bpm:               return "BPM";
+        case Tempo:             return "Tempo";
         case Swing:             return "Swing";
         case SyncMeasure:       return "Sync Measure";
         case Scale:             return "Scale";
@@ -78,8 +78,8 @@ private:
         case Name:
             str(_project.name());
             break;
-        case Bpm:
-            _project.printBpm(str);
+        case Tempo:
+            _project.printTempo(str);
             break;
         case Swing:
             _project.printSwing(str);
@@ -101,8 +101,8 @@ private:
         switch (item) {
         case Name:
             break;
-        case Bpm:
-            _project.editBpm(value, shift);
+        case Tempo:
+            _project.editTempo(value, shift);
             break;
         case Swing:
             _project.editSwing(value, shift);

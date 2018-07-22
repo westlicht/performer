@@ -17,7 +17,7 @@ Project::Project() :
 void Project::clear() {
     _slot = uint8_t(-1);
     StringUtils::copy(_name, "INIT", sizeof(_name));
-    setBpm(120.f);
+    setTempo(120.f);
     setSwing(50);
     setSyncMeasure(1);
     setScale(0);
@@ -78,7 +78,7 @@ void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
 
 void Project::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_bpm);
+    writer.write(_tempo);
     writer.write(_swing);
     writer.write(_syncMeasure);
     writer.write(_scale);
@@ -104,7 +104,7 @@ bool Project::read(ReadContext &context) {
     clear();
 
     auto &reader = context.reader;
-    reader.read(_bpm);
+    reader.read(_tempo);
     reader.read(_swing);
     reader.read(_syncMeasure);
     reader.read(_scale);
