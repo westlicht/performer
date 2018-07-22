@@ -11,7 +11,10 @@
                 "${workspaceRoot}/src/platform/stm32/libs/freertos/portable",
                 "${workspaceRoot}/src/platform/stm32/libs/libusbhost/include"
             ],
-            "defines": ["STM32F4", "STM32F405xx"],
+            "defines": [
+                "STM32F4",
+                "STM32F405xx"
+            ],
             "intelliSenseMode": "clang-x64",
             "browse": {
                 "path": [
@@ -23,7 +26,10 @@
             "macFrameworkPath": [
                 "/System/Library/Frameworks",
                 "/Library/Frameworks"
-            ]
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++11"
         },
         {
             "name": "Linux",
@@ -42,7 +48,10 @@
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++11"
         },
         {
             "name": "Win32",
@@ -62,8 +71,11 @@
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++11"
         }
     ],
-    "version": 3
+    "version": 4
 }
