@@ -2,9 +2,9 @@
 
 #include "BasePage.h"
 
-class BpmPage : public BasePage {
+class TempoPage : public BasePage {
 public:
-    BpmPage(PageManager &manager, PageContext &context);
+    TempoPage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;

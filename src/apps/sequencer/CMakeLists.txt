@@ -59,13 +59,12 @@ set(sources
     # ui/pages
     ui/pages/AsteroidsPage.cpp
     ui/pages/BasePage.cpp
-    ui/pages/BpmPage.cpp
     ui/pages/BusyPage.cpp
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
     ui/pages/ContextMenuPage.cpp
-    ui/pages/CurveSequencePage.cpp
     ui/pages/CurveSequenceEditPage.cpp
+    ui/pages/CurveSequencePage.cpp
     ui/pages/FileSelectPage.cpp
     ui/pages/GeneratorPage.cpp
     ui/pages/GeneratorSelectPage.cpp
@@ -73,8 +72,8 @@ set(sources
     ui/pages/LayoutPage.cpp
     ui/pages/ListPage.cpp
     ui/pages/MonitorPage.cpp
-    ui/pages/NoteSequencePage.cpp
     ui/pages/NoteSequenceEditPage.cpp
+    ui/pages/NoteSequencePage.cpp
     ui/pages/PatternPage.cpp
     ui/pages/PerformerPage.cpp
     ui/pages/ProjectPage.cpp
@@ -83,6 +82,7 @@ set(sources
     ui/pages/RoutingPage.cpp
     ui/pages/SettingsPage.cpp
     ui/pages/SongPage.cpp
+    ui/pages/TempoPage.cpp
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp

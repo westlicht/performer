@@ -84,7 +84,7 @@ void LedPainter::drawSelectedPage(Leds &leds, int page) {
     }
     setLed(Key::Pattern);
     setLed(Key::Performer);
-    setLed(Key::Bpm);
+    setLed(Key::Tempo);
 }
 
 void LedPainter::drawSelectedSequencePage(Leds &leds, int page) {

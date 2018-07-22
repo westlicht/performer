@@ -31,7 +31,7 @@ private:
         Routing         = Key::Track7,
         Pattern         = Key::Pattern,
         Performer       = Key::Performer,
-        ClockSetup      = Key::Bpm,
+        ClockSetup      = Key::Tempo,
 
         // aux modes
         UserScale       = Key::Step0,

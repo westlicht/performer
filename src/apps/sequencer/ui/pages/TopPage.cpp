@@ -50,7 +50,7 @@ void TopPage::editRoute(Routing::Param param, int trackIndex) {
 
 void TopPage::updateLeds(Leds &leds) {
     leds.set(
-        Key::Start,
+        Key::Play,
         false,
         _engine.clockRunning() && _engine.tick() % CONFIG_PPQN < (CONFIG_PPQN / 8)
     );
@@ -95,15 +95,15 @@ void TopPage::keyPress(KeyPressEvent &event) {
         }
     }
 
-    if (key.isStart()) {
+    if (key.isPlay()) {
         _engine.togglePlay(key.shiftModifier());
         event.consume();
     }
 
-    if (key.isBpm()) {
+    if (key.isTempo()) {
         if (!key.pageModifier()) {
-            // bpm page
-            pages.bpm.show();
+            // tempo page
+            pages.tempo.show();
         }
     }
 

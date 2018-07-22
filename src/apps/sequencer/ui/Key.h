@@ -45,8 +45,8 @@ public:
         Global5 = 29,
         Global6 = 30,
         Global7 = 31,
-        Start = Global0,
-        Bpm = Global1,
+        Play = Global0,
+        Tempo = Global1,
         Pattern = Global2,
         Performer = Global3,
         Left = Global4,
@@ -77,8 +77,8 @@ public:
 
     // individual buttons
 
-    bool isStart() const { return _code == Start; }
-    bool isBpm() const { return _code == Bpm; }
+    bool isPlay() const { return _code == Play; }
+    bool isTempo() const { return _code == Tempo; }
     bool isPattern() const { return _code == Pattern; }
     bool isPerformer() const { return _code == Performer; }
     bool isLeft() const { return _code == Left; }
@@ -119,7 +119,7 @@ public:
 
     bool isEncoder() const { return is(Encoder); }
 
-    bool isGlobal() const { return isStart() || isBpm(); }
+    bool isGlobal() const { return isPlay() || isTempo(); }
 
 private:
     int _code;

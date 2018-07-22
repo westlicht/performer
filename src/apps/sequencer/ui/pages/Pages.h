@@ -2,7 +2,6 @@
 
 #include "Config.h"
 
-#include "BpmPage.h"
 #include "BusyPage.h"
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
@@ -10,6 +9,8 @@
 #include "CurveSequenceEditPage.h"
 #include "CurveSequencePage.h"
 #include "FileSelectPage.h"
+#include "GeneratorPage.h"
+#include "GeneratorSelectPage.h"
 #include "LayoutPage.h"
 #include "MonitorPage.h"
 #include "NoteSequenceEditPage.h"
@@ -17,17 +18,16 @@
 #include "PatternPage.h"
 #include "PerformerPage.h"
 #include "ProjectPage.h"
+#include "QuickEditPage.h"
 #include "RoutePage.h"
 #include "RoutingPage.h"
+#include "SettingsPage.h"
 #include "SongPage.h"
+#include "TempoPage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
 #include "TrackPage.h"
 #include "UserScalePage.h"
-#include "GeneratorPage.h"
-#include "GeneratorSelectPage.h"
-#include "SettingsPage.h"
-#include "QuickEditPage.h"
 
 #ifdef CONFIG_ENABLE_INTRO
 #include "IntroPage.h"
@@ -54,7 +54,7 @@ struct Pages {
     UserScalePage userScale;
     SettingsPage settings;
     // modal pages
-    BpmPage bpm;
+    TempoPage tempo;
     ClockSetupPage clockSetup;
     MonitorPage monitor;
     FileSelectPage fileSelect;
@@ -93,7 +93,7 @@ struct Pages {
         userScale(manager, context),
         settings(manager, context),
         // modal pages
-        bpm(manager, context),
+        tempo(manager, context),
         clockSetup(manager, context),
         monitor(manager, context),
         fileSelect(manager, context),

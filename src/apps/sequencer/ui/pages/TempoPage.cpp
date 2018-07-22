@@ -1,30 +1,30 @@
-#include "BpmPage.h"
+#include "TempoPage.h"
 
 #include "ui/painters/WindowPainter.h"
 
 #include "core/utils/StringBuilder.h"
 
-BpmPage::BpmPage(PageManager &manager, PageContext &context) :
+TempoPage::TempoPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {
 }
 
-void BpmPage::enter() {
+void TempoPage::enter() {
     _engine.tapTempoReset();
 }
 
-void BpmPage::exit() {
+void TempoPage::exit() {
     _engine.nudgeTempoSetDirection(0);
 }
 
-void BpmPage::draw(Canvas &canvas) {
+void TempoPage::draw(Canvas &canvas) {
     WindowPainter::drawFrame(canvas, 16, 16, 256 - 32, 32);
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setFont(Font::Small);
     canvas.setColor(0xf);
 
-    FixedStringBuilder<16> string("BPM: %.1f", _project.bpm());
+    FixedStringBuilder<16> string("Tempo: %.1f", _project.bpm());
     canvas.drawText(50, 34, string);
 
     float nudgeTempoStrength = _engine.nudgeTempoStrength();
@@ -37,13 +37,13 @@ void BpmPage::draw(Canvas &canvas) {
     }
 }
 
-void BpmPage::updateLeds(Leds &leds) {
+void TempoPage::updateLeds(Leds &leds) {
 }
 
-void BpmPage::keyDown(KeyEvent &event) {
+void TempoPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.isStart()) {
+    if (key.isPlay()) {
         // tap tempo
         _engine.tapTempoTap();
     } else if (key.isLeft()) {
@@ -57,10 +57,10 @@ void BpmPage::keyDown(KeyEvent &event) {
     event.consume();
 }
 
-void BpmPage::keyUp(KeyEvent &event) {
+void TempoPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.isBpm()) {
+    if (key.isTempo()) {
         close();
     } else if (key.isLeft() || key.isRight()) {
         // reset nudge
@@ -70,7 +70,7 @@ void BpmPage::keyUp(KeyEvent &event) {
     event.consume();
 }
 
-void BpmPage::encoder(EncoderEvent &event) {
+void TempoPage::encoder(EncoderEvent &event) {
     _project.setBpm(_project.bpm() + event.value() * (event.pressed() ? 0.1f : 1.f) * (globalKeyState()[Key::Shift] ? 10.f : 1.f));
 
     event.consume();
