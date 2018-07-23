@@ -131,6 +131,9 @@ private:
     virtual void onClockOutput(const Clock::OutputState &state) override;
     virtual void onClockMidi(uint8_t data) override;
 
+    void setRunning(bool running);
+    void setSelectedTrack(int selectedTrackIndex);
+
     void updateTrackSetups();
     void updateTrackOutputs();
     void resetTrackEngines();

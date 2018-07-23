@@ -23,6 +23,7 @@ void CurveTrackEngine::reset() {
     _sequenceState.reset();
     _currentStep = -1;
     _currentStepFraction = 0.f;
+
     changePattern();
 }
 

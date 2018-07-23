@@ -299,5 +299,5 @@ private:
     NoteSequence::Layer _selectedNoteSequenceLayer = NoteSequence::Layer(0);
     CurveSequence::Layer _selectedCurveSequenceLayer = CurveSequence::Layer(0);
 
-    Observable<Property, 1> _observable;
+    Observable<Property, 2> _observable;
 };

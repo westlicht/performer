@@ -43,11 +43,11 @@ static int evalStepLength(const NoteSequence::Step &step, int lengthOffset) {
 }
 
 // evaluate note voltage
-static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, int rootNote, int octave, int transpose) {
+static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, int rootNote, int octave, int transpose, bool useVariation = true) {
     int note = step.note() + (scale.isChromatic() ? rootNote : 0) + octave * scale.notesPerOctave() + transpose;
     if (step.noteVariationProbability() > 0) {
-        if (int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) < step.noteVariationProbability()) {
-            int offset =step.noteVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.noteVariationRange()) + 1);
+        if (useVariation && int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) < step.noteVariationProbability()) {
+            int offset = step.noteVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.noteVariationRange()) + 1);
             if (step.noteVariationRange() < 0) {
                 offset = -offset;
             }
@@ -57,19 +57,22 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, in
     return scale.noteVolts(note);
 }
 
-
 void NoteTrackEngine::reset() {
     _sequenceState.reset();
     _currentStep = -1;
     _gate = false;
-    _idleOutput = false;
-    _gateOutput = false;
+    _gateOutput =false;
     _cvOutput = 0.f;
     _cvOutputTarget = 0.f;
     _slideActive = false;
     _gateQueue.clear();
     _cvQueue.clear();
+
     changePattern();
+}
+
+void NoteTrackEngine::setRunning(bool running) {
+    _running = running;
 }
 
 void NoteTrackEngine::tick(uint32_t tick) {
@@ -143,19 +146,35 @@ void NoteTrackEngine::changePattern() {
     _fillSequence = &_noteTrack.sequence(std::min(pattern() + 1, CONFIG_PATTERN_COUNT - 1));
 }
 
-void NoteTrackEngine::setIdleStep(int index) {
-    _idleOutput = true;
-    const auto &sequence = *_sequence;
-    const auto &step = sequence.step(index);
-    const auto &scale = sequence.selectedScale();
-    int rootNote = sequence.selectedRootNote();
-    int octave = _noteTrack.octave();
-    int transpose = _noteTrack.transpose();
-    _idleCvOutput = evalStepNote(step, scale, rootNote, octave, transpose);
+bool NoteTrackEngine::activity() const {
+    bool monitoring = !_running && _selected;
+    return monitoring ? (_monitorStep != -1) : _gate;
 }
 
-void NoteTrackEngine::setIdleGate(bool gate) {
-    _idleGateOutput = gate;
+bool NoteTrackEngine::gateOutput(int index) const {
+    bool monitoring = !_running && _selected;
+    return monitoring ? (_monitorStep != -1) : _gate;
+}
+
+float NoteTrackEngine::cvOutput(int index) const {
+    bool monitoring = !_running && _selected;
+    return monitoring && (_monitorStep >= 0) ? _monitorStepCv : _cvOutput;
+}
+
+void NoteTrackEngine::setMonitorStep(int index) {
+    if (index >= 0 && index < CONFIG_STEP_COUNT) {
+        const auto &sequence = *_sequence;
+        const auto &step = sequence.step(index);
+        const auto &scale = sequence.selectedScale();
+        int rootNote = sequence.selectedRootNote();
+        int octave = _noteTrack.octave();
+        int transpose = _noteTrack.transpose();
+
+        _monitorStepCv = evalStepNote(step, scale, rootNote, octave, transpose);
+        _monitorStep = index;
+    } else {
+        _monitorStep = -1;
+    }
 }
 
 void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {

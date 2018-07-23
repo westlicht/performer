@@ -55,14 +55,8 @@ public:
 
     // sequencer control
 
-    int swing() const { return _model.project().swing(); }
-
-    int pattern() const { return _trackState.pattern(); }
-
-    bool mute() const { return _trackState.mute(); }
-    bool fill() const { return _trackState.fill(); }
-
     virtual void reset() = 0;
+    virtual void setRunning(bool running) {}
     virtual void tick(uint32_t tick) = 0;
     virtual void update(float dt) = 0;
     virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message) {}
@@ -70,18 +64,22 @@ public:
 
     virtual const TrackLinkData *linkData() const { return nullptr; }
 
+    virtual void setSelected(bool selected) {}
+
     // track output
 
     virtual bool activity() const = 0;
     virtual bool gateOutput(int index) const = 0;
     virtual float cvOutput(int index) const = 0;
 
-    // idle track output
+    // helpers
 
-    virtual bool idleOutput() const { return false; }
-    virtual bool idleGateOutput(int index) const { return false; }
-    virtual float idleCvOutput(int index) const { return 0.f; }
-    virtual void clearIdleOutput() {}
+    int swing() const { return _model.project().swing(); }
+
+    int pattern() const { return _trackState.pattern(); }
+    bool mute() const { return _trackState.mute(); }
+    bool fill() const { return _trackState.fill(); }
+
 
 protected:
     const Model &_model;

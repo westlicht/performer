@@ -13,28 +13,25 @@ public:
     {}
 
     virtual void reset() override;
+    virtual void setRunning(bool running) override;
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
     virtual void changePattern() override;
 
     virtual const TrackLinkData *linkData() const override { return &_linkData; }
 
-    virtual bool activity() const override { return _gate; }
-    virtual bool gateOutput(int index) const override { return _gateOutput; }
-    virtual float cvOutput(int index) const override { return _cvOutput; }
+    virtual void setSelected(bool selected) override { _selected = selected; }
 
-    virtual bool idleOutput() const override { return _idleOutput; }
-    virtual bool idleGateOutput(int index) const override { return _idleGateOutput; }
-    virtual float idleCvOutput(int index) const override { return _idleCvOutput; }
-    virtual void clearIdleOutput() override { _idleOutput = false; }
+    virtual bool activity() const override;
+    virtual bool gateOutput(int index) const override;
+    virtual float cvOutput(int index) const override;
 
     const NoteSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
 
     int currentStep() const { return _currentStep; }
 
-    void setIdleStep(int index);
-    void setIdleGate(bool gate);
+    void setMonitorStep(int index);
 
     static constexpr Track::TrackMode trackMode = Track::TrackMode::Note;
 
@@ -51,15 +48,17 @@ private:
     SequenceState _sequenceState;
     int _currentStep;
 
+    int _monitorStep = -1;
+    float _monitorStepCv = 0.f;
+
+    bool _running = false;
+    bool _selected = false;
+
     bool _gate;
     bool _gateOutput;
     float _cvOutput;
     float _cvOutputTarget;
     bool _slideActive;
-
-    bool _idleOutput;
-    bool _idleGateOutput;
-    float _idleCvOutput;
 
     struct Gate {
         uint32_t tick;

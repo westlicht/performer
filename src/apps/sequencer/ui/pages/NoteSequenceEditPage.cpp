@@ -44,6 +44,7 @@ NoteSequenceEditPage::NoteSequenceEditPage(PageManager &manager, PageContext &co
 
 void NoteSequenceEditPage::enter() {
     resetKeyState();
+    updateMonitorStep();
 
     _showDetail = false;
 }
@@ -212,12 +213,12 @@ void NoteSequenceEditPage::updateLeds(Leds &leds) {
 
 void NoteSequenceEditPage::keyDown(KeyEvent &event) {
     _stepSelection.keyDown(event, stepOffset());
-    updateIdleOutput();
+    updateMonitorStep();
 }
 
 void NoteSequenceEditPage::keyUp(KeyEvent &event) {
     _stepSelection.keyUp(event, stepOffset());
-    updateIdleOutput();
+    updateMonitorStep();
 }
 
 void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
@@ -241,7 +242,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
 
     _stepSelection.keyPress(event, stepOffset());
-    updateIdleOutput();
+    updateMonitorStep();
 
     if (!key.shiftModifier() && key.isStep()) {
         int stepIndex = stepOffset() + key.step();
@@ -353,14 +354,14 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
                     setToFirst ? firstStep.note() :
                     step.note() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1)
                 );
-                updateIdleOutput();
+                updateMonitorStep();
                 break;
             case Layer::NoteVariationRange:
                 step.setNoteVariationRange(
                     setToFirst ? firstStep.noteVariationRange() :
                     step.noteVariationRange() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1)
                 );
-                updateIdleOutput();
+                updateMonitorStep();
                 break;
             case Layer::NoteVariationProbability:
                 step.setNoteVariationProbability(
@@ -402,10 +403,8 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
                 }
             }
 
-            trackEngine.setIdleStep(_stepSelection.first());
-            trackEngine.setIdleGate(true);
-        } else if (message.isNoteOff()) {
-            trackEngine.setIdleGate(false);
+            trackEngine.setMonitorStep(_stepSelection.first());
+            updateMonitorStep();
         }
     }
 }
@@ -487,14 +486,13 @@ int NoteSequenceEditPage::activeFunctionKey() {
     return -1;
 }
 
-void NoteSequenceEditPage::updateIdleOutput() {
+void NoteSequenceEditPage::updateMonitorStep() {
     auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
 
     if (layer() == Layer::Note && !_stepSelection.isPersisted() && _stepSelection.any()) {
-        trackEngine.setIdleStep(_stepSelection.first());
-        trackEngine.setIdleGate(true);
+        trackEngine.setMonitorStep(_stepSelection.first());
     } else {
-        trackEngine.setIdleGate(false);
+        trackEngine.setMonitorStep(-1);
     }
 }
 

@@ -38,6 +38,18 @@ void Engine::init() {
     resetTrackEngines();
 
     _lastSystemTicks = os::ticks();
+
+    setSelectedTrack(_model.project().selectedTrackIndex());
+
+    _model.project().watch([this] (Project::Property property) {
+        switch (property) {
+        case Project::Property::SelectedTrackIndex:
+            setSelectedTrack(_model.project().selectedTrackIndex());
+            break;
+        default:
+            break;
+        }
+    });
 }
 
 void Engine::update() {
@@ -77,21 +89,21 @@ void Engine::update() {
         switch (event) {
         case Clock::Start:
             DBG("START");
-            _running = true;
             resetTrackEngines();
+            setRunning(true);
             break;
         case Clock::Stop:
             DBG("STOP");
-            _running = false;
+            setRunning(false);
             break;
         case Clock::Continue:
             DBG("CONTINUE");
-            _running = true;
+            setRunning(true);
             break;
         case Clock::Reset:
             DBG("RESET");
-            _running = false;
             resetTrackEngines();
+            setRunning(false);
             break;
         }
     }
@@ -289,6 +301,20 @@ void Engine::onClockMidi(uint8_t data) {
     }
 }
 
+void Engine::setRunning(bool running) {
+    _running = running;
+
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        _trackEngines[trackIndex]->setRunning(running);
+    }
+}
+
+void Engine::setSelectedTrack(int selectedTrackIndex) {
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        _trackEngines[trackIndex]->setSelected(trackIndex == selectedTrackIndex);
+    }
+}
+
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &track = _model.project().track(trackIndex);
@@ -317,7 +343,6 @@ void Engine::updateTrackSetups() {
 }
 
 void Engine::updateTrackOutputs() {
-    bool isIdle = _clock.isIdle();
     const auto &gateOutputTracks = _model.project().gateOutputTracks();
     const auto &cvOutputTracks = _model.project().cvOutputTracks();
 
@@ -330,24 +355,13 @@ void Engine::updateTrackOutputs() {
     }
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        if (trackIndex != _model.project().selectedTrackIndex()) {
-            _trackEngines[trackIndex]->clearIdleOutput();
-        }
         int gateOutputTrack = gateOutputTracks[trackIndex];
         if (!_gateOutputOverride) {
-            if (isIdle && _trackEngines[gateOutputTrack]->idleOutput()) {
-                _gateOutput.setGate(trackIndex, _trackEngines[gateOutputTrack]->idleGateOutput(trackGateIndex[gateOutputTrack]++));
-            } else {
-                _gateOutput.setGate(trackIndex, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
-            }
+            _gateOutput.setGate(trackIndex, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
         }
         int cvOutputTrack = cvOutputTracks[trackIndex];
         if (!_cvOutputOverride) {
-            if (isIdle && _trackEngines[cvOutputTrack]->idleOutput()) {
-                _cvOutput.setChannel(trackIndex, _trackEngines[cvOutputTrack]->idleCvOutput(trackCvIndex[cvOutputTrack]++));
-            } else {
-                _cvOutput.setChannel(trackIndex, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
-            }
+            _cvOutput.setChannel(trackIndex, _trackEngines[cvOutputTrack]->cvOutput(trackCvIndex[cvOutputTrack]++));
         }
     }
 }

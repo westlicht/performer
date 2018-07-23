@@ -35,7 +35,7 @@ private:
     void switchLayer(int functionKey);
     int activeFunctionKey();
 
-    void updateIdleOutput();
+    void updateMonitorStep();
     void drawDetail(Canvas &canvas, const NoteSequence::Step &step);
 
     void contextShow();
