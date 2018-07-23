@@ -101,7 +101,7 @@ void PatternPage::draw(Canvas &canvas) {
         canvas.setColor(trackSelected ? 0xf : 0x7);
         canvas.drawTextCentered(x, y + 10, w, 8, snapshotActive ? "S" : FixedStringBuilder<8>("P%d", trackState.pattern() + 1));
 
-        if (trackState.pattern() != trackState.requestedPattern()) {
+        if (trackState.hasPatternRequest() && trackState.pattern() != trackState.requestedPattern()) {
             hasRequested = true;
         }
     }

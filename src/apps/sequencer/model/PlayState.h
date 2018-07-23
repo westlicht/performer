@@ -26,6 +26,7 @@ public:
     public:
         bool mute() const { return _state & Mute; }
         bool requestedMute() const { return _state & RequestedMute; }
+        bool hasMuteRequest() const { return hasRequests(State::MuteRequests); }
 
         bool fill() const { return _state & Fill; }
 

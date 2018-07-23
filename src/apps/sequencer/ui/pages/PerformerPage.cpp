@@ -43,7 +43,6 @@ void PerformerPage::draw(Canvas &canvas) {
     constexpr int Border = 4;
     constexpr int BorderRequested = 6;
 
-
     float syncMeasureFraction = _engine.syncMeasureFraction();
     bool hasRequested = false;
 
@@ -71,7 +70,7 @@ void PerformerPage::draw(Canvas &canvas) {
         canvas.drawRect(x, y, w, h);
 
         canvas.setColor(0xf);
-        if (trackState.mute() != trackState.requestedMute()) {
+        if (trackState.hasMuteRequest() && trackState.mute() != trackState.requestedMute()) {
             hasRequested = true;
             canvas.fillRect(x + BorderRequested, y + BorderRequested, w - 2 * BorderRequested, h - 2 * BorderRequested);
         } else if (trackState.mute()) {
