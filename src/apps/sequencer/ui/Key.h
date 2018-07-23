@@ -53,8 +53,6 @@ public:
         Right = Global5,
         Shift = Global6,
         Page = Global7,
-        // Page = 30,
-        // Shift = 31,
         F0 = MatrixMap::fromFunction(0),
         F1 = MatrixMap::fromFunction(1),
         F2 = MatrixMap::fromFunction(2),

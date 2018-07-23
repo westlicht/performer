@@ -143,7 +143,7 @@ void TopPage::setMode(Mode mode) {
         pages.performer.setModal(false);
         setMainPage(pages.performer);
         break;
-    case Mode::ClockSetup:
+    case Mode::Clock:
         setMainPage(pages.clockSetup);
         break;
     case Mode::Song:

@@ -2,6 +2,7 @@
 #include "Leds.h"
 #include "MatrixMap.h"
 #include "Key.h"
+#include "PageKeyMap.h"
 
 #include "engine/Engine.h"
 
@@ -71,8 +72,9 @@ void LedPainter::drawStepIndex(Leds &leds, int index) {
 
 void LedPainter::drawSelectedPage(Leds &leds, int page) {
     auto setLed = [&] (int code) {
+        bool isPageKey = PageKeyMap::isPageKey(code);
         bool selected = page == code;
-        leds.set(code, selected, selected);
+        leds.set(code, selected, isPageKey);
         leds.mask(code);
     };
 
