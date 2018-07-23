@@ -26,7 +26,7 @@
 #include "SystemConfig.h"
 
 #if CONFIG_ENABLE_USBH_DEBUG
-# define USART_DEBUG
+# define USART_DEBUG 1
 #endif
 
 #define USE_STM32F4_USBH_DRIVER_FS 1
