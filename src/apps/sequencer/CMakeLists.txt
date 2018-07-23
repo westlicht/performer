@@ -15,7 +15,6 @@ set(sources
     engine/NoteTrackEngine.cpp
     engine/RoutingEngine.cpp
     engine/SequenceState.cpp
-    engine/TrackEngine.cpp
     # engine/generators
     engine/generators/EuclideanGenerator.cpp
     engine/generators/Generator.cpp

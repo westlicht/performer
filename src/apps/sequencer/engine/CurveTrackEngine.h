@@ -7,8 +7,8 @@
 
 class CurveTrackEngine : public TrackEngine {
 public:
-    CurveTrackEngine(const Track &track, const TrackEngine *linkedTrackEngine) :
-        TrackEngine(track, linkedTrackEngine),
+    CurveTrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
+        TrackEngine(model, track, linkedTrackEngine),
         _curveTrack(track.curveTrack())
     {}
 
@@ -20,7 +20,7 @@ public:
     virtual const TrackLinkData *linkData() const override { return &_linkData; }
 
     virtual bool activity() const override { return false; }
-    virtual bool gateOutput(int index) const override { return !_mute; }
+    virtual bool gateOutput(int index) const override { return !mute(); }
     virtual float cvOutput(int index) const override { return _cvOutput; }
 
     const CurveSequence &sequence() const { return *_sequence; }

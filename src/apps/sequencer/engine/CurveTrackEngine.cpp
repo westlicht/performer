@@ -73,7 +73,7 @@ void CurveTrackEngine::update(float dt) {
 }
 
 void CurveTrackEngine::changePattern() {
-    _sequence = &_curveTrack.sequence(_pattern);
+    _sequence = &_curveTrack.sequence(pattern());
 }
 
 void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {

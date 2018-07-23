@@ -5,12 +5,10 @@
 #include "SortedQueue.h"
 #include "Groove.h"
 
-#include "model/Track.h"
-
 class NoteTrackEngine : public TrackEngine {
 public:
-    NoteTrackEngine(const Track &track, const TrackEngine *linkedTrackEngine) :
-        TrackEngine(track, linkedTrackEngine),
+    NoteTrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
+        TrackEngine(model, track, linkedTrackEngine),
         _noteTrack(track.noteTrack())
     {}
 

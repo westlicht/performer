@@ -35,7 +35,6 @@ void Engine::init() {
 
     // setup track engines
     updateTrackSetups();
-    updateTrackSequences();
     resetTrackEngines();
 
     _lastSystemTicks = os::ticks();
@@ -302,33 +301,18 @@ void Engine::updateTrackSetups() {
 
             switch (track.trackMode()) {
             case Track::TrackMode::Note:
-                trackEngine = trackContainer.create<NoteTrackEngine>(track, linkedTrackEngine);
+                trackEngine = trackContainer.create<NoteTrackEngine>(_model, track, linkedTrackEngine);
                 break;
             case Track::TrackMode::Curve:
-                trackEngine = trackContainer.create<CurveTrackEngine>(track, linkedTrackEngine);
+                trackEngine = trackContainer.create<CurveTrackEngine>(_model, track, linkedTrackEngine);
                 break;
             case Track::TrackMode::MidiCv:
-                trackEngine = trackContainer.create<MidiCvTrackEngine>(track, linkedTrackEngine);
+                trackEngine = trackContainer.create<MidiCvTrackEngine>(_model, track, linkedTrackEngine);
                 break;
             case Track::TrackMode::Last:
                 break;
             }
-
-            const auto &trackState = _model.project().playState().trackState(trackIndex);
-            trackEngine->setMute(trackState.mute());
-            trackEngine->setFill(trackState.fill());
-            trackEngine->setPattern(trackState.pattern());
         }
-
-        _trackEngines[trackIndex]->setSwing(_model.project().swing());
-    }
-}
-
-void Engine::updateTrackSequences() {
-    auto &project = _model.project();
-
-    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        _trackEngines[trackIndex]->setPattern(project.playState().trackState(trackIndex).pattern());
     }
 }
 
@@ -495,12 +479,7 @@ void Engine::updatePlayState(bool ticked) {
 
     if (hasRequests | handleSongAdvance) {
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-            auto &trackState = playState.trackState(trackIndex);
-            auto &trackEngine = *_trackEngines[trackIndex];
-
-            trackEngine.setMute(trackState.mute());
-            trackEngine.setFill(trackState.fill());
-            trackEngine.setPattern(trackState.pattern());
+            _trackEngines[trackIndex]->changePattern();
         }
     }
 }

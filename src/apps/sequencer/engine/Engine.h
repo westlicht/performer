@@ -132,7 +132,6 @@ private:
     virtual void onClockMidi(uint8_t data) override;
 
     void updateTrackSetups();
-    void updateTrackSequences();
     void updateTrackOutputs();
     void resetTrackEngines();
     void updatePlayState(bool ticked);

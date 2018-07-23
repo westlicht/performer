@@ -4,8 +4,7 @@
 
 #include "MidiPort.h"
 
-#include "model/Track.h"
-#include "model/PlayState.h"
+#include "model/Model.h"
 
 #include "core/midi/MidiMessage.h"
 
@@ -27,47 +26,41 @@ struct TrackLinkData {
 
 class TrackEngine {
 public:
-    TrackEngine(const Track &track, const TrackEngine *linkedTrackEngine) :
+    TrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
+        _model(model),
         _track(track),
-        _trackMode(track.trackMode()),
-        _linkedTrackEngine(linkedTrackEngine),
-        _pattern(0),
-        _mute(false),
-        _fill(false)
+        _trackState(model.project().playState().trackState(track.trackIndex())),
+        _linkedTrackEngine(linkedTrackEngine)
     {
+        changePattern();
     }
 
     void setLinkedTrackEngine(const TrackEngine *linkedTrackEngine) {
         _linkedTrackEngine = linkedTrackEngine;
     }
 
-    Track::TrackMode trackMode() const { return _trackMode; }
+    Track::TrackMode trackMode() const { return _track.trackMode(); }
 
     template<typename T>
     const T &as() const {
-        SANITIZE_TRACK_MODE(_trackMode, T::trackMode);
+        SANITIZE_TRACK_MODE(_track.trackMode(), T::trackMode);
         return *static_cast<const T *>(this);
     }
 
     template<typename T>
     T &as() {
-        SANITIZE_TRACK_MODE(_trackMode, T::trackMode);
+        SANITIZE_TRACK_MODE(_track.trackMode(), T::trackMode);
         return *static_cast<T *>(this);
     }
 
     // sequencer control
 
-    int swing() const { return _swing; }
-    void setSwing(int swing);
+    int swing() const { return _model.project().swing(); }
 
-    int pattern() const { return _pattern; }
-    void setPattern(int pattern);
+    int pattern() const { return _trackState.pattern(); }
 
-    bool mute() const { return _mute; }
-    void setMute(bool mute);
-
-    bool fill() const { return _fill; }
-    void setFill(bool fill);
+    bool mute() const { return _trackState.mute(); }
+    bool fill() const { return _trackState.fill(); }
 
     virtual void reset() = 0;
     virtual void tick(uint32_t tick) = 0;
@@ -91,14 +84,10 @@ public:
     virtual void clearIdleOutput() {}
 
 protected:
+    const Model &_model;
     const Track &_track;
-    Track::TrackMode _trackMode;
+    const PlayState::TrackState &_trackState;
     const TrackEngine *_linkedTrackEngine;
-
-    uint8_t _swing;
-    uint8_t _pattern;
-    bool _mute;
-    bool _fill;
 };
 
 #undef SANITIZE_TRACK_MODE

@@ -119,7 +119,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
 
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
         _gate = _gateQueue.front().gate;
-        _gateOutput = (!_mute || _fill) && _gate;
+        _gateOutput = (!mute() || fill()) && _gate;
         _gateQueue.pop();
     }
 
@@ -139,8 +139,8 @@ void NoteTrackEngine::update(float dt) {
 }
 
 void NoteTrackEngine::changePattern() {
-    _sequence = &_noteTrack.sequence(_pattern);
-    _fillSequence = &_noteTrack.sequence(std::min(_pattern + 1, CONFIG_PATTERN_COUNT - 1));
+    _sequence = &_noteTrack.sequence(pattern());
+    _fillSequence = &_noteTrack.sequence(std::min(pattern() + 1, CONFIG_PATTERN_COUNT - 1));
 }
 
 void NoteTrackEngine::setIdleStep(int index) {
@@ -162,8 +162,8 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     int octave = _noteTrack.octave();
     int transpose = _noteTrack.transpose();
     int rotate = _noteTrack.rotate();
-    bool useFillGates = _fill && _noteTrack.fillMode() == Types::FillMode::Gates;
-    bool useFillSequence = _fill && _noteTrack.fillMode() == Types::FillMode::NextPattern;
+    bool useFillGates = fill() && _noteTrack.fillMode() == Types::FillMode::Gates;
+    bool useFillSequence = fill() && _noteTrack.fillMode() == Types::FillMode::NextPattern;
 
     const auto &sequence = *_sequence;
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
@@ -193,5 +193,5 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
 }
 
 uint32_t NoteTrackEngine::applySwing(uint32_t tick) {
-    return Groove::swing(tick, CONFIG_PPQN / 4, _swing);
+    return Groove::swing(tick, CONFIG_PPQN / 4, swing());
 }
