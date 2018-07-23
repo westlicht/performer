@@ -39,12 +39,12 @@ void Engine::init() {
 
     _lastSystemTicks = os::ticks();
 
-    setSelectedTrack(_model.project().selectedTrackIndex());
+    updateSelectedTrack();
 
     _model.project().watch([this] (Project::Property property) {
         switch (property) {
         case Project::Property::SelectedTrackIndex:
-            setSelectedTrack(_model.project().selectedTrackIndex());
+            updateSelectedTrack();
             break;
         default:
             break;
@@ -309,7 +309,8 @@ void Engine::setRunning(bool running) {
     }
 }
 
-void Engine::setSelectedTrack(int selectedTrackIndex) {
+void Engine::updateSelectedTrack() {
+    auto selectedTrackIndex = _model.project().selectedTrackIndex();
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         _trackEngines[trackIndex]->setSelected(trackIndex == selectedTrackIndex);
     }

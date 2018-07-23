@@ -71,10 +71,6 @@ void NoteTrackEngine::reset() {
     changePattern();
 }
 
-void NoteTrackEngine::setRunning(bool running) {
-    _running = running;
-}
-
 void NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
@@ -136,10 +132,27 @@ void NoteTrackEngine::tick(uint32_t tick) {
 void NoteTrackEngine::update(float dt) {
     // override due to step monitoring
     if (!_running && _selected) {
-        bool active = _monitorStep >= 0;
-        _activity = _gateOutput = active;
-        if (active) {
-            _cvOutputTarget = _monitorStepCv;
+        const auto &sequence = *_sequence;
+        const auto &scale = sequence.selectedScale();
+        int rootNote = sequence.selectedRootNote();
+
+        if (_monitorStepIndex >= 0) {
+            const auto &step = sequence.step(_monitorStepIndex);
+            int octave = _noteTrack.octave();
+            int transpose = _noteTrack.transpose();
+            _cvOutputTarget = evalStepNote(step, scale, rootNote, octave, transpose, false);
+            _activity = _gateOutput = true;
+        } else if (_midiGate) {
+            if (scale.isChromatic()) {
+                int note = scale.noteFromVolts((_midiNote - 60 - rootNote) * (1.f / 12.f));
+                _cvOutputTarget = scale.noteVolts(note) + (rootNote / 12.f);
+            } else {
+                int note = scale.noteFromVolts((_midiNote - 60) * (1.f / 12.f));
+                _cvOutputTarget = scale.noteVolts(note);
+            }
+            _activity = _gateOutput = true;
+        } else {
+            _activity = _gateOutput = false;
         }
     }
 
@@ -150,25 +163,22 @@ void NoteTrackEngine::update(float dt) {
     }
 }
 
+void NoteTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessage &message) {
+    if (message.isNoteOn()) {
+        _midiGate = true;
+        _midiNote = message.note();
+    } else {
+        _midiGate = false;
+    }
+}
+
 void NoteTrackEngine::changePattern() {
     _sequence = &_noteTrack.sequence(pattern());
     _fillSequence = &_noteTrack.sequence(std::min(pattern() + 1, CONFIG_PATTERN_COUNT - 1));
 }
 
 void NoteTrackEngine::setMonitorStep(int index) {
-    if (index >= 0 && index < CONFIG_STEP_COUNT) {
-        const auto &sequence = *_sequence;
-        const auto &step = sequence.step(index);
-        const auto &scale = sequence.selectedScale();
-        int rootNote = sequence.selectedRootNote();
-        int octave = _noteTrack.octave();
-        int transpose = _noteTrack.transpose();
-
-        _monitorStepCv = evalStepNote(step, scale, rootNote, octave, transpose);
-        _monitorStep = index;
-    } else {
-        _monitorStep = -1;
-    }
+    _monitorStepIndex = (index >= 0 && index < CONFIG_STEP_COUNT) ? index : -1;
 }
 
 void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {

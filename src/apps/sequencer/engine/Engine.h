@@ -132,7 +132,9 @@ private:
     virtual void onClockMidi(uint8_t data) override;
 
     void setRunning(bool running);
-    void setSelectedTrack(int selectedTrackIndex);
+
+    void updateSelectedTrack();
+    void updateRecording();
 
     void updateTrackSetups();
     void updateTrackOutputs();
