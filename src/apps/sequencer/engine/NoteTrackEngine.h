@@ -22,9 +22,9 @@ public:
 
     virtual void setSelected(bool selected) override { _selected = selected; }
 
-    virtual bool activity() const override;
-    virtual bool gateOutput(int index) const override;
-    virtual float cvOutput(int index) const override;
+    virtual bool activity() const override { return _activity; }
+    virtual bool gateOutput(int index) const override { return _gateOutput; }
+    virtual float cvOutput(int index) const override { return _cvOutput; }
 
     const NoteSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
@@ -54,7 +54,7 @@ private:
     bool _running = false;
     bool _selected = false;
 
-    bool _gate;
+    bool _activity;
     bool _gateOutput;
     float _cvOutput;
     float _cvOutputTarget;

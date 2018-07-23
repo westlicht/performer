@@ -60,7 +60,7 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, in
 void NoteTrackEngine::reset() {
     _sequenceState.reset();
     _currentStep = -1;
-    _gate = false;
+    _activity = false;
     _gateOutput =false;
     _cvOutput = 0.f;
     _cvOutputTarget = 0.f;
@@ -121,8 +121,8 @@ void NoteTrackEngine::tick(uint32_t tick) {
     }
 
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
-        _gate = _gateQueue.front().gate;
-        _gateOutput = (!mute() || fill()) && _gate;
+        _activity = _gateQueue.front().gate;
+        _gateOutput = (!mute() || fill()) && _activity;
         _gateQueue.pop();
     }
 
@@ -134,6 +134,15 @@ void NoteTrackEngine::tick(uint32_t tick) {
 }
 
 void NoteTrackEngine::update(float dt) {
+    // override due to step monitoring
+    if (!_running && _selected) {
+        bool active = _monitorStep >= 0;
+        _activity = _gateOutput = active;
+        if (active) {
+            _cvOutputTarget = _monitorStepCv;
+        }
+    }
+
     if (_slideActive && _noteTrack.slideTime() > 0) {
         _cvOutput += (_cvOutputTarget - _cvOutput) * std::min(1.f, dt * (200 - 2 * _noteTrack.slideTime()));
     } else {
@@ -144,21 +153,6 @@ void NoteTrackEngine::update(float dt) {
 void NoteTrackEngine::changePattern() {
     _sequence = &_noteTrack.sequence(pattern());
     _fillSequence = &_noteTrack.sequence(std::min(pattern() + 1, CONFIG_PATTERN_COUNT - 1));
-}
-
-bool NoteTrackEngine::activity() const {
-    bool monitoring = !_running && _selected;
-    return monitoring ? (_monitorStep != -1) : _gate;
-}
-
-bool NoteTrackEngine::gateOutput(int index) const {
-    bool monitoring = !_running && _selected;
-    return monitoring ? (_monitorStep != -1) : _gate;
-}
-
-float NoteTrackEngine::cvOutput(int index) const {
-    bool monitoring = !_running && _selected;
-    return monitoring && (_monitorStep >= 0) ? _monitorStepCv : _cvOutput;
 }
 
 void NoteTrackEngine::setMonitorStep(int index) {
