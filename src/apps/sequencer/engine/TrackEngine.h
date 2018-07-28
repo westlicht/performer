@@ -29,6 +29,7 @@ public:
     TrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
         _model(model),
         _track(track),
+        _trackMode(track.trackMode()),
         _trackState(model.project().playState().trackState(track.trackIndex())),
         _linkedTrackEngine(linkedTrackEngine)
     {
@@ -39,7 +40,7 @@ public:
         _linkedTrackEngine = linkedTrackEngine;
     }
 
-    Track::TrackMode trackMode() const { return _track.trackMode(); }
+    Track::TrackMode trackMode() const { return _trackMode; }
 
     template<typename T>
     const T &as() const {
@@ -84,6 +85,7 @@ public:
 protected:
     const Model &_model;
     const Track &_track;
+    Track::TrackMode _trackMode;
     const PlayState::TrackState &_trackState;
     const TrackEngine *_linkedTrackEngine;
 };
