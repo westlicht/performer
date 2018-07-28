@@ -51,10 +51,11 @@ bool MidiCvTrackEngine::activity() const {
 }
 
 bool MidiCvTrackEngine::gateOutput(int index) const {
+    auto ticks = _voices[index % _midiCvTrack.voices()].ticks;
     if (_midiCvTrack.retrigger()) {
-        return _voices[index % _midiCvTrack.voices()].ticks > os::ticks() + RetriggerDelay;
+        return ticks > 0 && ticks - os::ticks() > RetriggerDelay;
     } else {
-        return _voices[index % _midiCvTrack.voices()].ticks > 0;
+        return ticks > 0;
     }
 }
 
