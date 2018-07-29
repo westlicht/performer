@@ -12,6 +12,8 @@ public:
     {
     }
 
+    virtual Track::TrackMode trackMode() const override { return Track::TrackMode::MidiCv; }
+
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
@@ -20,8 +22,6 @@ public:
     virtual bool activity() const override;
     virtual bool gateOutput(int index) const override;
     virtual float cvOutput(int index) const override;
-
-    static constexpr Track::TrackMode trackMode = Track::TrackMode::MidiCv;
 
 private:
     float noteToCv(int note) const;

@@ -12,6 +12,8 @@ public:
         _curveTrack(track.curveTrack())
     {}
 
+    virtual Track::TrackMode trackMode() const override { return Track::TrackMode::Curve; }
+
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
@@ -28,8 +30,6 @@ public:
 
     int currentStep() const { return _currentStep; }
     float currentStepFraction() const { return _currentStepFraction; }
-
-    static constexpr Track::TrackMode trackMode = Track::TrackMode::Curve;
 
 private:
     void updateOutput(uint32_t relativeTick, uint32_t divisor);

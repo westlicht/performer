@@ -29,7 +29,6 @@ public:
     TrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
         _model(model),
         _track(track),
-        _trackMode(track.trackMode()),
         _trackState(model.project().playState().trackState(track.trackIndex())),
         _linkedTrackEngine(linkedTrackEngine)
     {
@@ -40,19 +39,19 @@ public:
         _linkedTrackEngine = linkedTrackEngine;
     }
 
-    Track::TrackMode trackMode() const { return _trackMode; }
-
     template<typename T>
     const T &as() const {
-        SANITIZE_TRACK_MODE(_track.trackMode(), T::trackMode);
+        SANITIZE_TRACK_MODE(_track.trackMode(), trackMode());
         return *static_cast<const T *>(this);
     }
 
     template<typename T>
     T &as() {
-        SANITIZE_TRACK_MODE(_track.trackMode(), T::trackMode);
+        SANITIZE_TRACK_MODE(_track.trackMode(), trackMode());
         return *static_cast<T *>(this);
     }
+
+    virtual Track::TrackMode trackMode() const = 0;
 
     // sequencer control
 
@@ -85,7 +84,6 @@ public:
 protected:
     const Model &_model;
     const Track &_track;
-    Track::TrackMode _trackMode;
     const PlayState::TrackState &_trackState;
     const TrackEngine *_linkedTrackEngine;
 };

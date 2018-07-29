@@ -12,6 +12,8 @@ public:
         _noteTrack(track.noteTrack())
     {}
 
+    virtual Track::TrackMode trackMode() const override { return Track::TrackMode::Note; }
+
     virtual void reset() override;
     virtual void setRunning(bool running) override { _running = running; }
     virtual void tick(uint32_t tick) override;
@@ -33,8 +35,6 @@ public:
     int currentStep() const { return _currentStep; }
 
     void setMonitorStep(int index);
-
-    static constexpr Track::TrackMode trackMode = Track::TrackMode::Note;
 
 private:
     void triggerStep(uint32_t tick, uint32_t divisor);
