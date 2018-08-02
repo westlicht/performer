@@ -23,8 +23,8 @@ void LayoutPage::enter() {
 }
 
 void LayoutPage::draw(Canvas &canvas) {
-    bool showChange = _mode == Mode::TrackMode && !_trackModeListModel.sameAsProject(_project);
-    const char *functionNames[] = { "MODE", "LINK", "GATE", "CV", showChange ? "CHANGE" : nullptr };
+    bool showCommit = _mode == Mode::TrackMode && !_trackModeListModel.sameAsProject(_project);
+    const char *functionNames[] = { "MODE", "LINK", "GATE", "CV", showCommit ? "COMMIT" : nullptr };
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "LAYOUT");

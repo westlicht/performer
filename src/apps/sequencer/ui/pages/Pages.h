@@ -19,7 +19,6 @@
 #include "PerformerPage.h"
 #include "ProjectPage.h"
 #include "QuickEditPage.h"
-#include "RoutePage.h"
 #include "RoutingPage.h"
 #include "SettingsPage.h"
 #include "SongPage.h"
@@ -50,7 +49,6 @@ struct Pages {
     PerformerPage performer;
     SongPage song;
     RoutingPage routing;
-    RoutePage route;
     UserScalePage userScale;
     SettingsPage settings;
     // modal pages
@@ -89,7 +87,6 @@ struct Pages {
         performer(manager, context),
         song(manager, context),
         routing(manager, context),
-        route(manager, context),
         userScale(manager, context),
         settings(manager, context),
         // modal pages

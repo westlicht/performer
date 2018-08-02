@@ -25,24 +25,27 @@ void TopPage::init() {
 }
 
 void TopPage::editRoute(Routing::Param param, int trackIndex) {
+    auto &routing = _project.routing();
+
     if (param == Routing::Param::None) {
         return;
     }
 
-    int routeIndex = _project.routing().findRoute(param, trackIndex);
+    int routeIndex = routing.findRoute(param, trackIndex);
     if (routeIndex >= 0) {
         setMode(Mode::Routing);
-        _manager.pages().route.show(routeIndex);
+        _manager.pages().routing.show(routeIndex);
         return;
     }
 
-    routeIndex = _project.routing().findEmptyRoute();
+    routeIndex = routing.findEmptyRoute();
     if (routeIndex >= 0) {
+        routing.route(routeIndex).clear();
         Routing::Route initRoute;
         initRoute.setParam(param);
         initRoute.setTracks(1<<trackIndex);
         setMode(Mode::Routing);
-        _manager.pages().route.show(routeIndex, initRoute);
+        _manager.pages().routing.show(routeIndex, &initRoute);
     } else {
         showMessage("All routes are used!");
     }
