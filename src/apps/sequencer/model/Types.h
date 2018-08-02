@@ -49,8 +49,8 @@ public:
     enum class RunMode : uint8_t {
         Forward,
         Backward,
-        PingPong,
         Pendulum,
+        PingPong,
         Random,
         RandomWalk,
         Last
@@ -60,8 +60,8 @@ public:
         switch (runMode) {
         case RunMode::Forward:      return "Forward";
         case RunMode::Backward:     return "Backward";
-        case RunMode::PingPong:     return "PingPong";
         case RunMode::Pendulum:     return "Pendulum";
+        case RunMode::PingPong:     return "PingPong";
         case RunMode::Random:       return "Random";
         case RunMode::RandomWalk:   return "Random Walk";
         case RunMode::Last:         break;

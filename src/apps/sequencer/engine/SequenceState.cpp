@@ -18,8 +18,8 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
         // first step
         switch (runMode) {
         case Types::RunMode::Forward:
-        case Types::RunMode::PingPong:
         case Types::RunMode::Pendulum:
+        case Types::RunMode::PingPong:
             _step = firstStep;
             break;
         case Types::RunMode::Backward:
@@ -43,8 +43,8 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
         case Types::RunMode::Backward:
             _step = _step <= firstStep ? lastStep : _step - 1;
             break;
-        case Types::RunMode::PingPong:
         case Types::RunMode::Pendulum:
+        case Types::RunMode::PingPong:
             if (_direction > 0 && _step >= lastStep) {
                 _direction = -1;
             } else if (_direction < 0 && _step <= firstStep) {
@@ -77,13 +77,13 @@ void SequenceState::advanceAligned(int absoluteStep, Types::RunMode runMode, int
     case Types::RunMode::Forward:
         _step = firstStep + absoluteStep % stepCount;
         break;
-    case Types::RunMode::PingPong:
-        absoluteStep %= 2 * stepCount - 2;
-        _step = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount) - 1);
-        break;
     case Types::RunMode::Pendulum:
         absoluteStep %= 2 * stepCount;
         _step = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount));
+        break;
+    case Types::RunMode::PingPong:
+        absoluteStep %= 2 * stepCount - 2;
+        _step = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount) - 1);
         break;
     case Types::RunMode::Backward:
         _step = lastStep - absoluteStep % stepCount;
