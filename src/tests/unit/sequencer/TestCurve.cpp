@@ -70,7 +70,7 @@ UNIT_TEST("Curve") {
             drawCurve(i, filename);
             indices(" %d |", i + 1);
             separators(" --- |");
-            shapes(" <img width=\"%dpx\" height=\"%dpx\" src=\"images/%s\"/> |", Width, Height, (const char *)(filename));
+            shapes(" <img width=\"%d\" height=\"%d\" style=\"max-width: none\" src=\"images/%s\"/> |", Width, Height, (const char *)(filename));
         }
 
         DBG("----------------------------------------");
