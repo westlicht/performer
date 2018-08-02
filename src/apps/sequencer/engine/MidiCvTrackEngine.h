@@ -10,6 +10,7 @@ public:
         TrackEngine(model, track, linkedTrackEngine),
         _midiCvTrack(track.midiCvTrack())
     {
+        reset();
     }
 
     virtual Track::TrackMode trackMode() const override { return Track::TrackMode::MidiCv; }

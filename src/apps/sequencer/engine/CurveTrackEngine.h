@@ -10,7 +10,9 @@ public:
     CurveTrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
         TrackEngine(model, track, linkedTrackEngine),
         _curveTrack(track.curveTrack())
-    {}
+    {
+        reset();
+    }
 
     virtual Track::TrackMode trackMode() const override { return Track::TrackMode::Curve; }
 

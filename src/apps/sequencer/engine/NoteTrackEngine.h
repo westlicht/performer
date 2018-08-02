@@ -10,7 +10,9 @@ public:
     NoteTrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
         TrackEngine(model, track, linkedTrackEngine),
         _noteTrack(track.noteTrack())
-    {}
+    {
+        reset();
+    }
 
     virtual Track::TrackMode trackMode() const override { return Track::TrackMode::Note; }
 
