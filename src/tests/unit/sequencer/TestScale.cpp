@@ -57,11 +57,46 @@ UNIT_TEST("Scale") {
                 scale.noteName(longName, note, Scale::Long);
                 float volts = scale.noteVolts(note);
                 DBG("%-8.3f %-8d %-8.3f %-8s %-8s %-8s", voltsin, note, volts, (const char *)(short1Name), (const char *)(short2Name), (const char *)(longName));
-                // DBG("note = %d, volts = %f", note, volts);
             }
 
         }
     }
 
+#ifdef PLATFORM_SIM
+
+    CASE("markdown") {
+        DBG("----------------------------------------");
+        for (int i = 0; i < Scale::Count - 4; ++i) {
+            const auto &scale = Scale::get(i);
+            int notesPerOctave = scale.notesPerOctave();
+
+            DBG("<h4>%s</h4>", Scale::name(i));
+            FixedStringBuilder<4096> indices("| Index |");
+            FixedStringBuilder<4096> separators("| :--- |");
+            FixedStringBuilder<4096> names("| Name |");
+            FixedStringBuilder<4096> volts("| Volts |");
+            for (int note = 0; note < notesPerOctave; ++note) {
+                FixedStringBuilder<8> name;
+                if (scale.isChromatic()) {
+                    scale.noteName(name, note, Scale::Short1);
+                } else {
+                    scale.noteName(name, note, Scale::Short2);
+                }
+                indices(" %d |", note + 1);
+                separators(" --- |");
+                names(" %s |", (const char *)(name));
+                volts(" %.3f |", scale.noteVolts(note));
+            }
+            DBG("");
+            DBG("%s", (const char *)(indices));
+            DBG("%s", (const char *)(separators));
+            DBG("%s", (const char *)(names));
+            DBG("%s", (const char *)(volts));
+            DBG("");
+        }
+        DBG("----------------------------------------");
+    }
+
+#endif // PLATFORM_SIM
 
 }
