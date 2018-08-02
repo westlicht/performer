@@ -325,6 +325,8 @@ public:
                 for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
                     str("%c", (_tracks & (1<<i)) ? 'X' : '-');
                 }
+            } else {
+                str("n/a");
             }
         }
 

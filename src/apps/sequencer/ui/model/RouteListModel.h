@@ -29,10 +29,13 @@ public:
     {}
 
     virtual int rows() const override {
+        bool isEmpty = _route.param() == Routing::Param::None;
         bool isCvSource = Routing::isCvSource(_route.source());
         bool isMidiSource = Routing::isMidiSource(_route.source());
         bool hasNoteOrController = _route.midiSource().event() != Routing::MidiSource::Event::PitchBend;
-        if (isCvSource) {
+        if (isEmpty) {
+            return 1;
+        } else if (isCvSource) {
             return FirstSource + 1;
         } else if (isMidiSource) {
             return hasNoteOrController ? Last : int(Last) - 1;
