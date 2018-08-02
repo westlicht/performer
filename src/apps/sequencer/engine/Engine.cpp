@@ -112,7 +112,7 @@ void Engine::update() {
 
     // update tempo
     _nudgeTempo.update(dt);
-    _clock.setMasterBpm(_model.project().tempo() + _nudgeTempo.strength() * 10.f);
+    _clock.setMasterBpm(_model.project().tempo() * (1.f + _nudgeTempo.strength() * 0.1f));
 
     // update clock setup
     updateClockSetup();
