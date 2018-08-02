@@ -7,6 +7,7 @@
 enum class Function {
     Prev    = 0,
     Next    = 1,
+    Init    = 2,
     Learn   = 3,
     Commit  = 4,
 };
@@ -35,7 +36,7 @@ void RoutingPage::exit() {
 
 void RoutingPage::draw(Canvas &canvas) {
     bool showCommit = *_route != _editRoute;
-    const char *functionNames[] = { "PREV", "NEXT", nullptr, "LEARN", showCommit ? "COMMIT" : nullptr };
+    const char *functionNames[] = { "PREV", "NEXT", "INIT", "LEARN", showCommit ? "COMMIT" : nullptr };
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "ROUTING");
@@ -62,6 +63,10 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
         case Function::Next:
             selectRoute(_routeIndex + 1);
             break;
+        case Function::Init:
+            _engine.midiLearn().stop();
+            _editRoute.clear();
+            break;
         case Function::Learn:
             _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
                 // TODO this might be unsafe as callback is called from engine thread
@@ -70,6 +75,7 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
             });
             break;
         case Function::Commit:
+            _engine.midiLearn().stop();
             *_route = _editRoute;
             showMessage("ROUTE CHANGED");
             break;
@@ -102,6 +108,7 @@ void RoutingPage::showRoute(int routeIndex, const Routing::Route *initialValue) 
 void RoutingPage::selectRoute(int routeIndex) {
     routeIndex = clamp(routeIndex, 0, CONFIG_ROUTE_COUNT - 1);
     if (routeIndex != _routeIndex) {
+        _engine.midiLearn().stop();
         showRoute(routeIndex);
     }
 }
