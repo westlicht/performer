@@ -321,7 +321,7 @@ public:
         }
 
         void printTracks(StringBuilder &str) const {
-            if (isTrackParam(_param)) {
+            if (isTrackParam(_param) || isSequenceParam(_param)) {
                 for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
                     str("%c", (_tracks & (1<<i)) ? 'X' : '-');
                 }
