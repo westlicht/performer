@@ -41,6 +41,7 @@ void PatternPage::enter() {
     resetKeyState();
 
     _latching = false;
+    _syncing = false;
 }
 
 void PatternPage::exit() {
@@ -154,6 +155,9 @@ void PatternPage::keyDown(KeyEvent &event) {
         case Function::Latch:
             _latching = true;
             break;
+        case Function::Sync:
+            _syncing = true;
+            break;
         default:
             break;
         }
@@ -183,6 +187,10 @@ void PatternPage::keyUp(KeyEvent &event) {
             _latching = false;
             _project.playState().commitLatchedRequests();
             break;
+        case Function::Sync:
+            closePage = true;
+            _syncing = false;
+            break;
         default:
             break;
         }
@@ -194,7 +202,7 @@ void PatternPage::keyUp(KeyEvent &event) {
         event.consume();
     }
 
-    bool canClose = _modal && !_latching && !globalKeyState()[Key::Pattern];
+    bool canClose = _modal && !_latching && !_syncing && !globalKeyState()[Key::Pattern];
     if (canClose && closePage) {
         close();
     }
@@ -253,8 +261,7 @@ void PatternPage::keyPress(KeyPressEvent &event) {
                 // use immediate by default
                 // use latched when LATCH is pressed
                 // use synced when SYNC is pressed
-                bool syncPressed = keyState()[MatrixMap::fromFunction(int(Function::Sync))];
-                PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (syncPressed ? PlayState::Synced : PlayState::Immediate);
+                PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (_syncing ? PlayState::Synced : PlayState::Immediate);
 
                 bool globalChange = true;
                 for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {

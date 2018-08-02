@@ -25,6 +25,7 @@ void PerformerPage::enter() {
     resetKeyState();
 
     _latching = false;
+    _syncing = false;
 }
 
 void PerformerPage::exit() {
@@ -107,6 +108,9 @@ void PerformerPage::keyDown(KeyEvent &event) {
         case Function::Latch:
             _latching = true;
             break;
+        case Function::Sync:
+            _syncing = true;
+            break;
         case Function::Fill:
             updateFills();
             break;
@@ -139,6 +143,10 @@ void PerformerPage::keyUp(KeyEvent &event) {
             _latching = false;
             _project.playState().commitLatchedRequests();
             break;
+        case Function::Sync:
+            closePage = true;
+            _syncing = false;
+            break;
         case Function::Fill:
             updateFills();
             break;
@@ -153,7 +161,7 @@ void PerformerPage::keyUp(KeyEvent &event) {
         event.consume();
     }
 
-    bool canClose = _modal && !_latching && !globalKeyState()[Key::Performer];
+    bool canClose = _modal && !_latching && !_syncing && !globalKeyState()[Key::Performer];
     if (canClose && closePage) {
         close();
     }
@@ -174,8 +182,7 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
     // use immediate by default
     // use latched when LATCH is pressed
     // use synced when SYNC is pressed
-    bool syncPressed = keyState()[MatrixMap::fromFunction(int(Function::Sync))];
-    PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (syncPressed ? PlayState::Synced : PlayState::Immediate);
+    PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (_syncing ? PlayState::Synced : PlayState::Immediate);
 
     if (key.isFunction()) {
         switch (Function(key.function())) {

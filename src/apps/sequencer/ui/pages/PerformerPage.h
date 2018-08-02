@@ -26,4 +26,5 @@ private:
 
     bool _modal = false;
     bool _latching = false;
+    bool _syncing = false;
 };
