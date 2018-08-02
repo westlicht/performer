@@ -41,7 +41,7 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
                 break;
             case Routing::MidiSource::Event::PitchBend:
                 if (message.isPitchBend()) {
-                    sourceValue = (message.pitchBend() + 0x2000) * (1.f / 16384.f);
+                    sourceValue = (message.pitchBend() + 0x2000) * (1.f / 16383.f);
                 }
                 break;
             case Routing::MidiSource::Event::NoteMomentary:

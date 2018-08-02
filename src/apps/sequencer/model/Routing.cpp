@@ -305,6 +305,7 @@ float Routing::paramValueStep(Routing::Param param) {
 
 void Routing::printParamValue(Routing::Param param, float normalized, StringBuilder &str) {
     float value = denormalizeParamValue(param, normalized);
+    int intValue = std::round(value);
     switch (param) {
     case Param::None:
         str("-");
@@ -314,12 +315,12 @@ void Routing::printParamValue(Routing::Param param, float normalized, StringBuil
         break;
     case Param::Swing:
     case Param::TrackSlideTime:
-        str("%d%%", int(value));
+        str("%d%%", intValue);
         break;
     case Param::TrackOctave:
     case Param::TrackTranspose:
     case Param::TrackRotate:
-        str("%+d", int(value));
+        str("%+d", intValue);
         break;
     case Param::TrackStepProbabilityBias:
     case Param::TrackStepLengthBias:
@@ -327,10 +328,10 @@ void Routing::printParamValue(Routing::Param param, float normalized, StringBuil
         break;
     case Param::FirstStep:
     case Param::LastStep:
-        str("%d", int(value) + 1);
+        str("%d", intValue + 1);
         break;
     default:
-        str("%d", int(value));
+        str("%d", intValue);
         break;
     }
 }
