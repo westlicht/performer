@@ -369,19 +369,19 @@ void SettingsPage::restoreSettingsFromFile() {
 
 void SettingsPage::formatSdCard() {
     if (!FileManager::volumeAvailable()) {
-        showMessage("NO SDCARD DETECTED!");
+        showMessage("NO SD CARD DETECTED!");
         return;
     }
 
-    _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
+    _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SD CARD?", [this] (bool result) {
         if (result) {
-            _manager.pages().busy.show("FORMATTING SDCARD ...");
+            _manager.pages().busy.show("FORMATTING SD CARD ...");
 
             FileManager::task([] () {
                 return FileManager::format();
             }, [this] (fs::Error result) {
                 if (result == fs::OK) {
-                    showMessage("SDCARD FORMATTED");
+                    showMessage("SD CARD FORMATTED");
                 } else {
                     showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
                 }
