@@ -49,7 +49,7 @@ public:
         }
 
         void setRepeats(int repeats) {
-            _repeats = clamp(repeats, 0, 8);
+            _repeats = clamp(repeats, 1, 8);
         }
 
         uint32_t _patterns;

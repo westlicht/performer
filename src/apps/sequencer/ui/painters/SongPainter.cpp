@@ -13,3 +13,11 @@ void SongPainter::drawArrowUp(Canvas &canvas, int x, int y, int w) {
     canvas.point(x - 1, y + 1);
     canvas.point(x + 1, y + 1);
 }
+
+void SongPainter::drawProgress(Canvas &canvas, int x, int y, int w, int h, float progress) {
+    int pw = w * progress;
+    canvas.setColor(0x7);
+    canvas.fillRect(x + pw, y, w - pw, h);
+    canvas.setColor(0xf);
+    canvas.fillRect(x, y, pw, h);
+}

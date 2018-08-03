@@ -492,6 +492,12 @@ void Engine::updatePlayState(bool ticked) {
         }
     }
 
+    // abort song mode if slot is invalid
+
+    if (songState.playing() && songState.currentSlot() >= song.slotCount()) {
+        playState.stopSong();
+    }
+
     if (hasRequests | handleSongAdvance) {
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             _trackEngines[trackIndex]->changePattern();

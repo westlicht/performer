@@ -123,6 +123,7 @@ public:
     class SongState {
     public:
         bool playing() const { return _state & Playing; }
+        bool hasPlayRequests() const { return hasRequests(PlayRequests); }
         int currentSlot() const { return _currentSlot; }
         int currentRepeat() const { return _currentRepeat; }
         int requestedSlot() const { return _requestedSlot; }

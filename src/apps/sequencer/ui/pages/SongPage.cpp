@@ -34,9 +34,10 @@ void SongPage::exit() {
 
 void SongPage::draw(Canvas &canvas) {
     const auto &song = _project.song();
-    const auto &songState = _project.playState().songState();
+    const auto &playState = _project.playState();
+    const auto &songState = playState.songState();
 
-    bool isPlaying = _project.playState().songState().playing();
+    bool isPlaying = songState.playing();
     const char *functionNames[] = { "CLEAR", "CHAIN", "ADD", "REMOVE", isPlaying ? "STOP" : "PLAY" };
 
     WindowPainter::clear(canvas);
@@ -45,14 +46,20 @@ void SongPage::draw(Canvas &canvas) {
 
     const int slotWidth = Width / SlotCount;
 
+    float syncMeasureFraction = _engine.syncMeasureFraction();
+
     // draw selection cursor
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
     SongPainter::drawArrowDown(canvas, _selectedSlot * slotWidth + 1, 16, slotWidth - 2);
 
-    // draw play cursor
+    // draw play cursor and slot progress
     if (songState.playing()) {
-        SongPainter::drawArrowUp(canvas, songState.currentSlot() * slotWidth + 1, 48, slotWidth - 2);
+        SongPainter::drawArrowUp(canvas, songState.currentSlot() * slotWidth + 1, 44, slotWidth - 2);
+
+        int currentSlot = songState.currentSlot();
+        float progress = (songState.currentRepeat() + syncMeasureFraction) / song.slot(currentSlot).repeats();
+        SongPainter::drawProgress(canvas, currentSlot * slotWidth + 2, 48, slotWidth - 4, 2, progress);
     }
 
     for (int i = 0; i < SlotCount; ++i) {
@@ -77,6 +84,11 @@ void SongPage::draw(Canvas &canvas) {
                 canvas.drawText(x + (slotWidth - canvas.textWidth(repeatsStr) + 1) / 2, y + 20, repeatsStr);
             }
         }
+    }
+
+    if (playState.hasSyncedRequests() && songState.hasPlayRequests()) {
+        canvas.setColor(0xf);
+        canvas.hline(0, 10, syncMeasureFraction * Width);
     }
 }
 
@@ -148,7 +160,10 @@ void SongPage::keyPress(KeyPressEvent &event) {
             if (playState.songState().playing()) {
                 playState.stopSong();
             } else {
-                playState.playSong(_selectedSlot);
+                playState.playSong(_selectedSlot, key.shiftModifier() ? PlayState::ExecuteType::Synced : PlayState::ExecuteType::Immediate);
+                if (!_engine.clockRunning()) {
+                    _engine.clockStart();
+                }
             }
             break;
         default:
