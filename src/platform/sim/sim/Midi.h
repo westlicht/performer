@@ -49,8 +49,8 @@ public:
         DisconnectHandler _disconnectHandler;
 
         bool _open = false;
-        std::unique_ptr<RtMidiIn> _input;
-        std::unique_ptr<RtMidiOut> _output;
+        RtMidiIn _input;
+        RtMidiOut _output;
 
         int _firstOpenAttempt = true;
     };

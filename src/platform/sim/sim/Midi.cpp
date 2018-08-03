@@ -28,9 +28,9 @@ static void errorCallback(RtMidiError::Type type, const std::string &errorText, 
 
 
 bool Midi::Port::send(uint8_t data) {
-    if (_output) {
+    if (_output.isPortOpen()) {
         std::vector<uint8_t> message = { data };
-        _output->sendMessage(&message);
+        _output.sendMessage(&message);
         return true;
     }
 
@@ -38,9 +38,9 @@ bool Midi::Port::send(uint8_t data) {
 }
 
 bool Midi::Port::send(const uint8_t *data, size_t length) {
-    if (_output) {
+    if (_output.isPortOpen()) {
         std::vector<uint8_t> message(data, data + length);
-        _output->sendMessage(&message);
+        _output.sendMessage(&message);
         return true;
     }
 
@@ -51,7 +51,7 @@ void Midi::Port::update() {
     if (!_open) {
         open();
     } else {
-        if (findPort(*_input, _port) == -1 || findPort(*_output, _port) == -1) {
+        if (findPort(_input, _port) == -1 || findPort(_output, _port) == -1) {
             close();
         }
     }
@@ -68,15 +68,14 @@ void Midi::Port::open() {
 
     // open input
     try {
-        _input.reset(new RtMidiIn());
-        int index = findPort(*_input, _port);
+        int index = findPort(_input, _port);
         if (index >= 0) {
-            _input->openPort(index);
-            _input->ignoreTypes(false, false, false);
-            _input->setCallback(recvCallback, &_recvHandler);
-            _input->setErrorCallback(errorCallback, this);
+            _input.openPort(index);
+            _input.ignoreTypes(false, false, false);
+            _input.setCallback(recvCallback, &_recvHandler);
+            _input.setErrorCallback(errorCallback, this);
         } else {
-            _input.reset();
+            _input.closePort();
             return;
         }
     } catch (RtMidiError &error) {
@@ -85,19 +84,18 @@ void Midi::Port::open() {
             error.printMessage();
             _firstOpenAttempt = false;
         }
-        _input.reset();
+        _input.closePort();
         return;
     }
 
     // open output
     try {
-        _output.reset(new RtMidiOut());
-        int index = findPort(*_output, _port);
+        int index = findPort(_output, _port);
         if (index >= 0) {
-            _output->openPort(index);
-            _output->setErrorCallback(errorCallback, this);
+            _output.openPort(index);
+            _output.setErrorCallback(errorCallback, this);
         } else {
-            _output.reset();
+            _output.closePort();
             return;
         }
     } catch (RtMidiError &error) {
@@ -106,7 +104,7 @@ void Midi::Port::open() {
             error.printMessage();
             _firstOpenAttempt = false;
         }
-        _output.reset();
+        _output.closePort();
         return;
     }
 
@@ -122,8 +120,8 @@ void Midi::Port::close() {
         return;
     }
 
-    _input.reset();
-    _output.reset();
+    _input.closePort();
+    _output.closePort();
 
     if (_disconnectHandler) {
         _disconnectHandler();
