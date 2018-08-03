@@ -11,10 +11,11 @@
 
 enum Function {
     Calibration = 0,
+    Utilities   = 3,
     Update      = 4,
 };
 
-static const char *functionNames[] = { "CAL", nullptr, nullptr, nullptr, "UPDATE" };
+static const char *functionNames[] = { "CAL", nullptr, nullptr, "UTILS", "UPDATE" };
 
 enum CalibrationEditFunction {
     Auto        = 0,
@@ -27,7 +28,6 @@ enum class ContextAction {
     Save,
     Backup,
     Restore,
-    Format,
     Last
 };
 
@@ -35,8 +35,7 @@ static const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
     { "SAVE" },
     { "BACKUP" },
-    { "RESTORE" },
-    { "FORMAT" },
+    { "RESTORE" }
 };
 
 SettingsPage::SettingsPage(PageManager &manager, PageContext &context) :
@@ -76,14 +75,21 @@ void SettingsPage::draw(Canvas &canvas) {
         if (edit()) {
             WindowPainter::drawFooter(canvas, calibrationEditFunctionNames, keyState());
         } else {
-            WindowPainter::drawFooter(canvas, functionNames, keyState());
+            WindowPainter::drawFooter(canvas, functionNames, keyState(), int(_mode));
         }
+        ListPage::draw(canvas);
+        break;
+    }
+    case Mode::Utilities: {
+        WindowPainter::drawActiveFunction(canvas, "UTILITIES");
+        WindowPainter::drawFooter(canvas, functionNames, keyState(), int(_mode));
         ListPage::draw(canvas);
         break;
     }
     case Mode::Update: {
         WindowPainter::drawActiveFunction(canvas, "UPDATE");
-        WindowPainter::drawFooter(canvas, functionNames, keyState());
+        WindowPainter::drawFooter(canvas, functionNames, keyState(), int(_mode));
+        canvas.setBlendMode(BlendMode::Set);
         canvas.setColor(0xf);
         canvas.drawText(4, 24, "CURRENT VERSION:");
         FixedStringBuilder<16> str("%d.%d.%d", CONFIG_VERSION_MAJOR, CONFIG_VERSION_MINOR, CONFIG_VERSION_REVISION);
@@ -132,9 +138,11 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isContextMenu()) {
-        contextShow();
-        event.consume();
-        return;
+        if (_mode == Mode::Calibration) {
+            contextShow();
+            event.consume();
+            return;
+        }
     }
 
     if (key.isFunction()) {
@@ -147,6 +155,9 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
             switch (Function(key.function())) {
             case Function::Calibration:
                 setMode(Mode::Calibration);
+                break;
+            case Function::Utilities:
+                setMode(Mode::Utilities);
                 break;
             case Function::Update:
                 setMode(Mode::Update);
@@ -166,6 +177,13 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
         ListPage::keyPress(event);
         updateOutputs();
         break;
+    case Mode::Utilities:
+        if (key.isEncoder()) {
+            executeUtilityItem(UtilitiesListModel::Item(selectedRow()));
+        } else {
+            ListPage::keyPress(event);
+        }
+        break;
     case Mode::Update:
         break;
     }
@@ -177,6 +195,9 @@ void SettingsPage::encoder(EncoderEvent &event) {
         ListPage::encoder(event);
         updateOutputs();
         break;
+    case Mode::Utilities:
+        ListPage::encoder(event);
+        break;
     case Mode::Update:
         break;
     }
@@ -184,6 +205,16 @@ void SettingsPage::encoder(EncoderEvent &event) {
 
 void SettingsPage::setMode(Mode mode) {
     _mode = mode;
+    switch (_mode) {
+    case Mode::Calibration:
+        setListModel(_cvOutputListModel);
+        break;
+    case Mode::Utilities:
+        setListModel(_utilitiesListModel);
+        break;
+    default:
+        break;
+    }
 }
 
 void SettingsPage::setOutputIndex(int index) {
@@ -195,6 +226,16 @@ void SettingsPage::updateOutputs() {
     float volts = Calibration::CvOutput::itemToVolts(selectedRow());
     for (int i = 0; i < CONFIG_CV_OUTPUT_CHANNELS; ++i) {
         _engine.setCvOutput(i, volts);
+    }
+}
+
+void SettingsPage::executeUtilityItem(UtilitiesListModel::Item item) {
+    switch (item) {
+    case UtilitiesListModel::FormatSdCard:
+        formatSdCard();
+        break;
+    case UtilitiesListModel::Last:
+        break;
     }
 }
 
@@ -221,9 +262,6 @@ void SettingsPage::contextAction(int index) {
     case ContextAction::Restore:
         restoreSettings();
         break;
-    case ContextAction::Format:
-        formatSdCard();
-        break;
     case ContextAction::Last:
         break;
     }
@@ -234,8 +272,6 @@ bool SettingsPage::contextActionEnabled(int index) const {
     case ContextAction::Backup:
     case ContextAction::Restore:
         return FileManager::volumeMounted();
-    case ContextAction::Format:
-        return FileManager::volumeAvailable();
     default:
         return true;
     }
@@ -332,6 +368,11 @@ void SettingsPage::restoreSettingsFromFile() {
 }
 
 void SettingsPage::formatSdCard() {
+    if (!FileManager::volumeAvailable()) {
+        showMessage("NO SDCARD DETECTED!");
+        return;
+    }
+
     _manager.pages().confirmation.show("DO YOU REALLY WANT TO FORMAT THE SDCARD?", [this] (bool result) {
         if (result) {
             _manager.pages().busy.show("FORMATTING SDCARD ...");

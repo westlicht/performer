@@ -3,6 +3,7 @@
 #include "ListPage.h"
 
 #include "ui/model/CalibrationCvOutputListModel.h"
+#include "ui/model/UtilitiesListModel.h"
 
 #include "model/Settings.h"
 
@@ -22,13 +23,16 @@ public:
 
 private:
     enum class Mode : uint8_t {
-        Calibration,
-        Update
+        Calibration = 0,
+        Utilities   = 3,
+        Update      = 4,
     };
 
     void setMode(Mode mode);
     void setOutputIndex(int index);
     void updateOutputs();
+
+    void executeUtilityItem(UtilitiesListModel::Item item);
 
     void contextShow();
     void contextAction(int index);
@@ -49,6 +53,7 @@ private:
 
     int _outputIndex;
     CalibrationCvOutputListModel _cvOutputListModel;
+    UtilitiesListModel _utilitiesListModel;
 
     uint32_t _encoderDownTicks;
 };
