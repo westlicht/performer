@@ -24,16 +24,23 @@ void TempoPage::draw(Canvas &canvas) {
     canvas.setFont(Font::Small);
     canvas.setColor(0xf);
 
-    FixedStringBuilder<16> string("Tempo: %.1f", _project.tempo());
-    canvas.drawText(50, 34, string);
+    FixedStringBuilder<16> tempoString("Tempo: %.1f", _project.tempo());
+    canvas.drawText(50, 34, tempoString);
 
     float nudgeTempoStrength = _engine.nudgeTempoStrength();
+
+    FixedStringBuilder<16> nudgeString("%.1f%%", nudgeTempoStrength * 10.f);
+
+    canvas.setFont(Font::Tiny);
+
     if (nudgeTempoStrength > 0.f) {
         int w = nudgeTempoStrength * 10;
         canvas.fillRect(180, 32 - 2, w, 4);
+        canvas.drawText(200, 32 + 1, nudgeString);
     } else if (nudgeTempoStrength < 0.f) {
         int w = std::abs(nudgeTempoStrength * 10);
         canvas.fillRect(180 - w, 32 - 2, w, 4);
+        canvas.drawText(200, 32 + 1, nudgeString);
     }
 }
 
