@@ -10,7 +10,7 @@ UserScale::UserScale() :
 
 void UserScale::clear() {
     StringUtils::copy(_name, "INIT", sizeof(_name));
-    setMode(Mode::Note);
+    setMode(Mode::Chromatic);
     clearItems();
 }
 

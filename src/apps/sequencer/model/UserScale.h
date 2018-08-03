@@ -29,16 +29,16 @@ public:
     typedef std::array<int16_t, CONFIG_USER_SCALE_SIZE> ItemArray;
 
     enum class Mode : uint8_t {
-        Note,
+        Chromatic,
         Voltage,
         Last,
     };
 
     static const char *modeName(Mode mode) {
         switch (mode) {
-        case Mode::Note:    return "Note";
-        case Mode::Voltage: return "Voltage";
-        default:            break;
+        case Mode::Chromatic:   return "Chromatic";
+        case Mode::Voltage:     return "Voltage";
+        default:                break;
         }
         return nullptr;
     }
@@ -77,7 +77,7 @@ public:
 
     int size() const { return _size; }
     void setSize(int size) {
-        _size = clamp(size, _mode == Mode::Note ? 1 : 2, CONFIG_USER_SCALE_SIZE);
+        _size = clamp(size, _mode == Mode::Chromatic ? 1 : 2, CONFIG_USER_SCALE_SIZE);
     }
 
     void editSize(int value, bool shift) {
@@ -96,7 +96,7 @@ public:
     int item(int index) const { return _items[index]; }
     void setItem(int index, int value) {
         switch (_mode) {
-        case Mode::Note:
+        case Mode::Chromatic:
             _items[index] = clamp(value, 0, 11);
             break;
         case Mode::Voltage:
@@ -109,7 +109,7 @@ public:
 
     void editItem(int index, int value, int shift) {
         switch (_mode) {
-        case Mode::Note:
+        case Mode::Chromatic:
             setItem(index, item(index) + value);
             break;
         case Mode::Voltage:
@@ -122,8 +122,8 @@ public:
 
     void printItem(int index, StringBuilder &str) const {
         switch (_mode) {
-        case Mode::Note:
-            noteNameNoteMode(str, index, Scale::Short1);
+        case Mode::Chromatic:
+            noteNameChromaticMode(str, index, Scale::Short1);
             break;
         case Mode::Voltage:
             str("%+.3fV", _items[index] * (1.f / 1000.f));
@@ -152,12 +152,12 @@ public:
     // Scale implementation
     //----------------------------------------
 
-    bool isChromatic() const override { return mode() == Mode::Note; }
+    bool isChromatic() const override { return mode() == Mode::Chromatic; }
 
     void noteName(StringBuilder &str, int note, Format format) const override {
         switch (_mode) {
-        case Mode::Note:
-            noteNameNoteMode(str, note, format);
+        case Mode::Chromatic:
+            noteNameChromaticMode(str, note, format);
             break;
         case Mode::Voltage:
             noteNameVoltageMode(str, note, format);
@@ -172,7 +172,7 @@ public:
         int octave = roundDownDivide(note, notesPerOctave_);
         int index = note - octave * notesPerOctave_;
         switch (_mode) {
-        case Mode::Note:
+        case Mode::Chromatic:
             return octave + _items[index] * (1.f / 12.f);
         case Mode::Voltage:
             return octave * octaveRangeVolts() + _items[index] * (1.f / 1000.f);
@@ -184,8 +184,8 @@ public:
 
     int noteFromVolts(float volts) const override {
         switch (_mode) {
-        case Mode::Note:
-            return noteFromVoltsNoteMode(volts);
+        case Mode::Chromatic:
+            return noteFromVoltsChromaticMode(volts);
         case Mode::Voltage:
             return noteFromVoltsVoltageMode(volts);
         case Mode::Last:
@@ -195,13 +195,13 @@ public:
     }
 
     int notesPerOctave() const override {
-        return _mode == Mode::Note ? _size : _size - 1;
+        return _mode == Mode::Chromatic ? _size : _size - 1;
     }
 
     static Array userScales;
 
 private:
-    void noteNameNoteMode(StringBuilder &str, int note, Format format) const {
+    void noteNameChromaticMode(StringBuilder &str, int note, Format format) const {
         static const char *names[] = { "1", "1#", "2", "2#", "3", "4", "4#", "5", "5#", "6", "6#", "7" };
 
         int octave = roundDownDivide(note, _size);
@@ -234,7 +234,7 @@ private:
         }
     }
 
-    int noteFromVoltsNoteMode(float volts) const {
+    int noteFromVoltsChromaticMode(float volts) const {
         int semiNotes = std::floor(volts * 12.f + 0.01f);
         int octave = roundDownDivide(semiNotes, 12);
         semiNotes -= octave * 12;
