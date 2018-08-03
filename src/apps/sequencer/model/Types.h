@@ -11,15 +11,15 @@ public:
     // PlayMode
 
     enum class PlayMode : uint8_t {
-        Free,
         Aligned,
+        Free,
         Last
     };
 
     static const char *playModeName(PlayMode playMode) {
         switch (playMode) {
-        case PlayMode::Free:    return "Free";
         case PlayMode::Aligned: return "Aligned";
+        case PlayMode::Free:    return "Free";
         case PlayMode::Last:    break;
         }
         return nullptr;

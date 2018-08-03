@@ -1,7 +1,7 @@
 #include "CurveTrack.h"
 
 void CurveTrack::clear() {
-    _playMode = Types::PlayMode::Free;
+    _playMode = Types::PlayMode::Aligned;
     _fillMode = Types::FillMode::None;
     _rotate = 0;
 

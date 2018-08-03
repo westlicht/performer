@@ -51,11 +51,11 @@ void CurveTrackEngine::tick(uint32_t tick) {
         if (relativeTick == 0) {
             // advance sequence
             switch (_curveTrack.playMode()) {
-            case Types::PlayMode::Free:
-                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-                break;
             case Types::PlayMode::Aligned:
                 _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                break;
+            case Types::PlayMode::Free:
+                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
             case Types::PlayMode::Last:
                 break;

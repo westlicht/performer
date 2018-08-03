@@ -1,7 +1,7 @@
 #include "NoteTrack.h"
 
 void NoteTrack::clear() {
-    _playMode = Types::PlayMode::Free;
+    _playMode = Types::PlayMode::Aligned;
     _fillMode = Types::FillMode::Gates;
     _slideTime = 50;
     _octave = 0;

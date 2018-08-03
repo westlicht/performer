@@ -98,11 +98,11 @@ void NoteTrackEngine::tick(uint32_t tick) {
         // advance sequence
         if (relativeTick == 0) {
             switch (_noteTrack.playMode()) {
-            case Types::PlayMode::Free:
-                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-                break;
             case Types::PlayMode::Aligned:
                 _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                break;
+            case Types::PlayMode::Free:
+                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
             case Types::PlayMode::Last:
                 break;
