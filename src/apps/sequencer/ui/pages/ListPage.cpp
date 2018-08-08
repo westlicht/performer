@@ -46,19 +46,24 @@ void ListPage::exit() {
 }
 
 void ListPage::draw(Canvas &canvas) {
+    int displayRow = _displayRow;
+    if (displayRow + LineCount > _listModel->rows()) {
+        displayRow = std::max(0, _listModel->rows() - LineCount);
+    }
+
     canvas.setFont(Font::Small);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
 
     for (int i = 0; i < LineCount; ++i) {
-        int row = _displayRow + i;
+        int row = displayRow + i;
         if (row < _listModel->rows()) {
             drawCell(canvas, row, 0, 8, 12 + i * LineHeight, 128 - 16, LineHeight);
             drawCell(canvas, row, 1, 128, 12 + i * LineHeight, 128 - 16, LineHeight);
         }
     }
 
-    drawScrollbar(canvas, Width - 8, 12, 4, LineCount * LineHeight, _listModel->rows(), LineCount, _displayRow);
+    drawScrollbar(canvas, Width - 8, 12, 4, LineCount * LineHeight, _listModel->rows(), LineCount, displayRow);
 }
 
 void ListPage::updateLeds(Leds &leds) {
