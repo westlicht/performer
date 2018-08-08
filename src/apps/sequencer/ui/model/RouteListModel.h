@@ -16,11 +16,11 @@ public:
         Source,
         FirstSource,
         CvRange = FirstSource,
-        MidiPort = CvRange,
-        MidiChannel,
+        MidiSource = FirstSource,
         MidiEvent,
-        MidiControlNumber,
-        MidiNote = MidiControlNumber,
+        FirstMidiEventConfig,
+        MidiControlNumber = FirstMidiEventConfig,
+        MidiNote = FirstMidiEventConfig,
         Last
     };
 
@@ -71,8 +71,7 @@ private:
         case Tracks:        return "Tracks";
         case Source:        return "Source";
         // case CvRange:
-        case MidiPort:      return Routing::isCvSource(_route.source()) ? "Range" : "MIDI Port";
-        case MidiChannel:   return "MIDI Channel";
+        case MidiSource:    return Routing::isCvSource(_route.source()) ? "Range" : "MIDI Source";
         case MidiEvent:     return "MIDI Event";
         // case MidiControlNumber:
         case MidiNote:
@@ -104,15 +103,12 @@ private:
             _route.printSource(str);
             break;
         // case CvRange:
-        case MidiPort:
+        case MidiSource:
             if (Routing::isCvSource(_route.source())) {
                 _route.cvSource().printRange(str);
             } else {
-                _route.midiSource().printPort(str);
+                _route.midiSource().source().print(str);
             }
-            break;
-        case MidiChannel:
-            _route.midiSource().printChannel(str);
             break;
         case MidiEvent:
             _route.midiSource().printEvent(str);
@@ -148,15 +144,12 @@ private:
             _route.editSource(value, shift);
             break;
         // case CvRange:
-        case MidiPort:
+        case MidiSource:
             if (Routing::isCvSource(_route.source())) {
                 _route.cvSource().editRange(value, shift);
             } else {
-                _route.midiSource().editPort(value, shift);
+                _route.midiSource().source().edit(value, shift);
             }
-            break;
-        case MidiChannel:
-            _route.midiSource().editChannel(value, shift);
             break;
         case MidiEvent:
             _route.midiSource().editEvent(value, shift);

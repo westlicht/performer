@@ -21,8 +21,8 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
         const auto &route = _routing.route(routeIndex);
         if (route.active() &&
             route.source() == Routing::Source::Midi &&
-            route.midiSource().port() == Types::MidiPort(port) &&
-            (route.midiSource().channel() == 0 || route.midiSource().channel() == message.channel() + 1)
+            route.midiSource().source().port() == Types::MidiPort(port) &&
+            (route.midiSource().source().channel() == 0 || route.midiSource().source().channel() == message.channel() + 1)
         ) {
             const auto &midiSource = route.midiSource();
             auto &sourceValue = _sourceValues[routeIndex];

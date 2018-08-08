@@ -20,7 +20,8 @@ void MidiCvTrackEngine::update(float dt) {
 }
 
 void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessage &message) {
-    if (port == MidiPort(_midiCvTrack.port()) && (_midiCvTrack.channel() == -1 || _midiCvTrack.channel() == channel)) {
+    const auto &source = _midiCvTrack.source();
+    if (port == MidiPort(source.port()) && (source.channel() == -1 || source.channel() == channel)) {
         if (message.isNoteOn()) {
             int note = message.note();
             auto voice = allocateVoice(note, _midiCvTrack.voices());

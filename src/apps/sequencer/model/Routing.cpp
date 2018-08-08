@@ -31,32 +31,28 @@ bool Routing::CvSource::operator==(const CvSource &other) const {
 //----------------------------------------
 
 void Routing::MidiSource::clear() {
-    _port = Types::MidiPort::Midi;
-    _channel = -1;
+    _source.clear();
     _event = Event::ControlAbsolute;
     _controlNumberOrNote = 0;
 }
 
 void Routing::MidiSource::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_port);
-    writer.write(_channel);
+    _source.write(context);
     writer.write(_event);
     writer.write(_controlNumberOrNote);
 }
 
 void Routing::MidiSource::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_port);
-    reader.read(_channel);
+    _source.read(context);
     reader.read(_event);
     reader.read(_controlNumberOrNote);
 }
 
 bool Routing::MidiSource::operator==(const MidiSource &other) const {
     return (
-        _port == other._port &&
-        _channel == other._channel &&
+        _source == other._source &&
         _event == other._event &&
         _controlNumberOrNote == other._controlNumberOrNote
     );

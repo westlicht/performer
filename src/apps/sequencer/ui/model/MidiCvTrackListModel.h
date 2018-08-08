@@ -40,8 +40,7 @@ public:
 
 private:
     enum Item {
-        Port,
-        Channel,
+        Source,
         Voices,
         VoiceConfig,
         PitchBendRange,
@@ -52,8 +51,7 @@ private:
 
     static const char *itemName(Item item) {
         switch (item) {
-        case Port:              return "MIDI Port";
-        case Channel:           return "MIDI Channel";
+        case Source:            return "Source";
         case Voices:            return "Voices";
         case VoiceConfig:       return "Voice Config";
         case PitchBendRange:    return "Pitch Bend";
@@ -70,11 +68,8 @@ private:
 
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
-        case Port:
-            _track->printPort(str);
-            break;
-        case Channel:
-            _track->printChannel(str);
+        case Source:
+            _track->source().print(str);
             break;
         case Voices:
             _track->printVoices(str);
@@ -98,11 +93,8 @@ private:
 
     void editValue(Item item, int value, bool shift) {
         switch (item) {
-        case Port:
-            _track->editPort(value, shift);
-            break;
-        case Channel:
-            _track->editChannel(value, shift);
+        case Source:
+            _track->source().edit(value, shift);
             break;
         case Voices:
             _track->editVoices(value, shift);

@@ -3,6 +3,7 @@
 #include "Config.h"
 
 #include "Types.h"
+#include "MidiConfig.h"
 #include "Serialize.h"
 #include "ModelUtils.h"
 
@@ -195,35 +196,10 @@ public:
             return nullptr;
         }
 
-        // port
+        // source
 
-        Types::MidiPort port() const { return _port; }
-        void setPort(Types::MidiPort port) {
-            _port = ModelUtils::clampedEnum(port);
-        }
-
-        void editPort(int value, bool shift) {
-            setPort(ModelUtils::adjustedEnum(port(), value));
-        }
-
-        void printPort(StringBuilder &str) const {
-            str(Types::midiPortName(port()));
-        }
-
-        // channel
-
-        int channel() const { return _channel; }
-        void setChannel(int channel) {
-            _channel = clamp(channel, -1, 15);
-        }
-
-        void editChannel(int value, bool shift) {
-            setChannel(channel() + value);
-        }
-
-        void printChannel(StringBuilder &str) const {
-            Types::printMidiChannel(str, channel());
-        }
+        const MidiSourceConfig &source() const { return _source; }
+              MidiSourceConfig &source()       { return _source; }
 
         // event
 
@@ -282,8 +258,7 @@ public:
         bool operator==(const MidiSource &other) const;
 
     private:
-        Types::MidiPort _port;
-        int8_t _channel;
+        MidiSourceConfig _source;
         Event _event;
         uint8_t _controlNumberOrNote;
     };

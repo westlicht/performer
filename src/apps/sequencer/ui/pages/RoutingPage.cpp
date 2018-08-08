@@ -118,8 +118,8 @@ void RoutingPage::assignMidiLearn(const MidiLearn::Result &result) {
 
     _editRoute.setSource(Routing::Source::Midi);
 
-    midiSource.setPort(Types::MidiPort(result.port));
-    midiSource.setChannel(result.channel);
+    midiSource.source().setPort(Types::MidiPort(result.port));
+    midiSource.source().setChannel(result.channel);
 
     switch (result.event) {
     case MidiLearn::Event::ControlAbsolute:
@@ -141,7 +141,7 @@ void RoutingPage::assignMidiLearn(const MidiLearn::Result &result) {
         break;
     }
 
-    setSelectedRow(int(RouteListModel::MidiPort));
-    setTopRow(int(RouteListModel::MidiPort));
+    setSelectedRow(int(RouteListModel::MidiSource));
+    setTopRow(int(RouteListModel::MidiSource));
     setEdit(false);
 }

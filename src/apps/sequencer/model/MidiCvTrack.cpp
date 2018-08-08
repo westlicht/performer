@@ -1,8 +1,7 @@
 #include "MidiCvTrack.h"
 
 void MidiCvTrack::clear() {
-    setPort(Types::MidiPort::Midi);
-    setChannel(-1);
+    _source.clear();
     setVoices(1);
     setVoiceConfig(VoiceConfig::Pitch);
     setPitchBendRange(2);
@@ -29,8 +28,7 @@ void MidiCvTrack::cvOutputName(int index, StringBuilder &str) const {
 
 void MidiCvTrack::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_port);
-    writer.write(_channel);
+    _source.write(context);
     writer.write(_voices);
     writer.write(_voiceConfig);
     writer.write(_pitchBendRange);
@@ -40,8 +38,7 @@ void MidiCvTrack::write(WriteContext &context) const {
 
 void MidiCvTrack::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_port);
-    reader.read(_channel);
+    _source.read(context);
     reader.read(_voices);
     reader.read(_voiceConfig);
     reader.read(_pitchBendRange);
