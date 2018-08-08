@@ -549,7 +549,7 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
 
     int channel = message.channel();
     for (auto trackEngine : _trackEngines) {
-        trackEngine->receiveMidi(port, channel, message);
+        trackEngine->receiveMidi(port, channel, message, _tick);
     }
 }
 

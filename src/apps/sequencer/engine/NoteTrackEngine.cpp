@@ -163,12 +163,12 @@ void NoteTrackEngine::update(float dt) {
     }
 }
 
-void NoteTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessage &message) {
     if (message.isNoteOn()) {
         _midiGate = true;
         _midiNote = message.note();
     } else {
         _midiGate = false;
+void NoteTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) {
     }
 }
 

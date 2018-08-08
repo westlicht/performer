@@ -20,7 +20,7 @@ public:
     virtual void setRunning(bool running) override { _running = running; }
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
-    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message) override;
+    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) override;
     virtual void changePattern() override;
 
     virtual const TrackLinkData *linkData() const override { return &_linkData; }

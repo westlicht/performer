@@ -59,7 +59,7 @@ public:
     virtual void setRunning(bool running) {}
     virtual void tick(uint32_t tick) = 0;
     virtual void update(float dt) = 0;
-    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message) {}
+    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) {}
     virtual void changePattern() {}
 
     virtual const TrackLinkData *linkData() const { return nullptr; }

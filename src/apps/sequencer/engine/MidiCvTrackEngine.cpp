@@ -19,7 +19,7 @@ void MidiCvTrackEngine::tick(uint32_t tick) {
 void MidiCvTrackEngine::update(float dt) {
 }
 
-void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessage &message) {
+void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) {
     const auto &source = _midiCvTrack.source();
     if (port == MidiPort(source.port()) && (source.channel() == -1 || source.channel() == channel)) {
         if (message.isNoteOn()) {

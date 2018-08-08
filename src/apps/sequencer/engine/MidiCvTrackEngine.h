@@ -18,7 +18,7 @@ public:
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
-    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message) override;
+    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) override;
 
     virtual bool activity() const override;
     virtual bool gateOutput(int index) const override;
