@@ -20,8 +20,8 @@
 #include "ProjectPage.h"
 #include "QuickEditPage.h"
 #include "RoutingPage.h"
-#include "SettingsPage.h"
 #include "SongPage.h"
+#include "SystemPage.h"
 #include "TempoPage.h"
 #include "TextInputPage.h"
 #include "TopPage.h"
@@ -50,7 +50,7 @@ struct Pages {
     SongPage song;
     RoutingPage routing;
     UserScalePage userScale;
-    SettingsPage settings;
+    SystemPage system;
     // modal pages
     TempoPage tempo;
     ClockSetupPage clockSetup;
@@ -88,7 +88,7 @@ struct Pages {
         song(manager, context),
         routing(manager, context),
         userScale(manager, context),
-        settings(manager, context),
+        system(manager, context),
         // modal pages
         tempo(manager, context),
         clockSetup(manager, context),

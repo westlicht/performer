@@ -7,9 +7,9 @@
 
 #include "model/Settings.h"
 
-class SettingsPage : public ListPage {
+class SystemPage : public ListPage {
 public:
-    SettingsPage(PageManager &manager, PageContext &context);
+    SystemPage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
     virtual void exit() override;

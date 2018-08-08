@@ -38,7 +38,7 @@ private:
         // aux modes
         UserScale       = PageKeyMap::UserScale,
         Monitor         = PageKeyMap::Monitor,
-        Settings        = PageKeyMap::Settings,
+        System          = PageKeyMap::System,
 
         Last,
     };

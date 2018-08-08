@@ -78,8 +78,8 @@ set(sources
     ui/pages/ProjectPage.cpp
     ui/pages/QuickEditPage.cpp
     ui/pages/RoutingPage.cpp
-    ui/pages/SettingsPage.cpp
     ui/pages/SongPage.cpp
+    ui/pages/SystemPage.cpp
     ui/pages/TempoPage.cpp
     ui/pages/TextInputPage.cpp
     ui/pages/TopPage.cpp

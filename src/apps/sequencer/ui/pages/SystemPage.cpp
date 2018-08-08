@@ -1,4 +1,4 @@
-#include "SettingsPage.h"
+#include "SystemPage.h"
 
 #include "ui/pages/Pages.h"
 #include "ui/painters/WindowPainter.h"
@@ -38,14 +38,14 @@ static const ContextMenuModel::Item contextMenuItems[] = {
     { "RESTORE" }
 };
 
-SettingsPage::SettingsPage(PageManager &manager, PageContext &context) :
+SystemPage::SystemPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _cvOutputListModel),
     _settings(context.model.settings())
 {
     setOutputIndex(_project.selectedTrackIndex());
 }
 
-void SettingsPage::enter() {
+void SystemPage::enter() {
     resetKeyState();
 
     _engine.lock();
@@ -58,15 +58,15 @@ void SettingsPage::enter() {
     updateOutputs();
 }
 
-void SettingsPage::exit() {
+void SystemPage::exit() {
     _engine.setGateOutputOverride(false);
     _engine.setCvOutputOverride(false);
     _engine.unlock();
 }
 
-void SettingsPage::draw(Canvas &canvas) {
+void SystemPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "SETTINGS");
+    WindowPainter::drawHeader(canvas, _model, _engine, "SYSTEM");
 
     switch (_mode) {
     case Mode::Calibration: {
@@ -106,7 +106,7 @@ void SettingsPage::draw(Canvas &canvas) {
     }
 }
 
-void SettingsPage::keyDown(KeyEvent &event) {
+void SystemPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
     switch (_mode) {
@@ -120,7 +120,7 @@ void SettingsPage::keyDown(KeyEvent &event) {
     }
 }
 
-void SettingsPage::keyUp(KeyEvent &event) {
+void SystemPage::keyUp(KeyEvent &event) {
     const auto &key = event.key();
 
     switch (_mode) {
@@ -134,7 +134,7 @@ void SettingsPage::keyUp(KeyEvent &event) {
     }
 }
 
-void SettingsPage::keyPress(KeyPressEvent &event) {
+void SystemPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isContextMenu()) {
@@ -189,7 +189,7 @@ void SettingsPage::keyPress(KeyPressEvent &event) {
     }
 }
 
-void SettingsPage::encoder(EncoderEvent &event) {
+void SystemPage::encoder(EncoderEvent &event) {
     switch (_mode) {
     case Mode::Calibration:
         ListPage::encoder(event);
@@ -203,7 +203,7 @@ void SettingsPage::encoder(EncoderEvent &event) {
     }
 }
 
-void SettingsPage::setMode(Mode mode) {
+void SystemPage::setMode(Mode mode) {
     _mode = mode;
     switch (_mode) {
     case Mode::Calibration:
@@ -217,19 +217,19 @@ void SettingsPage::setMode(Mode mode) {
     }
 }
 
-void SettingsPage::setOutputIndex(int index) {
+void SystemPage::setOutputIndex(int index) {
     _outputIndex = index;
     _cvOutputListModel.setCvOutput(_settings.calibration().cvOutput(index));
 }
 
-void SettingsPage::updateOutputs() {
+void SystemPage::updateOutputs() {
     float volts = Calibration::CvOutput::itemToVolts(selectedRow());
     for (int i = 0; i < CONFIG_CV_OUTPUT_CHANNELS; ++i) {
         _engine.setCvOutput(i, volts);
     }
 }
 
-void SettingsPage::executeUtilityItem(UtilitiesListModel::Item item) {
+void SystemPage::executeUtilityItem(UtilitiesListModel::Item item) {
     switch (item) {
     case UtilitiesListModel::FormatSdCard:
         formatSdCard();
@@ -239,7 +239,7 @@ void SettingsPage::executeUtilityItem(UtilitiesListModel::Item item) {
     }
 }
 
-void SettingsPage::contextShow() {
+void SystemPage::contextShow() {
     showContextMenu(ContextMenu(
         contextMenuItems,
         int(ContextAction::Last),
@@ -248,7 +248,7 @@ void SettingsPage::contextShow() {
     ));
 }
 
-void SettingsPage::contextAction(int index) {
+void SystemPage::contextAction(int index) {
     switch (ContextAction(index)) {
     case ContextAction::Init:
         initSettings();
@@ -267,7 +267,7 @@ void SettingsPage::contextAction(int index) {
     }
 }
 
-bool SettingsPage::contextActionEnabled(int index) const {
+bool SystemPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Backup:
     case ContextAction::Restore:
@@ -277,7 +277,7 @@ bool SettingsPage::contextActionEnabled(int index) const {
     }
 }
 
-void SettingsPage::initSettings() {
+void SystemPage::initSettings() {
     _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
         if (result) {
             _settings.clear();
@@ -286,7 +286,7 @@ void SettingsPage::initSettings() {
     });
 }
 
-void SettingsPage::saveSettings() {
+void SystemPage::saveSettings() {
     _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
         if (result) {
             saveSettingsToFlash();
@@ -294,7 +294,7 @@ void SettingsPage::saveSettings() {
     });
 }
 
-void SettingsPage::backupSettings() {
+void SystemPage::backupSettings() {
     _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
         if (result) {
             backupSettingsToFile();
@@ -302,7 +302,7 @@ void SettingsPage::backupSettings() {
     });
 }
 
-void SettingsPage::restoreSettings() {
+void SystemPage::restoreSettings() {
     if (fs::exists(Settings::Filename)) {
         _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
             if (result) {
@@ -312,7 +312,7 @@ void SettingsPage::restoreSettings() {
     }
 }
 
-void SettingsPage::saveSettingsToFlash() {
+void SystemPage::saveSettingsToFlash() {
     _engine.lock();
     _manager.pages().busy.show("SAVING SETTINGS ...");
 
@@ -327,7 +327,7 @@ void SettingsPage::saveSettingsToFlash() {
     });
 }
 
-void SettingsPage::backupSettingsToFile() {
+void SystemPage::backupSettingsToFile() {
     _engine.lock();
     _manager.pages().busy.show("BACKING UP SETTINGS ...");
 
@@ -345,7 +345,7 @@ void SettingsPage::backupSettingsToFile() {
     });
 }
 
-void SettingsPage::restoreSettingsFromFile() {
+void SystemPage::restoreSettingsFromFile() {
     _engine.lock();
     _manager.pages().busy.show("RESTORING SETTINGS ...");
 
@@ -367,7 +367,7 @@ void SettingsPage::restoreSettingsFromFile() {
     });
 }
 
-void SettingsPage::formatSdCard() {
+void SystemPage::formatSdCard() {
     if (!FileManager::volumeAvailable()) {
         showMessage("NO SD CARD DETECTED!");
         return;

@@ -19,7 +19,7 @@ namespace PageKeyMap {
 
         UserScale       = Key::Step0,
         Monitor         = Key::Step6,
-        Settings        = Key::Step7,
+        System          = Key::Step7,
     };
 
     static bool isPageKey(int code) {
@@ -38,7 +38,7 @@ namespace PageKeyMap {
 
         case UserScale:
         case Monitor:
-        case Settings:
+        case System:
             return true;
         default:
             break;

@@ -161,11 +161,11 @@ void TopPage::setMode(Mode mode) {
     case Mode::Monitor:
         setMainPage(pages.monitor);
         break;
-    case Mode::Settings:
+    case Mode::System:
         if (mode != _lastMode) {
-            _manager.pages().confirmation.show("DO YOU REALLY WANT TO ENTER SETTINGS?", [this] (bool result) {
+            _manager.pages().confirmation.show("DO YOU REALLY WANT TO ENTER SYSTEM PAGE?", [this] (bool result) {
                 if (result) {
-                    setMainPage(_manager.pages().settings);
+                    setMainPage(_manager.pages().system);
                 } else {
                     setMode(_lastMode);
                 }
