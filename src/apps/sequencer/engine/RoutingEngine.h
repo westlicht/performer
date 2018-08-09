@@ -20,7 +20,7 @@ public:
 
     void update();
 
-    void receiveMidi(MidiPort port, const MidiMessage &message);
+    bool receiveMidi(MidiPort port, const MidiMessage &message);
 
 private:
     void updateSources();

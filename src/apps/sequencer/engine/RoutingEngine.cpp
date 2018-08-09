@@ -16,7 +16,9 @@ void RoutingEngine::update() {
     updateSinks();
 }
 
-void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
+bool RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
+    bool consumed = false;
+
     for (int routeIndex = 0; routeIndex < CONFIG_ROUTE_COUNT; ++routeIndex) {
         const auto &route = _routing.route(routeIndex);
         if (route.active() &&
@@ -30,6 +32,7 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
             case Routing::MidiSource::Event::ControlAbsolute:
                 if (message.controlNumber() == midiSource.controlNumber()) {
                     sourceValue = message.controlValue() * (1.f / 127.f);
+                    consumed = true;
                 }
                 break;
             case Routing::MidiSource::Event::ControlRelative:
@@ -37,28 +40,34 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
                     int value = message.controlValue();
                     value = value >= 64 ? 64 - value : value;
                     sourceValue = clamp(sourceValue + value * (1.f / 127.f), 0.f, 1.f);
+                    consumed = true;
                 }
                 break;
             case Routing::MidiSource::Event::PitchBend:
                 if (message.isPitchBend()) {
                     sourceValue = (message.pitchBend() + 0x2000) * (1.f / 16383.f);
+                    consumed = true;
                 }
                 break;
             case Routing::MidiSource::Event::NoteMomentary:
                 if (message.isNoteOn() && message.note() == midiSource.note()) {
                     sourceValue = 1.f;
+                    consumed = true;
                 } else if (message.isNoteOff() && message.note() == midiSource.note()) {
                     sourceValue = 0.f;
+                    consumed = true;
                 }
                 break;
             case Routing::MidiSource::Event::NoteToggle:
                 if (message.isNoteOn() && message.note() == midiSource.note()) {
                     sourceValue = sourceValue < 0.5f ? 1.f : 0.f;
+                    consumed = true;
                 }
                 break;
             case Routing::MidiSource::Event::NoteVelocity:
                 if (message.isNoteOn() && message.note() == midiSource.note()) {
                     sourceValue = message.velocity() * (1.f / 127.f);
+                    consumed = true;
                 }
                 break;
             case Routing::MidiSource::Event::Last:
@@ -66,6 +75,8 @@ void RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
             }
         }
     }
+
+    return consumed;
 }
 
 void RoutingEngine::updateSources() {
