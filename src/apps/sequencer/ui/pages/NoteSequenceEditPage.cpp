@@ -385,7 +385,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
 }
 
 void NoteSequenceEditPage::midi(MidiEvent &event) {
-    if (layer() == Layer::Note && _stepSelection.any()) {
+    if (!_engine.recording() && layer() == Layer::Note && _stepSelection.any()) {
         auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
         auto &sequence = _project.selectedNoteSequence();
         const auto &scale = sequence.selectedScale();
