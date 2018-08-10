@@ -6,8 +6,8 @@
 
 class MidiCvTrackEngine : public TrackEngine {
 public:
-    MidiCvTrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
-        TrackEngine(model, track, linkedTrackEngine),
+    MidiCvTrackEngine(const Model &model, Track &track, const TrackEngine *linkedTrackEngine, const EngineState &engineState) :
+        TrackEngine(model, track, linkedTrackEngine, engineState),
         _midiCvTrack(track.midiCvTrack())
     {
         reset();
@@ -18,7 +18,8 @@ public:
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
-    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) override;
+
+    virtual bool receiveMidi(MidiPort port, const MidiMessage &message) override;
 
     virtual bool activity() const override;
     virtual bool gateOutput(int index) const override;

@@ -2,6 +2,7 @@
 
 #include "Config.h"
 
+#include "EngineState.h"
 #include "MidiPort.h"
 
 #include "model/Model.h"
@@ -26,11 +27,12 @@ struct TrackLinkData {
 
 class TrackEngine {
 public:
-    TrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
+    TrackEngine(const Model &model, Track &track, const TrackEngine *linkedTrackEngine, const EngineState &engineState) :
         _model(model),
         _track(track),
         _trackState(model.project().playState().trackState(track.trackIndex())),
-        _linkedTrackEngine(linkedTrackEngine)
+        _linkedTrackEngine(linkedTrackEngine),
+        _engineState(engineState)
     {
         changePattern();
     }
@@ -56,15 +58,15 @@ public:
     // sequencer control
 
     virtual void reset() = 0;
-    virtual void setRunning(bool running) {}
     virtual void tick(uint32_t tick) = 0;
     virtual void update(float dt) = 0;
-    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) {}
+
     virtual void changePattern() {}
 
-    virtual const TrackLinkData *linkData() const { return nullptr; }
+    virtual bool receiveMidi(MidiPort port, const MidiMessage &message) { return false; }
+    virtual void monitorMidi(uint32_t tick, const MidiMessage &message) {}
 
-    virtual void setSelected(bool selected) {}
+    virtual const TrackLinkData *linkData() const { return nullptr; }
 
     // track output
 
@@ -74,18 +76,20 @@ public:
 
     // helpers
 
+    bool isSelected() const { return _model.project().selectedTrackIndex() == _track.trackIndex(); }
+
     int swing() const { return _model.project().swing(); }
 
     int pattern() const { return _trackState.pattern(); }
     bool mute() const { return _trackState.mute(); }
     bool fill() const { return _trackState.fill(); }
 
-
 protected:
     const Model &_model;
-    const Track &_track;
+    Track &_track;
     const PlayState::TrackState &_trackState;
     const TrackEngine *_linkedTrackEngine;
+    const EngineState &_engineState;
 };
 
 #undef SANITIZE_TRACK_MODE

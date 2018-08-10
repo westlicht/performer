@@ -39,7 +39,8 @@ void Ui::init() {
             DBG("ui midi buffer overflow");
             _midiMessages.read();
         }
-        _midiMessages.write({port, message});
+        _midiMessages.write({ port, message });
+        return port == MidiPort::UsbMidi && _controllerManager.isConnected();
     });
 
     _engine.setUsbMidiConnectHandler([this] (uint16_t vendorId, uint16_t productId) {

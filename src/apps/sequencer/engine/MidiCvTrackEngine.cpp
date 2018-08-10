@@ -1,5 +1,7 @@
 #include "MidiCvTrackEngine.h"
 
+#include "MidiUtils.h"
+
 #include "os/os.h"
 
 #include <cmath>
@@ -19,9 +21,10 @@ void MidiCvTrackEngine::tick(uint32_t tick) {
 void MidiCvTrackEngine::update(float dt) {
 }
 
-void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) {
-    const auto &source = _midiCvTrack.source();
-    if (port == MidiPort(source.port()) && (source.channel() == -1 || source.channel() == channel)) {
+bool MidiCvTrackEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
+    bool consumed = false;
+
+    if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
         if (message.isNoteOn()) {
             int note = message.note();
             auto voice = allocateVoice(note, _midiCvTrack.voices());
@@ -44,7 +47,11 @@ void MidiCvTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessag
         }
 
         updateActivity();
+
+        consumed = true;
     }
+
+    return consumed;
 }
 
 bool MidiCvTrackEngine::activity() const {

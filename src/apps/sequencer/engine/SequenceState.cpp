@@ -9,10 +9,12 @@ static int randomStep(int firstStep, int lastStep, Random &rng) {
 
 void SequenceState::reset() {
     _step = -1;
+    _lastStep = -1;
     _direction = 1;
 }
 
 void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastStep, Random &rng) {
+    _lastStep = _step;
 
     if (_step == -1) {
         // first step
@@ -71,6 +73,8 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
 }
 
 void SequenceState::advanceAligned(int absoluteStep, Types::RunMode runMode, int firstStep, int lastStep, Random &rng) {
+    _lastStep = _step;
+
     int stepCount = lastStep - firstStep + 1;
 
     switch (runMode) {

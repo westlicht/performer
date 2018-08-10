@@ -4,11 +4,12 @@
 #include "SequenceState.h"
 #include "SortedQueue.h"
 #include "Groove.h"
+#include "RecordHistory.h"
 
 class NoteTrackEngine : public TrackEngine {
 public:
-    NoteTrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
-        TrackEngine(model, track, linkedTrackEngine),
+    NoteTrackEngine(const Model &model, Track &track, const TrackEngine *linkedTrackEngine, const EngineState &engineState) :
+        TrackEngine(model, track, linkedTrackEngine, engineState),
         _noteTrack(track.noteTrack())
     {
         reset();
@@ -17,15 +18,14 @@ public:
     virtual Track::TrackMode trackMode() const override { return Track::TrackMode::Note; }
 
     virtual void reset() override;
-    virtual void setRunning(bool running) override { _running = running; }
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
-    virtual void receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) override;
+
     virtual void changePattern() override;
 
-    virtual const TrackLinkData *linkData() const override { return &_linkData; }
+    virtual void monitorMidi(uint32_t tick, const MidiMessage &message) override;
 
-    virtual void setSelected(bool selected) override { _selected = selected; }
+    virtual const TrackLinkData *linkData() const override { return &_linkData; }
 
     virtual bool activity() const override { return _activity; }
     virtual bool gateOutput(int index) const override { return _gateOutput; }
@@ -40,24 +40,22 @@ public:
 
 private:
     void triggerStep(uint32_t tick, uint32_t divisor);
+    void recordStep(uint32_t tick, uint32_t divisor);
     uint32_t applySwing(uint32_t tick);
 
-    const NoteTrack &_noteTrack;
+    NoteTrack &_noteTrack;
 
     TrackLinkData _linkData;
 
-    const NoteSequence *_sequence;
+    NoteSequence *_sequence;
     const NoteSequence *_fillSequence;
     SequenceState _sequenceState;
     int _currentStep;
 
     int _monitorStepIndex = -1;
 
-    bool _midiGate = false;
-    uint8_t _midiNote;
-
-    bool _running = false;
-    bool _selected = false;
+    RecordHistory _recordHistory;
+    bool _monitorOverrideActive = false;
 
     bool _activity;
     bool _gateOutput;

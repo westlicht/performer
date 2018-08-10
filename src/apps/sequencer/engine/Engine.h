@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EngineState.h"
 #include "Clock.h"
 #include "TapTempo.h"
 #include "NudgeTempo.h"
@@ -33,7 +34,7 @@ public:
     typedef std::array<TrackEngineContainer, CONFIG_TRACK_COUNT> TrackEngineContainerArray;
     typedef std::array<TrackEngine *, CONFIG_TRACK_COUNT> TrackEngineArray;
 
-    typedef std::function<void(MidiPort port, const MidiMessage &message)> MidiReceiveHandler;
+    typedef std::function<bool(MidiPort port, const MidiMessage &message)> MidiReceiveHandler;
 
     typedef std::function<void(uint16_t vendorId, uint16_t productId)> UsbMidiConnectHandler;
     typedef std::function<void()> UsbMidiDisconnectHandler;
@@ -68,7 +69,12 @@ public:
     void clockStop();
     void clockContinue();
     void clockReset();
-    bool clockRunning() const { return _running; }
+    bool clockRunning() const;
+
+    // recording
+    void toggleRecording();
+    void setRecording(bool recording);
+    bool recording() const;
 
     // tempo
     float tempo() const { return _clock.bpm(); }
@@ -131,11 +137,6 @@ private:
     virtual void onClockOutput(const Clock::OutputState &state) override;
     virtual void onClockMidi(uint8_t data) override;
 
-    void setRunning(bool running);
-
-    void updateSelectedTrack();
-    void updateRecording();
-
     void updateTrackSetups();
     void updateTrackOutputs();
     void resetTrackEngines();
@@ -147,6 +148,7 @@ private:
 
     void receiveMidi();
     void receiveMidi(MidiPort port, const MidiMessage &message);
+    void monitorMidi(const MidiMessage &message);
 
     void initClock();
     void updateClockSetup();
@@ -156,6 +158,8 @@ private:
     GateOutput &_gateOutput;
     Midi &_midi;
     UsbMidi &_usbMidi;
+
+    EngineState _state;
 
     CvInput _cvInput;
     CvOutput _cvOutput;
@@ -178,10 +182,15 @@ private:
     volatile uint32_t _requestUnlock = 0;
     volatile uint32_t _locked = 0;
 
-    bool _running = false;
     uint32_t _tick = 0;
 
     uint32_t _lastSystemTicks = 0;
+
+    // midi monitoring
+    struct {
+        int8_t lastNote = -1;
+        uint8_t lastTrack = -1;
+    } _midiMonitoring;
 
     // gate output overrides
     bool _gateOutputOverride = false;

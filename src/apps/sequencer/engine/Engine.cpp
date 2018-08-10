@@ -38,18 +38,6 @@ void Engine::init() {
     resetTrackEngines();
 
     _lastSystemTicks = os::ticks();
-
-    updateSelectedTrack();
-
-    _model.project().watch([this] (Project::Property property) {
-        switch (property) {
-        case Project::Property::SelectedTrackIndex:
-            updateSelectedTrack();
-            break;
-        default:
-            break;
-        }
-    });
 }
 
 void Engine::update() {
@@ -88,22 +76,22 @@ void Engine::update() {
     while (Clock::Event event = _clock.checkEvent()) {
         switch (event) {
         case Clock::Start:
-            DBG("START");
+            // DBG("START");
             resetTrackEngines();
-            setRunning(true);
+            _state.setRunning(true);
             break;
         case Clock::Stop:
-            DBG("STOP");
-            setRunning(false);
+            // DBG("STOP");
+            _state.setRunning(false);
             break;
         case Clock::Continue:
-            DBG("CONTINUE");
-            setRunning(true);
+            // DBG("CONTINUE");
+            _state.setRunning(true);
             break;
         case Clock::Reset:
-            DBG("RESET");
+            // DBG("RESET");
             resetTrackEngines();
-            setRunning(false);
+            _state.setRunning(false);
             break;
         }
     }
@@ -226,6 +214,22 @@ void Engine::clockReset() {
     _clock.masterReset();
 }
 
+bool Engine::clockRunning() const {
+    return _state.running();
+}
+
+void Engine::toggleRecording() {
+    _state.setRecording(!_state.recording());
+}
+
+void Engine::setRecording(bool recording) {
+    _state.setRecording(recording);
+}
+
+bool Engine::recording() const {
+    return _state.recording();
+}
+
 void Engine::tapTempoReset() {
     _tapTempo.reset(_model.project().tempo());
 }
@@ -301,24 +305,9 @@ void Engine::onClockMidi(uint8_t data) {
     }
 }
 
-void Engine::setRunning(bool running) {
-    _running = running;
-
-    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        _trackEngines[trackIndex]->setRunning(running);
-    }
-}
-
-void Engine::updateSelectedTrack() {
-    auto selectedTrackIndex = _model.project().selectedTrackIndex();
-    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        _trackEngines[trackIndex]->setSelected(trackIndex == selectedTrackIndex);
-    }
-}
-
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        const auto &track = _model.project().track(trackIndex);
+        auto &track = _model.project().track(trackIndex);
 
         if (!_trackEngines[trackIndex] || _trackEngines[trackIndex]->trackMode() != track.trackMode()) {
             int linkTrack = track.linkTrack();
@@ -328,13 +317,13 @@ void Engine::updateTrackSetups() {
 
             switch (track.trackMode()) {
             case Track::TrackMode::Note:
-                trackEngine = trackContainer.create<NoteTrackEngine>(_model, track, linkedTrackEngine);
+                trackEngine = trackContainer.create<NoteTrackEngine>(_model, track, linkedTrackEngine, _state);
                 break;
             case Track::TrackMode::Curve:
-                trackEngine = trackContainer.create<CurveTrackEngine>(_model, track, linkedTrackEngine);
+                trackEngine = trackContainer.create<CurveTrackEngine>(_model, track, linkedTrackEngine, _state);
                 break;
             case Track::TrackMode::MidiCv:
-                trackEngine = trackContainer.create<MidiCvTrackEngine>(_model, track, linkedTrackEngine);
+                trackEngine = trackContainer.create<MidiCvTrackEngine>(_model, track, linkedTrackEngine, _state);
                 break;
             case Track::TrackMode::Last:
                 break;
@@ -540,16 +529,64 @@ void Engine::receiveMidi() {
 }
 
 void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
-    _midiLearn.receiveMidi(port, message);
-    _routingEngine.receiveMidi(port, message);
-
-    if (_midiReceiveHandler) {
-        _midiReceiveHandler(port, message);
+    // filter out real-time and system messages
+    if (message.isRealTimeMessage() || message.isSystemMessage()) {
+        return;
     }
 
-    int channel = message.channel();
+    // let receive handler consume messages (controllers in UI task)
+    if (_midiReceiveHandler) {
+        if (_midiReceiveHandler(port, message)) {
+            return;
+        }
+    }
+
+    // let midi learn inspect messages
+    _midiLearn.receiveMidi(port, message);
+
+    // let routing engine consume messages
+    if (_routingEngine.receiveMidi(port, message)) {
+        return;
+    }
+
+    // let track engines consume messages
     for (auto trackEngine : _trackEngines) {
-        trackEngine->receiveMidi(port, channel, message, _tick);
+        if (trackEngine->receiveMidi(port, message)) {
+            return;
+        }
+    }
+
+    // midi monitoring (and recording)
+    monitorMidi(message);
+}
+
+void Engine::monitorMidi(const MidiMessage &message) {
+    // helper to send monitor message to a track engine
+    auto sendMidi = [this] (int trackIndex, const MidiMessage &message) {
+        _trackEngines[trackIndex]->monitorMidi(_tick, message);
+    };
+
+    auto currentTrack = _model.project().selectedTrackIndex();
+
+    // detect when selected track has changed and a note is still active -> send note off
+    if (_midiMonitoring.lastNote != -1 && _midiMonitoring.lastTrack != -1 && currentTrack != _midiMonitoring.lastTrack) {
+        sendMidi(_midiMonitoring.lastTrack, MidiMessage::makeNoteOff(0, _midiMonitoring.lastNote));
+    }
+
+    if (message.isNoteOn()) {
+        // detect if a different note is still active => send note off
+        if (_midiMonitoring.lastNote != -1 && _midiMonitoring.lastNote != message.note()) {
+            sendMidi(currentTrack, MidiMessage::makeNoteOff(0, _midiMonitoring.lastNote));
+        }
+        // send note on
+        sendMidi(currentTrack, MidiMessage::makeNoteOn(0, message.note(), message.velocity()));
+        _midiMonitoring.lastNote = message.note();
+        _midiMonitoring.lastTrack = currentTrack;
+    } else if (message.isNoteOff()) {
+        // send note off
+        sendMidi(currentTrack, MidiMessage::makeNoteOff(0, message.note()));
+        _midiMonitoring.lastNote = -1;
+        _midiMonitoring.lastTrack = currentTrack;
     }
 }
 

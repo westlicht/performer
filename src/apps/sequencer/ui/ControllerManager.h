@@ -18,6 +18,8 @@ public:
     void connect(uint16_t vendorId, uint16_t productId);
     void disconnect();
 
+    bool isConnected() { return _controller != nullptr; }
+
     void update();
 
     bool recvMidi(MidiPort port, const MidiMessage &message);

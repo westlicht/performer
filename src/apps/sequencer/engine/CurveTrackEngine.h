@@ -7,8 +7,8 @@
 
 class CurveTrackEngine : public TrackEngine {
 public:
-    CurveTrackEngine(const Model &model, const Track &track, const TrackEngine *linkedTrackEngine) :
-        TrackEngine(model, track, linkedTrackEngine),
+    CurveTrackEngine(const Model &model, Track &track, const TrackEngine *linkedTrackEngine, const EngineState &engineState) :
+        TrackEngine(model, track, linkedTrackEngine, engineState),
         _curveTrack(track.curveTrack())
     {
         reset();
@@ -19,6 +19,7 @@ public:
     virtual void reset() override;
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
+
     virtual void changePattern() override;
 
     virtual const TrackLinkData *linkData() const override { return &_linkData; }

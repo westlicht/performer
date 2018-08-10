@@ -81,6 +81,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
         _sequenceState = *linkData->sequenceState;
 
         if (linkData->relativeTick == 0) {
+            recordStep(tick, linkData->divisor);
             triggerStep(tick, linkData->divisor);
         }
     } else {
@@ -108,6 +109,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
                 break;
             }
 
+            recordStep(tick, divisor);
             triggerStep(tick, divisor);
         }
 
@@ -130,29 +132,39 @@ void NoteTrackEngine::tick(uint32_t tick) {
 }
 
 void NoteTrackEngine::update(float dt) {
-    // override due to step monitoring
-    if (!_running && _selected) {
-        const auto &sequence = *_sequence;
-        const auto &scale = sequence.selectedScale();
-        int rootNote = sequence.selectedRootNote();
+    bool running = _engineState.running();
+    bool recording = _engineState.recording();
 
-        if (_monitorStepIndex >= 0) {
+    const auto &sequence = *_sequence;
+    const auto &scale = sequence.selectedScale();
+    int rootNote = sequence.selectedRootNote();
+
+    // override due to monitoring or recording
+    if (!running || recording) {
+        if (!recording && _monitorStepIndex >= 0) {
+            // step monitoring (first priority)
             const auto &step = sequence.step(_monitorStepIndex);
             int octave = _noteTrack.octave();
             int transpose = _noteTrack.transpose();
             _cvOutputTarget = evalStepNote(step, scale, rootNote, octave, transpose, false);
             _activity = _gateOutput = true;
-        } else if (_midiGate) {
+            _monitorOverrideActive = true;
+        } else if (_recordHistory.isNoteActive()) {
+            // midi monitoring (second priority)
             if (scale.isChromatic()) {
-                int note = scale.noteFromVolts((_midiNote - 60 - rootNote) * (1.f / 12.f));
+                int note = scale.noteFromVolts((_recordHistory.activeNote() - 60 - rootNote) * (1.f / 12.f));
                 _cvOutputTarget = scale.noteVolts(note) + (rootNote / 12.f);
             } else {
-                int note = scale.noteFromVolts((_midiNote - 60) * (1.f / 12.f));
+                int note = scale.noteFromVolts((_recordHistory.activeNote() - 60) * (1.f / 12.f));
                 _cvOutputTarget = scale.noteVolts(note);
             }
             _activity = _gateOutput = true;
+            _monitorOverrideActive = true;
         } else {
-            _activity = _gateOutput = false;
+            if (_monitorOverrideActive) {
+                _activity = _gateOutput = false;
+                _monitorOverrideActive = false;
+            }
         }
     }
 
@@ -163,18 +175,13 @@ void NoteTrackEngine::update(float dt) {
     }
 }
 
-    if (message.isNoteOn()) {
-        _midiGate = true;
-        _midiNote = message.note();
-    } else {
-        _midiGate = false;
-void NoteTrackEngine::receiveMidi(MidiPort port, int channel, const MidiMessage &message, uint32_t tick) {
-    }
-}
-
 void NoteTrackEngine::changePattern() {
     _sequence = &_noteTrack.sequence(pattern());
     _fillSequence = &_noteTrack.sequence(std::min(pattern() + 1, CONFIG_PATTERN_COUNT - 1));
+}
+
+void NoteTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
+    _recordHistory.write(tick, message);
 }
 
 void NoteTrackEngine::setMonitorStep(int index) {
@@ -213,6 +220,73 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
         int rootNote = evalSequence.selectedRootNote();
         _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, rootNote, octave, transpose), step.slide() });
     }
+}
+
+void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
+    if (!_engineState.recording() || _sequenceState.lastStep() < 0) {
+        return;
+    }
+
+    uint32_t startTick = 0;
+    uint32_t endTick = 0;
+    int note = -1;
+
+    for (size_t i = 0; i < _recordHistory.size(); ++i) {
+        const auto &event = _recordHistory[i];
+        if (event.tick >= tick) {
+            break;
+        }
+
+        switch (event.type) {
+        case RecordHistory::Type::NoteOn:
+            startTick = endTick = event.tick;
+            note = event.note;
+            break;
+        case RecordHistory::Type::NoteOff:
+            if (event.tick + divisor < tick) {
+                note = -1;
+            }
+            endTick = event.tick;
+            break;
+        }
+    }
+
+    if (note == -1) {
+        return;
+    }
+
+    // if (tick - startTick > divisor) {
+    //     return;
+    // }
+
+    int length = startTick == endTick ?
+        NoteSequence::Length::max() :
+        std::min(NoteSequence::Length::max(), (int(endTick - startTick) * NoteSequence::Length::range()) / int(divisor));
+
+    DBG("%d, %d, %d", _sequenceState.lastStep(), note, length);
+
+    auto &sequence = *_sequence;
+    auto &step = sequence.step(_sequenceState.lastStep());
+
+    const auto &scale = sequence.selectedScale();
+    int rootNote = sequence.selectedRootNote();
+
+    if (scale.isChromatic()) {
+        note = scale.noteFromVolts((note - 60 - rootNote) * (1.f / 12.f));
+    } else {
+        note = scale.noteFromVolts((note - 60) * (1.f / 12.f));
+    }
+
+    step.setGate(true);
+    step.setGateProbability(NoteSequence::GateProbability::Max);
+    step.setRetrigger(0);
+    step.setRetriggerProbability(0);
+    step.setLength(length);
+    step.setLengthVariationRange(0);
+    step.setLengthVariationProbability(0);
+    step.setNote(note);
+    step.setNoteVariationRange(0);
+    step.setNoteVariationProbability(0);
 }
 
 uint32_t NoteTrackEngine::applySwing(uint32_t tick) {

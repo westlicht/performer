@@ -52,10 +52,12 @@ void TopPage::editRoute(Routing::Param param, int trackIndex) {
 }
 
 void TopPage::updateLeds(Leds &leds) {
+    bool clockTick = _engine.clockRunning() && _engine.tick() % CONFIG_PPQN < (CONFIG_PPQN / 8);
+
     leds.set(
         Key::Play,
-        false,
-        _engine.clockRunning() && _engine.tick() % CONFIG_PPQN < (CONFIG_PPQN / 8)
+        _engine.recording() && !clockTick,
+        clockTick
     );
 
     if (globalKeyState()[Key::Page]) {
@@ -99,7 +101,11 @@ void TopPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isPlay()) {
-        _engine.togglePlay(key.shiftModifier());
+        if (key.pageModifier()) {
+            _engine.toggleRecording();
+        } else {
+            _engine.togglePlay(key.shiftModifier());
+        }
         event.consume();
     }
 
