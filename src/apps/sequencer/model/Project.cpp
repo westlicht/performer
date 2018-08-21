@@ -34,6 +34,7 @@ void Project::clear() {
         _gateOutputTracks[i] = i;
     }
 
+    _song.clear();
     _playState.clear();
     _routing.clear();
 
