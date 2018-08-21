@@ -157,20 +157,20 @@ public:
     private:
         union {
             uint32_t raw;
-            BitField<0, 1> gate;
-            BitField<1, 1> slide;
-            BitField<2, GateProbability::Bits> gateProbability;
-            BitField<5, Length::Bits> length;
-            BitField<8, LengthVariationRange::Bits> lengthVariationRange;
-            BitField<12, LengthVariationProbability::Bits> lengthVariationProbability;
-            BitField<15, Note::Bits> note;
-            BitField<22, NoteVariationRange::Bits> noteVariationRange;
-            BitField<29, NoteVariationProbability::Bits> noteVariationProbability;
+            BitField<uint32_t, 0, 1> gate;
+            BitField<uint32_t, 1, 1> slide;
+            BitField<uint32_t, 2, GateProbability::Bits> gateProbability;
+            BitField<uint32_t, 5, Length::Bits> length;
+            BitField<uint32_t, 8, LengthVariationRange::Bits> lengthVariationRange;
+            BitField<uint32_t, 12, LengthVariationProbability::Bits> lengthVariationProbability;
+            BitField<uint32_t, 15, Note::Bits> note;
+            BitField<uint32_t, 22, NoteVariationRange::Bits> noteVariationRange;
+            BitField<uint32_t, 29, NoteVariationProbability::Bits> noteVariationProbability;
         } _data0;
         union {
             uint16_t raw;
-            BitField<0, Retrigger::Bits> retrigger;
-            BitField<3, RetriggerProbability::Bits> retriggerProbability;
+            BitField<uint16_t, 0, Retrigger::Bits> retrigger;
+            BitField<uint16_t, 3, RetriggerProbability::Bits> retriggerProbability;
             // 10 bit left
         } _data1;
     };

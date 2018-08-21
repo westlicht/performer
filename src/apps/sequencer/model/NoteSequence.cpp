@@ -112,7 +112,7 @@ void NoteSequence::Step::clear() {
     setGateProbability(GateProbability::Max);
     setLength(Length::Max / 2);
     setLengthVariationRange(0);
-    setLengthVariationProbability(0);
+    setLengthVariationProbability(LengthVariationProbability::Max);
     setNote(0);
     setNoteVariationRange(0);
     setNoteVariationProbability(NoteVariationProbability::Max);
