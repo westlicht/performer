@@ -36,12 +36,14 @@ void RoutingPage::exit() {
 
 void RoutingPage::draw(Canvas &canvas) {
     bool showCommit = *_route != _editRoute;
-    const char *functionNames[] = { "PREV", "NEXT", "INIT", "LEARN", showCommit ? "COMMIT" : nullptr };
+    bool showLearn = _editRoute.param() != Routing::Param::None;
+    bool highlightLearn = showLearn && _engine.midiLearn().isActive();
+    const char *functionNames[] = { "PREV", "NEXT", "INIT", showLearn ? "LEARN" : nullptr, showCommit ? "COMMIT" : nullptr };
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "ROUTING");
     WindowPainter::drawActiveFunction(canvas, FixedStringBuilder<16>("ROUTE %d", _routeIndex + 1));
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, keyState(), highlightLearn ? int(Function::Learn) : -1);
 
     ListPage::draw(canvas);
 }
@@ -66,13 +68,17 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
         case Function::Init:
             _engine.midiLearn().stop();
             _editRoute.clear();
+            setSelectedRow(0);
+            setEdit(false);
             break;
         case Function::Learn:
-            _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
-                // TODO this might be unsafe as callback is called from engine thread
-                assignMidiLearn(result);
-                _engine.midiLearn().stop();
-            });
+            if (_editRoute.param() != Routing::Param::None) {
+                _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
+                    // TODO this might be unsafe as callback is called from engine thread
+                    assignMidiLearn(result);
+                    _engine.midiLearn().stop();
+                });
+            }
             break;
         case Function::Commit:
             _engine.midiLearn().stop();
