@@ -254,7 +254,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
 
     uint32_t stepStart = tick - divisor;
     uint32_t stepEnd = tick;
-    uint32_t margin = divisor / 4;
+    uint32_t margin = divisor / 3;
 
     for (size_t i = 0; i < _recordHistory.size(); ++i) {
         if (_recordHistory[i].type != RecordHistory::Type::NoteOn) {
@@ -267,7 +267,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
 
         if (noteStart <= stepStart + margin && noteEnd >= stepStart + margin) {
             int length = std::min(noteEnd, stepEnd) - std::max(noteStart, stepStart);
-            length = std::max(1, (length * NoteSequence::Length::Range) / divisor);
+            length = (length * NoteSequence::Length::Range) / divisor;
             writeStep(_sequenceState.lastStep(), note, length);
         }
     }
