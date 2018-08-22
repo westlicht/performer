@@ -67,7 +67,6 @@ void ListPage::draw(Canvas &canvas) {
 }
 
 void ListPage::updateLeds(Leds &leds) {
-    LedPainter::drawStepIndex(leds,_listModel->indexed(_selectedRow));
 }
 
 void ListPage::keyPress(KeyPressEvent &event) {
@@ -95,9 +94,6 @@ void ListPage::keyPress(KeyPressEvent &event) {
     } else if (key.isEncoder()) {
         _edit = !_edit;
         event.consume();
-    } else if (key.isStep()) {
-        _listModel->setIndexed(_selectedRow, key.step());
-        event.consume();
     }
 }
 
@@ -122,8 +118,6 @@ void ListPage::setTopRow(int row) {
 }
 
 void ListPage::drawCell(Canvas &canvas, int row, int column, int x, int y, int w, int h) {
-    // canvas.drawRect(x, y, w, h);
-
     FixedStringBuilder<32> str;
     _listModel->cell(row, column, str);
     canvas.setColor(column == int(_edit) && row == _selectedRow ? 0xf : 0x7);
