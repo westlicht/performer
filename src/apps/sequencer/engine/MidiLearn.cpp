@@ -5,6 +5,7 @@ MidiLearn::MidiLearn() {
 }
 
 void MidiLearn::start(ResultCallback callback) {
+    reset();
     _callback = callback;
 }
 
@@ -64,6 +65,7 @@ void MidiLearn::reset() {
     _controlNumber = -1;
     _note = -1;
     _eventCounters.fill(0);
+    _lastResult.event = Event::Last;
 }
 
 void MidiLearn::emitResult(Result result) {

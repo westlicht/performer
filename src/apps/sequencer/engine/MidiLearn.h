@@ -42,6 +42,8 @@ public:
     void start(ResultCallback callback);
     void stop();
 
+    bool isActive() const { return _callback != nullptr; }
+
     void receiveMidi(MidiPort port, const MidiMessage &message);
 
 private:
