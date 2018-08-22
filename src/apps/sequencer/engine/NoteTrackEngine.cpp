@@ -227,66 +227,50 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         return;
     }
 
-    uint32_t startTick = 0;
-    uint32_t endTick = 0;
-    int note = -1;
+    auto writeStep = [this] (int stepIndex, int note, int length) {
+        auto &sequence = *_sequence;
+        auto &step = sequence.step(stepIndex);
+
+        const auto &scale = sequence.selectedScale();
+        int rootNote = sequence.selectedRootNote();
+
+        if (scale.isChromatic()) {
+            note = scale.noteFromVolts((note - 60 - rootNote) * (1.f / 12.f));
+        } else {
+            note = scale.noteFromVolts((note - 60) * (1.f / 12.f));
+        }
+
+        step.setGate(true);
+        step.setGateProbability(NoteSequence::GateProbability::Max);
+        step.setRetrigger(0);
+        step.setRetriggerProbability(0);
+        step.setLength(length);
+        step.setLengthVariationRange(0);
+        step.setLengthVariationProbability(0);
+        step.setNote(note);
+        step.setNoteVariationRange(0);
+        step.setNoteVariationProbability(0);
+    };
+
+    uint32_t stepStart = tick - divisor;
+    uint32_t stepEnd = tick;
+    uint32_t margin = divisor / 4;
 
     for (size_t i = 0; i < _recordHistory.size(); ++i) {
-        const auto &event = _recordHistory[i];
-        if (event.tick >= tick) {
-            break;
+        if (_recordHistory[i].type != RecordHistory::Type::NoteOn) {
+            continue;
         }
 
-        switch (event.type) {
-        case RecordHistory::Type::NoteOn:
-            startTick = endTick = event.tick;
-            note = event.note;
-            break;
-        case RecordHistory::Type::NoteOff:
-            if (event.tick + divisor < tick) {
-                note = -1;
-            }
-            endTick = event.tick;
-            break;
+        int note = _recordHistory[i].note;
+        uint32_t noteStart = _recordHistory[i].tick;
+        uint32_t noteEnd = i + 1 < _recordHistory.size() ? _recordHistory[i + 1].tick : tick;
+
+        if (noteStart <= stepStart + margin && noteEnd >= stepStart + margin) {
+            int length = std::min(noteEnd, stepEnd) - std::max(noteStart, stepStart);
+            length = std::max(1, (length * NoteSequence::Length::Range) / divisor);
+            writeStep(_sequenceState.lastStep(), note, length);
         }
     }
-
-    if (note == -1) {
-        return;
-    }
-
-    // if (tick - startTick > divisor) {
-    //     return;
-    // }
-
-    int length = startTick == endTick ?
-        NoteSequence::Length::max() :
-        std::min(NoteSequence::Length::max(), (int(endTick - startTick) * NoteSequence::Length::range()) / int(divisor));
-
-    DBG("%d, %d, %d", _sequenceState.lastStep(), note, length);
-
-    auto &sequence = *_sequence;
-    auto &step = sequence.step(_sequenceState.lastStep());
-
-    const auto &scale = sequence.selectedScale();
-    int rootNote = sequence.selectedRootNote();
-
-    if (scale.isChromatic()) {
-        note = scale.noteFromVolts((note - 60 - rootNote) * (1.f / 12.f));
-    } else {
-        note = scale.noteFromVolts((note - 60) * (1.f / 12.f));
-    }
-
-    step.setGate(true);
-    step.setGateProbability(NoteSequence::GateProbability::Max);
-    step.setRetrigger(0);
-    step.setRetriggerProbability(0);
-    step.setLength(length);
-    step.setLengthVariationRange(0);
-    step.setLengthVariationProbability(0);
-    step.setNote(note);
-    step.setNoteVariationRange(0);
-    step.setNoteVariationProbability(0);
 }
 
 uint32_t NoteTrackEngine::applySwing(uint32_t tick) {
