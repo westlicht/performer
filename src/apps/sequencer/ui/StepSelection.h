@@ -117,11 +117,13 @@ public:
     void clear() {
         _selected.reset();
         _mode = Mode::Immediate;
+        _first = -1;
     }
 
     void selectAll() {
         _selected.set();
         _mode = Mode::Persist;
+        _first = 0;
     }
 
     bool isPersisted() const {
