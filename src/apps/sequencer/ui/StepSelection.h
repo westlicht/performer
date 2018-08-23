@@ -63,8 +63,12 @@ public:
             return;
         }
 
-        if (_mode == Mode::Persist && key.isShift() && event.count() == 2) {
-            clear();
+        if (key.isShift() && event.count() == 2) {
+            if (none()) {
+                selectAll();
+            } else if (_mode == Mode::Persist) {
+                clear();
+            }
             event.consume();
             return;
         }
@@ -113,6 +117,11 @@ public:
     void clear() {
         _selected.reset();
         _mode = Mode::Immediate;
+    }
+
+    void selectAll() {
+        _selected.set();
+        _mode = Mode::Persist;
     }
 
     bool isPersisted() const {
