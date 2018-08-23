@@ -21,7 +21,7 @@ public:
     //----------------------------------------
 
     typedef UnsignedValue<3> GateProbability;
-    typedef UnsignedValue<3> Retrigger;
+    typedef UnsignedValue<2> Retrigger;
     typedef UnsignedValue<3> RetriggerProbability;
     typedef UnsignedValue<3> Length;
     typedef SignedValue<4> LengthVariationRange;
@@ -170,8 +170,8 @@ public:
         union {
             uint16_t raw;
             BitField<uint16_t, 0, Retrigger::Bits> retrigger;
-            BitField<uint16_t, 3, RetriggerProbability::Bits> retriggerProbability;
-            // 10 bit left
+            BitField<uint16_t, 2, RetriggerProbability::Bits> retriggerProbability;
+            // 11 bits left
         } _data1;
     };
 
