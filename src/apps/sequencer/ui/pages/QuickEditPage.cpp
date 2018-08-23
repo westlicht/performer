@@ -40,7 +40,7 @@ void QuickEditPage::draw(Canvas &canvas) {
 }
 
 void QuickEditPage::updateLeds(Leds &leds) {
-    LedPainter::unmaskSteps(leds);
+    leds.clear();
     LedPainter::drawStepIndex(leds, _listModel->indexed(_row));
 }
 
