@@ -60,7 +60,7 @@ void TopPage::updateLeds(Leds &leds) {
         clockTick
     );
 
-    if (globalKeyState()[Key::Page]) {
+    if (globalKeyState()[Key::Page] && !globalKeyState()[Key::Shift]) {
         LedPainter::drawSelectedPage(leds, _mode);
     } else {
         LedPainter::drawTrackGatesAndSelectedTrack(leds, _engine, _project.selectedTrackIndex());
