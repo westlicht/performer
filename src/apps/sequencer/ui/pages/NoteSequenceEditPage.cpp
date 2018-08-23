@@ -38,6 +38,17 @@ enum class Function {
 
 static const char *functionNames[] = { "GATE", "RETRIG", "LENGTH", "NOTE", nullptr };
 
+static const NoteSequenceListModel::Item quickEditItems[8] = {
+    NoteSequenceListModel::Item::Scale,
+    NoteSequenceListModel::Item::RootNote,
+    NoteSequenceListModel::Item::Divisor,
+    NoteSequenceListModel::Item::ResetMeasure,
+    NoteSequenceListModel::Item::RunMode,
+    NoteSequenceListModel::Item::FirstStep,
+    NoteSequenceListModel::Item::LastStep,
+    NoteSequenceListModel::Item::Last
+};
+
 NoteSequenceEditPage::NoteSequenceEditPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
@@ -209,6 +220,16 @@ void NoteSequenceEditPage::updateLeds(Leds &leds) {
     }
 
     LedPainter::drawSelectedSequencePage(leds, _page);
+
+    // show quick edit keys
+    if (globalKeyState()[Key::Page] && !globalKeyState()[Key::Shift]) {
+        for (int i = 0; i < 8; ++i) {
+            int index = MatrixMap::fromStep(i + 8);
+            leds.unmask(index);
+            leds.set(index, false, quickEditItems[i] != NoteSequenceListModel::Item::Last);
+            leds.mask(index);
+        }
+    }
 }
 
 void NoteSequenceEditPage::keyDown(KeyEvent &event) {
@@ -684,20 +705,9 @@ void NoteSequenceEditPage::generateSequence() {
 }
 
 void NoteSequenceEditPage::quickEdit(int index) {
-    static const NoteSequenceListModel::Item itemMap[8] = {
-        NoteSequenceListModel::Item::Scale,
-        NoteSequenceListModel::Item::RootNote,
-        NoteSequenceListModel::Item::Divisor,
-        NoteSequenceListModel::Item::ResetMeasure,
-        NoteSequenceListModel::Item::RunMode,
-        NoteSequenceListModel::Item::FirstStep,
-        NoteSequenceListModel::Item::LastStep,
-        NoteSequenceListModel::Item::Last
-    };
-
     _listModel.setSequence(&_project.selectedNoteSequence());
-    if (itemMap[index] != NoteSequenceListModel::Item::Last) {
-        _manager.pages().quickEdit.show(_listModel, int(itemMap[index]));
+    if (quickEditItems[index] != NoteSequenceListModel::Item::Last) {
+        _manager.pages().quickEdit.show(_listModel, int(quickEditItems[index]));
     }
 }
 

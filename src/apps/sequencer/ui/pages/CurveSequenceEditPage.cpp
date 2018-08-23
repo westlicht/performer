@@ -35,6 +35,16 @@ enum class Function {
 
 static const char *functionNames[] = { "SHAPE", "MIN", "MAX", nullptr, nullptr };
 
+static const CurveSequenceListModel::Item quickEditItems[8] = {
+    CurveSequenceListModel::Item::Range,
+    CurveSequenceListModel::Item::Last,
+    CurveSequenceListModel::Item::Divisor,
+    CurveSequenceListModel::Item::ResetMeasure,
+    CurveSequenceListModel::Item::RunMode,
+    CurveSequenceListModel::Item::FirstStep,
+    CurveSequenceListModel::Item::LastStep,
+    CurveSequenceListModel::Item::Last
+};
 
 static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, const Curve::Function function, float min, float max) {
     const int Step = 1;
@@ -149,6 +159,16 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
 void CurveSequenceEditPage::updateLeds(Leds &leds) {
     LedPainter::drawSelectedSequencePage(leds, _page);
+
+    // show quick edit keys
+    if (globalKeyState()[Key::Page] && !globalKeyState()[Key::Shift]) {
+        for (int i = 0; i < 8; ++i) {
+            int index = MatrixMap::fromStep(i + 8);
+            leds.unmask(index);
+            leds.set(index, false, quickEditItems[i] != CurveSequenceListModel::Item::Last);
+            leds.mask(index);
+        }
+    }
 }
 
 void CurveSequenceEditPage::keyDown(KeyEvent &event) {
@@ -345,19 +365,8 @@ void CurveSequenceEditPage::generateSequence() {
 }
 
 void CurveSequenceEditPage::quickEdit(int index) {
-    static const CurveSequenceListModel::Item itemMap[8] = {
-        CurveSequenceListModel::Item::Range,
-        CurveSequenceListModel::Item::Last,
-        CurveSequenceListModel::Item::Divisor,
-        CurveSequenceListModel::Item::ResetMeasure,
-        CurveSequenceListModel::Item::RunMode,
-        CurveSequenceListModel::Item::FirstStep,
-        CurveSequenceListModel::Item::LastStep,
-        CurveSequenceListModel::Item::Last
-    };
-
     _listModel.setSequence(&_project.selectedCurveSequence());
-    if (itemMap[index] != CurveSequenceListModel::Item::Last) {
-        _manager.pages().quickEdit.show(_listModel, int(itemMap[index]));
+    if (quickEditItems[index] != CurveSequenceListModel::Item::Last) {
+        _manager.pages().quickEdit.show(_listModel, int(quickEditItems[index]));
     }
 }
