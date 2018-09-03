@@ -53,6 +53,7 @@ private:
         SyncMeasure,
         Scale,
         RootNote,
+        RecordMode,
         Last
     };
 
@@ -64,6 +65,7 @@ private:
         case SyncMeasure:       return "Sync Measure";
         case Scale:             return "Scale";
         case RootNote:          return "Root Note";
+        case RecordMode:        return "Record Mode";
         case Last:              break;
         }
         return nullptr;
@@ -92,6 +94,10 @@ private:
             break;
         case RootNote:
             _project.printRootNote(str);
+            break;
+        case RecordMode:
+            _project.printRecordMode(str);
+            break;
         case Last:
             break;
         }
@@ -115,6 +121,9 @@ private:
             break;
         case RootNote:
             _project.editRootNote(value, shift);
+            break;
+        case RecordMode:
+            _project.editRecordMode(value, shift);
             break;
         case Last:
             break;
