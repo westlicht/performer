@@ -8,6 +8,23 @@
 
 class Types {
 public:
+    // RecordMode
+
+    enum class RecordMode : uint8_t {
+        Overdub,
+        Overwrite,
+        Last
+    };
+
+    static const char *recordModeName(RecordMode recordMode) {
+        switch (recordMode) {
+        case RecordMode::Overdub:   return "Overdub";
+        case RecordMode::Overwrite: return "Overwrite";
+        case RecordMode::Last:      break;
+        }
+        return nullptr;
+    }
+
     // PlayMode
 
     enum class PlayMode : uint8_t {

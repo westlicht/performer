@@ -134,6 +134,21 @@ public:
         Types::printNote(str, _rootNote);
     }
 
+    // recordMode
+
+    Types::RecordMode recordMode() const { return _recordMode; }
+    void setRecordMode(Types::RecordMode recordMode) {
+        _recordMode = ModelUtils::clampedEnum(recordMode);
+    }
+
+    void editRecordMode(int value, bool shift) {
+        _recordMode = ModelUtils::adjustedEnum(_recordMode, value);
+    }
+
+    void printRecordMode(StringBuilder &str) const {
+        str(Types::recordModeName(_recordMode));
+    }
+
     // clockSetup
 
     const ClockSetup &clockSetup() const { return _clockSetup; }
@@ -285,6 +300,7 @@ private:
     uint8_t _syncMeasure;
     uint8_t _scale;
     uint8_t _rootNote;
+    Types::RecordMode _recordMode;
 
     ClockSetup _clockSetup;
     TrackArray _tracks;

@@ -252,9 +252,18 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         step.setNoteVariationProbability(0);
     };
 
+    auto clearStep = [this] (int stepIndex) {
+        auto &sequence = *_sequence;
+        auto &step = sequence.step(stepIndex);
+
+        step.clear();
+    };
+
     uint32_t stepStart = tick - divisor;
     uint32_t stepEnd = tick;
     uint32_t margin = divisor / 3;
+
+    bool written = false;
 
     for (size_t i = 0; i < _recordHistory.size(); ++i) {
         if (_recordHistory[i].type != RecordHistory::Type::NoteOn) {
@@ -269,7 +278,13 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
             int length = std::min(noteEnd, stepEnd) - std::max(noteStart, stepStart);
             length = (length * NoteSequence::Length::Range) / divisor;
             writeStep(_sequenceState.lastStep(), note, length);
+            written = true;
+            break;
         }
+    }
+
+    if (!written && _model.project().recordMode() == Types::RecordMode::Overwrite) {
+        clearStep(_sequenceState.lastStep());
     }
 }
 

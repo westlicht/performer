@@ -22,6 +22,7 @@ void Project::clear() {
     setSyncMeasure(1);
     setScale(0);
     setRootNote(0);
+    setRecordMode(Types::RecordMode::Overdub);
 
     _clockSetup.clear();
 
@@ -84,6 +85,7 @@ void Project::write(WriteContext &context) const {
     writer.write(_syncMeasure);
     writer.write(_scale);
     writer.write(_rootNote);
+    writer.write(_recordMode);
 
     _clockSetup.write(context);
 
@@ -110,6 +112,7 @@ bool Project::read(ReadContext &context) {
     reader.read(_syncMeasure);
     reader.read(_scale);
     reader.read(_rootNote);
+    reader.read(_recordMode);
 
     _clockSetup.read(context);
 
