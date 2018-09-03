@@ -214,8 +214,8 @@ void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, flo
         case Param::TrackRotate:
             noteTrack.setRotate(intValue);
             break;
-        case Param::TrackStepProbabilityBias:
-            noteTrack.setStepProbabilityBias(intValue);
+        case Param::TrackStepGateProbabilityBias:
+            noteTrack.setStepGateProbabilityBias(intValue);
             break;
         case Param::TrackStepLengthBias:
             noteTrack.setStepLengthBias(intValue);
@@ -271,17 +271,17 @@ struct ParamInfo {
 };
 
 const ParamInfo paramInfos[int(Routing::Param::Last)] = {
-    [int(Routing::Param::None)]                     = { 0,      0   },
-    [int(Routing::Param::Tempo)]                    = { 20,     500 },
-    [int(Routing::Param::Swing)]                    = { 50,     75  },
-    [int(Routing::Param::TrackSlideTime)]           = { 0,      100 },
-    [int(Routing::Param::TrackOctave)]              = { -10,    10  },
-    [int(Routing::Param::TrackTranspose)]           = { -12,    12  },
-    [int(Routing::Param::TrackRotate)]              = { -64,    64  },
-    [int(Routing::Param::TrackStepProbabilityBias)] = { -8,     8   },
-    [int(Routing::Param::TrackStepLengthBias)]      = { -8,     8   },
-    [int(Routing::Param::FirstStep)]                = { 0,      63  },
-    [int(Routing::Param::LastStep)]                 = { 0,      63  },
+    [int(Routing::Param::None)]                         = { 0,      0   },
+    [int(Routing::Param::Tempo)]                        = { 20,     500 },
+    [int(Routing::Param::Swing)]                        = { 50,     75  },
+    [int(Routing::Param::TrackSlideTime)]               = { 0,      100 },
+    [int(Routing::Param::TrackOctave)]                  = { -10,    10  },
+    [int(Routing::Param::TrackTranspose)]               = { -12,    12  },
+    [int(Routing::Param::TrackRotate)]                  = { -64,    64  },
+    [int(Routing::Param::TrackStepGateProbabilityBias)] = { -8,     8   },
+    [int(Routing::Param::TrackStepLengthBias)]          = { -8,     8   },
+    [int(Routing::Param::FirstStep)]                    = { 0,      63  },
+    [int(Routing::Param::LastStep)]                     = { 0,      63  },
 };
 
 float Routing::normalizeParamValue(Routing::Param param, float value) {
@@ -318,7 +318,7 @@ void Routing::printParamValue(Routing::Param param, float normalized, StringBuil
     case Param::TrackRotate:
         str("%+d", intValue);
         break;
-    case Param::TrackStepProbabilityBias:
+    case Param::TrackStepGateProbabilityBias:
     case Param::TrackStepLengthBias:
         str("%+.1f%%", value * 12.5f);
         break;

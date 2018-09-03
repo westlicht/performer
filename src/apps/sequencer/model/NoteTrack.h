@@ -113,19 +113,19 @@ public:
         str("%+d", rotate());
     }
 
-    // stepProbabilityBias
+    // stepGateProbabilityBias
 
-    int stepProbabilityBias() const { return _stepProbabilityBias; }
-    void setStepProbabilityBias(int stepProbabilityBias) {
-        _stepProbabilityBias = clamp(stepProbabilityBias, -NoteSequence::GateProbability::Range, NoteSequence::GateProbability::Range);
+    int stepGateProbabilityBias() const { return _stepGateProbabilityBias; }
+    void setStepGateProbabilityBias(int stepGateProbabilityBias) {
+        _stepGateProbabilityBias = clamp(stepGateProbabilityBias, -NoteSequence::GateProbability::Range, NoteSequence::GateProbability::Range);
     }
 
-    void editStepProbabilityBias(int value, bool shift) {
-        setStepProbabilityBias(stepProbabilityBias() + value);
+    void editStepGateProbabilityBias(int value, bool shift) {
+        setStepGateProbabilityBias(stepGateProbabilityBias() + value);
     }
 
-    void printStepProbabilityBias(StringBuilder &str) const {
-        str("%+.1f%%", stepProbabilityBias() * 12.5f);
+    void printStepGateProbabilityBias(StringBuilder &str) const {
+        str("%+.1f%%", stepGateProbabilityBias() * 12.5f);
     }
 
     // stepLengthBias
@@ -172,7 +172,7 @@ private:
     int8_t _octave;
     int8_t _transpose;
     int8_t _rotate;
-    int8_t _stepProbabilityBias;
+    int8_t _stepGateProbabilityBias;
     int8_t _stepLengthBias;
 
     NoteSequenceArray _sequences;

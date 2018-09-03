@@ -200,7 +200,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
     const auto &step = evalSequence.step(_currentStep);
 
-    if (evalStepGate(step, _noteTrack.stepProbabilityBias()) || useFillGates) {
+    if (evalStepGate(step, _noteTrack.stepGateProbabilityBias()) || useFillGates) {
         uint32_t stepLength = (divisor * evalStepLength(step, _noteTrack.stepLengthBias())) / NoteSequence::Length::Range;
         int stepRetrigger = evalStepRetrigger(step);
         if (stepRetrigger > 1) {

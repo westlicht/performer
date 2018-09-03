@@ -49,7 +49,7 @@ public:
         TrackOctave,
         TrackTranspose,
         TrackRotate,
-        TrackStepProbabilityBias,
+        TrackStepGateProbabilityBias,
         TrackStepLengthBias,
         TrackLast = TrackStepLengthBias,
 
@@ -72,8 +72,8 @@ public:
         case Param::TrackOctave:    return "Octave";
         case Param::TrackTranspose: return "Transpose";
         case Param::TrackRotate:    return "Rotate";
-        case Param::TrackStepProbabilityBias: return "Step P. Bias";
-        case Param::TrackStepLengthBias: return "Step L. Bias";
+        case Param::TrackStepGateProbabilityBias: return "Gate Prob Bias";
+        case Param::TrackStepLengthBias: return "Length Bias";
 
         case Param::FirstStep:      return "First Step";
         case Param::LastStep:       return "Last Step";

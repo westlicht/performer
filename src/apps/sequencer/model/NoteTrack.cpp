@@ -7,7 +7,7 @@ void NoteTrack::clear() {
     _octave = 0;
     _transpose = 0;
     _rotate = 0;
-    _stepProbabilityBias = 0;
+    _stepGateProbabilityBias = 0;
     _stepLengthBias = 0;
 
     for (auto &sequence : _sequences) {
@@ -23,7 +23,7 @@ void NoteTrack::write(WriteContext &context) const {
     writer.write(_octave);
     writer.write(_transpose);
     writer.write(_rotate);
-    writer.write(_stepProbabilityBias);
+    writer.write(_stepGateProbabilityBias);
     writer.write(_stepLengthBias);
     writeArray(context, _sequences);
 }
@@ -36,7 +36,7 @@ void NoteTrack::read(ReadContext &context) {
     reader.read(_octave);
     reader.read(_transpose);
     reader.read(_rotate);
-    reader.read(_stepProbabilityBias);
+    reader.read(_stepGateProbabilityBias);
     reader.read(_stepLengthBias);
     readArray(context, _sequences);
 }

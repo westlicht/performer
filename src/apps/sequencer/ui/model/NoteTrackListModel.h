@@ -44,8 +44,8 @@ public:
             return Routing::Param::TrackTranspose;
         case Rotate:
             return Routing::Param::TrackRotate;
-        case StepProbabilityBias:
-            return Routing::Param::TrackStepProbabilityBias;
+        case StepGateProbabilityBias:
+            return Routing::Param::TrackStepGateProbabilityBias;
         case StepLengthBias:
             return Routing::Param::TrackStepLengthBias;
         default:
@@ -61,7 +61,7 @@ private:
         Octave,
         Transpose,
         Rotate,
-        StepProbabilityBias,
+        StepGateProbabilityBias,
         StepLengthBias,
         Last
     };
@@ -74,8 +74,8 @@ private:
         case Octave:    return "Octave";
         case Transpose: return "Transpose";
         case Rotate:    return "Rotate";
-        case StepProbabilityBias: return "Step P. Bias";
-        case StepLengthBias: return "Step L. Bias";
+        case StepGateProbabilityBias: return "Gate Prob Bias";
+        case StepLengthBias: return "Length Bias";
         case Last:      break;
         }
         return nullptr;
@@ -105,8 +105,8 @@ private:
         case Rotate:
             _track->printRotate(str);
             break;
-        case StepProbabilityBias:
-            _track->printStepProbabilityBias(str);
+        case StepGateProbabilityBias:
+            _track->printStepGateProbabilityBias(str);
             break;
         case StepLengthBias:
             _track->printStepLengthBias(str);
@@ -136,8 +136,8 @@ private:
         case Rotate:
             _track->editRotate(value, shift);
             break;
-        case StepProbabilityBias:
-            _track->editStepProbabilityBias(value, shift);
+        case StepGateProbabilityBias:
+            _track->editStepGateProbabilityBias(value, shift);
             break;
         case StepLengthBias:
             _track->editStepLengthBias(value, shift);
