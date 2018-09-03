@@ -30,7 +30,7 @@ FileTypeInfo fileTypeInfos[] = {
 
 static void slotPath(StringBuilder &str, FileType type, int slot) {
     const auto &info = fileTypeInfos[int(type)];
-    str("%s/%03d.%s", info.dir, slot, info.ext);
+    str("%s/%03d.%s", info.dir, slot + 1, info.ext);
 }
 
 bool FileManager::volumeAvailable() {
