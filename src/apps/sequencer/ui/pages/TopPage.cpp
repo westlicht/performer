@@ -24,14 +24,14 @@ void TopPage::init() {
     setMode(Mode::Project);
 }
 
-void TopPage::editRoute(Routing::Param param, int trackIndex) {
+void TopPage::editRoute(Routing::Target target, int trackIndex) {
     auto &routing = _project.routing();
 
-    if (param == Routing::Param::None) {
+    if (target == Routing::Target::None) {
         return;
     }
 
-    int routeIndex = routing.findRoute(param, trackIndex);
+    int routeIndex = routing.findRoute(target, trackIndex);
     if (routeIndex >= 0) {
         setMode(Mode::Routing);
         _manager.pages().routing.show(routeIndex);
@@ -42,7 +42,7 @@ void TopPage::editRoute(Routing::Param param, int trackIndex) {
     if (routeIndex >= 0) {
         routing.route(routeIndex).clear();
         Routing::Route initRoute;
-        initRoute.setParam(param);
+        initRoute.setTarget(target);
         initRoute.setTracks(1<<trackIndex);
         setMode(Mode::Routing);
         _manager.pages().routing.show(routeIndex, &initRoute);

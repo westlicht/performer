@@ -34,8 +34,8 @@ public:
         }
     }
 
-    virtual Routing::Param routingParam(int row) const override {
-        return Routing::Param::None;
+    virtual Routing::Target routingTarget(int row) const override {
+        return Routing::Target::None;
     }
 
 private:

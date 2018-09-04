@@ -36,7 +36,7 @@ void RoutingPage::exit() {
 
 void RoutingPage::draw(Canvas &canvas) {
     bool showCommit = *_route != _editRoute;
-    bool showLearn = _editRoute.param() != Routing::Param::None;
+    bool showLearn = _editRoute.target() != Routing::Target::None;
     bool highlightLearn = showLearn && _engine.midiLearn().isActive();
     const char *functionNames[] = { "PREV", "NEXT", "INIT", showLearn ? "LEARN" : nullptr, showCommit ? "COMMIT" : nullptr };
 
@@ -72,7 +72,7 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
             setEdit(false);
             break;
         case Function::Learn:
-            if (_editRoute.param() != Routing::Param::None) {
+            if (_editRoute.target() != Routing::Target::None) {
                 _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
                     // TODO this might be unsafe as callback is called from engine thread
                     assignMidiLearn(result);

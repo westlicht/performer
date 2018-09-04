@@ -122,7 +122,7 @@ bool ProjectPage::contextActionEnabled(int index) const {
     case ContextAction::SaveAs:
         return FileManager::volumeMounted();
     case ContextAction::Route:
-        return _listModel.routingParam(selectedRow()) != Routing::Param::None;
+        return _listModel.routingTarget(selectedRow()) != Routing::Target::None;
     default:
         return true;
     }
@@ -175,7 +175,7 @@ void ProjectPage::saveAsProject() {
 }
 
 void ProjectPage::initRoute() {
-    _manager.pages().top.editRoute(_listModel.routingParam(selectedRow()), 0);
+    _manager.pages().top.editRoute(_listModel.routingTarget(selectedRow()), 0);
 }
 
 void ProjectPage::saveProjectToSlot(int slot) {

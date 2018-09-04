@@ -34,12 +34,12 @@ public:
         }
     }
 
-    virtual Routing::Param routingParam(int row) const override {
+    virtual Routing::Target routingTarget(int row) const override {
         switch (Item(row)) {
         case Rotate:
-            return Routing::Param::TrackRotate;
+            return Routing::Target::TrackRotate;
         default:
-            return Routing::Param::None;
+            return Routing::Target::None;
         }
     }
 

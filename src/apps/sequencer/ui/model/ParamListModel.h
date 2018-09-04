@@ -6,5 +6,5 @@
 
 class ParamListModel : public ListModel {
 public:
-    virtual Routing::Param routingParam(int row) const = 0;
+    virtual Routing::Target routingTarget(int row) const = 0;
 };

@@ -67,7 +67,7 @@ Routing::Route::Route() {
 }
 
 void Routing::Route::clear() {
-    _param = Param::None;
+    _target = Target::None;
     _tracks = 0;
     _min = 0.f;
     _max = 1.f;
@@ -76,14 +76,14 @@ void Routing::Route::clear() {
     _midiSource.clear();
 }
 
-void Routing::Route::init(Param param, int track) {
+void Routing::Route::init(Target target, int track) {
     clear();
-    _param = param;
+    _target = target;
 }
 
 void Routing::Route::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_param);
+    writer.write(_target);
     writer.write(_tracks);
     writer.write(_min);
     writer.write(_max);
@@ -98,7 +98,7 @@ void Routing::Route::write(WriteContext &context) const {
 
 void Routing::Route::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_param);
+    reader.read(_target);
     reader.read(_tracks);
     reader.read(_min);
     reader.read(_max);
@@ -113,7 +113,7 @@ void Routing::Route::read(ReadContext &context) {
 
 bool Routing::Route::operator==(const Route &other) const {
     return (
-        _param == other._param &&
+        _target == other._target &&
         _tracks == other._tracks &&
         _min == other._min &&
         _max == other._max &&
@@ -146,27 +146,27 @@ int Routing::findEmptyRoute() const {
     return -1;
 }
 
-int Routing::findRoute(Param param, int trackIndex) const {
+int Routing::findRoute(Target target, int trackIndex) const {
     for (size_t i = 0; i < _routes.size(); ++i) {
         const auto &route = _routes[i];
-        if (route.active() && route.param() == param && (!Routing::isTrackParam(param) || route.tracks() & (1<<trackIndex))) {
+        if (route.active() && route.target() == target && (!Routing::isTrackTarget(target) || route.tracks() & (1<<trackIndex))) {
             return i;
         }
     }
     return -1;
 }
 
-void Routing::writeParam(Param param, int trackIndex, int patternIndex, float normalized) {
-    float floatValue = denormalizeParamValue(param, normalized);
+void Routing::writeTarget(Target target, int trackIndex, int patternIndex, float normalized) {
+    float floatValue = denormalizeTargetValue(target, normalized);
     int intValue = std::round(floatValue);
-    writeParam(param, trackIndex, patternIndex, floatValue, intValue);
+    writeTarget(target, trackIndex, patternIndex, floatValue, intValue);
 }
 
-float Routing::readParam(Param param, int patternIndex, int trackIndex) const {
-    switch (param) {
-    case Param::Tempo:
+float Routing::readTarget(Target target, int patternIndex, int trackIndex) const {
+    switch (target) {
+    case Target::Tempo:
         return _project.tempo();
-    case Param::Swing:
+    case Target::Swing:
         return _project.swing();
     default:
         return 0.f;
@@ -182,58 +182,58 @@ void Routing::read(ReadContext &context) {
 }
 
 
-void Routing::writeParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue) {
-    switch (param) {
-    case Param::Tempo:
+void Routing::writeTarget(Target target, int trackIndex, int patternIndex, float floatValue, int intValue) {
+    switch (target) {
+    case Target::Tempo:
         _project.setTempo(floatValue);
         break;
-    case Param::Swing:
+    case Target::Swing:
         _project.setSwing(intValue);
         break;
     default:
-        writeTrackParam(param, trackIndex, patternIndex, floatValue, intValue);
+        writeTrackTarget(target, trackIndex, patternIndex, floatValue, intValue);
         break;
     }
 }
 
-void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue) {
+void Routing::writeTrackTarget(Target target, int trackIndex, int patternIndex, float floatValue, int intValue) {
     auto &track = _project.track(trackIndex);
     switch (track.trackMode()) {
     case Track::TrackMode::Note: {
         auto &noteTrack = track.noteTrack();
-        switch (param) {
-        case Param::TrackSlideTime:
+        switch (target) {
+        case Target::TrackSlideTime:
             noteTrack.setSlideTime(intValue);
             break;
-        case Param::TrackOctave:
+        case Target::TrackOctave:
             noteTrack.setOctave(intValue);
             break;
-        case Param::TrackTranspose:
+        case Target::TrackTranspose:
             noteTrack.setTranspose(intValue);
             break;
-        case Param::TrackRotate:
+        case Target::TrackRotate:
             noteTrack.setRotate(intValue);
             break;
-        case Param::TrackStepGateProbabilityBias:
+        case Target::TrackStepGateProbabilityBias:
             noteTrack.setStepGateProbabilityBias(intValue);
             break;
-        case Param::TrackStepLengthBias:
+        case Target::TrackStepLengthBias:
             noteTrack.setStepLengthBias(intValue);
             break;
         default:
-            writeNoteSequenceParam(noteTrack.sequence(patternIndex), param, floatValue, intValue);
+            writeNoteSequenceTarget(noteTrack.sequence(patternIndex), target, floatValue, intValue);
             break;
         }
         break;
     }
     case Track::TrackMode::Curve: {
         auto &curveTrack = track.curveTrack();
-        switch (param) {
-        case Param::TrackRotate:
+        switch (target) {
+        case Target::TrackRotate:
             curveTrack.setRotate(intValue);
             break;
         default:
-            writeCurveSequenceParam(curveTrack.sequence(patternIndex), param, floatValue, intValue);
+            writeCurveSequenceTarget(curveTrack.sequence(patternIndex), target, floatValue, intValue);
             break;
         }
         break;
@@ -247,12 +247,12 @@ void Routing::writeTrackParam(Param param, int trackIndex, int patternIndex, flo
     }
 }
 
-void Routing::writeNoteSequenceParam(NoteSequence &sequence, Param param, float floatValue, int intValue) {
-    switch (param) {
-    case Param::FirstStep:
+void Routing::writeNoteSequenceTarget(NoteSequence &sequence, Target target, float floatValue, int intValue) {
+    switch (target) {
+    case Target::FirstStep:
         sequence.setFirstStep(intValue);
         break;
-    case Param::LastStep:
+    case Target::LastStep:
         sequence.setLastStep(intValue);
         break;
     default:
@@ -260,70 +260,70 @@ void Routing::writeNoteSequenceParam(NoteSequence &sequence, Param param, float 
     }
 }
 
-void Routing::writeCurveSequenceParam(CurveSequence &sequence, Param param, float floatValue, int intValue) {
+void Routing::writeCurveSequenceTarget(CurveSequence &sequence, Target target, float floatValue, int intValue) {
 
 }
 
 
-struct ParamInfo {
+struct TargetInfo {
     int16_t min;
     int16_t max;
 };
 
-const ParamInfo paramInfos[int(Routing::Param::Last)] = {
-    [int(Routing::Param::None)]                         = { 0,      0   },
-    [int(Routing::Param::Tempo)]                        = { 20,     500 },
-    [int(Routing::Param::Swing)]                        = { 50,     75  },
-    [int(Routing::Param::TrackSlideTime)]               = { 0,      100 },
-    [int(Routing::Param::TrackOctave)]                  = { -10,    10  },
-    [int(Routing::Param::TrackTranspose)]               = { -12,    12  },
-    [int(Routing::Param::TrackRotate)]                  = { -64,    64  },
-    [int(Routing::Param::TrackStepGateProbabilityBias)] = { -8,     8   },
-    [int(Routing::Param::TrackStepLengthBias)]          = { -8,     8   },
-    [int(Routing::Param::FirstStep)]                    = { 0,      63  },
-    [int(Routing::Param::LastStep)]                     = { 0,      63  },
+const TargetInfo targetInfos[int(Routing::Target::Last)] = {
+    [int(Routing::Target::None)]                            = { 0,      0   },
+    [int(Routing::Target::Tempo)]                           = { 20,     500 },
+    [int(Routing::Target::Swing)]                           = { 50,     75  },
+    [int(Routing::Target::TrackSlideTime)]                  = { 0,      100 },
+    [int(Routing::Target::TrackOctave)]                     = { -10,    10  },
+    [int(Routing::Target::TrackTranspose)]                  = { -12,    12  },
+    [int(Routing::Target::TrackRotate)]                     = { -64,    64  },
+    [int(Routing::Target::TrackStepGateProbabilityBias)]    = { -8,     8   },
+    [int(Routing::Target::TrackStepLengthBias)]             = { -8,     8   },
+    [int(Routing::Target::FirstStep)]                       = { 0,      63  },
+    [int(Routing::Target::LastStep)]                        = { 0,      63  },
 };
 
-float Routing::normalizeParamValue(Routing::Param param, float value) {
-    const auto &info = paramInfos[int(param)];
+float Routing::normalizeTargetValue(Routing::Target target, float value) {
+    const auto &info = targetInfos[int(target)];
     return clamp((value - info.min) / (info.max - info.min), 0.f, 1.f);
 }
 
-float Routing::denormalizeParamValue(Routing::Param param, float normalized) {
-    const auto &info = paramInfos[int(param)];
+float Routing::denormalizeTargetValue(Routing::Target target, float normalized) {
+    const auto &info = targetInfos[int(target)];
     return normalized * (info.max - info.min) + info.min;
 }
 
-float Routing::paramValueStep(Routing::Param param) {
-    const auto &info = paramInfos[int(param)];
+float Routing::targetValueStep(Routing::Target target) {
+    const auto &info = targetInfos[int(target)];
     return 1.f / (info.max - info.min);
 }
 
-void Routing::printParamValue(Routing::Param param, float normalized, StringBuilder &str) {
-    float value = denormalizeParamValue(param, normalized);
+void Routing::printTargetValue(Routing::Target target, float normalized, StringBuilder &str) {
+    float value = denormalizeTargetValue(target, normalized);
     int intValue = std::round(value);
-    switch (param) {
-    case Param::None:
+    switch (target) {
+    case Target::None:
         str("-");
         break;
-    case Param::Tempo:
+    case Target::Tempo:
         str("%.1f", value);
         break;
-    case Param::Swing:
-    case Param::TrackSlideTime:
+    case Target::Swing:
+    case Target::TrackSlideTime:
         str("%d%%", intValue);
         break;
-    case Param::TrackOctave:
-    case Param::TrackTranspose:
-    case Param::TrackRotate:
+    case Target::TrackOctave:
+    case Target::TrackTranspose:
+    case Target::TrackRotate:
         str("%+d", intValue);
         break;
-    case Param::TrackStepGateProbabilityBias:
-    case Param::TrackStepLengthBias:
+    case Target::TrackStepGateProbabilityBias:
+    case Target::TrackStepLengthBias:
         str("%+.1f%%", value * 12.5f);
         break;
-    case Param::FirstStep:
-    case Param::LastStep:
+    case Target::FirstStep:
+    case Target::LastStep:
         str("%d", intValue + 1);
         break;
     default:

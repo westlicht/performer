@@ -126,15 +126,15 @@ void RoutingEngine::updateSinks() {
         if (route.active()) {
             float value = route.min() + _sourceValues[routeIndex] * (route.max() - route.min());
             // TODO handle pattern
-            if (Routing::isTrackParam(route.param()) || Routing::isSequenceParam(route.param())) {
+            if (Routing::isTrackTarget(route.target()) || Routing::isSequenceTarget(route.target())) {
                 uint8_t tracks = route.tracks();
                 for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
                     if (tracks & (1<<trackIndex)) {
-                        _routing.writeParam(route.param(), trackIndex, 0, value);
+                        _routing.writeTarget(route.target(), trackIndex, 0, value);
                     }
                 }
             } else {
-                _routing.writeParam(route.param(), 0, 0, value);
+                _routing.writeTarget(route.target(), 0, 0, value);
             }
         }
     }

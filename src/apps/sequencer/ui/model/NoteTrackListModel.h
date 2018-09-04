@@ -34,22 +34,22 @@ public:
         }
     }
 
-    virtual Routing::Param routingParam(int row) const override {
+    virtual Routing::Target routingTarget(int row) const override {
         switch (Item(row)) {
         case SlideTime:
-            return Routing::Param::TrackSlideTime;
+            return Routing::Target::TrackSlideTime;
         case Octave:
-            return Routing::Param::TrackOctave;
+            return Routing::Target::TrackOctave;
         case Transpose:
-            return Routing::Param::TrackTranspose;
+            return Routing::Target::TrackTranspose;
         case Rotate:
-            return Routing::Param::TrackRotate;
+            return Routing::Target::TrackRotate;
         case StepGateProbabilityBias:
-            return Routing::Param::TrackStepGateProbabilityBias;
+            return Routing::Target::TrackStepGateProbabilityBias;
         case StepLengthBias:
-            return Routing::Param::TrackStepLengthBias;
+            return Routing::Target::TrackStepLengthBias;
         default:
-            return Routing::Param::None;
+            return Routing::Target::None;
         }
     }
 

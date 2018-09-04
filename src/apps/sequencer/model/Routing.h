@@ -24,9 +24,9 @@ public:
     // Types
     //----------------------------------------
 
-    enum class Param : uint8_t {
+    enum class Target : uint8_t {
         None,
-        // Global parameters
+        // Global targets
         Tempo,
         GlobalFirst = Tempo,
         Swing,
@@ -43,7 +43,7 @@ public:
         // SequenceShift,
         // GlobalModLast = SequenceShift,
 
-        // Track parameters
+        // Track targets
         TrackSlideTime,
         TrackFirst = TrackSlideTime,
         TrackOctave,
@@ -53,7 +53,7 @@ public:
         TrackStepLengthBias,
         TrackLast = TrackStepLengthBias,
 
-        // Sequence parameters
+        // Sequence targets
         FirstStep,
         SequenceFirst = FirstStep,
         LastStep,
@@ -62,33 +62,33 @@ public:
         Last,
     };
 
-    static const char *paramName(Param param) {
-        switch (param) {
-        case Param::None:           return "None";
-        case Param::Tempo:          return "Tempo";
-        case Param::Swing:          return "Swing";
+    static const char *targetName(Target target) {
+        switch (target) {
+        case Target::None:              return "None";
+        case Target::Tempo:             return "Tempo";
+        case Target::Swing:             return "Swing";
 
-        case Param::TrackSlideTime: return "Slide Time";
-        case Param::TrackOctave:    return "Octave";
-        case Param::TrackTranspose: return "Transpose";
-        case Param::TrackRotate:    return "Rotate";
-        case Param::TrackStepGateProbabilityBias: return "Gate Prob Bias";
-        case Param::TrackStepLengthBias: return "Length Bias";
+        case Target::TrackSlideTime:    return "Slide Time";
+        case Target::TrackOctave:       return "Octave";
+        case Target::TrackTranspose:    return "Transpose";
+        case Target::TrackRotate:       return "Rotate";
+        case Target::TrackStepGateProbabilityBias: return "Gate Prob Bias";
+        case Target::TrackStepLengthBias: return "Length Bias";
 
-        case Param::FirstStep:      return "First Step";
-        case Param::LastStep:       return "Last Step";
+        case Target::FirstStep:         return "First Step";
+        case Target::LastStep:          return "Last Step";
 
-        case Param::Last:           break;
+        case Target::Last:              break;
         }
         return nullptr;
     }
 
-    static bool isTrackParam(Param param) {
-        return param >= Param::TrackFirst && param <= Param::TrackLast;
+    static bool isTrackTarget(Target target) {
+        return target >= Target::TrackFirst && target <= Target::TrackLast;
     }
 
-    static bool isSequenceParam(Param param) {
-        return param >= Param::SequenceFirst && param <= Param::SequenceLast;
+    static bool isSequenceTarget(Target target) {
+        return target >= Target::SequenceFirst && target <= Target::SequenceLast;
     }
 
     enum class Source : uint8_t {
@@ -265,19 +265,19 @@ public:
 
     class Route {
     public:
-        // param
+        // target
 
-        Param param() const { return _param; }
-        void setParam(Param param) {
-            _param = ModelUtils::clampedEnum(param);
+        Target target() const { return _target; }
+        void setTarget(Target target) {
+            _target = ModelUtils::clampedEnum(target);
         }
 
-        void editParam(int value, bool shift) {
-            setParam(ModelUtils::adjustedEnum(param(), value));
+        void editTarget(int value, bool shift) {
+            setTarget(ModelUtils::adjustedEnum(target(), value));
         }
 
-        void printParam(StringBuilder &str) const {
-            str(paramName(param()));
+        void printTarget(StringBuilder &str) const {
+            str(targetName(target()));
         }
 
         // tracks
@@ -296,7 +296,7 @@ public:
         }
 
         void printTracks(StringBuilder &str) const {
-            if (isTrackParam(_param) || isSequenceParam(_param)) {
+            if (isTrackTarget(_target) || isSequenceTarget(_target)) {
                 for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
                     str("%c", (_tracks & (1<<i)) ? 'X' : '-');
                 }
@@ -316,11 +316,11 @@ public:
         }
 
         void editMin(int value, bool shift) {
-            setMin(min() + value * paramValueStep(_param));
+            setMin(min() + value * targetValueStep(_target));
         }
 
         void printMin(StringBuilder &str) const {
-            Routing::printParamValue(_param, _min, str);
+            Routing::printTargetValue(_target, _min, str);
         }
 
         // max
@@ -334,11 +334,11 @@ public:
         }
 
         void editMax(int value, bool shift) {
-            setMax(max() + value * paramValueStep(_param));
+            setMax(max() + value * targetValueStep(_target));
         }
 
         void printMax(StringBuilder &str) const {
-            Routing::printParamValue(_param, _max, str);
+            Routing::printTargetValue(_target, _max, str);
         }
 
         // source
@@ -370,9 +370,9 @@ public:
 
         void clear();
 
-        bool active() const { return _param != Param::None; }
+        bool active() const { return _target != Target::None; }
 
-        void init(Param param, int track = -1);
+        void init(Target target, int track = -1);
 
         void write(WriteContext &context) const;
         void read(ReadContext &context);
@@ -383,7 +383,7 @@ public:
         }
 
     private:
-        Param _param;
+        Target _target;
         int8_t _tracks;
         float _min; // TODO make these int16_t
         float _max;
@@ -417,10 +417,10 @@ public:
     void clear();
 
     int findEmptyRoute() const;
-    int findRoute(Param param, int trackIndex) const;
+    int findRoute(Target target, int trackIndex) const;
 
-    void writeParam(Param param, int trackIndex, int patternIndex, float normalized);
-    float readParam(Param param, int trackIndex, int patternIndex) const;
+    void writeTarget(Target target, int trackIndex, int patternIndex, float normalized);
+    float readTarget(Target target, int trackIndex, int patternIndex) const;
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
@@ -429,15 +429,15 @@ public:
     void clearDirty() { _dirty = false; }
 
 private:
-    void writeParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue);
-    void writeTrackParam(Param param, int trackIndex, int patternIndex, float floatValue, int intValue);
-    void writeNoteSequenceParam(NoteSequence &sequence, Param param, float floatValue, int intValue);
-    void writeCurveSequenceParam(CurveSequence &sequence, Param param, float floatValue, int intValue);
+    void writeTarget(Target target, int trackIndex, int patternIndex, float floatValue, int intValue);
+    void writeTrackTarget(Target target, int trackIndex, int patternIndex, float floatValue, int intValue);
+    void writeNoteSequenceTarget(NoteSequence &sequence, Target target, float floatValue, int intValue);
+    void writeCurveSequenceTarget(CurveSequence &sequence, Target target, float floatValue, int intValue);
 
-    static float normalizeParamValue(Param param, float value);
-    static float denormalizeParamValue(Param param, float normalized);
-    static float paramValueStep(Param param);
-    static void printParamValue(Param param, float normalized, StringBuilder &str);
+    static float normalizeTargetValue(Target target, float value);
+    static float denormalizeTargetValue(Target target, float normalized);
+    static float targetValueStep(Target target);
+    static void printTargetValue(Target target, float normalized, StringBuilder &str);
 
     Project &_project;
     RouteArray _routes;

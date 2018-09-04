@@ -9,7 +9,7 @@
 class RouteListModel : public ListModel {
 public:
     enum Item {
-        Param,
+        Target,
         Min,
         Max,
         Tracks,
@@ -29,7 +29,7 @@ public:
     {}
 
     virtual int rows() const override {
-        bool isEmpty = _route.param() == Routing::Param::None;
+        bool isEmpty = _route.target() == Routing::Target::None;
         bool isCvSource = Routing::isCvSource(_route.source());
         bool isMidiSource = Routing::isMidiSource(_route.source());
         bool hasNoteOrController = _route.midiSource().event() != Routing::MidiSource::Event::PitchBend;
@@ -65,7 +65,7 @@ public:
 private:
     const char *itemName(Item item) const {
         switch (item) {
-        case Param:         return "Parameter";
+        case Target:        return "Target";
         case Min:           return "Min";
         case Max:           return "Max";
         case Tracks:        return "Tracks";
@@ -87,8 +87,8 @@ private:
 
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
-        case Param:
-            _route.printParam(str);
+        case Target:
+            _route.printTarget(str);
             break;
         case Min:
             _route.printMin(str);
@@ -128,8 +128,8 @@ private:
 
     void editValue(Item item, int value, bool shift) {
         switch (item) {
-        case Param:
-            _route.editParam(value, shift);
+        case Target:
+            _route.editTarget(value, shift);
             break;
         case Min:
             _route.editMin(value, shift);
