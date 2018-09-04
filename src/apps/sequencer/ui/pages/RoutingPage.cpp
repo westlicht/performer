@@ -72,7 +72,9 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
             setEdit(false);
             break;
         case Function::Learn:
-            if (_editRoute.target() != Routing::Target::None) {
+            if (_engine.midiLearn().isActive()) {
+                _engine.midiLearn().stop();
+            } else if (_editRoute.target() != Routing::Target::None) {
                 _engine.midiLearn().start([this] (const MidiLearn::Result &result) {
                     // TODO this might be unsafe as callback is called from engine thread
                     assignMidiLearn(result);
