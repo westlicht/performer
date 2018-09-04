@@ -70,7 +70,7 @@ void TrackPage::keyPress(KeyPressEvent &event) {
 }
 
 void TrackPage::setTrack(Track &track) {
-    ParamListModel *newListModel = _listModel;
+    RoutableListModel *newListModel = _listModel;
 
     switch (track.trackMode()) {
     case Track::TrackMode::Note:

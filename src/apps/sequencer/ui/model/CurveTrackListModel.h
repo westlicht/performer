@@ -2,11 +2,11 @@
 
 #include "Config.h"
 
-#include "ParamListModel.h"
+#include "RoutableListModel.h"
 
 #include "model/CurveTrack.h"
 
-class CurveTrackListModel : public ParamListModel {
+class CurveTrackListModel : public RoutableListModel {
 public:
     void setTrack(CurveTrack &track) {
         _track = &track;

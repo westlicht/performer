@@ -30,7 +30,7 @@ private:
     void pasteTrackSetup();
     void initRoute();
 
-    ParamListModel *_listModel;
+    RoutableListModel *_listModel;
     NoteTrackListModel _noteTrackListModel;
     CurveTrackListModel _curveTrackListModel;
     MidiCvTrackListModel _midiCvTrackListModel;

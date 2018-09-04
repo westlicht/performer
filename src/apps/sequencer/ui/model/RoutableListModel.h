@@ -4,7 +4,7 @@
 
 #include "model/Routing.h"
 
-class ParamListModel : public ListModel {
+class RoutableListModel : public ListModel {
 public:
     virtual Routing::Target routingTarget(int row) const = 0;
 };
