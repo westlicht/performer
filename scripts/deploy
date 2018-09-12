@@ -9,13 +9,18 @@ DEPLOY_DIR = 'build/deploy'
 items = [
     {
         'name': 'Bootloader',
-        'srcs': ['build/stm32/release/src/apps/bootloader/bootloader' + ext for ext in ['.bin', '.hex', '.size', '.srec']],
+        'srcs': ['build/stm32/release/src/apps/bootloader/bootloader' + ext for ext in ['.hex', '.srec']],
         'dst': 'bootloader'
     },
     {
         'name': 'Sequencer',
-        'srcs': ['build/stm32/release/src/apps/sequencer/sequencer' + ext for ext in ['.bin', '.hex', '.size', '.srec']],
+        'srcs': ['build/stm32/release/src/apps/sequencer/sequencer' + ext for ext in ['.hex', '.srec']],
         'dst': 'sequencer'
+    },
+    {
+        'name': 'Tester',
+        'srcs': ['build/stm32/release/src/apps/tester/tester' + ext for ext in ['.hex', '.srec']],
+        'dst': 'tester'
     },
     {
         'name': 'Update',
