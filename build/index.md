@@ -1,7 +1,7 @@
 ---
 layout: manual
 title: Build Guide
-permalink: /manual/
+permalink: /build/
 ---
 
 # Build Guide
