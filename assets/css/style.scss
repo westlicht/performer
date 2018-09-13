@@ -1,0 +1,38 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.wrapper, section {
+    max-width: 1024px;
+}
+
+.user-manual {
+    p {
+        text-align: justify;
+    }
+
+    pre > code {
+        padding: 0;
+    }
+
+    :not(pre) > code {
+        padding: 1px 1px;
+        background-color: #ffcc00;
+        color: black;
+    }
+
+    ul {
+        list-style-type: disc;
+        list-style-image: none;
+    }
+
+    li {
+    }
+
+    table {
+        display: block;
+        width: 100%;
+        overflow: auto;
+    }
+}
