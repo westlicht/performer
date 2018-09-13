@@ -1,6 +1,7 @@
 ---
 layout: manual
 title: User Manual
+permalink: /manual/
 ---
 
 <h1>User Manual</h1>
