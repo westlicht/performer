@@ -1,16 +1,17 @@
 ---
-layout: manual
 title: Build Guide
 permalink: /build/
+layout: manual
+nav: 30
 ---
 
 # Build Guide
 
 ## Introduction
 
-**DISCLAIMER: Building the per|former sequencer is not recommended for beginners!**
+**DISCLAIMER: Building the per\|former sequencer is not recommended for beginners!**
 
-This build guide is intended to give experienced builders all the required information to successfully build the **per|former** sequencer.
+This build guide is intended to give experienced builders all the required information to successfully build the **per\|former** sequencer.
 
 ## Sourcing Parts
 

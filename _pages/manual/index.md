@@ -1,12 +1,11 @@
 ---
-layout: manual
 title: User Manual
 permalink: /manual/
+layout: manual
+nav: 20
 ---
 
 <h1>User Manual</h1>
-
-![](images/sequencer.jpg)
 
 <!-- TOC -->
 
