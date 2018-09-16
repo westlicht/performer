@@ -28,7 +28,7 @@
             {% if item.url == page.url %}
                 {% assign class = 'active' %}          
             {% endif %}
-            <li class="link"><a href="{{ item.url }}" class="{{ class }}">{{ item.title }}</a></li>
+            <li class="link"><a href="{{ item.url | relative_url }}" class="{{ class }}">{{ item.title }}</a></li>
           {% endif %}
         {% endfor %}        
       </nav>
