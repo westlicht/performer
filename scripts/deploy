@@ -3,6 +3,7 @@
 import os
 import glob
 import shutil
+import subprocess
 
 DEPLOY_DIR = 'build/deploy'
 
@@ -26,6 +27,12 @@ items = [
         'name': 'Update',
         'srcs': ['build/stm32/release/src/apps/sequencer/UPDATE.DAT'],
         'dst': 'update'
+    },
+    {
+        'name': 'Sequencer (WASM)',
+        'srcs': ['build/sim/www/src/apps/sequencer/sequencer' + ext for ext in ['.html', '.js', '.data', '.wasm', '.wast']],
+        'dst': 'sequencer-wasm',
+        'compress': True
     }
 ]
 
@@ -44,5 +51,10 @@ for item in items:
     for src in item['srcs']:
         files += glob.glob(src)
 
-    for file in files:
-        shutil.copy(file, dst_dir)
+    if 'compress' in item and item['compress'] == True:
+        dst_file = os.path.join(dst_dir, item['dst'] + '.tar.gz')
+        args = ['tar', 'czf', dst_file, *files]
+        subprocess.call(args)
+    else:
+        for file in files:
+            shutil.copy(file, dst_dir)
