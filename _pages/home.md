@@ -1,7 +1,7 @@
 ---
 title: Home
 permalink: /
-layout: page
+layout: home
 nav: 10
 ---
 
