@@ -239,7 +239,7 @@ dt {
 
 section {
   max-width: $page-width;
-  padding: 10px 0px 10px 0px;
+  padding: 10px 0px;
   margin: 20px 0;
 }
 
@@ -283,6 +283,10 @@ section {
 
 @media print, screen and (max-width: 720px) {
 
+  .wrapper {
+    padding: 0 10px;
+  }
+
   #header {
     nav {
       display: flex;
@@ -310,6 +314,7 @@ section {
   }
 
   #banner {  
+    margin: 10px 0;
     height: 150px;
   }
 }
