@@ -241,47 +241,6 @@ section {
   max-width: $page-width;
   padding: 10px 0px 10px 0px;
   margin: 20px 0;
-  /*margin-top: 70px;*/
-
-  #title {
-    border: 0;
-    outline: none;
-    margin: 0 0 50px 0;
-    padding: 0 0 5px 0;
-
-    h1 {
-      font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-weight: normal;
-      font-size: 40px;
-      text-align: center;
-      line-height: 36px;
-    }
-
-    p {
-      color: #d7cfbe;
-      font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-weight: normal;
-      font-size: 18px;
-      text-align: center;
-    }
-
-    .credits {
-      font-size: 11px;
-      font-family: 'OpenSansRegular', "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-weight: normal;
-      color: #696969;
-      margin-top: -10px;
-
-      &.left {
-        float: left;
-      }
-
-      &.right {
-        float: right;
-      }
-    }
-
-  }
 }
 
 .manual {
@@ -338,12 +297,12 @@ section {
         &.title {
           width: 100%;
           padding: 0;
-          line-height: 50px;
+          line-height: 40px;
         }
 
         a {
           padding: 5px 10px;
-          margin: 10px;
+          margin: 5px;
           border-radius: 5px;
         }
       }
@@ -352,25 +311,6 @@ section {
 
   #banner {  
     height: 150px;
-  }
-
-  #title {
-    .credits {
-      display: block;
-      width: 100%;
-      line-height: 30px;
-      text-align: center;
-
-      .left {
-        float: none;
-        display: block;
-      }
-
-      .right {
-        float: none;
-        display: block;
-      }
-    }
   }
 }
 
