@@ -420,7 +420,7 @@ On pages that provide a context menu, the labels dynamically change to the conte
 
 Pages that expose configuration options are typically presented as a list of items, each having the name shown on the left and the value on the right side.
 
-Rotate the `ENCODER` or use `<`, `>` to navigate up and down the list. Press `ENCODER` to enter and leave edit mode which is indicated by moving the highlight from the item name to the item value and back. While in edit mode, rotate the `ENCODER` or use `<`, `>` to adjust the value. Hold `SHIFT` to change the value in larger or smaller steps depending on item being edited.
+Rotate the `ENCODER` or use `PREV`, `NEXT` to navigate up and down the list. Press `ENCODER` to enter and leave edit mode which is indicated by moving the highlight from the item name to the item value and back. While in edit mode, rotate the `ENCODER` or use `PREV`, `NEXT` to adjust the value. Hold `SHIFT` to change the value in larger or smaller steps depending on item being edited.
 
 <!-- Copy/Paste -->
 
@@ -678,12 +678,12 @@ Note that when creating pattern chains, the song mode is automatically started.
 
 <h4>Editing</h4>
 
-- Rotate the `ENCODER` or use `<` and `>` to select any of the assigned slots indicated with the small cursor above the slots.
+- Rotate the `ENCODER` or use `PREV` and `NEXT` to select any of the assigned slots indicated with the small cursor above the slots.
 - Press `F1` to clear the slot list.
 - Press `F3` to add a slot at the end of the list.
 - Press `SHIFT` + `F3` to insert a slot at the current cursor position.
 - Press `F4` to remove the selected slot.
-- Hold `SHIFT` and rotate the `ENCODER` or use `<` and `>` to move the selected slot forward and backward in the slot list.
+- Hold `SHIFT` and rotate the `ENCODER` or use `PREV` and `NEXT` to move the selected slot forward and backward in the slot list.
 - Press `STEP[1-16]` to assign a pattern to all tracks of the selected slot.
 - Hold any combination of `TRACK[1-8]` and press `STEP[1-16]` to assign a pattern to a group of tracks of the selected slot.
 - Press and rotate the `ENCODER` to adjust the number of repeats on the selected slot.
@@ -732,7 +732,7 @@ On this page you can handle pattern changes as well as selecting the currently e
 
 <h4>Editing Pattern</h4>
 
-To change the pattern for editing which is indicated in the header as `E[1-16]` simple rotate the `ENCODER` or press `<` and `>`. Alternatively you can use `SHIFT` + `STEP[1-16]` to select the editing pattern.
+To change the pattern for editing which is indicated in the header as `E[1-16]` simple rotate the `ENCODER` or press `PREV` and `NEXT`. Alternatively you can use `SHIFT` + `STEP[1-16]` to select the editing pattern.
 
 > Note: The editing pattern indicated in the header is highlighted if the selected pattern for editing is the same as the currently playing pattern.
 
@@ -1203,8 +1203,9 @@ With a rotation of `-3` the sequence is rotated 3 steps to the left and played b
 <h3 id="appendix-shapes">Shapes</h3>
 
 | Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 |
-| :--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Shapes | <img width="32" height="64" style="max-width: none" src="images/shape-001.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-002.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-003.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-004.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-005.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-006.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-007.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-008.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-009.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-010.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-011.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-012.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-013.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-014.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-015.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-016.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-017.png"/> |
+
 <!-- Launchpad -->
 
 <h3 id="appendix-launchpad">Launchpad</h3>
@@ -1234,7 +1235,7 @@ With all channels calibrated you should save the data to flash memory by holding
 
 Use the following steps to upgrade the sequencer:
 
-- Download the latest `UPDATE.DAT` file from https://github.com/westlicht/eurorack-sequencer/releases.
+- Download the latest `UPDATE.DAT` file from [https://github.com/westlicht/eurorack-sequencer/releases](https://github.com/westlicht/eurorack-sequencer/releases).
 - Copy the `UPDATE.DAT` file to the root directory of the SD card.
 - Insert the SD card into the sequencer's SD card slot.
 
