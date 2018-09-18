@@ -5,6 +5,23 @@ layout: manual
 nav: 40
 ---
 
+<style>
+  .emscripten-wrapper {
+    background: #111;
+    width: 100%;
+    padding: 50px 0;
+    margin: 20px 0;
+  }
+
+  #canvas {
+    display: block;
+    margin: 0 auto;
+    /*width: 100%;*/
+  }
+
+
+</style>
+
 # Test Drive
 
 <div class="spinner" id='spinner'></div>
@@ -15,18 +32,40 @@ nav: 40
 </div>
  -->
     
-<div class="emscripten_border">
+<div class="emscripten-wrapper">
   <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 </div>
 
 <!-- <textarea id="output" rows="8"></textarea> -->
 
+## Description
+
+This simulator was used during development of the **per\|former** sequencer to have a shorter iteration time and to allow me to work on the firmware without having access to the hardware module. It is not intended to be a useful sequencer on the desktop, but it may allow people interested in building one to quickly check some of its features. To learn how to use the sequencer check the [User Manual](../manual).
+
+## Sound Engine
+
+To actually hear some audio when running the sequencer, the simulator has a small sound engine that is hardwired to the sequencers gate and CV outputs. The following voices are set up:
+
+| Track | Gate | CV | Sound |
+| :--- | :--- | :--- | :--- |
+| 1 | Trigger | - | Kick |
+| 2 | Trigger | - | Snare |
+| 3 | Trigger | - | Rimshot |
+| 4 | Trigger | - | Clap |
+| 5 | Trigger | - | Closed Hat |
+| 6 | Trigger | - | Open Hat |
+| 7 | Trigger | - | Tom |
+| 8 | Gate | Pitch | Simple Monosynth Voice |
+
+
 ## Controls
 
-| Keyboard | Simulator |
+To control the sequencer, the following mapping is used:
+
+| Input | Function |
 | :--- | :--- |
-| Space | `ENCODER` press |
 | Mouse Wheel | `ENCODER` rotate |
+| Space | `ENCODER` press |
 | 1 | `PLAY` |
 | 2 | `CLOCK` |
 | 3 | `PATT` |
