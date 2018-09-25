@@ -8,6 +8,7 @@ env:
     # EM_USE_GLOBAL_CACHE=1 tells emscripten to use precompiled libraries from
     # the emscripten-libs-asmjs package. This speeds up the build significantly.
     - EM_USE_GLOBAL_CACHE=1
+    - secure: "e5o7YJ+fPhhDGT/LU2QWyk+Pm1PSp7YPShFRHR9AkaMXsBKdWd1HmQ+a52UeBbKA4Pw5GRAL0g5KTm1D1L6VesLvovwtcQ7zosgBHFh7KuACi8E9a/xrDTwJie1lcTdxLbEPsd466ji59cLohj1Tc3zde8eVAAXdzMEi9yHF4pObInDnGjo1lxrZckjVa0GUKHZYFbMFmtl9XxOI61tewFwyLy6Hlv4TTcXLjSOUXCT+1losR/Hg3WrBYQGdAs4hHYPZgYVqnjS4YEX0wpF5hIQBXmY6FMcKG9+Rn9PWfhILhAX3LbWcTErm6DZ2kbvJ5fTOdsI1WJ2HHz3roW55eCBlJgFJJECv5AsAvrIlDY02ncsCZbpQRPWUzpX+o/0L11QpTquAylhGVQ2fvqtNVKSVMMniQGjRgpSUYIc1RkOZ2rirwNHUDUGMdtI9RkSud2s+ANyB9nGAosTiM7B76DQWpwQ5MiS8YbuypfXnk8FPhpZNWwMSxRuuTN16rJGXUmMUkMI87QIbNlQdnI+0ZTJmdKMuq4ZJJQFFVup00XTbjqYoj2ppEmXF9aN/wvyAJgBPYd1qwu4zWM/wWjJjx9d8l8sVQvc5xmdB48/dkwUMH1b36VeBQI+UqCO6MSS+cbwkaQDBjfie3WmF5Nl+Alj2fwCPvm/TOS59bdPRLkM="
 before_install:
  - sudo apt-get install libasound2-dev
 jobs:
@@ -52,3 +53,5 @@ jobs:
       - chmod a+x build-www.sh
       # Build
       - /alpine/enter-chroot -u $USER ./build-www.sh
+      after_success:
+      - make deploy-simulator
