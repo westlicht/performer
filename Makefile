@@ -146,3 +146,7 @@ setup_www:
 .PHONY: deploy
 deploy:
 	./scripts/deploy
+
+.PHONY: deploy-simulator
+deploy-simulator:
+	./scripts/deploy-simulator
