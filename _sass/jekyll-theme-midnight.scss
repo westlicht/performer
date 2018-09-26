@@ -244,40 +244,43 @@ section {
 }
 
 .manual {
-    h1 {
-        text-transform: uppercase;
-        padding-bottom: 4rem;
-    }
+  h1 {
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+    text-shadow: 2px 0px 5px black;
+  }
 
-    p {
-        text-align: justify;
-    }
+  h2, h3 {
+    margin-top: 3rem;
+  }
 
-    pre > code {
-        padding: 0;
-    }
+  p {
+    text-align: justify;
+  }
 
-    :not(pre) > code {
-        padding: 1px 0.25rem;
-        /*background-color: #ffcc00;*/
-        /*color: black;*/
-        background-color: #eee;
-        color: #000;
-    }
+  pre > code {
+    padding: 0;
+  }
 
-    ul {
-        list-style-type: disc;
-        list-style-image: none;
-    }
+  :not(pre) > code {
+    padding: 1px 0.25rem;
+    background-color: #eee;
+    color: #000;
+  }
 
-    li {
-    }
+  ul {
+    list-style-type: disc;
+    list-style-image: none;
+  }
 
-    table {
-        display: block;
-        width: 100%;
-        overflow: auto;
-    }
+  li {
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+  }
 }
 
 
