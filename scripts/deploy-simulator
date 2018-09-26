@@ -10,7 +10,7 @@ setup_git() {
 
 commit_simulator_files() {
   git checkout -b gh-pages
-  mkdir ${SIMULATOR_DIR}
+  mkdir -p ${SIMULATOR_DIR}
   cp ${BUILD_DIR}/sequencer.* ${SIMULATOR_DIR}
   git add ${SIMULATOR_DIR}/sequencer.*
   git commit --message "Travis simulator build: $TRAVIS_BUILD_NUMBER"
