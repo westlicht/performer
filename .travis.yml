@@ -24,6 +24,8 @@ jobs:
         file_glob: true
         file: build/deploy/**/*
         skip_cleanup: true
+        on:
+          tags: true
     - stage: Simulation Platform (Linux)
       script:
       # Simulation target requires recent versions of SDL2, SDL2_image and SDL2_ttf not available as packages
