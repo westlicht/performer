@@ -1,26 +1,22 @@
 #!/bin/sh
 
 BUILD_DIR=build/sim/www/src/apps/sequencer
-SIMULATOR_DIR=_pages/testdrive
+TESTDRIVE_DIR=_pages/testdrive
 
-setup_git() {
-  git config --global user.email "travis@travis-ci.org"
-  git config --global user.name "Travis CI"
-}
+# clone gh-pages repository
+git clone --branch=gh-pages https://${GH_PAGES_TOKEN}@github.com/westlicht/performer.git gh-pages
 
-commit_simulator_files() {
-  git checkout -b gh-pages
-  mkdir -p ${SIMULATOR_DIR}
-  cp ${BUILD_DIR}/sequencer.* ${SIMULATOR_DIR}
-  git add ${SIMULATOR_DIR}/sequencer.*
-  git commit --message "Travis simulator build: $TRAVIS_BUILD_NUMBER"
-}
+# copy simulator files
+cp ${BUILD_DIR}/sequencer.* gh-pages/${TESTDRIVE_DIR}
 
-upload_files() {
-  git remote add origin-pages https://${GH_PAGES_TOKEN}@github.com/westlicht/performer.git > /dev/null 2>&1
-  git push --quiet --set-upstream origin-pages gh-pages
-}
+# commit simulator files
+cd gh-pages
+git config --global user.email "travis@travis-ci.org"
+git config --global user.name "Travis CI"
+git add ${TESTDRIVE_DIR}/sequencer.*
+git commit --message "Travis simulator build: $TRAVIS_BUILD_NUMBER"
+git push
+cd ..
 
-setup_git
-commit_simulator_files
-upload_files
+# remove gh-pages repository
+rm -rf gh-pages
