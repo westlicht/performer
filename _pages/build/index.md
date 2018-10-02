@@ -45,21 +45,25 @@ To help populating the PCB, its always handy to have access to the schematic and
 
 It's generally a good idea to populate the power section first. Check the POWER sheet in the schematics to find the required components.
 
-Next, measure all the power rails for proper voltages. These can be measured on any pad on the following nets: `+12V`, `-12V`, `+5V`, `+3V3`, `+3.3VA` and `AREF_-10V`. Use the online board viewer to highlight the nets.
+TODO: image of assembled power section
+
+Next, measure all the power rails for proper voltages. These can be measured on any pad on the following nets: **+12V**, **-12V**, **+5V**, **+3V3**, **+3.3VA** and **AREF_-10V**. Use the online board viewer to highlight the nets.
+
+TODO: image of measurement points
 
 Next, populate the STM32 and the components around it found on the MCU sheet in the schematics. This allows for testing the JTAG connection to the STM32 and allow flashing the firmware.
 
-Next, populate all other components, except for the OLED display, jacks, USB port, SD card holder, switches and LEDs, as they will need proper alignment with the frontpanel.
+TODO: image of assembled STM32 section
+
+Next, populate all other components, except for the OLED display, jacks, USB connector, SD card holder and LEDs, as they will need proper alignment with the frontpanel.
+
+TODO: image of assembled board
 
 ## Assembly
 
+TODO: image of crimping OLED pin header
 
-
-
-
-
-
-
+TODO: image of jack alignment
 
 ## Flashing Firmware
 
