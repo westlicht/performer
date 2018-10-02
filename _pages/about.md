@@ -15,4 +15,4 @@ With a reasonably sized system, I did lack a good sequencer and bought an Arturi
 
 I'm excited to see how other people are using this sequencer module and how many decide to build one. Should there be enough demand from people that don't have the skills to build their own module, I will consider making a commercial version. But this will most probably not happen in the near future.
 
-![](/assets/images/me.jpg)
+![](../assets/images/me.jpg)
