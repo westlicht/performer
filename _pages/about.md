@@ -14,3 +14,5 @@ I'm Simon, the developer of the **per\|former** sequencer. I got into electronic
 With a reasonably sized system, I did lack a good sequencer and bought an Arturia Beatstep Pro, which kind of broke my DIY mentality. This is when I decided to start working on my own sequencer module. My main motivation was to create the sequencer that I would love to use, but at the same time I wanted other people to be able to build one too. Because of this, I decided to make the hardware design and software open source.
 
 I'm excited to see how other people are using this sequencer module and how many decide to build one. Should there be enough demand from people that don't have the skills to build their own module, I will consider making a commercial version. But this will most probably not happen in the near future.
+
+![](/assets/images/me.jpg)
