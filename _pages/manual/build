@@ -1,0 +1,111 @@
+#!/usr/bin/env python
+
+import os
+from subprocess import call
+import re
+
+MARKDOWN_FILE = "UserManual.md"
+IMAGE_INPUT_DIR = "resources"
+IMAGE_OUTPUT_DIR = "images"
+
+TOC_MIN_LEVEL = 2
+TOC_MAX_LEVEL = 3
+
+def process_images():
+
+    def infile(filename):
+        return os.path.join(IMAGE_INPUT_DIR, filename)
+
+    def outfile(filename):
+        return os.path.join(IMAGE_OUTPUT_DIR, filename)
+
+    pages = [
+        "page-clock.png",
+        "page-curve-sequence.png",
+        "page-curve-track.png",
+        "page-layout-cv-example.png",
+        "page-layout-cv.png",
+        "page-layout-gate.png",
+        "page-layout-link.png",
+        "page-layout-mode-confirm.png",
+        "page-layout-mode.png",
+        "page-midi-cv-track.png",
+        "page-monitor-cv-in.png",
+        "page-monitor-cv-out.png",
+        "page-monitor-midi.png",
+        "page-monitor-stats.png",
+        "page-note-sequence.png",
+        "page-note-track.png",
+        "page-pattern.png",
+        "page-performer.png",
+        "page-project.png",
+        "page-routing.png",
+        "page-routing-edit.png",
+        "page-sequence-edit-quick-access.png",
+        "page-sequence-edit.png",
+        "page-sequence.png",
+        "page-song-chain-example.png",
+        "page-song.png",
+        "page-system-cal-edit.png",
+        "page-system-cal.png",
+        "page-system-confirm.png",
+        "page-system-update.png",
+        "page-system-utils.png",
+        "page-tempo-nudge.png",
+        "page-tempo.png",
+        "page-track.png",
+        "page-user-scale.png",
+    ]
+
+    print("processing images ...");
+
+    # rescale page images
+    for filename in pages:
+        print("resizing %s" % (filename))
+        call(["convert", infile(filename), "-filter", "Box", "-resize", "512x128", outfile(filename)])
+
+    # create section images
+    def section_image(filename):
+        call(["convert", infile("page-layout-mode.png"), "-filter", "Box", "-resize", "512x128", infile(filename), "-compose", "lighten", "-composite", outfile(filename)])
+
+    section_image("section-header.png")
+    section_image("section-main.png")
+    section_image("section-footer.png")
+
+def generate_toc():
+    print("processing table of contents ...")
+
+    text = open(MARKDOWN_FILE).read()
+    lines = text.split("\n")
+    headings = re.findall(r"<h(\d) id=\"([\w-]+)\">(.+)</h\1>", text)
+    toc = ""
+
+    for heading in headings:
+        level = int(heading[0])
+        anchor = heading[1]
+        title = heading[2]
+        if TOC_MIN_LEVEL <= level <= TOC_MAX_LEVEL:
+            level -= TOC_MIN_LEVEL
+            toc += "%s- [%s](#%s)\n" % (level * "  ", title, anchor)
+
+    text = re.sub(r"(<!-- toc-begin -->\n)(.*)(<!-- toc-end -->\n)", r"\g<1>" + toc + r"\g<3>", text, flags=re.DOTALL)
+
+    open(MARKDOWN_FILE, "w").write(text)
+
+
+def verify_anchors():
+    text = open(MARKDOWN_FILE).read()
+    lines = text.split("\n")
+    anchors = re.findall(r"id=\"([\w-]+)\"", text)
+
+    for index, line in enumerate(lines):
+        m = re.search(r"\(#([\w-]+)\)", line)
+        if m:
+            ref = m.group(1)
+            if not ref in anchors:
+                print("Found reference to unknown anchor '%s' on line %d" % (ref, index))
+
+
+process_images()
+generate_toc()
+verify_anchors()

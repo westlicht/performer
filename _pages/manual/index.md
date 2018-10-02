@@ -550,7 +550,7 @@ If a track is in _Note_ mode, the following parameters are available:
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
-| Fill Mode | None, Gates, Next Pattern | TODO |
+| Fill Mode | None, Gates, Next Pattern | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. |
 | Slide Time | 0% - 100% | Duration of voltage slides for steps that have _Slide_ enabled. |
 | Octave | -10 - +10 | Number of octaves to transpose the sequence up or down. |
 | Transpose | -100 - +100 | Number of notes to transpose the sequence up or down. Note that this depends on the current [Scale](#appendix-scales) of the sequence.
@@ -564,12 +564,12 @@ If a track is in _Note_ mode, the following parameters are available:
 
 ![](images/page-curve-track.png)
 
-If a track is in _Curve_ mode, the following parameters are available:
+If a track is in _Curve_, the following parameters are available:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
-| Fill Mode | None, Gates, Next Pattern | TODO |
+| Fill Mode | None, Gates, Next Pattern | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. |
 | Rotate | [Rotation](#appendix-rotation) | Amount of rotation applied to the sequence. |
 
 > Note: _Rotate_ is a routable parameter.
@@ -640,9 +640,55 @@ If a track is in _Curve_ mode, the following parameters are available:
 
 The _Sequence Edit_ page is entered using `PAGE` + `SEQ EDIT`.
 
+![](images/page-sequence-edit.png)
+
+This page allows editing the currently selected sequence on the currently selected track. Depending on the track mode of the selected track, this page shows a different graphical representation of the sequence. If track mode is set to MIDI/CV, the page is not available and selecting it will jump to the [Track](#pages-track) page.
+
+<h4>Layer Selection</h4>
+
+Sequence data is organized in layers (see [Note Track](#concepts-note-track) and [Curve Track](#concepts-curve-track)). Press `F1`, `F2`, `F3`, `F4` or `F5` to select different layers. The currently selected layer is shown in the header and the graphical representation of the sequence will change accordingly. Note that each function key can represent a group of layers, in which case pressing the same function key repeatedly will cycle through the layers contained in the group.
+
+<h4>Section Selection</h4>
+
+Sequences contain up to 64 steps, of which only 16 are shown on the page. Press `PREV` and `NEXT` to select one of the 4 available sections (1-16, 17-32, 33-48, 49-64). The currently selected section is indicated by the 4 LEDs in the bottom left corner as well as with the step indices above each step on the page.
+
+<h4>Shifting Steps</h4>
+
+Press `SHIFT` + `PREV` or `SHIFT` + `NEXT` to shift all steps in the sequence to the left or right. This has the same effect as [Rotation](#appendix-rotation), but instead of changing the playback position, shifting actually moves the steps in the sequence itself.
+
+<h4>Editing Steps</h4>
+
+There are various ways to edit the steps of a sequence. When the _Gate_ layer is selected, simply press `STEP[1-16]` to enable/disable steps. The current state of the gates is always visualized on the page as well as on the LEDs above the step buttons.
+
+
 TODO
 
-![](images/page-sequence-edit.png)
+<h4>Step Selection</h4>
+
+TODO
+
+<h4>Quick Access</h4>
+
+The sequence edit page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as the _Run Mode_, _First Step_, _Last Step_ and others, one needs to temporarily switch to the [Sequence](#pages-sequence) page. This breaks the workflow, especially when in a live situation, where immediate access to the most important features and parameters is paramount. To help improve the workflow, most of the sequence parameters can be accessed through a quick access function. To access a parameter, hold `PAGE` and press `STEP[9-16]`, similarly to switching between pages, but keep holding the `PAGE` button. The page is overlayed with the selected parameter.
+
+![](images/page-sequence-edit-quick-access.png)
+
+Depending on the _Track Mode_, the following parameters are available through quick access:
+
+| Button | Note Track | Curve Track |
+| :--- | :--- | :--- |
+| `STEP9` | Scale | Range |
+| `STEP10` | Root Note | - |
+| `STEP11` | Divisor | Divisor |
+| `STEP12` | Reset Measure | Reset Measure |
+| `STEP13` | Run Mode | Run Mode |
+| `STEP14` | First Step | First Step |
+| `STEP15` | Last Step | Last Step |
+| `STEP16` | - | - |
+
+While holding the `PAGE` key, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `STEP[1-16]` to select the most common values. Releasing the `PAGE` key will return to the normal state of the sequence edit page.
+
+
 
 <!-- Sequence Edit (Note) -->
 
