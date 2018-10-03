@@ -4,8 +4,6 @@
 
 #include "ui/LedPainter.h"
 #include "ui/painters/WindowPainter.h"
-#include "ui/layouts/GridLayout.h"
-#include "ui/layouts/CenterLayout.h"
 
 #include "core/utils/StringBuilder.h"
 

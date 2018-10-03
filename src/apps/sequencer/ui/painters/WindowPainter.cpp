@@ -4,8 +4,6 @@
 
 #include "core/utils/StringBuilder.h"
 
-#include "ui/layouts/PartitionLayout.h"
-
 static void drawInvertedText(Canvas &canvas, int x, int y, const char *text, bool inverted = true) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
