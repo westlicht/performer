@@ -9,6 +9,8 @@ namespace sim {
 
 class InstrumentSetup {
 public:
+    virtual ~InstrumentSetup() {}
+    
     virtual void setGate(int channel, bool gate) {
         _instruments[channel]->setGate(gate);
     }

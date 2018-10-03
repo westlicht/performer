@@ -15,6 +15,8 @@ public:
         _size(size)
     {}
 
+    virtual ~Widget() {}
+
     const Vector2i &pos() const { return _pos; }
           Vector2i &pos()       { return _pos; }
 
