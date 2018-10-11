@@ -287,8 +287,6 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
             setSelectedStepsGate(false);
         } else {
             setSelectedStepsGate(true);
-            _showDetail = true;
-            _showDetailTicks = os::ticks();
         }
     }
 
@@ -312,7 +310,6 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
 
 void NoteSequenceEditPage::encoder(EncoderEvent &event) {
     auto &sequence = _project.selectedNoteSequence();
-    const auto &scale = sequence.selectedScale();
 
     if (_stepSelection.any()) {
         _showDetail = true;
@@ -373,14 +370,14 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Note:
                 step.setNote(
                     setToFirst ? firstStep.note() :
-                    step.note() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1)
+                    step.note() + event.value()
                 );
                 updateMonitorStep();
                 break;
             case Layer::NoteVariationRange:
                 step.setNoteVariationRange(
                     setToFirst ? firstStep.noteVariationRange() :
-                    step.noteVariationRange() + event.value() * (event.pressed() ? scale.notesPerOctave() : 1)
+                    step.noteVariationRange() + event.value()
                 );
                 updateMonitorStep();
                 break;
