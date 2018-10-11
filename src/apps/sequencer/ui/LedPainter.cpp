@@ -64,12 +64,6 @@ void LedPainter::drawNoteSequenceGateAndCurrentStep(Leds &leds, const NoteSequen
     }
 }
 
-void LedPainter::drawStepIndex(Leds &leds, int index) {
-    for (int step = 0; step < 16; ++step) {
-        leds.set(MatrixMap::fromStep(step), step == index, step == index);
-    }
-}
-
 void LedPainter::drawSelectedPage(Leds &leds, int page) {
     auto setLed = [&] (int code) {
         bool isPageKey = PageKeyMap::isPageKey(code);
@@ -105,6 +99,12 @@ void LedPainter::drawSelectedPattern(Leds &leds, int activePattern, int requeste
 void LedPainter::drawSelectedPatterns(Leds &leds, uint16_t activePatterns, uint16_t requestedPatterns) {
     for (int i = 0; i < 16; ++i) {
         leds.set(MatrixMap::fromStep(i), activePatterns & (1<<i), requestedPatterns & (1<<i));
+    }
+}
+
+void LedPainter::drawSelectedQuickEditValue(Leds &leds, int index, int count) {
+    for (int i = 0; i < 16; ++i) {
+        leds.set(MatrixMap::fromStep(i), i == index, i < count);
     }
 }
 

@@ -49,6 +49,10 @@ public:
         }
     }
 
+    virtual int indexedCount(int row) const override {
+        return indexedCountValue(Item(row));
+    }
+
     virtual int indexed(int row) const override {
         return indexedValue(Item(row));
     }
@@ -130,6 +134,25 @@ private:
         case Last:
             break;
         }
+    }
+
+    int indexedCountValue(Item item) const {
+        switch (item) {
+        case Scale:
+            return Scale::Count + 1;
+        case RootNote:
+            return 12 + 1;
+        case RunMode:
+            return int(Types::RunMode::Last);
+        case Divisor:
+        case ResetMeasure:
+        case FirstStep:
+        case LastStep:
+            return 16;
+        case Last:
+            break;
+        }
+        return -1;
     }
 
     int indexedValue(Item item) const {

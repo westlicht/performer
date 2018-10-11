@@ -41,7 +41,7 @@ void QuickEditPage::draw(Canvas &canvas) {
 
 void QuickEditPage::updateLeds(Leds &leds) {
     leds.clear();
-    LedPainter::drawStepIndex(leds, _listModel->indexed(_row));
+    LedPainter::drawSelectedQuickEditValue(leds, _listModel->indexed(_row), _listModel->indexedCount(_row));
 }
 
 void QuickEditPage::keyDown(KeyEvent &event) {
