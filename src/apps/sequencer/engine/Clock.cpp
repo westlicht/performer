@@ -129,12 +129,10 @@ void Clock::slaveTick(int slave) {
     }
 
     if (_state == State::SlaveRunning && _activeSlave == slave) {
-        int divisor = _slaves[slave].divisor;
-        _slaveSubTicksPending += divisor;
-        // for (int i = 0; i < divisor; ++i) {
-        //     outputTick(_tick);
-        //     ++_tick;
-        // }
+        uint32_t divisor = _slaves[slave].divisor;
+
+        // protect against clock rate overload
+        _slaveSubTicksPending = std::min(_slaveSubTicksPending + divisor, 2 * divisor);
 
         // time past since last tick
         uint32_t periodUs = _elapsedUs - _lastSlaveTickUs;
@@ -155,7 +153,6 @@ void Clock::slaveTick(int slave) {
         } else {
             _nextSlaveSubTickUs += _slaveSubTickPeriodUs;
         }
-        // _nextSlaveSubTickUs = std::max(_nextSlaveSubTickUs + _slaveSubTickPeriodUs, _elapsedUs);
 
         // estimate slave BPM
         if (periodUs > 0 && _lastSlaveTickUs > 0) {
