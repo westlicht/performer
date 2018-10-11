@@ -221,14 +221,13 @@ public:
 
     // selectedPatternIndex
 
-    int selectedPatternIndex() const { return _selectedPatternIndex; }
+    int selectedPatternIndex() const {
+        return _playState.snapshotActive() ? PlayState::SnapshotPatternIndex : _selectedPatternIndex;
+    }
+
     void setSelectedPatternIndex(int index) {
         _selectedPatternIndex = clamp(index, 0, CONFIG_PATTERN_COUNT - 1);
         _observable.notify(SelectedPatternIndex);
-    }
-
-    void setSelectedPatternIndexUnsafe(int index) {
-        _selectedPatternIndex = index;
     }
 
     bool isSelectedPattern(int index) const { return _selectedPatternIndex == index; }

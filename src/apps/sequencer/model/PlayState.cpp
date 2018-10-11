@@ -14,7 +14,8 @@ void PlayState::TrackState::write(WriteContext &context) const {
     auto &writer = context.writer;
     uint8_t muteValue = mute();
     writer.write(muteValue);
-    writer.write(_pattern);
+    // make sure to not write snapshot state
+    writer.write(_pattern < CONFIG_PATTERN_COUNT ? _pattern : 0);
 }
 
 void PlayState::TrackState::read(ReadContext &context) {
@@ -122,13 +123,18 @@ void PlayState::fillAll(bool fill) {
 }
 
 void PlayState::selectTrackPattern(int track, int pattern, ExecuteType executeType) {
-    auto &trackState = _trackStates[track];
-    trackState.setRequests(TrackState::patternRequestFromExecuteType(executeType));
-    trackState.setRequestedPattern(pattern);
-    notify(executeType);
+    if (_snapshot.active) {
+        return;
+}
+
+    selectTrackPatternUnsafe(track, pattern, executeType);
 }
 
 void PlayState::selectPattern(int pattern, ExecuteType executeType) {
+    if (_snapshot.active) {
+        return;
+    }
+
     for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
         selectTrackPattern(track, pattern, executeType);
     }
@@ -149,8 +155,6 @@ void PlayState::createSnapshot() {
     }
 
     _snapshot.lastSelectedPatternIndex = _project.selectedPatternIndex();
-    _project.setSelectedPatternIndexUnsafe(SnapshotPatternIndex);
-
     _snapshot.active = true;
 }
 
@@ -160,7 +164,7 @@ void PlayState::revertSnapshot(int targetPattern) {
     }
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        selectTrackPattern(trackIndex, targetPattern >= 0 ? targetPattern : _snapshot.lastTrackPatternIndex[trackIndex]);
+        selectTrackPatternUnsafe(trackIndex, targetPattern >= 0 ? targetPattern : _snapshot.lastTrackPatternIndex[trackIndex]);
     }
 
     _project.setSelectedPatternIndex(targetPattern >= 0 ? targetPattern : _snapshot.lastSelectedPatternIndex);
@@ -176,7 +180,7 @@ void PlayState::commitSnapshot(int targetPattern) {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         int trackPatternIndex = targetPattern >= 0 ? targetPattern : _snapshot.lastTrackPatternIndex[trackIndex];
         _project.track(trackIndex).copyPattern(SnapshotPatternIndex, trackPatternIndex);
-        selectTrackPattern(trackIndex, trackPatternIndex);
+        selectTrackPatternUnsafe(trackIndex, trackPatternIndex);
     }
 
     _project.setSelectedPatternIndex(targetPattern >= 0 ? targetPattern : _snapshot.lastSelectedPatternIndex);
@@ -233,4 +237,11 @@ void PlayState::write(WriteContext &context) const {
 void PlayState::read(ReadContext &context) {
     readArray(context, _trackStates);
     notify(Immediate);
+}
+
+void PlayState::selectTrackPatternUnsafe(int track, int pattern, ExecuteType executeType) {
+    auto &trackState = _trackStates[track];
+    trackState.setRequests(TrackState::patternRequestFromExecuteType(executeType));
+    trackState.setRequestedPattern(pattern);
+    notify(executeType);
 }

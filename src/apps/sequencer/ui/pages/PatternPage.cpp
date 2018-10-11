@@ -251,29 +251,27 @@ void PatternPage::keyPress(KeyPressEvent &event) {
     if (key.isStep()) {
         int pattern = key.step();
 
-        if (!playState.snapshotActive()) {
-            if (key.shiftModifier()) {
-                // select edit pattern
+        if (key.shiftModifier()) {
+            // select edit pattern
+            _project.setSelectedPatternIndex(pattern);
+        } else {
+            // select playing pattern
+
+            // use immediate by default
+            // use latched when LATCH is pressed
+            // use synced when SYNC is pressed
+            PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (_syncing ? PlayState::Synced : PlayState::Immediate);
+
+            bool globalChange = true;
+            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
+                    playState.selectTrackPattern(trackIndex, pattern, executeType);
+                    globalChange = false;
+                }
+            }
+            if (globalChange) {
+                playState.selectPattern(pattern, executeType);
                 _project.setSelectedPatternIndex(pattern);
-            } else {
-                // select playing pattern
-
-                // use immediate by default
-                // use latched when LATCH is pressed
-                // use synced when SYNC is pressed
-                PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (_syncing ? PlayState::Synced : PlayState::Immediate);
-
-                bool globalChange = true;
-                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                    if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
-                        playState.selectTrackPattern(trackIndex, pattern, executeType);
-                        globalChange = false;
-                    }
-                }
-                if (globalChange) {
-                    playState.selectPattern(pattern, executeType);
-                    _project.setSelectedPatternIndex(pattern);
-                }
             }
         }
         event.consume();

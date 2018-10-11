@@ -270,6 +270,8 @@ public:
     void read(ReadContext &context);
 
 private:
+    void selectTrackPatternUnsafe(int track, int pattern, ExecuteType executeType = Immediate);
+
     void notify(ExecuteType executeType) {
         _hasImmediateRequests |= (executeType == Immediate);
         _hasSyncedRequests |= (executeType == Synced);
@@ -300,5 +302,6 @@ private:
         uint8_t lastTrackPatternIndex[CONFIG_TRACK_COUNT];
     } _snapshot;
 
+    friend class Project;
     friend class Engine;
 };
