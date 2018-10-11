@@ -30,7 +30,7 @@ private:
 
     static const int StepCount = 16;
 
-    int stepOffset() const { return _page * StepCount; }
+    int stepOffset() const { return _section * StepCount; }
 
     void switchLayer(int functionKey);
     int activeFunctionKey();
@@ -56,7 +56,7 @@ private:
     NoteSequence::Layer layer() const { return _project.selectedNoteSequenceLayer(); };
     void setLayer(NoteSequence::Layer layer) { _project.setSelectedNoteSequenceLayer(layer); }
 
-    int _page = 0;
+    int _section = 0;
     bool _showDetail;
     uint32_t _showDetailTicks;
 

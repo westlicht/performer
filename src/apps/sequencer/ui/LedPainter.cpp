@@ -89,11 +89,11 @@ void LedPainter::drawSelectedPage(Leds &leds, int page) {
     setLed(Key::Tempo);
 }
 
-void LedPainter::drawSelectedSequencePage(Leds &leds, int page) {
-    leds.set(Key::Global4, page == 0, page == 0);
-    leds.set(Key::Global5, page == 1, page == 1);
-    leds.set(Key::Global6, page == 2, page == 2);
-    leds.set(Key::Global7, page == 3, page == 3);
+void LedPainter::drawSelectedSequenceSection(Leds &leds, int section) {
+    leds.set(Key::Global4, section == 0, section == 0);
+    leds.set(Key::Global5, section == 1, section == 1);
+    leds.set(Key::Global6, section == 2, section == 2);
+    leds.set(Key::Global7, section == 3, section == 3);
 }
 
 void LedPainter::drawSelectedPattern(Leds &leds, int activePattern, int requestedPattern) {

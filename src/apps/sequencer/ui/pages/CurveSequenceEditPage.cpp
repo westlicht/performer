@@ -158,7 +158,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 }
 
 void CurveSequenceEditPage::updateLeds(Leds &leds) {
-    LedPainter::drawSelectedSequencePage(leds, _page);
+    LedPainter::drawSelectedSequenceSection(leds, _section);
 
     // show quick edit keys
     if (globalKeyState()[Key::Page] && !globalKeyState()[Key::Shift]) {
@@ -210,7 +210,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         if (key.shiftModifier()) {
             sequence.shiftSteps(-1);
         } else {
-            _page = std::max(0, _page - 1);
+            _section = std::max(0, _section - 1);
         }
         event.consume();
     }
@@ -218,7 +218,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         if (key.shiftModifier()) {
             sequence.shiftSteps(1);
         } else {
-            _page = std::min(3, _page + 1);
+            _section = std::min(3, _section + 1);
         }
         event.consume();
     }

@@ -16,7 +16,7 @@ public:
     static void drawStepIndex(Leds &leds, int index);
 
     static void drawSelectedPage(Leds &leds, int page);
-    static void drawSelectedSequencePage(Leds &leds, int page);
+    static void drawSelectedSequenceSection(Leds &leds, int section);
     static void drawSelectedPattern(Leds &leds, int activePattern, int requestedPattern);
     static void drawSelectedPatterns(Leds &leds, uint16_t activePatterns, uint16_t requestedPatterns);
 
