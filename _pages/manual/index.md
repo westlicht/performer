@@ -1062,55 +1062,69 @@ Divisors are used to divide the clock ticks with a resolution of 192 PPQN into p
 
 <h3 id="appendix-run-modes">Run Modes</h3>
 
-Step sequences can be run in various run modes, which describe the order in which the steps of the sequence are played. To illustrate the different run modes, assume a sequence with `N = 8` steps, indexed from `1` to `8`:
+Step sequences can be run in various run modes, which describe the order in which the steps of the sequence are played. To illustrate the different run modes, assume a sequence with **N = 8** steps, indexed from **1** to **8**:
 
-`1 2 3 4 5 6 7 8`
+```
+1 2 3 4 5 6 7 8
+```
 
 <h4>Forward</h4>
 
-In forward mode, the sequence is played from the first to the last step and then repeated. Each iteration is exactly `N` steps:
+In _Forward_ mode, the sequence is played from the first to the last step and then repeated. Each iteration is exactly **N** steps:
 
-`1 2 3 4 5 6 7 8 | 1 2 3 4 5 6 7 8 | 1 ...`
+```
+1 2 3 4 5 6 7 8 | 1 2 3 4 5 6 7 8 | 1 ...
+```
 
 <h4>Backward</h4>
 
-In backward mode, the sequence is played from the last to the first step and the repeated. Each iteration is exactly `N` steps:
+In _Backward_ mode, the sequence is played from the last to the first step and then repeated. Each iteration is exactly **N** steps:
 
-`8 7 6 5 4 3 2 1 | 8 7 6 5 4 3 2 1 | 8 ...`
+```
+8 7 6 5 4 3 2 1 | 8 7 6 5 4 3 2 1 | 8 ...
+```
 
 <h4>Pendulum</h4>
 
-In pendulum mode, the sequence is alternately played in forward and backward mode. Each iteration is exactly `2 * N` steps:
+In _Pendulum_ mode, the sequence is alternately played in forward and backward mode. Each iteration is exactly **2 * N** steps:
 
-`1 2 3 4 5 6 7 8 8 7 6 5 4 3 2 1 | 1 ...`
+```
+1 2 3 4 5 6 7 8 8 7 6 5 4 3 2 1 | 1 ...
+```
 
 <h4>Ping Pong</h4>
 
-In ping pong mode, the sequence is played similarly to the pendulum mode, but when changing direction, the first/last step is not played twice. This essentially shortens the iteration by two steps to `2 * N - 2` steps:
+In _Ping Pong_ mode, the sequence is played similarly to the pendulum mode, but when changing direction, the first/last step is not played twice. This essentially shortens the iteration by two steps to **2 * N - 2** steps:
 
-`1 2 3 4 5 6 7 8 7 6 5 4 3 2 | 1 ...`
+```
+1 2 3 4 5 6 7 8 7 6 5 4 3 2 | 1 ...
+```
 
 <h4>Random</h4>
 
-In random mode, the sequence starts with a random step and each time the sequence advances, a new random step is picked:
+In _Random_ mode, the sequence starts with a random step and each time the sequence advances, a new random step is picked:
 
-`4 7 5 3 5 7 5 3 5 6 8 6 4 2 4 1 3 6 ...`
+```
+4 7 5 3 5 7 5 3 5 6 8 6 4 2 4 1 3 6 ...
+```
 
 <h4>Random Walk</h4>
 
-In random walk mode, the sequence starts with a random step and each time the sequence advances, a random coin toss is used to either pick the step to the left or to the right of the last played step. This also works across the boundary from the first to the last step of the sequence:
+In _Random Walk_ mode, the sequence starts with a random step and each time the sequence advances, a random coin toss is used to either pick the step to the left or to the right of the last played step. This also works across the boundary from the first to the last step of the sequence:
 
-`7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 3 2 ...`
+```
+7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 3 2 ...
+```
 
 <!-- Play Modes -->
 
 <h3 id="appendix-play-modes">Play Modes</h3>
 
-Step sequences can be played in two different modes. In `Aligned` mode, the default mode, the current step position is computed in a deterministic way, whereas in `Free` mode, the current step position is always determined based on the previous step position.
+Step sequences can be played in two different modes. In _Aligned_ mode, the default mode, the current step position is computed in a deterministic way, whereas in _Free_ mode, the current step position is always determined based on the previous step position.
 
-The following example illustrates the difference between the two modes: Let's assume a sequence with a length of 16 steps and the step length set to quarter notes, running in `Forward` mode. When the sequencer is reset and started, the sequence will be played the same in both `Aligned` and `Free` mode, advancing to the next step at each quarter note division. Let's assume that the step length is changed to half notes while the sequencer is running and the step sequence is currently at the 9th step. In `Free` mode, the sequence will continue from the 9th step, but advancing to the next step at each half note division. This means that the step position is not the same as if the sequencer would have been started with the step length set to half notes. This is exactly what `Aligned` mode does, it always computes the current position based on the time that has passed since the sequencer was last reset and started. So in this example, the sequence would jump to the 5th or 13th step instead and continue playing from there.
+The following example illustrates the difference between the two modes: Let's assume a sequence with a length of 16 steps and the step length set to quarter notes, running in _Forward_ mode. When the sequencer is reset and started, the sequence will be played the same in both _Aligned_ and _Free_ mode, advancing to the next step at each quarter note division. Let's assume that the step length is changed to half notes while the sequencer is running and the step sequence is currently at the 9th step. In _Free_ mode, the sequence will continue from the 9th step, but advancing to the next step at each half note division. This means that the step position is not the same as if the sequencer would have been started with the step length set to half notes. This is exactly what _Aligned_ mode does, it always computes the current position based on the time that has passed since the sequencer was last reset and started. So in this example, the sequence would jump to the 5th or 13th step instead and continue playing from there.
 
-In summary, `Free` mode behaves more like an analog sequencer, which simply advances to the next step when the current step length has passed. This may lead to sequences being played in weird ways, depending on how parameters like `Divisor`, `First Step` and `Last Step` are changed while the sequencer is running. While these side effects may allow for some nice happy accidents, `Aligned` mode is generally the safer bet for most purposes.
+In summary, _Free_ mode behaves more like an analog sequencer, which simply advances to the next step when the current step length has passed. This may lead to sequences being played in weird ways, depending on how parameters like _Divisor_, _First Step_ and _Last Step_ are changed while the sequencer is running. While these side effects may allow for some nice happy accidents, _Aligned_ mode is generally the safer bet for most purposes.
 
 <!-- Rotation -->
 
@@ -1118,15 +1132,21 @@ In summary, `Free` mode behaves more like an analog sequencer, which simply adva
 
 Rotation enables to play back the sequence at different start points. A typical 8 step sequence in _Forward_ mode is played back as follows:
 
-`1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 ...`
+```
+1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 ...
+```
 
-With a rotation of `+1` the sequence is rotated 1 step to the right and played back as follows:
+With a rotation of **+1** the sequence is rotated 1 step to the right and played back as follows:
 
-`2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 ...`
+```
+2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 ...
+```
 
-With a rotation of `-3` the sequence is rotated 3 steps to the left and played back as follows:
+With a rotation of **-3** the sequence is rotated 3 steps to the left and played back as follows:
 
-`6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 ...`
+```
+6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 ...
+```
 
 <!-- Scales -->
 
