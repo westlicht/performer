@@ -277,17 +277,17 @@ See [Launchpad](#appendix-launchpad) for more details.
 
 The SD card can be used to store various resources such as projects, user scales and system settings. Resources are stored into slots, with each type having a total of 128 slots available. The actual content on the SD card looks as follows:
 
-- `PROJECTS/`
-  - `001.PRO`
-  - `002.PRO`
-  - `...`
-- `SCALES/`
-  - `001.SCA`
-  - `002.SCA`
-  - `...`
-- `SETTINGS.DAT`
+- **PROJECTS/**
+  - **001.PRO**
+  - **002.PRO**
+  - **...**
+- **SCALES/**
+  - **001.SCA**
+  - **002.SCA**
+  - **...**
+- **SETTINGS.DAT**
 
-where `001.PRO` is the first project slot, `002.SCA` is the second user scale slot and `SETTINGS.DAT` is the backup of the system settings (also stored in on-chip flash memory).
+where **001.PRO** is the first project slot, **002.SCA** is the second user scale slot and **SETTINGS.DAT** is the backup of the system settings (also stored in on-chip flash memory).
 
 The reason for using a slot system rather than traditional filenames is in order to allow for a smooth user experience while preserving the limited resources on the system.
 
@@ -669,7 +669,7 @@ TODO
 
 <h4>Quick Access</h4>
 
-The sequence edit page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as the _Run Mode_, _First Step_, _Last Step_ and others, one needs to temporarily switch to the [Sequence](#pages-sequence) page. This breaks the workflow, especially when in a live situation, where immediate access to the most important features and parameters is paramount. To help improve the workflow, most of the sequence parameters can be accessed through a quick access function. To access a parameter, hold `PAGE` and press `STEP[9-16]`, similarly to switching between pages, but keep holding the `PAGE` button. The page is overlayed with the selected parameter.
+The _Sequence Edit_ page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as the _Run Mode_, _First Step_, _Last Step_ and others, one needs to temporarily switch to the [Sequence](#pages-sequence) page. This breaks the workflow, especially when in a live situation, where immediate access to the most important features and parameters is paramount. To help improve the workflow, most of the sequence parameters can be accessed through a quick access function. To access a parameter, hold `PAGE` and press `STEP[9-16]`, similarly to switching between pages, but keep holding the `PAGE` button. The page is now overlayed with the selected parameter.
 
 ![](images/page-sequence-edit-quick-access.png)
 
@@ -901,7 +901,7 @@ As with the preset scales, user scales can either be in _Chromatic_ or _Voltage_
 
 The number of items in the scale is set with the _Size_ parameter and can be up to 32 items.
 
-When in _Chromatic_ mode, each item can be assigned a semitone: `1`, `1#`, `2`, `2#`, `3`, `4`, `4#`, `5`, `5#`, `6`, `6#` or `7`.
+When in _Chromatic_ mode, each item can be assigned a semitone: **1**, **1#**, **2**, **2#**, **3**, **4**, **4#**, **5**, **5#**, **6**, **6#** or **7**.
 
 When in _Voltage_ mode, each item can be assigned a voltage between -5V and +5V with millivolts accuracy.
 
@@ -1301,8 +1301,8 @@ With all channels calibrated you should save the data to flash memory by holding
 
 Use the following steps to upgrade the sequencer:
 
-- Download the latest `UPDATE.DAT` file from [https://github.com/westlicht/eurorack-sequencer/releases](https://github.com/westlicht/eurorack-sequencer/releases).
-- Copy the `UPDATE.DAT` file to the root directory of the SD card.
+- Download the latest **UPDATE.DAT** file from [https://github.com/westlicht/eurorack-sequencer/releases](https://github.com/westlicht/eurorack-sequencer/releases).
+- Copy the **UPDATE.DAT** file to the root directory of the SD card.
 - Insert the SD card into the sequencer's SD card slot.
 
 The update procedure is performed by the bootloader on the sequencer. There are two possible ways to enter the bootloader:
@@ -1310,6 +1310,6 @@ The update procedure is performed by the bootloader on the sequencer. There are 
 1. Power up the sequencer while pressing down the `ENCODER`.
 2. Enter the [System](#pages-system) page and go to the update tab, then press and hold the `ENCODER` which will initiate a reset and jump to the bootloader.
 
-The bootloader will verify the integrity of the `UPDATE.DAT` file using an MD5 hash. Once verified, a confirmation is requested to actually initiate the update process. Simply rotate the `ENCODER` to change to _YES_ and press the `ENCODER` to start the update.
+The bootloader will verify the integrity of the **UPDATE.DAT** file using an MD5 hash. Once verified, a confirmation is requested to actually initiate the update process. Simply rotate the `ENCODER` to change to **YES** and press the `ENCODER` to start the update.
 
 After the firmware is written to the flash memory, it is verified again to ensure it was written properly. In case the verification fails, the firmware is erased from flash memory. At this point the sequencer will always enter the bootloader when powering up, allowing to load a different firmware.
