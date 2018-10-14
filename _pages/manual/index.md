@@ -333,11 +333,11 @@ All global buttons have fixed functions associated to them:
 
 <h4>Track Buttons</h4>
 
-There are 8 track buttons: `TRACK1` to `TRACK8`. These buttons are generally used to select the active track, but also to select pages in combination with the `PAGE` key and some other functions depending on the active page.
+There are 8 track buttons: `TRACK1` to `TRACK8`. These buttons are generally used to select the active track, but also to select pages in combination with the `PAGE` button and some other functions depending on the active page.
 
 <h4>Step Buttons</h4>
 
-There are 16 step buttons: `STEP1` up to `STEP16`. These buttons are generally used to select steps in a sequence, but also to select pages in combination with the `PAGE` key and some other functions depending on the active page.
+There are 16 step buttons: `STEP1` up to `STEP16`. These buttons are generally used to select steps in a sequence, but also to select pages in combination with the `PAGE` button and some other functions depending on the active page.
 
 <!-- Navigation -->
 
@@ -404,11 +404,11 @@ The _body_ is used to display the main content for the active page.
 
 <h4>Footer</h4>
 
-The _footer_ is used to display the labels of the function keys for the current page.
+The _footer_ is used to display the labels of the function buttons for the current page.
 
 ![](images/section-footer.png)
 
-On pages such as the [Layout](#pages-layout) page, the function keys are used to switch between different sub-pages. In that case, the currently active sub-page is highlighted in the footer.
+On pages such as the [Layout](#pages-layout) page, the function buttons are used to switch between different sub-pages. In that case, the currently active sub-page is highlighted in the footer.
 
 On pages that provide a context menu, the labels dynamically change to the context menu actions when `SHIFT` + `PAGE` is hold.
 
