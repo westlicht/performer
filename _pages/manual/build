@@ -4,7 +4,7 @@ import os
 from subprocess import call
 import re
 
-MARKDOWN_FILE = "UserManual.md"
+MARKDOWN_FILE = "index.md"
 IMAGE_INPUT_DIR = "resources"
 IMAGE_OUTPUT_DIR = "images"
 
