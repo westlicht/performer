@@ -632,6 +632,15 @@ If a track is in _Note_ mode, the following parameters are available:
 
 If a track is in _Curve_ mode, the following parameters are available:
 
+| Parameter | Range | Description |
+| :--- | :--- | :--- |
+| Range | 1V - 5V Unipolar, 1V - 5V Bipolar | Voltage range to use for this sequence. |
+| Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
+| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
+| Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
+| First Step | 1 - 64 | First step to play. |
+| Last Step | 1 - 64 | Last step to play. |
+
 <!-- Sequence Edit -->
 
 <h3 id="pages-sequence-edit">Sequence Edit</h3>
