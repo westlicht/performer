@@ -41,8 +41,6 @@ nav: 20
   - [Track](#pages-track)
   - [Sequence](#pages-sequence)
   - [Sequence Edit](#pages-sequence-edit)
-  - [Sequence Edit (Note)](#pages-sequence-edit-note)
-  - [Sequence Edit (Curve)](#pages-sequence-edit-curve)
   - [Song](#pages-song)
   - [Tempo](#pages-tempo)
   - [Pattern](#pages-pattern)
@@ -688,19 +686,6 @@ Depending on the _Track Mode_, the following parameters are available through qu
 
 While holding the `PAGE` key, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `STEP[1-16]` to select the most common values. Releasing the `PAGE` key will return to the normal state of the sequence edit page.
 
-
-
-<!-- Sequence Edit (Note) -->
-
-<h3 id="pages-sequence-edit-note">Sequence Edit (Note)</h3>
-
-TODO
-
-<!-- Sequence Edit (Curve) -->
-
-<h3 id="pages-sequence-edit-curve">Sequence Edit (Curve)</h3>
-
-TODO
 
 <!-- Song -->
 
