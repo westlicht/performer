@@ -647,7 +647,8 @@ If a track is in _Curve_ mode, the following parameters are available:
 
 The _Sequence Edit_ page is entered using `PAGE` + `SEQ EDIT`.
 
-![](images/page-sequence-edit.png)
+![](images/page-sequence-edit-note.png)
+![](images/page-sequence-edit-curve.png)
 
 This page allows editing the currently selected sequence on the currently selected track. Depending on the track mode of the selected track, this page shows a different graphical representation of the sequence. If track mode is set to _MIDI/CV_, the page is not available and selecting it will jump to the [Track](#pages-track) page.
 
