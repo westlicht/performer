@@ -649,30 +649,65 @@ The _Sequence Edit_ page is entered using `PAGE` + `SEQ EDIT`.
 
 ![](images/page-sequence-edit.png)
 
-This page allows editing the currently selected sequence on the currently selected track. Depending on the track mode of the selected track, this page shows a different graphical representation of the sequence. If track mode is set to MIDI/CV, the page is not available and selecting it will jump to the [Track](#pages-track) page.
+This page allows editing the currently selected sequence on the currently selected track. Depending on the track mode of the selected track, this page shows a different graphical representation of the sequence. If track mode is set to _MIDI/CV_, the page is not available and selecting it will jump to the [Track](#pages-track) page.
 
 <h4>Layer Selection</h4>
 
-Sequence data is organized in layers (see [Note Track](#concepts-note-track) and [Curve Track](#concepts-curve-track)). Press `F1`, `F2`, `F3`, `F4` or `F5` to select different layers. The currently selected layer is shown in the header and the graphical representation of the sequence will change accordingly. Note that each function key can represent a group of layers, in which case pressing the same function key repeatedly will cycle through the layers contained in the group.
+Sequence data is organized in layers (see [Note Track](#concepts-note-track) and [Curve Track](#concepts-curve-track)). Press `F1`, `F2`, `F3`, `F4` or `F5` to select different layers. The currently selected layer is shown in the header and the graphical representation of the sequence will change accordingly. Note that each function button can represent a group of layers, in which case pressing the same function button repeatedly will cycle through the layers contained in the group.
+
+The following layers are available in _Note_ mode:
+
+| Button | Layers |
+| :--- | :--- |
+| `F1` | Gate, Gate Probability, Slide |
+| `F2` | Retrigger, Retrigger Probability |
+| `F3` | Length, Length Variation Range, Length Variation Probability |
+| `F4` | Note, Note Variation Range, Note Variation Probability |
+
+The following layers are available in _Curve_ mode:
+
+| Button | Layers |
+| :--- | :--- |
+| `F1` | Shape |
+| `F2` | Minimum |
+| `F3` | Maximum |
 
 <h4>Section Selection</h4>
 
 Sequences contain up to 64 steps, of which only 16 are shown on the page. Press `PREV` and `NEXT` to select one of the 4 available sections (1-16, 17-32, 33-48, 49-64). The currently selected section is indicated by the 4 LEDs in the bottom left corner as well as with the step indices above each step on the page.
 
+<h4>Editing Steps</h4>
+
+To adjust the values of the currently selected layer, hold `STEP[1-16]` and rotate the `ENCODER`. To adjust multiple steps at the same time, hold multiple step buttons and rotate the `ENCODER`. The currently selected steps are visualized both on the page by highlighting the step indices as well as on the step LEDs which turn orange. When adjusting multiple steps, the values are adjusted relative to their current value. Depending on the track mode and the selected layer, there is some additional functionality available:
+
+- When editing the _Gate_ layer on a sequence of a _Note_ track, pressing `STEP[1-16]` enables/disables the gate values.
+- When editing any other layer on a sequence of a _Note_ track, holding one or multiple step buttons and pressing the `ENCODER` enables/disables the gate values. This comes in handy for example when editing note values, as gates can easily be enabled/disabled without switching layers.
+- When editing layers on a sequence of a _Curve_ track, pressing and rotating the `ENCODER` adjusts the values in smaller steps.
+
+<h4>Advanced Step Selection</h4>
+
+When holding `SHIFT` and pressing any of the step buttons, steps are selected in a _persistent_ mode. This means that steps are kept selected even when the step buttons are released. This allows to select multiple steps across different sections. Steps can also be removed from the selection by holding `SHIFT` and pressing step buttons corresponding to selected steps again. To clear the entire selection, simply press any step button without holding `SHIFT` or quickly press `SHIFT` twice (double tap). When the selection is empty, double tap `SHIFT` to select all 64 steps.
+
+Finally, there is a shortcut to select a series of steps. For example, to select steps 1, 5, 9, 13 and so forth, hold `SHIFT` and `STEP1` and then double tap `STEP5` while holding the other two buttons. With this shortcut, any series of steps with a common interval can be selected quickly, great to build rhythms.
+
+> Note: Different series can be combined by applying the shortcut multiple times. Each time it is executed, the steps of the series are added to the selection.
+
 <h4>Shifting Steps</h4>
 
 Press `SHIFT` + `PREV` or `SHIFT` + `NEXT` to shift all steps in the sequence to the left or right. This has the same effect as [Rotation](#appendix-rotation), but instead of changing the playback position, shifting actually moves the steps in the sequence itself.
 
-<h4>Editing Steps</h4>
+<h4>Context Menu</h4>
 
-There are various ways to edit the steps of a sequence. When the _Gate_ layer is selected, simply press `STEP[1-16]` to enable/disable steps. The current state of the gates is always visualized on the page as well as on the LEDs above the step buttons.
+Hold `SHIFT` + `PAGE` to open the context menu and access the following functions:
 
+| Button | Function | Description |
+| :--- | :--- | :--- |
+| `F1` | Init | Initialize all steps of the current sequence to the default state. |
+| `F2` | Copy | Copy the selected steps to the clipboard. |
+| `F3` | Paste | Paste steps in the clipboard to the selected steps. |
+| `F4` | Duplicate | Doubles the length of the sequence between _First Step_ and _Last Step_ and copies the first half to the second half. |
 
-TODO
-
-<h4>Step Selection</h4>
-
-TODO
+Copy/Paste only works with steps selected in _persistent_ mode. When more steps are pasted than copied to the clipboard, the steps will be repeated multiple times. This means that for example one can copy 2 steps and then paste them to 8 steps, creating a repetition of the two copied steps.
 
 <h4>Quick Access</h4>
 
@@ -693,8 +728,9 @@ Depending on the _Track Mode_, the following parameters are available through qu
 | `STEP15` | Last Step | Last Step |
 | `STEP16` | - | - |
 
-While holding the `PAGE` key, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `STEP[1-16]` to select the most common values. Releasing the `PAGE` key will return to the normal state of the sequence edit page.
+While holding the `PAGE` button, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `STEP[1-16]` to select the most common values. Releasing the `PAGE` button will return to the normal state of the sequence edit page.
 
+> Note: When quick access is active, the step LEDs will indicate the range of values that can be selected in green as well as the current selection in red.
 
 <!-- Song -->
 
