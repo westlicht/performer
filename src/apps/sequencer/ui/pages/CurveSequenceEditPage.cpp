@@ -158,6 +158,19 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 }
 
 void CurveSequenceEditPage::updateLeds(Leds &leds) {
+    const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
+    const auto &sequence = _project.selectedCurveSequence();
+    int currentStep = trackEngine.isActiveSequence(sequence) ? trackEngine.currentStep() : -1;
+
+    for (int i = 0; i < 16; ++i) {
+        int stepIndex = stepOffset() + i;
+        bool red = (stepIndex == currentStep) || _stepSelection[stepIndex];
+        bool green = (stepIndex != currentStep) && _stepSelection[stepIndex];
+        leds.set(MatrixMap::fromStep(i), red, green);
+    }
+
+    LedPainter::drawSelectedSequenceSection(leds, _section);
+
     LedPainter::drawSelectedSequenceSection(leds, _section);
 
     // show quick edit keys
