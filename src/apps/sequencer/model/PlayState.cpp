@@ -15,7 +15,8 @@ void PlayState::TrackState::write(WriteContext &context) const {
     uint8_t muteValue = mute();
     writer.write(muteValue);
     // make sure to not write snapshot state
-    writer.write(_pattern < CONFIG_PATTERN_COUNT ? _pattern : 0);
+    uint8_t patternValue = _pattern < CONFIG_PATTERN_COUNT ? _pattern : 0;
+    writer.write(patternValue);
 }
 
 void PlayState::TrackState::read(ReadContext &context) {

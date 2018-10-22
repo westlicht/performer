@@ -33,7 +33,7 @@ void ClockSetup::write(WriteContext &context) const {
 void ClockSetup::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_mode);
-    reader.read(_shiftMode, 2);
+    reader.read(_shiftMode);
     reader.read(_clockInputDivisor);
     reader.read(_clockInputMode);
     reader.read(_clockOutputDivisor);
