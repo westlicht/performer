@@ -30,7 +30,7 @@ void PlayState::TrackState::read(ReadContext &context) {
 // PlayState::SongState
 
 void PlayState::SongState::clear() {
-    _state = false;
+    _state = 0;
 }
 
 // PlayState

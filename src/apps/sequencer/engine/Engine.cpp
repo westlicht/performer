@@ -481,9 +481,10 @@ void Engine::updatePlayState(bool ticked) {
         }
     }
 
-    // abort song mode if slot is invalid
+    // abort song mode if slot becomes invalid
 
-    if (songState.playing() && songState.currentSlot() >= song.slotCount()) {
+    if ((songState.playing() && songState.currentSlot() >= song.slotCount()) ||
+        (songState.currentRepeat() >= song.slot(songState.currentSlot()).repeats())) {
         playState.stopSong();
     }
 
