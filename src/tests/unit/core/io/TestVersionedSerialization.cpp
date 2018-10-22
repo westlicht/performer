@@ -57,7 +57,7 @@ static void writeVersion2(void *buf, size_t len) {
     writer.writeHash();
 }
 
-static Data3 writeVersion3(void *buf, size_t len) {
+static void writeVersion3(void *buf, size_t len) {
     MemoryWriter memoryWriter(buf, len);
     VersionedSerializedWriter writer([&memoryWriter] (const void *data, size_t len) { memoryWriter.write(data, len); }, 3);
     Data3 data;
