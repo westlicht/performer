@@ -48,7 +48,6 @@ struct LayerMapItem {
 static const LayerMapItem noteSequenceLayerMap[] = {
     [int(NoteSequence::Layer::Gate)]                        =  { 0, 0 },
     [int(NoteSequence::Layer::GateProbability)]             =  { 1, 0 },
-    [int(NoteSequence::Layer::Slide)]                       =  { 2, 0 },
     [int(NoteSequence::Layer::Retrigger)]                   =  { 0, 1 },
     [int(NoteSequence::Layer::RetriggerProbability)]        =  { 1, 1 },
     [int(NoteSequence::Layer::Length)]                      =  { 0, 2 },
@@ -57,6 +56,7 @@ static const LayerMapItem noteSequenceLayerMap[] = {
     [int(NoteSequence::Layer::Note)]                        =  { 0, 3 },
     [int(NoteSequence::Layer::NoteVariationRange)]          =  { 1, 3 },
     [int(NoteSequence::Layer::NoteVariationProbability)]    =  { 2, 3 },
+    [int(NoteSequence::Layer::Slide)]                       =  { 2, 0 },
 };
 
 static constexpr int noteSequenceLayerMapSize = sizeof(noteSequenceLayerMap) / sizeof(noteSequenceLayerMap[0]);
