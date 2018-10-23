@@ -86,7 +86,7 @@ void PerformerPage::draw(Canvas &canvas) {
 void PerformerPage::updateLeds(Leds &leds) {
     const auto &playState = _project.playState();
 
-    LedPainter::drawTrackGates(leds, _engine);
+    LedPainter::drawTrackGates(leds, _engine, _project.playState());
 
     uint8_t activeFills = 0;
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {

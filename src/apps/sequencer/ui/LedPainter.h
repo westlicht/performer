@@ -4,12 +4,13 @@
 
 class Leds;
 class Engine;
+class PlayState;
 class NoteSequence;
 
 class LedPainter {
 public:
-    static void drawTrackGatesAndSelectedTrack(Leds &leds, const Engine &engine, int selectedTrack);
-    static void drawTrackGates(Leds &leds, const Engine &engine);
+    static void drawTrackGatesAndSelectedTrack(Leds &leds, const Engine &engine, const PlayState &playState, int selectedTrack);
+    static void drawTrackGates(Leds &leds, const Engine &engine, const PlayState &playState);
 
     static void drawNoteSequenceGateAndCurrentStep(Leds &leds, const NoteSequence &sequence, int stepOffset, int currentStep);
 

@@ -63,7 +63,7 @@ void TopPage::updateLeds(Leds &leds) {
     if (globalKeyState()[Key::Page] && !globalKeyState()[Key::Shift]) {
         LedPainter::drawSelectedPage(leds, _mode);
     } else {
-        LedPainter::drawTrackGatesAndSelectedTrack(leds, _engine, _project.selectedTrackIndex());
+        LedPainter::drawTrackGatesAndSelectedTrack(leds, _engine, _project.playState(), _project.selectedTrackIndex());
     }
 }
 
