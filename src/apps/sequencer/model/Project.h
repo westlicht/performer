@@ -213,8 +213,12 @@ public:
 
     int selectedTrackIndex() const { return _selectedTrackIndex; }
     void setSelectedTrackIndex(int index) {
-        _selectedTrackIndex = clamp(index, 0, CONFIG_TRACK_COUNT - 1);
-        _observable.notify(SelectedTrackIndex);
+        index = clamp(index, 0, CONFIG_TRACK_COUNT - 1);
+        if (index != _selectedTrackIndex) {
+            _selectedTrackIndex = index;
+            _observable.notify(SelectedTrackIndex);
+            setSelectedPatternIndex(_playState.trackState(index).pattern());
+        }
     }
 
     bool isSelectedTrack(int index) const { return _selectedTrackIndex == index; }
