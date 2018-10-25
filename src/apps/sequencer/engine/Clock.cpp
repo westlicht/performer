@@ -322,7 +322,7 @@ void Clock::onClockTimerTick() {
             _nextSlaveSubTickUs += _slaveSubTickPeriodUs;
         }
 
-        if (_mode == Mode::Auto && (_elapsedUs - _lastSlaveTickUs) > 100000) {
+        if (_mode == Mode::Auto && (_elapsedUs - _lastSlaveTickUs) > 500000) {
             slaveReset(_activeSlave);
         }
         break;
