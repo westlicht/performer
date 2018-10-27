@@ -22,7 +22,7 @@ void LedPainter::drawTrackGatesAndSelectedTrack(Leds &leds, const Engine &engine
         const auto &trackState = playState.trackState(track);
 
         bool activity = trackEngine.activity();
-        bool mute = trackState.mute() != trackState.requestedMute() ? blink : trackEngine.mute();
+        bool mute = (trackState.hasMuteRequest() && trackState.mute() != trackState.requestedMute()) ? blink : trackEngine.mute();
         bool selected = track == selectedTrack;
 
         if (selected) {
