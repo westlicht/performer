@@ -15,6 +15,7 @@ public:
     virtual void exit() override;
 
     virtual void draw(Canvas &canvas) override;
+    virtual void updateLeds(Leds &leds) override;
 
     virtual void keyDown(KeyEvent &event) override;
     virtual void keyUp(KeyEvent &event) override;

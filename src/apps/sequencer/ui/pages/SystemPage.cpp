@@ -42,11 +42,13 @@ SystemPage::SystemPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _cvOutputListModel),
     _settings(context.model.settings())
 {
-    setOutputIndex(_project.selectedTrackIndex());
+    setOutputIndex(0);
 }
 
 void SystemPage::enter() {
     resetKeyState();
+
+    setOutputIndex(_project.selectedTrackIndex());
 
     _engine.lock();
     _engine.setGateOutput(0xff);
@@ -103,6 +105,19 @@ void SystemPage::draw(Canvas &canvas) {
 #endif
         break;
     }
+    }
+}
+
+void SystemPage::updateLeds(Leds &leds) {
+    int selectedTrack = _project.selectedTrackIndex();
+
+    for (int track = 0; track < 8; ++track) {
+        bool selected = track == selectedTrack;
+        leds.set(MatrixMap::fromTrack(track), selected, selected);
+    }
+
+    for (int step = 0; step < 16; ++step) {
+        leds.set(MatrixMap::fromStep(step), false, false);
     }
 }
 
