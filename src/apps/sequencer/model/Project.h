@@ -275,14 +275,14 @@ public:
     const NoteSequence &noteSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].noteTrack().sequence(patternIndex); }
           NoteSequence &noteSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].noteTrack().sequence(patternIndex); }
 
-    const NoteSequence &selectedNoteSequence() const { return noteSequence(_selectedTrackIndex, _selectedPatternIndex); }
-          NoteSequence &selectedNoteSequence()       { return noteSequence(_selectedTrackIndex, _selectedPatternIndex); }
+    const NoteSequence &selectedNoteSequence() const { return noteSequence(_selectedTrackIndex, selectedPatternIndex()); }
+          NoteSequence &selectedNoteSequence()       { return noteSequence(_selectedTrackIndex, selectedPatternIndex()); }
 
     const CurveSequence &curveSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].curveTrack().sequence(patternIndex); }
           CurveSequence &curveSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].curveTrack().sequence(patternIndex); }
 
-    const CurveSequence &selectedCurveSequence() const { return curveSequence(_selectedTrackIndex, _selectedPatternIndex); }
-          CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, _selectedPatternIndex); }
+    const CurveSequence &selectedCurveSequence() const { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
+          CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
 
     void clear();
     void clearPattern(int patternIndex);
