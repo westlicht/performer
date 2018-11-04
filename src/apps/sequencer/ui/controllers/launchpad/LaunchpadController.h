@@ -104,7 +104,7 @@ private:
     void drawStepRange(int first, int last, int highlit);
 
     Color stepColor(bool active, bool current) const;
-    void drawNoteSequenceGates(const NoteSequence &sequence, int currentStep);
+    void drawNoteSequenceBits(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
     void drawNoteSequenceBars(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
     void drawNoteSequenceDots(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
     void drawCurveSequenceDots(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep);

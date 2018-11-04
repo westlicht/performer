@@ -330,6 +330,9 @@ void LaunchpadController::sequenceEditNoteStep(int row, int col) {
     case NoteSequence::Layer::Gate:
         sequence.step(gridIndex).toggleGate();
         break;
+    case NoteSequence::Layer::Slide:
+        sequence.step(gridIndex).toggleSlide();
+        break;
     default:
         sequence.step(linearIndex).setLayerValue(layer, value);
         break;
@@ -405,7 +408,8 @@ void LaunchpadController::sequenceDrawNoteSequence() {
 
     switch (layer) {
     case NoteSequence::Layer::Gate:
-        drawNoteSequenceGates(sequence, currentStep);
+    case NoteSequence::Layer::Slide:
+        drawNoteSequenceBits(sequence, layer, currentStep);
         break;
     case NoteSequence::Layer::Note:
         drawNoteSequenceDots(sequence, layer, currentStep);
@@ -602,12 +606,12 @@ LaunchpadController::Color LaunchpadController::stepColor(bool active, bool curr
     return Color(red, green);
 }
 
-void LaunchpadController::drawNoteSequenceGates(const NoteSequence &sequence, int currentStep) {
+void LaunchpadController::drawNoteSequenceBits(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
     for (int row = 0; row < 8; ++row) {
         for (int col = 0; col < 8; ++col) {
             int stepIndex = row * 8 + col;
             const auto &step = sequence.step(stepIndex);
-            setGridLed(row, col, Color(stepIndex == currentStep, step.gate() ? 1 : 0));
+            setGridLed(row, col, Color(stepIndex == currentStep, step.layerValue(layer) ? 1 : 0));
         }
     }
 }
