@@ -283,7 +283,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         }
     }
 
-    if (!written && _model.project().recordMode() == Types::RecordMode::Overwrite) {
+    if (isSelected() && !written && _model.project().recordMode() == Types::RecordMode::Overwrite) {
         clearStep(_sequenceState.lastStep());
     }
 }
