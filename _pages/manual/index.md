@@ -1332,7 +1332,7 @@ With all channels calibrated you should save the data to flash memory by holding
 
 Use the following steps to upgrade the sequencer:
 
-- Download the latest **UPDATE.DAT** file from [https://github.com/westlicht/eurorack-sequencer/releases](https://github.com/westlicht/eurorack-sequencer/releases).
+- Download the latest **UPDATE.DAT** file from [https://github.com/westlicht/performer/releases](https://github.com/westlicht/performer/releases).
 - Copy the **UPDATE.DAT** file to the root directory of the SD card.
 - Insert the SD card into the sequencer's SD card slot.
 
