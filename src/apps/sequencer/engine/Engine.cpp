@@ -693,8 +693,6 @@ void Engine::updateClockSetup() {
     case ClockSetup::ClockInputMode::Reset:
         if (resetInput && running) {
             _clock.slaveReset(ClockSourceExternal);
-        } else if (!resetInput && !running) {
-            _clock.slaveStart(ClockSourceExternal);
         }
         break;
     case ClockSetup::ClockInputMode::Run:
