@@ -39,6 +39,7 @@ void CurveSequencePage::exit() {
 void CurveSequencePage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE");
+    WindowPainter::drawActiveFunction(canvas, Track::trackModeName(_project.selectedTrack().trackMode()));
     WindowPainter::drawFooter(canvas);
 
     ListPage::draw(canvas);
