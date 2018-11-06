@@ -39,6 +39,7 @@ private:
         ClockInputDivisor,
         ClockInputMode,
         ClockOutputDivisor,
+        ClockOutputSwing,
         ClockOutputPulse,
         ClockOutputMode,
         MidiRx,
@@ -55,6 +56,7 @@ private:
         case ClockInputDivisor: return "Input Divisor";
         case ClockInputMode:    return "Input Mode";
         case ClockOutputDivisor:return "Output Divisor";
+        case ClockOutputSwing:  return "Output Swing";
         case ClockOutputPulse:  return "Output Pulse";
         case ClockOutputMode:   return "Output Mode";
         case MidiRx:            return "MIDI RX";
@@ -86,6 +88,9 @@ private:
             break;
         case ClockOutputDivisor:
             _clockSetup.printClockOutputDivisor(str);
+            break;
+        case ClockOutputSwing:
+            _clockSetup.printClockOutputSwing(str);
             break;
         case ClockOutputPulse:
             _clockSetup.printClockOutputPulse(str);
@@ -126,6 +131,9 @@ private:
             break;
         case ClockOutputDivisor:
             _clockSetup.editClockOutputDivisor(value, shift);
+            break;
+        case ClockOutputSwing:
+            _clockSetup.editClockOutputSwing(value, shift);
             break;
         case ClockOutputPulse:
             _clockSetup.editClockOutputPulse(value, shift);

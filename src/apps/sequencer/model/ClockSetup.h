@@ -173,6 +173,24 @@ public:
         ModelUtils::printDivisor(str, clockOutputDivisor());
     }
 
+    // clockOutputSwing
+
+    bool clockOutputSwing() const { return _clockOutputSwing; }
+    void setClockOutputSwing(bool clockOutputSwing) {
+        if (clockOutputSwing != _clockOutputSwing) {
+            _clockOutputSwing = clockOutputSwing;
+            _dirty = true;
+        }
+    }
+
+    void editClockOutputSwing(int value, int shift) {
+        setClockOutputSwing(value > 0);
+    }
+
+    void printClockOutputSwing(StringBuilder &str) const {
+        ModelUtils::printYesNo(str, _clockOutputSwing);
+    }
+
     // clockOutputPulse
 
     int clockOutputPulse() const { return _clockOutputPulse; }
@@ -301,6 +319,7 @@ private:
     uint8_t _clockInputDivisor;
     ClockInputMode _clockInputMode;
     uint8_t _clockOutputDivisor;
+    bool _clockOutputSwing;
     uint8_t _clockOutputPulse;
     ClockOutputMode _clockOutputMode;
     bool _midiRx;

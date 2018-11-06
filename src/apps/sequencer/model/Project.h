@@ -42,7 +42,10 @@ public:
     // expanded divisor to 16 bits
     static constexpr uint32_t Version10 = 10;
 
-    static constexpr uint32_t Version = Version10;
+    // added ClockSetup::clockOutputSwing
+    static constexpr uint32_t Version11 = 11;
+
+    static constexpr uint32_t Version = Version11;
 
     //----------------------------------------
     // Types

@@ -1,4 +1,5 @@
 #include "ClockSetup.h"
+#include "Project.h"
 
 void ClockSetup::clear() {
     _mode = Mode::Auto;
@@ -6,6 +7,7 @@ void ClockSetup::clear() {
     _clockInputDivisor = 12;
     _clockInputMode = ClockInputMode::Reset;
     _clockOutputDivisor = 12;
+    _clockOutputSwing = false;
     _clockOutputPulse = 1;
     _clockOutputMode = ClockOutputMode::Reset;
     _midiRx = true;
@@ -22,6 +24,7 @@ void ClockSetup::write(WriteContext &context) const {
     writer.write(_clockInputDivisor);
     writer.write(_clockInputMode);
     writer.write(_clockOutputDivisor);
+    writer.write(_clockOutputSwing);
     writer.write(_clockOutputPulse);
     writer.write(_clockOutputMode);
     writer.write(_midiRx);
@@ -37,6 +40,7 @@ void ClockSetup::read(ReadContext &context) {
     reader.read(_clockInputDivisor);
     reader.read(_clockInputMode);
     reader.read(_clockOutputDivisor);
+    reader.read(_clockOutputSwing, Project::Version11);
     reader.read(_clockOutputPulse);
     reader.read(_clockOutputMode);
     reader.read(_midiRx);
