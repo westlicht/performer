@@ -108,8 +108,8 @@ public:
     const Clock &clock() const { return _clock; }
           Clock &clock()       { return _clock; }
 
-    const TrackEngineArray &tracksEngines() const { return _trackEngines; }
-          TrackEngineArray &tracksEngines()       { return _trackEngines; }
+    const TrackEngineArray &trackEngines() const { return _trackEngines; }
+          TrackEngineArray &trackEngines()       { return _trackEngines; }
 
     const TrackEngine &trackEngine(int index) const { return *_trackEngines[index]; }
           TrackEngine &trackEngine(int index)       { return *_trackEngines[index]; }
