@@ -16,6 +16,7 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &di
     _cvInput(adc),
     _cvOutput(dac, model.settings().calibration()),
     _clock(clockTimer),
+    _midiOutputEngine(*this, model),
     _routingEngine(*this, model)
 {
     _cvOutputOverrideValues.fill(0.f);
@@ -35,7 +36,7 @@ void Engine::init() {
 
     // setup track engines
     updateTrackSetups();
-    resetTrackEngines();
+    reset();
 
     _lastSystemTicks = os::ticks();
 }
@@ -77,7 +78,7 @@ void Engine::update() {
         switch (event) {
         case Clock::Start:
             // DBG("START");
-            resetTrackEngines();
+            reset();
             _state.setRunning(true);
             break;
         case Clock::Stop:
@@ -90,7 +91,7 @@ void Engine::update() {
             break;
         case Clock::Reset:
             // DBG("RESET");
-            resetTrackEngines();
+            reset();
             _state.setRunning(false);
             break;
         }
@@ -131,6 +132,8 @@ void Engine::update() {
 
         updateTrackOutputs();
         updateOutputs = false;
+
+        _midiOutputEngine.tick(tick);
     }
 
     if (updateOutputs) {
@@ -356,10 +359,12 @@ void Engine::updateTrackOutputs() {
     }
 }
 
-void Engine::resetTrackEngines() {
+void Engine::reset() {
     for (auto trackEngine : _trackEngines) {
         trackEngine->reset();
     }
+
+    _midiOutputEngine.reset();
 }
 
 void Engine::updatePlayState(bool ticked) {

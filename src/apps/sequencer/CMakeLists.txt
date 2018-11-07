@@ -11,6 +11,7 @@ set(sources
     engine/Engine.cpp
     engine/MidiCvTrackEngine.cpp
     engine/MidiLearn.cpp
+    engine/MidiOutputEngine.cpp
     engine/NoteTrackEngine.cpp
     engine/RoutingEngine.cpp
     engine/SequenceState.cpp

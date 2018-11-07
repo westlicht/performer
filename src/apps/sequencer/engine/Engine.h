@@ -11,6 +11,7 @@
 #include "CvInput.h"
 #include "CvOutput.h"
 #include "RoutingEngine.h"
+#include "MidiOutputEngine.h"
 #include "MidiPort.h"
 #include "MidiLearn.h"
 
@@ -139,7 +140,7 @@ private:
 
     void updateTrackSetups();
     void updateTrackOutputs();
-    void resetTrackEngines();
+    void reset();
     void updatePlayState(bool ticked);
     void updateOverrides();
 
@@ -170,6 +171,8 @@ private:
 
     TrackEngineContainerArray _trackEngineContainers;
     TrackEngineArray _trackEngines;
+
+    MidiOutputEngine _midiOutputEngine;
 
     RoutingEngine _routingEngine;
     MidiLearn _midiLearn;
