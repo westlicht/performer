@@ -47,12 +47,6 @@ public:
         str(Types::fillModeName(fillMode()));
     }
 
-    // midiMode (note, velocity, pitchbend, cc)
-
-    // midiPort (midi, usb)
-
-    // midiChannel (1-16)
-
     // slideTime
 
     int slideTime() const { return _slideTime; }
