@@ -11,6 +11,7 @@
 
 #include <cstdint>
 
+class Engine;
 class SequenceState;
 
 struct TrackLinkData {
@@ -27,12 +28,12 @@ struct TrackLinkData {
 
 class TrackEngine {
 public:
-    TrackEngine(const Model &model, Track &track, const TrackEngine *linkedTrackEngine, const EngineState &engineState) :
+    TrackEngine(Engine &engine, const Model &model, Track &track, const TrackEngine *linkedTrackEngine) :
+        _engine(engine),
         _model(model),
         _track(track),
         _trackState(model.project().playState().trackState(track.trackIndex())),
-        _linkedTrackEngine(linkedTrackEngine),
-        _engineState(engineState)
+        _linkedTrackEngine(linkedTrackEngine)
     {
         changePattern();
     }
@@ -85,11 +86,11 @@ public:
     bool fill() const { return _trackState.fill(); }
 
 protected:
+    Engine &_engine;
     const Model &_model;
     Track &_track;
     const PlayState::TrackState &_trackState;
     const TrackEngine *_linkedTrackEngine;
-    const EngineState &_engineState;
 };
 
 #undef SANITIZE_TRACK_MODE

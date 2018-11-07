@@ -8,8 +8,8 @@
 
 class NoteTrackEngine : public TrackEngine {
 public:
-    NoteTrackEngine(const Model &model, Track &track, const TrackEngine *linkedTrackEngine, const EngineState &engineState) :
-        TrackEngine(model, track, linkedTrackEngine, engineState),
+    NoteTrackEngine(Engine &engine, const Model &model, Track &track, const TrackEngine *linkedTrackEngine) :
+        TrackEngine(engine, model, track, linkedTrackEngine),
         _noteTrack(track.noteTrack())
     {
         reset();

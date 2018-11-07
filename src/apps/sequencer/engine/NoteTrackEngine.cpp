@@ -1,5 +1,6 @@
 #include "NoteTrackEngine.h"
 
+#include "Engine.h"
 #include "Groove.h"
 #include "SequenceUtils.h"
 
@@ -132,8 +133,8 @@ void NoteTrackEngine::tick(uint32_t tick) {
 }
 
 void NoteTrackEngine::update(float dt) {
-    bool running = _engineState.running();
-    bool recording = _engineState.recording();
+    bool running = _engine.state().running();
+    bool recording = _engine.state().recording();
 
     const auto &sequence = *_sequence;
     const auto &scale = sequence.selectedScale();
@@ -223,7 +224,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
 }
 
 void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
-    if (!_engineState.recording() || _sequenceState.lastStep() < 0) {
+    if (!_engine.state().recording() || _sequenceState.lastStep() < 0) {
         return;
     }
 

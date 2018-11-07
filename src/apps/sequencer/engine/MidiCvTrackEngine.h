@@ -6,8 +6,8 @@
 
 class MidiCvTrackEngine : public TrackEngine {
 public:
-    MidiCvTrackEngine(const Model &model, Track &track, const TrackEngine *linkedTrackEngine, const EngineState &engineState) :
-        TrackEngine(model, track, linkedTrackEngine, engineState),
+    MidiCvTrackEngine(Engine &engine, const Model &model, Track &track, const TrackEngine *linkedTrackEngine) :
+        TrackEngine(engine, model, track, linkedTrackEngine),
         _midiCvTrack(track.midiCvTrack())
     {
         reset();

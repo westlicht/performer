@@ -108,6 +108,8 @@ public:
     const Clock &clock() const { return _clock; }
           Clock &clock()       { return _clock; }
 
+    const EngineState &state() const { return _state; }
+
     const TrackEngineArray &trackEngines() const { return _trackEngines; }
           TrackEngineArray &trackEngines()       { return _trackEngines; }
 
@@ -120,7 +122,11 @@ public:
     const RoutingEngine &routingEngine() const { return _routingEngine; }
           RoutingEngine &routingEngine()       { return _routingEngine; }
 
-    MidiLearn &midiLearn() { return _midiLearn; }
+    const MidiOutputEngine &midiOutputEngine() const { return _midiOutputEngine; }
+          MidiOutputEngine &midiOutputEngine()       { return _midiOutputEngine; }
+
+    const MidiLearn &midiLearn() const { return _midiLearn; }
+          MidiLearn &midiLearn()       { return _midiLearn; }
 
     bool sendMidi(MidiPort port, const MidiMessage &message);
     void setMidiReceiveHandler(MidiReceiveHandler handler) { _midiReceiveHandler = handler; }

@@ -7,8 +7,8 @@
 
 class CurveTrackEngine : public TrackEngine {
 public:
-    CurveTrackEngine(const Model &model, Track &track, const TrackEngine *linkedTrackEngine, const EngineState &engineState) :
-        TrackEngine(model, track, linkedTrackEngine, engineState),
+    CurveTrackEngine(Engine &engine, const Model &model, Track &track, const TrackEngine *linkedTrackEngine) :
+        TrackEngine(engine, model, track, linkedTrackEngine),
         _curveTrack(track.curveTrack())
     {
         reset();

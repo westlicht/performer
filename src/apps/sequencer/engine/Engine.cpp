@@ -320,13 +320,13 @@ void Engine::updateTrackSetups() {
 
             switch (track.trackMode()) {
             case Track::TrackMode::Note:
-                trackEngine = trackContainer.create<NoteTrackEngine>(_model, track, linkedTrackEngine, _state);
+                trackEngine = trackContainer.create<NoteTrackEngine>(*this, _model, track, linkedTrackEngine);
                 break;
             case Track::TrackMode::Curve:
-                trackEngine = trackContainer.create<CurveTrackEngine>(_model, track, linkedTrackEngine, _state);
+                trackEngine = trackContainer.create<CurveTrackEngine>(*this, _model, track, linkedTrackEngine);
                 break;
             case Track::TrackMode::MidiCv:
-                trackEngine = trackContainer.create<MidiCvTrackEngine>(_model, track, linkedTrackEngine, _state);
+                trackEngine = trackContainer.create<MidiCvTrackEngine>(*this, _model, track, linkedTrackEngine);
                 break;
             case Track::TrackMode::Last:
                 break;
