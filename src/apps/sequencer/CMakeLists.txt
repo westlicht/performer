@@ -30,6 +30,7 @@ set(sources
     model/CurveTrack.cpp
     model/FileManager.cpp
     model/MidiCvTrack.cpp
+    model/MidiOutput.cpp
     model/Model.cpp
     model/ModelUtils.cpp
     model/NoteSequence.cpp
@@ -69,6 +70,7 @@ set(sources
     ui/pages/IntroPage.cpp
     ui/pages/LayoutPage.cpp
     ui/pages/ListPage.cpp
+    ui/pages/MidiOutputPage.cpp
     ui/pages/MonitorPage.cpp
     ui/pages/NoteSequenceEditPage.cpp
     ui/pages/NoteSequencePage.cpp

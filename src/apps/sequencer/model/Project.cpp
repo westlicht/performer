@@ -5,7 +5,8 @@
 
 Project::Project() :
     _playState(*this),
-    _routing(*this)
+    _routing(*this),
+    _midiOutput(*this)
 {
     for (size_t i = 0; i < _tracks.size(); ++i) {
         _tracks[i].setTrackIndex(i);
@@ -38,6 +39,7 @@ void Project::clear() {
     _song.clear();
     _playState.clear();
     _routing.clear();
+    _midiOutput.clear();
 
     setSelectedTrackIndex(0);
     setSelectedPatternIndex(0);
@@ -96,6 +98,7 @@ void Project::write(WriteContext &context) const {
     _song.write(context);
     _playState.write(context);
     _routing.write(context);
+    _midiOutput.write(context);
 
     writer.write(_selectedTrackIndex);
     writer.write(_selectedPatternIndex);
@@ -123,6 +126,7 @@ bool Project::read(ReadContext &context) {
     _song.read(context);
     _playState.read(context);
     _routing.read(context);
+    _midiOutput.read(context);
 
     reader.read(_selectedTrackIndex);
     reader.read(_selectedPatternIndex);

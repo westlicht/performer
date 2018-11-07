@@ -9,6 +9,7 @@
 #include "PlayState.h"
 #include "UserScale.h"
 #include "Routing.h"
+#include "MidiOutput.h"
 #include "Serialize.h"
 #include "FileDefs.h"
 
@@ -209,6 +210,11 @@ public:
     const Routing &routing() const { return _routing; }
           Routing &routing()       { return _routing; }
 
+    // midiOutput
+
+    const MidiOutput &midiOutput() const { return _midiOutput; }
+          MidiOutput &midiOutput()       { return _midiOutput; }
+
     // selectedTrackIndex
 
     int selectedTrackIndex() const { return _selectedTrackIndex; }
@@ -312,6 +318,7 @@ private:
     Song _song;
     PlayState _playState;
     Routing _routing;
+    MidiOutput _midiOutput;
 
     int _selectedTrackIndex = 0;
     int _selectedPatternIndex = 0;

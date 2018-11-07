@@ -2,8 +2,8 @@
 
 #include "Key.h"
 
-//  Project     Layout      Routing     UserScale   ...     System
-//  SequenceEdt Sequence    Track       Song        ...     Monitor
+//  Project     Layout      Routing     MidiOutput  UserScale   -       -       System
+//  SequenceEdt Sequence    Track       Song        -           -       -       Monitor
 
 namespace PageKeyMap {
 
@@ -15,7 +15,8 @@ namespace PageKeyMap {
         Project         = Key::Track0,
         Layout          = Key::Track1,
         Routing         = Key::Track2,
-        UserScale       = Key::Track3,
+        MidiOutput      = Key::Track3,
+        UserScale       = Key::Track4,
 
         SequenceEdit    = Key::Step0,
         Sequence        = Key::Step1,
@@ -24,18 +25,6 @@ namespace PageKeyMap {
 
         System          = Key::Track7,
         Monitor         = Key::Step7,
-
-        // Project         = Key::Track0,
-        // Layout          = Key::Track1,
-        // Track           = Key::Track2,
-        // Sequence        = Key::Track3,
-        // SequenceEdit    = Key::Track4,
-        // Song            = Key::Track6,
-        // Routing         = Key::Track7,
-
-        // UserScale       = Key::Step0,
-        // Monitor         = Key::Step6,
-        // System          = Key::Step7,
     };
 
     static bool isPageKey(int code) {
@@ -46,15 +35,17 @@ namespace PageKeyMap {
 
         case Project:
         case Layout:
-        case Track:
-        case Sequence:
-        case SequenceEdit:
-        case Song:
         case Routing:
-
+        case MidiOutput:
         case UserScale:
-        case Monitor:
+
+        case SequenceEdit:
+        case Sequence:
+        case Track:
+        case Song:
+
         case System:
+        case Monitor:
             return true;
         default:
             break;

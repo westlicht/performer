@@ -31,6 +31,7 @@ private:
         SequenceEdit    = PageKeyMap::SequenceEdit,
         Song            = PageKeyMap::Song,
         Routing         = PageKeyMap::Routing,
+        MidiOutput      = PageKeyMap::MidiOutput,
         Pattern         = PageKeyMap::Pattern,
         Performer       = PageKeyMap::Performer,
         Clock           = PageKeyMap::Clock,
