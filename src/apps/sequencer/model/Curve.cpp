@@ -64,15 +64,15 @@ static float bell(float x) {
 }
 
 static float expDown2x(float x) {
-    return expDown(std::fmod(x * 2.f, 1.f));
+    return x < 1.f ? expDown(std::fmod(x * 2.f, 1.f)) : 0.f;
 }
 
 static float expDown3x(float x) {
-    return expDown(std::fmod(x * 3.f, 1.f));
+    return x < 1.f ? expDown(std::fmod(x * 3.f, 1.f)) : 0.f;
 }
 
 static float expDown4x(float x) {
-    return expDown(std::fmod(x * 4.f, 1.f));
+    return x < 1.f ? expDown(std::fmod(x * 4.f, 1.f)) : 0.f;
 }
 
 static Curve::Function functions[] = {
