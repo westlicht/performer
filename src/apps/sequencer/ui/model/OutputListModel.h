@@ -11,13 +11,20 @@ public:
     enum Item {
         Target,
         Event,
-        FirstParameter,
-        GateSource = FirstParameter,
+        Last,
+    };
+
+    enum NoteItem {
+        GateSource = Last,
         NoteSource,
         VelocitySource,
-        Last,
-        ControlNumber = FirstParameter,
+        LastNoteItem,
+    };
+
+    enum ControlChangeItem {
+        ControlNumber = Last,
         ControlSource,
+        LastControlChangeItem,
     };
 
     OutputListModel(MidiOutput::Output &output) :
@@ -27,13 +34,13 @@ public:
     virtual int rows() const override {
         switch (_output.event()) {
         case MidiOutput::Output::Event::None:
-            return FirstParameter;
+            return Last;
         case MidiOutput::Output::Event::Note:
-            return FirstParameter + 3;
+            return LastNoteItem;
         case MidiOutput::Output::Event::ControlChange:
-            return FirstParameter + 2;
+            return LastControlChangeItem;
         default:
-            return FirstParameter;
+            return Last;
         }
     }
 
@@ -60,13 +67,24 @@ private:
         switch (item) {
         case Target:        return "Target";
         case Event:         return "Event";
-        // case ControlNumber:
-        case GateSource:    return _output.event() == MidiOutput::Output::Event::Note ? "Gate Source" : "Control Number";
-        // case ControlSource
-        case NoteSource:    return _output.event() == MidiOutput::Output::Event::Note ? "Note Source" : "Control Source";
-        case VelocitySource:return "Vel. Source";
         case Last:          break;
         }
+
+        if (_output.isNoteEvent()) {
+            switch (NoteItem(item)) {
+            case GateSource:    return "Gate Source";
+            case NoteSource:    return "Note Source";
+            case VelocitySource:return "Vel. Source";
+            case LastNoteItem:  break;
+            }
+        } else if (_output.isControlChangeEvent()) {
+            switch (ControlChangeItem(item)) {
+            case ControlNumber: return "Control Number";
+            case ControlSource: return "Control Source";
+            case LastControlChangeItem: break;
+            }
+        }
+
         return nullptr;
     }
 
@@ -82,27 +100,35 @@ private:
         case Event:
             _output.printEvent(str);
             break;
-        // case ControlNumber:
-        case GateSource:
-            if (_output.event() == MidiOutput::Output::Event::Note) {
-                _output.printGateSource(str);
-            } else {
-                _output.printControlNumber(str);
-            }
-            break;
-        // case ControlSource
-        case NoteSource:
-            if (_output.event() == MidiOutput::Output::Event::Note) {
-                _output.printNoteSource(str);
-            } else {
-                _output.printControlSource(str);
-            }
-            break;
-        case VelocitySource:
-            _output.printVelocitySource(str);
-            break;
         case Last:
             break;
+        }
+
+        if (_output.isNoteEvent()) {
+            switch (NoteItem(item)) {
+            case GateSource:
+                _output.printGateSource(str);
+                break;
+            case NoteSource:
+                _output.printNoteSource(str);
+                break;
+            case VelocitySource:
+                _output.printVelocitySource(str);
+                break;
+            case LastNoteItem:
+            break;
+            }
+        } else if (_output.isControlChangeEvent()) {
+            switch (ControlChangeItem(item)) {
+            case ControlNumber:
+                _output.printControlNumber(str);
+                break;
+            case ControlSource:
+                _output.printControlSource(str);
+                break;
+            case LastControlChangeItem:
+                break;
+            }
         }
     }
 
@@ -114,27 +140,35 @@ private:
         case Event:
             _output.editEvent(value, shift);
             break;
-        // case ControlNumber:
-        case GateSource:
-            if (_output.event() == MidiOutput::Output::Event::Note) {
-                _output.editGateSource(value, shift);
-            } else {
-                _output.editControlNumber(value, shift);
-            }
-            break;
-        // case ControlSource
-        case NoteSource:
-            if (_output.event() == MidiOutput::Output::Event::Note) {
-                _output.editNoteSource(value, shift);
-            } else {
-                _output.editControlSource(value, shift);
-            }
-            break;
-        case VelocitySource:
-            _output.editVelocitySource(value, shift);
-            break;
         case Last:
             break;
+        }
+
+        if (_output.isNoteEvent()) {
+            switch (NoteItem(item)) {
+            case GateSource:
+                _output.editGateSource(value, shift);
+                break;
+            case NoteSource:
+                _output.editNoteSource(value, shift);
+                break;
+            case VelocitySource:
+                _output.editVelocitySource(value, shift);
+                break;
+            case LastNoteItem:
+            break;
+            }
+        } else if (_output.isControlChangeEvent()) {
+            switch (ControlChangeItem(item)) {
+            case ControlNumber:
+                _output.editControlNumber(value, shift);
+                break;
+            case ControlSource:
+                _output.editControlSource(value, shift);
+                break;
+            case LastControlChangeItem:
+                break;
+            }
         }
     }
 

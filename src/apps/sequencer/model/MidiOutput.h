@@ -174,21 +174,28 @@ public:
             }
         }
 
+        bool isNoteEvent() const {
+            return event() == MidiOutput::Output::Event::Note;
+        }
+
+        bool isControlChangeEvent() const {
+            return event() == MidiOutput::Output::Event::ControlChange;
+        }
 
         bool takesGateFromTrack(int trackIndex) const {
-            return event() == MidiOutput::Output::Event::Note && int(gateSource()) == trackIndex;
+            return isNoteEvent() && int(gateSource()) == trackIndex;
         }
 
         bool takesNoteFromTrack(int trackIndex) const {
-            return event() == MidiOutput::Output::Event::Note && int(noteSource()) == trackIndex;
+            return isNoteEvent() && int(noteSource()) == trackIndex;
         }
 
         bool takesVelocityFromTrack(int trackIndex) const {
-            return event() == MidiOutput::Output::Event::Note && int(velocitySource()) == trackIndex;
+            return isNoteEvent() && int(velocitySource()) == trackIndex;
         }
 
         bool takesControlFromTrack(int trackIndex) const {
-            return event() == MidiOutput::Output::Event::ControlChange && int(controlSource()) == trackIndex;
+            return isControlChangeEvent() && int(controlSource()) == trackIndex;
         }
 
 
