@@ -161,7 +161,6 @@ private:
     const float AngleVelocity = 5.f;
     const float Acceleration = 100.f;
     const float Drag = 0.5f;
-    const float MaxVelocity = 60.f;
     const float ShootInterval = 0.25f;
     const float ShootGate = 0.05f;
     const float ShootVelocity = 100.f;

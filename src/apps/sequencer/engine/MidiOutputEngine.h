@@ -53,7 +53,6 @@ private:
     void sendMidi(uint32_t tick, MidiPort port, const MidiMessage &message);
 
     Engine &_engine;
-    Model &_model;
     const MidiOutput &_midiOutput;
     std::array<OutputState, CONFIG_TRACK_COUNT> _outputStates;
 };

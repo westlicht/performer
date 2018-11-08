@@ -8,7 +8,6 @@
 
 MidiOutputEngine::MidiOutputEngine(Engine &engine, Model &model):
     _engine(engine),
-    _model(model),
     _midiOutput(model.project().midiOutput())
 {
     reset();

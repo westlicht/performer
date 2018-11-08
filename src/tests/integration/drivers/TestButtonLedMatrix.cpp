@@ -61,7 +61,6 @@ private:
     ButtonLedMatrix _blm;
     os::PeriodicTask<1024> _driverTask;
     std::array<int, ButtonLedMatrix::Rows * ButtonLedMatrix::ColsLed> _leds;
-    int _led = 0;
 };
 
 INTEGRATION_TEST(TestButtonLedMatrix)

@@ -199,7 +199,7 @@ private:
     // midi monitoring
     struct {
         int8_t lastNote = -1;
-        uint8_t lastTrack = -1;
+        int8_t lastTrack = -1;
     } _midiMonitoring;
 
     // gate output overrides

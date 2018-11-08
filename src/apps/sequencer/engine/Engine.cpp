@@ -575,7 +575,7 @@ void Engine::monitorMidi(const MidiMessage &message) {
     auto currentTrack = _model.project().selectedTrackIndex();
 
     // detect when selected track has changed and a note is still active -> send note off
-    if (_midiMonitoring.lastNote != -1 && _midiMonitoring.lastTrack != -1 && currentTrack != _midiMonitoring.lastTrack) {
+    if (int(_midiMonitoring.lastNote) != -1 && int(_midiMonitoring.lastTrack) != -1 && currentTrack != _midiMonitoring.lastTrack) {
         sendMidi(_midiMonitoring.lastTrack, MidiMessage::makeNoteOff(0, _midiMonitoring.lastNote));
     }
 
