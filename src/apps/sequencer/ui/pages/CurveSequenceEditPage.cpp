@@ -55,7 +55,7 @@ static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, 
 
     float fy0 = y + eval(0.f);
 
-    if (lastY != 0.f) {
+    if (lastY >= 0.f && lastY != fy0) {
         canvas.line(x, lastY, x, fy0);
     }
 
@@ -113,7 +113,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
     // draw curve
     canvas.setColor(0xf);
-    float lastY = 0.f;
+    float lastY = -1.f;
     for (int i = 0; i < StepCount; ++i) {
         int stepIndex = stepOffset + i;
         const auto &step = sequence.step(stepIndex);

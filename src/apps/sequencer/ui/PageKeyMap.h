@@ -11,6 +11,7 @@ namespace PageKeyMap {
         Clock           = Key::Tempo,
         Pattern         = Key::Pattern,
         Performer       = Key::Performer,
+        Overview        = Key::Left,
 
         Project         = Key::Track0,
         Layout          = Key::Track1,
@@ -32,6 +33,7 @@ namespace PageKeyMap {
         case Clock:
         case Pattern:
         case Performer:
+        case Overview:
 
         case Project:
         case Layout:

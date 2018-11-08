@@ -152,6 +152,9 @@ void TopPage::setMode(Mode mode) {
         pages.performer.setModal(false);
         setMainPage(pages.performer);
         break;
+    case Mode::Overview:
+        setMainPage(pages.overview);
+        break;
     case Mode::Clock:
         setMainPage(pages.clockSetup);
         break;

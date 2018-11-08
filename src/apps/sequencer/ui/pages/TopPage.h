@@ -34,6 +34,7 @@ private:
         MidiOutput      = PageKeyMap::MidiOutput,
         Pattern         = PageKeyMap::Pattern,
         Performer       = PageKeyMap::Performer,
+        Overview        = PageKeyMap::Overview,
         Clock           = PageKeyMap::Clock,
 
         // aux modes

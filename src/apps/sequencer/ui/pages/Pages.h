@@ -16,6 +16,7 @@
 #include "MonitorPage.h"
 #include "NoteSequenceEditPage.h"
 #include "NoteSequencePage.h"
+#include "OverviewPage.h"
 #include "PatternPage.h"
 #include "PerformerPage.h"
 #include "ProjectPage.h"
@@ -52,6 +53,7 @@ struct Pages {
     RoutingPage routing;
     MidiOutputPage midiOutput;
     UserScalePage userScale;
+    OverviewPage overview;
     SystemPage system;
     // modal pages
     TempoPage tempo;
@@ -91,6 +93,7 @@ struct Pages {
         routing(manager, context),
         midiOutput(manager, context),
         userScale(manager, context),
+        overview(manager, context),
         system(manager, context),
         // modal pages
         tempo(manager, context),
