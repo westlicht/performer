@@ -69,6 +69,7 @@ void LedPainter::drawSelectedPage(Leds &leds, int page) {
     setLed(Key::Pattern);
     setLed(Key::Performer);
     setLed(Key::Tempo);
+    setLed(Key::Left);
 }
 
 void LedPainter::drawSelectedSequenceSection(Leds &leds, int section) {
