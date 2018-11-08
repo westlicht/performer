@@ -167,7 +167,6 @@ fs::Error Project::read(const char *path) {
 
     FileHeader header;
     fileReader.read(&header, sizeof(header));
-    header.readName(_name, sizeof(_name));
 
     VersionedSerializedReader reader(
         [&fileReader] (void *data, size_t len) { fileReader.read(data, len); },
@@ -176,6 +175,8 @@ fs::Error Project::read(const char *path) {
 
     ReadContext context = { reader };
     bool success = read(context);
+
+    header.readName(_name, sizeof(_name));
 
     auto error = fileReader.finish();
     if (error == fs::OK && !success) {
