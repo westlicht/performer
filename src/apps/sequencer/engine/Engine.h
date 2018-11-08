@@ -94,6 +94,7 @@ public:
 
     const CvInput &cvInput() const { return _cvInput; }
     const CvOutput &cvOutput() const { return _cvOutput; }
+    const uint8_t gateOutput() const { return _gateOutput.gates(); }
 
     // gate overrides
     bool gateOutputOverride() const { return _gateOutputOverride; }
