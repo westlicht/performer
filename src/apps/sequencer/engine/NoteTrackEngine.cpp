@@ -123,12 +123,16 @@ void NoteTrackEngine::tick(uint32_t tick) {
         _activity = _gateQueue.front().gate;
         _gateOutput = (!mute() || fill()) && _activity;
         _gateQueue.pop();
+
+        _engine.midiOutputEngine().sendGate(_track.trackIndex(), _gateOutput);
     }
 
     while (!_cvQueue.empty() && tick >= _cvQueue.front().tick) {
         _cvOutputTarget = _cvQueue.front().cv;
         _slideActive = _cvQueue.front().slide;
         _cvQueue.pop();
+
+        _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutputTarget);
     }
 }
 

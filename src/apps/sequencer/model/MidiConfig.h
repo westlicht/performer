@@ -86,6 +86,10 @@ public:
         return _port == other._port && _channel == other._channel;
     }
 
+    bool operator!=(const MidiConfig<IsSource> &other) const {
+        return !(*this == other);
+    }
+
 private:
     Types::MidiPort _port;
     int8_t _channel;
