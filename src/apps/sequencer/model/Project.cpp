@@ -142,7 +142,7 @@ bool Project::read(ReadContext &context) {
 fs::Error Project::write(const char *path) const {
     fs::FileWriter fileWriter(path);
     if (fileWriter.error() != fs::OK) {
-        fileWriter.error();
+        return fileWriter.error();
     }
 
     FileHeader header(FileType::Project, 0, _name);
@@ -162,7 +162,7 @@ fs::Error Project::write(const char *path) const {
 fs::Error Project::read(const char *path) {
     fs::FileReader fileReader(path);
     if (fileReader.error() != fs::OK) {
-        fileReader.error();
+        return fileReader.error();
     }
 
     FileHeader header;

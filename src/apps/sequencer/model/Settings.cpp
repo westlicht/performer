@@ -32,7 +32,7 @@ bool Settings::read(ReadContext &context) {
 fs::Error Settings::write(const char *path) const {
     fs::FileWriter fileWriter(path);
     if (fileWriter.error() != fs::OK) {
-        fileWriter.error();
+        return fileWriter.error();
     }
 
     FileHeader header(FileType::Settings, 0, "SETTINGS");
@@ -52,7 +52,7 @@ fs::Error Settings::write(const char *path) const {
 fs::Error Settings::read(const char *path) {
     fs::FileReader fileReader(path);
     if (fileReader.error() != fs::OK) {
-        fileReader.error();
+        return fileReader.error();
     }
 
     FileHeader header;
