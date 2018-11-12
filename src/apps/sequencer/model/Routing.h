@@ -269,7 +269,11 @@ public:
 
         Target target() const { return _target; }
         void setTarget(Target target) {
-            _target = ModelUtils::clampedEnum(target);
+            target = ModelUtils::clampedEnum(target);
+            if (target != _target) {
+                _target = target;
+                init(_target);
+            }
         }
 
         void editTarget(int value, bool shift) {
@@ -372,7 +376,7 @@ public:
 
         bool active() const { return _target != Target::None; }
 
-        void init(Target target, int track = -1);
+        void init(Target target);
 
         void write(WriteContext &context) const;
         void read(ReadContext &context);
@@ -436,6 +440,7 @@ private:
 
     static float normalizeTargetValue(Target target, float value);
     static float denormalizeTargetValue(Target target, float normalized);
+    static std::pair<float, float> normalizedDefaultRange(Target target);
     static float targetValueStep(Target target);
     static void printTargetValue(Target target, float normalized, StringBuilder &str);
 

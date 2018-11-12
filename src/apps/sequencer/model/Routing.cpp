@@ -76,9 +76,10 @@ void Routing::Route::clear() {
     _midiSource.clear();
 }
 
-void Routing::Route::init(Target target, int track) {
+void Routing::Route::init(Target target) {
     clear();
     _target = target;
+    std::tie(_min, _max) = normalizedDefaultRange(target);;
 }
 
 void Routing::Route::write(WriteContext &context) const {
@@ -268,20 +269,23 @@ void Routing::writeCurveSequenceTarget(CurveSequence &sequence, Target target, f
 struct TargetInfo {
     int16_t min;
     int16_t max;
+    int16_t minDef;
+    int16_t maxDef;
 };
 
 const TargetInfo targetInfos[int(Routing::Target::Last)] = {
-    [int(Routing::Target::None)]                            = { 0,      0   },
-    [int(Routing::Target::Tempo)]                           = { 20,     500 },
-    [int(Routing::Target::Swing)]                           = { 50,     75  },
-    [int(Routing::Target::TrackSlideTime)]                  = { 0,      100 },
-    [int(Routing::Target::TrackOctave)]                     = { -10,    10  },
-    [int(Routing::Target::TrackTranspose)]                  = { -12,    12  },
-    [int(Routing::Target::TrackRotate)]                     = { -64,    64  },
-    [int(Routing::Target::TrackStepGateProbabilityBias)]    = { -8,     8   },
-    [int(Routing::Target::TrackStepLengthBias)]             = { -8,     8   },
-    [int(Routing::Target::FirstStep)]                       = { 0,      63  },
-    [int(Routing::Target::LastStep)]                        = { 0,      63  },
+    // Target                                                   min     max     minDef  maxDef
+    [int(Routing::Target::None)]                            = { 0,      0,      0,      0       },
+    [int(Routing::Target::Tempo)]                           = { 20,     500,    100,    200     },
+    [int(Routing::Target::Swing)]                           = { 50,     75,     50,     75      },
+    [int(Routing::Target::TrackSlideTime)]                  = { 0,      100,    0,      100,    },
+    [int(Routing::Target::TrackOctave)]                     = { -10,    10,     -1,     1       },
+    [int(Routing::Target::TrackTranspose)]                  = { -60,    60,     -12,    12      },
+    [int(Routing::Target::TrackRotate)]                     = { -64,    64,     0,      64      },
+    [int(Routing::Target::TrackStepGateProbabilityBias)]    = { -8,     8,      -8,     8       },
+    [int(Routing::Target::TrackStepLengthBias)]             = { -8,     8,      -8,     8       },
+    [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
+    [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63      },
 };
 
 float Routing::normalizeTargetValue(Routing::Target target, float value) {
@@ -292,6 +296,11 @@ float Routing::normalizeTargetValue(Routing::Target target, float value) {
 float Routing::denormalizeTargetValue(Routing::Target target, float normalized) {
     const auto &info = targetInfos[int(target)];
     return normalized * (info.max - info.min) + info.min;
+}
+
+std::pair<float, float> Routing::normalizedDefaultRange(Target target) {
+    const auto &info = targetInfos[int(target)];
+    return { normalizeTargetValue(target, info.minDef), normalizeTargetValue(target, info.maxDef) };
 }
 
 float Routing::targetValueStep(Routing::Target target) {
