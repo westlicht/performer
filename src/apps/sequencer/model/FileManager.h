@@ -20,8 +20,9 @@ public:
 
     static fs::Error saveProject(Project &project, int slot);
     static fs::Error loadProject(Project &project, int slot);
+    static fs::Error loadLastProject(Project &project);
 
-    static fs::Error saveUserScale(UserScale &userScale, int slot);
+    static fs::Error saveUserScale(const UserScale &userScale, int slot);
     static fs::Error loadUserScale(UserScale &userScale, int slot);
 
     // Slot information
@@ -45,6 +46,9 @@ public:
 private:
     static fs::Error saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write);
     static fs::Error loadFile(FileType type, int slot, std::function<fs::Error(const char *)> read);
+
+    static fs::Error saveLastProject(int slot);
+    static fs::Error loadLastProject(int &slot);
 
     static bool cachedSlot(FileType type, int slot, SlotInfo &info);
     static void cacheSlot(FileType type, int slot, const SlotInfo &info);

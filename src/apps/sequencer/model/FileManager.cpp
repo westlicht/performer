@@ -51,6 +51,7 @@ fs::Error FileManager::saveProject(Project &project, int slot) {
         auto result = project.write(path);
         if (result == fs::OK) {
             project.setSlot(slot);
+            saveLastProject(slot);
         }
         return result;
     });
@@ -61,12 +62,25 @@ fs::Error FileManager::loadProject(Project &project, int slot) {
         auto result = project.read(path);
         if (result == fs::OK) {
             project.setSlot(slot);
+            saveLastProject(slot);
         }
         return result;
     });
 }
 
-fs::Error FileManager::saveUserScale(UserScale &userScale, int slot) {
+fs::Error FileManager::loadLastProject(Project &project) {
+    int slot;
+
+    auto result = loadLastProject(slot);
+
+    if (result == fs::OK && slot >= 0) {
+        result = loadProject(project, slot);
+    }
+
+    return result;
+}
+
+fs::Error FileManager::saveUserScale(const UserScale &userScale, int slot) {
     return saveFile(FileType::UserScale, slot, [&] (const char *path) {
         return userScale.write(path);
     });
@@ -170,6 +184,29 @@ fs::Error FileManager::loadFile(FileType type, int slot, std::function<fs::Error
     auto result = read(path);
 
     return result;
+}
+
+fs::Error FileManager::saveLastProject(int slot) {
+    fs::FileWriter fileWriter("LAST.DAT");
+    if (fileWriter.error() != fs::OK) {
+        return fileWriter.error();
+    }
+
+    fileWriter.write(&slot, sizeof(slot));
+
+    return fileWriter.finish();
+
+}
+
+fs::Error FileManager::loadLastProject(int &slot) {
+    fs::FileReader fileReader("LAST.DAT");
+    if (fileReader.error() != fs::OK) {
+        return fileReader.error();
+    }
+
+    fileReader.read(&slot, sizeof(slot));
+
+    return fileReader.finish();
 }
 
 bool FileManager::cachedSlot(FileType type, int slot, SlotInfo &info) {
