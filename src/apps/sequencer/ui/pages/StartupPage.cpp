@@ -12,19 +12,19 @@ StartupPage::StartupPage(PageManager &manager, PageContext &context) :
     _startTicks = os::ticks();
 }
 
-void StartupPage::enter() {
-    _engine.lock();
-
-    FileManager::task([this] () {
-        return FileManager::loadLastProject(_model.project());
-    }, [this] (fs::Error result) {
-        _engine.unlock();
-        _ready = true;
-    });
-}
-
 void StartupPage::draw(Canvas &canvas) {
-    if (relTime() > 1.f && _ready) {
+    if (_state == State::Initial) {
+        _state = State::Loading;
+        _engine.lock();
+        FileManager::task([this] () {
+            return FileManager::loadLastProject(_model.project());
+        }, [this] (fs::Error result) {
+            _engine.unlock();
+            _state = State::Ready;
+        });
+    }
+
+    if (relTime() > 1.f && _state == State::Ready) {
         close();
     }
 
