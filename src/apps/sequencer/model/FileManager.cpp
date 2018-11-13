@@ -75,6 +75,7 @@ fs::Error FileManager::loadLastProject(Project &project) {
 
     if (result == fs::OK && slot >= 0) {
         result = loadProject(project, slot);
+        project.setSlot(-1);
     }
 
     return result;
