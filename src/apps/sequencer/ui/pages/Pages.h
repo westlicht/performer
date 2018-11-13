@@ -23,6 +23,7 @@
 #include "QuickEditPage.h"
 #include "RoutingPage.h"
 #include "SongPage.h"
+#include "StartupPage.h"
 #include "SystemPage.h"
 #include "TempoPage.h"
 #include "TextInputPage.h"
@@ -70,6 +71,7 @@ struct Pages {
     ConfirmationPage confirmation;
     BusyPage busy;
     // misc
+    StartupPage startup;
 #ifdef CONFIG_ENABLE_INTRO
     IntroPage intro;
 #endif
@@ -108,8 +110,9 @@ struct Pages {
         // helper pages
         textInput(manager, context),
         confirmation(manager, context),
-        busy(manager, context)
+        busy(manager, context),
         // misc
+        startup(manager, context)
 #ifdef CONFIG_ENABLE_INTRO
         ,intro(manager, context)
 #endif

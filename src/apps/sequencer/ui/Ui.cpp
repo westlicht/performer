@@ -33,6 +33,7 @@ void Ui::init() {
 #ifdef CONFIG_ENABLE_INTRO
     _pageManager.push(&_pages.intro);
 #endif
+    _pageManager.push(&_pages.startup);
 
     _engine.setMidiReceiveHandler([this] (MidiPort port, const MidiMessage &message) {
         if (!_midiMessages.writable()) {
