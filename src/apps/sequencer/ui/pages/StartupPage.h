@@ -14,6 +14,11 @@ public:
     virtual bool isModal() const override { return true; }
 
 private:
+    float time() const;
+    float relTime() const { return time() / LoadTime; }
+
+    static constexpr int LoadTime = 2;
+
     uint32_t _startTicks;
     bool _ready = false;
 };

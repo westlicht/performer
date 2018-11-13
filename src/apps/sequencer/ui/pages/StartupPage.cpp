@@ -24,8 +24,7 @@ void StartupPage::enter() {
 }
 
 void StartupPage::draw(Canvas &canvas) {
-    float time = (os::ticks() - _startTicks) / float(os::time::ms(1000));
-    if (time > 1.f && _ready) {
+    if (relTime() > 1.f && _ready) {
         close();
     }
 
@@ -33,10 +32,29 @@ void StartupPage::draw(Canvas &canvas) {
     canvas.fill();
 
     canvas.setColor(0xf);
-    canvas.setFont(Font::Small);
 
-    canvas.drawTextCentered(0, 16, Width, 32, "PERFORMER");
+    canvas.setFont(Font::Small);
+    canvas.drawTextCentered(0, 0, Width, 32, "PERFORMER");
+
+    canvas.setFont(Font::Tiny);
+    canvas.drawTextCentered(0, 32, Width, 32, "LOADING ...");
+
+    int w = std::floor(relTime() * Width);
+    canvas.fillRect(0, 32 - 2, w, 4);
 }
 
 void StartupPage::updateLeds(Leds &leds) {
+    leds.clear();
+
+    int progress = std::floor(relTime() * 8.f);
+    for (int i = 0; i < 8; ++i) {
+        bool active = i <= progress;
+        leds.set(MatrixMap::fromTrack(i), active, active);
+        leds.set(MatrixMap::fromStep(i), active, active);
+        leds.set(MatrixMap::fromStep(i + 8), active, active);
+    }
+}
+
+float StartupPage::time() const {
+    return (os::ticks() - _startTicks) / float(os::time::ms(1000));
 }
