@@ -293,8 +293,6 @@ public:
     void clear();
     void clearPattern(int patternIndex);
 
-    void demoProject();
-
     void write(WriteContext &context) const;
     bool read(ReadContext &context);
 

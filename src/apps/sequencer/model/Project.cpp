@@ -44,18 +44,8 @@ void Project::clear() {
     setSelectedTrackIndex(0);
     setSelectedPatternIndex(0);
 
-    // TODO remove
-    demoProject();
-}
-
-void Project::clearPattern(int patternIndex) {
-    for (auto &track : _tracks) {
-        track.clearPattern(patternIndex);
-    }
-}
-
-void Project::demoProject() {
-#if 1
+    // load demo project on simulator
+#if PLATFORM_SIM
     noteSequence(0, 0).setLastStep(15);
     noteSequence(0, 0).setGates({ 1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0 });
     noteSequence(1, 0).setLastStep(15);
@@ -72,6 +62,12 @@ void Project::demoProject() {
     noteSequence(7, 0).setGates({ 1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1 });
     noteSequence(7, 0).setNotes({ 0,0,0,0,12,0,12,1,24,21,22,0,3,6,12,1 });
 #endif
+}
+
+void Project::clearPattern(int patternIndex) {
+    for (auto &track : _tracks) {
+        track.clearPattern(patternIndex);
+    }
 }
 
 void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
