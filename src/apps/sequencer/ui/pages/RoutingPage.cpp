@@ -19,11 +19,6 @@ RoutingPage::RoutingPage(PageManager &manager, PageContext &context) :
     showRoute(0);
 }
 
-void RoutingPage::show(int routeIndex, const Routing::Route *initialValue) {
-    showRoute(routeIndex, initialValue);
-    ListPage::show();
-}
-
 void RoutingPage::enter() {
     ListPage::enter();
 }

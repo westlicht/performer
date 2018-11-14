@@ -12,9 +12,6 @@ class RoutingPage : public ListPage {
 public:
     RoutingPage(PageManager &manager, PageContext &context);
 
-    using ListPage::show;
-    void show(int routeIndex, const Routing::Route *initialValue = nullptr);
-
     virtual void enter() override;
     virtual void exit() override;
 
@@ -23,8 +20,9 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
 
-private:
     void showRoute(int routeIndex, const Routing::Route *initialValue = nullptr);
+
+private:
     void selectRoute(int routeIndex);
     void assignMidiLearn(const MidiLearn::Result &result);
 

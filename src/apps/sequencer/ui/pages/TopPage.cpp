@@ -34,7 +34,7 @@ void TopPage::editRoute(Routing::Target target, int trackIndex) {
     int routeIndex = routing.findRoute(target, trackIndex);
     if (routeIndex >= 0) {
         setMode(Mode::Routing);
-        _manager.pages().routing.show(routeIndex);
+        _manager.pages().routing.showRoute(routeIndex);
         return;
     }
 
@@ -45,7 +45,7 @@ void TopPage::editRoute(Routing::Target target, int trackIndex) {
         initRoute.setTarget(target);
         initRoute.setTracks(1<<trackIndex);
         setMode(Mode::Routing);
-        _manager.pages().routing.show(routeIndex, &initRoute);
+        _manager.pages().routing.showRoute(routeIndex, &initRoute);
     } else {
         showMessage("All routes are used!");
     }
