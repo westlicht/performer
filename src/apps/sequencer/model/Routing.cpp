@@ -76,12 +76,6 @@ void Routing::Route::clear() {
     _midiSource.clear();
 }
 
-void Routing::Route::init(Target target) {
-    clear();
-    _target = target;
-    std::tie(_min, _max) = normalizedDefaultRange(target);;
-}
-
 void Routing::Route::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_target);

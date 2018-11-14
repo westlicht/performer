@@ -279,7 +279,7 @@ public:
             target = ModelUtils::clampedEnum(target);
             if (target != _target) {
                 _target = target;
-                init(_target);
+                std::tie(_min, _max) = normalizedDefaultRange(target);
             }
         }
 
@@ -382,8 +382,6 @@ public:
         void clear();
 
         bool active() const { return _target != Target::None; }
-
-        void init(Target target);
 
         void write(WriteContext &context) const;
         void read(ReadContext &context);
