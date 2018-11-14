@@ -78,15 +78,15 @@ void PatternPage::draw(Canvas &canvas) {
         int x = trackIndex * 32;
         int y = 16;
 
-        int w = 16;
-        int h = 16;
+        int w = 28;
+        int h = 10;
 
-        x += 8;
+        x += 2;
 
         canvas.setColor(trackSelected ? 0xf : 0x7);
         canvas.drawTextCentered(x, y - 2, w, 8, FixedStringBuilder<8>("T%d", trackIndex + 1));
 
-        y += 8;
+        y += 11;
 
         canvas.setColor(trackEngine.activity() ? 0xf : 0x7);
         canvas.drawRect(x, y, w, h);
@@ -95,7 +95,22 @@ void PatternPage::draw(Canvas &canvas) {
             canvas.fillRect(x + Border, y + Border, w - 2 * Border, h - 2 * Border);
         }
 
-        y += 8;
+        for (int p = 0; p < 16; ++p) {
+            int px = x + (p % 8) * 3 + 2;
+            int py = y + (p / 8) * 3 + 2;
+            if (p == trackState.pattern()) {
+                canvas.setColor(0xf);
+                canvas.fillRect(px, py, 3, 3);
+            } else if (trackState.hasPatternRequest() && p == trackState.requestedPattern()) {
+                canvas.setColor(0x7);
+                canvas.fillRect(px, py, 3, 3);
+            } else {
+                canvas.setColor(0x3);
+                canvas.point(px + 1, py + 1);
+            }
+        }
+
+        y += 5;
 
         canvas.setColor(trackSelected ? 0xf : 0x7);
         canvas.drawTextCentered(x, y + 10, w, 8, snapshotActive ? "S" : FixedStringBuilder<8>("P%d", trackState.pattern() + 1));
