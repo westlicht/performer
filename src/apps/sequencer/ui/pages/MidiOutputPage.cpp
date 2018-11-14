@@ -61,6 +61,7 @@ void MidiOutputPage::keyPress(KeyPressEvent &event) {
             break;
         case Function::Commit:
             *_output = _editOutput;
+            setEdit(false);
             showMessage("OUTPUT CHANGED");
             break;
         }

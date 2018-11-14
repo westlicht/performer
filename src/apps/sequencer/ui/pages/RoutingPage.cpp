@@ -80,6 +80,7 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
         case Function::Commit:
             _engine.midiLearn().stop();
             *_route = _editRoute;
+            setEdit(false);
             showMessage("ROUTE CHANGED");
             break;
         }
