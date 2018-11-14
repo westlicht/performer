@@ -26,26 +26,21 @@ public:
 
     enum class Target : uint8_t {
         None,
+        // Engine targets
+        EngineFirst,
+        Play = EngineFirst,
+        Record,
+        EngineLast = Record,
+
         // Global targets
-        Tempo,
-        GlobalFirst = Tempo,
+        GlobalFirst,
+        Tempo = GlobalFirst,
         Swing,
         GlobalLast = Swing,
 
-        // Global modulations
-        // GlobalModFirst,
-        // CvOffset = GlobalModFirst,
-        // GateProbabilityOffset,
-        // GateLengthOffset,
-        // GateLengthProbabilityOffset,
-        // RetriggerOffset,
-        // RetriggerProbabilityOffset,
-        // SequenceShift,
-        // GlobalModLast = SequenceShift,
-
         // Track targets
-        TrackSlideTime,
-        TrackFirst = TrackSlideTime,
+        TrackFirst,
+        TrackSlideTime = TrackFirst,
         TrackOctave,
         TrackTranspose,
         TrackRotate,
@@ -54,8 +49,8 @@ public:
         TrackLast = TrackStepLengthBias,
 
         // Sequence targets
-        FirstStep,
-        SequenceFirst = FirstStep,
+        SequenceFirst,
+        FirstStep = SequenceFirst,
         LastStep,
         SequenceLast = LastStep,
 
@@ -65,6 +60,10 @@ public:
     static const char *targetName(Target target) {
         switch (target) {
         case Target::None:              return "None";
+
+        case Target::Play:              return "Play";
+        case Target::Record:            return "Record";
+
         case Target::Tempo:             return "Tempo";
         case Target::Swing:             return "Swing";
 
@@ -81,6 +80,14 @@ public:
         case Target::Last:              break;
         }
         return nullptr;
+    }
+
+    static bool isEngineTarget(Target target) {
+        return target >= Target::EngineFirst && target <= Target::EngineLast;
+    }
+
+    static bool isGlobalTarget(Target target) {
+        return target >= Target::GlobalFirst && target <= Target::GlobalLast;
     }
 
     static bool isTrackTarget(Target target) {

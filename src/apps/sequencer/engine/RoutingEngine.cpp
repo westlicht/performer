@@ -124,18 +124,40 @@ void RoutingEngine::updateSinks() {
     for (int routeIndex = 0; routeIndex < CONFIG_ROUTE_COUNT; ++routeIndex) {
         const auto &route = _routing.route(routeIndex);
         if (route.active()) {
+            auto target = route.target();
             float value = route.min() + _sourceValues[routeIndex] * (route.max() - route.min());
             // TODO handle pattern
-            if (Routing::isTrackTarget(route.target()) || Routing::isSequenceTarget(route.target())) {
+            if (Routing::isEngineTarget(target)) {
+                writeEngineTarget(target, value);
+            } else if (Routing::isGlobalTarget(target)) {
+                _routing.writeTarget(target, 0, 0, value);
+            } else if (Routing::isTrackTarget(target) || Routing::isSequenceTarget(target)) {
                 uint8_t tracks = route.tracks();
                 for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
                     if (tracks & (1<<trackIndex)) {
-                        _routing.writeTarget(route.target(), trackIndex, 0, value);
+                        _routing.writeTarget(target, trackIndex, 0, value);
                     }
                 }
-            } else {
-                _routing.writeTarget(route.target(), 0, 0, value);
             }
         }
+    }
+}
+
+void RoutingEngine::writeEngineTarget(Routing::Target target, float normalized) {
+    bool active = normalized > 0.5f;
+
+    switch (target) {
+    case Routing::Target::Play:
+        if (active != _engine.clockRunning()) {
+            _engine.togglePlay();
+        }
+        break;
+    case Routing::Target::Record:
+        if (active != _engine.recording()) {
+            _engine.toggleRecording();
+        }
+        break;
+    default:
+        break;
     }
 }

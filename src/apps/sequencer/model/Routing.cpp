@@ -276,6 +276,8 @@ struct TargetInfo {
 const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     // Target                                                   min     max     minDef  maxDef
     [int(Routing::Target::None)]                            = { 0,      0,      0,      0       },
+    [int(Routing::Target::Play)]                            = { 0,      1,      0,      1       },
+    [int(Routing::Target::Record)]                          = { 0,      1,      0,      1       },
     [int(Routing::Target::Tempo)]                           = { 20,     500,    100,    200     },
     [int(Routing::Target::Swing)]                           = { 50,     75,     50,     75      },
     [int(Routing::Target::TrackSlideTime)]                  = { 0,      100,    0,      100,    },

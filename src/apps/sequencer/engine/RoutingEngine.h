@@ -26,6 +26,8 @@ private:
     void updateSources();
     void updateSinks();
 
+    void writeEngineTarget(Routing::Target target, float normalized);
+
     Engine &_engine;
     Routing &_routing;
 
