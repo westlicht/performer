@@ -53,7 +53,7 @@ private:
     Canvas _canvas;
     uint32_t _lastUpdateTicks;
 
-    KeyState _keyState;
+    KeyState _pageKeyState;
     KeyState _globalKeyState;
     KeyPressEventTracker _keyPressEventTracker;
     Leds _leds;

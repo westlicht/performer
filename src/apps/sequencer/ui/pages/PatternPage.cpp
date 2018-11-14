@@ -62,7 +62,7 @@ void PatternPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     constexpr int Border = 4;
 
@@ -75,7 +75,7 @@ void PatternPage::draw(Canvas &canvas) {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         const auto &trackEngine = _engine.trackEngine(trackIndex);
         const auto &trackState = playState.trackState(trackIndex);
-        bool trackSelected = keyState()[MatrixMap::fromTrack(trackIndex)];
+        bool trackSelected = pageKeyState()[MatrixMap::fromTrack(trackIndex)];
 
         int x = trackIndex * 32;
         int y = 16;
@@ -133,7 +133,7 @@ void PatternPage::updateLeds(Leds &leds) {
             int requestedPattern = trackState.requestedPattern();
             allActivePatterns |= (pattern < 16) ? (1<<pattern) : 0;
             allRequestedPatterns |= (hasPatternRequest && requestedPattern < 16) ? (1<<requestedPattern) : 0;
-            if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
+            if (pageKeyState()[MatrixMap::fromTrack(trackIndex)]) {
                 selectedActivePatterns |= (pattern < 16) ? (1<<pattern) : 0;
                 selectedRequestedPatterns |= (hasPatternRequest && requestedPattern < 16) ? (1<<requestedPattern) : 0;
             }
@@ -264,7 +264,7 @@ void PatternPage::keyPress(KeyPressEvent &event) {
 
             bool globalChange = true;
             for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                if (keyState()[MatrixMap::fromTrack(trackIndex)]) {
+                if (pageKeyState()[MatrixMap::fromTrack(trackIndex)]) {
                     playState.selectTrackPattern(trackIndex, pattern, executeType);
                     globalChange = false;
                 }

@@ -37,7 +37,7 @@ void PerformerPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PERFORMER");
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     constexpr int Border = 4;
     constexpr int BorderRequested = 6;
@@ -215,10 +215,10 @@ void PerformerPage::encoder(EncoderEvent &event) {
 
 void PerformerPage::updateFills() {
     auto &playState = _project.playState();
-    bool fillPressed = keyState()[MatrixMap::fromFunction(int(Function::Fill))];
+    bool fillPressed = pageKeyState()[MatrixMap::fromFunction(int(Function::Fill))];
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        bool trackFill = keyState()[MatrixMap::fromStep(8 + trackIndex)];
+        bool trackFill = pageKeyState()[MatrixMap::fromStep(8 + trackIndex)];
         playState.fillTrack(trackIndex, trackFill || fillPressed);
     }
 }

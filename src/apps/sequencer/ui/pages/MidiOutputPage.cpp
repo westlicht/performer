@@ -38,7 +38,7 @@ void MidiOutputPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "MIDI OUTPUT");
     WindowPainter::drawActiveFunction(canvas, FixedStringBuilder<16>("OUTPUT %d", _outputIndex + 1));
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     ListPage::draw(canvas);
 }
@@ -71,7 +71,7 @@ void MidiOutputPage::keyPress(KeyPressEvent &event) {
 }
 
 void MidiOutputPage::encoder(EncoderEvent &event) {
-    if (!edit() && keyState()[Key::Shift]) {
+    if (!edit() && pageKeyState()[Key::Shift]) {
         selectOutput(_outputIndex + event.value());
         event.consume();
         return;

@@ -83,7 +83,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "STEPS");
     WindowPainter::drawActiveFunction(canvas, CurveSequence::layerName(layer()));
-    WindowPainter::drawFooter(canvas, functionNames, keyState(), activeFunctionKey());
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), activeFunctionKey());
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
     const auto &sequence = _project.selectedCurveSequence();

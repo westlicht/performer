@@ -34,7 +34,7 @@ void FileSelectPage::exit() {
 void FileSelectPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, _title);
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     ListPage::draw(canvas);
 }

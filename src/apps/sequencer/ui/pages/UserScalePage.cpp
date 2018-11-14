@@ -42,7 +42,7 @@ void UserScalePage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "USER SCALE");
     FixedStringBuilder<8> str("USER%d", _selectedIndex + 1);
     WindowPainter::drawActiveFunction(canvas, str);
-    WindowPainter::drawFooter(canvas, functionNames, keyState(), _selectedIndex);
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), _selectedIndex);
 
     ListPage::draw(canvas);
 }

@@ -75,22 +75,22 @@ void SystemPage::draw(Canvas &canvas) {
         FixedStringBuilder<8> str("CAL CV%d", _outputIndex + 1);
         WindowPainter::drawActiveFunction(canvas, str);
         if (edit()) {
-            WindowPainter::drawFooter(canvas, calibrationEditFunctionNames, keyState());
+            WindowPainter::drawFooter(canvas, calibrationEditFunctionNames, pageKeyState());
         } else {
-            WindowPainter::drawFooter(canvas, functionNames, keyState(), int(_mode));
+            WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
         }
         ListPage::draw(canvas);
         break;
     }
     case Mode::Utilities: {
         WindowPainter::drawActiveFunction(canvas, "UTILITIES");
-        WindowPainter::drawFooter(canvas, functionNames, keyState(), int(_mode));
+        WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
         ListPage::draw(canvas);
         break;
     }
     case Mode::Update: {
         WindowPainter::drawActiveFunction(canvas, "UPDATE");
-        WindowPainter::drawFooter(canvas, functionNames, keyState(), int(_mode));
+        WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
         canvas.setBlendMode(BlendMode::Set);
         canvas.setColor(0xf);
         canvas.drawText(4, 24, "CURRENT VERSION:");

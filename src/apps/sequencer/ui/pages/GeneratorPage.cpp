@@ -46,7 +46,7 @@ void GeneratorPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "GENERATOR");
     WindowPainter::drawActiveFunction(canvas, _generator->name());
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     canvas.setFont(Font::Small);
     canvas.setBlendMode(BlendMode::Set);
@@ -157,7 +157,7 @@ void GeneratorPage::encoder(EncoderEvent &event) {
     bool changed = false;
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
-        if (keyState()[Key::F0 + i]) {
+        if (pageKeyState()[Key::F0 + i]) {
             _generator->editParam(i, event.value(), event.pressed());
             changed = true;
         }

@@ -29,7 +29,7 @@ void LayoutPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "LAYOUT");
     WindowPainter::drawActiveFunction(canvas, modeName(_mode));
-    WindowPainter::drawFooter(canvas, functionNames, keyState(), int(_mode));
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
 
     ListPage::draw(canvas);
 }

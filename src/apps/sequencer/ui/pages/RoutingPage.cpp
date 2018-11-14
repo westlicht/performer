@@ -38,7 +38,7 @@ void RoutingPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "ROUTING");
     WindowPainter::drawActiveFunction(canvas, FixedStringBuilder<16>("ROUTE %d", _routeIndex + 1));
-    WindowPainter::drawFooter(canvas, functionNames, keyState(), highlightLearn ? int(Function::Learn) : -1);
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), highlightLearn ? int(Function::Learn) : -1);
 
     ListPage::draw(canvas);
 }
@@ -90,7 +90,7 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
 }
 
 void RoutingPage::encoder(EncoderEvent &event) {
-    if (!edit() && keyState()[Key::Shift]) {
+    if (!edit() && pageKeyState()[Key::Shift]) {
         selectRoute(_routeIndex + event.value());
         event.consume();
         return;

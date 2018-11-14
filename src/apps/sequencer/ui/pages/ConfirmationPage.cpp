@@ -29,7 +29,7 @@ void ConfirmationPage::exit() {
 
 void ConfirmationPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawFooter(canvas, functionNames, keyState());
+    WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
