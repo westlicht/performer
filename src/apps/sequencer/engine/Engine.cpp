@@ -255,6 +255,15 @@ float Engine::syncMeasureFraction() const {
     return float(_tick % measureDivisor) / measureDivisor;
 }
 
+bool Engine::trackEnginesConsistent() const {
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        if (trackEngine(trackIndex).trackMode() != _model.project().track(trackIndex).trackMode()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool Engine::sendMidi(MidiPort port, const MidiMessage &message) {
     switch (port) {
     case MidiPort::Midi:

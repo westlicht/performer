@@ -129,6 +129,8 @@ public:
     const MidiLearn &midiLearn() const { return _midiLearn; }
           MidiLearn &midiLearn()       { return _midiLearn; }
 
+    bool trackEnginesConsistent() const;
+
     bool sendMidi(MidiPort port, const MidiMessage &message);
     void setMidiReceiveHandler(MidiReceiveHandler handler) { _midiReceiveHandler = handler; }
     void setUsbMidiConnectHandler(UsbMidiConnectHandler handler) { _usbMidiConnectHandler = handler; }

@@ -70,6 +70,11 @@ void Ui::update() {
     handleEncoder();
     handleMidi();
 
+    // abort if track engines are not consistent with model
+    if (!_engine.trackEnginesConsistent()) {
+        return;
+    }
+
     _leds.clear();
     _pageManager.updateLeds(_leds);
     _blm.setLeds(_leds.array());
