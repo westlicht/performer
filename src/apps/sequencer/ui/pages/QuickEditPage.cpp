@@ -51,11 +51,11 @@ void QuickEditPage::keyDown(KeyEvent &event) {
 void QuickEditPage::keyUp(KeyEvent &event) {
     event.consume();
 
-    if (pageKeyState()[Key::Page]) {
+    if (globalKeyState()[Key::Page]) {
         return;
     }
     for (int i = 8; i < 16; ++i) {
-        if (pageKeyState()[MatrixMap::fromStep(i)]) {
+        if (globalKeyState()[MatrixMap::fromStep(i)]) {
             return;
         }
     }

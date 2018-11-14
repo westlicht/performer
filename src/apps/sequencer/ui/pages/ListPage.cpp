@@ -37,8 +37,6 @@ void ListPage::show() {
 }
 
 void ListPage::enter() {
-    resetKeyState();
-
     scrollTo(_selectedRow);
 }
 

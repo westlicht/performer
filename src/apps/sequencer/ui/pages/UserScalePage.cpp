@@ -31,7 +31,6 @@ UserScalePage::UserScalePage(PageManager &manager, PageContext &context) :
 }
 
 void UserScalePage::enter() {
-    resetKeyState();
 }
 
 void UserScalePage::exit() {

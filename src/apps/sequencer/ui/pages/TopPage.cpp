@@ -192,13 +192,10 @@ void TopPage::setMode(Mode mode) {
 }
 
 void TopPage::setMainPage(Page &page) {
-    Page *oldTop = _manager.top();
-    _manager.reset(&_manager.pages().top);
-    _manager.push(&page);
-
-    // restore modal page
-    if (oldTop->isModal()) {
-        _manager.push(oldTop);
+    if (_manager.stackSize() < 2) {
+        _manager.push(&page);
+    } else {
+        _manager.replace(1, &page);
     }
 }
 

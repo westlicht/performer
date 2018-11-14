@@ -28,8 +28,6 @@ NoteSequencePage::NoteSequencePage(PageManager &manager, PageContext &context) :
 {}
 
 void NoteSequencePage::enter() {
-    resetKeyState();
-
     _listModel.setSequence(&_project.selectedNoteSequence());
 }
 

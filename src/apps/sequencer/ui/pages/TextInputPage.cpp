@@ -43,7 +43,6 @@ void TextInputPage::show(const char *title, const char *text, size_t maxTextLeng
 }
 
 void TextInputPage::enter() {
-    resetKeyState();
 }
 
 void TextInputPage::exit() {

@@ -21,7 +21,6 @@ void ConfirmationPage::show(const char *text, ResultCallback callback) {
 }
 
 void ConfirmationPage::enter() {
-    resetKeyState();
 }
 
 void ConfirmationPage::exit() {

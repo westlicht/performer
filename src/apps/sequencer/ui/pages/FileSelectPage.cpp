@@ -25,7 +25,6 @@ void FileSelectPage::show(const char *title, FileType type, int selectedSlot, bo
 }
 
 void FileSelectPage::enter() {
-    resetKeyState();
 }
 
 void FileSelectPage::exit() {

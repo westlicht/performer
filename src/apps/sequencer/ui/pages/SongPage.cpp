@@ -23,8 +23,6 @@ SongPage::SongPage(PageManager &manager, PageContext &context) :
 {}
 
 void SongPage::enter() {
-    resetKeyState();
-
     _mode = Mode::Idle;
     setSelectedSlot(_selectedSlot);
 }

@@ -28,6 +28,10 @@ void Ui::init() {
     _pageKeyState.reset();
     _globalKeyState.reset();
 
+    _pageManager.setPageSwitchHandler([this] (Page *page) {
+        _pageKeyState.reset();
+    });
+
     _pageManager.push(&_pages.top);
     _pages.top.init();
 #ifdef CONFIG_ENABLE_INTRO

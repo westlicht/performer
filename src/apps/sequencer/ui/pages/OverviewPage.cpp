@@ -88,7 +88,6 @@ OverviewPage::OverviewPage(PageManager &manager, PageContext &context) :
 {}
 
 void OverviewPage::enter() {
-    resetKeyState();
 }
 
 void OverviewPage::exit() {

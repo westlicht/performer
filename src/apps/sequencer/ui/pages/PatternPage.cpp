@@ -38,8 +38,6 @@ PatternPage::PatternPage(PageManager &manager, PageContext &context) :
 {}
 
 void PatternPage::enter() {
-    resetKeyState();
-
     _latching = false;
     _syncing = false;
 }

@@ -54,7 +54,6 @@ NoteSequenceEditPage::NoteSequenceEditPage(PageManager &manager, PageContext &co
 {}
 
 void NoteSequenceEditPage::enter() {
-    resetKeyState();
     updateMonitorStep();
 
     _showDetail = false;

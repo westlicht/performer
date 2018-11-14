@@ -20,8 +20,6 @@ PerformerPage::PerformerPage(PageManager &manager, PageContext &context) :
 {}
 
 void PerformerPage::enter() {
-    resetKeyState();
-
     _latching = false;
     _syncing = false;
 }

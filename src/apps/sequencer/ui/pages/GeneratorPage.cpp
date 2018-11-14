@@ -28,8 +28,6 @@ void GeneratorPage::show(Generator *generator) {
 }
 
 void GeneratorPage::enter() {
-    resetKeyState();
-
     _valueRange.first = 0;
     _valueRange.second = 7;
 }

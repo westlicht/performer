@@ -17,8 +17,6 @@ LayoutPage::LayoutPage(PageManager &manager, PageContext &context) :
 }
 
 void LayoutPage::enter() {
-    resetKeyState();
-
     _trackModeListModel.fromProject(_project);
 }
 

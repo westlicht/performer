@@ -15,12 +15,18 @@ void PageManager::push(Page *page) {
     ASSERT(_pageStackPos < PageStackSize - 1, "page stack overflow");
     _pageStack[++_pageStackPos] = page;
     page->enter();
+
+    notifyPageSwitch(page);
 }
 
 void PageManager::pop() {
     ASSERT(_pageStackPos > 0, "page stack underflow");
     top()->exit();
     --_pageStackPos;
+
+    if (_pageStackPos >= 0) {
+        notifyPageSwitch(top());
+    }
 }
 
 void PageManager::reset(Page *page) {
@@ -28,6 +34,19 @@ void PageManager::reset(Page *page) {
         _pageStack[_pageStackPos--]->exit();
     }
     push(page);
+}
+
+void PageManager::replace(int index, Page *page) {
+    ASSERT(index >= 0 && index <= _pageStackPos, "invalid page index");
+
+    auto &pagePtr = _pageStack[index];
+    pagePtr->exit();
+    pagePtr = page;
+    pagePtr->enter();
+
+    if (index == _pageStackPos) {
+        notifyPageSwitch(page);
+    }
 }
 
 void PageManager::draw(Canvas &canvas) {

@@ -89,7 +89,6 @@ MonitorPage::MonitorPage(PageManager &manager, PageContext &context) :
 {}
 
 void MonitorPage::enter() {
-    resetKeyState();
 }
 
 void MonitorPage::exit() {

@@ -20,7 +20,6 @@ void GeneratorSelectPage::show(ResultCallback callback) {
 }
 
 void GeneratorSelectPage::enter() {
-    resetKeyState();
 }
 
 void GeneratorSelectPage::exit() {

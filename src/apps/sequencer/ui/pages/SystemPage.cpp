@@ -46,8 +46,6 @@ SystemPage::SystemPage(PageManager &manager, PageContext &context) :
 }
 
 void SystemPage::enter() {
-    resetKeyState();
-
     setOutputIndex(_project.selectedTrackIndex());
 
     _engine.lock();

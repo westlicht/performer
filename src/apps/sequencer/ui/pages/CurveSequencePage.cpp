@@ -27,8 +27,6 @@ CurveSequencePage::CurveSequencePage(PageManager &manager, PageContext &context)
 {}
 
 void CurveSequencePage::enter() {
-    resetKeyState();
-
     _listModel.setSequence(&_project.selectedCurveSequence());
 }
 

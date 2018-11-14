@@ -73,7 +73,6 @@ CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &
 {}
 
 void CurveSequenceEditPage::enter() {
-    resetKeyState();
 }
 
 void CurveSequenceEditPage::exit() {

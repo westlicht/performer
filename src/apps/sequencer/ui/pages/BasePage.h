@@ -33,8 +33,6 @@ protected:
     const KeyState &pageKeyState() const { return _context.pageKeyState; }
     const KeyState &globalKeyState() const { return _context.globalKeyState; }
 
-    void resetKeyState() { _context.pageKeyState.reset(); }
-
     PageContext &_context;
     Model &_model;
     Project &_project;
