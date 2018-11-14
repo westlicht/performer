@@ -129,6 +129,11 @@ void PlayState::selectTrackPattern(int track, int pattern, ExecuteType executeTy
 }
 
     selectTrackPatternUnsafe(track, pattern, executeType);
+
+    // switch selected pattern
+    if (track == _project.selectedTrackIndex()) {
+        _project.setSelectedPatternIndex(pattern);
+    }
 }
 
 void PlayState::selectPattern(int pattern, ExecuteType executeType) {
@@ -202,6 +207,11 @@ void PlayState::cancelPatternRequests() {
         auto &trackState = _trackStates[track];
         trackState.clearRequests(TrackState::PatternRequests);
         trackState.setRequestedPattern(trackState.pattern());
+
+        // switch selected pattern
+        if (track == _project.selectedTrackIndex()) {
+            _project.setSelectedPatternIndex(trackState.pattern());
+        }
     }
 }
 

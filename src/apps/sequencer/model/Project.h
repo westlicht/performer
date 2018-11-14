@@ -223,6 +223,8 @@ public:
         if (index != _selectedTrackIndex) {
             _selectedTrackIndex = index;
             _observable.notify(SelectedTrackIndex);
+
+            // switch selected pattern
             setSelectedPatternIndex(_playState.trackState(index).pattern());
         }
     }
