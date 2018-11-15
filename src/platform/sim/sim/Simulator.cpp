@@ -15,6 +15,7 @@
 namespace sim {
 
 Simulator::Simulator() :
+    _sdl(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER),
     _window("Sequencer", Vector2i(800, 500))
 {
     _timerFrequency = SDL_GetPerformanceFrequency();

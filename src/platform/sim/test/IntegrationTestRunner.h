@@ -13,9 +13,9 @@ class ExpectError : public std::exception {};
 
 template<typename T>
 int integrationTestRunner() {
-    HighResolutionTimer::init();
+    auto &simulator = sim::Simulator::instance();
 
-    sdl::Init init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
+    HighResolutionTimer::init();
 
     T test;
 
@@ -30,7 +30,6 @@ int integrationTestRunner() {
         test.once();
 
         if (test.interactive()) {
-            auto &simulator = sim::Simulator::instance();
             while (!simulator.terminate()) {
                 simulator.update();
 

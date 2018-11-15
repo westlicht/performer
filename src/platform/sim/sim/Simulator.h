@@ -50,6 +50,7 @@ public:
 private:
     void setupInstruments();
 
+    sdl::Init _sdl;
     Window _window;
     Audio _audio;
     std::unique_ptr<InstrumentSetup> _instruments;
