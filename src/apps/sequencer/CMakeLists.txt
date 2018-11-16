@@ -97,7 +97,7 @@ set(sources
 
 include_directories(.)
 
-if(${PLATFORM} MATCHES "stm32")
+if(${PLATFORM} STREQUAL "stm32")
     add_library(sequencer_shared ${sources})
     target_link_libraries(sequencer_shared core)
 
@@ -117,7 +117,7 @@ if(${PLATFORM} MATCHES "stm32")
     set_target_properties(sequencer_standalone PROPERTIES LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/sequencer_standalone.ld")
 endif()
 
-if(${PLATFORM} MATCHES "sim")
+if(${PLATFORM} STREQUAL "sim")
     add_executable(sequencer SequencerSim.cpp ${sources})
     target_link_libraries(sequencer core)
     platform_postprocess_executable(sequencer)

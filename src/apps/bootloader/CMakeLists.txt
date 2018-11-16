@@ -15,7 +15,7 @@ set(sources
 
 include_directories(.)
 
-if(${PLATFORM} MATCHES "stm32")
+if(${PLATFORM} STREQUAL "stm32")
     add_executable(bootloader Bootloader.cpp ${sources})
     target_link_libraries(bootloader ${platform_libraries})
     platform_postprocess_executable(bootloader)

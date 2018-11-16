@@ -1,4 +1,4 @@
-if(${PLATFORM} MATCHES "stm32")
+if(${PLATFORM} STREQUAL "stm32")
 
     function(create_config variant)
         add_executable(hwconfig_${variant} hwconfig_${variant}.c)
