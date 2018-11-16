@@ -68,4 +68,6 @@ endif()
 add_subdirectory(apps)
 
 # tests
-add_subdirectory(tests)
+if((${PLATFORM} STREQUAL "stm32") OR (${PLATFORM} STREQUAL "sim"))
+    add_subdirectory(tests)
+endif()
