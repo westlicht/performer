@@ -10,3 +10,6 @@
 [submodule "src/platform/sim/libs/soloud"]
 	path = src/platform/sim/libs/soloud
 	url = https://github.com/jarikomppa/soloud.git
+[submodule "src/platform/sim/libs/pybind11"]
+	path = src/platform/sim/libs/pybind11
+	url = https://github.com/pybind/pybind11.git
