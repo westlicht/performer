@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Common.h"
-#include "Window.h"
-#include "Audio.h"
-#include "InstrumentSetup.h"
-#include "Midi.h"
+#include "EncoderEvent.h"
+#include "MidiEvent.h"
+#include "Trace.h"
 
-#include "widgets/Button.h"
-
+#include <array>
+#include <functional>
 #include <string>
+#include <vector>
+
+class MidiMessage;
 
 namespace sim {
 
@@ -18,17 +19,40 @@ struct Target {
     std::function<void()> update;
 };
 
-class Simulator {
+struct TargetInputHandler {
+    virtual void writeButton(int index, bool pressed) {}
+    virtual void writeEncoder(EncoderEvent event) {}
+    virtual void writeAdc(int channel, uint16_t value) {}
+    virtual void writeDigitalInput(int pin, bool value) {}
+    virtual void writeMidiInput(MidiEvent event) {}
+};
+
+struct TargetOutputHandler {
+    virtual void writeLed(int index, bool red, bool green) {}
+    virtual void writeGateOutput(int channel, bool value) {}
+    virtual void writeDac(int channel, uint16_t value) {}
+    virtual void writeDigitalOutput(int pin, bool value) {}
+    virtual void writeLcd(uint8_t *frameBuffer) {}
+    virtual void writeMidiOutput(MidiEvent event) {}
+};
+
+class Simulator : public TargetOutputHandler, TargetInputHandler {
 public:
     Simulator(Target target);
+    ~Simulator();
 
-    Window &window() { return _window; }
-    Audio &audio() { return _audio; }
+    void wait(int ms);
+    void setButton(int index, bool pressed);
+    void setEncoder(bool pressed);
+    void rotateEncoder(int direction);
+    void setAdc(int channel, float voltage);
+    void setDio(int pin, bool state);
+    void sendMidi(int port, const MidiMessage &message);
 
-    void run();
-    void step();
+    void screenshot(const std::string &filename);
 
-    void close();
+    const TargetState &targetState() const { return _targetState; }
+    const TargetTrace &targetTrace() const { return _targetTrace; }
 
     double ticks();
 
@@ -36,48 +60,45 @@ public:
 
     void addUpdateCallback(UpdateCallback callback);
 
-    typedef std::function<void(const std::string &filename)> ScreenshotCallback;
+    // Target input/output handling
 
-    void setScreenshotCallback(ScreenshotCallback callback);
-    void screenshot(const std::string &filename = "");
+    void registerTargetInputObserver(TargetInputHandler *observer);
+    void registerTargetOutputObserver(TargetOutputHandler *observer);
 
-    // Hardware IO emulation
-    void writeGate(int channel, bool value);
-    void writeDac(int channel, uint16_t value);
+    // TargetInputHandler
+    void writeButton(int index, bool pressed) override;
+    void writeEncoder(EncoderEvent event) override;
+    void writeAdc(int channel, uint16_t value) override;
+    void writeDigitalInput(int pin, bool value) override;
+    void writeMidiInput(MidiEvent event) override;
 
-    // MIDI emulation
-    Midi &midi() { return _midi; }
+    // TargetOutputHandler
+    void writeLed(int index, bool red, bool green) override;
+    void writeGateOutput(int channel, bool value) override;
+    void writeDac(int channel, uint16_t value) override;
+    void writeDigitalOutput(int pin, bool value) override;
+    void writeLcd(uint8_t *frameBuffer) override;
+    void writeMidiOutput(MidiEvent event) override;
 
     static Simulator &instance();
 
 private:
-    bool terminate() const;
-    void update();
-    void render();
-    void delay(int ms);
-
-    void setupInstruments();
+    void step();
 
     Target _target;
-    sdl::Init _sdl;
-    Window _window;
-    Audio _audio;
-    std::unique_ptr<InstrumentSetup> _instruments;
+    bool _targetCreated = false;
 
-    double _timerFrequency;
-    double _timerStart;
+    uint32_t _tick = 0;
 
-    double _lastRenderTicks = 0.0;
-
-    std::array<bool, 8> _gate;
-    std::array<uint16_t, 8> _dac;
+    std::vector<TargetInputHandler *> _targetInputObservers;
+    std::vector<TargetOutputHandler *> _targetOutputObservers;
 
     std::vector<UpdateCallback> _updateCallbacks;
 
-    ScreenshotCallback _screenshotCallback;
-    std::shared_ptr<Button> _screenshotButton;
+    TargetState _targetState;
+    TargetTrace _targetTrace;
 
-    Midi _midi;
+    bool _writeTrace = false;
 };
 
 } // namespace sim

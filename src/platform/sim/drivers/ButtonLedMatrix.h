@@ -3,19 +3,14 @@
 #include "SystemConfig.h"
 
 #include "sim/Simulator.h"
-#include "sim/widgets/Button.h"
-#include "sim/widgets/Led.h"
-#include "sim/widgets/Label.h"
 
-#include <vector>
 #include <deque>
 #include <array>
-#include <utility>
+#include <bitset>
 
 #include <cstdint>
-#include <cstdlib>
 
-class ButtonLedMatrix {
+class ButtonLedMatrix : private sim::TargetInputHandler {
 public:
     struct Event {
         enum Action {
@@ -38,11 +33,17 @@ public:
     static constexpr int ColsButton = CONFIG_BLM_COLS_BUTTON;
     static constexpr int ColsLed = CONFIG_BLM_COLS_LED;
 
-    ButtonLedMatrix();
+    ButtonLedMatrix() :
+        _simulator(sim::Simulator::instance())
+    {
+        _simulator.registerTargetInputObserver(this);
+    }
 
     void init() {}
 
-    void setLed(int index, uint8_t red, uint8_t green);
+    void setLed(int index, uint8_t red, uint8_t green) {
+        _simulator.writeLed(index, red > 0, green > 0);
+    }
 
     void setLed(int row, int col, uint8_t red, uint8_t green) {
         setLed(col * Rows + row, red, green);
@@ -54,7 +55,9 @@ public:
         }
     }
 
-    bool buttonState(int index) const;
+    bool buttonState(int index) const {
+        return _buttonState[index];
+    }
 
     inline bool buttonState(int row, int col) const {
         return buttonState(col * Rows + row);
@@ -62,12 +65,22 @@ public:
 
     void process() {}
 
-    bool nextEvent(Event &event);
+    bool nextEvent(Event &event) {
+        if (_events.empty()) {
+            return false;
+        }
+        event = _events.front();
+        _events.pop_front();
+        return true;
+    }
 
 private:
+    void writeButton(int index, bool pressed) override {
+        _buttonState[index] = pressed;
+        _events.emplace_back(pressed ? Event::KeyDown : Event::KeyUp, index);
+    }
+
     sim::Simulator &_simulator;
-    std::vector<sim::Button::Ptr> _buttons;
-    std::vector<sim::Led::Ptr> _leds;
-    std::vector<sim::Label::Ptr> _labels;
+    std::bitset<Rows * ColsButton> _buttonState;
     std::deque<Event> _events;
 };

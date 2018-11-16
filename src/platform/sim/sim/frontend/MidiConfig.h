@@ -11,7 +11,8 @@ struct MidiConfig {
 };
 
 static const MidiConfig midiPortConfig = {
-    .port = "SL MkII Port 1"
+    // .port = "SL MkII Port 1"
+    .port = "Launchkey Mini LK Mini MIDI"
 };
 
 static const MidiConfig usbMidiPortConfig = {

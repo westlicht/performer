@@ -5,9 +5,7 @@
 #include <functional>
 #include <memory>
 
-class ClockSource;
-
-class Dio {
+class Dio : private sim::TargetInputHandler {
 public:
     struct Input {
         typedef std::function<void(bool)> Handler;
@@ -46,10 +44,21 @@ public:
         friend class Dio;
     };
 
-    Dio();
-    ~Dio();
+    Dio() :
+        _simulator(sim::Simulator::instance())
+    {
+        _simulator.registerTargetInputObserver(this);
 
-    void init();
+        clockOutput.setHandler([this] (int value) {
+            _simulator.writeDigitalOutput(0, value);
+        });
+
+        resetOutput.setHandler([this] (int value) {
+            _simulator.writeDigitalOutput(1, value);
+        });
+    }
+
+    void init() {}
 
     Input clockInput;
     Input resetInput;
@@ -58,6 +67,12 @@ public:
     Output resetOutput;
 
 private:
+    void writeDigitalInput(int pin, bool value) override {
+        switch (pin) {
+        case 0: clockInput.set(value); break;
+        case 1: resetInput.set(value); break;
+        }
+    }
+
     sim::Simulator &_simulator;
-    std::unique_ptr<ClockSource> _clockSource;
 };

@@ -1,6 +1,7 @@
 #include "SequencerApp.h"
 
 #include "sim/Simulator.h"
+#include "sim/frontend/Frontend.h"
 
 #include <memory>
 
@@ -19,7 +20,9 @@ int main(int argc, char *argv[]) {
         }
     });
 
-    sim.run();
+    sim::Frontend frontend(sim);
+
+    frontend.run();
 
     return 0;
 }

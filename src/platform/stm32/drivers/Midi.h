@@ -10,12 +10,14 @@
 
 class Midi {
 public:
+    typedef std::function<bool(uint8_t)> RecvFilter;
+
     void init();
 
     bool send(const MidiMessage &message);
     bool recv(MidiMessage *message);
 
-    void setRecvFilter(std::function<bool(uint8_t)> filter);
+    void setRecvFilter(RecvFilter filter);
 
     uint32_t rxOverflow() const { return _rxOverflow; }
 
@@ -28,6 +30,6 @@ private:
     volatile uint32_t _rxOverflow = 0;
     volatile uint32_t _txActive = 0;
 
-    std::function<bool(uint8_t)> _filter;
+    RecvFilter _recvFilter;
     MidiParser _midiParser;
 };

@@ -1,4 +1,5 @@
 #include "sim/Simulator.h"
+#include "sim/frontend/Frontend.h"
 
 #include "drivers/HighResolutionTimer.h"
 
@@ -31,9 +32,9 @@ int integrationTestRunner(const char *name, bool interactive) {
             test->init();
             test->once();
 
-            if (interactive) {
-                sim.close();
-            }
+            // if (interactive) {
+            //     sim.close();
+            // }
         },
         .destroy = [&] () {
             test.reset();
@@ -43,10 +44,12 @@ int integrationTestRunner(const char *name, bool interactive) {
         }
     });
 
+    sim::Frontend frontend(sim);
+
     try {
-        sim.run();
+        frontend.run();
     } catch (ExpectError &e) {
-        sim.close();
+        frontend.close();
         success = false;
     }
 

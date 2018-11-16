@@ -1,118 +1,193 @@
 #include "Simulator.h"
 
+#include "libs/stb/stb_image_write.h"
+
 #include "os/os.h"
 
-#include "widgets/Button.h"
-#include "widgets/Led.h"
-
-#include "instruments/DrumSampler.h"
-#include "instruments/Synth.h"
+#include "core/midi/MidiMessage.h"
 
 #include <memory>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
+#include <iostream>
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
+#include <cmath>
 
 namespace sim {
 
 static Simulator *g_instance;
 
 Simulator::Simulator(Target target) :
-    _target(target),
-    _sdl(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER),
-    _window("Sequencer", Vector2i(800, 500))
+    _target(target)
 {
     g_instance = this;
 
-    _timerFrequency = SDL_GetPerformanceFrequency();
-    _timerStart = SDL_GetPerformanceCounter();
-
-    setupInstruments();
-
-    std::fill(_gate.begin(), _gate.end(), false);
-
-    // button to take screenshots
-    _screenshotButton = _window.createWidget<Button>(
-        Vector2i(8, 8),
-        Vector2i(8, 8),
-        SDLK_F10
-    );
-    _screenshotButton->setCallback([&] (bool pressed) {
-        if (pressed) {
-            screenshot();
-        }
-    });
+    _writeTrace = true;
 }
 
-#ifdef __EMSCRIPTEN__
-static void mainLoop() {
-    g_instance->step();
+Simulator::~Simulator() {
+    if (_targetCreated) {
+       _target.destroy();
+    }
 }
-#endif
 
-void Simulator::run() {
-    _target.create();
-
-#ifdef __EMSCRIPTEN__
-    // 0 fps means to use requestAnimationFrame; non-0 means to use setTimeout.
-    emscripten_set_main_loop(mainLoop, 0, 1);
-#else
-    while (!terminate()) {
+void Simulator::wait(int ms) {
+    while (ms--) {
         step();
     }
-#endif
-
-    _target.destroy();
 }
 
-void Simulator::step() {
-    update();
-    _target.update();
-    render();
-#ifdef __EMSCRIPTEN__
-    delay(1);
-#endif
+void Simulator::setButton(int index, bool pressed) {
+    writeButton(index, pressed);
 }
 
-void Simulator::close() {
-    _window.close();
+void Simulator::setEncoder(bool pressed) {
+    writeEncoder(pressed ? EncoderEvent::Down : EncoderEvent::Up);
 }
 
-double Simulator::ticks() {
-    double delta = SDL_GetPerformanceCounter() - _timerStart;
-    return delta / _timerFrequency * 1000.0;
+void Simulator::rotateEncoder(int direction) {
+    if (direction > 0) {
+        writeEncoder(EncoderEvent::Right);
+    } else if (direction < 0) {
+        writeEncoder(EncoderEvent::Left);
+    }
 }
 
-void Simulator::setScreenshotCallback(ScreenshotCallback callback) {
-    _screenshotCallback = callback;
+void Simulator::setAdc(int channel, float voltage) {
+    float normalized = std::max(0.f, std::min(1.f, voltage * 0.1f + 0.5f));
+    writeAdc(channel, uint16_t(std::floor(0xffff - 0xffff * normalized)));
+}
+
+void Simulator::setDio(int pin, bool state) {
+    writeDigitalInput(pin, state);
+}
+
+void Simulator::sendMidi(int port, const MidiMessage &message) {
+    writeMidiInput(MidiEvent::makeMessage(port, message));
 }
 
 void Simulator::screenshot(const std::string &filename) {
-    if (_screenshotCallback) {
-        std::stringstream ss;
-        if (filename.empty()) {
-            static int counter = 0;
-            ss << "screenshot-" << std::setfill('0') << std::setw(3) << counter << ".png";
-            ++counter;
-        } else {
-            ss << filename;
-        }
-        _screenshotCallback(ss.str());
+    std::unique_ptr<uint8_t[]> pixelBuffer(new uint8_t[CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT]);
+
+    const uint8_t *src = _targetState.lcd.state.data();
+    uint8_t *dst = pixelBuffer.get();
+
+    for (int i = 0; i < CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT; ++i) {
+        float s = std::min(uint8_t(15), *src++) * (1.f / 15.f);
+        *dst++ = s * 0xff;
+    }
+
+    stbi_write_png(filename.c_str(), CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, 1, pixelBuffer.get(), CONFIG_LCD_WIDTH);
+}
+
+double Simulator::ticks() {
+    return _tick;
+}
+
+void Simulator::addUpdateCallback(UpdateCallback callback) {
+    _updateCallbacks.emplace_back(callback);
+}
+
+void Simulator::registerTargetInputObserver(TargetInputHandler *observer) {
+    _targetInputObservers.emplace_back(observer);
+}
+
+void Simulator::registerTargetOutputObserver(TargetOutputHandler *observer) {
+    _targetOutputObservers.emplace_back(observer);
+}
+
+// TargetInputHandler
+
+void Simulator::writeButton(int index, bool pressed) {
+    _targetState.button.set(index, pressed);
+
+    if (_writeTrace) {
+        _targetTrace.button.write(_tick, _targetState.button);
+    }
+
+    for (auto observer : _targetInputObservers) {
+        observer->writeButton(index, pressed);
     }
 }
 
-void Simulator::writeGate(int channel, bool value) {
-    if (channel >= 0 && channel < int(_gate.size())) {
-        _gate[channel] = value;
-        _instruments->setGate(channel, value);
+void Simulator::writeEncoder(EncoderEvent event) {
+    if (_writeTrace) {
+        _targetTrace.encoder.write(_tick, event);
+    }
+
+    for (auto observer : _targetInputObservers) {
+        observer->writeEncoder(event);
+    }
+}
+
+void Simulator::writeAdc(int channel, uint16_t value) {
+    auto valueToVoltage = [] (uint16_t value) {
+        float normalized = (0xffff - value) / float(0xffff);
+        return (normalized - 0.5f) * 10.f;
+    };
+
+    _targetState.adc.set(channel, value, valueToVoltage(value));
+
+    if (_writeTrace) {
+        _targetTrace.adc.write(_tick, _targetState.adc);
+    }
+
+    for (auto observer : _targetInputObservers) {
+        observer->writeAdc(channel, value);
+    }
+}
+
+void Simulator::writeDigitalInput(int pin, bool value) {
+    _targetState.digitalOutput.set(pin, value);
+
+    if (_writeTrace) {
+        _targetTrace.digitalOutput.write(_tick, _targetState.digitalOutput);
+    }
+
+    for (auto observer : _targetInputObservers) {
+        observer->writeDigitalInput(pin, value);
+    }
+}
+
+void Simulator::writeMidiInput(MidiEvent event) {
+    if (_writeTrace) {
+        _targetTrace.midiInput.write(_tick, event);
+    }
+
+    for (auto observer : _targetInputObservers) {
+        observer->writeMidiInput(event);
+    }
+}
+
+// TargetOutputHandler
+
+void Simulator::writeLed(int index, bool red, bool green) {
+    _targetState.led.set(index, red, green);
+
+    if (_writeTrace) {
+        _targetTrace.led.write(_tick, _targetState.led);
+    }
+
+    for (auto observer : _targetOutputObservers) {
+        observer->writeLed(index, red, green);
+    }
+}
+
+void Simulator::writeGateOutput(int channel, bool value) {
+    _targetState.gateOutput.set(channel, value);
+
+    if (_writeTrace) {
+        _targetTrace.gateOutput.write(_tick, _targetState.gateOutput);
+    }
+
+    for (auto observer : _targetOutputObservers) {
+        observer->writeGateOutput(channel, value);
     }
 }
 
 void Simulator::writeDac(int channel, uint16_t value) {
-    auto valueToVolts = [] (uint16_t value) {
+    auto valueToVoltage = [] (uint16_t value) {
         // In ideal DAC/OpAmp configuration we get:
         // 0     ->  5.17V
         // 32768 -> -5.25V
@@ -124,52 +199,75 @@ void Simulator::writeDac(int channel, uint16_t value) {
         return (value - value0) / (value1 - value0) * 10.f - 5.f;
     };
 
-    if (channel >= 0 && channel < int(_dac.size())) {
-        _dac[channel] = value;
-        _instruments->setCv(channel, valueToVolts(value));
+    _targetState.dac.set(channel, value, valueToVoltage(value));
+
+    if (_writeTrace) {
+        _targetTrace.dac.write(_tick, _targetState.dac);
+    }
+
+    for (auto observer : _targetOutputObservers) {
+        observer->writeDac(channel, value);
     }
 }
+
+void Simulator::writeDigitalOutput(int pin, bool value) {
+    _targetState.digitalOutput.set(pin, value);
+
+    if (_writeTrace) {
+        _targetTrace.digitalOutput.write(_tick, _targetState.digitalOutput);
+    }
+
+    for (auto observer : _targetOutputObservers) {
+        observer->writeDigitalOutput(pin, value);
+    }
+}
+
+void Simulator::writeLcd(uint8_t *frameBuffer) {
+    _targetState.lcd.set(frameBuffer);
+
+    if (_writeTrace) {
+        _targetTrace.lcd.write(_tick, _targetState.lcd);
+    }
+
+    for (auto observer : _targetOutputObservers) {
+        observer->writeLcd(frameBuffer);
+    }
+}
+
+void Simulator::writeMidiOutput(MidiEvent event) {
+    if (_writeTrace) {
+        _targetTrace.midiOutput.write(_tick, event);
+    }
+
+    for (auto observer : _targetOutputObservers) {
+        observer->writeMidiOutput(event);
+    }
+}
+
 
 Simulator &Simulator::instance() {
     return *g_instance;
 }
 
-void Simulator::addUpdateCallback(UpdateCallback callback) {
-    _updateCallbacks.emplace_back(callback);
-}
+void Simulator::step() {
+    // std::cout << "step: tick=" << _tick << std::endl;
 
-bool Simulator::terminate() const {
-    return _window.terminate();
-}
+    if (!_targetCreated) {
+        _target.create();
+        _targetCreated = true;
+    }
 
-void Simulator::update() {
     for (const auto &callback : os::updateCallbacks()) {
         callback();
     }
+
     for (const auto &callback : _updateCallbacks) {
         callback();
     }
 
-    _midi.update();
-    _window.update();
-}
+    _target.update();
 
-void Simulator::render() {
-    double currentTicks = ticks();
-    if (currentTicks < _lastRenderTicks + 15) {
-        return;
-    }
-    _lastRenderTicks = currentTicks;
-    _window.render();
-}
-
-void Simulator::delay(int ms) {
-    SDL_Delay(ms);
-}
-
-void Simulator::setupInstruments() {
-    // _instruments.reset(new SamplerSetup(_audio));
-    _instruments.reset(new MixedSetup(_audio));
+    _tick += 1;
 }
 
 } // namespace sim

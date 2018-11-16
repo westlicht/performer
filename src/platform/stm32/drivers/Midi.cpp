@@ -55,8 +55,8 @@ bool Midi::recv(MidiMessage *message) {
     return false;
 }
 
-void Midi::setRecvFilter(std::function<bool(uint8_t)> filter) {
-    _filter = filter;
+void Midi::setRecvFilter(RecvFilter filter) {
+    _recvFilter = filter;
 }
 
 void Midi::send(uint8_t data) {
@@ -91,7 +91,7 @@ void Midi::handleIrq() {
     }
     if (usart_get_flag(MIDI_USART, USART_SR_RXNE)) {
         uint8_t data = usart_recv(MIDI_USART);
-        if (!_filter || !_filter(data)) {
+        if (!_recvFilter || !_recvFilter(data)) {
             if (_rxBuffer.full()) {
                 // overflow
                 ++_rxOverflow;

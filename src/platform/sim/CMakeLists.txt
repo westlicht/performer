@@ -18,7 +18,7 @@ add_subdirectory(libs/rtmidi)
 # platform
 
 set(platform_dependencies "" PARENT_SCOPE)
-set(platform_compiler_flags "-Wno-unknown-pragmas -Wno-unknown-attributes ${SDL_FLAGS}" PARENT_SCOPE)
+set(platform_compiler_flags "-fPIC -Wno-unknown-pragmas -Wno-unknown-attributes ${SDL_FLAGS}" PARENT_SCOPE)
 set(platform_linker_flags "" PARENT_SCOPE)
 
 set(platform_sources
@@ -46,19 +46,18 @@ set(platform_sources
     # stb
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/stb/stb_image_write.cpp
     # drivers
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/ButtonLedMatrix.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Dio.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Encoder.cpp
     # sim
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/Audio.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/InstrumentSetup.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/Midi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Simulator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/Text.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/Window.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/instruments/DrumSampler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/instruments/Synth.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/Trace.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Audio.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Frontend.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/InstrumentSetup.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Midi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Text.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/instruments/DrumSampler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/instruments/Synth.cpp
     # os
     ${CMAKE_CURRENT_SOURCE_DIR}/os/os.cpp
 
@@ -76,6 +75,7 @@ set(platform_include_directories
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/include
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/rtmidi
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/tinyformat
     PARENT_SCOPE
 )
 
@@ -100,7 +100,10 @@ set(platform_defines
 # functions
 
 function(platform_postprocess_executable executable)
-    if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-        # nothing for now
-    endif()
 endfunction(platform_postprocess_executable)
+
+# pybind11
+
+if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+    add_subdirectory(libs/pybind11)
+endif()

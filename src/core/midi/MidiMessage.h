@@ -242,6 +242,7 @@ public:
     // Constructor
 
     MidiMessage() = default;
+    MidiMessage(const MidiMessage &other) = default;
     MidiMessage(uint8_t status) :
         _raw { status }, _length(1)
     {}
@@ -251,6 +252,12 @@ public:
     MidiMessage(uint8_t status, uint8_t data0, uint8_t data1) :
         _raw { status, data0, data1 }, _length(3)
     {}
+    MidiMessage(const uint8_t *raw, size_t length) {
+        _raw[0] = length > 0 ? raw[0] : 0;
+        _raw[1] = length > 1 ? raw[1] : 0;
+        _raw[2] = length > 2 ? raw[2] : 0;
+        _length = std::min(size_t(2), length);
+    }
 
     // Factory
 

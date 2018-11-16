@@ -1,19 +1,16 @@
 #pragma once
 
 #include "core/midi/MidiMessage.h"
-#include "core/midi/MidiParser.h"
 
 #include "sim/Simulator.h"
-#include "sim/MidiConfig.h"
 
 #include <functional>
 #include <deque>
-#include <mutex>
 #include <memory>
 
 #include <cstdint>
 
-class UsbMidi {
+class UsbMidi : private sim::TargetInputHandler {
 public:
     typedef std::function<void(uint16_t vendorId, uint16_t productId)> ConnectHandler;
     typedef std::function<void()> DisconnectHandler;
@@ -22,44 +19,21 @@ public:
     UsbMidi() :
         _simulator(sim::Simulator::instance())
     {
-        _port = std::make_shared<sim::Midi::Port>(
-            sim::usbMidiPortConfig.port,
-            [this] (uint8_t data) {
-                if (!_recvFilter || !_recvFilter(data)) {
-                    std::lock_guard<std::mutex> lock(_recvMutex);
-                    _recvQueue.emplace_back(data);
-                }
-            },
-            [this] () {
-                if (_connectHandler) {
-                    _connectHandler(sim::usbMidiPortConfig.vendorId, sim::usbMidiPortConfig.productId);
-                }
-            },
-            [this] () {
-                if (_disconnectHandler) {
-                    _disconnectHandler();
-                }
-            }
-        );
-
-        _simulator.midi().registerPort(_port);
+        _simulator.registerTargetInputObserver(this);
     }
 
     void init() {}
 
     bool send(const MidiMessage &message) {
-        return _port->send(message.raw(), message.length());
+        _simulator.writeMidiOutput(sim::MidiEvent::makeMessage(1, message));
+        return true;
     }
 
     bool recv(MidiMessage *message) {
-        std::lock_guard<std::mutex> lock(_recvMutex);
-        while (!_recvQueue.empty()) {
-            uint8_t data = _recvQueue.front();
+        if (!_recvQueue.empty()) {
+            *message = _recvQueue.front();
             _recvQueue.pop_front();
-            if (_midiParser.feed(data)) {
-                *message = _midiParser.message();
-                return true;
-            }
+            return true;
         }
         return false;
     }
@@ -79,13 +53,32 @@ public:
     uint32_t rxOverflow() const { return 0; }
 
 private:
+    void writeMidiInput(sim::MidiEvent event) {
+        if (event.port == 1) {
+            switch (event.kind) {
+            case sim::MidiEvent::Connect:
+                if (_connectHandler) {
+                    _connectHandler(event.connect.vendorId, event.connect.productId);
+                }
+                break;
+            case sim::MidiEvent::Disconnect:
+                if (_disconnectHandler) {
+                    _disconnectHandler();
+                }
+                break;
+            case sim::MidiEvent::Message:
+                if (event.message.length() != 1 || !_recvFilter || !_recvFilter(event.message.status())) {
+                    _recvQueue.emplace_back(event.message);
+                }
+                break;
+            }
+        }
+    }
+
     ConnectHandler _connectHandler;
     DisconnectHandler _disconnectHandler;
     RecvFilter _recvFilter;
 
     sim::Simulator &_simulator;
-    std::shared_ptr<sim::Midi::Port> _port;
-    std::deque<uint8_t> _recvQueue;
-    std::mutex _recvMutex;
-    MidiParser _midiParser;
+    std::deque<MidiMessage> _recvQueue;
 };

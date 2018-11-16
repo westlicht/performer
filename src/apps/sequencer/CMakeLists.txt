@@ -118,8 +118,15 @@ if(${PLATFORM} STREQUAL "stm32")
 endif()
 
 if(${PLATFORM} STREQUAL "sim")
-    add_executable(sequencer SequencerSim.cpp ${sources})
-    target_link_libraries(sequencer core)
+    add_library(sequencer_shared ${sources})
+    target_link_libraries(sequencer_shared core)
+
+    add_executable(sequencer SequencerSim.cpp)
+    target_link_libraries(sequencer sequencer_shared)
     platform_postprocess_executable(sequencer)
     add_custom_command(TARGET sequencer COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/../../platform/sim/assets ${CMAKE_BINARY_DIR}/assets)
+
+    if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+        add_subdirectory(python)
+    endif()
 endif()

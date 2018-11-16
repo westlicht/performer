@@ -3,25 +3,22 @@
 #include "SystemConfig.h"
 
 #include "sim/Simulator.h"
-#include "sim/widgets/Rotary.h"
 
+#include <array>
+
+#include <cmath>
 #include <cstdint>
-#include <cstdlib>
 
-class Adc {
+class Adc : private sim::TargetInputHandler {
 public:
     static constexpr int Channels = CONFIG_ADC_CHANNELS;
 
-    Adc() :
-        _simulator(sim::Simulator::instance())
-    {
-        for (int i = 0; i < Channels; ++i) {
-            auto rotary = _simulator.window().createWidget<sim::Rotary>(sim::Vector2i(50 + i * 50, 450), sim::Vector2i(40, 40));
-            rotary->setValueCallback([this, i] (float value) {
-                setChannel(i, value);
-            });
-            setChannel(i, 0.5f);
+    Adc() {
+        for (int channel = 0; channel < Channels; ++channel) {
+            _channels[channel] = 0x7fff;
         }
+
+        sim::Simulator::instance().registerTargetInputObserver(this);
     }
 
     void init() {}
@@ -31,11 +28,9 @@ public:
     }
 
 private:
-    void setChannel(int index, float value) {
-        _channels[index] = uint16_t(std::floor(0xffff - 0xffff * value));
+    void writeAdc(int channel, uint16_t value) override {
+        _channels[channel] = value;
     }
-
-    sim::Simulator &_simulator;
 
     std::array<uint16_t, Channels> _channels;
 };

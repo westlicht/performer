@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sim/Audio.h"
-#include "sim/Instrument.h"
+#include "../Audio.h"
+#include "../Instrument.h"
 
 #include "soloud.h"
 

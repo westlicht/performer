@@ -15,17 +15,14 @@ static int findPort(T &midi, const std::string &port) {
 }
 
 static void recvCallback(double timeStamp, std::vector<uint8_t> *message, void *userData) {
-    for (auto data : *message) {
-        auto &handler = *static_cast<Midi::Port::RecvHandler *>(userData);
-        handler(data);
-    }
+    auto &port = *static_cast<Midi::Port *>(userData);
+    port.receive(*message);
 }
 
 static void errorCallback(RtMidiError::Type type, const std::string &errorText, void *userData) {
     auto &port = *static_cast<Midi::Port *>(userData);
     port.notifyError();
 }
-
 
 bool Midi::Port::send(uint8_t data) {
     if (_output.isPortOpen()) {
@@ -51,14 +48,25 @@ void Midi::Port::update() {
     if (!_open) {
         open();
     } else {
-        if (findPort(_input, _port) == -1 || findPort(_output, _port) == -1) {
+        if (_error || findPort(_input, _port) == -1 || findPort(_output, _port) == -1) {
             close();
+        }
+
+        std::lock_guard<std::mutex> lock(_recvQueueMutex);
+        while (!_recvQueue.empty()) {
+            _recvHandler(_recvQueue.front());
+            _recvQueue.pop_front();
         }
     }
 }
 
 void Midi::Port::notifyError() {
-    close();
+    _error = true;
+}
+
+void Midi::Port::receive(const std::vector<uint8_t> &message) {
+    std::lock_guard<std::mutex> lock(_recvQueueMutex);
+    _recvQueue.emplace_back(message);
 }
 
 void Midi::Port::open() {
@@ -72,7 +80,7 @@ void Midi::Port::open() {
         if (index >= 0) {
             _input.openPort(index);
             _input.ignoreTypes(false, false, false);
-            _input.setCallback(recvCallback, &_recvHandler);
+            _input.setCallback(recvCallback, this);
             _input.setErrorCallback(errorCallback, this);
         } else {
             _input.closePort();
@@ -112,6 +120,7 @@ void Midi::Port::open() {
         _connectHandler();
     }
 
+    _error = false;
     _open = true;
 }
 
