@@ -12,38 +12,41 @@
 class ExpectError : public std::exception {};
 
 template<typename T>
-int integrationTestRunner() {
-    auto &simulator = sim::Simulator::instance();
+int integrationTestRunner(const char *name, bool interactive) {
+
+    DBG("\n========================================");
+    DBG("Integration Test: %s", name);
+    DBG("----------------------------------------");
+
+    std::unique_ptr<T> test;
 
     HighResolutionTimer::init();
 
-    T test;
-
     bool success = true;
 
-    DBG("\n========================================");
-    DBG("Integration Test: %s", test.name());
-    DBG("----------------------------------------");
+    sim::Simulator sim({
+        .create = [&] () {
+            test.reset(new T());
+
+            test->init();
+            test->once();
+
+            if (interactive) {
+                sim.close();
+            }
+        },
+        .destroy = [&] () {
+            test.reset();
+        },
+        .update = [&] () {
+            test->update();
+        }
+    });
 
     try {
-        test.init();
-        test.once();
-
-        if (test.interactive()) {
-            while (!simulator.terminate()) {
-                simulator.update();
-
-                try {
-                    test.update();
-                } catch (ExpectError &e) {
-                    simulator.close();
-                    success = false;
-                }
-
-                simulator.render();
-            }
-        }
+        sim.run();
     } catch (ExpectError &e) {
+        sim.close();
         success = false;
     }
 
@@ -54,9 +57,9 @@ int integrationTestRunner() {
     return success ? 0 : 1;
 }
 
-#define INTEGRATION_TEST_RUNNER(_class_)        \
-int main() {                                    \
-    return integrationTestRunner<_class_>();    \
+#define INTEGRATION_TEST_RUNNER(_class_, _name_, _interactive_)     \
+int main() {                                                        \
+    return integrationTestRunner<_class_>(_name_, _interactive_);   \
 }
 
 #define INTEGRATION_TEST_RUNNER_EXPECT(_cond_, _fmt_, ...)  \

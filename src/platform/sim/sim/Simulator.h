@@ -12,20 +12,23 @@
 
 namespace sim {
 
+struct Target {
+    std::function<void()> create;
+    std::function<void()> destroy;
+    std::function<void()> update;
+};
+
 class Simulator {
 public:
-    Simulator();
+    Simulator(Target target);
 
     Window &window() { return _window; }
     Audio &audio() { return _audio; }
 
+    void run();
+    void step();
+
     void close();
-
-    bool terminate() const;
-
-    void update();
-    void render();
-    void delay(int ms);
 
     double ticks();
 
@@ -48,8 +51,14 @@ public:
     static Simulator &instance();
 
 private:
+    bool terminate() const;
+    void update();
+    void render();
+    void delay(int ms);
+
     void setupInstruments();
 
+    Target _target;
     sdl::Init _sdl;
     Window _window;
     Audio _audio;

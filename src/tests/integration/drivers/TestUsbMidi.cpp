@@ -10,12 +10,11 @@
 
 class TestUsbMidi : public IntegrationTest {
 public:
-    TestUsbMidi() :
-        IntegrationTest("UsbMidi", true)
 #ifdef PLATFORM_STM32
-        ,usbh(usbMidi)
-#endif
+    TestUsbMidi() :
+        usbh(usbMidi)
     {}
+#endif
 
     void init() override {
         usbMidi.init();
@@ -53,4 +52,4 @@ private:
     uint8_t sendPosition = 0;
 };
 
-INTEGRATION_TEST(TestUsbMidi)
+INTEGRATION_TEST(TestUsbMidi, "UsbMidi", true)

@@ -4,10 +4,6 @@
 
 class TestMidi : public IntegrationTest {
 public:
-    TestMidi() :
-        IntegrationTest("Midi", true)
-    {}
-
     void init() override {
         midi.init();
     }
@@ -43,4 +39,4 @@ private:
     int step = 0;
 };
 
-INTEGRATION_TEST(TestMidi)
+INTEGRATION_TEST(TestMidi, "Midi", true)

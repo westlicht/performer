@@ -11,7 +11,6 @@
 class TestLcd : public IntegrationTest {
 public:
     TestLcd() :
-        IntegrationTest("Lcd", true),
         frameBuffer(256, 64, frameBufferData),
         canvas(frameBuffer)
     {}
@@ -53,4 +52,4 @@ private:
     int lastFrame = -1;
 };
 
-INTEGRATION_TEST(TestLcd)
+INTEGRATION_TEST(TestLcd, "Lcd", true)

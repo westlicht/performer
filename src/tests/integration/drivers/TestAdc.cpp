@@ -4,10 +4,6 @@
 
 class TestAdc : public IntegrationTest {
 public:
-    TestAdc() :
-        IntegrationTest("Adc", true)
-    {}
-
     void init() override {
         adc.init();
     }
@@ -23,4 +19,4 @@ private:
     Adc adc;
 };
 
-INTEGRATION_TEST(TestAdc)
+INTEGRATION_TEST(TestAdc, "Adc", true)

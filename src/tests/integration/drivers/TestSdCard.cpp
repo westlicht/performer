@@ -6,10 +6,6 @@
 
 class TestSdCard : public IntegrationTest {
 public:
-    TestSdCard() :
-        IntegrationTest("SdCard", false)
-    {}
-
     void init() override {
         sdCard.init();
     }
@@ -89,4 +85,4 @@ private:
     SdCard sdCard;
 };
 
-INTEGRATION_TEST(TestSdCard)
+INTEGRATION_TEST(TestSdCard, "SdCard", false)

@@ -11,7 +11,6 @@
 class TestGateOutput : public IntegrationTest {
 public:
     TestGateOutput() :
-        IntegrationTest("GateOutput", true),
 #ifdef PLATFORM_STM32
         _gateOutput(_shiftRegister),
 #endif
@@ -45,4 +44,4 @@ private:
     uint8_t _gates = 0;
 };
 
-INTEGRATION_TEST(TestGateOutput)
+INTEGRATION_TEST(TestGateOutput, "GateOutput", true)

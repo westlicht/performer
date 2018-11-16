@@ -4,10 +4,6 @@
 
 class TestDac : public IntegrationTest {
 public:
-    TestDac() :
-        IntegrationTest("Dac", true)
-    {}
-
     void init() override {
         dac.init();
     }
@@ -27,4 +23,4 @@ private:
     uint16_t value = 0;
 };
 
-INTEGRATION_TEST(TestDac)
+INTEGRATION_TEST(TestDac, "Dac", true)

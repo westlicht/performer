@@ -13,7 +13,6 @@
 class TestButtonLedMatrix : public IntegrationTest {
 public:
     TestButtonLedMatrix() :
-        IntegrationTest("ButtonLedMatrix", true),
 #ifdef PLATFORM_STM32
         _blm(_shiftRegister),
 #endif
@@ -63,4 +62,4 @@ private:
     std::array<int, ButtonLedMatrix::Rows * ButtonLedMatrix::ColsLed> _leds;
 };
 
-INTEGRATION_TEST(TestButtonLedMatrix)
+INTEGRATION_TEST(TestButtonLedMatrix, "ButtonLedMatrix", true)

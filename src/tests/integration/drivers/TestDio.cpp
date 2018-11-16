@@ -4,10 +4,6 @@
 
 class TestDio : public IntegrationTest {
 public:
-    TestDio() :
-        IntegrationTest("Dio", true)
-    {}
-
     void init() override {
         dio.init();
 
@@ -39,4 +35,4 @@ private:
     int resetInputCount = 0;
 };
 
-INTEGRATION_TEST(TestDio)
+INTEGRATION_TEST(TestDio, "Dio", true)

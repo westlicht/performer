@@ -12,19 +12,27 @@
 #include <sstream>
 #include <iomanip>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace sim {
 
-Simulator::Simulator() :
+static Simulator *g_instance;
+
+Simulator::Simulator(Target target) :
+    _target(target),
     _sdl(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER),
     _window("Sequencer", Vector2i(800, 500))
 {
+    g_instance = this;
+
     _timerFrequency = SDL_GetPerformanceFrequency();
     _timerStart = SDL_GetPerformanceCounter();
 
     setupInstruments();
 
     std::fill(_gate.begin(), _gate.end(), false);
-    std::fill(_gate.begin(), _gate.end(), 0);
 
     // button to take screenshots
     _screenshotButton = _window.createWidget<Button>(
@@ -39,38 +47,38 @@ Simulator::Simulator() :
     });
 }
 
+#ifdef __EMSCRIPTEN__
+static void mainLoop() {
+    g_instance->step();
+}
+#endif
+
+void Simulator::run() {
+    _target.create();
+
+#ifdef __EMSCRIPTEN__
+    // 0 fps means to use requestAnimationFrame; non-0 means to use setTimeout.
+    emscripten_set_main_loop(mainLoop, 0, 1);
+#else
+    while (!terminate()) {
+        step();
+    }
+#endif
+
+    _target.destroy();
+}
+
+void Simulator::step() {
+    update();
+    _target.update();
+    render();
+#ifdef __EMSCRIPTEN__
+    delay(1);
+#endif
+}
+
 void Simulator::close() {
     _window.close();
-}
-
-bool Simulator::terminate() const {
-    return _window.terminate();
-}
-
-void Simulator::update() {
-    for (const auto &callback : os::updateCallbacks()) {
-        callback();
-    }
-    for (const auto &callback : _updateCallbacks) {
-        callback();
-    }
-
-    _midi.update();
-
-    _window.update();
-}
-
-void Simulator::render() {
-    double currentTicks = ticks();
-    if (currentTicks < _lastRenderTicks + 15) {
-        return;
-    }
-    _lastRenderTicks = currentTicks;
-    _window.render();
-}
-
-void Simulator::delay(int ms) {
-    SDL_Delay(ms);
 }
 
 double Simulator::ticks() {
@@ -123,15 +131,40 @@ void Simulator::writeDac(int channel, uint16_t value) {
 }
 
 Simulator &Simulator::instance() {
-    static std::unique_ptr<Simulator> simulator;
-    if (!simulator) {
-        simulator.reset(new Simulator());
-    }
-    return *simulator;
+    return *g_instance;
 }
 
 void Simulator::addUpdateCallback(UpdateCallback callback) {
     _updateCallbacks.emplace_back(callback);
+}
+
+bool Simulator::terminate() const {
+    return _window.terminate();
+}
+
+void Simulator::update() {
+    for (const auto &callback : os::updateCallbacks()) {
+        callback();
+    }
+    for (const auto &callback : _updateCallbacks) {
+        callback();
+    }
+
+    _midi.update();
+    _window.update();
+}
+
+void Simulator::render() {
+    double currentTicks = ticks();
+    if (currentTicks < _lastRenderTicks + 15) {
+        return;
+    }
+    _lastRenderTicks = currentTicks;
+    _window.render();
+}
+
+void Simulator::delay(int ms) {
+    SDL_Delay(ms);
 }
 
 void Simulator::setupInstruments() {
