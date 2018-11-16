@@ -1,5 +1,4 @@
 
-include_directories(../../libs/lest/include/lest)
 include_directories(../../test)
 
 function(register_test test file)
