@@ -40,7 +40,7 @@ nav: 20
   - [Layout](#pages-layout)
   - [Track](#pages-track)
   - [Sequence](#pages-sequence)
-  - [Sequence Edit](#pages-sequence-edit)
+  - [Steps](#pages-steps)
   - [Song](#pages-song)
   - [Tempo](#pages-tempo)
   - [Pattern](#pages-pattern)
@@ -185,7 +185,7 @@ The playback of the sequence is controlled by additional parameters:
 - _Run Mode_ controls the order in which steps are played back
 - _First Step_ and _Last Step_ control what range of the sequence is played back
 
-Sequences are edited on the [Sequence Edit](#pages-sequence-edit) page and sequence parameters can be edited on the [Sequence](#pages-sequence) page.
+Sequences are edited on the [Steps](#pages-steps) page and sequence parameters can be edited on the [Sequence](#pages-sequence) page.
 
 <!-- Curve Track -->
 
@@ -361,7 +361,7 @@ The active page is selected by holding the `PAGE` button and pressing the corres
 | `PAGE` + `LAYOUT` (`TRACK2`) | [Layout](#pages-layout) |
 | `PAGE` + `TRACK` (`TRACK3`) | [Track](#pages-track) |
 | `PAGE` + `SEQ` (`TRACK4`) | [Sequence](#pages-sequence) |
-| `PAGE` + `SEQ EDIT` (`TRACK5`) | [Sequence Edit](#pages-sequence-edit) |
+| `PAGE` + `STEPS` (`TRACK5`) | [Steps](#pages-steps) |
 | `PAGE` + `SONG` (`TRACK7`) | [Song](#pages-song) |
 | `PAGE` + `ROUTING` (`TRACK8`) | [Routing](#pages-routing) |
 | `PAGE` + `USER SCALE` (`STEP1`) | [User Scale](#pages-user-scale) |
@@ -428,7 +428,7 @@ To allow moving and copying data, a copy/paste system is implemented that allows
 
 - Track (see [Track](#pages-track) page)
 - Sequence (see [Sequence](#pages-sequence) page)
-- Steps (see [Sequence Edit](#pages-sequence-edit) page)
+- Steps (see [Steps](#pages-steps) page)
 - Pattern (see [Pattern](#pages-pattern) page)
 - User Scale (see [User Scale](#pages-user-scale) page)
 
@@ -597,7 +597,7 @@ The _Sequence_ page is entered using `PAGE` + `SEQ`.
 
 This page allows to change the sequence settings of the currently selected sequence on the selected track. Note that the shown parameters depend on the configured _Track Mode_ of the selected track. Press `TRACK[1-8]` to change the selected track. Hold `PATT` and rotate the `ENCODER` to change the selected sequence.
 
-For quick access to most of the sequence parameters, there is also a quick edit mode on the [Sequence Edit](#pages-sequence-edit) page, introduced in the next section.
+For quick access to most of the sequence parameters, there is also a quick edit mode on the [Steps](#pages-steps) page, introduced in the next section.
 
 <h4>Context Menu</h4>
 
@@ -641,11 +641,11 @@ If a track is in _Curve_ mode, the following parameters are available:
 | First Step | 1 - 64 | First step to play. |
 | Last Step | 1 - 64 | Last step to play. |
 
-<!-- Sequence Edit -->
+<!-- Steps -->
 
-<h3 id="pages-sequence-edit">Sequence Edit</h3>
+<h3 id="pages-steps">Steps</h3>
 
-The _Sequence Edit_ page is entered using `PAGE` + `SEQ EDIT`.
+The _Steps_ page is entered using `PAGE` + `SEQ EDIT`.
 
 ![](images/page-note-steps.png)
 ![](images/page-curve-steps.png)
@@ -712,7 +712,7 @@ Copy/Paste only works with steps selected in _persistent_ mode. When more steps 
 
 <h4>Quick Access</h4>
 
-The _Sequence Edit_ page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as the _Run Mode_, _First Step_, _Last Step_ and others, one needs to temporarily switch to the [Sequence](#pages-sequence) page. This breaks the workflow, especially when in a live situation, where immediate access to the most important features and parameters is paramount. To help improve the workflow, most of the sequence parameters can be accessed through a quick access function. To access a parameter, hold `PAGE` and press `STEP[9-16]`, similarly to switching between pages, but keep holding the `PAGE` button. The page is now overlayed with the selected parameter.
+The _Steps_ page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as the _Run Mode_, _First Step_, _Last Step_ and others, one needs to temporarily switch to the [Sequence](#pages-sequence) page. This breaks the workflow, especially when in a live situation, where immediate access to the most important features and parameters is paramount. To help improve the workflow, most of the sequence parameters can be accessed through a quick access function. To access a parameter, hold `PAGE` and press `STEP[9-16]`, similarly to switching between pages, but keep holding the `PAGE` button. The page is now overlayed with the selected parameter.
 
 ![](images/page-note-steps-quick-access.png)
 
@@ -729,7 +729,7 @@ Depending on the _Track Mode_, the following parameters are available through qu
 | `STEP15` | Last Step | Last Step |
 | `STEP16` | - | - |
 
-While holding the `PAGE` button, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `STEP[1-16]` to select the most common values. Releasing the `PAGE` button will return to the normal state of the sequence edit page.
+While holding the `PAGE` button, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `STEP[1-16]` to select the most common values. Releasing the `PAGE` button will return to the normal state of the steps page.
 
 > Note: When quick access is active, the step LEDs will indicate the range of values that can be selected in green as well as the current selection in red.
 
