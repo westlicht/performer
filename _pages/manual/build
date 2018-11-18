@@ -33,6 +33,7 @@ def process_images():
         "page-layout-mode-confirm.png",
         "page-layout-mode.png",
         "page-midi-cv-track.png",
+        "page-midi-output.png",
         "page-monitor-cv-in.png",
         "page-monitor-cv-out.png",
         "page-monitor-midi.png",

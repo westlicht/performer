@@ -46,7 +46,7 @@ nav: 20
   - [Pattern](#pages-pattern)
   - [Performer](#pages-performer)
   - [Routing](#pages-routing)
-  - [Midi Out](#pages-midi-output)
+  - [Midi Output](#pages-midi-output)
   - [User Scale](#pages-user-scale)
   - [Monitor](#pages-monitor)
   - [Clock](#pages-clock)
@@ -361,7 +361,7 @@ The active page is selected by holding the `PAGE` button and pressing the corres
 | `PAGE` + `PROJECT` (`TRACK1`) | [Project](#pages-project) |
 | `PAGE` + `LAYOUT` (`TRACK2`) | [Layout](#pages-layout) |
 | `PAGE` + `ROUTING` (`TRACK3`) | [Routing](#pages-routing) |
-| `PAGE` + `MIDI OUT` (`TRACK4`) | [Routing](#pages-midi-output) |
+| `PAGE` + `MIDI OUT` (`TRACK4`) | [Midi Output](#pages-midi-output) |
 | `PAGE` + `USER SCALE` (`TRACK5`) | [User Scale](#pages-user-scale) |
 | `PAGE` + `STEPS` (`STEP1`) | [Steps](#pages-steps) |
 | `PAGE` + `SEQ` (`STEP2`) | [Sequence](#pages-sequence) |
@@ -922,11 +922,11 @@ In order to simplify assigning MIDI controllers to target parameters, press `F4`
 
 <!-- Midi Output -->
 
-<h3 id="pages-midi-output">Midi Out</h3>
+<h3 id="pages-midi-output">Midi Output</h3>
 
 The _Midi Output_ page is entered using `PAGE` + `MIDI OUT`.
 
-![](images/page-midi-out.png)
+![](images/page-midi-output.png)
 
 TODO
 
