@@ -46,6 +46,7 @@ nav: 20
   - [Pattern](#pages-pattern)
   - [Performer](#pages-performer)
   - [Routing](#pages-routing)
+  - [Midi Out](#pages-midi-output)
   - [User Scale](#pages-user-scale)
   - [Monitor](#pages-monitor)
   - [Clock](#pages-clock)
@@ -359,14 +360,15 @@ The active page is selected by holding the `PAGE` button and pressing the corres
 | `PAGE` + `PERF` | [Performer](#pages-performer) |
 | `PAGE` + `PROJECT` (`TRACK1`) | [Project](#pages-project) |
 | `PAGE` + `LAYOUT` (`TRACK2`) | [Layout](#pages-layout) |
-| `PAGE` + `TRACK` (`TRACK3`) | [Track](#pages-track) |
-| `PAGE` + `SEQ` (`TRACK4`) | [Sequence](#pages-sequence) |
-| `PAGE` + `STEPS` (`TRACK5`) | [Steps](#pages-steps) |
-| `PAGE` + `SONG` (`TRACK7`) | [Song](#pages-song) |
-| `PAGE` + `ROUTING` (`TRACK8`) | [Routing](#pages-routing) |
-| `PAGE` + `USER SCALE` (`STEP1`) | [User Scale](#pages-user-scale) |
-| `PAGE` + `MONITOR` (`STEP7`) | [Monitor](#pages-monitor) |
-| `PAGE` + `SYSTEM` (`STEP8`) | [System](#pages-system) |
+| `PAGE` + `ROUTING` (`TRACK3`) | [Routing](#pages-routing) |
+| `PAGE` + `MIDI OUT` (`TRACK4`) | [Routing](#pages-midi-output) |
+| `PAGE` + `USER SCALE` (`TRACK5`) | [User Scale](#pages-user-scale) |
+| `PAGE` + `STEPS` (`STEP1`) | [Steps](#pages-steps) |
+| `PAGE` + `SEQ` (`STEP2`) | [Sequence](#pages-sequence) |
+| `PAGE` + `TRACK` (`STEP3`) | [Track](#pages-track) |
+| `PAGE` + `SONG` (`STEP4`) | [Song](#pages-song) |
+| `PAGE` + `MONITOR` (`STEP8`) | [Monitor](#pages-monitor) |
+| `PAGE` + `SYSTEM` (`TRACK8`) | [System](#pages-system) |
 
 There are 3 special pages which can be entered temporarily by just holding a single button, namely the [Tempo](#pages-tempo), [Pattern](#pages-pattern) and [Performer](#pages-performer) pages. These pages give access to performance related features which need to be quickly accessible at any time.
 
@@ -881,9 +883,9 @@ Hold `STEP[9-16]` to enable fills on individual tracks. Hold `F4` to fill all tr
 
 > Note: There are different fill modes that can be configured per track on the [Track](#pages-track) page using the _Fill Mode_ parameter.
 
-<h3 id="pages-routing">Routing</h3>
-
 <!-- Routing -->
+
+<h3 id="pages-routing">Routing</h3>
 
 The _Routing_ page is entered using `PAGE` + `ROUTING`.
 
@@ -917,6 +919,16 @@ When changing the route parameters, they will not immediately be active. Press `
 In order to simplify assigning MIDI controllers to target parameters, press `F4` to enter MIDI learn mode. Simply rotate an encoder or press a key/button on the connected MIDI controller to assign it to the target parameter. MIDI learn mode is active when the _Learn_ button is highlighted. Press `F4` again to exit MIDI learn mode without assigning a MIDI controller.
 
 > Note: When creating a route, the original value the target parameter was set to before creating the route is lost. This also implies that the target parameter will not go back to its original value when a route is deleted.
+
+<!-- Midi Output -->
+
+<h3 id="pages-midi-output">Midi Out</h3>
+
+The _Midi Output_ page is entered using `PAGE` + `MIDI OUT`.
+
+![](images/page-midi-out.png)
+
+TODO
 
 <!-- User Scale -->
 
