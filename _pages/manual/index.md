@@ -524,7 +524,7 @@ If using a MIDI/CV track, it can be useful to map multiple virtual outputs of th
 
 The _Track_ page is entered using `PAGE` + `TRACK`.
 
-![](images/page-track.png)
+![](images/page-note-track.png)
 
 This page allows to change track wide settings. Note that the shown parameters depend on the configured _Track Mode_ of the selected track. Press `TRACK[1-8]` to change the selected track.
 
@@ -593,7 +593,7 @@ If a track is in MIDI/CV mode, the following parameters are available:
 
 The _Sequence_ page is entered using `PAGE` + `SEQ`.
 
-![](images/page-sequence.png)
+![](images/page-note-sequence.png)
 
 This page allows to change the sequence settings of the currently selected sequence on the selected track. Note that the shown parameters depend on the configured _Track Mode_ of the selected track. Press `TRACK[1-8]` to change the selected track. Hold `PATT` and rotate the `ENCODER` to change the selected sequence.
 
@@ -647,8 +647,8 @@ If a track is in _Curve_ mode, the following parameters are available:
 
 The _Sequence Edit_ page is entered using `PAGE` + `SEQ EDIT`.
 
-![](images/page-sequence-edit-note.png)
-![](images/page-sequence-edit-curve.png)
+![](images/page-note-steps.png)
+![](images/page-curve-steps.png)
 
 This page allows editing the currently selected sequence on the currently selected track. Depending on the track mode of the selected track, this page shows a different graphical representation of the sequence. If track mode is set to _MIDI/CV_, the page is not available and selecting it will jump to the [Track](#pages-track) page.
 
@@ -714,7 +714,7 @@ Copy/Paste only works with steps selected in _persistent_ mode. When more steps 
 
 The _Sequence Edit_ page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as the _Run Mode_, _First Step_, _Last Step_ and others, one needs to temporarily switch to the [Sequence](#pages-sequence) page. This breaks the workflow, especially when in a live situation, where immediate access to the most important features and parameters is paramount. To help improve the workflow, most of the sequence parameters can be accessed through a quick access function. To access a parameter, hold `PAGE` and press `STEP[9-16]`, similarly to switching between pages, but keep holding the `PAGE` button. The page is now overlayed with the selected parameter.
 
-![](images/page-sequence-edit-quick-access.png)
+![](images/page-note-steps-quick-access.png)
 
 Depending on the _Track Mode_, the following parameters are available through quick access:
 

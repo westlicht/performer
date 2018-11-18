@@ -11,6 +11,8 @@ IMAGE_OUTPUT_DIR = "images"
 TOC_MIN_LEVEL = 2
 TOC_MAX_LEVEL = 3
 
+COLORIZE = ["(", "-clone", "0", "-fill", "#cce500", "-colorize", "100", ")", "-compose", "multiply", "-composite"]
+
 def process_images():
 
     def infile(filename):
@@ -22,6 +24,7 @@ def process_images():
     pages = [
         "page-clock.png",
         "page-curve-sequence.png",
+        "page-curve-steps.png",
         "page-curve-track.png",
         "page-layout-cv-example.png",
         "page-layout-cv.png",
@@ -35,16 +38,14 @@ def process_images():
         "page-monitor-midi.png",
         "page-monitor-stats.png",
         "page-note-sequence.png",
+        "page-note-steps-quick-access.png",
+        "page-note-steps.png",
         "page-note-track.png",
         "page-pattern.png",
         "page-performer.png",
         "page-project.png",
         "page-routing-edit.png",
         "page-routing.png",
-        "page-sequence-edit-curve.png",
-        "page-sequence-edit-note.png",
-        "page-sequence-edit-quick-access.png",
-        "page-sequence.png",
         "page-song-chain-example.png",
         "page-song.png",
         "page-system-cal-edit.png",
@@ -54,7 +55,6 @@ def process_images():
         "page-system-utils.png",
         "page-tempo-nudge.png",
         "page-tempo.png",
-        "page-track.png",
         "page-user-scale.png",
     ]
 
@@ -63,11 +63,11 @@ def process_images():
     # rescale page images
     for filename in pages:
         print("resizing %s" % (filename))
-        call(["convert", infile(filename), "-filter", "Box", "-resize", "512x128", outfile(filename)])
+        call(["convert", infile(filename), *COLORIZE, "-filter", "Box", "-resize", "512x128", outfile(filename)])
 
     # create section images
     def section_image(filename):
-        call(["convert", infile("page-layout-mode.png"), "-filter", "Box", "-resize", "512x128", infile(filename), "-compose", "lighten", "-composite", outfile(filename)])
+        call(["convert", infile("page-layout-mode.png"), *COLORIZE, "-filter", "Box", "-resize", "512x128", infile(filename), "-compose", "lighten", "-composite", outfile(filename)])
 
     section_image("section-header.png")
     section_image("section-main.png")
