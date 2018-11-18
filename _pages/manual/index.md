@@ -647,7 +647,7 @@ If a track is in _Curve_ mode, the following parameters are available:
 
 <h3 id="pages-steps">Steps</h3>
 
-The _Steps_ page is entered using `PAGE` + `SEQ EDIT`.
+The _Steps_ page is entered using `PAGE` + `STEPS`.
 
 ![](images/page-note-steps.png)
 ![](images/page-curve-steps.png)
