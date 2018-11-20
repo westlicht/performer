@@ -258,11 +258,37 @@ public:
     CurveSequence::Layer selectedCurveSequenceLayer() const { return _selectedCurveSequenceLayer; }
     void setSelectedCurveSequenceLayer(CurveSequence::Layer layer) { _selectedCurveSequenceLayer = layer; }
 
+    // selectedTrack
+
+    const Track &selectedTrack() const { return _tracks[_selectedTrackIndex]; }
+          Track &selectedTrack()       { return _tracks[_selectedTrackIndex]; }
+
+    // noteSequence
+
+    const NoteSequence &noteSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].noteTrack().sequence(patternIndex); }
+          NoteSequence &noteSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].noteTrack().sequence(patternIndex); }
+
+    // selectedNoteSequence
+
+    const NoteSequence &selectedNoteSequence() const { return noteSequence(_selectedTrackIndex, selectedPatternIndex()); }
+          NoteSequence &selectedNoteSequence()       { return noteSequence(_selectedTrackIndex, selectedPatternIndex()); }
+
+    // curveSequence
+
+    const CurveSequence &curveSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].curveTrack().sequence(patternIndex); }
+          CurveSequence &curveSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].curveTrack().sequence(patternIndex); }
+
+    // selectedCurveSequence
+
+    const CurveSequence &selectedCurveSequence() const { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
+          CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
+
     //----------------------------------------
     // Observable
     //----------------------------------------
 
     enum Property {
+        TrackModes,
         SelectedTrackIndex,
         SelectedPatternIndex,
     };
@@ -275,25 +301,10 @@ public:
     // Methods
     //----------------------------------------
 
-    void setTrackMode(int trackIndex, Track::TrackMode trackMode);
-
-    const Track &selectedTrack() const { return _tracks[_selectedTrackIndex]; }
-          Track &selectedTrack()       { return _tracks[_selectedTrackIndex]; }
-
-    const NoteSequence &noteSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].noteTrack().sequence(patternIndex); }
-          NoteSequence &noteSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].noteTrack().sequence(patternIndex); }
-
-    const NoteSequence &selectedNoteSequence() const { return noteSequence(_selectedTrackIndex, selectedPatternIndex()); }
-          NoteSequence &selectedNoteSequence()       { return noteSequence(_selectedTrackIndex, selectedPatternIndex()); }
-
-    const CurveSequence &curveSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].curveTrack().sequence(patternIndex); }
-          CurveSequence &curveSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].curveTrack().sequence(patternIndex); }
-
-    const CurveSequence &selectedCurveSequence() const { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
-          CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
-
     void clear();
     void clearPattern(int patternIndex);
+
+    void setTrackMode(int trackIndex, Track::TrackMode trackMode);
 
     void write(WriteContext &context) const;
     bool read(ReadContext &context);

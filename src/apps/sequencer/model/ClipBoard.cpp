@@ -3,7 +3,9 @@
 #include "Model.h"
 #include "ModelUtils.h"
 
-ClipBoard::ClipBoard() {
+ClipBoard::ClipBoard(Project &project) :
+    _project(project)
+{
     clear();
 }
 
@@ -40,11 +42,11 @@ void ClipBoard::copyCurveSequenceSteps(const CurveSequence &curveSequence, const
     curveSequenceSteps.selected = selectedSteps;
 }
 
-void ClipBoard::copyPattern(const Project &project, int patternIndex) {
+void ClipBoard::copyPattern(int patternIndex) {
     _type = Type::Pattern;
     auto &pattern = _container.as<Pattern>();
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        const auto &track = project.track(trackIndex);
+        const auto &track = _project.track(trackIndex);
         pattern.sequences[trackIndex].trackMode = track.trackMode();
         switch (track.trackMode()) {
         case Track::TrackMode::Note:
@@ -67,6 +69,7 @@ void ClipBoard::copyUserScale(const UserScale &userScale) {
 void ClipBoard::pasteTrack(Track &track) const {
     if (canPasteTrack()) {
         Model::ConfigLock lock;
+        _project.setTrackMode(track.trackIndex(), _container.as<Track>().trackMode());
         track = _container.as<Track>();
     }
 }
@@ -99,12 +102,12 @@ void ClipBoard::pasteCurveSequenceSteps(CurveSequence &curveSequence, const Sele
     }
 }
 
-void ClipBoard::pastePattern(Project &project, int patternIndex) const {
+void ClipBoard::pastePattern(int patternIndex) const {
     if (canPastePattern()) {
         Model::WriteLock lock;
         const auto &pattern = _container.as<Pattern>();
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-            auto &track = project.track(trackIndex);
+            auto &track = _project.track(trackIndex);
             if (track.trackMode() == pattern.sequences[trackIndex].trackMode) {
                 switch (track.trackMode()) {
                 case Track::TrackMode::Note:

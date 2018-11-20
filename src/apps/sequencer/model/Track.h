@@ -22,6 +22,8 @@
 # define SANITIZE_TRACK_MODE(_actual_, _expected_) {}
 #endif // CONFIG_ENABLE_SANITIZE
 
+class Project;
+
 class Track {
 public:
     //----------------------------------------
@@ -53,18 +55,10 @@ public:
     // trackIndex
 
     int trackIndex() const { return _trackIndex; }
-    void setTrackIndex(int trackIndex) { _trackIndex = trackIndex; }
 
     // trackMode
 
     TrackMode trackMode() const { return _trackMode; }
-    void setTrackMode(TrackMode trackMode) {
-        trackMode = ModelUtils::clampedEnum(trackMode);
-        if (trackMode != _trackMode) {
-            _trackMode = trackMode;
-            setupTrack();
-        }
-    }
 
     void printTrackMode(StringBuilder &str) const {
         str(trackModeName(trackMode()));
@@ -108,7 +102,9 @@ public:
     // Methods
     //----------------------------------------
 
-    Track() { clear(); }
+    Track() {
+        initContainer();
+    }
 
     void clear();
     void clearPattern(int patternIndex);
@@ -121,14 +117,25 @@ public:
     void read(ReadContext &context);
 
     Track &operator=(const Track &other) {
-        setTrackMode(other._trackMode);
+        ASSERT(_trackMode == other._trackMode, "invalid track mode");
         _linkTrack = other._linkTrack;
         _container = other._container;
         return *this;
     }
 
 private:
-    void setupTrack();
+    void setTrackIndex(int trackIndex) { _trackIndex = trackIndex; }
+
+    // Note: always call through Project::setTrackMode
+    void setTrackMode(TrackMode trackMode) {
+        trackMode = ModelUtils::clampedEnum(trackMode);
+        if (trackMode != _trackMode) {
+            _trackMode = trackMode;
+            initContainer();
+        }
+    }
+
+    void initContainer();
 
     uint8_t _trackIndex = -1;
     TrackMode _trackMode;
@@ -140,6 +147,8 @@ private:
         CurveTrack *curve;
         MidiCvTrack *midiCv;
     } _track;
+
+    friend class Project;
 };
 
 #undef SANITIZE_TRACK_MODE

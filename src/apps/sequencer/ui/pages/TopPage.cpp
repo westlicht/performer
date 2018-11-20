@@ -12,6 +12,7 @@ TopPage::TopPage(PageManager &manager, PageContext &context) :
 {
     context.model.project().watch([this] (Project::Property property) {
         switch (property) {
+        case Project::Property::TrackModes:
         case Project::Property::SelectedTrackIndex:
         case Project::Property::SelectedPatternIndex:
             setMode(_mode);

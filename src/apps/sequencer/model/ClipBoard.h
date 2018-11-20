@@ -16,7 +16,7 @@ class ClipBoard {
 public:
     typedef std::bitset<CONFIG_STEP_COUNT> SelectedSteps;
 
-    ClipBoard();
+    ClipBoard(Project &project);
 
     void clear();
 
@@ -25,7 +25,7 @@ public:
     void copyNoteSequenceSteps(const NoteSequence &noteSequence, const SelectedSteps &selectedSteps);
     void copyCurveSequence(const CurveSequence &curveSequence);
     void copyCurveSequenceSteps(const CurveSequence &curveSequence, const SelectedSteps &selectedSteps);
-    void copyPattern(const Project &project, int patternIndex);
+    void copyPattern(int patternIndex);
     void copyUserScale(const UserScale &userScale);
 
     void pasteTrack(Track &track) const;
@@ -33,7 +33,7 @@ public:
     void pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps);
     void pasteCurveSequence(CurveSequence &curveSequence) const;
     void pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps);
-    void pastePattern(Project &project, int patternIndex) const;
+    void pastePattern(int patternIndex) const;
     void pasteUserScale(UserScale &userScale) const;
 
     bool canPasteTrack() const;
@@ -76,6 +76,7 @@ private:
         } sequences[CONFIG_TRACK_COUNT];
     };
 
+    Project &_project;
     Type _type = Type::None;
     Container<Track, NoteSequence, NoteSequenceSteps, CurveSequence, CurveSequenceSteps, Pattern, UserScale> _container;
 };

@@ -347,20 +347,20 @@ void PatternPage::initPattern() {
 }
 
 void PatternPage::copyPattern() {
-    _model.clipBoard().copyPattern(_project, _project.selectedPatternIndex());
+    _model.clipBoard().copyPattern(_project.selectedPatternIndex());
     showMessage("PATTERN COPIED");
 }
 
 void PatternPage::pastePattern() {
-    _model.clipBoard().pastePattern(_project, _project.selectedPatternIndex());
+    _model.clipBoard().pastePattern(_project.selectedPatternIndex());
     showMessage("PATTERN PASTED");
 }
 
 void PatternPage::duplicatePattern() {
     if (_project.selectedPatternIndex() < CONFIG_PATTERN_COUNT - 1) {
-        _model.clipBoard().copyPattern(_project, _project.selectedPatternIndex());
+        _model.clipBoard().copyPattern(_project.selectedPatternIndex());
         _project.editSelectedPatternIndex(1, false);
-        _model.clipBoard().pastePattern(_project, _project.selectedPatternIndex());
+        _model.clipBoard().pastePattern(_project.selectedPatternIndex());
         _model.clipBoard().clear();
         showMessage("PATTERN DUPLICATED");
     }

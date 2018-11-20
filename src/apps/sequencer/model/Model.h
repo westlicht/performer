@@ -43,6 +43,8 @@ public:
     // Methods
     //----------------------------------------
 
+    Model();
+
     void init();
 
 private:

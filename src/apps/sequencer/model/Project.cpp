@@ -72,8 +72,9 @@ void Project::clearPattern(int patternIndex) {
 
 void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
     // TODO make sure engine is synced to this before updating UI
-    // TODO reset snapshots
+    _playState.revertSnapshot();
     _tracks[trackIndex].setTrackMode(trackMode);
+    _observable.notify(TrackModes);
 }
 
 void Project::write(WriteContext &context) const {

@@ -1,10 +1,11 @@
 #include "Track.h"
+#include "Project.h"
 
 void Track::clear() {
     _trackMode = TrackMode::Default;
     _linkTrack = -1;
 
-    setupTrack();
+    initContainer();
 }
 
 void Track::clearPattern(int patternIndex) {
@@ -90,6 +91,8 @@ void Track::read(ReadContext &context) {
     reader.read(_trackMode);
     reader.read(_linkTrack);
 
+    initContainer();
+
     switch (_trackMode) {
     case TrackMode::Note:
         _track.note->read(context);
@@ -105,7 +108,11 @@ void Track::read(ReadContext &context) {
     }
 }
 
-void Track::setupTrack() {
+void Track::initContainer() {
+    _track.note = nullptr;
+    _track.curve = nullptr;
+    _track.midiCv = nullptr;
+
     switch (_trackMode) {
     case TrackMode::Note:
         _track.note = _container.create<NoteTrack>();
