@@ -16,3 +16,6 @@
 [submodule "src/platform/sim/libs/tinyformat"]
 	path = src/platform/sim/libs/tinyformat
 	url = https://github.com/c42f/tinyformat.git
+[submodule "src/platform/sim/libs/args"]
+	path = src/platform/sim/libs/args
+	url = https://github.com/Taywee/args.git
