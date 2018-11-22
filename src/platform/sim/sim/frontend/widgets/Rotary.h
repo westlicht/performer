@@ -42,13 +42,7 @@ public:
             return toInt(center + radius * Vector2f(std::sin(theta), -std::cos(theta)));
         };
 
-        const int Segments = 64;
-        for (int i = 0; i < Segments; ++i) {
-            auto theta1 = float(i) / Segments * TWO_PI;
-            auto theta2 = float(i + 1) / Segments * TWO_PI;
-            renderer.drawLine(pointOnCircle(theta1), pointOnCircle(theta2));
-        }
-
+        renderer.drawEllipse(_pos, _size);
         renderer.drawLine(toInt(center), pointOnCircle(-PI * 0.75f + _value * TWO_PI * 0.75f));
     }
 

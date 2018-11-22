@@ -1,48 +1,37 @@
 #pragma once
 
 #include "Common.h"
-#include "Renderer.h"
-#include "Text.h"
+
+#include <string>
+
+struct NVGcontext;
 
 namespace sim {
 
 class Renderer {
 public:
-    Renderer(sdl::Window &window) :
-        _renderer(&window, -1, SDL_RENDERER_ACCELERATED)
-    {}
+    Renderer(sdl::Window &window);
 
-    void clear() { _renderer.clear(); }
+    NVGcontext *nvg() const { return _nvg; }
 
-    void setColor(const Color &color) {
-        _renderer.setDrawColor(color.r() * 255, color.g() * 255, color.b() * 255, color.a() * 255);
-    }
+    void clear() ;
+    void setColor(const Color &color);
+    void drawRect(const Vector2i &pos, const Vector2i &size);
+    void fillRect(const Vector2i &pos, const Vector2i &size);
+    void drawEllipse(const Vector2i &pos, const Vector2i &size);
+    void fillEllipse(const Vector2i &pos, const Vector2i &size);
+    void drawLine(const Vector2i &p1, const Vector2i &p2);
+    void drawArc(const Vector2i &pos, const Vector2i &size, float rotation);
 
-    void drawRect(const Vector2i &pos, const Vector2i &size) {
-        SDL_Rect rect = { pos.x(), pos.y(), size.x(), size.y() };
-        _renderer.drawRect(&rect);
-    }
+    void drawText(const Vector2i &pos, const std::string &text);
 
-    void fillRect(const Vector2i &pos, const Vector2i &size) {
-        SDL_Rect rect = { pos.x(), pos.y(), size.x(), size.y() };
-        _renderer.fillRect(&rect);
-    }
-
-    void drawLine(const Vector2i &p1, const Vector2i &p2) {
-        _renderer.drawLine(p1.x(), p1.y(), p2.x(), p2.y());
-    }
-
-    void drawText(const Vector2i &pos, Text &text) {
-        SDL_Rect rect = { pos.x(), pos.y(), text.size().x(), text.size().y() };
-        _renderer.copy(&text.texture(), nullptr, &rect);
-    }
-
-    void present() { _renderer.present(); }
-
-    sdl::Renderer &sdl() { return _renderer; }
+    void present();
 
 private:
-    sdl::Renderer _renderer;
+    sdl::Window &_window;
+    SDL_GLContext _context;
+    NVGcontext *_nvg;
+    int _font;
 };
 
 } // namespace sim

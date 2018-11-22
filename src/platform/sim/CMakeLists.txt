@@ -2,12 +2,11 @@
 # SDL2
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-    set(SDL_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='[\"png\"]' -s USE_SDL_TTF=2 -s WASM=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
+    set(SDL_FLAGS "-s USE_SDL=2 -s WASM=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
     set(CMAKE_EXECUTABLE_SUFFIX ".html" PARENT_SCOPE)
 else()
     find_package(SDL2 REQUIRED)
-    find_package(SDL2_image REQUIRED)
-    find_package(SDL2_ttf REQUIRED)
+    find_package(OpenGL REQUIRED)
     set(SDL_FLAGS "")
 endif()
 
@@ -45,6 +44,8 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/core/soloud.cpp
     # stb
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/stb/stb_image_write.cpp
+    # nanovg
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/nanovg/src/nanovg.c
     # drivers
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
     # sim
@@ -54,6 +55,7 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Frontend.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/InstrumentSetup.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Midi.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Renderer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Text.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/instruments/DrumSampler.cpp
@@ -73,6 +75,7 @@ set(platform_include_directories
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/sdlpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/eigen
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/nanovg/src
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/include
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/rtmidi
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/tinyformat
@@ -83,6 +86,7 @@ set(platform_libraries
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARIES}
     ${SDL2_TTF_LIBRARIES}
+    ${OPENGL_LIBRARIES}
     rtmidi
     PARENT_SCOPE
 )

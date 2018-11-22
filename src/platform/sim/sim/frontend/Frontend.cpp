@@ -1,13 +1,17 @@
 #include "Frontend.h"
 #include "MidiConfig.h"
+#include "Frontpanel.h"
 
 #include "widgets/Button.h"
 #include "widgets/Led.h"
+#include "widgets/Image.h"
 
 #include "instruments/DrumSampler.h"
 #include "instruments/Synth.h"
 
 #include "sim/TargetConfig.h"
+
+#include "tinyformat.h"
 
 #include <memory>
 #include <sstream>
@@ -21,60 +25,36 @@ namespace sim {
 
 static Frontend *g_instance;
 
-struct ColSettings {
-    ColSettings(
-        const Vector2i &origin = Vector2i(0, 0),
-        const Vector2i &spacing = Vector2i(64, 0),
-        int stride = 8,
-        const Vector2i &buttonSize = Vector2i(20, 20),
-        const Vector2i &ledSize = Vector2i(10, 10),
-        const Vector2i &ledOffset = Vector2i(0, -20),
-        const Vector2i &labelSize = Vector2i(50, 10),
-        const Vector2i &labelOffset = Vector2i(0, 22)
-    ) {
-        this->origin = origin;
-        this->spacing = spacing;
-        this->stride = stride;
-        this->buttonSize = buttonSize;
-        this->ledSize = ledSize;
-        this->ledOffset = ledOffset;
-        this->labelSize = labelSize;
-        this->labelOffset = labelOffset;
-    }
-    Vector2i origin;
-    Vector2i spacing;
-    int stride;
-    Vector2i buttonSize;
-    Vector2i ledSize;
-    Vector2i ledOffset;
-    Vector2i labelSize;
-    Vector2i labelOffset;
-};
-
-static ColSettings colSettings[5] = {
-//    origin                                spacing             stride  buttonSize
-    { Vector2i(64 + 16 + 32, 380)                                                           },
-    { Vector2i(64 + 16 + 32, 320)                                                           },
-    { Vector2i(64 + 16 + 32, 260)                                                           },
-    { Vector2i(64 + 16 + 512 + 64, 200),    Vector2i(64, 60),   2                           },
-    { Vector2i(64 + 16 + 51, 200),          Vector2i(102, 0),   8,      Vector2i(40, 20)    },
-};
-
+template<typename T>
+static void addWidget(std::vector<T> &list, T widget, int index) {
+    list.resize(std::max(int(list.size()), index + 1));
+    list[index] = widget;
+}
 
 Frontend::Frontend(Simulator &simulator) :
     _sdl(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER),
-    _simulator(simulator),
-    _window("Sequencer", Vector2i(800, 500))
+    _simulator(simulator)
 {
     g_instance = this;
 
     _timerFrequency = SDL_GetPerformanceFrequency();
     _timerStart = SDL_GetPerformanceCounter();
 
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
+
     setupWindow();
     setupMidi();
     setupInstruments();
 
+    _simulator.registerTargetInputObserver(this);
     _simulator.registerTargetOutputObserver(this);
 }
 
@@ -99,20 +79,20 @@ void Frontend::run() {
     // _target.destroy();
 }
 
-void Frontend::close() {
-    _window.close();
-}
-
-bool Frontend::terminate() const {
-    return _window.terminate();
-}
-
 void Frontend::step() {
     update();
     render();
 #ifdef __EMSCRIPTEN__
     delay(1);
 #endif
+}
+
+void Frontend::close() {
+    _window->close();
+}
+
+bool Frontend::terminate() const {
+    return _window->terminate();
 }
 
 void Frontend::update() {
@@ -123,7 +103,7 @@ void Frontend::update() {
     _lastUpdateTicks = currentTicks;
 
     _midi.update();
-    _window.update();
+    _window->update();
 }
 
 void Frontend::render() {
@@ -132,7 +112,7 @@ void Frontend::render() {
         return;
     }
     _lastRenderTicks = currentTicks;
-    _window.render();
+    _window->render();
 }
 
 void Frontend::delay(int ms) {
@@ -145,59 +125,14 @@ double Frontend::ticks() const {
 }
 
 void Frontend::setupWindow() {
-    setupEncoder();
-    setupLcd();
-    setupButtonLedMatrix();
-    setupAdc();
-    setupDio();
+    Vector2i size(Frontpanel::windowWidth, Frontpanel::windowHeight + 80);
+    _window = std::make_shared<Window>("PER|FORMER Simulator", size);
 
-    auto screenshotButton = _window.createWidget<Button>(
-        Vector2i(8, 8),
-        Vector2i(8, 8),
-        SDLK_F10
-    );
-
-    screenshotButton->setCallback([&] (bool pressed) {
-        // if (pressed) {
-        //     screenshot();
-        // }
-    });
+    setupFrontpanel();
+    setupControls();
 }
 
-void Frontend::setupEncoder() {
-    auto encoder = _window.createWidget<Encoder>(
-        Vector2i(8, 8 + 32),
-        Vector2i(64, 64),
-        SDLK_SPACE
-    );
-
-    encoder->setButtonCallback([this] (bool pressed) {
-        _simulator.writeEncoder(pressed ? EncoderEvent::Down : EncoderEvent::Up);
-    });
-
-    encoder->setValueCallback([this] (int value) {
-        if (value > 0) {
-            for (int i = 0; i < value; ++i) {
-                _simulator.writeEncoder(EncoderEvent::Right);
-            }
-        } else if (value < 0) {
-            for (int i = 0; i > value; --i) {
-                _simulator.writeEncoder(EncoderEvent::Left);
-            }
-        }
-    });
-}
-
-void Frontend::setupLcd() {
-    Vector2i resolution(TargetConfig::LcdWidth, TargetConfig::LcdHeight);
-    _display = _window.createWidget<Display>(
-        Vector2i(64 + 16, 8),
-        resolution * 2 + Vector2i(2, 2),
-        resolution
-    );
-}
-
-void Frontend::setupButtonLedMatrix() {
+void Frontend::setupFrontpanel() {
     const std::vector<SDL_Keycode> keys({
         SDLK_z, SDLK_x, SDLK_c, SDLK_v, SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA,
         SDLK_a, SDLK_s, SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k,
@@ -206,123 +141,186 @@ void Frontend::setupButtonLedMatrix() {
         SDLK_F1, SDLK_F2, SDLK_F3, SDLK_F4, SDLK_F5
     });
 
-    const std::vector<std::string> labels({
-        "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16",
-        "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8",
-        "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8",
-        "PLAY", "TEMPO", "PATT", "PERF", "<", ">", "SHIFT", "PAGE",
-        "", "", "", "", ""
-    });
+    const double scale = Frontpanel::scale;
 
-    for (int col = 0; col < TargetConfig::ColsButton; ++col) {
-        const auto &settings = colSettings[col];
-        for (int row = 0; row < TargetConfig::Rows; ++row) {
-            if (col == TargetConfig::ColsButton - 1 && row >= 5) {
-                continue;
+    auto transformToScreen = [&] (double x, double y) {
+        return Vector2i(x * scale, y * scale);
+    };
+
+    auto scaleToScreen = [&] (double w, double h) {
+        return Vector2i(w * scale, h * scale);
+    };
+
+    _window->createWidget<Image>(Vector2i(0, 0), scaleToScreen(Frontpanel::width, Frontpanel::height), "assets/frontpanel.png");
+
+    for (const auto &info : Frontpanel::infos) {
+        auto origin = transformToScreen(info.x, info.y);
+        auto size = scaleToScreen(info.w, info.h);
+
+        switch (info.widget) {
+        case Frontpanel::Widget::Jack: {
+            auto jack = _window->createWidget<Jack>(origin - size / 2, size);
+            switch (info.signal) {
+            case Frontpanel::Signal::MidiInput:
+                _midiInputJack = jack;
+                break;
+            case Frontpanel::Signal::MidiOutput:
+                _midiOutputJack = jack;
+                break;
+            case Frontpanel::Signal::DigitalInput:
+                addWidget(_digitalInputJacks, jack, info.index);
+                break;
+            case Frontpanel::Signal::DigitalOutput:
+                addWidget(_digitalOutputJacks, jack, info.index);
+                break;
+            case Frontpanel::Signal::CvInput:
+                addWidget(_cvInputJacks, jack, info.index);
+                break;
+            case Frontpanel::Signal::GateOutput:
+                addWidget(_gateOutputJacks, jack, info.index);
+                break;
+            case Frontpanel::Signal::CvOutput:
+                addWidget(_cvOutputJacks, jack, info.index);
+                break;
+            default:
+                break;
             }
-
-            int index = col * TargetConfig::Rows + row;
-
-            Vector2i origin(
-                settings.origin.x() + (row % settings.stride) * settings.spacing.x(),
-                settings.origin.y() + (row / settings.stride) * settings.spacing.y()
+            break;
+        }
+        case Frontpanel::Widget::Led: {
+            auto led = _window->createWidget<Led>(origin - size / 2, size);
+            if (info.signal == Frontpanel::Signal::Led) {
+                addWidget(_leds, led, info.index);
+            }
+            break;
+        }
+        case Frontpanel::Widget::CButton:
+        case Frontpanel::Widget::RButton: {
+            auto button = _window->createWidget<Button>(
+                origin - size / 2,
+                size,
+                info.widget == Frontpanel::Widget::CButton ? Button::Ellipse : Button::Rectangle,
+                keys[info.index]
             );
-
-            // button
-            auto button = _window.createWidget<Button>(
-                origin - settings.buttonSize / 2,
-                settings.buttonSize,
-                keys[index]
-            );
-            button->setCallback([this, index] (bool pressed) {
-                _simulator.writeButton(index, pressed);
+            if (info.signal == Frontpanel::Signal::Button) {
+                button->setCallback([this, info] (bool pressed) {
+                    _simulator.writeButton(info.index, pressed);
+                });
+                addWidget(_buttons, button, info.index);
+            }
+            break;
+        }
+        case Frontpanel::Widget::Encoder: {
+            _encoder = _window->createWidget<Encoder>(origin - size / 2, size, SDLK_SPACE);
+            _encoder->setButtonCallback([this] (bool pressed) {
+                _simulator.writeEncoder(pressed ? EncoderEvent::Down : EncoderEvent::Up);
             });
-            _buttons.emplace_back(button);
 
-            // button label
-            auto buttonLabel = _window.createWidget<Label>(
-                origin - settings.buttonSize / 2,
-                settings.buttonSize,
-                SDL_GetKeyName(keys[index]),
-                Font("inconsolata", 12),
-                Color(0.5f, 1.f)
-            );
-            _labels.emplace_back(buttonLabel);
-
-            // led
-            if (col < TargetConfig::ColsLed) {
-                auto led = _window.createWidget<Led>(
-                    origin + settings.ledOffset - settings.ledSize / 2,
-                    settings.ledSize
-                );
-                _leds.emplace_back(led);
-            }
-
-            auto label = _window.createWidget<Label>(
-                origin + settings.labelOffset - settings.labelSize / 2,
-                settings.labelSize,
-                labels[index],
-                Font("inconsolata", 16),
-                Color(1.f, 1.f)
-            );
-            _labels.emplace_back(label);
+            _encoder->setValueCallback([this] (int value) {
+                if (value > 0) {
+                    for (int i = 0; i < value; ++i) {
+                        _simulator.writeEncoder(EncoderEvent::Right);
+                    }
+                } else if (value < 0) {
+                    for (int i = 0; i > value; --i) {
+                        _simulator.writeEncoder(EncoderEvent::Left);
+                    }
+                }
+            });
+            break;
+        }
+        case Frontpanel::Widget::Lcd: {
+            Vector2i resolution(TargetConfig::LcdWidth, TargetConfig::LcdHeight);
+            _lcd = _window->createWidget<Display>(origin, size, resolution);
+            break;
+        }
         }
     }
 }
 
-void Frontend::setupAdc() {
+void Frontend::setupControls() {
+    int x = 10;
+    int y = Frontpanel::windowHeight;
+
+    // cv inputs
     for (int i = 0; i < TargetConfig::AdcChannels; ++i) {
-        auto rotary = _window.createWidget<Rotary>(Vector2i(50 + i * 50, 450), Vector2i(40, 40));
+        auto rotary = _window->createWidget<Rotary>(Vector2i(x, y + 10), Vector2i(40, 40));
         rotary->setValueCallback([this, i] (float value) {
-            _simulator.setAdc(i, value);
+            _simulator.setAdc(i, value * 10.f - 5.f);
         });
-        _simulator.setAdc(i, 0.5f);
+        _simulator.setAdc(i, 0.f);
+        _window->createWidget<Label>(Vector2i(x, y + 60), Vector2i(40, 10), tfm::format("CV%d IN", i + 1));
+        x += 50;
     }
-}
 
-void Frontend::setupDio() {
     // clock input
-    auto button = _window.createWidget<Button>(
-        Vector2i(600, 100),
-        Vector2i(20, 20),
-        SDLK_F10
-    );
+    {
+        auto button = _window->createWidget<Button>(
+            Vector2i(x + 10, y + 20),
+            Vector2i(20, 20),
+            Button::Rectangle,
+            SDLK_F10
+        );
+        _window->createWidget<Label>(Vector2i(x, y + 60), Vector2i(40, 10), "CLK IN");
+        x += 50;
 
-    _clockSource.reset(new ClockSource(_simulator, [this] () {
-        _simulator.writeDigitalInput(0, true);
-        _simulator.writeDigitalInput(0, false);
-    }));
+        _clockSource.reset(new ClockSource(_simulator, [this] () {
+            _simulator.writeDigitalInput(0, true);
+            _simulator.writeDigitalInput(0, false);
+        }));
 
-    button->setCallback([this] (bool pressed) {
-        if (pressed) {
-            _clockSource->toggle();
-        }
-    });
+        button->setCallback([this] (bool pressed) {
+            if (pressed) {
+                _clockSource->toggle();
+            }
+        });
+    }
 
     // reset input
-    button = _window.createWidget<Button>(
-        Vector2i(600, 130),
-        Vector2i(20, 20),
-        SDLK_F11
-    );
-    button->setCallback([this] (bool pressed) {
-        _simulator.writeDigitalInput(1, pressed);
-    });
+    {
+        auto button = _window->createWidget<Button>(
+            Vector2i(x + 10, y + 20),
+            Vector2i(20, 20),
+            Button::Rectangle,
+            SDLK_F11
+        );
+        _window->createWidget<Label>(Vector2i(x, y + 60), Vector2i(40, 10), "RST IN");
+        x += 50;
 
-    // clock output
-    _clockOutputLed = _window.createWidget<Led>(
-        Vector2i(630, 100),
-        Vector2i(20, 20),
-        Color(0.f, 1.f)
-    );
+        button->setCallback([this] (bool pressed) {
+            _simulator.writeDigitalInput(1, pressed);
+        });
+    }
 
-    // reset output
-    _resetOutputLed = _window.createWidget<Led>(
-        Vector2i(630, 130),
-        Vector2i(20, 20),
-        Color(0.f, 1.f)
-    );
+    // screenshot
+    {
+        auto button = _window->createWidget<Button>(
+            Vector2i(x + 10, y + 20),
+            Vector2i(40, 20),
+            Button::Rectangle,
+            SDLK_F12
+        );
+        _window->createWidget<Label>(Vector2i(x, y + 60), Vector2i(60, 10), "SCREENSHOT");
+        x += 70;
+
+        button->setCallback([&] (bool pressed) {
+            if (pressed) {
+                _simulator.screenshot("screenshot.png");
+            }
+        });
+
+    }
 }
+
+// // button label
+// auto buttonLabel = _window->createWidget<Label>(
+//     origin - settings.buttonSize / 2,
+//     settings.buttonSize,
+//     SDL_GetKeyName(keys[index]),
+//     Font("inconsolata", 12),
+//     Color(0.5f, 1.f)
+// );
+// _labels.emplace_back(buttonLabel);
 
 void Frontend::setupMidi() {
     _midiPort = std::make_shared<Midi::Port>(
@@ -359,6 +357,34 @@ void Frontend::setupInstruments() {
     _instruments.reset(new MixedSetup(_audio));
 }
 
+// TargetInputHandler
+
+void Frontend::writeButton(int index, bool pressed) {
+    _buttons[index]->setState(pressed);
+}
+
+void Frontend::writeEncoder(EncoderEvent event) {
+}
+
+void Frontend::writeAdc(int channel, uint16_t value) {
+    auto valueToVoltage = [] (uint16_t value) {
+        float normalized = (0xffff - value) / float(0xffff);
+        return (normalized - 0.5f) * 10.f;
+    };
+
+    float voltage = valueToVoltage(value);
+    _cvInputJacks[channel]->setValue(voltage, -5.f, 5.f);
+}
+
+void Frontend::writeDigitalInput(int pin, bool value) {
+    _digitalInputJacks[pin]->setState(value);
+}
+
+void Frontend::writeMidiInput(MidiEvent event) {
+}
+
+// TargetOutputHandler
+
 void Frontend::writeLed(int index, bool red, bool green) {
     if (index < int(_leds.size())) {
         _leds[index]->color() = Color(red ? 1.f : 0.f, green ? 1.f : 0.f, 0.f, 1.f);
@@ -367,10 +393,11 @@ void Frontend::writeLed(int index, bool red, bool green) {
 
 void Frontend::writeGateOutput(int channel, bool value) {
     _instruments->setGate(channel, value);
+    _gateOutputJacks[channel]->setState(value);
 }
 
 void Frontend::writeDac(int channel, uint16_t value) {
-    auto valueToVolts = [] (uint16_t value) {
+    auto valueToVoltage = [] (uint16_t value) {
         // In ideal DAC/OpAmp configuration we get:
         // 0     ->  5.17V
         // 32768 -> -5.25V
@@ -382,22 +409,17 @@ void Frontend::writeDac(int channel, uint16_t value) {
         return (value - value0) / (value1 - value0) * 10.f - 5.f;
     };
 
-    _instruments->setCv(channel, valueToVolts(value));
+    float voltage = valueToVoltage(value);
+    _instruments->setCv(channel, voltage);
+    _cvOutputJacks[channel]->setValue(voltage, -5.f, 5.f);
 }
 
 void Frontend::writeDigitalOutput(int pin, bool value) {
-    switch (pin) {
-    case 0:
-        _clockOutputLed->color() = Color(value ? 1.f : 0.f, 1.f);
-        break;
-    case 1:
-        _resetOutputLed->color() = Color(value ? 1.f : 0.f, 1.f);
-        break;
-    }
+    _digitalOutputJacks[pin]->setState(value);
 }
 
 void Frontend::writeLcd(uint8_t *frameBuffer) {
-    _display->draw(frameBuffer);
+    _lcd->draw(frameBuffer);
 }
 
 void Frontend::writeMidiOutput(MidiEvent event) {

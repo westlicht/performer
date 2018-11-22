@@ -21,9 +21,9 @@ public:
 
     virtual void render(Renderer &renderer) override {
         renderer.setColor(Color(0.5f, 1.f));
-        renderer.drawRect(_pos, _size);
+        renderer.drawEllipse(_pos, _size);
         renderer.setColor(_color);
-        renderer.fillRect(_pos + Vector2i(1, 1), _size - Vector2i(2, 2));
+        renderer.fillEllipse(_pos + Vector2i(1, 1), _size - Vector2i(2, 2));
     }
 
 private:

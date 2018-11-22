@@ -8,6 +8,8 @@ namespace sim {
 
 class Window {
 public:
+    typedef std::shared_ptr<Window> Ptr;
+
     Window(const std::string &title, const Vector2i &size);
 
     void close() { _terminate = true; }

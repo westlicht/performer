@@ -3,7 +3,7 @@
 namespace sim {
 
 Window::Window(const std::string &title, const Vector2i &size) :
-    _window(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size.x(), size.y(), 0),
+    _window(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size.x(), size.y(), SDL_WINDOW_OPENGL),
     _renderer(_window)
 {
     _eventHandler.quit = [this] (const SDL_QuitEvent &) {

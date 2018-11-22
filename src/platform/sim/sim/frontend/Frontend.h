@@ -13,6 +13,7 @@
 #include "widgets/Label.h"
 #include "widgets/Led.h"
 #include "widgets/Rotary.h"
+#include "widgets/Jack.h"
 
 #include "sim/Simulator.h"
 
@@ -23,17 +24,17 @@
 
 namespace sim {
 
-class Frontend : private TargetOutputHandler {
+class Frontend : private TargetInputHandler, TargetOutputHandler {
 public:
     Frontend(Simulator &simulator);
 
     void run();
+    void step();
 
     void close();
 
 private:
     bool terminate() const;
-    void step();
     void update();
     void render();
     void delay(int ms);
@@ -41,14 +42,18 @@ private:
     double ticks() const;
 
     void setupWindow();
-    void setupEncoder();
-    void setupLcd();
-    void setupButtonLedMatrix();
-    void setupAdc();
-    void setupDio();
+    void setupFrontpanel();
+    void setupControls();
 
     void setupMidi();
     void setupInstruments();
+
+    // TargetInputHandler
+    void writeButton(int index, bool pressed) override;
+    void writeEncoder(EncoderEvent event) override;
+    void writeAdc(int channel, uint16_t value) override;
+    void writeDigitalInput(int pin, bool value) override;
+    void writeMidiInput(MidiEvent event) override;
 
     // TargetOutputHandler
     void writeLed(int index, bool red, bool green) override;
@@ -60,7 +65,6 @@ private:
 
     sdl::Init _sdl;
     Simulator &_simulator;
-    Window _window;
     Audio _audio;
     std::unique_ptr<InstrumentSetup> _instruments;
 
@@ -76,12 +80,19 @@ private:
 
     std::unique_ptr<ClockSource> _clockSource;
 
-    Display::Ptr _display;
+    Window::Ptr _window;
+    Encoder::Ptr _encoder;
+    Display::Ptr _lcd;
+    Jack::Ptr _midiInputJack;
+    Jack::Ptr _midiOutputJack;
+    std::vector<Jack::Ptr> _digitalInputJacks;
+    std::vector<Jack::Ptr> _digitalOutputJacks;
+    std::vector<Jack::Ptr> _cvInputJacks;
+    std::vector<Jack::Ptr> _gateOutputJacks;
+    std::vector<Jack::Ptr> _cvOutputJacks;
     std::vector<Button::Ptr> _buttons;
     std::vector<Led::Ptr> _leds;
     std::vector<Label::Ptr> _labels;
-    Led::Ptr _clockOutputLed;
-    Led::Ptr _resetOutputLed;
 };
 
 } // namespace sim

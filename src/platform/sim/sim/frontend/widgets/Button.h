@@ -8,12 +8,21 @@ class Button : public Widget {
 public:
     typedef std::shared_ptr<Button> Ptr;
 
-    Button(const Vector2i &pos, const Vector2i &size, SDL_Keycode keycode = -1) :
+    enum Shape {
+        Rectangle,
+        Ellipse,
+    };
+
+    Button(const Vector2i &pos, const Vector2i &size, Shape shape = Rectangle, SDL_Keycode keycode = -1) :
         Widget(pos, size),
+        _shape(shape),
         _keycode(keycode)
     {}
 
-    bool pressed() const { return _pressed; }
+    // bool pressed() const { return _pressed; }
+
+    bool state() const { return _state; }
+    void setState(bool state) { _state = state; }
 
     void setCallback(std::function<void(bool)> callback) {
         _callback = callback;
@@ -24,10 +33,17 @@ public:
 
     virtual void render(Renderer &renderer) override {
         renderer.setColor(Color(_hovered ? 0.75f : 0.5f, 1.f));
-        renderer.drawRect(_pos, _size);
-        if (_pressed) {
+        switch (_shape) {
+        case Rectangle: renderer.drawRect(_pos, _size);     break;
+        case Ellipse:   renderer.drawEllipse(_pos, _size);  break;
+        }
+
+        if (_state) {
             renderer.setColor(Color(1.f, 1.f));
-            renderer.fillRect(_pos + Vector2i(4, 4), _size - Vector2i(8, 8));
+            switch (_shape) {
+            case Rectangle: renderer.fillRect(_pos + Vector2i(4, 4), _size - Vector2i(8, 8));       break;
+            case Ellipse:   renderer.fillEllipse(_pos + Vector2i(4, 4), _size - Vector2i(8, 8));    break;
+            }
         }
     }
 
@@ -72,9 +88,11 @@ private:
         }
     }
 
+    Shape _shape;
     SDL_Keycode _keycode;
     bool _pressed = false;
     bool _hovered = false;
+    bool _state = false;
     std::function<void(bool)> _callback;
 };
 
