@@ -19,3 +19,6 @@
 [submodule "src/platform/sim/libs/args"]
 	path = src/platform/sim/libs/args
 	url = https://github.com/Taywee/args.git
+[submodule "src/platform/sim/libs/nanovg"]
+	path = src/platform/sim/libs/nanovg
+	url = https://github.com/memononen/nanovg.git
