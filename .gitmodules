@@ -13,3 +13,6 @@
 [submodule "src/platform/sim/libs/pybind11"]
 	path = src/platform/sim/libs/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "src/platform/sim/libs/tinyformat"]
+	path = src/platform/sim/libs/tinyformat
+	url = https://github.com/c42f/tinyformat.git
