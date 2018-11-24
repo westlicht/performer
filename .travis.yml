@@ -1,4 +1,4 @@
-dist: trusty
+dist: xenial
 language: cpp
 compiler: gcc
 notifications:
@@ -9,8 +9,6 @@ env:
     # the emscripten-libs-asmjs package. This speeds up the build significantly.
     - EM_USE_GLOBAL_CACHE=1
     - secure: "e5o7YJ+fPhhDGT/LU2QWyk+Pm1PSp7YPShFRHR9AkaMXsBKdWd1HmQ+a52UeBbKA4Pw5GRAL0g5KTm1D1L6VesLvovwtcQ7zosgBHFh7KuACi8E9a/xrDTwJie1lcTdxLbEPsd466ji59cLohj1Tc3zde8eVAAXdzMEi9yHF4pObInDnGjo1lxrZckjVa0GUKHZYFbMFmtl9XxOI61tewFwyLy6Hlv4TTcXLjSOUXCT+1losR/Hg3WrBYQGdAs4hHYPZgYVqnjS4YEX0wpF5hIQBXmY6FMcKG9+Rn9PWfhILhAX3LbWcTErm6DZ2kbvJ5fTOdsI1WJ2HHz3roW55eCBlJgFJJECv5AsAvrIlDY02ncsCZbpQRPWUzpX+o/0L11QpTquAylhGVQ2fvqtNVKSVMMniQGjRgpSUYIc1RkOZ2rirwNHUDUGMdtI9RkSud2s+ANyB9nGAosTiM7B76DQWpwQ5MiS8YbuypfXnk8FPhpZNWwMSxRuuTN16rJGXUmMUkMI87QIbNlQdnI+0ZTJmdKMuq4ZJJQFFVup00XTbjqYoj2ppEmXF9aN/wvyAJgBPYd1qwu4zWM/wWjJjx9d8l8sVQvc5xmdB48/dkwUMH1b36VeBQI+UqCO6MSS+cbwkaQDBjfie3WmF5Nl+Alj2fwCPvm/TOS59bdPRLkM="
-before_install:
- - sudo apt-get install libasound2-dev
 jobs:
   include:
     - stage: Hardware Platform (STM32)
@@ -27,17 +25,18 @@ jobs:
         on:
           tags: true
     - stage: Simulation Platform (Linux)
+      addons:
+        apt:
+          sources:
+          - sourceline: 'ppa:deadsnakes/ppa'
+          packages:
+          - libsdl2-dev
+          - libasound2-dev
+          - mesa-common-dev
+          - python3.7
+          - python3.7-dev
+      env: PYTHON=3.7
       script:
-      # Simulation target requires recent versions of SDL2, SDL2_image and SDL2_ttf not available as packages
-      - wget https://www.libsdl.org/release/SDL2-2.0.7.tar.gz
-      - tar -xf SDL2-2.0.7.tar.gz
-      - (cd SDL2-2.0.7 && ./configure && make && sudo make install)
-      - wget https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.2.tar.gz
-      - tar -xf SDL2_image-2.0.2.tar.gz
-      - (cd SDL2_image-2.0.2 && ./configure --disable-png && make && sudo make install)
-      - wget https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-2.0.14.tar.gz
-      - tar -xf SDL2_ttf-2.0.14.tar.gz
-      - (cd SDL2_ttf-2.0.14 && ./configure && make && sudo make install)
       - make setup_sim && (cd build/sim/debug && make) && (cd build/sim/release && make)
     - stage: Simulation Platform (WebAssembly)
       script:
