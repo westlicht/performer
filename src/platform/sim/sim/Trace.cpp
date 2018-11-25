@@ -121,6 +121,7 @@ static std::ostream &operator<<(std::ostream &os, const MidiEvent &event) {
 }
 
 struct WriterBase {
+    virtual ~WriterBase() {}
     virtual uint32_t write(uint32_t tick, std::ostream &os) = 0;
 };
 
