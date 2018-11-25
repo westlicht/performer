@@ -258,7 +258,7 @@ public:
     // Methods
     //----------------------------------------
 
-    MidiOutput(Project &project);
+    MidiOutput();
 
     void clear();
 
@@ -269,7 +269,6 @@ public:
     void clearDirty() { _dirty = false; }
 
 private:
-    Project &_project;
     OutputArray _outputs;
     bool _dirty;
 };

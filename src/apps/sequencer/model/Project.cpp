@@ -5,8 +5,7 @@
 
 Project::Project() :
     _playState(*this),
-    _routing(*this),
-    _midiOutput(*this)
+    _routing(*this)
 {
     for (size_t i = 0; i < _tracks.size(); ++i) {
         _tracks[i].setTrackIndex(i);

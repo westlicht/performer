@@ -69,9 +69,7 @@ bool MidiOutput::Output::operator==(const Output &other) const {
 // MidiOutput
 //----------------------------------------
 
-MidiOutput::MidiOutput(Project &project) :
-    _project(project)
-{
+MidiOutput::MidiOutput() {
     clear();
 }
 
