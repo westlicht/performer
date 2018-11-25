@@ -24,7 +24,6 @@ namespace sim {
 Renderer::Renderer(sdl::Window &window) :
     _window(window)
 {
-
     _context = _window.glCreateContext();
     _window.glMakeCurrent(_context);
 
