@@ -68,6 +68,6 @@ endif()
 add_subdirectory(apps)
 
 # tests
-if((${PLATFORM} STREQUAL "stm32") OR (${PLATFORM} STREQUAL "sim"))
+if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
     add_subdirectory(tests)
 endif()
