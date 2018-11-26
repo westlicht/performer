@@ -56,7 +56,6 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/InstrumentSetup.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Midi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Renderer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Text.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/instruments/DrumSampler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/instruments/Synth.cpp
