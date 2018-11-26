@@ -5,13 +5,12 @@ notifications:
   email: false
 env:
   global:
-    # EM_USE_GLOBAL_CACHE=1 tells emscripten to use precompiled libraries from
-    # the emscripten-libs-asmjs package. This speeds up the build significantly.
-    - EM_USE_GLOBAL_CACHE=1
     - secure: "e5o7YJ+fPhhDGT/LU2QWyk+Pm1PSp7YPShFRHR9AkaMXsBKdWd1HmQ+a52UeBbKA4Pw5GRAL0g5KTm1D1L6VesLvovwtcQ7zosgBHFh7KuACi8E9a/xrDTwJie1lcTdxLbEPsd466ji59cLohj1Tc3zde8eVAAXdzMEi9yHF4pObInDnGjo1lxrZckjVa0GUKHZYFbMFmtl9XxOI61tewFwyLy6Hlv4TTcXLjSOUXCT+1losR/Hg3WrBYQGdAs4hHYPZgYVqnjS4YEX0wpF5hIQBXmY6FMcKG9+Rn9PWfhILhAX3LbWcTErm6DZ2kbvJ5fTOdsI1WJ2HHz3roW55eCBlJgFJJECv5AsAvrIlDY02ncsCZbpQRPWUzpX+o/0L11QpTquAylhGVQ2fvqtNVKSVMMniQGjRgpSUYIc1RkOZ2rirwNHUDUGMdtI9RkSud2s+ANyB9nGAosTiM7B76DQWpwQ5MiS8YbuypfXnk8FPhpZNWwMSxRuuTN16rJGXUmMUkMI87QIbNlQdnI+0ZTJmdKMuq4ZJJQFFVup00XTbjqYoj2ppEmXF9aN/wvyAJgBPYd1qwu4zWM/wWjJjx9d8l8sVQvc5xmdB48/dkwUMH1b36VeBQI+UqCO6MSS+cbwkaQDBjfie3WmF5Nl+Alj2fwCPvm/TOS59bdPRLkM="
-jobs:
+matrix:
   include:
-    - stage: Hardware Platform (STM32)
+    - name: Hardware Platform (STM32)
+      os: linux
+      env: NAME=stm32
       script:
       - make setup_stm32 && (cd build/stm32/debug && make) && (cd build/stm32/release && make) && make deploy
       # Deploy to github releases
@@ -24,7 +23,8 @@ jobs:
         skip_cleanup: true
         on:
           tags: true
-    - stage: Simulation Platform (Linux)
+    - name: Simulator Platform (Linux)
+      os: linux
       addons:
         apt:
           sources:
@@ -35,24 +35,23 @@ jobs:
           - mesa-common-dev
           - python3.7
           - python3.7-dev
-      env: PYTHON=3.7
       script:
       - make setup_sim && (cd build/sim/debug && make) && (cd build/sim/release && make)
-    - stage: Simulation Platform (WebAssembly)
+    - name: Simulator Platform (macOS)
+      os: osx
       script:
-      # Download and verify alpine-chroot-install script
-      - wget https://raw.githubusercontent.com/alpinelinux/alpine-chroot-install/v0.6.0/alpine-chroot-install
-          && echo 'a827a4ba3d0817e7c88bae17fe34e50204983d1e  alpine-chroot-install' | sha1sum -c
-      # Install Alpine Linux into /alpine and prepare there a chroot environment;
-      # add testing repository and install packages for Emscripten.
-      - sudo sh alpine-chroot-install -b v3.6
-          -r 'https://nl.alpinelinux.org/alpine/edge/testing'
-          -p 'emscripten emscripten-libs-wasm binaryen closure-compiler make cmake'
-          -k 'CI TRAVIS_.* EM_.*'
-      # Setup a script to run in chroot for emscripten build
-      - printf '#!/bin/sh\nexport EMSCRIPTEN=/usr/share/emscripten\nmake setup_www\n(cd build/sim/www && make)' > build-www.sh
+      - brew install sdl2
+      - make setup_sim && (cd build/sim/debug && make) && (cd build/sim/release && make)
+    - name: Simulation Platform (WebAssembly)
+      sudo: required
+      servies:
+      - docker
+      before_install:
+      - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:sdk-incoming-64bit bash
+      script:
+      - printf '#!/bin/sh\nmake setup_www\n(cd build/sim/www && make)' > build-www.sh
       - chmod a+x build-www.sh
-      # Build
-      - /alpine/enter-chroot -u $USER ./build-www.sh
+      - docker exec -it emscripten bash ./build-www.sh
       after_success:
+      # Deploy to github pages
       - make deploy-simulator
