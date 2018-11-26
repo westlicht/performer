@@ -5,6 +5,7 @@
 
 class IntegrationTest {
 public:
+    virtual ~IntegrationTest() {}
     virtual void init() {}
     virtual void once() {}
     virtual void update() {}
