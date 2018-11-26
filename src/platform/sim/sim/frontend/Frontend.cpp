@@ -11,6 +11,7 @@
 
 #include "sim/TargetConfig.h"
 
+#include "args.hxx"
 #include "tinyformat.h"
 
 #include <memory>
@@ -36,59 +37,46 @@ Frontend::Frontend(Simulator &simulator) :
     _simulator(simulator)
 {
     g_instance = this;
-
-    _timerFrequency = SDL_GetPerformanceFrequency();
-    _timerStart = SDL_GetPerformanceCounter();
-
-#ifdef __EMSCRIPTEN__
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-#else
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-#endif
-
-    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
-
-    setupWindow();
-    setupMidi();
-    setupInstruments();
-
-    _simulator.registerTargetInputObserver(this);
-    _simulator.registerTargetOutputObserver(this);
 }
 
-#ifdef __EMSCRIPTEN__
-static void mainLoop() {
-    g_instance->step();
+int Frontend::main(int argc, char *argv[]) {
+    args::ArgumentParser parser("PER|FORMER Simulator", "");
+    args::HelpFlag help(parser, "help", "Display this help menu", { 'h', "help" });
+    args::Flag showMidiPorts(parser, "midi", "Show available MIDI ports", { 'm', "midi" });
+
+    try {
+        parser.ParseCLI(argc, argv);
+    } catch (const args::Help &) {
+        std::cout << parser;
+        return 0;
+    } catch (const args::ParseError &e) {
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser;
+        return 1;
+    }
+
+    if (showMidiPorts) {
+        _midi.dumpPorts();
+        return 0;
+    }
+
+
+
+    run();
+
+    return 0;
 }
-#endif
 
 void Frontend::run() {
-    // _target.create();
+    setup();
 
 #ifdef __EMSCRIPTEN__
     // 0 fps means to use requestAnimationFrame; non-0 means to use setTimeout.
-    emscripten_set_main_loop(mainLoop, 0, 1);
+    emscripten_set_main_loop(emscriptenMainLoop, 0, 1);
 #else
     while (!terminate()) {
         step();
     }
-#endif
-
-    // _target.destroy();
-}
-
-void Frontend::step() {
-    update();
-    render();
-#ifdef __EMSCRIPTEN__
-    delay(1);
 #endif
 }
 
@@ -98,6 +86,14 @@ void Frontend::close() {
 
 bool Frontend::terminate() const {
     return _window->terminate();
+}
+
+void Frontend::step() {
+    update();
+    render();
+#ifdef __EMSCRIPTEN__
+    delay(1);
+#endif
 }
 
 void Frontend::update() {
@@ -127,6 +123,33 @@ void Frontend::delay(int ms) {
 double Frontend::ticks() const {
     double delta = SDL_GetPerformanceCounter() - _timerStart;
     return delta / _timerFrequency * 1000.0;
+}
+
+void Frontend::setup() {
+    _timerFrequency = SDL_GetPerformanceFrequency();
+    _timerStart = SDL_GetPerformanceCounter();
+
+#ifdef __EMSCRIPTEN__
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#else
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
+
+    setupWindow();
+    setupMidi();
+    setupInstruments();
+
+    _simulator.registerTargetInputObserver(this);
+    _simulator.registerTargetOutputObserver(this);
 }
 
 void Frontend::setupWindow() {
@@ -440,5 +463,11 @@ void Frontend::writeMidiOutput(MidiEvent event) {
         }
     }
 }
+
+#ifdef __EMSCRIPTEN__
+void emscriptenMainLoop() {
+    g_instance->step();
+}
+#endif
 
 } // namespace sim

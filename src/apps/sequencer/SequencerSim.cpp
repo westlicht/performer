@@ -22,7 +22,5 @@ int main(int argc, char *argv[]) {
 
     sim::Frontend frontend(sim);
 
-    frontend.run();
-
-    return 0;
+    return frontend.main(argc, argv);
 }

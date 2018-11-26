@@ -69,9 +69,9 @@ public:
 
     void update();
 
-private:
     void dumpPorts();
 
+private:
     std::vector<std::shared_ptr<Port>> _ports;
 };
 

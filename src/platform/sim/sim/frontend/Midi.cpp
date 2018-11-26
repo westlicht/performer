@@ -140,9 +140,7 @@ void Midi::Port::close() {
     _firstOpenAttempt = true;
 }
 
-
 Midi::Midi() {
-    dumpPorts();
 }
 
 void Midi::registerPort(std::shared_ptr<Port> port) {

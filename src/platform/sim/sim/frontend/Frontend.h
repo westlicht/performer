@@ -28,19 +28,22 @@ class Frontend : private TargetInputHandler, TargetOutputHandler {
 public:
     Frontend(Simulator &simulator);
 
+    int main(int argc, char *argv[]);
+
     void run();
-    void step();
 
     void close();
 
 private:
     bool terminate() const;
+    void step();
     void update();
     void render();
     void delay(int ms);
 
     double ticks() const;
 
+    void setup();
     void setupWindow();
     void setupFrontpanel();
     void setupControls();
@@ -93,6 +96,10 @@ private:
     std::vector<Button::Ptr> _buttons;
     std::vector<Led::Ptr> _leds;
     std::vector<Label::Ptr> _labels;
+
+#ifdef __EMSCRIPTEN__
+    friend void emscriptenMainLoop();
+#endif
 };
 
 } // namespace sim

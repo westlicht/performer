@@ -72,11 +72,12 @@ set(platform_include_directories
     ${SDL2_TTF_INCLUDE_DIRS}
 
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/sdlpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/args
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/nanovg/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/include
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/rtmidi
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/sdlpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/include
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/tinyformat
     PARENT_SCOPE
 )
