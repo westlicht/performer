@@ -10,6 +10,7 @@
 #include "instruments/Synth.h"
 
 #include "sim/TargetConfig.h"
+#include "sim/TargetUtils.h"
 
 #include "args.hxx"
 #include "tinyformat.h"
@@ -388,24 +389,25 @@ void Frontend::setupInstruments() {
 // TargetInputHandler
 
 void Frontend::writeButton(int index, bool pressed) {
-    _buttons[index]->setState(pressed);
+    if (index >= 0 && index < int(_buttons.size())) {
+        _buttons[index]->setState(pressed);
+    }
 }
 
 void Frontend::writeEncoder(EncoderEvent event) {
 }
 
 void Frontend::writeAdc(int channel, uint16_t value) {
-    auto valueToVoltage = [] (uint16_t value) {
-        float normalized = (0xffff - value) / float(0xffff);
-        return (normalized - 0.5f) * 10.f;
-    };
-
-    float voltage = valueToVoltage(value);
-    _cvInputJacks[channel]->setValue(voltage, -5.f, 5.f);
+    if (channel >= 0 && channel < int(_cvInputJacks.size())) {
+        float voltage = adcToVoltage(value);
+        _cvInputJacks[channel]->setValue(voltage, -5.f, 5.f);
+    }
 }
 
 void Frontend::writeDigitalInput(int pin, bool value) {
-    _digitalInputJacks[pin]->setState(value);
+    if (pin >= 0 && pin < int(_digitalInputJacks.size())) {
+        _digitalInputJacks[pin]->setState(value);
+    }
 }
 
 void Frontend::writeMidiInput(MidiEvent event) {
@@ -414,40 +416,34 @@ void Frontend::writeMidiInput(MidiEvent event) {
 // TargetOutputHandler
 
 void Frontend::writeLed(int index, bool red, bool green) {
-    if (index < int(_leds.size())) {
+    if (index >= 0 && index < int(_leds.size())) {
         _leds[index]->color() = Color(red ? 1.f : 0.f, green ? 1.f : 0.f, 0.f, 1.f);
     }
 }
 
 void Frontend::writeGateOutput(int channel, bool value) {
     _instruments->setGate(channel, value);
-    _gateOutputJacks[channel]->setState(value);
+    if (channel >= 0 && channel < int(_gateOutputJacks.size())) {
+        _gateOutputJacks[channel]->setState(value);
+    }
 }
 
 void Frontend::writeDac(int channel, uint16_t value) {
-    auto valueToVoltage = [] (uint16_t value) {
-        // In ideal DAC/OpAmp configuration we get:
-        // 0     ->  5.17V
-        // 32768 -> -5.25V
-        // it follows:
-        // 534   ->  5.00V
-        // 31981 -> -5.00V
-        static constexpr float value0 = 31981.f;
-        static constexpr float value1 = 534.f;
-        return (value - value0) / (value1 - value0) * 10.f - 5.f;
-    };
-
-    float voltage = valueToVoltage(value);
+    float voltage = dacToVoltage(value);
     _instruments->setCv(channel, voltage);
-    _cvOutputJacks[channel]->setValue(voltage, -5.f, 5.f);
+    if (channel >= 0 && channel < int(_cvOutputJacks.size())) {
+        _cvOutputJacks[channel]->setValue(voltage, -5.f, 5.f);
+    }
 }
 
 void Frontend::writeDigitalOutput(int pin, bool value) {
-    _digitalOutputJacks[pin]->setState(value);
+    if (pin >= 0 && pin < int(_digitalOutputJacks.size())) {
+        _digitalOutputJacks[pin]->setState(value);
+    }
 }
 
-void Frontend::writeLcd(uint8_t *frameBuffer) {
-    _lcd->draw(frameBuffer);
+void Frontend::writeLcd(const FrameBuffer &frameBuffer) {
+    _lcd->draw(frameBuffer.data());
 }
 
 void Frontend::writeMidiOutput(MidiEvent event) {

@@ -25,8 +25,8 @@ public:
     const Color &color() const { return _color; }
           Color &color()       { return _color; }
 
-    void draw(uint8_t *frameBuffer) {
-        uint8_t *src = frameBuffer;
+    void draw(const uint8_t *frameBuffer) {
+        const uint8_t *src = frameBuffer;
         uint32_t *dst = _frameBuffer.get();
         for (int i = 0; i < _resolution.prod(); ++i) {
             float s = std::min(uint8_t(15), *src++) * (1.f / 15.f);

@@ -19,11 +19,13 @@ namespace sim {
 static Simulator *g_instance;
 
 Simulator::Simulator(Target target) :
-    _target(target)
+    _target(target),
+    _targetStateTracker(_targetState)
 {
     g_instance = this;
 
-    _writeTrace = true;
+    registerTargetInputObserver(&_targetStateTracker);
+    registerTargetOutputObserver(&_targetStateTracker);
 }
 
 Simulator::~Simulator() {
@@ -70,7 +72,7 @@ void Simulator::sendMidi(int port, const MidiMessage &message) {
 void Simulator::screenshot(const std::string &filename) {
     std::unique_ptr<uint8_t[]> pixelBuffer(new uint8_t[CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT]);
 
-    const uint8_t *src = _targetState.lcd.state.data();
+    const uint8_t *src = targetState().lcd.state.data();
     uint8_t *dst = pixelBuffer.get();
 
     for (int i = 0; i < CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT; ++i) {
@@ -89,6 +91,10 @@ void Simulator::addUpdateCallback(UpdateCallback callback) {
     _updateCallbacks.emplace_back(callback);
 }
 
+void Simulator::registerTargetTickObserver(TargetTickHandler *observer) {
+    _targetTickObservers.emplace_back(observer);
+}
+
 void Simulator::registerTargetInputObserver(TargetInputHandler *observer) {
     _targetInputObservers.emplace_back(observer);
 }
@@ -100,61 +106,30 @@ void Simulator::registerTargetOutputObserver(TargetOutputHandler *observer) {
 // TargetInputHandler
 
 void Simulator::writeButton(int index, bool pressed) {
-    _targetState.button.set(index, pressed);
-
-    if (_writeTrace) {
-        _targetTrace.button.write(_tick, _targetState.button);
-    }
-
     for (auto observer : _targetInputObservers) {
         observer->writeButton(index, pressed);
     }
 }
 
 void Simulator::writeEncoder(EncoderEvent event) {
-    if (_writeTrace) {
-        _targetTrace.encoder.write(_tick, event);
-    }
-
     for (auto observer : _targetInputObservers) {
         observer->writeEncoder(event);
     }
 }
 
 void Simulator::writeAdc(int channel, uint16_t value) {
-    auto valueToVoltage = [] (uint16_t value) {
-        float normalized = (0xffff - value) / float(0xffff);
-        return (normalized - 0.5f) * 10.f;
-    };
-
-    _targetState.adc.set(channel, value, valueToVoltage(value));
-
-    if (_writeTrace) {
-        _targetTrace.adc.write(_tick, _targetState.adc);
-    }
-
     for (auto observer : _targetInputObservers) {
         observer->writeAdc(channel, value);
     }
 }
 
 void Simulator::writeDigitalInput(int pin, bool value) {
-    _targetState.digitalOutput.set(pin, value);
-
-    if (_writeTrace) {
-        _targetTrace.digitalOutput.write(_tick, _targetState.digitalOutput);
-    }
-
     for (auto observer : _targetInputObservers) {
         observer->writeDigitalInput(pin, value);
     }
 }
 
 void Simulator::writeMidiInput(MidiEvent event) {
-    if (_writeTrace) {
-        _targetTrace.midiInput.write(_tick, event);
-    }
-
     for (auto observer : _targetInputObservers) {
         observer->writeMidiInput(event);
     }
@@ -163,98 +138,53 @@ void Simulator::writeMidiInput(MidiEvent event) {
 // TargetOutputHandler
 
 void Simulator::writeLed(int index, bool red, bool green) {
-    _targetState.led.set(index, red, green);
-
-    if (_writeTrace) {
-        _targetTrace.led.write(_tick, _targetState.led);
-    }
-
     for (auto observer : _targetOutputObservers) {
         observer->writeLed(index, red, green);
     }
 }
 
 void Simulator::writeGateOutput(int channel, bool value) {
-    _targetState.gateOutput.set(channel, value);
-
-    if (_writeTrace) {
-        _targetTrace.gateOutput.write(_tick, _targetState.gateOutput);
-    }
-
     for (auto observer : _targetOutputObservers) {
         observer->writeGateOutput(channel, value);
     }
 }
 
 void Simulator::writeDac(int channel, uint16_t value) {
-    auto valueToVoltage = [] (uint16_t value) {
-        // In ideal DAC/OpAmp configuration we get:
-        // 0     ->  5.17V
-        // 32768 -> -5.25V
-        // it follows:
-        // 534   ->  5.00V
-        // 31981 -> -5.00V
-        static constexpr float value0 = 31981.f;
-        static constexpr float value1 = 534.f;
-        return (value - value0) / (value1 - value0) * 10.f - 5.f;
-    };
-
-    _targetState.dac.set(channel, value, valueToVoltage(value));
-
-    if (_writeTrace) {
-        _targetTrace.dac.write(_tick, _targetState.dac);
-    }
-
     for (auto observer : _targetOutputObservers) {
         observer->writeDac(channel, value);
     }
 }
 
 void Simulator::writeDigitalOutput(int pin, bool value) {
-    _targetState.digitalOutput.set(pin, value);
-
-    if (_writeTrace) {
-        _targetTrace.digitalOutput.write(_tick, _targetState.digitalOutput);
-    }
-
     for (auto observer : _targetOutputObservers) {
         observer->writeDigitalOutput(pin, value);
     }
 }
 
-void Simulator::writeLcd(uint8_t *frameBuffer) {
-    _targetState.lcd.set(frameBuffer);
-
-    if (_writeTrace) {
-        _targetTrace.lcd.write(_tick, _targetState.lcd);
-    }
-
+void Simulator::writeLcd(const FrameBuffer &frameBuffer) {
     for (auto observer : _targetOutputObservers) {
         observer->writeLcd(frameBuffer);
     }
 }
 
 void Simulator::writeMidiOutput(MidiEvent event) {
-    if (_writeTrace) {
-        _targetTrace.midiOutput.write(_tick, event);
-    }
-
     for (auto observer : _targetOutputObservers) {
         observer->writeMidiOutput(event);
     }
 }
-
 
 Simulator &Simulator::instance() {
     return *g_instance;
 }
 
 void Simulator::step() {
-    // std::cout << "step: tick=" << _tick << std::endl;
-
     if (!_targetCreated) {
         _target.create();
         _targetCreated = true;
+    }
+
+    for (auto observer : _targetTickObservers) {
+        observer->setTick(_tick);
     }
 
     for (const auto &callback : os::updateCallbacks()) {

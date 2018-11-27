@@ -1,4 +1,6 @@
-#include "Trace.h"
+#include "TargetTrace.h"
+
+#include "TargetUtils.h"
 
 #include "tinyformat.h"
 
@@ -35,7 +37,7 @@ static std::ostream &operator<<(std::ostream &os, const ButtonState &state) {
 
 static std::ostream &operator<<(std::ostream &os, const AdcState &state) {
     for (int i = 0; i < AdcState::Count; ++i) {
-        os << tfm::format("%.3f", state.state[i]);
+        os << tfm::format("%.3f", adcToVoltage(state.state[i]));
         if (i < AdcState::Count - 1) {
             os << " ";
         }
@@ -71,7 +73,7 @@ static std::ostream &operator<<(std::ostream &os, const GateOutputState &state) 
 
 static std::ostream &operator<<(std::ostream &os, const DacState &state) {
     for (int i = 0; i < DacState::Count; ++i) {
-        os << tfm::format("%.3f", state.state[i]);
+        os << tfm::format("%.3f", dacToVoltage(state.state[i]));
         if (i < DacState::Count - 1) {
             os << " ";
         }
@@ -149,6 +151,46 @@ struct Writer : public WriterBase {
         return it == end ? 0xffffffff : it->first;
     }
 };
+
+void TargetTrace::writeStream(std::ostream &stream) const {
+    button.writeStream(stream);
+    adc.writeStream(stream);
+    digitalInput.writeStream(stream);
+    led.writeStream(stream);
+    gateOutput.writeStream(stream);
+    dac.writeStream(stream);
+    digitalOutput.writeStream(stream);
+    lcd.writeStream(stream);
+    encoder.writeStream(stream);
+    midiInput.writeStream(stream);
+    midiOutput.writeStream(stream);
+}
+
+void TargetTrace::readStream(std::istream &stream) {
+    button.readStream(stream);
+    adc.readStream(stream);
+    digitalInput.readStream(stream);
+    led.readStream(stream);
+    gateOutput.readStream(stream);
+    dac.readStream(stream);
+    digitalOutput.readStream(stream);
+    lcd.readStream(stream);
+    encoder.readStream(stream);
+    midiInput.readStream(stream);
+    midiOutput.readStream(stream);
+}
+
+void TargetTrace::saveToFile(const std::string &filename) const {
+    std::ofstream ofs(filename, std::ios::binary);
+    writeStream(ofs);
+    ofs.close();
+}
+
+void TargetTrace::loadFromFile(const std::string &filename) {
+    std::ifstream ifs(filename, std::ios::binary);
+    readStream(ifs);
+    ifs.close();
+}
 
 void TargetTrace::saveToText(const std::string &filename) const {
     std::vector<std::unique_ptr<WriterBase>> writers;

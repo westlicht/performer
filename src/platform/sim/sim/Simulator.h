@@ -1,8 +1,8 @@
 #pragma once
 
-#include "EncoderEvent.h"
-#include "MidiEvent.h"
-#include "Trace.h"
+#include "Target.h"
+#include "TargetStateTracker.h"
+#include "TargetTrace.h"
 
 #include <array>
 #include <functional>
@@ -13,30 +13,7 @@ class MidiMessage;
 
 namespace sim {
 
-struct Target {
-    std::function<void()> create;
-    std::function<void()> destroy;
-    std::function<void()> update;
-};
-
-struct TargetInputHandler {
-    virtual void writeButton(int index, bool pressed) {}
-    virtual void writeEncoder(EncoderEvent event) {}
-    virtual void writeAdc(int channel, uint16_t value) {}
-    virtual void writeDigitalInput(int pin, bool value) {}
-    virtual void writeMidiInput(MidiEvent event) {}
-};
-
-struct TargetOutputHandler {
-    virtual void writeLed(int index, bool red, bool green) {}
-    virtual void writeGateOutput(int channel, bool value) {}
-    virtual void writeDac(int channel, uint16_t value) {}
-    virtual void writeDigitalOutput(int pin, bool value) {}
-    virtual void writeLcd(uint8_t *frameBuffer) {}
-    virtual void writeMidiOutput(MidiEvent event) {}
-};
-
-class Simulator : public TargetOutputHandler, TargetInputHandler {
+class Simulator : public TargetInputHandler, public TargetOutputHandler {
 public:
     Simulator(Target target);
     ~Simulator();
@@ -52,7 +29,6 @@ public:
     void screenshot(const std::string &filename);
 
     const TargetState &targetState() const { return _targetState; }
-    const TargetTrace &targetTrace() const { return _targetTrace; }
 
     double ticks();
 
@@ -62,6 +38,7 @@ public:
 
     // Target input/output handling
 
+    void registerTargetTickObserver(TargetTickHandler *observer);
     void registerTargetInputObserver(TargetInputHandler *observer);
     void registerTargetOutputObserver(TargetOutputHandler *observer);
 
@@ -77,7 +54,7 @@ public:
     void writeGateOutput(int channel, bool value) override;
     void writeDac(int channel, uint16_t value) override;
     void writeDigitalOutput(int pin, bool value) override;
-    void writeLcd(uint8_t *frameBuffer) override;
+    void writeLcd(const FrameBuffer &frameBuffer) override;
     void writeMidiOutput(MidiEvent event) override;
 
     static Simulator &instance();
@@ -90,15 +67,14 @@ private:
 
     uint32_t _tick = 0;
 
+    std::vector<TargetTickHandler *> _targetTickObservers;
     std::vector<TargetInputHandler *> _targetInputObservers;
     std::vector<TargetOutputHandler *> _targetOutputObservers;
 
     std::vector<UpdateCallback> _updateCallbacks;
 
     TargetState _targetState;
-    TargetTrace _targetTrace;
-
-    bool _writeTrace = false;
+    TargetStateTracker _targetStateTracker;
 };
 
 } // namespace sim

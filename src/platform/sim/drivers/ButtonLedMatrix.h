@@ -76,8 +76,13 @@ public:
 
 private:
     void writeButton(int index, bool pressed) override {
-        _buttonState[index] = pressed;
-        _events.emplace_back(pressed ? Event::KeyDown : Event::KeyUp, index);
+        if (index < 0 || index >= 37) {
+            return;
+        }
+        if (_buttonState[index] != pressed) {
+            _buttonState[index] = pressed;
+            _events.emplace_back(pressed ? Event::KeyDown : Event::KeyUp, index);
+        }
     }
 
     sim::Simulator &_simulator;

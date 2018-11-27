@@ -21,7 +21,7 @@ void register_simulator(py::module &m) {
         .def("setDio", &Simulator::setDio)
         .def("sendMidi", &Simulator::sendMidi)
         .def("screenshot", &Simulator::screenshot)
-        .def_property_readonly("targetTrace", &Simulator::targetTrace, py::return_value_policy::copy)
+        .def_property_readonly("targetState", &Simulator::targetState, py::return_value_policy::reference)
     ;
 
     // ------------------------------------------------------------------------

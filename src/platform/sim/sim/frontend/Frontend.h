@@ -63,7 +63,7 @@ private:
     void writeGateOutput(int channel, bool value) override;
     void writeDac(int channel, uint16_t value) override;
     void writeDigitalOutput(int pin, bool value) override;
-    void writeLcd(uint8_t *frameBuffer) override;
+    void writeLcd(const FrameBuffer &frameBuffer) override;
     void writeMidiOutput(MidiEvent event) override;
 
     sdl::Init _sdl;

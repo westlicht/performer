@@ -50,7 +50,10 @@ set(platform_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/Console.cpp
     # sim
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/Simulator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/sim/Trace.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/TargetStateTracker.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/TargetTrace.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/TargetTracePlayer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/sim/TargetTraceRecorder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Audio.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/Frontend.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sim/frontend/InstrumentSetup.cpp
