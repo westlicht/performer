@@ -68,6 +68,12 @@ int Frontend::main(int argc, char *argv[]) {
     return 0;
 }
 
+#ifdef __EMSCRIPTEN__
+void emscriptenMainLoop() {
+    g_instance->step();
+}
+#endif
+
 void Frontend::run() {
     setup();
 
@@ -459,11 +465,5 @@ void Frontend::writeMidiOutput(MidiEvent event) {
         }
     }
 }
-
-#ifdef __EMSCRIPTEN__
-void emscriptenMainLoop() {
-    g_instance->step();
-}
-#endif
 
 } // namespace sim
