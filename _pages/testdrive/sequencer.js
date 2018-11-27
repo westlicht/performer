@@ -193,7 +193,7 @@ Module['FS_createPath']('/assets', 'drumkit', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 66203, "filename": "/assets/frontpanel.png"}, {"start": 66203, "audio": 0, "end": 163167, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 163167, "audio": 1, "end": 185263, "filename": "/assets/drumkit/kick.wav"}, {"start": 185263, "audio": 1, "end": 203165, "filename": "/assets/drumkit/tom2.wav"}, {"start": 203165, "audio": 1, "end": 225199, "filename": "/assets/drumkit/clap.wav"}, {"start": 225199, "audio": 1, "end": 231859, "filename": "/assets/drumkit/hh1.wav"}, {"start": 231859, "audio": 1, "end": 233895, "filename": "/assets/drumkit/rim.wav"}, {"start": 233895, "audio": 1, "end": 294719, "filename": "/assets/drumkit/hh2.wav"}, {"start": 294719, "audio": 1, "end": 309075, "filename": "/assets/drumkit/snare.wav"}, {"start": 309075, "audio": 1, "end": 326611, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 326611, "package_uuid": "9f3fda89-ce0d-4007-887c-d0435d66240e"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 66203, "filename": "/assets/frontpanel.png"}, {"start": 66203, "audio": 0, "end": 163167, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 163167, "audio": 1, "end": 185263, "filename": "/assets/drumkit/kick.wav"}, {"start": 185263, "audio": 1, "end": 203165, "filename": "/assets/drumkit/tom2.wav"}, {"start": 203165, "audio": 1, "end": 225199, "filename": "/assets/drumkit/clap.wav"}, {"start": 225199, "audio": 1, "end": 231859, "filename": "/assets/drumkit/hh1.wav"}, {"start": 231859, "audio": 1, "end": 233895, "filename": "/assets/drumkit/rim.wav"}, {"start": 233895, "audio": 1, "end": 294719, "filename": "/assets/drumkit/hh2.wav"}, {"start": 294719, "audio": 1, "end": 309075, "filename": "/assets/drumkit/snare.wav"}, {"start": 309075, "audio": 1, "end": 326611, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 326611, "package_uuid": "f00df53f-5191-43e1-b0f7-61c9d424ac27"});
 
 })();
 
@@ -1919,7 +1919,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 STATIC_BASE = GLOBAL_BASE;
 
-STATICTOP = STATIC_BASE + 148208;
+STATICTOP = STATIC_BASE + 151696;
 /* global initializers */  __ATINIT__.push({ func: function() { __GLOBAL__I_000101() } }, { func: function() { __GLOBAL__sub_I_SequencerSim_cpp() } }, { func: function() { __GLOBAL__sub_I_FileManager_cpp() } }, { func: function() { __GLOBAL__sub_I_File_cpp() } }, { func: function() { __GLOBAL__sub_I_Audio_cpp() } }, { func: function() { __GLOBAL__sub_I_Frontend_cpp() } }, { func: function() { ___emscripten_environ_constructor() } }, { func: function() { __GLOBAL__sub_I_iostream_cpp() } });
 
 
@@ -1928,7 +1928,7 @@ STATICTOP = STATIC_BASE + 148208;
 
 
 
-var STATIC_BUMP = 148208;
+var STATIC_BUMP = 151696;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 
@@ -2022,9 +2022,12 @@ function copyTempDouble(ptr) {
         if (!adjusted || EXCEPTIONS.infos[adjusted]) return adjusted;
         for (var key in EXCEPTIONS.infos) {
           var ptr = +key; // the iteration key is a string, and if we throw this, it must be an integer as that is what we look for
-          var info = EXCEPTIONS.infos[ptr];
-          if (info.adjusted === adjusted) {
-            return ptr;
+          var adj = EXCEPTIONS.infos[ptr].adjusted;
+          var len = adj.length;
+          for (var i = 0; i < len; i++) {
+            if (adj[i] === adjusted) {
+              return ptr;
+            }
           }
         }
         return adjusted;
@@ -2099,7 +2102,7 @@ function copyTempDouble(ptr) {
       for (var i = 0; i < typeArray.length; i++) {
         if (typeArray[i] && Module['___cxa_can_catch'](typeArray[i], throwntype, thrown)) {
           thrown = HEAP32[((thrown)>>2)]; // undo indirection
-          info.adjusted = thrown;
+          info.adjusted.push(thrown);
           return ((setTempRet0(typeArray[i]),thrown)|0);
         }
       }
@@ -2111,7 +2114,7 @@ function copyTempDouble(ptr) {
     }function ___cxa_throw(ptr, type, destructor) {
       EXCEPTIONS.infos[ptr] = {
         ptr: ptr,
-        adjusted: ptr,
+        adjusted: [ptr],
         type: type,
         destructor: destructor,
         refcount: 0,
@@ -2331,16 +2334,9 @@ function copyTempDouble(ptr) {
           if (!stream.tty || !stream.tty.ops.put_char) {
             throw new FS.ErrnoError(ERRNO_CODES.ENXIO);
           }
-          var i = 0;
           try {
-            if (offset === 0 && length === 0) {
-              // musl implements an fflush using a write of a NULL buffer of size 0
-              stream.tty.ops.flush(stream.tty);
-            } else {
-              while (i < length) {
-                stream.tty.ops.put_char(stream.tty, buffer[offset+i]);
-                i++;
-              }
+            for (var i = 0; i < length; i++) {
+              stream.tty.ops.put_char(stream.tty, buffer[offset+i]);
             }
           } catch (e) {
             throw new FS.ErrnoError(ERRNO_CODES.EIO);
