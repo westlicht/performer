@@ -38,29 +38,24 @@ TargetTracePlayer::TargetTracePlayer(const TargetTrace &targetTrace, TargetInput
 {
     if (_targetInputHandler) {
         _tracePlayers.emplace_back(new TracePlayer<ButtonTrace>(_targetTrace.button, [this] (const ButtonState &buttonState) {
-            std::cout << "write button" << std::endl;
             for (size_t i = 0; i < buttonState.state.size(); ++i) {
                 _targetInputHandler->writeButton(i, buttonState.state[i]);
             }
         }));
         _tracePlayers.emplace_back(new TracePlayer<AdcTrace>(_targetTrace.adc, [this] (const AdcState &adcState) {
-            std::cout << "write adc" << std::endl;
             for (size_t i = 0; i < adcState.state.size(); ++i) {
                 _targetInputHandler->writeAdc(i, adcState.state[i]);
             }
         }));
         _tracePlayers.emplace_back(new TracePlayer<DigitalInputTrace>(_targetTrace.digitalInput, [this] (const DigitalInputState &digitalInputState) {
-            std::cout << "write digitalInput" << std::endl;
             for (size_t i = 0; i < digitalInputState.state.size(); ++i) {
                 _targetInputHandler->writeDigitalInput(i, digitalInputState.state[i]);
             }
         }));
         _tracePlayers.emplace_back(new TracePlayer<EncoderTrace>(_targetTrace.encoder, [this] (const EncoderEvent &encoderEvent) {
-            std::cout << "write encoder" << std::endl;
             _targetInputHandler->writeEncoder(encoderEvent);
         }));
         _tracePlayers.emplace_back(new TracePlayer<MidiTrace>(_targetTrace.midiInput, [this] (const MidiEvent &midiEvent) {
-            std::cout << "write midiInput" << std::endl;
             _targetInputHandler->writeMidiInput(midiEvent);
         }));
     }
