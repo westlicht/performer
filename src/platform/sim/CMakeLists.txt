@@ -79,7 +79,6 @@ set(platform_include_directories
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/nanovg/src
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/rtmidi
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/sdlpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/include
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/tinyformat
     PARENT_SCOPE
