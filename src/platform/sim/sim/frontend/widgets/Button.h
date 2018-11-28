@@ -41,8 +41,8 @@ public:
         if (_state) {
             renderer.setColor(Color(1.f, 1.f));
             switch (_shape) {
-            case Rectangle: renderer.fillRect(_pos + Vector2f(4, 4), _size - Vector2f(8, 8));       break;
-            case Ellipse:   renderer.fillEllipse(_pos + Vector2f(4, 4), _size - Vector2f(8, 8));    break;
+            case Rectangle: renderer.fillRect(_pos + Vector2f(1, 1), _size - Vector2f(2, 2));       break;
+            case Ellipse:   renderer.fillEllipse(_pos + Vector2f(1, 1), _size - Vector2f(2, 2));    break;
             }
         }
     }
