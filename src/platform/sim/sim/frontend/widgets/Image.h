@@ -8,7 +8,7 @@ class Image : public Widget {
 public:
     typedef std::shared_ptr<Image> Ptr;
 
-    Image(const Vector2i &pos, const Vector2i &size, const std::string &filename) :
+    Image(const Vector2f &pos, const Vector2f &size, const std::string &filename) :
         Widget(pos, size),
         _filename(filename)
     {}

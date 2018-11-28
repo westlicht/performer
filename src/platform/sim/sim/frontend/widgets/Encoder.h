@@ -8,7 +8,7 @@ class Encoder : public Widget {
 public:
     typedef std::shared_ptr<Encoder> Ptr;
 
-    Encoder(const Vector2i &pos, const Vector2i &size, SDL_Keycode keycode = -1) :
+    Encoder(const Vector2f &pos, const Vector2f &size, SDL_Keycode keycode = -1) :
         Widget(pos, size),
         _keycode(keycode)
     {}
@@ -33,15 +33,15 @@ public:
             renderer.setColor(Color(1.f, 1.f));
         }
 
-        Vector2f center = toFloat(_pos) + 0.5f * toFloat(_size);
+        Vector2f center = _pos + 0.5f * _size;
         float radius = 0.5f * std::max(_size.x(), _size.y()) - 2.f;
 
-        auto pointOnCircle = [&] (float theta) -> Vector2i {
-            return toInt(center + radius * Vector2f(std::sin(theta), -std::cos(theta)));
+        auto pointOnCircle = [&] (float theta) -> Vector2f {
+            return center + radius * Vector2f(std::sin(theta), -std::cos(theta));
         };
 
         renderer.drawEllipse(_pos, _size);
-        renderer.drawLine(toInt(center), pointOnCircle(_value * TWO_PI / Ticks));
+        renderer.drawLine(center, pointOnCircle(_value * TWO_PI / Ticks));
     }
 
     virtual void onKeyDown(KeyEvent &e) override {

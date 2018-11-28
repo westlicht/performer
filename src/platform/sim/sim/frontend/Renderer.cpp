@@ -54,49 +54,49 @@ void Renderer::setColor(const Color &color) {
     nvgStrokeColor(_nvg, nvgRGBA(color.r() * 255, color.g() * 255, color.b() * 255, color.a() * 255));
 }
 
-void Renderer::drawRect(const Vector2i &pos, const Vector2i &size) {
+void Renderer::drawRect(const Vector2f &pos, const Vector2f &size) {
     nvgBeginPath(_nvg);
     nvgRect(_nvg, pos.x(), pos.y(), size.x(), size.y());
     nvgStroke(_nvg);
 }
 
-void Renderer::fillRect(const Vector2i &pos, const Vector2i &size) {
+void Renderer::fillRect(const Vector2f &pos, const Vector2f &size) {
     nvgBeginPath(_nvg);
     nvgRect(_nvg, pos.x(), pos.y(), size.x(), size.y());
     nvgFill(_nvg);
 }
 
-void Renderer::drawEllipse(const Vector2i &pos, const Vector2i &size) {
+void Renderer::drawEllipse(const Vector2f &pos, const Vector2f &size) {
     nvgBeginPath(_nvg);
-    nvgEllipse(_nvg, pos.x() + size.x() / 2, pos.y() + size.y() / 2, size.x() / 2, size.y() / 2);
+    nvgEllipse(_nvg, pos.x() + size.x() * 0.5f, pos.y() + size.y() * 0.5f, size.x() * 0.5f, size.y() * 0.5f);
     nvgStroke(_nvg);
 }
 
-void Renderer::fillEllipse(const Vector2i &pos, const Vector2i &size) {
+void Renderer::fillEllipse(const Vector2f &pos, const Vector2f &size) {
     nvgBeginPath(_nvg);
-    nvgEllipse(_nvg, pos.x() + size.x() / 2, pos.y() + size.y() / 2, size.x() / 2, size.y() / 2);
+    nvgEllipse(_nvg, pos.x() + size.x() * 0.5f, pos.y() + size.y() * 0.5f, size.x() * 0.5f, size.y() * 0.5f);
     nvgFill(_nvg);
 }
 
-void Renderer::drawLine(const Vector2i &p1, const Vector2i &p2) {
+void Renderer::drawLine(const Vector2f &p1, const Vector2f &p2) {
     nvgBeginPath(_nvg);
     nvgMoveTo(_nvg, p1.x(), p1.y());
     nvgLineTo(_nvg, p2.x(), p2.y());
     nvgStroke(_nvg);
 }
 
-void Renderer::drawArc(const Vector2i &pos, const Vector2i &size, float rotation) {
+void Renderer::drawArc(const Vector2f &pos, const Vector2f &size, float rotation) {
     nvgBeginPath(_nvg);
-    nvgArc(_nvg, pos.x() + size.x() / 2, pos.y() + size.y() / 2, size.x() / 2, -0.5f * M_PI, (rotation - 0.5f) * M_PI, rotation > 0.f ? NVG_CW : NVG_CCW);
+    nvgArc(_nvg, pos.x() + size.x() * 0.5f, pos.y() + size.y() * 0.5f, size.x() * 0.5f, -0.5f * M_PI, (rotation - 0.5f) * M_PI, rotation > 0.f ? NVG_CW : NVG_CCW);
     nvgStroke(_nvg);
 }
 
-void Renderer::drawText(const Vector2i &pos, const std::string &text) {
+void Renderer::drawText(const Vector2f &pos, const std::string &text) {
     float bounds[4];
     nvgFontFaceId(_nvg, _font);
     nvgFontSize(_nvg, 12.f);
     nvgTextBounds(_nvg, 0.f, 0.f, text.c_str(), nullptr, bounds);
-    nvgText(_nvg, pos.x() - bounds[2] / 2, pos.y() - bounds[3] / 2, text.c_str(), nullptr);
+    nvgText(_nvg, pos.x() - bounds[2] * 0.5f, pos.y() - bounds[3] * 0.5f, text.c_str(), nullptr);
 }
 
 void Renderer::present() {

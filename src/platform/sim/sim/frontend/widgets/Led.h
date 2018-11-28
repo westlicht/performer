@@ -8,7 +8,7 @@ class Led : public Widget {
 public:
     typedef std::shared_ptr<Led> Ptr;
 
-    Led(const Vector2i &pos, const Vector2i &size, const Color &color = Color(0.f, 1.f)) :
+    Led(const Vector2f &pos, const Vector2f &size, const Color &color = Color(0.f, 1.f)) :
         Widget(pos, size),
         _color(color)
     {}
@@ -23,7 +23,7 @@ public:
         renderer.setColor(Color(0.5f, 1.f));
         renderer.drawEllipse(_pos, _size);
         renderer.setColor(_color);
-        renderer.fillEllipse(_pos + Vector2i(1, 1), _size - Vector2i(2, 2));
+        renderer.fillEllipse(_pos + Vector2f(1.f, 1.f), _size - Vector2f(2.f, 2.f));
     }
 
 private:

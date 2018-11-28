@@ -8,7 +8,7 @@ class Rotary : public Widget {
 public:
     typedef std::shared_ptr<Rotary> Ptr;
 
-    Rotary(const Vector2i &pos, const Vector2i &size) :
+    Rotary(const Vector2f &pos, const Vector2f &size) :
         Widget(pos, size)
     {}
 
@@ -35,15 +35,15 @@ public:
             renderer.setColor(Color(1.f, 1.f));
         }
 
-        Vector2f center = toFloat(_pos) + 0.5f * toFloat(_size);
+        Vector2f center = _pos + 0.5f * _size;
         float radius = 0.5f * std::max(_size.x(), _size.y()) - 2.f;
 
-        auto pointOnCircle = [&] (float theta) -> Vector2i {
-            return toInt(center + radius * Vector2f(std::sin(theta), -std::cos(theta)));
+        auto pointOnCircle = [&] (float theta) -> Vector2f {
+            return center + radius * Vector2f(std::sin(theta), -std::cos(theta));
         };
 
         renderer.drawEllipse(_pos, _size);
-        renderer.drawLine(toInt(center), pointOnCircle(-PI * 0.75f + _value * TWO_PI * 0.75f));
+        renderer.drawLine(center, pointOnCircle(-PI * 0.75f + _value * TWO_PI * 0.75f));
     }
 
     virtual void onMouseMove(MouseMoveEvent &e) override {

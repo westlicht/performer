@@ -179,14 +179,14 @@ void Frontend::setupFrontpanel() {
     const double scale = Frontpanel::scale;
 
     auto transformToScreen = [&] (double x, double y) {
-        return Vector2i(x * scale, y * scale);
+        return Vector2f(x * scale, y * scale);
     };
 
     auto scaleToScreen = [&] (double w, double h) {
-        return Vector2i(w * scale, h * scale);
+        return Vector2f(w * scale, h * scale);
     };
 
-    _window->createWidget<Image>(Vector2i(0, 0), scaleToScreen(Frontpanel::width, Frontpanel::height), "assets/frontpanel.png");
+    _window->createWidget<Image>(Vector2f(0.f, 0.f), scaleToScreen(Frontpanel::width, Frontpanel::height), "assets/frontpanel.png");
 
     for (const auto &info : Frontpanel::infos) {
         auto origin = transformToScreen(info.x, info.y);
@@ -279,24 +279,24 @@ void Frontend::setupControls() {
 
     // cv inputs
     for (int i = 0; i < TargetConfig::AdcChannels; ++i) {
-        auto rotary = _window->createWidget<Rotary>(Vector2i(x, y + 10), Vector2i(40, 40));
+        auto rotary = _window->createWidget<Rotary>(Vector2f(x, y + 10), Vector2f(40, 40));
         rotary->setValueCallback([this, i] (float value) {
             _simulator.setAdc(i, value * 10.f - 5.f);
         });
         _simulator.setAdc(i, 0.f);
-        _window->createWidget<Label>(Vector2i(x, y + 60), Vector2i(40, 10), tfm::format("CV%d IN", i + 1));
+        _window->createWidget<Label>(Vector2f(x, y + 60), Vector2f(40, 10), tfm::format("CV%d IN", i + 1));
         x += 50;
     }
 
     // clock input
     {
         auto button = _window->createWidget<Button>(
-            Vector2i(x + 10, y + 20),
-            Vector2i(20, 20),
+            Vector2f(x + 10, y + 20),
+            Vector2f(20, 20),
             Button::Rectangle,
             SDLK_F10
         );
-        _window->createWidget<Label>(Vector2i(x, y + 60), Vector2i(40, 10), "CLK IN");
+        _window->createWidget<Label>(Vector2f(x, y + 60), Vector2f(40, 10), "CLK IN");
         x += 50;
 
         _clockSource.reset(new ClockSource(_simulator, [this] () {
@@ -314,12 +314,12 @@ void Frontend::setupControls() {
     // reset input
     {
         auto button = _window->createWidget<Button>(
-            Vector2i(x + 10, y + 20),
-            Vector2i(20, 20),
+            Vector2f(x + 10, y + 20),
+            Vector2f(20, 20),
             Button::Rectangle,
             SDLK_F11
         );
-        _window->createWidget<Label>(Vector2i(x, y + 60), Vector2i(40, 10), "RST IN");
+        _window->createWidget<Label>(Vector2f(x, y + 60), Vector2f(40, 10), "RST IN");
         x += 50;
 
         button->setCallback([this] (bool pressed) {
@@ -330,12 +330,12 @@ void Frontend::setupControls() {
     // screenshot
     {
         auto button = _window->createWidget<Button>(
-            Vector2i(x + 10, y + 20),
-            Vector2i(40, 20),
+            Vector2f(x + 10, y + 20),
+            Vector2f(40, 20),
             Button::Rectangle,
             SDLK_F12
         );
-        _window->createWidget<Label>(Vector2i(x, y + 60), Vector2i(60, 10), "SCREENSHOT");
+        _window->createWidget<Label>(Vector2f(x, y + 60), Vector2f(60, 10), "SCREENSHOT");
         x += 70;
 
         button->setCallback([&] (bool pressed) {

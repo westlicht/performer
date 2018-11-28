@@ -8,7 +8,7 @@ class Jack : public Widget {
 public:
     typedef std::shared_ptr<Jack> Ptr;
 
-    Jack(const Vector2i &pos, const Vector2i &size, const Color &color = Color(0.f, 1.f)) :
+    Jack(const Vector2f &pos, const Vector2f &size, const Color &color = Color(0.f, 1.f)) :
         Widget(pos, size),
         _color(color)
     {}
@@ -40,13 +40,13 @@ public:
         case State:
             if (_state) {
                 renderer.setColor(Color(1.f, 1.f));
-                renderer.drawEllipse(_pos + Vector2i(1, 1), _size - Vector2i(2, 2));
+                renderer.drawEllipse(_pos + Vector2f(1.f, 1.f), _size - Vector2f(2.f, 2.f));
             }
             break;
         case Value:
             float rotation = ((_value - _min) / (_max - _min)) * 2.f - 1.f;
             renderer.setColor(Color(1.f, 1.f));
-            renderer.drawArc(_pos + Vector2i(1, 1), _size - Vector2i(2, 2), rotation);
+            renderer.drawArc(_pos + Vector2f(1.f, 1.f), _size - Vector2f(2.f, 2.f), rotation);
             break;
         }
     }

@@ -10,18 +10,27 @@ class Widget {
 public:
     typedef std::shared_ptr<Widget> Ptr;
 
-    Widget(const Vector2i &pos, const Vector2i &size) :
+    Widget(const Vector2f &pos, const Vector2f &size) :
         _pos(pos),
         _size(size)
     {}
 
     virtual ~Widget() {}
 
-    const Vector2i &pos() const { return _pos; }
-          Vector2i &pos()       { return _pos; }
+    const Vector2f &pos() const { return _pos; }
+          Vector2f &pos()       { return _pos; }
 
-    const Vector2i &size() const { return _size; }
-          Vector2i &size()       { return _size; }
+    const Vector2f &size() const { return _size; }
+          Vector2f &size()       { return _size; }
+
+    bool isInside(const Vector2f &pos) const {
+        return (
+            pos.x() >= _pos.x() &&
+            pos.x() <= _pos.x() + _size.x() &&
+            pos.y() >= _pos.y() &&
+            pos.y() <= _pos.y() + _size.y()
+        );
+    }
 
     bool isInside(const Vector2i &pos) const {
         return (
@@ -43,8 +52,8 @@ public:
     virtual void onMouseWheel(MouseWheelEvent &e) {}
 
 protected:
-    Vector2i _pos;
-    Vector2i _size;
+    Vector2f _pos;
+    Vector2f _size;
 };
 
 } // namespace sim

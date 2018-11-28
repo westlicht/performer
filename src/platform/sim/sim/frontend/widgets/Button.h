@@ -13,7 +13,7 @@ public:
         Ellipse,
     };
 
-    Button(const Vector2i &pos, const Vector2i &size, Shape shape = Rectangle, SDL_Keycode keycode = -1) :
+    Button(const Vector2f &pos, const Vector2f &size, Shape shape = Rectangle, SDL_Keycode keycode = -1) :
         Widget(pos, size),
         _shape(shape),
         _keycode(keycode)
@@ -41,8 +41,8 @@ public:
         if (_state) {
             renderer.setColor(Color(1.f, 1.f));
             switch (_shape) {
-            case Rectangle: renderer.fillRect(_pos + Vector2i(4, 4), _size - Vector2i(8, 8));       break;
-            case Ellipse:   renderer.fillEllipse(_pos + Vector2i(4, 4), _size - Vector2i(8, 8));    break;
+            case Rectangle: renderer.fillRect(_pos + Vector2f(4, 4), _size - Vector2f(8, 8));       break;
+            case Ellipse:   renderer.fillEllipse(_pos + Vector2f(4, 4), _size - Vector2f(8, 8));    break;
             }
         }
     }

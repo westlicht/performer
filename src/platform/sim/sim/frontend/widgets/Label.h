@@ -11,7 +11,7 @@ class Label : public Widget {
 public:
     typedef std::shared_ptr<Label> Ptr;
 
-    Label(const Vector2i &pos, const Vector2i &size, const std::string &text, const Color &color = Color(1.f, 1.f)) :
+    Label(const Vector2f &pos, const Vector2f &size, const std::string &text, const Color &color = Color(1.f, 1.f)) :
         Widget(pos, size),
         _text(text),
         _color(color)
@@ -29,7 +29,7 @@ public:
 
     virtual void render(Renderer &renderer) override {
         renderer.setColor(_color);
-        renderer.drawText(_pos + _size / 2, _text);
+        renderer.drawText(_pos + _size * 0.5f, _text);
     }
 
 private:

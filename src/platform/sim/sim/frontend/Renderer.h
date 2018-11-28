@@ -16,14 +16,14 @@ public:
 
     void clear() ;
     void setColor(const Color &color);
-    void drawRect(const Vector2i &pos, const Vector2i &size);
-    void fillRect(const Vector2i &pos, const Vector2i &size);
-    void drawEllipse(const Vector2i &pos, const Vector2i &size);
-    void fillEllipse(const Vector2i &pos, const Vector2i &size);
-    void drawLine(const Vector2i &p1, const Vector2i &p2);
-    void drawArc(const Vector2i &pos, const Vector2i &size, float rotation);
+    void drawRect(const Vector2f &pos, const Vector2f &size);
+    void fillRect(const Vector2f &pos, const Vector2f &size);
+    void drawEllipse(const Vector2f &pos, const Vector2f &size);
+    void fillEllipse(const Vector2f &pos, const Vector2f &size);
+    void drawLine(const Vector2f &p1, const Vector2f &p2);
+    void drawArc(const Vector2f &pos, const Vector2f &size, float rotation);
 
-    void drawText(const Vector2i &pos, const std::string &text);
+    void drawText(const Vector2f &pos, const std::string &text);
 
     void present();
 
