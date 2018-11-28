@@ -3,34 +3,42 @@
 namespace sim {
 
 Window::Window(const std::string &title, const Vector2i &size) :
-    _window(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size.x(), size.y(), SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI),
+    _window(SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size.x(), size.y(), SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI)),
     _renderer(_window)
 {
-    _eventHandler.quit = [this] (const SDL_QuitEvent &) {
-        _terminate = true;
-    };
-    _eventHandler.keyDown = [this] (const SDL_KeyboardEvent &e) {
-        handleEvent(KeyEvent::fromSDL(e), [] (Widget &widget, KeyEvent &e) { widget.onKeyDown(e); } );
-    };
-    _eventHandler.keyUp = [this] (const SDL_KeyboardEvent &e) {
-        handleEvent(KeyEvent::fromSDL(e), [] (Widget &widget, KeyEvent &e) { widget.onKeyUp(e); } );
-    };
-    _eventHandler.mouseMotion = [this] (const SDL_MouseMotionEvent &e) {
-        handleEvent(MouseMoveEvent::fromSDL(e), [] (Widget &widget, MouseMoveEvent &e) { widget.onMouseMove(e); } );
-    };
-    _eventHandler.mouseButtonDown = [this] (const SDL_MouseButtonEvent &e) {
-        handleEvent(MouseButtonEvent::fromSDL(e), [] (Widget &widget, MouseButtonEvent &e) { widget.onMouseDown(e); } );
-    };
-    _eventHandler.mouseButtonUp = [this] (const SDL_MouseButtonEvent &e) {
-        handleEvent(MouseButtonEvent::fromSDL(e), [] (Widget &widget, MouseButtonEvent &e) { widget.onMouseUp(e); } );
-    };
-    _eventHandler.mouseWheel = [this] (const SDL_MouseWheelEvent &e) {
-        handleEvent(MouseWheelEvent::fromSDL(e), [] (Widget &widget, MouseWheelEvent &e) { widget.onMouseWheel(e); } );
-    };
+}
+
+Window::~Window() {
+    SDL_DestroyWindow(_window);
 }
 
 void Window::update() {
-    while (_eventHandler.poll()) {}
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+        case SDL_QUIT:
+            _terminate = true;
+            break;
+        case SDL_KEYDOWN:
+            handleEvent(KeyEvent::fromSDL(event.key), [] (Widget &widget, KeyEvent &e) { widget.onKeyDown(e); } );
+            break;
+        case SDL_KEYUP:
+            handleEvent(KeyEvent::fromSDL(event.key), [] (Widget &widget, KeyEvent &e) { widget.onKeyUp(e); } );
+            break;
+        case SDL_MOUSEMOTION:
+            handleEvent(MouseMoveEvent::fromSDL(event.motion), [] (Widget &widget, MouseMoveEvent &e) { widget.onMouseMove(e); } );
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            handleEvent(MouseButtonEvent::fromSDL(event.button), [] (Widget &widget, MouseButtonEvent &e) { widget.onMouseDown(e); } );
+            break;
+        case SDL_MOUSEBUTTONUP:
+            handleEvent(MouseButtonEvent::fromSDL(event.button), [] (Widget &widget, MouseButtonEvent &e) { widget.onMouseUp(e); } );
+            break;
+        case SDL_MOUSEWHEEL:
+            handleEvent(MouseWheelEvent::fromSDL(event.wheel), [] (Widget &widget, MouseWheelEvent &e) { widget.onMouseWheel(e); } );
+            break;
+        }
+    }
 
     for (const auto &widget : _widgets) {
         widget->update();

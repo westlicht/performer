@@ -11,6 +11,7 @@ public:
     typedef std::shared_ptr<Window> Ptr;
 
     Window(const std::string &title, const Vector2i &size);
+    ~Window();
 
     void close() { _terminate = true; }
 
@@ -29,8 +30,6 @@ public:
     void addWidget(Widget::Ptr widget);
     void removeWidget(Widget::Ptr widget);
 
-    sdl::Window &sdl() { return _window; }
-
 private:
     template<typename Event, typename Handler>
     void handleEvent(Event event, Handler handler) {
@@ -42,12 +41,9 @@ private:
         }
     }
 
-    sdl::Window _window;
-    sdl::EventHandler _eventHandler;
+    SDL_Window *_window;
     Renderer _renderer;
-
     std::vector<Widget::Ptr> _widgets;
-
     bool _terminate = false;
 };
 

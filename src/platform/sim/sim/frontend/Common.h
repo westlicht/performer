@@ -1,7 +1,6 @@
 #pragma once
 
-#include "sdlpp.hpp"
-
+#include <SDL.h>
 #include <Eigen/Core>
 
 #include <string>

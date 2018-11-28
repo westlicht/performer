@@ -35,10 +35,15 @@ static void addWidget(std::vector<T> &list, T widget, int index) {
 }
 
 Frontend::Frontend(Simulator &simulator) :
-    _sdl(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER),
     _simulator(simulator)
 {
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
+
     g_instance = this;
+}
+
+Frontend::~Frontend() {
+    SDL_Quit();
 }
 
 int Frontend::main(int argc, char *argv[]) {

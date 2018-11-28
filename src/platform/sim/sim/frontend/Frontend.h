@@ -27,6 +27,7 @@ namespace sim {
 class Frontend : private TargetInputHandler, TargetOutputHandler {
 public:
     Frontend(Simulator &simulator);
+    ~Frontend();
 
     int main(int argc, char *argv[]);
 
@@ -66,7 +67,6 @@ private:
     void writeLcd(const FrameBuffer &frameBuffer) override;
     void writeMidiOutput(MidiEvent event) override;
 
-    sdl::Init _sdl;
     Simulator &_simulator;
     Audio _audio;
     std::unique_ptr<InstrumentSetup> _instruments;

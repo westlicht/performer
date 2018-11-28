@@ -10,7 +10,8 @@ namespace sim {
 
 class Renderer {
 public:
-    Renderer(sdl::Window &window);
+    Renderer(SDL_Window *window);
+    ~Renderer();
 
     NVGcontext *nvg() const { return _nvg; }
 
@@ -28,7 +29,7 @@ public:
     void present();
 
 private:
-    sdl::Window &_window;
+    SDL_Window *_window;
     SDL_GLContext _context;
     NVGcontext *_nvg;
     int _font;

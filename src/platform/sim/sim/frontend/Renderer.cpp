@@ -21,11 +21,10 @@
 
 namespace sim {
 
-Renderer::Renderer(sdl::Window &window) :
+Renderer::Renderer(SDL_Window *window) :
     _window(window)
 {
-    _context = _window.glCreateContext();
-    _window.glMakeCurrent(_context);
+    SDL_GL_CreateContext(_window);
 
 #ifdef __EMSCRIPTEN__
     _nvg = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
@@ -39,12 +38,16 @@ Renderer::Renderer(sdl::Window &window) :
     _font = nvgCreateFont(_nvg, "monospace", "assets/fonts/inconsolata.ttf");
 }
 
+Renderer::~Renderer() {
+    SDL_GL_DeleteContext(_context);
+}
+
 void Renderer::clear() {
     glClearColor(0.f, 0.f, 0.f, 0.f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     int width, height;
-    _window.getSize(&width, &height);
+    SDL_GetWindowSize(_window, &width, &height);
 
     nvgBeginFrame(_nvg, width, height, 1.f);
 }
@@ -102,7 +105,7 @@ void Renderer::drawText(const Vector2f &pos, const std::string &text) {
 void Renderer::present() {
     nvgEndFrame(_nvg);
 
-    _window.glSwap();
+    SDL_GL_SwapWindow(_window);
 }
 
 } // namespace sim
