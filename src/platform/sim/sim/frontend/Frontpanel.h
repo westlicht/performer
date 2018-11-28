@@ -13,6 +13,7 @@ static double scale = 5.0;
 
 static int windowWidth = std::ceil(width * scale);
 static int windowHeight = std::ceil(height * scale);
+static int controlHeight = 80;
 
 enum class Widget {
     Jack,

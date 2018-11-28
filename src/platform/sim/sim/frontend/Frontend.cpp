@@ -5,6 +5,7 @@
 #include "widgets/Button.h"
 #include "widgets/Led.h"
 #include "widgets/Image.h"
+#include "widgets/Panel.h"
 
 #include "instruments/DrumSampler.h"
 #include "instruments/Synth.h"
@@ -160,7 +161,7 @@ void Frontend::setup() {
 }
 
 void Frontend::setupWindow() {
-    Vector2i size(Frontpanel::windowWidth, Frontpanel::windowHeight + 80);
+    Vector2i size(Frontpanel::windowWidth, Frontpanel::windowHeight + Frontpanel::controlHeight);
     _window = std::make_shared<Window>("PER|FORMER Simulator", size);
 
     setupFrontpanel();
@@ -276,6 +277,9 @@ void Frontend::setupFrontpanel() {
 void Frontend::setupControls() {
     int x = 10;
     int y = Frontpanel::windowHeight;
+
+    // panel
+    _window->createWidget<Panel>(Vector2f(0.f, Frontpanel::windowHeight), Vector2f(Frontpanel::windowWidth, Frontpanel::controlHeight), Color(1.f, 1.f, 1.f, 0.05f));
 
     // cv inputs
     for (int i = 0; i < TargetConfig::AdcChannels; ++i) {
