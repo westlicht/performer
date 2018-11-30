@@ -193,7 +193,7 @@ Module['FS_createPath']('/assets', 'drumkit', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 66203, "filename": "/assets/frontpanel.png"}, {"start": 66203, "audio": 0, "end": 163167, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 163167, "audio": 1, "end": 185263, "filename": "/assets/drumkit/kick.wav"}, {"start": 185263, "audio": 1, "end": 203165, "filename": "/assets/drumkit/tom2.wav"}, {"start": 203165, "audio": 1, "end": 225199, "filename": "/assets/drumkit/clap.wav"}, {"start": 225199, "audio": 1, "end": 231859, "filename": "/assets/drumkit/hh1.wav"}, {"start": 231859, "audio": 1, "end": 233895, "filename": "/assets/drumkit/rim.wav"}, {"start": 233895, "audio": 1, "end": 294719, "filename": "/assets/drumkit/hh2.wav"}, {"start": 294719, "audio": 1, "end": 309075, "filename": "/assets/drumkit/snare.wav"}, {"start": 309075, "audio": 1, "end": 326611, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 326611, "package_uuid": "34409e55-7f16-4712-8477-c51290052f10"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 66203, "filename": "/assets/frontpanel.png"}, {"start": 66203, "audio": 0, "end": 163167, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 163167, "audio": 1, "end": 185263, "filename": "/assets/drumkit/kick.wav"}, {"start": 185263, "audio": 1, "end": 203165, "filename": "/assets/drumkit/tom2.wav"}, {"start": 203165, "audio": 1, "end": 225199, "filename": "/assets/drumkit/clap.wav"}, {"start": 225199, "audio": 1, "end": 231859, "filename": "/assets/drumkit/hh1.wav"}, {"start": 231859, "audio": 1, "end": 233895, "filename": "/assets/drumkit/rim.wav"}, {"start": 233895, "audio": 1, "end": 294719, "filename": "/assets/drumkit/hh2.wav"}, {"start": 294719, "audio": 1, "end": 309075, "filename": "/assets/drumkit/snare.wav"}, {"start": 309075, "audio": 1, "end": 326611, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 326611, "package_uuid": "148cb4e8-29e1-4c54-9967-92fe3bb5c485"});
 
 })();
 
@@ -1919,7 +1919,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 STATIC_BASE = GLOBAL_BASE;
 
-STATICTOP = STATIC_BASE + 148672;
+STATICTOP = STATIC_BASE + 148624;
 /* global initializers */  __ATINIT__.push({ func: function() { __GLOBAL__I_000101() } }, { func: function() { __GLOBAL__sub_I_SequencerSim_cpp() } }, { func: function() { __GLOBAL__sub_I_FileManager_cpp() } }, { func: function() { __GLOBAL__sub_I_File_cpp() } }, { func: function() { __GLOBAL__sub_I_Frontend_cpp() } }, { func: function() { ___emscripten_environ_constructor() } }, { func: function() { __GLOBAL__sub_I_iostream_cpp() } });
 
 
@@ -1928,7 +1928,7 @@ STATICTOP = STATIC_BASE + 148672;
 
 
 
-var STATIC_BUMP = 148672;
+var STATIC_BUMP = 148624;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 
@@ -13027,7 +13027,6 @@ var _pthread_mutex_unlock = Module["_pthread_mutex_unlock"] = function() {  retu
 var _sbrk = Module["_sbrk"] = function() {  return Module["asm"]["_sbrk"].apply(null, arguments) };
 var _strstr = Module["_strstr"] = function() {  return Module["asm"]["_strstr"].apply(null, arguments) };
 var establishStackSpace = Module["establishStackSpace"] = function() {  return Module["asm"]["establishStackSpace"].apply(null, arguments) };
-var runPostSets = Module["runPostSets"] = function() {  return Module["asm"]["runPostSets"].apply(null, arguments) };
 var setThrew = Module["setThrew"] = function() {  return Module["asm"]["setThrew"].apply(null, arguments) };
 var stackAlloc = Module["stackAlloc"] = function() {  return Module["asm"]["stackAlloc"].apply(null, arguments) };
 var stackRestore = Module["stackRestore"] = function() {  return Module["asm"]["stackRestore"].apply(null, arguments) };
