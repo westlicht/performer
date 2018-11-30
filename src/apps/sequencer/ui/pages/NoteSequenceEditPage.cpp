@@ -70,7 +70,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
     const auto &sequence = _project.selectedNoteSequence();
-    const auto &scale = sequence.selectedScale();
+    const auto &scale = sequence.selectedScale(_project.scale());
     int currentStep = trackEngine.isActiveSequence(sequence) ? trackEngine.currentStep() : -1;
 
     const int stepWidth = Width / StepCount;
@@ -405,7 +405,7 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
     if (!_engine.recording() && layer() == Layer::Note && _stepSelection.any()) {
         auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
         auto &sequence = _project.selectedNoteSequence();
-        const auto &scale = sequence.selectedScale();
+        const auto &scale = sequence.selectedScale(_project.scale());
         const auto &message = event.message();
 
         if (message.isNoteOn()) {
@@ -515,7 +515,7 @@ void NoteSequenceEditPage::updateMonitorStep() {
 
 void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &step) {
 
-    const auto &scale = _project.selectedNoteSequence().selectedScale();
+    const auto &scale = _project.selectedNoteSequence().selectedScale(_project.scale());
 
     FixedStringBuilder<16> str;
 

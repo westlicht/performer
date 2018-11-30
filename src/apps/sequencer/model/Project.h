@@ -104,7 +104,6 @@ public:
     int scale() const { return _scale; }
     void setScale(int scale) {
         _scale = clamp(scale, 0, Scale::Count - 1);
-        NoteSequence::_defaultScale = _scale;
     }
 
     void editScale(int value, bool shift) {
@@ -124,7 +123,6 @@ public:
     int rootNote() const { return _rootNote; }
     void setRootNote(int rootNote) {
         _rootNote = clamp(rootNote, 0, 11);
-        NoteSequence::_defaultRootNote = _rootNote;
     }
 
     void editRootNote(int value, bool shift) {

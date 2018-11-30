@@ -2,9 +2,6 @@
 
 #include "ModelUtils.h"
 
-uint8_t NoteSequence::_defaultScale;
-uint8_t NoteSequence::_defaultRootNote;
-
 Types::LayerRange NoteSequence::layerRange(Layer layer) {
     #define CASE(_layer_) \
     case Layer::_layer_: \

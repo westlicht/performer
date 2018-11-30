@@ -201,8 +201,8 @@ public:
         str(scale() < 0 ? "Default" : Scale::name(scale()));
     }
 
-    const Scale &selectedScale() const {
-        return Scale::get(scale() < 0 ? _defaultScale : scale());
+    const Scale &selectedScale(int defaultScale) const {
+        return Scale::get(scale() < 0 ? defaultScale : scale());
     }
 
     // rootNote
@@ -229,8 +229,8 @@ public:
         }
     }
 
-    int selectedRootNote() const {
-        return rootNote() < 0 ? _defaultRootNote : rootNote();
+    int selectedRootNote(int defaultRootNote) const {
+        return rootNote() < 0 ? defaultRootNote : rootNote();
     }
 
     // divisor
@@ -354,9 +354,6 @@ private:
     uint8_t _firstStep;
     uint8_t _lastStep;
     StepArray _steps;
-
-    static uint8_t _defaultScale;
-    static uint8_t _defaultRootNote;
 
     friend class Project;
 };

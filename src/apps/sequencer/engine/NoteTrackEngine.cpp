@@ -141,8 +141,8 @@ void NoteTrackEngine::update(float dt) {
     bool recording = _engine.state().recording();
 
     const auto &sequence = *_sequence;
-    const auto &scale = sequence.selectedScale();
-    int rootNote = sequence.selectedRootNote();
+    const auto &scale = sequence.selectedScale(_model.project().scale());
+    int rootNote = sequence.selectedRootNote(_model.project().rootNote());
 
     // override due to monitoring or recording
     if (!running || recording) {
@@ -221,8 +221,8 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
             _gateQueue.push({ applySwing(tick + stepLength), false });
         }
 
-        const auto &scale = evalSequence.selectedScale();
-        int rootNote = evalSequence.selectedRootNote();
+        const auto &scale = evalSequence.selectedScale(_model.project().scale());
+        int rootNote = evalSequence.selectedRootNote(_model.project().rootNote());
         _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, rootNote, octave, transpose), step.slide() });
     }
 }
@@ -236,8 +236,8 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         auto &sequence = *_sequence;
         auto &step = sequence.step(stepIndex);
 
-        const auto &scale = sequence.selectedScale();
-        int rootNote = sequence.selectedRootNote();
+        const auto &scale = sequence.selectedScale(_model.project().scale());
+        int rootNote = sequence.selectedRootNote(_model.project().rootNote());
 
         if (scale.isChromatic()) {
             note = scale.noteFromVolts((note - 60 - rootNote) * (1.f / 12.f));
