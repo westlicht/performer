@@ -52,7 +52,7 @@ struct Info {
 #define INFO(_kind_, _signal_, _index_, _x_, _y_, _w_, _h_) \
     { Widget::_kind_, Signal::_signal_, _index_, _x_, _y_, _w_, _h_ },
 
-static Info infos[] = {
+static const Info infos[] = {
 
 //   kind       function        index   x           y           w       h
 

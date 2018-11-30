@@ -145,7 +145,7 @@ public:
 
 private:
     int toSemiNotes(uint8_t note) const {
-        static uint8_t noteToSemiNotes[] = { 0, 2, 4, 5, 7, 9, 11 };
+        static const uint8_t noteToSemiNotes[] = { 0, 2, 4, 5, 7, 9, 11 };
         int semiNotes = noteToSemiNotes[(note & 0xf) - 1];
         semiNotes -= (note & Flat) ? 1 : 0;
         semiNotes += (note & Sharp) ? 1 : 0;

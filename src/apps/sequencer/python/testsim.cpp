@@ -22,11 +22,10 @@ struct Environment {
                 sequencer->update();
             }
         }));
-
     }
 
-    std::unique_ptr<sim::Simulator> simulator;
     std::unique_ptr<SequencerApp> sequencer;
+    std::unique_ptr<sim::Simulator> simulator;
 };
 
 PYBIND11_MODULE(testsim, m) {

@@ -9,12 +9,10 @@ public:
         if (len == 0) {
             return;
         }
-        while (len-- > 1 && *src != '\0') {
+        while (--len > 1 && *src != '\0') {
             *dst++ = *src++;
         }
-        if (len > 0) {
-            *dst = '\0';
-        }
+        *dst = '\0';
     }
 
 };
