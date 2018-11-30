@@ -10,7 +10,13 @@
 TopPage::TopPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {
-    context.model.project().watch([this] (Project::Property property) {
+}
+
+void TopPage::init() {
+    setMode(Mode::Project);
+
+    _context.model.project().watch([this] (Project::Property property) {
+        DBG("property changed");
         switch (property) {
         case Project::Property::TrackModes:
         case Project::Property::SelectedTrackIndex:
@@ -19,10 +25,6 @@ TopPage::TopPage(PageManager &manager, PageContext &context) :
             break;
         }
     });
-}
-
-void TopPage::init() {
-    setMode(Mode::Project);
 }
 
 void TopPage::editRoute(Routing::Target target, int trackIndex) {
