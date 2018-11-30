@@ -1,5 +1,13 @@
+import os
 import sys
-sys.path.append("/Users/freak/Documents/performer/build/sim/release/src/apps/sequencer/python")
+
+module_path = os.path.normpath(
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "../../../../../build/sim/release/src/apps/sequencer/python"
+    )
+)
+sys.path.append(module_path)
 
 from testsim import *
 
