@@ -16,7 +16,6 @@ void TopPage::init() {
     setMode(Mode::Project);
 
     _context.model.project().watch([this] (Project::Property property) {
-        DBG("property changed");
         switch (property) {
         case Project::Property::TrackModes:
         case Project::Property::SelectedTrackIndex:
