@@ -2,9 +2,6 @@ import sys
 import os
 import testframework as tf
 
-# print(tf.__dict__)
-# sys.exit(0)
-
 SCREENSHOT_DIR = "manual-screenshots"
 
 os.makedirs(SCREENSHOT_DIR, exist_ok=True)
@@ -16,12 +13,6 @@ c.screenshotDir(SCREENSHOT_DIR)
 c.wait(4000)
 
 project = env.sequencer.model.project
-
-# "page-sequence-edit-curve.png",
-# "page-sequence-edit-note.png",
-# "page-sequence-edit-quick-access.png",
-# "page-sequence.png",
-# "page-track.png",
 
 # page-tempo
 c.down("clock").wait(100).screenshot("page-tempo").up("clock").wait(100)
@@ -114,9 +105,4 @@ c.press("f5").screenshot("page-system-cal")
 c.pressEncoder().screenshot("page-system-cal-edit").pressEncoder()
 c.press("f4").screenshot("page-system-utils")
 c.press("f5").screenshot("page-system-update")
-
-# env.targetTrace.saveToFile("trace2.dat")
-
-trace = tf.simulator.TargetTrace()
-trace.loadFromFile("trace.dat")
 
