@@ -28,7 +28,7 @@ public:
 
     struct OutputState {
         bool clock = false;
-        bool reset = false;
+        bool reset = true;
         bool run = false;
     };
 
