@@ -11,10 +11,10 @@ namespace fs {
 static Volume *g_volume;
 static SdCard *g_sdCard;
 
-void setVolume(Volume &volume) {
-    ASSERT(g_volume == nullptr, "only one volume allowed");
-    g_volume = &volume;
-    g_sdCard = &volume.sdcard();
+void setVolume(Volume *volume) {
+    ASSERT(volume == nullptr || g_volume == nullptr, "only one volume allowed");
+    g_volume = volume;
+    g_sdCard = volume ? &volume->sdcard() : nullptr;
 }
 
 Volume &volume() {

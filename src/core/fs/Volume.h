@@ -12,6 +12,7 @@ namespace fs {
 class Volume {
 public:
     Volume(SdCard &sdcard);
+    ~Volume();
 
     SdCard &sdcard() { return _sdcard; }
 

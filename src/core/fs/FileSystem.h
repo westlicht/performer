@@ -10,7 +10,7 @@
 
 namespace fs {
 
-void setVolume(Volume &volume);
+void setVolume(Volume *volume);
 Volume &volume();
 
 Error mkdir(const char *path);

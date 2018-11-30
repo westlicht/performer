@@ -12,7 +12,12 @@ namespace fs {
 Volume::Volume(SdCard &sdcard) :
     _sdcard(sdcard)
 {
-    setVolume(*this);
+    setVolume(this);
+}
+
+Volume::~Volume() {
+    unmount();
+    setVolume(nullptr);
 }
 
 bool Volume::available() {
