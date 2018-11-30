@@ -26,7 +26,9 @@
 
 namespace sim {
 
+#ifdef __EMSCRIPTEN__
 static Frontend *g_instance;
+#endif
 
 template<typename T>
 static void addWidget(std::vector<T> &list, T widget, int index) {
@@ -39,7 +41,9 @@ Frontend::Frontend(Simulator &simulator) :
 {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
 
+#ifdef __EMSCRIPTEN__
     g_instance = this;
+#endif
 }
 
 Frontend::~Frontend() {
