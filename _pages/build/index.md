@@ -17,15 +17,17 @@ This build guide is intended to give experienced builders all the required infor
 
 To build the sequencer you first need to source all the required parts. A complete bill of materials (BOM) can be found here:
 
-[Google Sheet BOM](https://docs.google.com/spreadsheets/d/1XFOsXiIkOcD5iRhrXQCekjhakFLR-p3aiQ2NIJsRs8M/edit?usp=sharing)
+[Google Sheet BOM](https://docs.google.com/spreadsheets/d/1ISlHD3w4I0c7bPkKgSyBY_JKwI-BUlVTNLUrIJnzrM8/edit?usp=sharing)
 
 To make sourcing parts a bit easier, there is also a BOM at Octopart:
 
-[Octopart BOM](https://octopart.com/bom-tool/ZDJ2VMnB)
+[Octopart BOM](https://octopart.com/bom-tool/wxkGGtzB)
 
 The Octopart BOM contains all parts except the jacks, encoder knob and the standoffs and makes it easy to order from the two main distributors [Mouser](https://www.mouser.com) and [Digikey](https://www.digikey.com).
 
-> Note: Due to the current shortage of surface mount capacitors it can be a bit hard to source some values of capacitors. Note that most of these are used as bypass capacitors and should be easily replaceable with a different part of similar specification.
+Due to the current shortage of surface mount capacitors it can be a bit hard to source some values of capacitors. Note that most of these are used as bypass capacitors and should be easily replaceable with a different part of similar specification.
+
+Make sure to get the LEDs specified in the BOM. The circuit for driving the matrix is operating at the current sinking limits of the shift registers. For that reason, it is important to get bright LEDs, as reducing the current limiting resistor to increase brightness will damage the shift registers!
 
 A good source for the remaining parts is [Thonk](https://www.thonk.co.uk) in the UK:
 
@@ -38,8 +40,8 @@ A good source for the remaining parts is [Thonk](https://www.thonk.co.uk) in the
 To help populating the PCB, its always handy to have access to the schematic and board layout. If you don't have [KiCad](http://kicad-pcb.org) installed to open the board files, you can also access the all relevant files online:
 
 - [Schematics](https://cdn.rawgit.com/westlicht/performer-hardware/master/sequencer.pdf)
-- [Front Silkscreen](https://eyrie.io/board/244e2550832a4021a9b4df8c87535577?pours=true&active=layout&layers=m000000000a010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=false)
-- [Back Silkscreen](https://eyrie.io/board/244e2550832a4021a9b4df8c87535577?pours=true&active=layout&layers=m0000000005010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=true)
+- [Front Silkscreen](https://eyrie.io/board/2a9246cce6a14814b166129793126f1b?pours=true&active=layout&layers=m000000000a010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=false)
+- [Back Silkscreen](https://eyrie.io/board/2a9246cce6a14814b166129793126f1b?pours=true&active=layout&layers=m0000000005010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=true)
 
 > Note: The online board viewer can also show all the other layers of the board which is handy to find where traces go and where to measure the different power rails.
 
