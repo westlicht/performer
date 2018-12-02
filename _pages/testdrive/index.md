@@ -9,38 +9,28 @@ nav: 40
   .emscripten-wrapper {
     background: #111;
     width: 100%;
-    padding: 50px 0;
+    padding: 10px 0;
     margin: 20px 0;
   }
 
   #canvas {
     display: block;
     margin: 0 auto;
-    /*width: 100%;*/
   }
-
-
 </style>
 
 # Test Drive
 
 <div class="spinner" id='spinner'></div>
 <div class="emscripten" id="status">Downloading...</div>
-
-<!-- <div class="emscripten">
-  <progress value="0" max="100" id="progress" hidden=1></progress>
-</div>
- -->
     
 <div class="emscripten-wrapper">
   <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 </div>
 
-<!-- <textarea id="output" rows="8"></textarea> -->
-
 ## Description
 
-This simulator was used during development of the **per\|former** sequencer to have a shorter iteration time and to allow me to work on the firmware without having access to the hardware module. It is not intended to be a useful sequencer on the desktop, but it may allow people interested in building one to quickly check some of its features. To learn how to use the sequencer check the [User Manual](../manual).
+This simulator is used for development and testing of the **per\|former** sequencer. It allowed me to have shorter iteration times during development and to work on the firmware without having access to the hardware module. Note that this simulator is not intended to be a production sequencer on the desktop, but should allow people interested in building a **per\|former** module to quickly check out some of its features. In addition, please note that the timing accuracy of the simulator is not comparable to the hardware module, especially running in the browser. To learn how to use the sequencer check the [User Manual](../manual).
 
 ## Sound Engine
 
@@ -67,7 +57,7 @@ To control the sequencer, the following mapping is used:
 | Mouse Wheel | `ENCODER` rotate |
 | Space | `ENCODER` press |
 | 1 | `PLAY` |
-| 2 | `CLOCK` |
+| 2 | `TEMP` |
 | 3 | `PATT` |
 | 4 | `PERF` |
 | 5 | `PREV` |
