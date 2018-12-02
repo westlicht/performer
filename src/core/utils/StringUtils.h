@@ -9,7 +9,7 @@ public:
         if (len == 0) {
             return;
         }
-        while (--len > 1 && *src != '\0') {
+        while (len-- > 1 && *src != '\0') {
             *dst++ = *src++;
         }
         *dst = '\0';
