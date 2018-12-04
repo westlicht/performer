@@ -185,9 +185,21 @@ dt {
         font-size: 16px;
         padding-right: 1rem;
         line-height: 50px;
+
+        a {
+          color: white;
+
+          &:hover {
+            color: white;
+          }
+  
+          &.active {
+            color: white;
+          }
+        }
       }
 
-      a {
+      &.link > a {
         padding: 5px 10px;
         margin: 10px;
         border-radius: 5px;
@@ -229,12 +241,10 @@ dt {
 #banner {
   margin: 20px 0;
   width: 100%;
-  background: blue;
   height: 250px;
-  background: url("../images/sequencer.jpg");
+  background: url("../images/final.jpg");
   background-size: cover;
   background-position: center;
-  filter: grayscale(50%) sepia(60%);
 }
 
 section {
