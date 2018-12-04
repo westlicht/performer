@@ -2,7 +2,7 @@
 permalink: /about/
 title: About
 layout: page
-nav: 50
+nav: 10
 ---
 
 # About
