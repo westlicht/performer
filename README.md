@@ -11,3 +11,9 @@ This repository contains the firmware for the **per|former eurorack sequencer**.
 **Disclaimer: This is work in progress**
 
 The hardware design files are hosted in a separate repository [here](https://github.com/westlicht/performer-hardware).
+
+## License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This work is licensed under a [MIT License](https://opensource.org/licenses/MIT).
