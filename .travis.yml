@@ -12,7 +12,7 @@ matrix:
       os: linux
       env: NAME=stm32
       script:
-      - make setup_stm32 && (cd build/stm32/debug && make) && (cd build/stm32/release && make) && make deploy
+      - make setup_stm32 && (cd build/stm32/release && make) && make deploy
       # Deploy to github releases
       deploy:
         provider: releases
@@ -36,12 +36,12 @@ matrix:
           - python3.7
           - python3.7-dev
       script:
-      - make setup_sim && (cd build/sim/debug && make) && (cd build/sim/release && make)
+      - make setup_sim && (cd build/sim/release && make)
     - name: Simulator Platform (macOS)
       os: osx
       script:
       - brew install sdl2
-      - make setup_sim && (cd build/sim/debug && make) && (cd build/sim/release && make)
+      - make setup_sim && (cd build/sim/release && make)
     - name: Simulation Platform (WebAssembly)
       sudo: required
       servies:
