@@ -13,6 +13,8 @@
 
 class FileManager {
 public:
+    static void init();
+
     static bool volumeAvailable();
     static bool volumeMounted();
 

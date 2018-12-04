@@ -53,7 +53,7 @@ extern "C" {
 
 DSTATUS disk_initialize(BYTE pdrv) {
     ASSERT(pdrv == 0, "only one physical drive available");
-    DBG("disk_initialize(pdrv=%d)", pdrv);
+    // DBG("disk_initialize(pdrv=%d)", pdrv);
     return fs::g_sdCard->available() ? 0 : STA_NOINIT;
 }
 

@@ -33,6 +33,14 @@ static void slotPath(StringBuilder &str, FileType type, int slot) {
     str("%s/%03d.%s", info.dir, slot + 1, info.ext);
 }
 
+void FileManager::init() {
+    _volumeState = 0;
+    _nextVolumeStateCheckTicks = 0;
+    _taskExecuteCallback = nullptr;
+    _taskResultCallback = nullptr;
+    _taskPending = 0;
+}
+
 bool FileManager::volumeAvailable() {
     return _volumeState & Available;
 }
