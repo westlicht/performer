@@ -37,11 +37,13 @@ matrix:
           - python3.7-dev
       script:
       - make setup_sim && (cd build/sim/release && make)
+      - (cd build/sim/release && make test)
     - name: Simulator Platform (macOS)
       os: osx
       script:
       - brew install sdl2
       - make setup_sim && (cd build/sim/release && make)
+      - (cd build/sim/release && make test)
     - name: Simulation Platform (WebAssembly)
       sudo: required
       servies:
