@@ -30,11 +30,11 @@ nav: 40
 
 ## Description
 
-This simulator is used for development and testing of the **per\|former** sequencer. It allowed me to have shorter iteration times during development and to work on the firmware without having access to the hardware module. Note that this simulator is not intended to be a production sequencer on the desktop, but should allow people interested in building a **per\|former** module to quickly check out some of its features. In addition, please note that the timing accuracy of the simulator is not comparable to the hardware module, especially running in the browser. To learn how to use the sequencer check the [User Manual](../manual).
+This simulator is used for development and testing of the **per\|former** sequencer. It allows me to have shorter iteration times during development and to work on the firmware without having access to the hardware module. Note that this simulator is not intended to be a production sequencer on the desktop, but should allow people interested in building a **per\|former** module to quickly play with some of its features. In addition, please note that the timing accuracy of the simulator is not comparable to the hardware module, especially running in the browser. To learn how to use the sequencer check the [User Manual](../manual).
 
 ## Sound Engine
 
-To actually hear some audio when running the sequencer, the simulator has a small sound engine that is hardwired to the sequencers gate and CV outputs. The following voices are set up:
+In order to actually output some audio when running the sequencer, the simulator has a small sound engine attached to it that is hardwired to the sequencers gate and CV outputs. The following voices are set up:
 
 | Track | Gate | CV | Sound |
 | :--- | :--- | :--- | :--- |
@@ -46,7 +46,6 @@ To actually hear some audio when running the sequencer, the simulator has a smal
 | 6 | Trigger | - | Open Hat |
 | 7 | Trigger | - | Tom |
 | 8 | Gate | Pitch | Simple Monosynth Voice |
-
 
 ## Controls
 
@@ -60,8 +59,8 @@ To control the sequencer, the following mapping is used:
 | 2 | `TEMP` |
 | 3 | `PATT` |
 | 4 | `PERF` |
-| 5 | `PREV` |
-| 6 | `NEXT` |
+| Left | `PREV` |
+| Right | `NEXT` |
 | Shift | `SHIFT` |
 | Alt | `PAGE` |
 | Q, W, E, R, T, Y, U, I | `TRACK[1-8]` |
