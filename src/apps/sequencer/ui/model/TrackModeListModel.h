@@ -31,7 +31,9 @@ public:
 
     void toProject(Project &project) {
         for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-            project.setTrackMode(i, _trackModes[i]);
+            if (_trackModes[i] != project.track(i).trackMode()) {
+                project.setTrackMode(i, _trackModes[i]);
+            }
         }
     }
 
