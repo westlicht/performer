@@ -59,7 +59,7 @@ def process_images():
         "page-user-scale.png",
     ]
 
-    print("processing images ...");
+    print("processing images ...")
 
     # rescale page images
     for filename in pages:
@@ -97,8 +97,8 @@ def generate_toc():
 
 def verify_anchors():
     text = open(MARKDOWN_FILE).read()
-    lines = text.split("\n")
     anchors = re.findall(r"id=\"([\w-]+)\"", text)
+    lines = text.split("\n")
 
     for index, line in enumerate(lines):
         m = re.search(r"\(#([\w-]+)\)", line)
@@ -107,7 +107,12 @@ def verify_anchors():
             if not ref in anchors:
                 print("Found reference to unknown anchor '%s' on line %d" % (ref, index))
 
+def verify_button_labels():
+    text = open(MARKDOWN_FILE).read()
+    anchors = re.findall(r"`\w+`", text)
+    print(sorted(list(set(anchors))))
 
 process_images()
 generate_toc()
 verify_anchors()
+# verify_button_labels()
