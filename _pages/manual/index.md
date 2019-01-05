@@ -620,13 +620,13 @@ If a track is in _Note_ mode, the following parameters are available:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
-| Scale | [Scales](#appendix-scales) | Scale to use for this sequence. If set to _Default_, uses the default scale set on the [Project](#pages-project) page. |
-| Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Root note to use for this sequence. If set to _Default_, uses the default root note set on the [Project](#pages-project) page. |
-| Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
-| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
-| Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
 | First Step | 1 - 64 | First step to play. |
 | Last Step | 1 - 64 | Last step to play. |
+| Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
+| Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
+| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
+| Scale | [Scales](#appendix-scales) | Scale to use for this sequence. If set to _Default_, uses the default scale set on the [Project](#pages-project) page. |
+| Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Root note to use for this sequence. If set to _Default_, uses the default root note set on the [Project](#pages-project) page. |
 
 <h4>Curve Track</h4>
 
@@ -636,12 +636,12 @@ If a track is in _Curve_ mode, the following parameters are available:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
-| Range | 1V - 5V Unipolar, 1V - 5V Bipolar | Voltage range to use for this sequence. |
-| Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
-| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
-| Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
 | First Step | 1 - 64 | First step to play. |
 | Last Step | 1 - 64 | Last step to play. |
+| Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
+| Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
+| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
+| Range | 1V - 5V Unipolar, 1V - 5V Bipolar | Voltage range to use for this sequence. |
 
 <!-- Steps -->
 
@@ -722,13 +722,13 @@ Depending on the _Track Mode_, the following parameters are available through qu
 
 | Button | Note Track | Curve Track |
 | :--- | :--- | :--- |
-| `STEP9` | Scale | Range |
-| `STEP10` | Root Note | - |
-| `STEP11` | Divisor | Divisor |
-| `STEP12` | Reset Measure | Reset Measure |
-| `STEP13` | Run Mode | Run Mode |
-| `STEP14` | First Step | First Step |
-| `STEP15` | Last Step | Last Step |
+| `STEP9` | First Step | First Step |
+| `STEP10` | Last Step | Last Step |
+| `STEP11` | Run Mode | Run Mode |
+| `STEP12` | Divisor | Divisor |
+| `STEP13` | Reset Measure | Reset Measure |
+| `STEP14` | Scale | Range |
+| `STEP15` | Root Note | - |
 | `STEP16` | - | - |
 
 While holding the `PAGE` button, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `STEP[1-16]` to select the most common values. Releasing the `PAGE` button will return to the normal state of the steps page.
