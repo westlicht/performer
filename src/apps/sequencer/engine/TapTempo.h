@@ -22,9 +22,7 @@ public:
 
         if (_lastTime) {
             _intervalAverage.push(currentTime - _lastTime);
-            _lastTime = currentTime;
-
-            _bpm = 60.f / (_intervalAverage() / 1000000.f);
+            _bpm = 60000000.f / _intervalAverage();
         }
 
         _lastTime = currentTime;
