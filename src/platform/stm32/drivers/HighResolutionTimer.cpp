@@ -21,10 +21,10 @@ void HighResolutionTimer::init() {
     timer_disable_preload(TIMER);
     timer_continuous_mode(TIMER);
 
-    // set to 10mhz
-    timer_set_prescaler(TIMER, (rcc_apb1_frequency * 2) / 10000000 - 1);
+    // set to 1 MHz
+    timer_set_prescaler(TIMER, (rcc_apb1_frequency) / 1000000 - 1);
     // count microseconds
-    timer_set_period(TIMER, 10);
+    timer_set_period(TIMER, 1);
 
     timer_enable_update_event(TIMER);
     timer_enable_irq(TIMER, TIM_DIER_UIE);
