@@ -36,13 +36,13 @@ enum class Function {
 static const char *functionNames[] = { "SHAPE", "MIN", "MAX", nullptr, nullptr };
 
 static const CurveSequenceListModel::Item quickEditItems[8] = {
-    CurveSequenceListModel::Item::Range,
-    CurveSequenceListModel::Item::Last,
-    CurveSequenceListModel::Item::Divisor,
-    CurveSequenceListModel::Item::ResetMeasure,
-    CurveSequenceListModel::Item::RunMode,
     CurveSequenceListModel::Item::FirstStep,
     CurveSequenceListModel::Item::LastStep,
+    CurveSequenceListModel::Item::RunMode,
+    CurveSequenceListModel::Item::Divisor,
+    CurveSequenceListModel::Item::ResetMeasure,
+    CurveSequenceListModel::Item::Range,
+    CurveSequenceListModel::Item::Last,
     CurveSequenceListModel::Item::Last
 };
 

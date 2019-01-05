@@ -10,13 +10,13 @@
 class NoteSequenceListModel : public ListModel {
 public:
     enum Item {
-        Scale,
-        RootNote,
-        Divisor,
-        ResetMeasure,
-        RunMode,
         FirstStep,
         LastStep,
+        RunMode,
+        Divisor,
+        ResetMeasure,
+        Scale,
+        RootNote,
         Last
     };
 
@@ -64,13 +64,13 @@ public:
 private:
     static const char *itemName(Item item) {
         switch (item) {
-        case Scale:             return "Scale";
-        case RootNote:          return "Root Note";
-        case Divisor:           return "Divisor";
-        case ResetMeasure:      return "Reset Measure";
-        case RunMode:           return "Run Mode";
         case FirstStep:         return "First Step";
         case LastStep:          return "Last Step";
+        case RunMode:           return "Run Mode";
+        case Divisor:           return "Divisor";
+        case ResetMeasure:      return "Reset Measure";
+        case Scale:             return "Scale";
+        case RootNote:          return "Root Note";
         case Last:              break;
         }
         return nullptr;
@@ -82,11 +82,14 @@ private:
 
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
-        case Scale:
-            _sequence->printScale(str);
+        case FirstStep:
+            _sequence->printFirstStep(str);
             break;
-        case RootNote:
-            _sequence->printRootNote(str);
+        case LastStep:
+            _sequence->printLastStep(str);
+            break;
+        case RunMode:
+            _sequence->printRunMode(str);
             break;
         case Divisor:
             _sequence->printDivisor(str);
@@ -94,14 +97,11 @@ private:
         case ResetMeasure:
             _sequence->printResetMeasure(str);
             break;
-        case RunMode:
-            _sequence->printRunMode(str);
+        case Scale:
+            _sequence->printScale(str);
             break;
-        case FirstStep:
-            _sequence->printFirstStep(str);
-            break;
-        case LastStep:
-            _sequence->printLastStep(str);
+        case RootNote:
+            _sequence->printRootNote(str);
             break;
         case Last:
             break;
@@ -110,11 +110,14 @@ private:
 
     void editValue(Item item, int value, bool shift) {
         switch (item) {
-        case Scale:
-            _sequence->editScale(value, shift);
+        case FirstStep:
+            _sequence->editFirstStep(value, shift);
             break;
-        case RootNote:
-            _sequence->editRootNote(value, shift);
+        case LastStep:
+            _sequence->editLastStep(value, shift);
+            break;
+        case RunMode:
+            _sequence->editRunMode(value, shift);
             break;
         case Divisor:
             _sequence->editDivisor(value, shift);
@@ -122,14 +125,11 @@ private:
         case ResetMeasure:
             _sequence->editResetMeasure(value, shift);
             break;
-        case RunMode:
-            _sequence->editRunMode(value, shift);
+        case Scale:
+            _sequence->editScale(value, shift);
             break;
-        case FirstStep:
-            _sequence->editFirstStep(value, shift);
-            break;
-        case LastStep:
-            _sequence->editLastStep(value, shift);
+        case RootNote:
+            _sequence->editRootNote(value, shift);
             break;
         case Last:
             break;
@@ -138,17 +138,18 @@ private:
 
     int indexedCountValue(Item item) const {
         switch (item) {
-        case Scale:
-            return Scale::Count + 1;
-        case RootNote:
-            return 12 + 1;
+        case FirstStep:
+        case LastStep:
+            return 16;
         case RunMode:
             return int(Types::RunMode::Last);
         case Divisor:
         case ResetMeasure:
-        case FirstStep:
-        case LastStep:
             return 16;
+        case Scale:
+            return Scale::Count + 1;
+        case RootNote:
+            return 12 + 1;
         case Last:
             break;
         }
@@ -157,20 +158,20 @@ private:
 
     int indexedValue(Item item) const {
         switch (item) {
-        case Scale:
-            return _sequence->indexedScale();
-        case RootNote:
-            return _sequence->indexedRootNote();
-        case Divisor:
-            return _sequence->indexedDivisor();
-        case ResetMeasure:
-            return _sequence->resetMeasure();
-        case RunMode:
-            return int(_sequence->runMode());
         case FirstStep:
             return _sequence->firstStep();
         case LastStep:
             return _sequence->lastStep();
+        case RunMode:
+            return int(_sequence->runMode());
+        case Divisor:
+            return _sequence->indexedDivisor();
+        case ResetMeasure:
+            return _sequence->resetMeasure();
+        case Scale:
+            return _sequence->indexedScale();
+        case RootNote:
+            return _sequence->indexedRootNote();
         case Last:
             break;
         }
@@ -179,20 +180,20 @@ private:
 
     void setIndexedValue(Item item, int index) {
         switch (item) {
-        case Scale:
-            return _sequence->setIndexedScale(index);
-        case RootNote:
-            return _sequence->setIndexedRootNote(index);
-        case Divisor:
-            return _sequence->setIndexedDivisor(index);
-        case ResetMeasure:
-            return _sequence->setResetMeasure(index);
-        case RunMode:
-            return _sequence->setRunMode(Types::RunMode(index));
         case FirstStep:
             return _sequence->setFirstStep(index);
         case LastStep:
             return _sequence->setLastStep(index);
+        case RunMode:
+            return _sequence->setRunMode(Types::RunMode(index));
+        case Divisor:
+            return _sequence->setIndexedDivisor(index);
+        case ResetMeasure:
+            return _sequence->setResetMeasure(index);
+        case Scale:
+            return _sequence->setIndexedScale(index);
+        case RootNote:
+            return _sequence->setIndexedRootNote(index);
         case Last:
             break;
         }

@@ -39,13 +39,13 @@ enum class Function {
 static const char *functionNames[] = { "GATE", "RETRIG", "LENGTH", "NOTE", nullptr };
 
 static const NoteSequenceListModel::Item quickEditItems[8] = {
-    NoteSequenceListModel::Item::Scale,
-    NoteSequenceListModel::Item::RootNote,
-    NoteSequenceListModel::Item::Divisor,
-    NoteSequenceListModel::Item::ResetMeasure,
-    NoteSequenceListModel::Item::RunMode,
     NoteSequenceListModel::Item::FirstStep,
     NoteSequenceListModel::Item::LastStep,
+    NoteSequenceListModel::Item::RunMode,
+    NoteSequenceListModel::Item::Divisor,
+    NoteSequenceListModel::Item::ResetMeasure,
+    NoteSequenceListModel::Item::Scale,
+    NoteSequenceListModel::Item::RootNote,
     NoteSequenceListModel::Item::Last
 };
 

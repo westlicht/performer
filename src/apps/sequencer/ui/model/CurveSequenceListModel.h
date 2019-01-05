@@ -9,12 +9,12 @@
 class CurveSequenceListModel : public ListModel {
 public:
     enum Item {
-        Range,
-        Divisor,
-        ResetMeasure,
-        RunMode,
         FirstStep,
         LastStep,
+        RunMode,
+        Divisor,
+        ResetMeasure,
+        Range,
         Last
     };
 
@@ -62,12 +62,12 @@ public:
 private:
     static const char *itemName(Item item) {
         switch (item) {
-        case Range:             return "Range";
-        case Divisor:           return "Divisor";
-        case ResetMeasure:      return "Reset Measure";
-        case RunMode:           return "Run Mode";
         case FirstStep:         return "First Step";
         case LastStep:          return "Last Step";
+        case RunMode:           return "Run Mode";
+        case Divisor:           return "Divisor";
+        case ResetMeasure:      return "Reset Measure";
+        case Range:             return "Range";
         case Last:              break;
         }
         return nullptr;
@@ -79,8 +79,14 @@ private:
 
     void formatValue(Item item, StringBuilder &str) const {
         switch (item) {
-        case Range:
-            _sequence->printRange(str);
+        case FirstStep:
+            _sequence->printFirstStep(str);
+            break;
+        case LastStep:
+            _sequence->printLastStep(str);
+            break;
+        case RunMode:
+            _sequence->printRunMode(str);
             break;
         case Divisor:
             _sequence->printDivisor(str);
@@ -88,14 +94,8 @@ private:
         case ResetMeasure:
             _sequence->printResetMeasure(str);
             break;
-        case RunMode:
-            _sequence->printRunMode(str);
-            break;
-        case FirstStep:
-            _sequence->printFirstStep(str);
-            break;
-        case LastStep:
-            _sequence->printLastStep(str);
+        case Range:
+            _sequence->printRange(str);
             break;
         case Last:
             break;
@@ -104,8 +104,14 @@ private:
 
     void editValue(Item item, int value, bool shift) {
         switch (item) {
-        case Range:
-            _sequence->editRange(value, shift);
+        case FirstStep:
+            _sequence->editFirstStep(value, shift);
+            break;
+        case LastStep:
+            _sequence->editLastStep(value, shift);
+            break;
+        case RunMode:
+            _sequence->editRunMode(value, shift);
             break;
         case Divisor:
             _sequence->editDivisor(value, shift);
@@ -113,14 +119,8 @@ private:
         case ResetMeasure:
             _sequence->editResetMeasure(value, shift);
             break;
-        case RunMode:
-            _sequence->editRunMode(value, shift);
-            break;
-        case FirstStep:
-            _sequence->editFirstStep(value, shift);
-            break;
-        case LastStep:
-            _sequence->editLastStep(value, shift);
+        case Range:
+            _sequence->editRange(value, shift);
             break;
         case Last:
             break;
@@ -129,15 +129,16 @@ private:
 
     int indexedCountValue(Item item) const {
         switch (item) {
-        case Range:
-            return int(Types::VoltageRange::Last);
+        case FirstStep:
+        case LastStep:
+            return 16;
         case RunMode:
             return int(Types::RunMode::Last);
         case Divisor:
         case ResetMeasure:
-        case FirstStep:
-        case LastStep:
             return 16;
+        case Range:
+            return int(Types::VoltageRange::Last);
         case Last:
             break;
         }
@@ -146,18 +147,18 @@ private:
 
     int indexedValue(Item item) const {
         switch (item) {
-        case Range:
-            return int(_sequence->range());
-        case Divisor:
-            return _sequence->indexedDivisor();
-        case ResetMeasure:
-            return _sequence->resetMeasure();
-        case RunMode:
-            return int(_sequence->runMode());
         case FirstStep:
             return _sequence->firstStep();
         case LastStep:
             return _sequence->lastStep();
+        case RunMode:
+            return int(_sequence->runMode());
+        case Divisor:
+            return _sequence->indexedDivisor();
+        case ResetMeasure:
+            return _sequence->resetMeasure();
+        case Range:
+            return int(_sequence->range());
         case Last:
             break;
         }
@@ -166,18 +167,18 @@ private:
 
     void setIndexedValue(Item item, int index) {
         switch (item) {
-        case Range:
-            return _sequence->setRange(Types::VoltageRange(index));
-        case Divisor:
-            return _sequence->setIndexedDivisor(index);
-        case ResetMeasure:
-            return _sequence->setResetMeasure(index);
-        case RunMode:
-            return _sequence->setRunMode(Types::RunMode(index));
         case FirstStep:
             return _sequence->setFirstStep(index);
         case LastStep:
             return _sequence->setLastStep(index);
+        case RunMode:
+            return _sequence->setRunMode(Types::RunMode(index));
+        case Divisor:
+            return _sequence->setIndexedDivisor(index);
+        case ResetMeasure:
+            return _sequence->setResetMeasure(index);
+        case Range:
+            return _sequence->setRange(Types::VoltageRange(index));
         case Last:
             break;
         }
