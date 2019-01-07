@@ -30,7 +30,7 @@ nav: 40
 
 ## Description
 
-This simulator is used for development and testing of the **per\|former** sequencer. It allows me to have shorter iteration times during development and to work on the firmware without having access to the hardware module. Note that this simulator is not intended to be a production sequencer on the desktop, but should allow people interested in building a **per\|former** module to quickly play with some of its features. In addition, please note that the timing accuracy of the simulator is not comparable to the hardware module, especially running in the browser. To learn how to use the sequencer check the [User Manual](../manual).
+This simulator is used for development and testing of the **PER\|FORMER** sequencer. It allows me to have shorter iteration times during development and to work on the firmware without having access to the hardware module. Note that this simulator is not intended to be a production sequencer on the desktop, but should allow people interested in building a **PER\|FORMER** module to quickly play with some of its features. In addition, please note that the timing accuracy of the simulator is not comparable to the hardware module, especially running in the browser. To learn how to use the sequencer check the [User Manual](../manual).
 
 ## Sound Engine
 

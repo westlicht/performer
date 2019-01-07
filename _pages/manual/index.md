@@ -67,7 +67,7 @@ nav: 20
 
 <h2 id="introduction">Introduction</h2>
 
-**per\|former** is an open source and open hardware eurorack sequencer module. It packs a lot of functionality into a small form factor and was designed both as a versatile sequencer in the studio as well as for live performance. To fully take advantage of all the features available in this module, it is highly recommended to study this document carefully..
+**PER\|FORMER** is an open source and open hardware eurorack sequencer module. It packs a lot of functionality into a small form factor and was designed both as a versatile sequencer in the studio as well as for live performance. To fully take advantage of all the features available in this module, it is highly recommended to study this document carefully..
 
 The [Concepts](#concepts) chapter introduces the overall architecture and functionality of the sequencer. The [User Interface](#ui) chapter gives an overview of the user interface and introduces key concepts of how to use the sequencer. The [Pages](#pages) chapter goes into more detail in terms of functionality and user interface of the various modes and contexts in the sequencer and introduces common workflows.
 
@@ -75,7 +75,7 @@ The [Concepts](#concepts) chapter introduces the overall architecture and functi
 
 <h3 id="introduction-features">Features</h3>
 
-The following list describes the key features of the **per\|former** sequencer:
+The following list describes the key features of the **PER\|FORMER** sequencer:
 
 - 8 track sequencer
 - 16 sequences per track
@@ -140,7 +140,7 @@ The project is split into two regions. The first region contains the project set
 
 <h3 id="concepts-track">Track</h3>
 
-A track is responsible for generating note or modulation signals used to control other modules in the eurorack system using the CV/gate outputs. The **per\|former** sequencer can run up to 8 tracks, that primarily use step sequencing to generate these signals, where each track can run independent of the other tracks. This means that every sequence in a track can have a different time division, run mode, duration or scale among other properties.
+A track is responsible for generating note or modulation signals used to control other modules in the eurorack system using the CV/gate outputs. The *PERr\FORMERr** sequencer can run up to 8 tracks, that primarily use step sequencing to generate these signals, where each track can run independent of the other tracks. This means that every sequence in a track can have a different time division, run mode, duration or scale among other properties.
 
 <h4>Track Mode</h4>
 
@@ -204,7 +204,7 @@ The playback of the sequence is controlled by the same set of parameters as in t
 
 In MIDI/CV mode, a track acts as a MIDI to CV converter, taking MIDI note data from either the MIDI or USBMIDI input and coverting it to voltages at the CV/gate outputs. This allows for playing voices live from a keyboard or use an external MIDI sequencer to control them.
 
-> Note: MIDI/CV mode allows for using the **per\|former** module as a pure MIDI/CV converter with up to 8 CV/Gate outputs.
+> Note: MIDI/CV mode allows for using the **PER\|FORMER** module as a pure MIDI/CV converter with up to 8 CV/Gate outputs.
 
 <!-- Pattern -->
 
@@ -230,7 +230,7 @@ A song consists of up to 16 slots, each holding a set of patterns to be played o
 
 <h3 id="concepts-scale">Scale</h3>
 
-In contrast to many other sequencers that directly operate on chromatic note values, the **per\|former** sequencer is using the concept of voltage tables. Each note is stored as an index into a voltage table that does not necessarily have a specific musical meaning. While offering many of the more commonly used scales in form of presets, the sequencer also provides some scales beyond the typical western chromatic variants, for example a 24 tone equal temperament scale. The additional 4 user scales allow for even more experimentation as well as setting up voltage tables to specifically address discrete values of a CV input on another module. This allows for example to select a specific sample slot, choose a wavetable or similar applications.
+In contrast to many other sequencers that directly operate on chromatic note values, the **PER\|FORMER** sequencer is using the concept of voltage tables. Each note is stored as an index into a voltage table that does not necessarily have a specific musical meaning. While offering many of the more commonly used scales in form of presets, the sequencer also provides some scales beyond the typical western chromatic variants, for example a 24 tone equal temperament scale. The additional 4 user scales allow for even more experimentation as well as setting up voltage tables to specifically address discrete values of a CV input on another module. This allows for example to select a specific sample slot, choose a wavetable or similar applications.
 
 A global default scale and root note can be specified on the [Project](#pages-project) page which can be overridden for individual sequences in the [Sequence](#pages-sequence) page. The user scales can be edited on the [User Scale](#pages-user-scale) page. See [Scales](#appendix-scales) appendix for a list of all preset scales.
 
@@ -300,7 +300,7 @@ The reason for using a slot system rather than traditional filenames is in order
 
 <h3 id="ui-overview">Overview</h3>
 
-The user interface of the **per\|former** sequencer is made up from the following components:
+The user interface of the **PER\|FORMER** sequencer is made up from the following components:
 
 - OLED display
 - Rotary encoder with button

@@ -9,9 +9,9 @@ nav: 30
 
 ## Introduction
 
-**DISCLAIMER: Building the per\|former sequencer is not recommended for beginners!**
+**DISCLAIMER: Building the PER\|FORMER sequencer is not recommended for beginners!**
 
-This build guide is intended to give experienced builders all the required information to successfully build the **per\|former** sequencer.
+This build guide is intended to give experienced builders all the required information to successfully build the **PER\|FORMER** sequencer.
 
 ## Sourcing Parts
 
@@ -40,8 +40,8 @@ A good source for the remaining parts is [Thonk](https://www.thonk.co.uk) in the
 To help populating the PCB, its always handy to have access to the schematic and board layout. If you don't have [KiCad](http://kicad-pcb.org) installed to open the board files, you can also access the all relevant files online:
 
 - [Schematics](https://cdn.rawgit.com/westlicht/performer-hardware/master/sequencer.pdf)
-- [Front Silkscreen](https://eyrie.io/board/2a9246cce6a14814b166129793126f1b?pours=true&active=layout&layers=m000000000a010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=false)
-- [Back Silkscreen](https://eyrie.io/board/2a9246cce6a14814b166129793126f1b?pours=true&active=layout&layers=m0000000005010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=true)
+- [Front Silkscreen](https://eyrie.io/board/eca2465c9eca4299a8386ca4887076fa?pours=true&active=layout&layers=m000000000a010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=false)
+- [Back Silkscreen](https://eyrie.io/board/eca2465c9eca4299a8386ca4887076fa?pours=true&active=layout&layers=m0000000005010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=true)
 
 > Note: The online board viewer can also show all the other layers of the board which is handy to find where traces go and where to measure the different power rails.
 
@@ -105,7 +105,7 @@ Finally, put a round switch cap to all of the remaining switches. Note that they
 
 Flashing the firmware can be done in multiple ways. The easiest way is to download the latest firmware from the [Github Releases](https://github.com/westlicht/performer/releases) page and use the flasher of your choice. Both **bootloader.hex** and **sequencer.hex** need to be downloaded and flashed to run the sequencer. There is also **tester.hex**, a hardware test application that can be used to fully test all hardware components.
 
-With the firmware loaded, you now hopefully have a fully working **per\|former** sequencer.
+With the firmware loaded, you now hopefully have a fully working **PER\|FORMER** sequencer.
 
 ![](images/final.jpg)
 

@@ -3,11 +3,11 @@ permalink: /
 layout: home
 ---
 
-# per|former
+# PER|FORMER
 
-**per\|former** is a eurorack sequencer module designed for both live performance and work in the studio. It is based on the concept of step sequencing and can generate a wide variety of rhythms, melodies and modulation signals. While offering a vast amount of programming options, strong focus is put on having performance critical features available as directly as possible. External MIDI controllers can be used for live recording and to control many parameters of the sequencing engine. Alternatively you can directly connect a Novation Launchpad&trade; to control many aspects of the sequencer. A highly configurable clock system allows the module to act both as a master clock or sync to many other modules or external gear. In the studio, the module can act as a precise MIDI to CV converter. And best of all, if you should ever get bored with music, you can play some asteroids on it too!
+**PER\|FORMER** is a eurorack sequencer module designed for both live performance and work in the studio. It is based on the concept of step sequencing and can generate a wide variety of rhythms, melodies and modulation signals. While offering a vast amount of programming options, strong focus is put on having performance critical features available as directly as possible. External MIDI controllers can be used for live recording and to control many parameters of the sequencing engine. Alternatively you can directly connect a Novation Launchpad&trade; to control many aspects of the sequencer. A highly configurable clock system allows the module to act both as a master clock or sync to many other modules or external gear. In the studio, the module can act as a precise MIDI to CV converter. And best of all, if you should ever get bored with music, you can play some asteroids on it too!
 
-**per\|former** was developed as a free time project and is currently not a commercial product. However, the design files are freely available and the software is open source, allowing experienced DIY enthusiasts to build their own.
+**PER\|FORMER** was developed as a free time project and is currently not a commercial product. However, the design files are freely available and the software is open source, allowing experienced DIY enthusiasts to build their own.
 
 ## Features
 
