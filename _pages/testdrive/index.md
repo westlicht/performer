@@ -63,9 +63,9 @@ To control the sequencer, the following mapping is used:
 | Right | `NEXT` |
 | Shift | `SHIFT` |
 | Alt | `PAGE` |
-| Q, W, E, R, T, Y, U, I | `TRACK[1-8]` |
-| A, S, D, F, G, H, J, K | `STEP[1-8]` |
-| Z, X, C, V, B, N, M, , | `STEP[9-16]` |
+| Q, W, E, R, T, Y, U, I | `T[1-8]` |
+| A, S, D, F, G, H, J, K | `S[1-8]` |
+| Z, X, C, V, B, N, M, , | `S[9-16]` |
 
 
 <script type='text/javascript'>

@@ -315,7 +315,7 @@ There are 5 function buttons below the display: `F1`, `F2`, `F3`, `F4` and `F5`.
 
 <h4>Global Buttons</h4>
 
-There are 8 global buttons: `PLAY`, `TEMPO`, `PATT`, `PERF`, `PREV`, `NEXT`, `SHIFT` and `PAGE`.
+There are 8 global buttons: `PLAY`, `TEMP`, `PATT`, `PERF`, `PREV`, `NEXT`, `SHIFT` and `PAGE`.
 
 All global buttons have fixed functions associated to them:
 
@@ -324,7 +324,7 @@ All global buttons have fixed functions associated to them:
 | `PLAY` | Starts/stops the master clock. |
 | `SHIFT` + `PLAY` | Pause/continue or restart master clock depending on the configured _Shift Mode_ on the [Clock](#pages-clock) page. |
 | `PAGE` + `PLAY` | Enable/disable recording mode. |
-| `TEMPO` | Shows the [Tempo](#pages-tempo) page while being hold. |
+| `TEMP` | Shows the [Tempo](#pages-tempo) page while being hold. |
 | `PATT` | Shows the [Pattern](#pages-pattern) page while being hold. |
 | `PERF` | Shows the [Performer](#pages-performer) page while being hold. |
 | `PREV`, `NEXT` | Navigate on a page, depends on current context. |
@@ -334,11 +334,11 @@ All global buttons have fixed functions associated to them:
 
 <h4>Track Buttons</h4>
 
-There are 8 track buttons: `TRACK1` to `TRACK8`. These buttons are generally used to select the active track, but also to select pages in combination with the `PAGE` button and some other functions depending on the active page.
+There are 8 track buttons: `T1` to `T8`. These buttons are generally used to select the active track, but also to select pages in combination with the `PAGE` button and some other functions depending on the active page.
 
 <h4>Step Buttons</h4>
 
-There are 16 step buttons: `STEP1` up to `STEP16`. These buttons are generally used to select steps in a sequence, but also to select pages in combination with the `PAGE` button and some other functions depending on the active page.
+There are 16 step buttons: `S1` to `S16`. These buttons are generally used to select steps in a sequence, but also to select pages in combination with the `PAGE` button and some other functions depending on the active page.
 
 <!-- Navigation -->
 
@@ -346,29 +346,29 @@ There are 16 step buttons: `STEP1` up to `STEP16`. These buttons are generally u
 
 The user interface is organized in multiple pages, each page giving access to a different part of the sequencer such as:
 
-- editing configuration options
-- editing sequences and steps
-- performance related functions such as tempo, muting or pattern selection
-- displaying various other information
+- Editing configuration options
+- Editing sequences and steps
+- Performance related functions such as tempo, muting or pattern selection
+- Displaying various other information
 
 The active page is selected by holding the `PAGE` button and pressing the corresponding page button:
 
 | Button | Page |
 | :--- | :--- |
-| `PAGE` + `CLOCK` (`TEMPO`) | [Clock](#pages-clock) |
+| `PAGE` + `CLOCK` (`TEMP`) | [Clock](#pages-clock) |
 | `PAGE` + `PATT` | [Pattern](#pages-pattern) |
 | `PAGE` + `PERF` | [Performer](#pages-performer) |
-| `PAGE` + `PROJECT` (`TRACK1`) | [Project](#pages-project) |
-| `PAGE` + `LAYOUT` (`TRACK2`) | [Layout](#pages-layout) |
-| `PAGE` + `ROUTING` (`TRACK3`) | [Routing](#pages-routing) |
-| `PAGE` + `MIDI OUT` (`TRACK4`) | [Midi Output](#pages-midi-output) |
-| `PAGE` + `USER SCALE` (`TRACK5`) | [User Scale](#pages-user-scale) |
-| `PAGE` + `STEPS` (`STEP1`) | [Steps](#pages-steps) |
-| `PAGE` + `SEQ` (`STEP2`) | [Sequence](#pages-sequence) |
-| `PAGE` + `TRACK` (`STEP3`) | [Track](#pages-track) |
-| `PAGE` + `SONG` (`STEP4`) | [Song](#pages-song) |
-| `PAGE` + `MONITOR` (`STEP8`) | [Monitor](#pages-monitor) |
-| `PAGE` + `SYSTEM` (`TRACK8`) | [System](#pages-system) |
+| `PAGE` + `PROJECT` (`T1`) | [Project](#pages-project) |
+| `PAGE` + `LAYOUT` (`T2`) | [Layout](#pages-layout) |
+| `PAGE` + `ROUTING` (`T3`) | [Routing](#pages-routing) |
+| `PAGE` + `MIDI OUT` (`T4`) | [Midi Output](#pages-midi-output) |
+| `PAGE` + `USER SCALE` (`T5`) | [User Scale](#pages-user-scale) |
+| `PAGE` + `STEPS` (`S1`) | [Steps](#pages-steps) |
+| `PAGE` + `SEQ` (`S2`) | [Sequence](#pages-sequence) |
+| `PAGE` + `TRACK` (`S3`) | [Track](#pages-track) |
+| `PAGE` + `SONG` (`S4`) | [Song](#pages-song) |
+| `PAGE` + `MONITOR` (`S8`) | [Monitor](#pages-monitor) |
+| `PAGE` + `SYSTEM` (`T8`) | [System](#pages-system) |
 
 There are 3 special pages which can be entered temporarily by just holding a single button, namely the [Tempo](#pages-tempo), [Pattern](#pages-pattern) and [Performer](#pages-performer) pages. These pages give access to performance related features which need to be quickly accessible at any time.
 
@@ -388,13 +388,13 @@ The _header_ is used to display the global state of the sequencer and informatio
 
 The current clock mode and tempo are shown in the top-left corner. The clock mode can by any of the following:
 
-- `A` Auto
-- `M` Master
-- `S` Slave
+- **A** Auto
+- **M** Master
+- **S** Slave
 
-Instead of showing the clock mode, `R` is displayed when recording is enabled.
+Instead of showing the clock mode, **R** is displayed when recording is enabled.
 
-The currently selected track is shown as `T1` - `T8`. The currently playing pattern on the selected track is shown as `P1` - `P16`. If a song is currently playing, the playing pattern is highlighted. The currently edited pattern is shown as `E1` - `E16` and is highlighted if it matches the pattern that is currently playing. If a snapshot is currently active, the pattern info is replaced with a single item `SNAP`.
+The currently selected track is shown as **T1** - **T8**. The currently playing pattern on the selected track is shown as **P1** - **P16**. If a song is currently playing, the playing pattern is highlighted. The currently edited pattern is shown as **E1** - **E16** and is highlighted if it matches the pattern that is currently playing. If a snapshot is currently active, the pattern info is replaced with a single item **SNAP**.
 
 The currently active page is shown in the top-right corner and optionally a sub-page or mode is shown to its left.
 
@@ -480,7 +480,7 @@ Hold `SHIFT` + `PAGE` to open the context menu and access the following function
 | `F4` | Save As | Save the project to a new slot on the SD card. |
 | `F5` | Route | Show existing or create a new route for the currently selected parameter (only active if selected parameter is routable). |
 
-> Note: Should you ever get bored sequencing, take a break and hit `PAGE` + `STEP16`.
+> Note: Should you ever get bored sequencing, take a break and hit `PAGE` + `S16`.
 
 <!-- Layout -->
 
@@ -528,7 +528,7 @@ The _Track_ page is entered using `PAGE` + `TRACK`.
 
 ![](images/page-note-track.png)
 
-This page allows to change track wide settings. Note that the shown parameters depend on the configured _Track Mode_ of the selected track. Press `TRACK[1-8]` to change the selected track.
+This page allows to change track wide settings. Note that the shown parameters depend on the configured _Track Mode_ of the selected track. Press `T[1-8]` to change the selected track.
 
 <h4>Context Menu</h4>
 
@@ -597,7 +597,7 @@ The _Sequence_ page is entered using `PAGE` + `SEQ`.
 
 ![](images/page-note-sequence.png)
 
-This page allows to change the sequence settings of the currently selected sequence on the selected track. Note that the shown parameters depend on the configured _Track Mode_ of the selected track. Press `TRACK[1-8]` to change the selected track. Hold `PATT` and rotate the `ENCODER` to change the selected sequence.
+This page allows to change the sequence settings of the currently selected sequence on the selected track. Note that the shown parameters depend on the configured _Track Mode_ of the selected track. Press `T[1-8]` to change the selected track. Hold `PATT` and rotate the `ENCODER` to change the selected sequence.
 
 For quick access to most of the sequence parameters, there is also a quick edit mode on the [Steps](#pages-steps) page, introduced in the next section.
 
@@ -681,9 +681,9 @@ Sequences contain up to 64 steps, of which only 16 are shown on the page. Press 
 
 <h4>Editing Steps</h4>
 
-To adjust the values of the currently selected layer, hold `STEP[1-16]` and rotate the `ENCODER`. To adjust multiple steps at the same time, hold multiple step buttons and rotate the `ENCODER`. The currently selected steps are visualized both on the page by highlighting the step indices as well as on the step LEDs which turn orange. When adjusting multiple steps, the values are adjusted relative to their current value. Depending on the track mode and the selected layer, there is some additional functionality available:
+To adjust the values of the currently selected layer, hold `S[1-16]` and rotate the `ENCODER`. To adjust multiple steps at the same time, hold multiple step buttons and rotate the `ENCODER`. The currently selected steps are visualized both on the page by highlighting the step indices as well as on the step LEDs which turn orange. When adjusting multiple steps, the values are adjusted relative to their current value. Depending on the track mode and the selected layer, there is some additional functionality available:
 
-- When editing the _Gate_ layer on a sequence of a _Note_ track, pressing `STEP[1-16]` enables/disables the gate values.
+- When editing the _Gate_ layer on a sequence of a _Note_ track, pressing `S[1-16]` enables/disables the gate values.
 - When editing any other layer on a sequence of a _Note_ track, holding one or multiple step buttons and pressing the `ENCODER` enables/disables the gate values. This comes in handy for example when editing note values, as gates can easily be enabled/disabled without switching layers.
 - When editing layers on a sequence of a _Curve_ track, pressing and rotating the `ENCODER` adjusts the values in smaller steps.
 
@@ -691,7 +691,7 @@ To adjust the values of the currently selected layer, hold `STEP[1-16]` and rota
 
 When holding `SHIFT` and pressing any of the step buttons, steps are selected in a _persistent_ mode. This means that steps are kept selected even when the step buttons are released. This allows to select multiple steps across different sections. Steps can also be removed from the selection by holding `SHIFT` and pressing step buttons corresponding to selected steps again. To clear the entire selection, simply press any step button without holding `SHIFT` or quickly press `SHIFT` twice (double tap). When the selection is empty, double tap `SHIFT` to select all 64 steps.
 
-Finally, there is a shortcut to select a series of steps. For example, to select steps 1, 5, 9, 13 and so forth, hold `SHIFT` and `STEP1` and then double tap `STEP5` while holding the other two buttons. With this shortcut, any series of steps with a common interval can be selected quickly, great to build rhythms.
+Finally, there is a shortcut to select a series of steps. For example, to select steps 1, 5, 9, 13 and so forth, hold `SHIFT` and `S1` and then double tap `S5` while holding the other two buttons. With this shortcut, any series of steps with a common interval can be selected quickly, great to build rhythms.
 
 > Note: Different series can be combined by applying the shortcut multiple times. Each time it is executed, the steps of the series are added to the selection.
 
@@ -714,7 +714,7 @@ Copy/Paste only works with steps selected in _persistent_ mode. When more steps 
 
 <h4>Quick Access</h4>
 
-The _Steps_ page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as the _Run Mode_, _First Step_, _Last Step_ and others, one needs to temporarily switch to the [Sequence](#pages-sequence) page. This breaks the workflow, especially when in a live situation, where immediate access to the most important features and parameters is paramount. To help improve the workflow, most of the sequence parameters can be accessed through a quick access function. To access a parameter, hold `PAGE` and press `STEP[9-16]`, similarly to switching between pages, but keep holding the `PAGE` button. The page is now overlayed with the selected parameter.
+The _Steps_ page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as the _Run Mode_, _First Step_, _Last Step_ and others, one needs to temporarily switch to the [Sequence](#pages-sequence) page. This breaks the workflow, especially when in a live situation, where immediate access to the most important features and parameters is paramount. To help improve the workflow, most of the sequence parameters can be accessed through a quick access function. To access a parameter, hold `PAGE` and press `S[9-16]`, similarly to switching between pages, but keep holding the `PAGE` button. The page is now overlayed with the selected parameter.
 
 ![](images/page-note-steps-quick-access.png)
 
@@ -722,16 +722,16 @@ Depending on the _Track Mode_, the following parameters are available through qu
 
 | Button | Note Track | Curve Track |
 | :--- | :--- | :--- |
-| `STEP9` | First Step | First Step |
-| `STEP10` | Last Step | Last Step |
-| `STEP11` | Run Mode | Run Mode |
-| `STEP12` | Divisor | Divisor |
-| `STEP13` | Reset Measure | Reset Measure |
-| `STEP14` | Scale | Range |
-| `STEP15` | Root Note | - |
-| `STEP16` | - | - |
+| `S9` | First Step | First Step |
+| `S10` | Last Step | Last Step |
+| `S11` | Run Mode | Run Mode |
+| `S12` | Divisor | Divisor |
+| `S13` | Reset Measure | Reset Measure |
+| `S14` | Scale | Range |
+| `S15` | Root Note | - |
+| `S16` | - | - |
 
-While holding the `PAGE` button, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `STEP[1-16]` to select the most common values. Releasing the `PAGE` button will return to the normal state of the steps page.
+While holding the `PAGE` button, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `S[1-16]` to select the most common values. Releasing the `PAGE` button will return to the normal state of the steps page.
 
 > Note: When quick access is active, the step LEDs will indicate the range of values that can be selected in green as well as the current selection in red.
 
@@ -749,7 +749,7 @@ A song consists of up to 16 slots, each referencing a set of 8 patterns to be pl
 
 A quick way to create songs on the fly is pattern chaining. This mode is specifically made for live performance to quickly create more interesting structures by chaining multiple patterns together.
 
-To create a pattern chain, hold `F2` and press `STEP[1-16]` to select the pattern to be played for the newly created slot. If the same pattern is added multiple times by pressing `STEP[1-16]` again, the repeat count of the last added slot is incremented. For example, holding `F2` and pressing the sequence `STEP1`, `STEP1`, `STEP1`, `STEP2`, `STEP1`, `STEP1`, `STEP1`, `STEP3` will create the following slot list:
+To create a pattern chain, hold `F2` and press `S[1-16]` to select the pattern to be played for the newly created slot. If the same pattern is added multiple times by pressing `S[1-16]` again, the repeat count of the last added slot is incremented. For example, holding `F2` and pressing the sequence `S1`, `S1`, `S1`, `S2`, `S1`, `S1`, `S1`, `S3` will create the following slot list:
 
 ![](images/page-song-chain-example.png)
 
@@ -763,8 +763,8 @@ Note that when creating pattern chains, the song mode is automatically started.
 - Press `SHIFT` + `F3` to insert a slot at the current cursor position.
 - Press `F4` to remove the selected slot.
 - Hold `SHIFT` and rotate the `ENCODER` or use `PREV` and `NEXT` to move the selected slot forward and backward in the slot list.
-- Press `STEP[1-16]` to assign a pattern to all tracks of the selected slot.
-- Hold any combination of `TRACK[1-8]` and press `STEP[1-16]` to assign a pattern to a group of tracks of the selected slot.
+- Press `S[1-16]` to assign a pattern to all tracks of the selected slot.
+- Hold any combination of `T[1-8]` and press `S[1-16]` to assign a pattern to a group of tracks of the selected slot.
 - Press and rotate the `ENCODER` to adjust the number of repeats on the selected slot.
 
 <h4>Playback</h4>
@@ -781,7 +781,7 @@ During playback, the current slot being played is indicated by a small cursor be
 
 <h3 id="pages-tempo">Tempo</h3>
 
-The _Tempo_ page is temporarily shown while holding `TEMPO`.
+The _Tempo_ page is temporarily shown while holding `TEMP`.
 
 ![](images/page-tempo.png)
 
@@ -789,15 +789,15 @@ On this page the tempo of the master clock is adjusted. Simply rotate the `ENCOD
 
 <h4>Tap Tempo</h4>
 
-In addition to manually adjusting the tempo, it can also be set using tap tempo by pressing `PLAY` in a regular interval while holding `TEMPO`.
+In addition to manually adjusting the tempo, it can also be set using tap tempo by pressing `PLAY` in a regular interval while holding `TEMP`.
 
 <h4>Nudging</h4>
 
-To sync the master clock by ear to some other source, for example a turntable, tempo nudging is a useful feature. This allows the tempo to be temporarily increased/decreased within a 10% range. Nudging is activated by holding `TEMPO` and holding `NEXT` or `PREV` to increase/decrease the tempo. The amount of tempo change due to nudging is visualized on the tempo page.
+To sync the master clock by ear to some other source, for example a turntable, tempo nudging is a useful feature. This allows the tempo to be temporarily increased/decreased within a 10% range. Nudging is activated by holding `TEMP` and holding `NEXT` or `PREV` to increase/decrease the tempo. The amount of tempo change due to nudging is visualized on the tempo page.
 
 ![](images/page-tempo-nudge.png)
 
-> Note: The tempo is incrementally increased/decreased up to 10%, so one needs to hold both `TEMPO` and `NEXT` or `PREV` for a small amount of time to get an effect.
+> Note: The tempo is incrementally increased/decreased up to 10%, so one needs to hold both `TEMP` and `NEXT` or `PREV` for a small amount of time to get an effect.
 
 <!-- Pattern -->
 
@@ -811,13 +811,13 @@ On this page you can handle pattern changes as well as selecting the currently e
 
 <h4>Editing Pattern</h4>
 
-To change the pattern for editing which is indicated in the header as `E[1-16]` simple rotate the `ENCODER` or press `PREV` and `NEXT`. Alternatively you can use `SHIFT` + `STEP[1-16]` to select the editing pattern.
+To change the pattern for editing which is indicated in the header as `E[1-16]` simple rotate the `ENCODER` or press `PREV` and `NEXT`. Alternatively you can use `SHIFT` + `S[1-16]` to select the editing pattern.
 
 > Note: The editing pattern indicated in the header is highlighted if the selected pattern for editing is the same as the currently playing pattern.
 
 <h4>Pattern Changes</h4>
 
-To change to any of the 16 patterns press `STEP[1-16]`. This will switch all tracks to play the selected pattern immediately. To only switch patterns for certain tracks, hold any combination of `TRACK[1-8]` and then select the pattern using `STEP[1-16]`.
+To change to any of the 16 patterns press `S[1-16]`. This will switch all tracks to play the selected pattern immediately. To only switch patterns for certain tracks, hold any combination of `T[1-8]` and then select the pattern using `S[1-16]`.
 
 <h4>Latching Pattern Changes</h4>
 
@@ -839,11 +839,11 @@ Snapshots are a useful tool to quickly make a temporary copy of all patterns cur
 
 Press `F3` create a snapshot of the patterns currently being played.
 
-Note that the pattern indicators at the top-left of the screen change to `SNAP`, indicating that snapshot mode is active. While in snapshot mode, all functions of the sequencer remain working as expected, with the only exception that patterns cannot be changed on the [Pattern](#pages-pattern) page.
+Note that the pattern indicators at the top-left of the screen change to **SNAP**, indicating that snapshot mode is active. While in snapshot mode, all functions of the sequencer remain working as expected, with the only exception that patterns cannot be changed on the [Pattern](#pages-pattern) page.
 
-After editing the snapshot, press `F4` to commit the changes back to the original patterns. To commit the changes to a new set of patterns, press `STEP[1-16]` + `F4`. This will automatically change all tracks to play the selected pattern after the snapshot is committed.
+After editing the snapshot, press `F4` to commit the changes back to the original patterns. To commit the changes to a new set of patterns, press `S[1-16]` + `F4`. This will automatically change all tracks to play the selected pattern after the snapshot is committed.
 
-Press `F3` to revert the edits done on the snapshot and go back to playing the set of patterns that have been playing before taking the snapshot. Press `STEP[1-16]` + `F3` to revert the snapshot but continue playing a new set of patterns.
+Press `F3` to revert the edits done on the snapshot and go back to playing the set of patterns that have been playing before taking the snapshot. Press `S[1-16]` + `F3` to revert the snapshot but continue playing a new set of patterns.
 
 <h4>Actions</h4>
 
@@ -861,7 +861,7 @@ The temporary mode is very handy to quickly trigger performance actions while wo
 
 <h4>Mutes/Solos</h4>
 
-Press `TRACK[1-8]` to mute and unmute tracks or `STEP[1-8]` to solo a track. Press `F3` to unmute all tracks at once.
+Press `T[1-8]` to mute and unmute tracks or `S[1-8]` to solo a track. Press `F3` to unmute all tracks at once.
 
 <h4>Latching Mutes/Solos</h4>
 
@@ -879,7 +879,7 @@ To execute actions on a musical beat, hold `F2` while executing mute, unmute or 
 
 <h4>Fills</h4>
 
-Hold `STEP[9-16]` to enable fills on individual tracks. Hold `F4` to fill all tracks at once.
+Hold `S[9-16]` to enable fills on individual tracks. Hold `F4` to fill all tracks at once.
 
 > Note: There are different fill modes that can be configured per track on the [Track](#pages-track) page using the _Fill Mode_ parameter.
 
@@ -904,7 +904,7 @@ Once the routing target is selected, the following parameters are available for 
 | Target | Routable Parameters | Target parameter to affect by this route. |
 | Min | - | Value to set the target parameter to when source is at the minimum value. |
 | Max | - | Value to set the target parameter to when source is at the maximum value. |
-| Tracks | - | Target tracks to affect by this route. Only available if selected target parameter is a track parameter. Press `ENCODER` to edit the value and press `TRACK[1-8]` to select which tracks are affected. |
+| Tracks | - | Target tracks to affect by this route. Only available if selected target parameter is a track parameter. Press `ENCODER` to edit the value and press `T[1-8]` to select which tracks are affected. |
 | Source | None, CV In 1-4, CV Out 1-8, MIDI | Source signal to use. _CV In 1-4_ correspond to the physical CV inputs. _CV Out 1-8_ correspond to the CV output signals generated by the sequencer. _MIDI_ uses events from either MIDI or USB. |
 | Range | 1V - 5V Unipolar, 1V - 5V Bipolar | Voltage range to use for the CV source. Only available if source is set to a _CV In 1-4_ or _CV Out 1-8_. |
 | MIDI Source | MIDI, USB | MIDI port (hold `SHIFT` and rotate `ENCODER` to select MIDI channel) used for the source. Only available when source is set to _MIDI_. |
@@ -1066,7 +1066,7 @@ On this tab you can calibrate the 8 physical CV outputs of the sequencer to mill
 
 Each channel is calibrated using a list of calibration entries for all voltages from -5V to +5V at 1V increments. Each entry stores the decimal value that is sent to the digital-to-analog converter for the given voltage. By default, entries are set to _auto_ which automatically determines the best guess for the calibration value. This value is either determined by a reference table or by interpolating other manually set calibration entries.
 
-Press `TRACK[1-8]` to select the channel for calibration. The voltage present at the CV outputs directly depends on the entry selected in the list. This allows to scroll through the list and adjust the calibration values until the CV output generates the correct voltage. To edit a calibration entry, simply press the `ENCODER`. Rotate the encoder to set the calibration value or press `F1` to revert back to the _auto_ value.
+Press `T[1-8]` to select the channel for calibration. The voltage present at the CV outputs directly depends on the entry selected in the list. This allows to scroll through the list and adjust the calibration values until the CV output generates the correct voltage. To edit a calibration entry, simply press the `ENCODER`. Rotate the encoder to set the calibration value or press `F1` to revert back to the _auto_ value.
 
 ![](images/page-system-cal-edit.png)
 
@@ -1361,7 +1361,7 @@ Enter the [System](#pages-system) page using `PAGE` + `SYSTEM`.
 
 For each of the 8 channels, perform the following steps:
 
-- Select the channel by pressing `TRACK[1-8]`.
+- Select the channel by pressing `T[1-8]`.
 - Connect the volt meter to the given CV output.
 - Select the -5.0V entry and adjust the calibration value such that the volt meter measures as close to -5.000V as possible.
 - Repeat the the previous step for the +5.0V entry then for the +0.0V entry.
