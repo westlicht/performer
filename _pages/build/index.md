@@ -39,9 +39,11 @@ A good source for the remaining parts is [Thonk](https://www.thonk.co.uk) in the
 
 To help populating the PCB, its always handy to have access to the schematic and board layout. If you don't have [KiCad](http://kicad-pcb.org) installed to open the board files, you can also access the all relevant files online:
 
-- [Schematics](https://cdn.rawgit.com/westlicht/performer-hardware/master/sequencer.pdf)
-- [Front Silkscreen](https://eyrie.io/board/eca2465c9eca4299a8386ca4887076fa?pours=true&active=layout&layers=m000000000a010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=false)
-- [Back Silkscreen](https://eyrie.io/board/eca2465c9eca4299a8386ca4887076fa?pours=true&active=layout&layers=m0000000005010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=true)
+- [Schematics (PDF)](https://cdn.rawgit.com/westlicht/performer-hardware/master/sequencer.pdf)
+- [Front Silkscreen (PDF)](https://cdn.rawgit.com/westlicht/performer-hardware/master/silkscreen-front.pdf)
+- [Back Silkscreen (PDF)](https://cdn.rawgit.com/westlicht/performer-hardware/master/silkscreen-back.pdf)
+- [Front Silkscreen (Viewer)](https://eyrie.io/board/eca2465c9eca4299a8386ca4887076fa?pours=true&active=layout&layers=m000000000a010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=false)
+- [Back Silkscreen (Viewer)](https://eyrie.io/board/eca2465c9eca4299a8386ca4887076fa?pours=true&active=layout&layers=m0000000005010000000000000000000000000000000000000000000000000000000000000006&x=162560&y=54367&w=202964&h=117513&flipped=true)
 
 > Note: The online board viewer can also show all the other layers of the board which is handy to find where traces go and where to measure the different power rails.
 
