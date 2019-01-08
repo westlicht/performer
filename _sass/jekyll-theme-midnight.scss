@@ -68,7 +68,7 @@ a small {
   display:block;
 }
 
-ul{
+ul {
   list-style-image:url('../images/bullet.png');
 }
 
@@ -102,6 +102,7 @@ code {
   margin: 0 4px;
   padding: 4px 6px;
   border-radius: 2px;
+  white-space: nowrap;
 }
 
 pre {

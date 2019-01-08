@@ -361,8 +361,8 @@ The active page is selected by holding the `PAGE` button and pressing the corres
 | `PAGE` + `PROJECT` (`T1`) | [Project](#pages-project) |
 | `PAGE` + `LAYOUT` (`T2`) | [Layout](#pages-layout) |
 | `PAGE` + `ROUTING` (`T3`) | [Routing](#pages-routing) |
-| `PAGE` + `MIDI OUT` (`T4`) | [Midi Output](#pages-midi-output) |
-| `PAGE` + `USER SCALE` (`T5`) | [User Scale](#pages-user-scale) |
+| `PAGE` + `MIDIOUT` (`T4`) | [Midi Output](#pages-midi-output) |
+| `PAGE` + `U.SCALE` (`T5`) | [User Scale](#pages-user-scale) |
 | `PAGE` + `STEPS` (`S1`) | [Steps](#pages-steps) |
 | `PAGE` + `SEQ` (`S2`) | [Sequence](#pages-sequence) |
 | `PAGE` + `TRACK` (`S3`) | [Track](#pages-track) |
@@ -811,7 +811,7 @@ On this page you can handle pattern changes as well as selecting the currently e
 
 <h4>Editing Pattern</h4>
 
-To change the pattern for editing which is indicated in the header as `E[1-16]` simple rotate the `ENCODER` or press `PREV` and `NEXT`. Alternatively you can use `SHIFT` + `S[1-16]` to select the editing pattern.
+To change the pattern for editing which is indicated in the header as **E[1-16]** simple rotate the `ENCODER` or press `PREV` and `NEXT`. Alternatively you can use `SHIFT` + `S[1-16]` to select the editing pattern.
 
 > Note: The editing pattern indicated in the header is highlighted if the selected pattern for editing is the same as the currently playing pattern.
 
@@ -924,7 +924,7 @@ In order to simplify assigning MIDI controllers to target parameters, press `F4`
 
 <h3 id="pages-midi-output">Midi Output</h3>
 
-The _Midi Output_ page is entered using `PAGE` + `MIDI OUT`.
+The _Midi Output_ page is entered using `PAGE` + `MIDIOUT`.
 
 ![](images/page-midi-output.png)
 
@@ -964,7 +964,7 @@ When changing the MIDI output parameters, they will not immediately be active. P
 
 <h3 id="pages-user-scale">User Scale</h3>
 
-The _User Scale_ page is entered using `PAGE` + `USER SCALE`.
+The _User Scale_ page is entered using `PAGE` + `U.SCALE`.
 
 ![](images/page-user-scale.png)
 
