@@ -273,6 +273,8 @@ The reason for using a slot system rather than traditional filenames is in order
 
 <h3 id="ui-overview">Overview</h3>
 
+![](images/user-interface.png)
+
 The user interface of the **PER\|FORMER** sequencer is made up from the following components:
 
 - OLED display
