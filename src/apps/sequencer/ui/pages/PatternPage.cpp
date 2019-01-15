@@ -90,10 +90,6 @@ void PatternPage::draw(Canvas &canvas) {
 
         canvas.setColor(trackEngine.activity() ? 0xf : 0x7);
         canvas.drawRect(x, y, w, h);
-        if (trackState.mute()) {
-            canvas.setColor(0xf);
-            canvas.fillRect(x + Border, y + Border, w - 2 * Border, h - 2 * Border);
-        }
 
         for (int p = 0; p < 16; ++p) {
             int px = x + (p % 8) * 3 + 2;
