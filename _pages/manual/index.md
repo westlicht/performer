@@ -67,7 +67,7 @@ nav: 20
 
 <h2 id="introduction">Introduction</h2>
 
-**PER\|FORMER** is an open source and open hardware eurorack sequencer module. It packs a lot of functionality into a small form factor and was designed both as a versatile sequencer in the studio as well as for live performance. To fully take advantage of all the features available in this module, it is highly recommended to study this document carefully..
+**PER\|FORMER** is an open source and open hardware eurorack sequencer module. It packs a lot of functionality into a small form factor and was designed both as a versatile sequencer in the studio as well as for live performance. To fully take advantage of all the features available in this module, it is highly recommended to study this document carefully.
 
 The [Concepts](#concepts) chapter introduces the overall architecture and functionality of the sequencer. The [User Interface](#ui) chapter gives an overview of the user interface and introduces key concepts of how to use the sequencer. The [Pages](#pages) chapter goes into more detail in terms of functionality and user interface of the various modes and contexts in the sequencer and introduces common workflows.
 
@@ -109,30 +109,7 @@ This chapter introduces the basic concepts of the sequencer and should familiari
 
 A project represents the complete state of the sequencer, with the exception of calibration data. Only one project can be loaded at any given time and all data is volatile, meaning that all changes are lost when the unit is powered off. To persist a project it needs to be stored to the SD card (see [Project](#pages-project) page).
 
-The following shows a high level diagram of the data contained in a project:
-
-```
-┌─────────────────────────────────────────────────────┐
-│                       Project                       │
-├──────────────────────────┬──────────────────────────┤
-│         Settings         │                          │
-│          Layout          │                          │
-│           Song           │        Tracks 1-8        │
-│        Play State        │                          │
-│         Routing          │                          │
-└──────────────────────────┴──────────────────────────┘
-             ┌───────────────────────────┘
-             ▼
-┌────────────────────────┐   ┌────────────────────────┐
-│         Track          │ ┌▶│        Sequence        │
-├────────────────────────┤ │ ├────────────────────────┤
-│        Settings        │ │ │        Settings        │
-├────────────────────────┤ │ ├────────────────────────┤
-│     Sequences 1-16     │─┘ │       Steps 1-64       │
-└────────────────────────┘   └────────────────────────┘
-```
-
-The project is split into two regions. The first region contains the project settings, layout, song data, play state and routing data. The second region contains the data for the 8 tracks, where each track contains the track settings and 16 sequences. Each sequence in turn contains the sequence settings and 64 steps.
+Projects are split into two data regions. The first region contains all the global data such as project settings, layout settings, MIDI output settings, routing settings, song data and play state. The second region contains the data for the 8 tracks, where each track contains the track settings and 16 sequences. Each sequence in turn contains the sequence settings and up to 64 steps.
 
 > Note: Calibration data is stored in the flash memory of the micro controller and can be backed up and restored from the SD card. This allows exchanging the SD card while running the sequencer or run the sequencer without an SD card at all and still have it properly calibrated.
 
@@ -140,7 +117,7 @@ The project is split into two regions. The first region contains the project set
 
 <h3 id="concepts-track">Track</h3>
 
-A track is responsible for generating note or modulation signals used to control other modules in the eurorack system using the CV/gate outputs. The *PERr\FORMERr** sequencer can run up to 8 tracks, that primarily use step sequencing to generate these signals, where each track can run independent of the other tracks. This means that every sequence in a track can have a different time division, run mode, duration or scale among other properties.
+A track is responsible for generating note or modulation signals used to control other modules in the eurorack system using the CV/gate outputs. The **PER\|FORMER** sequencer can run up to 8 tracks, that primarily use step sequencing to generate these signals, where each track can run independent of the other tracks. This means that every sequence in a track can have a different time division, run mode, duration or scale among other properties.
 
 <h4>Track Mode</h4>
 
@@ -159,8 +136,6 @@ In the default configuration, each track controls one of the CV/gate output pair
 <h4>Track Linking</h4>
 
 In _Note_ or _Curve_ mode, a track generates a single CV signal, typically a pitch or modulation signal. To control a voice with multiple signals, for example a pitch and velocity signal, two tracks have to be used in combination. The first track is used to generate the pitch signal while the second track generates the velocity signal. Using two tracks allows to use different sequence lengths, time divison and other properties that affect playback. If that is not desired, the second track can be linked to the first track, essentially doubling the playback behavior.
-
-> Note: A track can only be linked to a preceding track due to the internal architecture of the sequencer. This means that track 1 cannot use track linking, while track 2 can only be linked to track 1. Track 8 on the other hand can be linked to any of the tracks 1-7.
 
 Track modes, the physical routing to CV/gate outputs and track linking can be configured on the [Layout](#pages-layout) page.
 
@@ -241,8 +216,6 @@ A global default scale and root note can be specified on the [Project](#pages-pr
 The sequencer is driven by a flexible clock system. In master mode, the clock is generated internally and can be sent to external gear and modules using MIDI clock and analog clock signals. In slave mode, the clock is received from an external source via MIDI or analog clock signals. For convenience, the clock is set to an auto mode by default that automatically switches to master mode when the sequencer is started manually or switches to the slave mode when an external clock signal is detected.
 
 To allow for accurate timing, the internal clock is running at a resolution of 192 parts per quarter note (PPQN). In master mode, a hardware timer is used to generate a low-jitter clock signal. To drive external clock signals, the internal clock is divided down to the required PPQN of the external clock signals. In slave mode, the external clock signal is multiplied internally to generate the 192 PPQN internal clock resolution, which in turn is used to clock the sequencer as well as the external clock signals.
-
-TODO discuss control signals (maybe also appendix)
 
 The clock system is configured on the [Clock](#pages-clock) page.
 
@@ -503,6 +476,8 @@ Changing track mode results in all data associated with a given track to be eras
 The second tab is used to setup track linking. Each of the 8 tracks can be linked to any of the preceding tracks, taking over its playback behavior.
 
 ![](images/page-layout-link.png)
+
+> Note: A track can only be linked to a preceding track due to the internal architecture of the sequencer. This means that track 1 cannot use track linking, while track 2 can only be linked to track 1. Track 8 on the other hand can be linked to any of the tracks 1-7.
 
 <h4>Gate Output</h4>
 
