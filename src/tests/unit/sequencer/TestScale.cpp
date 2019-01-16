@@ -10,7 +10,7 @@
 
 UNIT_TEST("Scale") {
 
-    CASE("noteName/noteVolts") {
+    CASE("noteName/noteToVolts") {
         for (int i = 0; i < Scale::Count; ++i) {
             const auto &scale = Scale::get(i);
             int notesPerOctave = scale.notesPerOctave();
@@ -28,7 +28,7 @@ UNIT_TEST("Scale") {
                 scale.noteName(short1Name, note, Scale::Short1);
                 scale.noteName(short2Name, note, Scale::Short2);
                 scale.noteName(longName, note, Scale::Long);
-                float volts = scale.noteVolts(note);
+                float volts = scale.noteToVolts(note);
                 DBG("%-8d %-8.3f %-8s %-8s %-8s", note, volts, (const char *)(short1Name), (const char *)(short2Name), (const char *)(longName));
                 // DBG("note = %d, volts = %f", note, volts);
             }
@@ -55,7 +55,7 @@ UNIT_TEST("Scale") {
                 scale.noteName(short1Name, note, Scale::Short1);
                 scale.noteName(short2Name, note, Scale::Short2);
                 scale.noteName(longName, note, Scale::Long);
-                float volts = scale.noteVolts(note);
+                float volts = scale.noteToVolts(note);
                 DBG("%-8.3f %-8d %-8.3f %-8s %-8s %-8s", voltsin, note, volts, (const char *)(short1Name), (const char *)(short2Name), (const char *)(longName));
             }
 
@@ -73,24 +73,15 @@ UNIT_TEST("Scale") {
             DBG("<h4>%s</h4>", Scale::name(i));
             FixedStringBuilder<4096> indices("| Index |");
             FixedStringBuilder<4096> separators("| :--- |");
-            FixedStringBuilder<4096> names("| Name |");
             FixedStringBuilder<4096> volts("| Volts |");
             for (int note = 0; note < notesPerOctave; ++note) {
-                FixedStringBuilder<8> name;
-                if (scale.isChromatic()) {
-                    scale.noteName(name, note, Scale::Short1);
-                } else {
-                    scale.noteName(name, note, Scale::Short2);
-                }
                 indices(" %d |", note + 1);
                 separators(" --- |");
-                names(" %s |", (const char *)(name));
-                volts(" %.3f |", scale.noteVolts(note));
+                volts(" %.3f |", scale.noteToVolts(note));
             }
             DBG("");
             DBG("%s", (const char *)(indices));
             DBG("%s", (const char *)(separators));
-            DBG("%s", (const char *)(names));
             DBG("%s", (const char *)(volts));
             DBG("");
         }

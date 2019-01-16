@@ -1,75 +1,69 @@
 #include "Scale.h"
 #include "UserScale.h"
 
-#define S ChromaticScale::Sharp
-#define F ChromaticScale::Flat
+#define ARRAY_SIZE(_array_) (sizeof(_array_) / sizeof(_array_[0]))
+#define NOTE_SCALE(_name_, _title_, _chromatic_, ...) \
+static const uint16_t _name_##_notes[] = { __VA_ARGS__ }; \
+static const NoteScale _name_(_title_, _chromatic_, ARRAY_SIZE(_name_##_notes), _name_##_notes);
 
-static const uint8_t chromaticNotes[] = { 1, S|1, 2, S|2, 3, 4, S|4, 5, S|5, 6, S|6, 7 };
-static const uint8_t majorNotes[] = { 1, 2, 3, 4, 5, 6, 7 };
-static const uint8_t minorNotes[] = { 1, 2, F|3, 4, 5, 6, 7 };
+NOTE_SCALE(semitoneScale, "Semitones", true, 0, 128, 256, 384, 512, 640, 768, 896, 1024, 1152, 1280, 1408)
 
-static const uint8_t algerianNotes[] = { 1, 2, F|3, S|4, 5, F|6, 7 };
+NOTE_SCALE(majorScale, "Major", true, 0, 256, 512, 640, 896, 1152, 1408)
+NOTE_SCALE(minorScale, "Minor", true, 0, 256, 384, 640, 896, 1024, 1280)
 
-// pentatonic
-static const uint8_t majorPentatonicNotes[] = { 1, 2, 3, 5, 6 };
-static const uint8_t minorPentatonicNotes[] = { 1, F|3, 4, 5, F|7 };
+NOTE_SCALE(majorBluesScale, "Major Blues", true, 0, 384, 512, 896, 1152, 1280)
+NOTE_SCALE(minorBluesScale, "Minor Blues", true, 0, 384, 640, 768, 896, 1280)
 
-// hexatonic
-static const uint8_t wholeToneNotes[] = { 1, 2, 3, S|4, S|5, S|6 };
-static const uint8_t augumentedNotes[] = { 1, F|3, 3, 5, S|5, 7 };
-static const uint8_t prometheusNotes[] = { 1, 2, 3, S|4, 6, F|7 };
-static const uint8_t bluesNotes[] = { 1, F|3, 4, F|5, 5, F|7 };
-static const uint8_t tritoneNotes[] = { 1, F|2, 3, F|5, 5, F|7 };
+NOTE_SCALE(majorPentatonicScale, "Major Pent.", true, 0, 256, 512, 896, 1152)
+NOTE_SCALE(minorPentatonicScale, "Minor Pent.", true, 0, 384, 640, 896, 1280)
 
-#undef S
-#undef F
+NOTE_SCALE(folkScale, "Folk", true, 0, 128, 384, 512, 640, 896, 1024, 1280)
+NOTE_SCALE(japaneseScale, "Japanese", true, 0, 128, 640, 896, 1024)
+NOTE_SCALE(gamelanScale, "Gamelan", true, 0, 128, 384, 896, 1024)
+NOTE_SCALE(gypsyScale, "Gypsy", true, 0, 256, 384, 768, 896, 1024, 1408)
+NOTE_SCALE(arabianScale, "Arabian", true, 0, 128, 512, 640, 896, 1024, 1408)
+NOTE_SCALE(flamencoScale, "Flamenco", true, 0, 128, 512, 640, 896, 1024, 1280)
+NOTE_SCALE(wholeToneScale, "Whole Tone", true, 0, 256, 512, 768, 1024, 1280)
 
-static const ChromaticScale chromaticScale("Chromatic", chromaticNotes, sizeof(chromaticNotes));
-static const ChromaticScale majorScale("Major", majorNotes, sizeof(majorNotes));
-static const ChromaticScale minorScale("Minor", minorNotes, sizeof(minorNotes));
+// python: [int(round(x * (12 * 128) / float(N))) for x in range(N)]
+NOTE_SCALE(tet5Scale, "5-tet", false, 0, 307, 614, 922, 1229);
+NOTE_SCALE(tet7Scale, "7-tet", false, 0, 219, 439, 658, 878, 1097, 1317);
+NOTE_SCALE(tet19Scale, "19-tet", false, 0, 81, 162, 243, 323, 404, 485, 566, 647, 728, 808, 889, 970, 1051, 1132, 1213, 1293, 1374, 1455);
+NOTE_SCALE(tet22Scale, "22-tet", false, 0, 70, 140, 209, 279, 349, 419, 489, 559, 628, 698, 768, 838, 908, 977, 1047, 1117, 1187, 1257, 1327, 1396, 1466);
+NOTE_SCALE(tet24Scale, "24-tet", false, 0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640, 704, 768, 832, 896, 960, 1024, 1088, 1152, 1216, 1280, 1344, 1408, 1472);
 
-static const ChromaticScale algerianScale("Algerian", algerianNotes, sizeof(algerianNotes));
+#undef ARRAY_SIZE
+#undef NOTE_SCALE
 
-// pentatonic
-static const ChromaticScale majorPentatonicScale("Major Pent.", majorPentatonicNotes, sizeof(majorPentatonicNotes));
-static const ChromaticScale minorPentatonicScale("Minor Pent.", minorPentatonicNotes, sizeof(minorPentatonicNotes));
-
-// hexatonic
-static const ChromaticScale wholeToneScale("Whole Tone", wholeToneNotes, sizeof(wholeToneNotes));
-static const ChromaticScale augumentedScale("Augumented", augumentedNotes, sizeof(augumentedNotes));
-static const ChromaticScale prometheusScale("Prometheus", prometheusNotes, sizeof(prometheusNotes));
-static const ChromaticScale bluesScale("Blues", bluesNotes, sizeof(bluesNotes));
-static const ChromaticScale tritoneScale("Tritone", tritoneNotes, sizeof(tritoneNotes));
-
-// x-tet
-static const VoltScale tet5Scale("5-tet", 1.f / 5.f);
-static const VoltScale tet7Scale("7-tet", 1.f / 7.f);
-static const VoltScale tet12Scale("12-tet", 1.f / 12.f);
-static const VoltScale tet24Scale("24-tet", 1.f / 24.f);
-
-static const VoltScale Scale1V("1V", 0.1f);
+static const VoltScale voltageScale("Voltage", 0.1f);
 
 static const Scale *scales[] = {
-    &chromaticScale,
+    &semitoneScale,
+
     &majorScale,
     &minorScale,
-    &algerianScale,
-    // pentatonic
+
+    &majorBluesScale,
+    &minorBluesScale,
+
     &majorPentatonicScale,
     &minorPentatonicScale,
-    // hexatonic
+
+    &folkScale,
+    &japaneseScale,
+    &gamelanScale,
+    &gypsyScale,
+    &arabianScale,
+    &flamencoScale,
     &wholeToneScale,
-    &augumentedScale,
-    &prometheusScale,
-    &bluesScale,
-    &tritoneScale,
-    // x-tet
+
     &tet5Scale,
     &tet7Scale,
-    &tet12Scale,
+    &tet19Scale,
+    &tet22Scale,
     &tet24Scale,
-    // voltage
-    &Scale1V
+
+    &voltageScale
 };
 
 static const int BuiltinCount = sizeof(scales) / sizeof(Scale *);

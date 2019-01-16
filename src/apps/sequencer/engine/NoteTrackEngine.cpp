@@ -55,7 +55,7 @@ static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, in
             note = NoteSequence::Note::clamp(note + offset);
         }
     }
-    return scale.noteVolts(note);
+    return scale.noteToVolts(note);
 }
 
 void NoteTrackEngine::reset() {
@@ -158,10 +158,10 @@ void NoteTrackEngine::update(float dt) {
             // midi monitoring (second priority)
             if (scale.isChromatic()) {
                 int note = scale.noteFromVolts((_recordHistory.activeNote() - 60 - rootNote) * (1.f / 12.f));
-                _cvOutputTarget = scale.noteVolts(note) + (rootNote / 12.f);
+                _cvOutputTarget = scale.noteToVolts(note) + (rootNote / 12.f);
             } else {
                 int note = scale.noteFromVolts((_recordHistory.activeNote() - 60) * (1.f / 12.f));
-                _cvOutputTarget = scale.noteVolts(note);
+                _cvOutputTarget = scale.noteToVolts(note);
             }
             _activity = _gateOutput = true;
             _monitorOverrideActive = true;

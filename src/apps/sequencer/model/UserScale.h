@@ -152,7 +152,9 @@ public:
     // Scale implementation
     //----------------------------------------
 
-    bool isChromatic() const override { return mode() == Mode::Chromatic; }
+    bool isChromatic() const override {
+        return mode() == Mode::Chromatic;
+    }
 
     void noteName(StringBuilder &str, int note, Format format) const override {
         switch (_mode) {
@@ -167,7 +169,7 @@ public:
         }
     }
 
-    float noteVolts(int note) const override {
+    float noteToVolts(int note) const override {
         int notesPerOctave_ = notesPerOctave();
         int octave = roundDownDivide(note, notesPerOctave_);
         int index = note - octave * notesPerOctave_;
@@ -220,7 +222,7 @@ private:
     }
 
     void noteNameVoltageMode(StringBuilder &str, int note, Format format) const {
-        float volts = noteVolts(note);
+        float volts = noteToVolts(note);
         switch (format) {
         case Short1:
             str("%c", volts < 0.f ? '-' : '+');
