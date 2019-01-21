@@ -51,7 +51,7 @@ To help populating the PCB, its always handy to have access to the schematic and
 
 It is best to populate the power section first. Check the _Power_ sheet in the schematics to find the required components.
 
-![](images/power-section.jpg)
+![](images/01-power-section.jpg)
 
 With the power section in place, it is a good idea to make sure there are no shorts between the **GND**, **+12V** and **-12V** pins on the power connector. With that confirmed, you can connect the board to a power supply to measure all the power rails for proper voltages. These can be measured on any pad on the following nets: **+12V**, **-12V**, **+5V**, **+3V3**, **+3.3VA** and **AREF_-10V**. Use the online board viewer to highlight the nets.
 
@@ -59,49 +59,49 @@ With the power section in place, it is a good idea to make sure there are no sho
 
 Populate the STM32 and the components around it found on the _MCU_ sheet in the schematics. This allows for testing the JTAG connection to the STM32 and allow flashing the firmware.
 
-![](images/stm32-section.jpg)
+![](images/02-stm32-section.jpg)
 
 ### Other Sections
 
 Populate all other components, except for the jacks, USB connector, SD card holder, encoder and LEDs, as they will need proper alignment with the frontpanel.
 
-![](images/all-sections.jpg)
+![](images/03-other-sections.jpg)
 
 ### Connectors
 
 Populate three of the PJ301BM jacks, put on the frontpanel and tighten the nuts on the jacks. Make sure all three jacks are firmly in place and solder them down.
 
-![](images/three-jacks.jpg)
+![](images/04-three-jacks.jpg)
 
-After that, remove the frontpanel, populate the remaining PJ301BM and the two PJ301CM jacks. Put the frontpanel back on and tighten the nuts on the three previously soldered jacks. This lets you solder in the remaining jacks, making sure they are flush with the PCB. Note that the two PJ301CM jacks are actually lifted off the board a tiny bit. These two are best tightened with nuts before soldering to get the best alignment.
+After that, remove the frontpanel, populate the remaining PJ301BM jacks, the two PJ301CM jacks, the USB connector, the SD card holder and the encoder. Put the frontpanel back on and tighten the nuts on the three previously soldered jacks. This lets you solder in the remaining jacks, making sure they are flush with the PCB. Note that the two PJ301CM jacks are actually lifted off the board a tiny bit. These two are best tightened with nuts before soldering to get the best alignment. It may be a good idea to plug in a USB cable to ensure alignment of the USB connector. Also make sure that the encoder is flush on the PCB and perfectly perpendicular.
 
-With all the jacks in place, remove the frontpanel again. Populate the USB connector and SD card holder as well as the encoder. Put the frontpanel back on to check alignment. It may be a good idea to plug in a USB cable to ensure alignment of the USB connector. Also make sure that the encoder is flush on the PCB and perfectly perpendicular.
-
-![](images/connectors.jpg)
-
-### LEDs
-
-Remove the frontpanel again and populate all the LEDs. Note that the shortest leg goes into the rectangular pad. With all LEDs in place, put the frontpanel back on and tighten the same three jacks and the spacer. Use tape to have all the LEDs flush to the frontpanel or use some tool to allow them come through the frontpanel just a little bit, whatever your taste is. Solder the middle leg of all LEDs and check alignment before soldering the remaining two legs of all the LEDs.
+![](images/05-connectors.jpg)
 
 ### OLED Display
 
-Prepare the display by soldering a row of pin headers.
+Prepare the display by soldering a row of pin headers. Shorten the pins to around 3 millimeter and file of the rough edges so it can still be inserted into the socket.
 
-![](images/oled-pin-header.jpg)
+![](images/06-oled-pin-header.jpg)
 
-You will most probably need to shorten the pin header by a few millimeters to make it fit below the frontpanel. Use 8mm spacers to attach the display to the main PCB. I just used 4 nuts and only two of the 4 supports, which should be sufficient.
+ Remove the frontpanel and use 6mm spacers and screws to attach the display to the main PCB.
 
-![](images/oled-assembly.jpg)
+![](images/07-oled-assembly.jpg)
 
-Before putting back the frontpanel (for the last time), add the rectangular switch caps on the 5 switches below the display, because they cannot be put in from above the frontpanel.
+### LEDs
 
-![](images/switch-caps-missing.jpg)
+Next, proceed with populating all the LEDs. Note that the shortest leg goes into the rectangular pad. With all LEDs in place, put the frontpanel back on and tighten the same three jacks and the 11mm spacer. Use tape to keep all the LEDs flush to the frontpanel or use some tool to allow them come through the frontpanel just a little bit, whatever your taste is. Solder the middle leg of all LEDs and check alignment before soldering the remaining two legs of all the LEDs.
+
+![](images/08-leds.jpg)
 
 ### Switch Caps
 
+Remove the frontpanel and put the 5 rectangular switch caps on. These unfortunately cannot be put in from above the frontpanel. Put the frontpanel back on and install washers and nuts on all the jacks.
+
+![](images/09-switch-caps-missing.jpg)
+
 Finally, put a round switch cap to all of the remaining switches. Note that they need to pressed quite firmly to put into the right spot. You can also put on the knob on the encoder now.
 
-![](images/switch-caps.jpg)
+![](images/10-switch-caps.jpg)
 
 ## Flashing Firmware
 
@@ -109,6 +109,4 @@ Flashing the firmware can be done in multiple ways. The easiest way is to downlo
 
 With the firmware loaded, you now hopefully have a fully working **PER\|FORMER** sequencer.
 
-![](images/final.jpg)
-
-
+![](images/11-final.jpg)
