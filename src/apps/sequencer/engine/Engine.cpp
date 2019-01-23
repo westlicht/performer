@@ -695,7 +695,7 @@ void Engine::updateClockSetup() {
     }
 
     // Configure clock slaves
-    _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputDivisor(), true);
+    _clock.slaveConfigure(ClockSourceExternal, clockSetup.clockInputDivisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN), true);
     _clock.slaveConfigure(ClockSourceMidi, CONFIG_PPQN / 24, clockSetup.midiRx());
     _clock.slaveConfigure(ClockSourceUsbMidi, CONFIG_PPQN / 24, clockSetup.usbRx());
 
@@ -728,7 +728,7 @@ void Engine::updateClockSetup() {
     }
 
     // Configure clock outputs
-    _clock.outputConfigure(clockSetup.clockOutputDivisor(), clockSetup.clockOutputPulse());
+    _clock.outputConfigure(clockSetup.clockOutputDivisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN), clockSetup.clockOutputPulse());
 
     // Update clock outputs
     onClockOutput(_clock.outputState());
