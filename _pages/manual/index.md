@@ -1023,7 +1023,7 @@ This page is used to setup the clock system of the sequencer using the following
 | USB RX | yes, no | Receive MIDI clock from USB. |
 | USB TX | yes, no | Transmit MIDI clock to USB. |
 
-TODO
+> Note: To set up a 24 PPQN input or output clock resolution, the divisor needs to be set to 2. This is because the divisor is applied to a 48 PPQN resolution instead of the internal 192 PPQN resolution.
 
 <!-- System -->
 
@@ -1084,7 +1084,7 @@ This tab shows the current version of the firmware and allows to reset to the bo
 
 <h3 id="appendix-divisors">Divisors</h3>
 
-Divisors are used to divide the clock ticks with a resolution of 192 PPQN into periods corresponding to musical notes. While any integer number between 1 and 192 can be used as a divisor, the following known divisor values are used to generate the commonly used musical notes:
+Divisors are used to divide clock ticks with a resolution of 48 PPQN into periods corresponding to musical notes. The divisor is applied to a 48 PPQN resolution instead of the internal 192 PPQN resolution, as this results in a more meaningful musical range of musical notes. While any integer number between 1 and 192 can be used as a divisor, the following known divisor values are used to generate the commonly used musical notes:
 
 | Divisor | Note | Name |
 | :--- | :--- | :--- |
