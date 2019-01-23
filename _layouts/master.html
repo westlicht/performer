@@ -45,12 +45,13 @@
     <div id="footer">
       <div class="wrapper">
       <p>
-        &copy; 2018 Simon Kallweit, Theme based on <a href="https://github.com/pages-themes/midnight">Midnight</a>
+        &copy; 2019 Simon Kallweit, Theme based on <a href="https://github.com/pages-themes/midnight">Midnight</a>
       </p>
       </div>
     </div>
 
 
+    {% if jekyll.environment == 'production' %}
     {% if site.google_analytics %}
       <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -60,6 +61,7 @@
         ga('create', '{{ site.google_analytics }}', 'auto');
         ga('send', 'pageview');
       </script>
+    {% endif %}
     {% endif %}
   </body>
 </html>
