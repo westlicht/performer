@@ -47,7 +47,10 @@ layout: home
 - Depth: 30mm
 - Power: 150mA @ +12V, 50mA @ -12V (+ USB power supply)
 
-
 ## License
 
 For licensing information please refer to the [License](../license) page.
+
+## Donations
+
+If you would like to support this project financially, please refer to the [Donate](../donate) page.
