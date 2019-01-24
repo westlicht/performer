@@ -1,12 +1,12 @@
 [![Build Status](https://travis-ci.org/westlicht/performer.svg?branch=master)](https://travis-ci.org/westlicht/performer)
 
-# PER|FORMER Eurorack Sequencer
+# PER|FORMER
 
 <a href="doc/sequencer.jpg"><img src="doc/sequencer.jpg"/></a>
 
 ## Overview
 
-This repository contains the firmware for the **PER|FORMER Eurorack Sequencer**.
+This repository contains the firmware for the **PER|FORMER** eurorack sequencer.
 
 **Disclaimer: This is work in progress**
 
