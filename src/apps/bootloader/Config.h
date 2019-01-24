@@ -1,7 +1,7 @@
 #pragma once
 
 #define CONFIG_VERSION_MAJOR        0
-#define CONFIG_VERSION_MINOR        1
+#define CONFIG_VERSION_MINOR        2
 
 #define CONFIG_CPU_FREQUENCY        168000000
 #define CONFIG_TICK_FREQUENCY       1000
