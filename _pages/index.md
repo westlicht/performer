@@ -49,8 +49,8 @@ layout: home
 
 ## License
 
-For licensing information please refer to the [License](../license) page.
+For licensing information please refer to the [License](./license) page.
 
 ## Donations
 
-If you would like to support this project financially, please refer to the [Donate](../donate) page.
+If you would like to support this project financially, please refer to the [Donate](./donate) page.
