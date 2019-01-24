@@ -62,7 +62,7 @@ class Controller:
         self._simulator = simulator
         self._screenshotDir = "."
 
-    def wait(self, ms):
+    def wait(self, ms = 100):
         self._simulator.wait(ms)
         return self
 
@@ -89,6 +89,8 @@ class Controller:
         self.wait(10)
         return self
 
+    # def contextAction(self, )
+
     def downEncoder(self):
         self._simulator.setEncoder(True)
         return self
@@ -104,10 +106,22 @@ class Controller:
         self.wait(post)
         return self
 
+    def encoder(self):
+        self.pressEncoder()
+        return self
+
     def rotateEncoder(self, count):
         for i in range(abs(count)):
             self._simulator.rotateEncoder(count)
             self.wait(10)
+        return self
+
+    def left(self):
+        self.rotateEncoder(-1)
+        return self
+
+    def right(self):
+        self.rotateEncoder(1)
         return self
 
     def adc(self, channel, voltage):
