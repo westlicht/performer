@@ -43,9 +43,9 @@ layout: home
 
 ## Specifications
 
-- Width: 32 HP
-- Depth: 30mm
-- Power: 150mA @ +12V, 50mA @ -12V (+ USB power supply)
+- Width: 34 HP
+- Depth: 25mm
+- Power: 100mA @ +12V, 15mA @ -12V (not including USB host power)
 
 ## License
 
