@@ -8,7 +8,7 @@
 
 This repository contains the firmware for the **PER|FORMER** eurorack sequencer.
 
-**Disclaimer: This is work in progress**
+For more information on the project go [here](https://westlicht.github.io/performer).
 
 The hardware design files are hosted in a separate repository [here](https://github.com/westlicht/performer-hardware).
 
