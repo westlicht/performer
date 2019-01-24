@@ -52,6 +52,8 @@ struct SequencerApp {
         engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
         ui(model, engine, lcd, blm, encoder)
     {
+        FileManager::init();
+
         model.init();
         engine.init();
         ui.init();

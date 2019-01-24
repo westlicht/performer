@@ -62,8 +62,6 @@ void PatternPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
-    constexpr int Border = 4;
-
     float syncMeasureFraction = _engine.syncMeasureFraction();
     bool hasRequested = false;
 
