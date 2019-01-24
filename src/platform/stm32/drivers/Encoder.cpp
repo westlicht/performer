@@ -24,9 +24,9 @@ void Encoder::process() {
             _encoderState[pin] = state;
             if (!_encoderState[0] && !_encoderState[1]) {
                 if (_reverse) {
-                    _events.write(pin ? Event::Right : Event::Left);
-                } else {
                     _events.write(pin ? Event::Left : Event::Right);
+                } else {
+                    _events.write(pin ? Event::Right : Event::Left);
                 }
             }
         }

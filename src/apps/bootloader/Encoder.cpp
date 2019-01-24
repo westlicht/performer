@@ -47,7 +47,7 @@ void Encoder::process() {
         if (state != encoderState[pin]) {
             encoderState[pin] = state;
             if (!encoderState[0] && !encoderState[1]) {
-                _value += pin ? -1 : 1;
+                _value += pin ? 1 : -1;
             }
         }
     };
