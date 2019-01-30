@@ -244,6 +244,9 @@ void Routing::writeTrackTarget(Target target, int trackIndex, int patternIndex, 
 
 void Routing::writeNoteSequenceTarget(NoteSequence &sequence, Target target, float floatValue, int intValue) {
     switch (target) {
+    case Target::RunMode:
+        sequence.setRunMode(Types::RunMode(intValue));
+        break;
     case Target::FirstStep:
         sequence.setFirstStep(intValue);
         break;
@@ -256,7 +259,19 @@ void Routing::writeNoteSequenceTarget(NoteSequence &sequence, Target target, flo
 }
 
 void Routing::writeCurveSequenceTarget(CurveSequence &sequence, Target target, float floatValue, int intValue) {
-
+    switch (target) {
+    case Target::RunMode:
+        sequence.setRunMode(Types::RunMode(intValue));
+        break;
+    case Target::FirstStep:
+        sequence.setFirstStep(intValue);
+        break;
+    case Target::LastStep:
+        sequence.setLastStep(intValue);
+        break;
+    default:
+        break;
+    }
 }
 
 
@@ -280,6 +295,7 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::TrackRotate)]                     = { -64,    64,     0,      64      },
     [int(Routing::Target::TrackStepGateProbabilityBias)]    = { -8,     8,      -8,     8       },
     [int(Routing::Target::TrackStepLengthBias)]             = { -8,     8,      -8,     8       },
+    [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
     [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
     [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63      },
 };
@@ -326,6 +342,9 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::TrackStepGateProbabilityBias:
     case Target::TrackStepLengthBias:
         str("%+.1f%%", value * 12.5f);
+        break;
+    case Target::RunMode:
+        str("%s", Types::runModeName(Types::RunMode(intValue)));
         break;
     case Target::FirstStep:
     case Target::LastStep:

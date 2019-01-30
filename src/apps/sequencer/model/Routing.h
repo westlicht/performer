@@ -50,7 +50,8 @@ public:
 
         // Sequence targets
         SequenceFirst,
-        FirstStep = SequenceFirst,
+        RunMode = SequenceFirst,
+        FirstStep,
         LastStep,
         SequenceLast = LastStep,
 
@@ -74,6 +75,7 @@ public:
         case Target::TrackStepGateProbabilityBias: return "Gate Prob Bias";
         case Target::TrackStepLengthBias: return "Length Bias";
 
+        case Target::RunMode:           return "Run Mode";
         case Target::FirstStep:         return "First Step";
         case Target::LastStep:          return "Last Step";
 
