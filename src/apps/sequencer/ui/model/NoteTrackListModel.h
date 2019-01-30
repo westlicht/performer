@@ -44,10 +44,12 @@ public:
             return Routing::Target::TrackTranspose;
         case Rotate:
             return Routing::Target::TrackRotate;
-        case StepGateProbabilityBias:
-            return Routing::Target::TrackStepGateProbabilityBias;
-        case StepLengthBias:
-            return Routing::Target::TrackStepLengthBias;
+        case GateProbabilityBias:
+            return Routing::Target::TrackGateProbabilityBias;
+        case RetriggerProbabilityBias:
+            return Routing::Target::TrackRetriggerProbabilityBias;
+        case LengthBias:
+            return Routing::Target::TrackLengthBias;
         default:
             return Routing::Target::None;
         }
@@ -61,8 +63,9 @@ private:
         Octave,
         Transpose,
         Rotate,
-        StepGateProbabilityBias,
-        StepLengthBias,
+        GateProbabilityBias,
+        RetriggerProbabilityBias,
+        LengthBias,
         Last
     };
 
@@ -74,8 +77,9 @@ private:
         case Octave:    return "Octave";
         case Transpose: return "Transpose";
         case Rotate:    return "Rotate";
-        case StepGateProbabilityBias: return "Gate Prob Bias";
-        case StepLengthBias: return "Length Bias";
+        case GateProbabilityBias: return "Gate P. Bias";
+        case RetriggerProbabilityBias: return "Retrig P. Bias";
+        case LengthBias: return "Length Bias";
         case Last:      break;
         }
         return nullptr;
@@ -105,11 +109,14 @@ private:
         case Rotate:
             _track->printRotate(str);
             break;
-        case StepGateProbabilityBias:
-            _track->printStepGateProbabilityBias(str);
+        case GateProbabilityBias:
+            _track->printGateProbabilityBias(str);
             break;
-        case StepLengthBias:
-            _track->printStepLengthBias(str);
+        case RetriggerProbabilityBias:
+            _track->printRetriggerProbabilityBias(str);
+            break;
+        case LengthBias:
+            _track->printLengthBias(str);
             break;
         case Last:
             break;
@@ -136,11 +143,14 @@ private:
         case Rotate:
             _track->editRotate(value, shift);
             break;
-        case StepGateProbabilityBias:
-            _track->editStepGateProbabilityBias(value, shift);
+        case GateProbabilityBias:
+            _track->editGateProbabilityBias(value, shift);
             break;
-        case StepLengthBias:
-            _track->editStepLengthBias(value, shift);
+        case RetriggerProbabilityBias:
+            _track->editRetriggerProbabilityBias(value, shift);
+            break;
+        case LengthBias:
+            _track->editLengthBias(value, shift);
             break;
         case Last:
             break;

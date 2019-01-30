@@ -44,9 +44,10 @@ public:
         TrackOctave,
         TrackTranspose,
         TrackRotate,
-        TrackStepGateProbabilityBias,
-        TrackStepLengthBias,
-        TrackLast = TrackStepLengthBias,
+        TrackGateProbabilityBias,
+        TrackRetriggerProbabilityBias,
+        TrackLengthBias,
+        TrackLast = TrackLengthBias,
 
         // Sequence targets
         SequenceFirst,
@@ -72,8 +73,9 @@ public:
         case Target::TrackOctave:       return "Octave";
         case Target::TrackTranspose:    return "Transpose";
         case Target::TrackRotate:       return "Rotate";
-        case Target::TrackStepGateProbabilityBias: return "Gate Prob Bias";
-        case Target::TrackStepLengthBias: return "Length Bias";
+        case Target::TrackGateProbabilityBias: return "Gate P. Bias";
+        case Target::TrackRetriggerProbabilityBias: return "Retrig P. Bias";
+        case Target::TrackLengthBias:   return "Length Bias";
 
         case Target::RunMode:           return "Run Mode";
         case Target::FirstStep:         return "First Step";

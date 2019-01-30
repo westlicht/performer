@@ -21,10 +21,11 @@ static bool evalStepGate(const NoteSequence::Step &step, int gateProbabilityOffs
 }
 
 // evaluate step retrigger count
-static int evalStepRetrigger(const NoteSequence::Step &step) {
+static int evalStepRetrigger(const NoteSequence::Step &step, int retriggerProbabilityOffset) {
+    int retriggerProbability = clamp(step.retriggerProbability() + retriggerProbabilityOffset, -1, NoteSequence::RetriggerProbability::Max);
     return
-        (step.retriggerProbability() == NoteSequence::RetriggerProbability::Max ||
-         int(rng.nextRange(NoteSequence::RetriggerProbability::Range)) <= step.retriggerProbability()) ?
+        (retriggerProbability == NoteSequence::RetriggerProbability::Max ||
+         int(rng.nextRange(NoteSequence::RetriggerProbability::Range)) <= retriggerProbability) ?
          step.retrigger() + 1 : 1;
 }
 
@@ -205,9 +206,9 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
     const auto &step = evalSequence.step(_currentStep);
 
-    if (evalStepGate(step, _noteTrack.stepGateProbabilityBias()) || useFillGates) {
-        uint32_t stepLength = (divisor * evalStepLength(step, _noteTrack.stepLengthBias())) / NoteSequence::Length::Range;
-        int stepRetrigger = evalStepRetrigger(step);
+    if (evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates) {
+        uint32_t stepLength = (divisor * evalStepLength(step, _noteTrack.lengthBias())) / NoteSequence::Length::Range;
+        int stepRetrigger = evalStepRetrigger(step, _noteTrack.retriggerProbabilityBias());
         if (stepRetrigger > 1) {
             uint32_t retriggerLength = divisor / stepRetrigger;
             uint32_t stepOffset = 0;

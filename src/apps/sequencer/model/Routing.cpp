@@ -209,11 +209,14 @@ void Routing::writeTrackTarget(Target target, int trackIndex, int patternIndex, 
         case Target::TrackRotate:
             noteTrack.setRotate(intValue);
             break;
-        case Target::TrackStepGateProbabilityBias:
-            noteTrack.setStepGateProbabilityBias(intValue);
+        case Target::TrackGateProbabilityBias:
+            noteTrack.setGateProbabilityBias(intValue);
             break;
-        case Target::TrackStepLengthBias:
-            noteTrack.setStepLengthBias(intValue);
+        case Target::TrackRetriggerProbabilityBias:
+            noteTrack.setRetriggerProbabilityBias(intValue);
+            break;
+        case Target::TrackLengthBias:
+            noteTrack.setLengthBias(intValue);
             break;
         default:
             writeNoteSequenceTarget(noteTrack.sequence(patternIndex), target, floatValue, intValue);
@@ -293,8 +296,9 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::TrackOctave)]                     = { -10,    10,     -1,     1       },
     [int(Routing::Target::TrackTranspose)]                  = { -60,    60,     -12,    12      },
     [int(Routing::Target::TrackRotate)]                     = { -64,    64,     0,      64      },
-    [int(Routing::Target::TrackStepGateProbabilityBias)]    = { -8,     8,      -8,     8       },
-    [int(Routing::Target::TrackStepLengthBias)]             = { -8,     8,      -8,     8       },
+    [int(Routing::Target::TrackGateProbabilityBias)]        = { -8,     8,      -8,     8       },
+    [int(Routing::Target::TrackRetriggerProbabilityBias)]   = { -8,     8,      -8,     8       },
+    [int(Routing::Target::TrackLengthBias)]                 = { -8,     8,      -8,     8       },
     [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
     [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
     [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63      },
@@ -339,8 +343,9 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::TrackRotate:
         str("%+d", intValue);
         break;
-    case Target::TrackStepGateProbabilityBias:
-    case Target::TrackStepLengthBias:
+    case Target::TrackGateProbabilityBias:
+    case Target::TrackRetriggerProbabilityBias:
+    case Target::TrackLengthBias:
         str("%+.1f%%", value * 12.5f);
         break;
     case Target::RunMode:

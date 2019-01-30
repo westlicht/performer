@@ -107,38 +107,52 @@ public:
         str("%+d", rotate());
     }
 
-    // stepGateProbabilityBias
+    // gateProbabilityBias
 
-    int stepGateProbabilityBias() const { return _stepGateProbabilityBias; }
-    void setStepGateProbabilityBias(int stepGateProbabilityBias) {
-        _stepGateProbabilityBias = clamp(stepGateProbabilityBias, -NoteSequence::GateProbability::Range, NoteSequence::GateProbability::Range);
+    int gateProbabilityBias() const { return _gateProbabilityBias; }
+    void setGateProbabilityBias(int gateProbabilityBias) {
+        _gateProbabilityBias = clamp(gateProbabilityBias, -NoteSequence::GateProbability::Range, NoteSequence::GateProbability::Range);
     }
 
-    void editStepGateProbabilityBias(int value, bool shift) {
-        setStepGateProbabilityBias(stepGateProbabilityBias() + value);
+    void editGateProbabilityBias(int value, bool shift) {
+        setGateProbabilityBias(gateProbabilityBias() + value);
     }
 
-    void printStepGateProbabilityBias(StringBuilder &str) const {
-        str("%+.1f%%", stepGateProbabilityBias() * 12.5f);
+    void printGateProbabilityBias(StringBuilder &str) const {
+        str("%+.1f%%", gateProbabilityBias() * 12.5f);
     }
 
-    // stepLengthBias
+    // retriggerProbabilityBias
 
-    int stepLengthBias() const { return _stepLengthBias; }
-    void setStepLengthBias(int stepLengthBias) {
-        _stepLengthBias = clamp(stepLengthBias, -NoteSequence::Length::Range, NoteSequence::Length::Range);
+    int retriggerProbabilityBias() const { return _retriggerProbabilityBias; }
+    void setRetriggerProbabilityBias(int retriggerProbabilityBias) {
+        _retriggerProbabilityBias = clamp(retriggerProbabilityBias, -NoteSequence::RetriggerProbability::Range, NoteSequence::RetriggerProbability::Range);
     }
 
-    void editStepLengthBias(int value, bool shift) {
-        setStepLengthBias(stepLengthBias() + value);
+    void editRetriggerProbabilityBias(int value, bool shift) {
+        setRetriggerProbabilityBias(retriggerProbabilityBias() + value);
     }
 
-    void printStepLengthBias(StringBuilder &str) const {
-        str("%+.1f%%", stepLengthBias() * 12.5f);
+    void printRetriggerProbabilityBias(StringBuilder &str) const {
+        str("%+.1f%%", retriggerProbabilityBias() * 12.5f);
     }
 
-    // retriggerProbability
-    // lengthVariationProbability
+    // lengthBias
+
+    int lengthBias() const { return _lengthBias; }
+    void setLengthBias(int lengthBias) {
+        _lengthBias = clamp(lengthBias, -NoteSequence::Length::Range, NoteSequence::Length::Range);
+    }
+
+    void editLengthBias(int value, bool shift) {
+        setLengthBias(lengthBias() + value);
+    }
+
+    void printLengthBias(StringBuilder &str) const {
+        str("%+.1f%%", lengthBias() * 12.5f);
+    }
+
+    // TODO lengthVariationProbability
 
     // sequences
 
@@ -166,8 +180,9 @@ private:
     int8_t _octave;
     int8_t _transpose;
     int8_t _rotate;
-    int8_t _stepGateProbabilityBias;
-    int8_t _stepLengthBias;
+    int8_t _gateProbabilityBias;
+    int8_t _retriggerProbabilityBias;
+    int8_t _lengthBias;
 
     NoteSequenceArray _sequences;
 };
