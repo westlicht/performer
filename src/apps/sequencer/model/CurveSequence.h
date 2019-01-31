@@ -59,7 +59,7 @@ public:
             _max = std::max(_max, _min);
         }
 
-        float minNormalized() const { return float(_min) / CurveSequence::Min::Max; }
+        float minNormalized() const { return float(_min) / Min::Max; }
 
         // max
 
@@ -69,7 +69,7 @@ public:
             _min = std::min(_min, _max);
         }
 
-        float maxNormalized() const { return float(_max) / CurveSequence::Max::Max; }
+        float maxNormalized() const { return float(_max) / Max::Max; }
 
 
         int layerValue(Layer layer) const;

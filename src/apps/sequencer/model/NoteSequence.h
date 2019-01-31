@@ -77,7 +77,7 @@ public:
 
         int gateProbability() const { return _data0.gateProbability; }
         void setGateProbability(int gateProbability) {
-            _data0.gateProbability = NoteSequence::GateProbability::clamp(gateProbability);
+            _data0.gateProbability = GateProbability::clamp(gateProbability);
         }
 
         // slide
@@ -94,56 +94,56 @@ public:
 
         int retrigger() const { return _data1.retrigger; }
         void setRetrigger(int retrigger) {
-            _data1.retrigger = NoteSequence::Retrigger::clamp(retrigger);
+            _data1.retrigger = Retrigger::clamp(retrigger);
         }
 
         // retriggerProbability
 
         int retriggerProbability() const { return _data1.retriggerProbability; }
         void setRetriggerProbability(int retriggerProbability) {
-            _data1.retriggerProbability = NoteSequence::RetriggerProbability::clamp(retriggerProbability);
+            _data1.retriggerProbability = RetriggerProbability::clamp(retriggerProbability);
         }
 
         // length
 
         int length() const { return _data0.length; }
         void setLength(int length) {
-            _data0.length = NoteSequence::Length::clamp(length);
+            _data0.length = Length::clamp(length);
         }
 
         // lengthVariationRange
 
         int lengthVariationRange() const { return LengthVariationRange::Min + _data0.lengthVariationRange; }
         void setLengthVariationRange(int lengthVariationRange) {
-            _data0.lengthVariationRange = NoteSequence::LengthVariationRange::clamp(lengthVariationRange) - LengthVariationRange::Min;
+            _data0.lengthVariationRange = LengthVariationRange::clamp(lengthVariationRange) - LengthVariationRange::Min;
         }
 
         // lengthVariationProbability
 
         int lengthVariationProbability() const { return _data0.lengthVariationProbability; }
         void setLengthVariationProbability(int lengthVariationProbability) {
-            _data0.lengthVariationProbability = NoteSequence::LengthVariationProbability::clamp(lengthVariationProbability);
+            _data0.lengthVariationProbability = LengthVariationProbability::clamp(lengthVariationProbability);
         }
 
         // note
 
         int note() const { return Note::Min + _data0.note; }
         void setNote(int note) {
-            _data0.note = NoteSequence::Note::clamp(note) - Note::Min;
+            _data0.note = Note::clamp(note) - Note::Min;
         }
 
         // noteVariationRange
 
         int noteVariationRange() const { return NoteVariationRange::Min + _data0.noteVariationRange; }
         void setNoteVariationRange(int noteVariationRange) {
-            _data0.noteVariationRange = NoteSequence::NoteVariationRange::clamp(noteVariationRange) - NoteVariationRange::Min;
+            _data0.noteVariationRange = NoteVariationRange::clamp(noteVariationRange) - NoteVariationRange::Min;
         }
 
         // noteVariationProbability
 
         int noteVariationProbability() const { return _data0.noteVariationProbability; }
         void setNoteVariationProbability(int noteVariationProbability) {
-            _data0.noteVariationProbability = NoteSequence::NoteVariationProbability::clamp(noteVariationProbability);
+            _data0.noteVariationProbability = NoteVariationProbability::clamp(noteVariationProbability);
         }
 
         int layerValue(Layer layer) const;
