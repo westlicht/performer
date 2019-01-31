@@ -242,13 +242,13 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         step.setGate(true);
         step.setGateProbability(NoteSequence::GateProbability::Max);
         step.setRetrigger(0);
-        step.setRetriggerProbability(0);
+        step.setRetriggerProbability(NoteSequence::RetriggerProbability::Max);
         step.setLength(length);
         step.setLengthVariationRange(0);
-        step.setLengthVariationProbability(0);
+        step.setLengthVariationProbability(NoteSequence::LengthVariationProbability::Max);
         step.setNote(note);
         step.setNoteVariationRange(0);
-        step.setNoteVariationProbability(0);
+        step.setNoteVariationProbability(NoteSequence::NoteVariationProbability::Max);
     };
 
     auto clearStep = [this] (int stepIndex) {
