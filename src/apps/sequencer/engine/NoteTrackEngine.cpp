@@ -15,32 +15,25 @@ static Random rng;
 // evaluate if step gate is active
 static bool evalStepGate(const NoteSequence::Step &step, int probabilityBias) {
     int probability = clamp(step.gateProbability() + probabilityBias, -1, NoteSequence::GateProbability::Max);
-    return step.gate() &&
-        (probability == NoteSequence::GateProbability::Max ||
-         int(rng.nextRange(NoteSequence::GateProbability::Range)) <= probability);
+    return step.gate() && int(rng.nextRange(NoteSequence::GateProbability::Range)) <= probability;
 }
 
 // evaluate step retrigger count
 static int evalStepRetrigger(const NoteSequence::Step &step, int probabilityBias) {
     int probability = clamp(step.retriggerProbability() + probabilityBias, -1, NoteSequence::RetriggerProbability::Max);
-    return
-        (probability == NoteSequence::RetriggerProbability::Max ||
-         int(rng.nextRange(NoteSequence::RetriggerProbability::Range)) <= probability) ?
-         step.retrigger() + 1 : 1;
+    return int(rng.nextRange(NoteSequence::RetriggerProbability::Range)) <= probability ? step.retrigger() + 1 : 1;
 }
 
 // evaluate step length
 static int evalStepLength(const NoteSequence::Step &step, int lengthBias) {
     int length = NoteSequence::Length::clamp(step.length() + lengthBias) + 1;
     int probability = step.lengthVariationProbability();
-    if (probability > 0) {
-        if (int(rng.nextRange(NoteSequence::LengthVariationProbability::Range)) < probability) {
-            int offset = step.lengthVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.lengthVariationRange()) + 1);
-            if (step.lengthVariationRange() < 0) {
-                offset = -offset;
-            }
-            length = clamp(length + offset, 0, NoteSequence::Length::Range);
+    if (int(rng.nextRange(NoteSequence::LengthVariationProbability::Range)) <= probability) {
+        int offset = step.lengthVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.lengthVariationRange()) + 1);
+        if (step.lengthVariationRange() < 0) {
+            offset = -offset;
         }
+        length = clamp(length + offset, 0, NoteSequence::Length::Range);
     }
     return length;
 }
@@ -48,15 +41,13 @@ static int evalStepLength(const NoteSequence::Step &step, int lengthBias) {
 // evaluate note voltage
 static float evalStepNote(const NoteSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, bool useVariation = true) {
     int note = step.note() + (scale.isChromatic() ? rootNote : 0) + octave * scale.notesPerOctave() + transpose;
-    int probability = clamp(step.noteVariationProbability() + probabilityBias, 0, NoteSequence::NoteVariationProbability::Max);
-    if (probability > 0) {
-        if (useVariation && int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) < probability) {
-            int offset = step.noteVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.noteVariationRange()) + 1);
-            if (step.noteVariationRange() < 0) {
-                offset = -offset;
-            }
-            note = NoteSequence::Note::clamp(note + offset);
+    int probability = clamp(step.noteVariationProbability() + probabilityBias, -1, NoteSequence::NoteVariationProbability::Max);
+    if (useVariation && int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) <= probability) {
+        int offset = step.noteVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.noteVariationRange()) + 1);
+        if (step.noteVariationRange() < 0) {
+            offset = -offset;
         }
+        note = NoteSequence::Note::clamp(note + offset);
     }
     return scale.noteToVolts(note);
 }

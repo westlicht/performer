@@ -152,7 +152,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             SequencePainter::drawProbability(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 2,
-                step.lengthVariationProbability(), NoteSequence::LengthVariationProbability::Max
+                step.lengthVariationProbability() + 1, NoteSequence::LengthVariationProbability::Range
             );
             break;
         case Layer::Note: {
@@ -175,7 +175,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             SequencePainter::drawProbability(
                 canvas,
                 x + 2, y + 18, stepWidth - 4, 2,
-                step.noteVariationProbability(), NoteSequence::NoteVariationProbability::Max
+                step.noteVariationProbability() + 1, NoteSequence::NoteVariationProbability::Range
             );
             break;
         case Layer::Slide:
@@ -594,10 +594,10 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         SequencePainter::drawProbability(
             canvas,
             64 + 32 + 8, 32 - 4, 64 - 16, 8,
-            step.lengthVariationProbability(), NoteSequence::LengthVariationProbability::Max
+            step.lengthVariationProbability() + 1, NoteSequence::LengthVariationProbability::Range
         );
         str.reset();
-        str("%.1f%%", 100.f * step.lengthVariationProbability() / NoteSequence::LengthVariationProbability::Max);
+        str("%.1f%%", 100.f * (step.lengthVariationProbability() + 1.f) / NoteSequence::LengthVariationProbability::Range);
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
@@ -617,10 +617,10 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         SequencePainter::drawProbability(
             canvas,
             64 + 32 + 8, 32 - 4, 64 - 16, 8,
-            step.noteVariationProbability(), NoteSequence::NoteVariationProbability::Max
+            step.noteVariationProbability() + 1, NoteSequence::NoteVariationProbability::Range
         );
         str.reset();
-        str("%.1f%%", 100.f * step.noteVariationProbability() / NoteSequence::NoteVariationProbability::Max);
+        str("%.1f%%", 100.f * (step.noteVariationProbability() + 1.f) / NoteSequence::NoteVariationProbability::Range);
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
