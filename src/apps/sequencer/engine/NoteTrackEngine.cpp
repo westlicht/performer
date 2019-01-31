@@ -56,7 +56,7 @@ void NoteTrackEngine::reset() {
     _sequenceState.reset();
     _currentStep = -1;
     _activity = false;
-    _gateOutput =false;
+    _gateOutput = false;
     _cvOutput = 0.f;
     _cvOutputTarget = 0.f;
     _slideActive = false;
