@@ -10,6 +10,7 @@ void NoteTrack::clear() {
     _gateProbabilityBias = 0;
     _retriggerProbabilityBias = 0;
     _lengthBias = 0;
+    _noteProbabilityBias = 0;
 
     for (auto &sequence : _sequences) {
         sequence.clear();
@@ -27,6 +28,7 @@ void NoteTrack::write(WriteContext &context) const {
     writer.write(_gateProbabilityBias);
     writer.write(_retriggerProbabilityBias);
     writer.write(_lengthBias);
+    writer.write(_noteProbabilityBias);
     writeArray(context, _sequences);
 }
 
@@ -41,5 +43,6 @@ void NoteTrack::read(ReadContext &context) {
     reader.read(_gateProbabilityBias);
     reader.read(_retriggerProbabilityBias);
     reader.read(_lengthBias);
+    reader.read(_noteProbabilityBias);
     readArray(context, _sequences);
 }

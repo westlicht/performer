@@ -13,27 +13,28 @@
 static Random rng;
 
 // evaluate if step gate is active
-static bool evalStepGate(const NoteSequence::Step &step, int gateProbabilityOffset) {
-    int gateProbability = clamp(step.gateProbability() + gateProbabilityOffset, -1, NoteSequence::GateProbability::Max);
+static bool evalStepGate(const NoteSequence::Step &step, int probabilityBias) {
+    int probability = clamp(step.gateProbability() + probabilityBias, -1, NoteSequence::GateProbability::Max);
     return step.gate() &&
-        (gateProbability == NoteSequence::GateProbability::Max ||
-         int(rng.nextRange(NoteSequence::GateProbability::Range)) <= gateProbability);
+        (probability == NoteSequence::GateProbability::Max ||
+         int(rng.nextRange(NoteSequence::GateProbability::Range)) <= probability);
 }
 
 // evaluate step retrigger count
-static int evalStepRetrigger(const NoteSequence::Step &step, int retriggerProbabilityOffset) {
-    int retriggerProbability = clamp(step.retriggerProbability() + retriggerProbabilityOffset, -1, NoteSequence::RetriggerProbability::Max);
+static int evalStepRetrigger(const NoteSequence::Step &step, int probabilityBias) {
+    int probability = clamp(step.retriggerProbability() + probabilityBias, -1, NoteSequence::RetriggerProbability::Max);
     return
-        (retriggerProbability == NoteSequence::RetriggerProbability::Max ||
-         int(rng.nextRange(NoteSequence::RetriggerProbability::Range)) <= retriggerProbability) ?
+        (probability == NoteSequence::RetriggerProbability::Max ||
+         int(rng.nextRange(NoteSequence::RetriggerProbability::Range)) <= probability) ?
          step.retrigger() + 1 : 1;
 }
 
 // evaluate step length
-static int evalStepLength(const NoteSequence::Step &step, int lengthOffset) {
-    int length = NoteSequence::Length::clamp(step.length() + lengthOffset) + 1;
-    if (step.lengthVariationProbability() > 0) {
-        if (int(rng.nextRange(NoteSequence::LengthVariationProbability::Range)) < step.lengthVariationProbability()) {
+static int evalStepLength(const NoteSequence::Step &step, int lengthBias) {
+    int length = NoteSequence::Length::clamp(step.length() + lengthBias) + 1;
+    int probability = step.lengthVariationProbability();
+    if (probability > 0) {
+        if (int(rng.nextRange(NoteSequence::LengthVariationProbability::Range)) < probability) {
             int offset = step.lengthVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.lengthVariationRange()) + 1);
             if (step.lengthVariationRange() < 0) {
                 offset = -offset;
@@ -45,10 +46,11 @@ static int evalStepLength(const NoteSequence::Step &step, int lengthOffset) {
 }
 
 // evaluate note voltage
-static float evalStepNote(const NoteSequence::Step &step, const Scale &scale, int rootNote, int octave, int transpose, bool useVariation = true) {
+static float evalStepNote(const NoteSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, bool useVariation = true) {
     int note = step.note() + (scale.isChromatic() ? rootNote : 0) + octave * scale.notesPerOctave() + transpose;
-    if (step.noteVariationProbability() > 0) {
-        if (useVariation && int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) < step.noteVariationProbability()) {
+    int probability = clamp(step.noteVariationProbability() + probabilityBias, 0, NoteSequence::NoteVariationProbability::Max);
+    if (probability > 0) {
+        if (useVariation && int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) < probability) {
             int offset = step.noteVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.noteVariationRange()) + 1);
             if (step.noteVariationRange() < 0) {
                 offset = -offset;
@@ -152,7 +154,7 @@ void NoteTrackEngine::update(float dt) {
             const auto &step = sequence.step(_monitorStepIndex);
             int octave = _noteTrack.octave();
             int transpose = _noteTrack.transpose();
-            _cvOutputTarget = evalStepNote(step, scale, rootNote, octave, transpose, false);
+            _cvOutputTarget = evalStepNote(step, 0, scale, rootNote, octave, transpose, false);
             _activity = _gateOutput = true;
             _monitorOverrideActive = true;
         } else if (_recordHistory.isNoteActive()) {
@@ -224,7 +226,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
 
         const auto &scale = evalSequence.selectedScale(_model.project().scale());
         int rootNote = evalSequence.selectedRootNote(_model.project().rootNote());
-        _cvQueue.push({ applySwing(tick), evalStepNote(step, scale, rootNote, octave, transpose), step.slide() });
+        _cvQueue.push({ applySwing(tick), evalStepNote(step, _noteTrack.noteProbabilityBias(), scale, rootNote, octave, transpose), step.slide() });
     }
 }
 

@@ -47,7 +47,8 @@ public:
         TrackGateProbabilityBias,
         TrackRetriggerProbabilityBias,
         TrackLengthBias,
-        TrackLast = TrackLengthBias,
+        TrackNoteProbabilityBias,
+        TrackLast = TrackNoteProbabilityBias,
 
         // Sequence targets
         SequenceFirst,
@@ -76,6 +77,7 @@ public:
         case Target::TrackGateProbabilityBias: return "Gate P. Bias";
         case Target::TrackRetriggerProbabilityBias: return "Retrig P. Bias";
         case Target::TrackLengthBias:   return "Length Bias";
+        case Target::TrackNoteProbabilityBias: return "Note P. Bias";
 
         case Target::RunMode:           return "Run Mode";
         case Target::FirstStep:         return "First Step";

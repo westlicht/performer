@@ -50,6 +50,8 @@ public:
             return Routing::Target::TrackRetriggerProbabilityBias;
         case LengthBias:
             return Routing::Target::TrackLengthBias;
+        case NoteProbabilityBias:
+            return Routing::Target::TrackNoteProbabilityBias;
         default:
             return Routing::Target::None;
         }
@@ -66,6 +68,7 @@ private:
         GateProbabilityBias,
         RetriggerProbabilityBias,
         LengthBias,
+        NoteProbabilityBias,
         Last
     };
 
@@ -80,6 +83,7 @@ private:
         case GateProbabilityBias: return "Gate P. Bias";
         case RetriggerProbabilityBias: return "Retrig P. Bias";
         case LengthBias: return "Length Bias";
+        case NoteProbabilityBias: return "Note P. Bias";
         case Last:      break;
         }
         return nullptr;
@@ -118,6 +122,9 @@ private:
         case LengthBias:
             _track->printLengthBias(str);
             break;
+        case NoteProbabilityBias:
+            _track->printNoteProbabilityBias(str);
+            break;
         case Last:
             break;
         }
@@ -151,6 +158,9 @@ private:
             break;
         case LengthBias:
             _track->editLengthBias(value, shift);
+            break;
+        case NoteProbabilityBias:
+            _track->editNoteProbabilityBias(value, shift);
             break;
         case Last:
             break;

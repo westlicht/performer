@@ -218,6 +218,9 @@ void Routing::writeTrackTarget(Target target, int trackIndex, int patternIndex, 
         case Target::TrackLengthBias:
             noteTrack.setLengthBias(intValue);
             break;
+        case Target::TrackNoteProbabilityBias:
+            noteTrack.setNoteProbabilityBias(intValue);
+            break;
         default:
             writeNoteSequenceTarget(noteTrack.sequence(patternIndex), target, floatValue, intValue);
             break;
@@ -299,6 +302,7 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::TrackGateProbabilityBias)]        = { -8,     8,      -8,     8       },
     [int(Routing::Target::TrackRetriggerProbabilityBias)]   = { -8,     8,      -8,     8       },
     [int(Routing::Target::TrackLengthBias)]                 = { -8,     8,      -8,     8       },
+    [int(Routing::Target::TrackNoteProbabilityBias)]        = { -8,     8,      -8,     8       },
     [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
     [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
     [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63      },
@@ -346,6 +350,7 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::TrackGateProbabilityBias:
     case Target::TrackRetriggerProbabilityBias:
     case Target::TrackLengthBias:
+    case Target::TrackNoteProbabilityBias:
         str("%+.1f%%", value * 12.5f);
         break;
     case Target::RunMode:

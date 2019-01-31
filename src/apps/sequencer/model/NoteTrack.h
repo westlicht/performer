@@ -152,7 +152,20 @@ public:
         str("%+.1f%%", lengthBias() * 12.5f);
     }
 
-    // TODO lengthVariationProbability
+    // noteProbabilityBias
+
+    int noteProbabilityBias() const { return _noteProbabilityBias; }
+    void setNoteProbabilityBias(int noteProbabilityBias) {
+        _noteProbabilityBias = clamp(noteProbabilityBias, -NoteSequence::NoteVariationProbability::Range, NoteSequence::NoteVariationProbability::Range);
+    }
+
+    void editNoteProbabilityBias(int value, bool shift) {
+        setNoteProbabilityBias(noteProbabilityBias() + value);
+    }
+
+    void printNoteProbabilityBias(StringBuilder &str) const {
+        str("%+.1f%%", noteProbabilityBias() * 12.5f);
+    }
 
     // sequences
 
@@ -183,6 +196,7 @@ private:
     int8_t _gateProbabilityBias;
     int8_t _retriggerProbabilityBias;
     int8_t _lengthBias;
+    int8_t _noteProbabilityBias;
 
     NoteSequenceArray _sequences;
 };
