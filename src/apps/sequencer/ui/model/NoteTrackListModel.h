@@ -37,21 +37,21 @@ public:
     virtual Routing::Target routingTarget(int row) const override {
         switch (Item(row)) {
         case SlideTime:
-            return Routing::Target::TrackSlideTime;
+            return Routing::Target::SlideTime;
         case Octave:
-            return Routing::Target::TrackOctave;
+            return Routing::Target::Octave;
         case Transpose:
-            return Routing::Target::TrackTranspose;
+            return Routing::Target::Transpose;
         case Rotate:
-            return Routing::Target::TrackRotate;
+            return Routing::Target::Rotate;
         case GateProbabilityBias:
-            return Routing::Target::TrackGateProbabilityBias;
+            return Routing::Target::GateProbabilityBias;
         case RetriggerProbabilityBias:
-            return Routing::Target::TrackRetriggerProbabilityBias;
+            return Routing::Target::RetriggerProbabilityBias;
         case LengthBias:
-            return Routing::Target::TrackLengthBias;
+            return Routing::Target::LengthBias;
         case NoteProbabilityBias:
-            return Routing::Target::TrackNoteProbabilityBias;
+            return Routing::Target::NoteProbabilityBias;
         default:
             return Routing::Target::None;
         }

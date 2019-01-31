@@ -40,15 +40,15 @@ public:
 
         // Track targets
         TrackFirst,
-        TrackSlideTime = TrackFirst,
-        TrackOctave,
-        TrackTranspose,
-        TrackRotate,
-        TrackGateProbabilityBias,
-        TrackRetriggerProbabilityBias,
-        TrackLengthBias,
-        TrackNoteProbabilityBias,
-        TrackLast = TrackNoteProbabilityBias,
+        SlideTime = TrackFirst,
+        Octave,
+        Transpose,
+        Rotate,
+        GateProbabilityBias,
+        RetriggerProbabilityBias,
+        LengthBias,
+        NoteProbabilityBias,
+        TrackLast = NoteProbabilityBias,
 
         // Sequence targets
         SequenceFirst,
@@ -70,14 +70,14 @@ public:
         case Target::Tempo:             return "Tempo";
         case Target::Swing:             return "Swing";
 
-        case Target::TrackSlideTime:    return "Slide Time";
-        case Target::TrackOctave:       return "Octave";
-        case Target::TrackTranspose:    return "Transpose";
-        case Target::TrackRotate:       return "Rotate";
-        case Target::TrackGateProbabilityBias: return "Gate P. Bias";
-        case Target::TrackRetriggerProbabilityBias: return "Retrig P. Bias";
-        case Target::TrackLengthBias:   return "Length Bias";
-        case Target::TrackNoteProbabilityBias: return "Note P. Bias";
+        case Target::SlideTime:         return "Slide Time";
+        case Target::Octave:            return "Octave";
+        case Target::Transpose:         return "Transpose";
+        case Target::Rotate:            return "Rotate";
+        case Target::GateProbabilityBias: return "Gate P. Bias";
+        case Target::RetriggerProbabilityBias: return "Retrig P. Bias";
+        case Target::LengthBias:        return "Length Bias";
+        case Target::NoteProbabilityBias: return "Note P. Bias";
 
         case Target::RunMode:           return "Run Mode";
         case Target::FirstStep:         return "First Step";

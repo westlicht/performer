@@ -37,7 +37,7 @@ public:
     virtual Routing::Target routingTarget(int row) const override {
         switch (Item(row)) {
         case Rotate:
-            return Routing::Target::TrackRotate;
+            return Routing::Target::Rotate;
         default:
             return Routing::Target::None;
         }

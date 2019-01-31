@@ -197,28 +197,28 @@ void Routing::writeTrackTarget(Target target, int trackIndex, int patternIndex, 
     case Track::TrackMode::Note: {
         auto &noteTrack = track.noteTrack();
         switch (target) {
-        case Target::TrackSlideTime:
+        case Target::SlideTime:
             noteTrack.setSlideTime(intValue);
             break;
-        case Target::TrackOctave:
+        case Target::Octave:
             noteTrack.setOctave(intValue);
             break;
-        case Target::TrackTranspose:
+        case Target::Transpose:
             noteTrack.setTranspose(intValue);
             break;
-        case Target::TrackRotate:
+        case Target::Rotate:
             noteTrack.setRotate(intValue);
             break;
-        case Target::TrackGateProbabilityBias:
+        case Target::GateProbabilityBias:
             noteTrack.setGateProbabilityBias(intValue);
             break;
-        case Target::TrackRetriggerProbabilityBias:
+        case Target::RetriggerProbabilityBias:
             noteTrack.setRetriggerProbabilityBias(intValue);
             break;
-        case Target::TrackLengthBias:
+        case Target::LengthBias:
             noteTrack.setLengthBias(intValue);
             break;
-        case Target::TrackNoteProbabilityBias:
+        case Target::NoteProbabilityBias:
             noteTrack.setNoteProbabilityBias(intValue);
             break;
         default:
@@ -230,7 +230,7 @@ void Routing::writeTrackTarget(Target target, int trackIndex, int patternIndex, 
     case Track::TrackMode::Curve: {
         auto &curveTrack = track.curveTrack();
         switch (target) {
-        case Target::TrackRotate:
+        case Target::Rotate:
             curveTrack.setRotate(intValue);
             break;
         default:
@@ -295,14 +295,14 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::Record)]                          = { 0,      1,      0,      1       },
     [int(Routing::Target::Tempo)]                           = { 20,     500,    100,    200     },
     [int(Routing::Target::Swing)]                           = { 50,     75,     50,     75      },
-    [int(Routing::Target::TrackSlideTime)]                  = { 0,      100,    0,      100,    },
-    [int(Routing::Target::TrackOctave)]                     = { -10,    10,     -1,     1       },
-    [int(Routing::Target::TrackTranspose)]                  = { -60,    60,     -12,    12      },
-    [int(Routing::Target::TrackRotate)]                     = { -64,    64,     0,      64      },
-    [int(Routing::Target::TrackGateProbabilityBias)]        = { -8,     8,      -8,     8       },
-    [int(Routing::Target::TrackRetriggerProbabilityBias)]   = { -8,     8,      -8,     8       },
-    [int(Routing::Target::TrackLengthBias)]                 = { -8,     8,      -8,     8       },
-    [int(Routing::Target::TrackNoteProbabilityBias)]        = { -8,     8,      -8,     8       },
+    [int(Routing::Target::SlideTime)]                       = { 0,      100,    0,      100,    },
+    [int(Routing::Target::Octave)]                          = { -10,    10,     -1,     1       },
+    [int(Routing::Target::Transpose)]                       = { -60,    60,     -12,    12      },
+    [int(Routing::Target::Rotate)]                          = { -64,    64,     0,      64      },
+    [int(Routing::Target::GateProbabilityBias)]             = { -8,     8,      -8,     8       },
+    [int(Routing::Target::RetriggerProbabilityBias)]        = { -8,     8,      -8,     8       },
+    [int(Routing::Target::LengthBias)]                      = { -8,     8,      -8,     8       },
+    [int(Routing::Target::NoteProbabilityBias)]             = { -8,     8,      -8,     8       },
     [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
     [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
     [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63      },
@@ -339,18 +339,18 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
         str("%.1f", value);
         break;
     case Target::Swing:
-    case Target::TrackSlideTime:
+    case Target::SlideTime:
         str("%d%%", intValue);
         break;
-    case Target::TrackOctave:
-    case Target::TrackTranspose:
-    case Target::TrackRotate:
+    case Target::Octave:
+    case Target::Transpose:
+    case Target::Rotate:
         str("%+d", intValue);
         break;
-    case Target::TrackGateProbabilityBias:
-    case Target::TrackRetriggerProbabilityBias:
-    case Target::TrackLengthBias:
-    case Target::TrackNoteProbabilityBias:
+    case Target::GateProbabilityBias:
+    case Target::RetriggerProbabilityBias:
+    case Target::LengthBias:
+    case Target::NoteProbabilityBias:
         str("%+.1f%%", value * 12.5f);
         break;
     case Target::RunMode:
