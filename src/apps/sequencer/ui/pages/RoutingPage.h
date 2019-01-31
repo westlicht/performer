@@ -23,6 +23,8 @@ public:
     void showRoute(int routeIndex, const Routing::Route *initialValue = nullptr);
 
 private:
+    virtual void drawCell(Canvas &canvas, int row, int column, int x, int y, int w, int h) override;
+
     void selectRoute(int routeIndex);
     void assignMidiLearn(const MidiLearn::Result &result);
 

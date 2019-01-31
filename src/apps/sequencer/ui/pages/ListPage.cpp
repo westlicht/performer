@@ -49,10 +49,6 @@ void ListPage::draw(Canvas &canvas) {
         displayRow = std::max(0, _listModel->rows() - LineCount);
     }
 
-    canvas.setFont(Font::Small);
-    canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
-
     for (int i = 0; i < LineCount; ++i) {
         int row = displayRow + i;
         if (row < _listModel->rows()) {
@@ -118,6 +114,8 @@ void ListPage::setTopRow(int row) {
 void ListPage::drawCell(Canvas &canvas, int row, int column, int x, int y, int w, int h) {
     FixedStringBuilder<32> str;
     _listModel->cell(row, column, str);
+    canvas.setFont(Font::Small);
+    canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(column == int(_edit) && row == _selectedRow ? 0xf : 0x7);
     canvas.drawText(x, y + 7, str);
 }

@@ -109,6 +109,27 @@ void RoutingPage::showRoute(int routeIndex, const Routing::Route *initialValue) 
     setEdit(false);
 }
 
+void RoutingPage::drawCell(Canvas &canvas, int row, int column, int x, int y, int w, int h) {
+    if (row == int(RouteListModel::Item::Tracks) &&
+        column == 1 &&
+        (Routing::isTrackTarget(_editRoute.target()) || Routing::isSequenceTarget(_editRoute.target()))
+    ) {
+        canvas.setFont(Font::Tiny);
+        canvas.setBlendMode(BlendMode::Set);
+        canvas.setColor(edit() && row == selectedRow() ? 0xf : 0x7);
+
+        uint8_t tracks = _editRoute.tracks();
+        for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
+            canvas.drawRect(x + i * 10, y + 1, 8, 8);
+            if (tracks & (1 << i)) {
+                canvas.fillRect(x + 2 + i * 10, y + 3, 4, 4);
+            }
+        }
+    } else {
+        ListPage::drawCell(canvas, row, column, x, y, w, h);
+    }
+}
+
 void RoutingPage::selectRoute(int routeIndex) {
     routeIndex = clamp(routeIndex, 0, CONFIG_ROUTE_COUNT - 1);
     if (routeIndex != _routeIndex) {
