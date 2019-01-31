@@ -193,8 +193,10 @@ void register_sequencer(py::module &m) {
         .def_property("octave", &NoteTrack::octave, &NoteTrack::setOctave)
         .def_property("transpose", &NoteTrack::transpose, &NoteTrack::setTranspose)
         .def_property("rotate", &NoteTrack::rotate, &NoteTrack::setRotate)
-        .def_property("stepGateProbabilityBias", &NoteTrack::stepGateProbabilityBias, &NoteTrack::setStepGateProbabilityBias)
-        .def_property("stepLengthBias", &NoteTrack::stepLengthBias, &NoteTrack::setStepLengthBias)
+        .def_property("gateProbabilityBias", &NoteTrack::gateProbabilityBias, &NoteTrack::setGateProbabilityBias)
+        .def_property("retriggerProbabilityBias", &NoteTrack::retriggerProbabilityBias, &NoteTrack::setRetriggerProbabilityBias)
+        .def_property("lengthBias", &NoteTrack::lengthBias, &NoteTrack::setLengthBias)
+        .def_property("noteProbabilityBias", &NoteTrack::noteProbabilityBias, &NoteTrack::setNoteProbabilityBias)
         .def_property_readonly("sequences", [] (NoteTrack &noteTrack) {
             py::list result;
             for (int i = 0; i < CONFIG_PATTERN_COUNT; ++i) {
