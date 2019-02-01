@@ -532,10 +532,12 @@ If a track is in _Note_ mode, the following parameters are available:
 | Octave | -10 - +10 | Number of octaves to transpose the sequence up or down. |
 | Transpose | -100 - +100 | Number of notes to transpose the sequence up or down. Note that this depends on the current [Scale](#appendix-scales) of the sequence.
 | Rotate | [Rotation](#appendix-rotation) |Amount of rotation applied to the sequence. |
-| Gate Prob Bias | -100% - +100% | Gate probability bias that is added to the sequence. |
+| Gate P. Bias | -100% - +100% | Gate probability bias that is added to the sequence. |
+| Retrig P. Bias | -100% - +100% | Retrigger probability bias that is added to the sequence. |
 | Length Bias | -100% - +100% | Length bias bias that is added to the sequence. |
+| Note P. Bias | -100% - +100% | Note variation probability bias that is added to the sequence. |
 
-> Note: _Slide Time_, _Octave_, _Transpose_, _Rotate_, _Gate Prob Bias_ and _Length Bias_ are routable parameters. These parameters are great for live performance, as they allow to change how the sequence is played back without actually changing the sequence itself.
+> Note: _Slide Time_, _Octave_, _Transpose_, _Rotate_, _Gate P. Bias_, _Retrig P. Bias_, _Length Bias_ and _Note P. Bias_ are routable parameters. These parameters are great for live performance, as they allow to change how the sequence is played back without actually changing the sequence itself.
 
 <h4>Curve Track</h4>
 
@@ -546,7 +548,7 @@ If a track is in _Curve_, the following parameters are available:
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
-| Fill Mode | None, Gates, Next Pattern | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. |
+| Fill Mode | None, Gates, Next Pattern | This parameter currently has no effect. |
 | Rotate | [Rotation](#appendix-rotation) | Amount of rotation applied to the sequence. |
 
 > Note: _Rotate_ is a routable parameter.
