@@ -177,7 +177,7 @@ public:
 
     int clockOutputPulse() const { return _clockOutputPulse; }
     void setClockOutputPulse(int clockOutputPulse) {
-        clockOutputPulse = clamp(clockOutputPulse, 1, 5);
+        clockOutputPulse = clamp(clockOutputPulse, 1, 20);
         if (clockOutputPulse != _clockOutputPulse) {
             _clockOutputPulse = clockOutputPulse;
             _dirty = true;
