@@ -23,7 +23,7 @@ To make sourcing parts a bit easier, there is also a BOM at Octopart:
 
 [Octopart BOM](https://octopart.com/bom-tool/wxkGGtzB)
 
-The Octopart BOM contains all parts except the jacks, encoder knob and the standoffs and makes it easy to order from the two main distributors [Mouser](https://www.mouser.com) and [Digikey](https://www.digikey.com).
+The Octopart BOM contains all parts except the jacks and the encoder knob and makes it easy to order from the two main distributors [Mouser](https://www.mouser.com) and [Digikey](https://www.digikey.com).
 
 Due to the current shortage of surface mount capacitors it can be a bit hard to source some values of capacitors. Note that most of these are used as bypass capacitors and should be easily replaceable with a different part of similar specification.
 
