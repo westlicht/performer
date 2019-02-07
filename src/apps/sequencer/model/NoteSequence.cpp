@@ -25,6 +25,7 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
     CASE(Note)
     CASE(NoteVariationRange)
     CASE(NoteVariationProbability)
+    CASE(Condition)
     case Layer::Last:
         break;
     }
@@ -60,6 +61,8 @@ int NoteSequence::Step::layerValue(Layer layer) const {
         return noteVariationRange();
     case Layer::NoteVariationProbability:
         return noteVariationProbability();
+    case Layer::Condition:
+        return int(condition());
     case Layer::Last:
         break;
     }
@@ -105,6 +108,9 @@ void NoteSequence::Step::setLayerValue(Layer layer, int value) {
     case Layer::NoteVariationProbability:
         setNoteVariationProbability(value);
         break;
+    case Layer::Condition:
+        setCondition(Types::Condition(value));
+        break;
     case Layer::Last:
         break;
     }
@@ -125,6 +131,7 @@ void NoteSequence::Step::clear() {
     setNote(0);
     setNoteVariationRange(0);
     setNoteVariationProbability(NoteVariationProbability::Max);
+    setCondition(Types::Condition::Off);
 }
 
 void NoteSequence::Step::write(WriteContext &context) const {

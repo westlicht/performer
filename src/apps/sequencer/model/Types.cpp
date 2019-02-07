@@ -1,5 +1,15 @@
 #include "Types.h"
 
+const Types::ConditionInfo Types::conditionInfos[] = {
+    [int(Types::Condition::Off)]        = { "Off",      "-",    ""  },
+    [int(Types::Condition::Fill)]       = { "Fill",     "F",    ""  },
+    [int(Types::Condition::NotFill)]    = { "!Fill",    "!F",   ""  },
+    [int(Types::Condition::Pre)]        = { "Pre",      "P",    ""  },
+    [int(Types::Condition::NotPre)]     = { "!Pre",     "!P",   ""  },
+    [int(Types::Condition::First)]      = { "First",    "1",    ""  },
+    [int(Types::Condition::NotFirst)]   = { "!First",   "!1",   ""  },
+};
+
 const Types::VoltageRangeInfo Types::voltageRangeInfos[] = {
     [int(Types::VoltageRange::Unipolar1V)]  = { 0.f, 1.f },
     [int(Types::VoltageRange::Unipolar2V)]  = { 0.f, 2.f },

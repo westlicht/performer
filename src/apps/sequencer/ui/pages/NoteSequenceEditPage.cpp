@@ -34,9 +34,10 @@ enum class Function {
     Retrigger   = 1,
     Length      = 2,
     Note        = 3,
+    Condition     = 4,
 };
 
-static const char *functionNames[] = { "GATE", "RETRIG", "LENGTH", "NOTE", nullptr };
+static const char *functionNames[] = { "GATE", "RETRIG", "LENGTH", "NOTE", "COND" };
 
 static const NoteSequenceListModel::Item quickEditItems[8] = {
     NoteSequenceListModel::Item::FirstStep,
@@ -126,6 +127,8 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         }
 
         switch (layer()) {
+        case Layer::Gate:
+            break;
         case Layer::GateProbability:
             SequencePainter::drawProbability(
                 canvas,
@@ -206,7 +209,17 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
                 step.slide()
             );
             break;
-        default:
+        case Layer::Condition: {
+            canvas.setColor(0xf);
+            FixedStringBuilder<8> str;
+            Types::printCondition(str, step.condition(), Types::ConditionFormat::Short1);
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
+            str.reset();
+            Types::printCondition(str, step.condition(), Types::ConditionFormat::Short2);
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
+            break;
+        }
+        case Layer::Last:
             break;
         }
     }
@@ -419,7 +432,13 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
                     event.value() > 0
                 );
                 break;
-            default:
+            case Layer::Condition:
+                step.setCondition(
+                    setToFirst ? firstStep.condition() :
+                    ModelUtils::adjustedEnum(step.condition(), event.value())
+                );
+                break;
+            case Layer::Last:
                 break;
             }
         }
@@ -467,6 +486,9 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
             break;
         case Function::Note:
             setLayer(Layer::Note);
+            break;
+        case Function::Condition:
+            setLayer(Layer::Condition);
             break;
         }
         return;
@@ -524,6 +546,9 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
             break;
         }
         break;
+    case Function::Condition:
+        setLayer(Layer::Condition);
+        break;
     }
 }
 
@@ -545,6 +570,8 @@ int NoteSequenceEditPage::activeFunctionKey() {
     case Layer::NoteVariationRange:
     case Layer::NoteVariationProbability:
         return 3;
+    case Layer::Condition:
+        return 4;
     case Layer::Last:
         break;
     }
@@ -585,6 +612,9 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
     canvas.setFont(Font::Tiny);
 
     switch (layer()) {
+    case Layer::Gate:
+    case Layer::Slide:
+        break;
     case Layer::GateProbability:
         SequencePainter::drawProbability(
             canvas,
@@ -685,8 +715,13 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
-
-    default:
+    case Layer::Condition:
+        str.reset();
+        Types::printCondition(str, step.condition(), Types::ConditionFormat::Long);
+        canvas.setFont(Font::Small);
+        canvas.drawTextCentered(64 + 32, 16, 96, 32, str);
+        break;
+    case Layer::Last:
         break;
     }
 }

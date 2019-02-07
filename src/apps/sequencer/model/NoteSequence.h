@@ -31,6 +31,9 @@ public:
     typedef SignedValue<7> Note;
     typedef SignedValue<7> NoteVariationRange;
     typedef UnsignedValue<3> NoteVariationProbability;
+    typedef UnsignedValue<6> Condition;
+
+    static_assert(int(Types::Condition::Last) <= Condition::Max + 1, "Condition enum does not fit");
 
     enum class Layer {
         Gate,
@@ -45,6 +48,7 @@ public:
         Note,
         NoteVariationRange,
         NoteVariationProbability,
+        Condition,
         Last
     };
 
@@ -62,6 +66,7 @@ public:
         case Layer::Note:                       return "NOTE";
         case Layer::NoteVariationRange:         return "NOTE RANGE";
         case Layer::NoteVariationProbability:   return "NOTE PROB";
+        case Layer::Condition:                  return "COND";
         case Layer::Last:                       break;
         }
         return nullptr;
@@ -162,6 +167,13 @@ public:
             _data0.noteVariationProbability = NoteVariationProbability::clamp(noteVariationProbability);
         }
 
+        // condition
+
+        Types::Condition condition() const { return Types::Condition(int(_data1.condition)); }
+        void setCondition(Types::Condition condition) {
+            _data1.condition = Condition::clamp(int(condition));
+        }
+
         int layerValue(Layer layer) const;
         void setLayerValue(Layer layer, int value);
 
@@ -202,7 +214,8 @@ public:
             BitField<uint16_t, 0, Retrigger::Bits> retrigger;
             BitField<uint16_t, 2, RetriggerProbability::Bits> retriggerProbability;
             BitField<uint16_t, 5, GateOffset::Bits> gateOffset;
-            // 7 bits left
+            BitField<uint16_t, 9, Condition::Bits> condition;
+            // 1 bit left
         } _data1;
     };
 
