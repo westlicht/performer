@@ -11,6 +11,7 @@ void SequenceState::reset() {
     _step = -1;
     _prevStep = -1;
     _direction = 1;
+    _iteration = 0;
 }
 
 void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastStep, Random &rng) {
@@ -42,10 +43,20 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
 
         switch (runMode) {
         case Types::RunMode::Forward:
-            _step = _step >= lastStep ? firstStep : _step + 1;
+            if (_step >= lastStep) {
+                _step = firstStep;
+                ++_iteration;
+            } else {
+                ++_step;
+            }
             break;
         case Types::RunMode::Backward:
-            _step = _step <= firstStep ? lastStep : _step - 1;
+            if (_step <= firstStep) {
+                _step = lastStep;
+                ++_iteration;
+            } else {
+                --_step;
+            }
             break;
         case Types::RunMode::Pendulum:
         case Types::RunMode::PingPong:
@@ -53,6 +64,7 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
                 _direction = -1;
             } else if (_direction < 0 && _step <= firstStep) {
                 _direction = 1;
+                ++_iteration;
             } else {
                 if (runMode == Types::RunMode::Pendulum) {
                     _step += _direction;
@@ -84,17 +96,21 @@ void SequenceState::advanceAligned(int absoluteStep, Types::RunMode runMode, int
     switch (runMode) {
     case Types::RunMode::Forward:
         _step = firstStep + absoluteStep % stepCount;
-        break;
-    case Types::RunMode::Pendulum:
-        absoluteStep %= 2 * stepCount;
-        _step = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount));
-        break;
-    case Types::RunMode::PingPong:
-        absoluteStep %= 2 * stepCount - 2;
-        _step = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount) - 1);
+        _iteration = absoluteStep / stepCount;
         break;
     case Types::RunMode::Backward:
         _step = lastStep - absoluteStep % stepCount;
+        _iteration = absoluteStep / stepCount;
+        break;
+    case Types::RunMode::Pendulum:
+        _iteration = absoluteStep / (2 * stepCount);
+        absoluteStep %= (2 * stepCount);
+        _step = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount));
+        break;
+    case Types::RunMode::PingPong:
+        _iteration = absoluteStep / (2 * stepCount - 2);
+        absoluteStep %= (2 * stepCount - 2);
+        _step = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount) - 1);
         break;
     case Types::RunMode::Random:
         _step = firstStep + rng.nextRange(stepCount);
