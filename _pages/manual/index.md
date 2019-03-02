@@ -1018,7 +1018,7 @@ This page is used to setup the clock system of the sequencer using the following
 | Input Divisor | [Divisors](#appendix-divisors) | Musical note duration at which to interpret incoming clock pulses. The divisor is actually used as a clock multiplier to generate the internal 192 PPQN clock resolution. |
 | Input Mode | Reset, Run, Start/Stop | Mode in which to handle the incoming clock control signal. In _Reset_ mode, the clock is kept in reset state while a high signal is read. In _Run_ mode, the clock is only run when the signal is high. In _Start/Stop_ mode, the clock is started when a high signal is read and stopped/paused when a low signal is read. |
 | Output Divisor | [Divisors](#appendix-divisors) | Musical note duration at which to generate outgoing clock pulses. The divisor is used to divide the internal 192 PPQN clock resolution to generate the outgoing clock pulses. |
-| Output Pulse | 1 - 5 ms | Duration of the outgoing clock pulses. |
+| Output Pulse | 1 - 20 ms | Duration of the outgoing clock pulses. |
 | Output Mode | Reset, Run | Mode for generating the outgoing clock control signal. In _Reset_ mode, the signal is high when the clock is stopped and in reset state. In _Run_ mode, the signal is high when the clock is currently running. |
 | MIDI RX | yes, no | Receive MIDI clock from MIDI. |
 | MIDI TX | yes, no | Transmit MIDI clock to MIDI. |
