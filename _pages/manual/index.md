@@ -48,6 +48,7 @@ nav: 20
   - [Routing](#pages-routing)
   - [Midi Output](#pages-midi-output)
   - [User Scale](#pages-user-scale)
+  - [Overview](#pages-overview)
   - [Monitor](#pages-monitor)
   - [Clock](#pages-clock)
   - [System](#pages-system)
@@ -344,6 +345,7 @@ The active page is selected by holding the `PAGE` button and pressing the corres
 | `PAGE` + `SONG` (`S4`) | [Song](#pages-song) |
 | `PAGE` + `MONITOR` (`S8`) | [Monitor](#pages-monitor) |
 | `PAGE` + `SYSTEM` (`T8`) | [System](#pages-system) |
+| `PAGE` + `PREV` | [Overview](#pages-overview) |
 
 There are 3 special pages which can be entered temporarily by just holding a single button, namely the [Tempo](#pages-tempo), [Pattern](#pages-pattern) and [Performer](#pages-performer) pages. These pages give access to performance related features which need to be quickly accessible at any time.
 
@@ -970,6 +972,16 @@ Hold `SHIFT` + `PAGE` to open the context menu and access the following function
 | `F3` | Paste | Paste the clipboard to the selected user scale. |
 | `F4` | Load | Load a user scale from the SD card into the selected user scale. |
 | `F5` | Save | Save the selected user scale to the SD card. |
+
+<!-- Overview -->
+
+<h3 id="pages-overview">Overview</h3>
+
+The _Overview_ page is entered using `PAGE` + `PREV`.
+
+![](images/page-overview.png)
+
+On this page you can see an overall representation of all currently running sequences. This page is a bit like a screensaver, as it has no controls attached to it and purely serves as a neat visualization. In the left section, the currently playing pattern for each track is indicated. In the middle section, a dense representation of the sequence is shown (steps or curves). In the right section, the current state of the gate and CV outputs is visualized.
 
 <!-- Monitor -->
 
