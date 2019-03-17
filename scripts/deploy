@@ -13,6 +13,12 @@ items = [
         'dst': 'bootloader'
     },
     {
+        'name': 'Hardware Configuration',
+        'srcs': ['build/stm32/release/src/apps/hwconfig/hwconfig_default' + ext for ext in ['.hex', '.srec']] +
+                ['build/stm32/release/src/apps/hwconfig/hwconfig_reversed_encoder' + ext for ext in ['.hex', '.srec']],
+        'dst': 'hwconfig'
+    },
+    {
         'name': 'Sequencer',
         'srcs': ['build/stm32/release/src/apps/sequencer/sequencer' + ext for ext in ['.hex', '.srec']],
         'dst': 'sequencer'
