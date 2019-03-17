@@ -204,7 +204,6 @@ fs::Error FileManager::saveLastProject(int slot) {
     fileWriter.write(&slot, sizeof(slot));
 
     return fileWriter.finish();
-
 }
 
 fs::Error FileManager::loadLastProject(int &slot) {
