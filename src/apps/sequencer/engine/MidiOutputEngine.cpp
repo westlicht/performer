@@ -41,11 +41,11 @@ void MidiOutputEngine::tick(uint32_t tick) {
 
         int note = int(output.noteSource()) <= int(MidiOutput::Output::NoteSource::LastTrack) ?
             outputState.note :
-            int(output.noteSource()) - int(MidiOutput::Output::NoteSource::LastTrack);
+            int(output.noteSource()) - int(MidiOutput::Output::NoteSource::FirstNote);
 
         int velocity = int(output.velocitySource()) <= int(MidiOutput::Output::VelocitySource::LastTrack) ?
             outputState.velocity :
-            int(output.velocitySource()) - int(MidiOutput::Output::VelocitySource::LastTrack);
+            int(output.velocitySource()) - int(MidiOutput::Output::VelocitySource::FirstVelocity);
 
         bool noteOnRequest = outputState.requests & MidiOutputEngine::OutputState::NoteOn;
         bool noteOffRequest = outputState.requests & MidiOutputEngine::OutputState::NoteOff;
