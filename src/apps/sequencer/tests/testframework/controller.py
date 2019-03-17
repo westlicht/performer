@@ -55,6 +55,7 @@ pageButtonMap = {
     "track" : "step3",
     "song" : "step4",
     "monitor" : "step8",
+    "overview" : "prev"
 }
 
 class Controller:

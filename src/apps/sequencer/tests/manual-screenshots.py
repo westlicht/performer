@@ -21,6 +21,9 @@ c.down("clock").wait(100).down("next").wait(800).screenshot("page-tempo-nudge").
 # page-clock
 c.selectPage("clock").screenshot("page-clock")
 
+# page-overview
+c.selectPage("overview").screenshot("page-overview")
+
 # page-pattern
 c.selectPage("patt").screenshot("page-pattern")
 
