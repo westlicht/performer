@@ -39,6 +39,7 @@ A good source for the remaining parts is [Thonk](https://www.thonk.co.uk) in the
 
 To help populating the PCB, its always handy to have access to the schematic and board layout. If you don't have [KiCad](http://kicad-pcb.org) installed to open the board files, you can also access the all relevant files online:
 
+- [Interactive BOM](ibom.html)
 - [Schematics (PDF)](https://cdn.rawgit.com/westlicht/performer-hardware/master/sequencer.pdf)
 - [Front Silkscreen (PDF)](https://cdn.rawgit.com/westlicht/performer-hardware/master/silkscreen-front.pdf)
 - [Back Silkscreen (PDF)](https://cdn.rawgit.com/westlicht/performer-hardware/master/silkscreen-back.pdf)
