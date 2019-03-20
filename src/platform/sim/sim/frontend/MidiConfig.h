@@ -6,6 +6,8 @@ namespace sim {
 
 struct MidiConfig {
     std::string port;
+    std::string portIn;
+    std::string portOut;
     uint16_t vendorId;
     uint16_t productId;
 };

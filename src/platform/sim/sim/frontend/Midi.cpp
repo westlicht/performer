@@ -48,7 +48,7 @@ void Midi::Port::update() {
     if (!_open) {
         open();
     } else {
-        if (_error || findPort(_input, _port) == -1 || findPort(_output, _port) == -1) {
+        if (_error || findPort(_input, _portIn) == -1 || findPort(_output, _portOut) == -1) {
             close();
         }
 
@@ -76,7 +76,7 @@ void Midi::Port::open() {
 
     // open input
     try {
-        int index = findPort(_input, _port);
+        int index = findPort(_input, _portIn);
         if (index >= 0) {
             _input.openPort(index);
             _input.ignoreTypes(false, false, false);
@@ -88,7 +88,7 @@ void Midi::Port::open() {
         }
     } catch (RtMidiError &error) {
         if (_firstOpenAttempt) {
-            std::cout << "Failed to open MIDI input port '" << _port << "'" << std::endl;
+            std::cout << "Failed to open MIDI input port '" << _portIn << "'" << std::endl;
             error.printMessage();
             _firstOpenAttempt = false;
         }
@@ -98,7 +98,7 @@ void Midi::Port::open() {
 
     // open output
     try {
-        int index = findPort(_output, _port);
+        int index = findPort(_output, _portOut);
         if (index >= 0) {
             _output.openPort(index);
             _output.setErrorCallback(errorCallback, this);
@@ -108,7 +108,7 @@ void Midi::Port::open() {
         }
     } catch (RtMidiError &error) {
         if (_firstOpenAttempt) {
-            std::cout << "Failed to open MIDI output port '" << _port << "'" << std::endl;
+            std::cout << "Failed to open MIDI output port '" << _portOut << "'" << std::endl;
             error.printMessage();
             _firstOpenAttempt = false;
         }

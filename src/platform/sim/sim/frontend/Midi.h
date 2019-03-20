@@ -22,16 +22,18 @@ public:
         typedef std::function<void()> DisconnectHandler;
 
         Port(
-            const std::string &port,
+            const std::string &portIn,
+            const std::string &portOut,
             RecvHandler recvHandler
-        ) : _port(port), _recvHandler(recvHandler) {}
+        ) : _portIn(portIn), _portOut(portOut), _recvHandler(recvHandler) {}
 
         Port(
-            const std::string &port,
+            const std::string &portIn,
+            const std::string &portOut,
             RecvHandler recvHandler,
             ConnectHandler connectHandler,
             DisconnectHandler disconnectHandler
-        ) : _port(port), _recvHandler(recvHandler), _connectHandler(connectHandler), _disconnectHandler(disconnectHandler) {}
+        ) : _portIn(portIn), _portOut(portOut), _recvHandler(recvHandler), _connectHandler(connectHandler), _disconnectHandler(disconnectHandler) {}
 
         bool isOpen() const { return _open; }
 
@@ -47,7 +49,8 @@ public:
         void open();
         void close();
 
-        std::string _port;
+        std::string _portIn;
+        std::string _portOut;
         RecvHandler _recvHandler;
         ConnectHandler _connectHandler;
         DisconnectHandler _disconnectHandler;
