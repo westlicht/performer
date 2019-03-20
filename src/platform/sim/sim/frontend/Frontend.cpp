@@ -372,8 +372,8 @@ void Frontend::setupControls() {
 
 void Frontend::setupMidi() {
     _midiPort = std::make_shared<Midi::Port>(
-        midiPortConfig.portIn.empty() ? midiPortConfig.port : midiPortConfig.portIn,
-        midiPortConfig.portOut.empty() ? midiPortConfig.port : midiPortConfig.portOut,
+        midiPortConfig.portIn ? midiPortConfig.portIn : midiPortConfig.port,
+        midiPortConfig.portOut ? midiPortConfig.portOut : midiPortConfig.port,
         [this] (const std::vector<uint8_t> &message) {
             if (message.size() >= 1 && message.size() <= 3) {
                 _simulator.writeMidiInput(MidiEvent::makeMessage(0, MidiMessage(message.data(), message.size())));
@@ -384,8 +384,8 @@ void Frontend::setupMidi() {
     _midi.registerPort(_midiPort);
 
     _usbMidiPort = std::make_shared<sim::Midi::Port>(
-        usbMidiPortConfig.portIn.empty() ? usbMidiPortConfig.port : usbMidiPortConfig.portIn,
-        usbMidiPortConfig.portOut.empty() ? usbMidiPortConfig.port : usbMidiPortConfig.portOut,
+        usbMidiPortConfig.portIn ? usbMidiPortConfig.portIn : usbMidiPortConfig.port,
+        usbMidiPortConfig.portOut ? usbMidiPortConfig.portOut : usbMidiPortConfig.port,
         [this] (const std::vector<uint8_t> &message) {
             if (message.size() >= 1 && message.size() <= 3) {
                 _simulator.writeMidiInput(MidiEvent::makeMessage(1, MidiMessage(message.data(), message.size())));
