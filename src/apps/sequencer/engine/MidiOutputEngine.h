@@ -23,6 +23,7 @@ public:
 
     void sendGate(int trackIndex, bool gate);
     void sendCv(int trackIndex, float cv);
+    void sendSlide(int trackIndex, bool slide);
 
 private:
     struct OutputState {
@@ -30,6 +31,7 @@ private:
             NoteOn          = 1<<0,
             NoteOff         = 1<<1,
             ControlChange   = 1<<2,
+            Slide           = 1<<3,
         };
 
         MidiTargetConfig activeTarget;
@@ -37,15 +39,21 @@ private:
 
         uint8_t requests;
         int8_t note;
+        int8_t slide;
         int8_t velocity;
         int8_t control;
 
         void reset() {
             requests = 0;
             note = 60;
+            slide = 0;
             velocity = 100;
             control = 0;
         };
+
+        void resetRequests() { requests = 0; }
+        void setRequest(Requests request) { requests |= request; }
+        bool hasRequest(Requests request) { return requests & request; }
     };
 
     void resetActiveNote(uint32_t tick, OutputState &outputState);

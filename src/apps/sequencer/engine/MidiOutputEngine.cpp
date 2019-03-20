@@ -47,28 +47,28 @@ void MidiOutputEngine::tick(uint32_t tick) {
             outputState.velocity :
             int(output.velocitySource()) - int(MidiOutput::Output::VelocitySource::FirstVelocity);
 
-        bool noteOnRequest = outputState.requests & MidiOutputEngine::OutputState::NoteOn;
-        bool noteOffRequest = outputState.requests & MidiOutputEngine::OutputState::NoteOff;
-        bool controlChangeRequest = outputState.requests & MidiOutputEngine::OutputState::ControlChange;
-
-        if (noteOffRequest && !noteOnRequest) {
-            sendMidi(tick, port, MidiMessage::makeNoteOff(channel, note));
-            if (outputState.activeNote == note) {
-                outputState.activeNote = -1;
-            }
+        if (outputState.hasRequest(OutputState::Slide)) {
+            sendMidi(tick, port, MidiMessage::makeControlChange(channel, 65, outputState.slide ? 127 : 0));
         }
 
-        if (noteOnRequest && !noteOffRequest) {
-            resetActiveNote(tick, outputState);
+        if (outputState.hasRequest(OutputState::NoteOn)) {
             sendMidi(tick, port, MidiMessage::makeNoteOn(channel, note, velocity));
+        }
+
+        if (outputState.hasRequest(OutputState::NoteOff) && outputState.activeNote != -1) {
+            sendMidi(tick, port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
+            outputState.activeNote = -1;
+        }
+
+        if (outputState.hasRequest(OutputState::NoteOn)) {
             outputState.activeNote = note;
         }
 
-        if (controlChangeRequest) {
+        if (outputState.hasRequest(OutputState::ControlChange)) {
             sendMidi(tick, port, MidiMessage::makeControlChange(channel, output.controlNumber(), outputState.control));
         }
 
-        outputState.requests = 0;
+        outputState.resetRequests();
     }
 }
 
@@ -78,11 +78,7 @@ void MidiOutputEngine::sendGate(int trackIndex, bool gate) {
         auto &outputState = _outputStates[outputIndex];
 
         if (output.takesGateFromTrack(trackIndex)) {
-            if (gate) {
-                outputState.requests |= MidiOutputEngine::OutputState::NoteOn;
-            } else {
-                outputState.requests |= MidiOutputEngine::OutputState::NoteOff;
-            }
+            outputState.setRequest(gate ? OutputState::NoteOn : OutputState::NoteOff);
         }
     }
 }
@@ -101,8 +97,20 @@ void MidiOutputEngine::sendCv(int trackIndex, float cv) {
         }
 
         if (output.takesControlFromTrack(trackIndex)) {
-            outputState.requests |= MidiOutputEngine::OutputState::ControlChange;
+            outputState.setRequest(OutputState::ControlChange);
             outputState.control = clamp(int(std::floor(cv * (127.f / 5.f))), 0, 127);
+        }
+    }
+}
+
+void MidiOutputEngine::sendSlide(int trackIndex, bool slide) {
+    for (int outputIndex = 0; outputIndex < CONFIG_TRACK_COUNT; ++outputIndex) {
+        const auto &output = _midiOutput.output(outputIndex);
+        auto &outputState = _outputStates[outputIndex];
+
+        if (output.takesNoteFromTrack(trackIndex)) {
+            outputState.setRequest(OutputState::Slide);
+            outputState.slide = slide;
         }
     }
 }

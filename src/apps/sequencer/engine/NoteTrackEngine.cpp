@@ -113,12 +113,14 @@ void NoteTrackEngine::tick(uint32_t tick) {
         _linkData.sequenceState = &_sequenceState;
     }
 
+    auto &midiOutputEngine = _engine.midiOutputEngine();
+
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
         _activity = _gateQueue.front().gate;
         _gateOutput = (!mute() || fill()) && _activity;
         _gateQueue.pop();
 
-        _engine.midiOutputEngine().sendGate(_track.trackIndex(), _gateOutput);
+        midiOutputEngine.sendGate(_track.trackIndex(), _gateOutput);
     }
 
     while (!_cvQueue.empty() && tick >= _cvQueue.front().tick) {
@@ -126,7 +128,8 @@ void NoteTrackEngine::tick(uint32_t tick) {
         _slideActive = _cvQueue.front().slide;
         _cvQueue.pop();
 
-        _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutputTarget);
+        midiOutputEngine.sendCv(_track.trackIndex(), _cvOutputTarget);
+        midiOutputEngine.sendSlide(_track.trackIndex(), _slideActive);
     }
 }
 
