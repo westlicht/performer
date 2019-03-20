@@ -5,7 +5,6 @@
 namespace sim {
 
 struct MidiConfig {
-    const char *port;
     const char *portIn;
     const char *portOut;
     uint16_t vendorId;
@@ -13,12 +12,13 @@ struct MidiConfig {
 };
 
 static const MidiConfig midiPortConfig = {
-    // .port = "SL MkII Port 1"
-    .port = "Launchkey Mini LK Mini MIDI"
+    .portIn = "Launchkey Mini LK Mini MIDI",
+    .portOut = "Launchkey Mini LK Mini MIDI"
 };
 
 static const MidiConfig usbMidiPortConfig = {
-    .port = "Launchpad Mini 2",
+    .portIn = "Launchpad Mini 2",
+    .portOut = "Launchpad Mini 2",
     .vendorId = 0x1235,
     .productId = 0x0037
 };
