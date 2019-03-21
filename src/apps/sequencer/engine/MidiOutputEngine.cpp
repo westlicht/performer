@@ -14,9 +14,8 @@ MidiOutputEngine::MidiOutputEngine(Engine &engine, Model &model):
 }
 
 void MidiOutputEngine::reset() {
-    for (auto &outputState : _outputStates) {
-        resetActiveNote(0, outputState);
-        outputState.reset();
+    for (int outputIndex = 0; outputIndex < CONFIG_TRACK_COUNT; ++outputIndex) {
+        resetOutput(outputIndex);
     }
 }
 
@@ -25,10 +24,10 @@ void MidiOutputEngine::tick(uint32_t tick) {
         const auto &output = _midiOutput.output(outputIndex);
         auto &outputState = _outputStates[outputIndex];
 
-        // check if target has changed
-        if (outputState.activeTarget != output.target()) {
-            resetActiveNote(tick, outputState);
-            outputState.reset();
+        // check if event or target has changed
+        if (outputState.activeEvent != output.event() || outputState.activeTarget != output.target()) {
+            resetOutput(outputIndex);
+            outputState.activeEvent = output.event();
             outputState.activeTarget = output.target();
         }
 
@@ -48,15 +47,15 @@ void MidiOutputEngine::tick(uint32_t tick) {
             int(output.velocitySource()) - int(MidiOutput::Output::VelocitySource::FirstVelocity);
 
         if (outputState.hasRequest(OutputState::Slide)) {
-            sendMidi(tick, port, MidiMessage::makeControlChange(channel, 65, outputState.slide ? 127 : 0));
+            sendMidi(port, MidiMessage::makeControlChange(channel, 65, outputState.slide ? 127 : 0));
         }
 
         if (outputState.hasRequest(OutputState::NoteOn)) {
-            sendMidi(tick, port, MidiMessage::makeNoteOn(channel, note, velocity));
+            sendMidi(port, MidiMessage::makeNoteOn(channel, note, velocity));
         }
 
         if (outputState.hasRequest(OutputState::NoteOff) && outputState.activeNote != -1) {
-            sendMidi(tick, port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
+            sendMidi(port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
             outputState.activeNote = -1;
         }
 
@@ -65,7 +64,7 @@ void MidiOutputEngine::tick(uint32_t tick) {
         }
 
         if (outputState.hasRequest(OutputState::ControlChange)) {
-            sendMidi(tick, port, MidiMessage::makeControlChange(channel, output.controlNumber(), outputState.control));
+            sendMidi(port, MidiMessage::makeControlChange(channel, output.controlNumber(), outputState.control));
         }
 
         outputState.resetRequests();
@@ -115,17 +114,25 @@ void MidiOutputEngine::sendSlide(int trackIndex, bool slide) {
     }
 }
 
-void MidiOutputEngine::resetActiveNote(uint32_t tick, OutputState &outputState) {
+void MidiOutputEngine::resetOutput(int outputIndex) {
+    auto &outputState = _outputStates[outputIndex];
+
+    MidiPort port = MidiPort(outputState.activeTarget.port());
+    int channel = outputState.activeTarget.channel();
+
     if (outputState.activeNote >= 0) {
-        MidiPort port = MidiPort(outputState.activeTarget.port());
-        int channel = outputState.activeTarget.channel();
-        sendMidi(tick, port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
-        outputState.activeNote = -1;
+        sendMidi(port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
     }
+
+    if (outputState.activeEvent == MidiOutput::Output::Event::Note) {
+        // all sound off
+        sendMidi(port, MidiMessage::makeControlChange(channel, 120, 0));
+    }
+
+    outputState.reset();
 }
 
-void MidiOutputEngine::sendMidi(uint32_t tick, MidiPort port, const MidiMessage &message) {
-    // DBG("tick=%d ", tick);
+void MidiOutputEngine::sendMidi(MidiPort port, const MidiMessage &message) {
     // MidiMessage::dump(message);
     _engine.sendMidi(port, message);
 }

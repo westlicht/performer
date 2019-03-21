@@ -5,13 +5,13 @@
 #include "MidiPort.h"
 
 #include "model/MidiConfig.h"
+#include "model/MidiOutput.h"
 
 #include <array>
 #include <cstdint>
 
 class Engine;
 class Model;
-class MidiOutput;
 class MidiMessage;
 
 class MidiOutputEngine {
@@ -34,6 +34,7 @@ private:
             Slide           = 1<<3,
         };
 
+        MidiOutput::Output::Event activeEvent = MidiOutput::Output::Event::None;
         MidiTargetConfig activeTarget;
         int8_t activeNote = -1;
 
@@ -56,9 +57,9 @@ private:
         bool hasRequest(Requests request) { return requests & request; }
     };
 
-    void resetActiveNote(uint32_t tick, OutputState &outputState);
+    void resetOutput(int outputIndex);
 
-    void sendMidi(uint32_t tick, MidiPort port, const MidiMessage &message);
+    void sendMidi(MidiPort port, const MidiMessage &message);
 
     Engine &_engine;
     const MidiOutput &_midiOutput;
