@@ -12,6 +12,8 @@ class RoutingPage : public ListPage {
 public:
     RoutingPage(PageManager &manager, PageContext &context);
 
+    void reset();
+
     virtual void enter() override;
     virtual void exit() override;
 

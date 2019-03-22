@@ -6,6 +6,8 @@ class SongPage : public BasePage {
 public:
     SongPage(PageManager &manager, PageContext &context);
 
+    void reset();
+
     virtual void enter() override;
     virtual void exit() override;
 

@@ -22,6 +22,10 @@ SongPage::SongPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
 
+void SongPage::reset() {
+    setSelectedSlot(0);
+}
+
 void SongPage::enter() {
     _mode = Mode::Idle;
     setSelectedSlot(_selectedSlot);

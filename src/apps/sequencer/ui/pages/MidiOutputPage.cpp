@@ -18,10 +18,9 @@ MidiOutputPage::MidiOutputPage(PageManager &manager, PageContext &context) :
     showOutput(0);
 }
 
-// void MidiOutputPage::show(int routeIndex, const Routing::Route *initialValue) {
-//     showOutput(routeIndex, initialValue);
-//     ListPage::show();
-// }
+void MidiOutputPage::reset() {
+    showOutput(0);
+}
 
 void MidiOutputPage::enter() {
     ListPage::enter();

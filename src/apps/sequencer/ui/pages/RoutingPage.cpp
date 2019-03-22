@@ -19,6 +19,11 @@ RoutingPage::RoutingPage(PageManager &manager, PageContext &context) :
     showRoute(0);
 }
 
+void RoutingPage::reset() {
+    _engine.midiLearn().stop();
+    showRoute(0);
+}
+
 void RoutingPage::enter() {
     ListPage::enter();
 }

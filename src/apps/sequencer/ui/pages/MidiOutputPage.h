@@ -12,6 +12,8 @@ class MidiOutputPage : public ListPage {
 public:
     MidiOutputPage(PageManager &manager, PageContext &context);
 
+    void reset();
+
     virtual void enter() override;
     virtual void exit() override;
 
