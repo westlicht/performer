@@ -33,10 +33,10 @@ public:
 private:
     bool _reverse;
 
-    RingBuffer<uint8_t, 16> _events;
+    RingBuffer<uint8_t, 32> _events;
 
-    Debouncer<3> _encoderSwitchDebouncer;
-    bool _encoderSwitch = false;
+    Debouncer<3> _switchDebouncer;
+    bool _switchState = false;
     Debouncer<3> _encoderDebouncer[2];
     bool _encoderState[2] = { false, false };
 };

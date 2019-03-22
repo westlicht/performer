@@ -19,24 +19,26 @@ void Encoder::init() {
 }
 
 void Encoder::process() {
-    auto updateEncoder = [this] (int pin, bool state) {
-        if (state != _encoderState[pin]) {
-            _encoderState[pin] = state;
-            if (!_encoderState[0] && !_encoderState[1]) {
-                if (_reverse) {
-                    _events.write(pin ? Event::Left : Event::Right);
-                } else {
-                    _events.write(pin ? Event::Right : Event::Left);
-                }
-            }
-        }
-    };
-
-    bool state = _encoderSwitchDebouncer.debounce(!gpio_get(ENC_PORT, ENC_SWITCH));
-    if (state != _encoderSwitch) {
-        _encoderSwitch = state;
-        _events.write(state ? Event::Down : Event::Up);
+    // handle switch
+    bool switchState = _switchDebouncer.debounce(!gpio_get(ENC_PORT, ENC_SWITCH));
+    if (switchState != _switchState) {
+        _switchState = switchState;
+        _events.write(switchState ? Event::Down : Event::Up);
     }
-    updateEncoder(0, _encoderDebouncer[0].debounce(!gpio_get(ENC_PORT, ENC_A)));
-    updateEncoder(1, _encoderDebouncer[1].debounce(!gpio_get(ENC_PORT, ENC_B)));
+
+    // handle encoder
+    bool encoderState[2] = {
+        _encoderDebouncer[0].debounce(!gpio_get(ENC_PORT, ENC_A)),
+        _encoderDebouncer[1].debounce(!gpio_get(ENC_PORT, ENC_B))
+    };
+    if (!_encoderState[0] && !_encoderState[1]) {
+        if (encoderState[0] != _encoderState[0]) {
+            _events.write(_reverse ? Event::Left : Event::Right);
+        }
+        if (encoderState[1] != _encoderState[1]) {
+            _events.write(_reverse ? Event::Right : Event::Left);
+        }
+    }
+    _encoderState[0] = encoderState[0];
+    _encoderState[1] = encoderState[1];
 }
