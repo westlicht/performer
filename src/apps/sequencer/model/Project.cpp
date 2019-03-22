@@ -61,6 +61,8 @@ void Project::clear() {
     noteSequence(7, 0).setGates({ 1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,1 });
     noteSequence(7, 0).setNotes({ 0,0,0,0,12,0,12,1,24,21,22,0,3,6,12,1 });
 #endif
+
+    _observable.notify(ProjectCleared);
 }
 
 void Project::clearPattern(int patternIndex) {
@@ -73,7 +75,7 @@ void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
     // TODO make sure engine is synced to this before updating UI
     _playState.revertSnapshot();
     _tracks[trackIndex].setTrackMode(trackMode);
-    _observable.notify(TrackModes);
+    _observable.notify(TrackModeChanged);
 }
 
 void Project::write(WriteContext &context) const {
@@ -128,7 +130,9 @@ bool Project::read(ReadContext &context) {
     reader.read(_selectedPatternIndex);
 
     bool success = reader.checkHash();
-    if (!success) {
+    if (success) {
+        _observable.notify(ProjectRead);
+    } else {
         clear();
     }
 

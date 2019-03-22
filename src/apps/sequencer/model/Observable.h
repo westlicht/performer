@@ -8,10 +8,10 @@
 #include <cstdint>
 #include <cstddef>
 
-template<typename Property, size_t MaxObservers>
+template<typename Event, size_t MaxObservers>
 class Observable {
 public:
-    typedef std::function<void(Property property)> Handler;
+    typedef std::function<void(Event event)> Handler;
 
     void watch(Handler handler) {
         ASSERT(_observerCount < MaxObservers, "too many observers");
@@ -19,9 +19,9 @@ public:
         observer.handler = handler;
     }
 
-    void notify(Property property) {
+    void notify(Event event) {
         for (size_t i = 0; i < _observerCount; ++i) {
-            _observers[i].handler(property);
+            _observers[i].handler(event);
         }
     }
 
