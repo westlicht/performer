@@ -11,7 +11,7 @@ ifndef TOOLS_DIR
 TOOLS_DIR 	:= $(ROOT)/tools
 endif
 DL_DIR 		:= $(ROOT)/downloads
-ARM_SDK_DIR ?= $(TOOLS_DIR)/gcc-arm-none-eabi-6-2017-q2-update
+ARM_SDK_DIR ?= $(TOOLS_DIR)/gcc-arm-none-eabi
 
 $(TOOLS_DIR):
 	mkdir -p $@
@@ -65,7 +65,8 @@ arm_sdk_install: | $(TOOLS_DIR)
 arm_sdk_install: arm_sdk_download $(SDK_INSTALL_MARKER)
 
 $(SDK_INSTALL_MARKER):
-	$(V1) tar -C $(TOOLS_DIR) -xjf "$(DL_DIR)/$(ARM_SDK_FILE)"
+	$(V1) mkdir $(ARM_SDK_DIR)
+	$(V1) tar -C $(ARM_SDK_DIR) --strip-components=1 -xjf "$(DL_DIR)/$(ARM_SDK_FILE)"
 
 .PHONY: arm_sdk_download
 arm_sdk_download: | $(DL_DIR)
@@ -81,7 +82,7 @@ arm_sdk_clean:
 # OpenOCD
 
 OPENOCD_DIR       := $(TOOLS_DIR)/openocd
-OPENOCD_BUILD_DIR := $(DL_DIR)/openocd-build
+OPENOCD_BUILD_DIR := $(DL_DIR)/openocd
 
 .PHONY: openocd_install
 
@@ -112,7 +113,7 @@ openocd_install: openocd_clean
 	  cd $(OPENOCD_BUILD_DIR) ; \
 	  ./bootstrap ; \
 	  ./configure  $(OPENOCD_OPTIONS) ; \
-	  $(MAKE) ; \
+	  $(MAKE) -j ; \
 	  $(MAKE) install ; \
 	)
 

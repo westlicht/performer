@@ -6,5 +6,5 @@ export PS1="(stm32) ${PS1}"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT="${DIR%/bin}"
 
-export PATH="${ROOT}/host/bin:${PATH}"
-export TOOLCHAIN_PATH="${ROOT}/host/"
+export PATH="${ROOT}/tools/gcc-arm-none-eabi/bin:${ROOT}/tools/openocd/bin:${PATH}"
+export TOOLCHAIN_PATH="${ROOT}/tools/gcc-arm-none-eabi"
