@@ -101,7 +101,6 @@ function(add_openocd_targets executable)
 endfunction(add_openocd_targets)
 
 function(platform_postprocess_executable executable)
-    # set_target_properties(${executable} PROPERTIES COMPILE_FLAGS "-save-temps")
     set_target_properties(${executable} PROPERTIES LINK_FLAGS "-T ${CMAKE_SOURCE_DIR}/src/platform/stm32/stm32f405.ld")
 
     add_custom_target(${executable}.bin ALL ${OBJCOPY} -Obinary ${executable} ${executable}.bin DEPENDS ${executable})
