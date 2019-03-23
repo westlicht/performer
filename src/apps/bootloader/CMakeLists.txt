@@ -19,6 +19,7 @@ if(${PLATFORM} STREQUAL "stm32")
     add_executable(bootloader Bootloader.cpp ${sources})
     target_link_libraries(bootloader ${platform_libraries})
     platform_postprocess_executable(bootloader)
+    add_dependencies(bootloader ${platform_dependencies})
     # override linker script
     set_target_properties(bootloader PROPERTIES LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/bootloader.ld")
     set_target_properties(bootloader PROPERTIES COMPILE_FLAGS "-Os")
