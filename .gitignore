@@ -1,6 +1,6 @@
 .DS_Store
 *.pyc
-
+.vagrant
 build/
 host/
 downloads/
