@@ -5,11 +5,8 @@
 
 
 # Directories
-ROOT 		:= $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
-ROOTABS		:= $(CURDIR)/$(ROOT)
-ifndef TOOLS_DIR
-TOOLS_DIR 	:= $(ROOT)/tools
-endif
+ROOT		:= $(CURDIR)/$(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
+TOOLS_DIR 	?= $(ROOT)/tools
 DL_DIR 		:= $(ROOT)/downloads
 
 $(TOOLS_DIR):
@@ -40,13 +37,13 @@ ifndef OSFAMILY
   $(error failed to detect operating system)
 endif
 
-# Toolchain
+# Tools
 
-.PHONY: toolchain_install
-toolchain_install: arm_sdk_install openocd_install
+.PHONY: tools_install
+tools_install: arm_sdk_install openocd_install
 
-.PHONY: toolchain_clean
-toolchain_clean: arm_sdk_clean openocd_clean
+.PHONY: tools_clean
+tools_clean: arm_sdk_clean openocd_clean
 
 # ARM toolchain
 
@@ -64,15 +61,15 @@ ifdef MACOSX
 endif
 
 ARM_SDK_FILE := $(notdir $(ARM_SDK_URL))
-ARM_SDK_DIR ?= $(TOOLS_DIR)/gcc-arm-none-eabi
-GCC_REQUIRED_VERSION ?= 6.3.1
+ARM_SDK_DIR := $(TOOLS_DIR)/gcc-arm-none-eabi
+GCC_REQUIRED_VERSION := 6.3.1
 ARM_SDK_INSTALL_MARKER := $(ARM_SDK_DIR)/bin/arm-none-eabi-gcc-$(GCC_REQUIRED_VERSION)
 
 arm_sdk_install: | $(TOOLS_DIR)
 arm_sdk_install: arm_sdk_download $(ARM_SDK_INSTALL_MARKER)
 
 $(ARM_SDK_INSTALL_MARKER):
-	$(V1) mkdir $(ARM_SDK_DIR)
+	$(V1) mkdir -p $(ARM_SDK_DIR)
 	$(V1) tar -C $(ARM_SDK_DIR) --strip-components=1 -xjf "$(DL_DIR)/$(ARM_SDK_FILE)"
 
 .PHONY: arm_sdk_download
@@ -93,9 +90,9 @@ arm_sdk_clean:
 OPENOCD_URL := https://downloads.sourceforge.net/project/openocd/openocd/0.10.0/openocd-0.10.0.tar.bz2
 OPENOCD_FILE := $(notdir $(OPENOCD_URL))
 OPENOCD_DIR := $(TOOLS_DIR)/openocd
-OPENOCD_BUILD_DIR := $(DL_DIR)/openocd
+OPENOCD_BUILD_DIR := $(TOOLS_DIR)/openocd-build
 OPENOCD_INSTALL_MARKER := $(OPENOCD_DIR)/bin/openocd
-OPENOCD_OPTIONS := --enable-maintainer-mode --prefix="$(ROOTABS)/$(OPENOCD_DIR)" --enable-buspirate --enable-stlink --enable-ftdi
+OPENOCD_OPTIONS := --enable-maintainer-mode --prefix="$(OPENOCD_DIR)" --enable-buspirate --enable-stlink --enable-ftdi
 
 openocd_install: | $(TOOLS_DIR)
 openocd_install: openocd_download $(OPENOCD_INSTALL_MARKER)
@@ -130,7 +127,7 @@ openocd_clean:
 
 .PHONY: setup_stm32
 setup_stm32: arm_sdk_install
-	$(eval export PATH=$(ROOTABS)/$(ARM_SDK_DIR)/bin:$(ROOTABS)/$(OPENOCD_DIR)/bin:$(PATH))
+	$(eval export PATH=$(ARM_SDK_DIR)/bin:$(OPENOCD_DIR)/bin:$(PATH))
 	(mkdir -p $(ROOT)/build/stm32/debug && cd $(ROOT)/build/stm32/debug && cmake -DCMAKE_TOOLCHAIN_FILE=./cmake/arm.cmake -DCMAKE_BUILD_TYPE=Debug -DPLATFORM=stm32 ../../..)
 	(mkdir -p $(ROOT)/build/stm32/release && cd $(ROOT)/build/stm32/release && cmake -DCMAKE_TOOLCHAIN_FILE=./cmake/arm.cmake -DCMAKE_BUILD_TYPE=Release -DPLATFORM=stm32 ../../..)
 
