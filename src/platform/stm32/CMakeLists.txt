@@ -1,7 +1,7 @@
 # libopencm3
 
 set(LIBOPENCM3_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/libopencm3)
-add_custom_target(libopencm3 make -j1 AR=${CMAKE_AR} CC=${CMAKE_C_COMPILER} WORKING_DIRECTORY ${LIBOPENCM3_DIR})
+add_custom_target(libopencm3 make -j1 AR=${CMAKE_AR} CC=${CMAKE_C_COMPILER} lib/stm32/f4 WORKING_DIRECTORY ${LIBOPENCM3_DIR})
 
 # platform
 
