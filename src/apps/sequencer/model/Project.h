@@ -19,7 +19,8 @@
 
 class Project {
 public:
-    static constexpr uint32_t Version = 3;
+    static constexpr uint32_t Version4 = 4;
+    static constexpr uint32_t Version = Version4;
 
     //----------------------------------------
     // Types
