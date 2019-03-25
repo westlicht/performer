@@ -1,8 +1,10 @@
 #include "NoteTrack.h"
+#include "Project.h"
 
 void NoteTrack::clear() {
     _playMode = Types::PlayMode::Aligned;
     _fillMode = Types::FillMode::Gates;
+    _cvUpdateMode = CvUpdateMode::Gate;
     _slideTime = 50;
     _octave = 0;
     _transpose = 0;
@@ -21,6 +23,7 @@ void NoteTrack::write(WriteContext &context) const {
     auto writer = context.writer;
     writer.write(_playMode);
     writer.write(_fillMode);
+    writer.write(_cvUpdateMode);
     writer.write(_slideTime);
     writer.write(_octave);
     writer.write(_transpose);
@@ -36,6 +39,7 @@ void NoteTrack::read(ReadContext &context) {
     auto reader = context.reader;
     reader.read(_playMode);
     reader.read(_fillMode);
+    reader.read(_cvUpdateMode, Project::Version4);
     reader.read(_slideTime);
     reader.read(_octave);
     reader.read(_transpose);

@@ -13,6 +13,21 @@ public:
 
     typedef std::array<NoteSequence, CONFIG_PATTERN_COUNT + CONFIG_SNAPSHOT_COUNT> NoteSequenceArray;
 
+    enum class CvUpdateMode : uint8_t {
+        Gate,
+        Always,
+        Last
+    };
+
+    static const char *cvUpdateModeName(CvUpdateMode mode) {
+        switch (mode) {
+        case CvUpdateMode::Gate:    return "Gate";
+        case CvUpdateMode::Always:  return "Always";
+        case CvUpdateMode::Last:    break;
+        }
+        return nullptr;
+    }
+
     //----------------------------------------
     // Properties
     //----------------------------------------
@@ -45,6 +60,21 @@ public:
 
     void printFillMode(StringBuilder &str) const {
         str(Types::fillModeName(fillMode()));
+    }
+
+    // cvUpdateMode
+
+    CvUpdateMode cvUpdateMode() const { return _cvUpdateMode; }
+    void setCvUpdateMode(CvUpdateMode cvUpdateMode) {
+        _cvUpdateMode = ModelUtils::clampedEnum(cvUpdateMode);
+    }
+
+    void editCvUpdateMode(int value, bool shift) {
+        setCvUpdateMode(ModelUtils::adjustedEnum(cvUpdateMode(), value));
+    }
+
+    void printCvUpdateMode(StringBuilder &str) const {
+        str(cvUpdateModeName(cvUpdateMode()));
     }
 
     // slideTime
@@ -189,6 +219,7 @@ public:
 private:
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
+    CvUpdateMode _cvUpdateMode;
     uint8_t _slideTime;
     int8_t _octave;
     int8_t _transpose;
