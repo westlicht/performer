@@ -530,6 +530,7 @@ If a track is in _Note_ mode, the following parameters are available:
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
 | Fill Mode | None, Gates, Next Pattern | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. |
+| CV Update Mode | Gate, Always | Mode used for updating the CV output of this track. _Gate_ only updates the CV output if the step gate is active, _Always_ always updates the CV output independent of the step gate. |
 | Slide Time | 0% - 100% | Duration of voltage slides for steps that have _Slide_ enabled. |
 | Octave | -10 - +10 | Number of octaves to transpose the sequence up or down. |
 | Transpose | -100 - +100 | Number of notes to transpose the sequence up or down. Note that this depends on the current [Scale](#appendix-scales) of the sequence.
