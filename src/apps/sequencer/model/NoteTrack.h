@@ -14,15 +14,15 @@ public:
     typedef std::array<NoteSequence, CONFIG_PATTERN_COUNT + CONFIG_SNAPSHOT_COUNT> NoteSequenceArray;
 
     enum class CvUpdateMode : uint8_t {
-        Always,
         Gate,
+        Always,
         Last
     };
 
     static const char *cvUpdateModeName(CvUpdateMode mode) {
         switch (mode) {
-        case CvUpdateMode::Always:  return "Always";
         case CvUpdateMode::Gate:    return "Gate";
+        case CvUpdateMode::Always:  return "Always";
         case CvUpdateMode::Last:    break;
         }
         return nullptr;

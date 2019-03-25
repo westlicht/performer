@@ -4,7 +4,7 @@
 void NoteTrack::clear() {
     _playMode = Types::PlayMode::Aligned;
     _fillMode = Types::FillMode::Gates;
-    _cvUpdateMode = CvUpdateMode::Always;
+    _cvUpdateMode = CvUpdateMode::Gate;
     _slideTime = 50;
     _octave = 0;
     _transpose = 0;
