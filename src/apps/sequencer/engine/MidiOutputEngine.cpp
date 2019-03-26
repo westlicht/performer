@@ -25,10 +25,10 @@ void MidiOutputEngine::tick(uint32_t tick) {
         auto &outputState = _outputStates[outputIndex];
 
         // check if event or target has changed
-        if (outputState.activeEvent != output.event() || outputState.activeTarget != output.target()) {
+        if (outputState.event != output.event() || outputState.target != output.target()) {
             resetOutput(outputIndex);
-            outputState.activeEvent = output.event();
-            outputState.activeTarget = output.target();
+            outputState.event = output.event();
+            outputState.target = output.target();
         }
 
         if (!outputState.requests) {
@@ -117,14 +117,14 @@ void MidiOutputEngine::sendSlide(int trackIndex, bool slide) {
 void MidiOutputEngine::resetOutput(int outputIndex) {
     auto &outputState = _outputStates[outputIndex];
 
-    MidiPort port = MidiPort(outputState.activeTarget.port());
-    int channel = outputState.activeTarget.channel();
+    MidiPort port = MidiPort(outputState.target.port());
+    int channel = outputState.target.channel();
 
     if (outputState.activeNote >= 0) {
         sendMidi(port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
     }
 
-    if (outputState.activeEvent == MidiOutput::Output::Event::Note) {
+    if (outputState.event == MidiOutput::Output::Event::Note) {
         // all sound off
         sendMidi(port, MidiMessage::makeControlChange(channel, 120, 0));
     }

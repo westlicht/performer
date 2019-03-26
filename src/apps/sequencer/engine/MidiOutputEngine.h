@@ -34,9 +34,8 @@ private:
             Slide           = 1<<3,
         };
 
-        MidiOutput::Output::Event activeEvent = MidiOutput::Output::Event::None;
-        MidiTargetConfig activeTarget;
-        int8_t activeNote = -1;
+        MidiOutput::Output::Event event = MidiOutput::Output::Event::None;
+        MidiTargetConfig target;
 
         uint8_t requests;
         int8_t note;
@@ -44,12 +43,16 @@ private:
         int8_t velocity;
         int8_t control;
 
+        int8_t activeNote;
+
         void reset() {
             requests = 0;
             note = 60;
             slide = 0;
             velocity = 100;
             control = 0;
+
+            activeNote = -1;
         };
 
         void resetRequests() { requests = 0; }
