@@ -240,7 +240,7 @@ public:
         } _data;
     };
 
-    typedef std::array<Output, CONFIG_TRACK_COUNT> OutputArray;
+    typedef std::array<Output, CONFIG_MIDI_OUTPUT_COUNT> OutputArray;
 
     //----------------------------------------
     // Properties

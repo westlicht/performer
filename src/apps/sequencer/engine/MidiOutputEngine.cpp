@@ -14,13 +14,13 @@ MidiOutputEngine::MidiOutputEngine(Engine &engine, Model &model):
 }
 
 void MidiOutputEngine::reset() {
-    for (int outputIndex = 0; outputIndex < CONFIG_TRACK_COUNT; ++outputIndex) {
+    for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
         resetOutput(outputIndex);
     }
 }
 
 void MidiOutputEngine::tick(uint32_t tick) {
-    for (int outputIndex = 0; outputIndex < CONFIG_TRACK_COUNT; ++outputIndex) {
+    for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
         const auto &output = _midiOutput.output(outputIndex);
         auto &outputState = _outputStates[outputIndex];
 
@@ -72,7 +72,7 @@ void MidiOutputEngine::tick(uint32_t tick) {
 }
 
 void MidiOutputEngine::sendGate(int trackIndex, bool gate) {
-    for (int outputIndex = 0; outputIndex < CONFIG_TRACK_COUNT; ++outputIndex) {
+    for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
         const auto &output = _midiOutput.output(outputIndex);
         auto &outputState = _outputStates[outputIndex];
 
@@ -83,7 +83,7 @@ void MidiOutputEngine::sendGate(int trackIndex, bool gate) {
 }
 
 void MidiOutputEngine::sendCv(int trackIndex, float cv) {
-    for (int outputIndex = 0; outputIndex < CONFIG_TRACK_COUNT; ++outputIndex) {
+    for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
         const auto &output = _midiOutput.output(outputIndex);
         auto &outputState = _outputStates[outputIndex];
 
@@ -103,7 +103,7 @@ void MidiOutputEngine::sendCv(int trackIndex, float cv) {
 }
 
 void MidiOutputEngine::sendSlide(int trackIndex, bool slide) {
-    for (int outputIndex = 0; outputIndex < CONFIG_TRACK_COUNT; ++outputIndex) {
+    for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
         const auto &output = _midiOutput.output(outputIndex);
         auto &outputState = _outputStates[outputIndex];
 

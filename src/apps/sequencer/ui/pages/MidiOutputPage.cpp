@@ -90,7 +90,7 @@ void MidiOutputPage::showOutput(int outputIndex) {
 }
 
 void MidiOutputPage::selectOutput(int outputIndex) {
-    outputIndex = clamp(outputIndex, 0, CONFIG_TRACK_COUNT - 1);
+    outputIndex = clamp(outputIndex, 0, CONFIG_MIDI_OUTPUT_COUNT - 1);
     if (outputIndex != _outputIndex) {
         showOutput(outputIndex);
     }

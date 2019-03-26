@@ -66,5 +66,5 @@ private:
 
     Engine &_engine;
     const MidiOutput &_midiOutput;
-    std::array<OutputState, CONFIG_TRACK_COUNT> _outputStates;
+    std::array<OutputState, CONFIG_MIDI_OUTPUT_COUNT> _outputStates;
 };
