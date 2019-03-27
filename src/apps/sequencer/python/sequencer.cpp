@@ -57,7 +57,8 @@ void register_sequencer(py::module &m) {
         .def_property_readonly("midiOutput", [] (Project &project) { return &project.midiOutput(); })
         .def_property("selectedTrackIndex", &Project::selectedTrackIndex, &Project::setSelectedTrackIndex)
         .def_property("selectedPatternIndex", &Project::selectedPatternIndex, &Project::setSelectedPatternIndex)
-
+        .def_property("selectedNoteSequenceLayer", &Project::selectedNoteSequenceLayer, &Project::setSelectedNoteSequenceLayer)
+        .def_property("selectedCurveSequenceLayer", &Project::selectedCurveSequenceLayer, &Project::setSelectedCurveSequenceLayer)
         .def("clear", &Project::clear)
         .def("clearPattern", &Project::clearPattern)
         .def("setTrackMode", &Project::setTrackMode)
@@ -109,6 +110,12 @@ void register_sequencer(py::module &m) {
         .value("Bipolar3V", Types::VoltageRange::Bipolar3V)
         .value("Bipolar4V", Types::VoltageRange::Bipolar4V)
         .value("Bipolar5V", Types::VoltageRange::Bipolar5V)
+        .export_values()
+    ;
+
+    py::enum_<Types::MidiPort>(types, "MidiPort")
+        .value("Midi", Types::MidiPort::Midi)
+        .value("UsbMidi", Types::MidiPort::UsbMidi)
         .export_values()
     ;
 
@@ -172,6 +179,7 @@ void register_sequencer(py::module &m) {
         .def_property_readonly("midiCvTrack", [] (Track &track) { return &track.midiCvTrack(); })
         .def("clear", &Track::clear)
         .def("clearPattern", &Track::clearPattern)
+        .def("copyPattern", &Track::copyPattern)
     ;
 
     py::enum_<Track::TrackMode>(track, "TrackMode")
@@ -189,6 +197,7 @@ void register_sequencer(py::module &m) {
     noteTrack
         .def_property("playMode", &NoteTrack::playMode, &NoteTrack::setPlayMode)
         .def_property("fillMode", &NoteTrack::fillMode, &NoteTrack::setFillMode)
+        .def_property("cvUpdateMode", &NoteTrack::cvUpdateMode, &NoteTrack::setCvUpdateMode)
         .def_property("slideTime", &NoteTrack::slideTime, &NoteTrack::setSlideTime)
         .def_property("octave", &NoteTrack::octave, &NoteTrack::setOctave)
         .def_property("transpose", &NoteTrack::transpose, &NoteTrack::setTranspose)
@@ -205,6 +214,12 @@ void register_sequencer(py::module &m) {
             return result;
         })
         .def("clear", &NoteTrack::clear)
+    ;
+
+    py::enum_<NoteTrack::CvUpdateMode>(noteTrack, "CvUpdateMode")
+        .value("Gate", NoteTrack::CvUpdateMode::Gate)
+        .value("Always", NoteTrack::CvUpdateMode::Always)
+        .export_values()
     ;
 
     // ------------------------------------------------------------------------
@@ -270,6 +285,23 @@ void register_sequencer(py::module &m) {
         })
         .def("clear", &NoteSequence::clear)
         .def("clearSteps", &NoteSequence::clearSteps)
+        .def("shiftSteps", &NoteSequence::shiftSteps)
+        .def("duplicateSteps", &NoteSequence::duplicateSteps)
+    ;
+
+    py::enum_<NoteSequence::Layer>(noteSequence, "Layer")
+        .value("Gate", NoteSequence::Layer::Gate)
+        .value("GateProbability", NoteSequence::Layer::GateProbability)
+        .value("Retrigger", NoteSequence::Layer::Retrigger)
+        .value("RetriggerProbability", NoteSequence::Layer::RetriggerProbability)
+        .value("Length", NoteSequence::Layer::Length)
+        .value("LengthVariationRange", NoteSequence::Layer::LengthVariationRange)
+        .value("LengthVariationProbability", NoteSequence::Layer::LengthVariationProbability)
+        .value("Note", NoteSequence::Layer::Note)
+        .value("NoteVariationRange", NoteSequence::Layer::NoteVariationRange)
+        .value("NoteVariationProbability", NoteSequence::Layer::NoteVariationProbability)
+        .value("Slide", NoteSequence::Layer::Slide)
+        .export_values()
     ;
 
     py::class_<NoteSequence::Step> noteSequenceStep(noteSequence, "Step");
@@ -309,6 +341,15 @@ void register_sequencer(py::module &m) {
         })
         .def("clear", &CurveSequence::clear)
         .def("clearSteps", &CurveSequence::clearSteps)
+        .def("shiftSteps", &CurveSequence::shiftSteps)
+        .def("duplicateSteps", &CurveSequence::duplicateSteps)
+    ;
+
+    py::enum_<CurveSequence::Layer>(curveSequence, "Layer")
+        .value("Shape", CurveSequence::Layer::Shape)
+        .value("Min", CurveSequence::Layer::Min)
+        .value("Max", CurveSequence::Layer::Max)
+        .export_values()
     ;
 
     py::class_<CurveSequence::Step> curveSequenceStep(curveSequence, "Step");
@@ -322,6 +363,31 @@ void register_sequencer(py::module &m) {
     // ------------------------------------------------------------------------
     // Song
     // ------------------------------------------------------------------------
+
+    py::class_<Song> song(m, "Song");
+    song
+        .def_property_readonly("slots", [] (Song &song) {
+            py::list result;
+            for (int i = 0; i < CONFIG_SONG_SLOT_COUNT; ++i) {
+                result.append(&song.slot(i));
+            }
+            return result;
+        })
+        .def("chainPattern", &Song::chainPattern)
+        .def("insertSlot", &Song::insertSlot)
+        .def("removeSlot", &Song::removeSlot)
+        .def("swapSlot", &Song::swapSlot)
+        // TODO .def("setPattern", &Song::setPattern)
+        .def("setRepeats", &Song::setRepeats)
+        .def("clear", &Song::clear)
+    ;
+
+    py::class_<Song::Slot> slot(song, "Slot");
+    slot
+        .def("pattern", &Song::Slot::pattern)
+        .def_property_readonly("repeats", &Song::Slot::repeats)
+        .def("clear", &Song::Slot::clear)
+    ;
 
     // ------------------------------------------------------------------------
     // PlayState
