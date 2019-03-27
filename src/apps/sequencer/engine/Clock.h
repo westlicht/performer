@@ -54,6 +54,7 @@ public:
     int ppqn() const { return _ppqn; }
     float bpm() const { return _state == State::SlaveRunning ? _slaveBpm : _masterBpm; }
     uint32_t tick() const { return _tick; }
+    float tickDuration() const { return 60.f / (bpm() * _ppqn); }
 
     // Master clock control
     void masterStart();

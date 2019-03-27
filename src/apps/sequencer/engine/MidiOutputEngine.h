@@ -22,8 +22,8 @@ public:
     void tick(uint32_t tick);
 
     void sendGate(int trackIndex, bool gate);
-    void sendCv(int trackIndex, float cv);
     void sendSlide(int trackIndex, bool slide);
+    void sendCv(int trackIndex, float cv);
 
 private:
     struct OutputState {
@@ -45,6 +45,8 @@ private:
 
         int8_t activeNote;
 
+        OutputState() { reset(); }
+
         void reset() {
             requests = 0;
             note = 60;
@@ -55,9 +57,9 @@ private:
             activeNote = -1;
         };
 
-        void resetRequests() { requests = 0; }
-        void setRequest(Requests request) { requests |= request; }
-        bool hasRequest(Requests request) { return requests & request; }
+        void setRequest(uint8_t request) { requests |= request; }
+        void clearRequest(uint8_t request) { requests &= ~request; }
+        bool hasRequest(uint8_t request) { return requests & request; }
     };
 
     void resetOutput(int outputIndex);

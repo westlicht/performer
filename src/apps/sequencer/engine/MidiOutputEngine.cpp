@@ -10,7 +10,6 @@ MidiOutputEngine::MidiOutputEngine(Engine &engine, Model &model):
     _engine(engine),
     _midiOutput(model.project().midiOutput())
 {
-    reset();
 }
 
 void MidiOutputEngine::reset() {
@@ -20,6 +19,14 @@ void MidiOutputEngine::reset() {
 }
 
 void MidiOutputEngine::tick(uint32_t tick) {
+    // determine the rate for sending MIDI CC events:
+    // 3250 bytes per second
+    // 3 bytes per message
+    // 8 outputs
+    // gives roughly 135 events per second per track
+    // be conservative and make this 50 events per second
+    uint32_t ccSendDivisor = nextPowerOfTwo(uint32_t(std::floor(1.f / (50.f * _engine.clock().tickDuration()))));
+
     for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
         const auto &output = _midiOutput.output(outputIndex);
         auto &outputState = _outputStates[outputIndex];
@@ -38,36 +45,43 @@ void MidiOutputEngine::tick(uint32_t tick) {
         MidiPort port = MidiPort(output.target().port());
         int channel = output.target().channel();
 
-        int note = int(output.noteSource()) <= int(MidiOutput::Output::NoteSource::LastTrack) ?
-            outputState.note :
-            int(output.noteSource()) - int(MidiOutput::Output::NoteSource::FirstNote);
-
-        int velocity = int(output.velocitySource()) <= int(MidiOutput::Output::VelocitySource::LastTrack) ?
-            outputState.velocity :
-            int(output.velocitySource()) - int(MidiOutput::Output::VelocitySource::FirstVelocity);
-
+        // send slide requests
         if (outputState.hasRequest(OutputState::Slide)) {
             sendMidi(port, MidiMessage::makeControlChange(channel, 65, outputState.slide ? 127 : 0));
+            outputState.clearRequest(OutputState::Slide);
         }
 
-        if (outputState.hasRequest(OutputState::NoteOn)) {
-            sendMidi(port, MidiMessage::makeNoteOn(channel, note, velocity));
+        // send note requests
+        if (outputState.hasRequest(OutputState::NoteOn | OutputState::NoteOff)) {
+            int note = int(output.noteSource()) <= int(MidiOutput::Output::NoteSource::LastTrack) ?
+                outputState.note :
+                int(output.noteSource()) - int(MidiOutput::Output::NoteSource::FirstNote);
+
+            int velocity = int(output.velocitySource()) <= int(MidiOutput::Output::VelocitySource::LastTrack) ?
+                outputState.velocity :
+                int(output.velocitySource()) - int(MidiOutput::Output::VelocitySource::FirstVelocity);
+
+            if (outputState.hasRequest(OutputState::NoteOn)) {
+                sendMidi(port, MidiMessage::makeNoteOn(channel, note, velocity));
+            }
+
+            if (outputState.hasRequest(OutputState::NoteOff) && outputState.activeNote != -1) {
+                sendMidi(port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
+                outputState.activeNote = -1;
+            }
+
+            if (outputState.hasRequest(OutputState::NoteOn)) {
+                outputState.activeNote = note;
+            }
+
+            outputState.clearRequest(OutputState::NoteOn | OutputState::NoteOff);
         }
 
-        if (outputState.hasRequest(OutputState::NoteOff) && outputState.activeNote != -1) {
-            sendMidi(port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
-            outputState.activeNote = -1;
-        }
-
-        if (outputState.hasRequest(OutputState::NoteOn)) {
-            outputState.activeNote = note;
-        }
-
-        if (outputState.hasRequest(OutputState::ControlChange)) {
+        // send control change requests
+        if (tick % ccSendDivisor == 0 && outputState.hasRequest(OutputState::ControlChange)) {
             sendMidi(port, MidiMessage::makeControlChange(channel, output.controlNumber(), outputState.control));
+            outputState.clearRequest(OutputState::ControlChange);
         }
-
-        outputState.resetRequests();
     }
 }
 
@@ -78,6 +92,20 @@ void MidiOutputEngine::sendGate(int trackIndex, bool gate) {
 
         if (output.takesGateFromTrack(trackIndex)) {
             outputState.setRequest(gate ? OutputState::NoteOn : OutputState::NoteOff);
+        }
+    }
+}
+
+void MidiOutputEngine::sendSlide(int trackIndex, bool slide) {
+    for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
+        const auto &output = _midiOutput.output(outputIndex);
+        auto &outputState = _outputStates[outputIndex];
+
+        if (output.takesNoteFromTrack(trackIndex)) {
+            if (slide != outputState.slide) {
+                outputState.slide = slide;
+                outputState.setRequest(OutputState::Slide);
+            }
         }
     }
 }
@@ -96,20 +124,11 @@ void MidiOutputEngine::sendCv(int trackIndex, float cv) {
         }
 
         if (output.takesControlFromTrack(trackIndex)) {
-            outputState.setRequest(OutputState::ControlChange);
-            outputState.control = clamp(int(std::floor(cv * (127.f / 5.f))), 0, 127);
-        }
-    }
-}
-
-void MidiOutputEngine::sendSlide(int trackIndex, bool slide) {
-    for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
-        const auto &output = _midiOutput.output(outputIndex);
-        auto &outputState = _outputStates[outputIndex];
-
-        if (output.takesNoteFromTrack(trackIndex)) {
-            outputState.setRequest(OutputState::Slide);
-            outputState.slide = slide;
+            int8_t value = clamp(int(std::floor(cv * (127.f / 5.f))), 0, 127);
+            if (value != outputState.control) {
+                outputState.control = value;
+                outputState.setRequest(OutputState::ControlChange);
+            }
         }
     }
 }
@@ -125,6 +144,8 @@ void MidiOutputEngine::resetOutput(int outputIndex) {
     }
 
     if (outputState.event == MidiOutput::Output::Event::Note) {
+        // portamento off
+        sendMidi(port, MidiMessage::makeControlChange(channel, 65, 0));
         // all sound off
         sendMidi(port, MidiMessage::makeControlChange(channel, 120, 0));
     }

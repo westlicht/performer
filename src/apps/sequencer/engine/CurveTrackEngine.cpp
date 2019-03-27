@@ -1,5 +1,6 @@
 #include "CurveTrackEngine.h"
 
+#include "Engine.h"
 #include "SequenceUtils.h"
 
 #include "core/Debug.h"
@@ -94,4 +95,6 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     const auto range = Types::voltageRangeInfo(sequence.range());
     value = range->lo + value * (range->hi - range->lo);
     _cvOutput = value;
+
+    _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutput);
 }
