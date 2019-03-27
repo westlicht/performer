@@ -61,11 +61,16 @@ void MidiOutputEngine::tick(uint32_t tick) {
                 outputState.velocity :
                 int(output.velocitySource()) - int(MidiOutput::Output::VelocitySource::FirstVelocity);
 
-            if (outputState.hasRequest(OutputState::NoteOn)) {
+            if (outputState.hasRequest(OutputState::NoteOn) && outputState.activeNote != note) {
                 sendMidi(port, MidiMessage::makeNoteOn(channel, note, velocity));
             }
 
             if (outputState.hasRequest(OutputState::NoteOff) && outputState.activeNote != -1) {
+                sendMidi(port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
+                outputState.activeNote = -1;
+            }
+
+            if (outputState.hasRequest(OutputState::NoteOn) && outputState.activeNote != -1 && outputState.activeNote != note) {
                 sendMidi(port, MidiMessage::makeNoteOff(channel, outputState.activeNote));
                 outputState.activeNote = -1;
             }
