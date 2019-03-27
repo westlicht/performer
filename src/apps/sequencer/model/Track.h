@@ -149,6 +149,7 @@ private:
     } _track;
 
     friend class Project;
+    friend class ClipBoard;
 };
 
 #undef SANITIZE_TRACK_MODE

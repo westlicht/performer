@@ -15,6 +15,7 @@ void ClipBoard::clear() {
 
 void ClipBoard::copyTrack(const Track &track) {
     _type = Type::Track;
+    _container.as<Track>().setTrackMode(track.trackMode());
     _container.as<Track>() = track;
 }
 
