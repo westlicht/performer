@@ -15,7 +15,7 @@
         static constexpr int col = _col_;   \
     };
 
-// Global
+// Global buttons
 BUTTON(Navigate, LaunchpadDevice::FunctionRow, 0)
 BUTTON(Left, LaunchpadDevice::FunctionRow, 1)
 BUTTON(Right, LaunchpadDevice::FunctionRow, 2)
@@ -24,13 +24,14 @@ BUTTON(Down, LaunchpadDevice::FunctionRow, 4)
 BUTTON(Play, LaunchpadDevice::FunctionRow, 6)
 BUTTON(Shift, LaunchpadDevice::FunctionRow, 7)
 
-// Sequence
+// Sequence page buttons
 BUTTON(Layer, LaunchpadDevice::FunctionRow, 1)
 BUTTON(FirstStep, LaunchpadDevice::FunctionRow, 2)
 BUTTON(LastStep, LaunchpadDevice::FunctionRow, 3)
+BUTTON(RunMode, LaunchpadDevice::FunctionRow, 4)
 BUTTON(Fill, LaunchpadDevice::FunctionRow, 6)
 
-// Pattern
+// Pattern page buttons
 BUTTON(Latch, LaunchpadDevice::FunctionRow, 1)
 BUTTON(Sync, LaunchpadDevice::FunctionRow, 2)
 
@@ -202,6 +203,9 @@ void LaunchpadController::sequenceDraw() {
     } else if (buttonState<LastStep>()) {
         mirrorButton<LastStep>();
         sequenceDrawStepRange(1);
+    } else if (buttonState<RunMode>()) {
+        mirrorButton<RunMode>();
+        sequenceDrawRunMode();
     } else {
         mirrorButton<Fill>();
         sequenceDrawSequence();
@@ -226,6 +230,10 @@ void LaunchpadController::sequenceButtonDown(const Button &button) {
     } else if (buttonState<LastStep>()) {
         if (button.isGrid()) {
             sequenceSetLastStep(button.gridIndex());
+        }
+    } else if (buttonState<RunMode>()) {
+        if (button.isGrid()) {
+            sequenceSetRunMode(button.gridIndex());
         }
     } else if (buttonState<Fill>()) {
         if (button.isScene()) {
@@ -328,6 +336,19 @@ void LaunchpadController::sequenceSetLastStep(int step) {
     }
 }
 
+void LaunchpadController::sequenceSetRunMode(int mode) {
+    switch (_project.selectedTrack().trackMode()) {
+    case Track::TrackMode::Note:
+        _project.selectedNoteSequence().setRunMode(Types::RunMode(mode));
+        break;
+    case Track::TrackMode::Curve:
+        _project.selectedCurveSequence().setRunMode(Types::RunMode(mode));
+        break;
+    default:
+        break;
+    }
+}
+
 void LaunchpadController::sequenceEditStep(int row, int col) {
     switch (_project.selectedTrack().trackMode()) {
     case Track::TrackMode::Note:
@@ -401,12 +422,27 @@ void LaunchpadController::sequenceDrawStepRange(int highlight) {
     switch (_project.selectedTrack().trackMode()) {
     case Track::TrackMode::Note: {
         const auto &sequence = _project.selectedNoteSequence();
-        drawStepRange(sequence.firstStep(), sequence.lastStep(), highlight == 0 ? sequence.firstStep() : sequence.lastStep());
+        drawRange(sequence.firstStep(), sequence.lastStep(), highlight == 0 ? sequence.firstStep() : sequence.lastStep());
         break;
     }
     case Track::TrackMode::Curve: {
         const auto &sequence = _project.selectedCurveSequence();
-        drawStepRange(sequence.firstStep(), sequence.lastStep(), highlight == 0 ? sequence.firstStep() : sequence.lastStep());
+        drawRange(sequence.firstStep(), sequence.lastStep(), highlight == 0 ? sequence.firstStep() : sequence.lastStep());
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void LaunchpadController::sequenceDrawRunMode() {
+    switch (_project.selectedTrack().trackMode()) {
+    case Track::TrackMode::Note: {
+        drawEnum(_project.selectedNoteSequence().runMode());
+        break;
+    }
+    case Track::TrackMode::Curve: {
+        drawEnum(_project.selectedCurveSequence().runMode());
         break;
     }
     default:
@@ -616,9 +652,9 @@ void LaunchpadController::drawTracksGateAndMute(const Engine &engine, const Play
     }
 }
 
-void LaunchpadController::drawStepRange(int first, int last, int highlit) {
+void LaunchpadController::drawRange(int first, int last, int selected) {
     for (int i = first; i <= last; ++i) {
-        setGridLed(i, i == highlit ? Yellow : Green);
+        setGridLed(i, i == selected ? Yellow : Green);
     }
 }
 

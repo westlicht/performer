@@ -69,12 +69,14 @@ private:
     void sequenceSetLayer(int row, int col);
     void sequenceSetFirstStep(int step);
     void sequenceSetLastStep(int step);
+    void sequenceSetRunMode(int mode);
     void sequenceEditStep(int row, int col);
     void sequenceEditNoteStep(int row, int col);
     void sequenceEditCurveStep(int row, int col);
 
     void sequenceDrawLayer();
     void sequenceDrawStepRange(int highlight);
+    void sequenceDrawRunMode();
     void sequenceDrawSequence();
     void sequenceDrawNoteSequence();
     void sequenceDrawCurveSequence();
@@ -101,7 +103,9 @@ private:
     void drawTracksGateAndSelected(const Engine &engine, int selectedTrack);
     void drawTracksGateAndMute(const Engine &engine, const PlayState &playState);
 
-    void drawStepRange(int first, int last, int highlit);
+    template<typename Enum>
+    void drawEnum(Enum e) { drawRange(0, int(Enum::Last) - 1, int(e)); }
+    void drawRange(int first, int last, int selected);
 
     Color stepColor(bool active, bool current) const;
     void drawNoteSequenceBits(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
