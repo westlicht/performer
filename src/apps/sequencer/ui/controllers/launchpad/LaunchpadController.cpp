@@ -153,7 +153,8 @@ bool LaunchpadController::globalButtonDown(const Button &button) {
             setMode(Mode::Pattern);
             break;
         case 2:
-            setMode(Mode::Performer);
+            // TODO implement performer mode
+            // setMode(Mode::Performer);
             break;
         case 6:
             _engine.togglePlay();
