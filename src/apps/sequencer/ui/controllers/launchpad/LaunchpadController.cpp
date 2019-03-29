@@ -69,6 +69,24 @@ static const LayerMapItem curveSequenceLayerMap[] = {
 
 static constexpr int curveSequenceLayerMapSize = sizeof(curveSequenceLayerMap) / sizeof(curveSequenceLayerMap[0]);
 
+struct RangeMap {
+    int16_t min[2];
+    int16_t max[2];
+    int map(int value) const {
+        return min[1] + ((value - min[0]) * (max[1] - min[1]) + (max[0] - min[0]) / 2) / (max[0] - min[0]);
+    }
+    int unmap(int value) const {
+        return min[0] + ((value - min[1]) * (max[0] - min[0]) + (max[1] - min[1]) / 2) / (max[1] - min[1]);
+    }
+};
+
+static const RangeMap curveMinMaxRangeMap = { { 0, 0 }, { 255, 7 } };
+
+static const RangeMap *curveSequenceLayerRangeMap[] = {
+    [int(CurveSequence::Layer::Shape)]  = nullptr,
+    [int(CurveSequence::Layer::Min)]    = &curveMinMaxRangeMap,
+    [int(CurveSequence::Layer::Max)]    = &curveMinMaxRangeMap,
+};
 
 LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine) :
     Controller(manager, model, engine),
@@ -243,6 +261,11 @@ void LaunchpadController::sequenceUpdateNavigation() {
     }
     case Track::TrackMode::Curve: {
         auto range = CurveSequence::layerRange(_project.selectedCurveSequenceLayer());
+        auto rangeMap = curveSequenceLayerRangeMap[int(_project.selectedCurveSequenceLayer())];
+        if (rangeMap) {
+            range.min = rangeMap->min[1];
+            range.max = rangeMap->max[1];
+        }
         _sequence.navigation.top = range.max / 8;
         _sequence.navigation.bottom = (range.min - 7) / 8;
         break;
@@ -342,9 +365,13 @@ void LaunchpadController::sequenceEditNoteStep(int row, int col) {
 void LaunchpadController::sequenceEditCurveStep(int row, int col) {
     auto &sequence = _project.selectedCurveSequence();
     auto layer = _project.selectedCurveSequenceLayer();
+    auto rangeMap = curveSequenceLayerRangeMap[int(_project.selectedCurveSequenceLayer())];
 
     int linearIndex = col + _sequence.navigation.col * 8;
     int value = (7 - row) + _sequence.navigation.row * 8;
+    if (rangeMap) {
+        value = rangeMap->unmap(value);
+    }
 
     sequence.step(linearIndex).setLayerValue(layer, value);
 }
@@ -634,11 +661,16 @@ void LaunchpadController::drawNoteSequenceDots(const NoteSequence &sequence, Not
 }
 
 void LaunchpadController::drawCurveSequenceDots(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep) {
+    auto rangeMap = curveSequenceLayerRangeMap[int(_project.selectedCurveSequenceLayer())];
     int ofs = _sequence.navigation.row * 8;
     for (int col = 0; col < 8; ++col) {
         int stepIndex = col + _sequence.navigation.col * 8;
         const auto &step = sequence.step(stepIndex);
-        setGridLed((7 - step.layerValue(layer)) + ofs, col, stepColor(true, stepIndex == currentStep));
+        int value = step.layerValue(layer);
+        if (rangeMap) {
+            value = rangeMap->map(value);
+        }
+        setGridLed((7 - value) + ofs, col, stepColor(true, stepIndex == currentStep));
     }
 }
 
