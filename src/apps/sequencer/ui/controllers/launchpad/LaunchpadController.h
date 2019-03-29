@@ -106,7 +106,7 @@ private:
     Color stepColor(bool active, bool current) const;
     void drawNoteSequenceBits(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
     void drawNoteSequenceBars(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
-    void drawNoteSequenceDots(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
+    void drawNoteSequenceNotes(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
     void drawCurveSequenceDots(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep);
     void drawBar(int row, int value, bool active, bool current);
 

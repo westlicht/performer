@@ -22,6 +22,14 @@ static S lerp(T t, S a, S b) {
 uint32_t nextPowerOfTwo(uint32_t value, bool strict = true);
 uint32_t prevPowerOfTwo(uint32_t value, bool strict = true);
 
+static int modulo(int a, int b) {
+    int m = a % b;
+    if (m < 0) {
+        m = (b < 0) ? m - b : m + b;
+    }
+    return m;
+}
+
 inline int roundDownDivide(int a, int b) {
     return a >= 0 ? (a / b) : (a - b + 1) / b;
 }

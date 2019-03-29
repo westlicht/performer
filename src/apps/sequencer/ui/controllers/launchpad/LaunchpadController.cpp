@@ -439,7 +439,7 @@ void LaunchpadController::sequenceDrawNoteSequence() {
         drawNoteSequenceBits(sequence, layer, currentStep);
         break;
     case NoteSequence::Layer::Note:
-        drawNoteSequenceDots(sequence, layer, currentStep);
+        drawNoteSequenceNotes(sequence, layer, currentStep);
         break;
     default:
         drawNoteSequenceBars(sequence, layer, currentStep);
@@ -651,8 +651,20 @@ void LaunchpadController::drawNoteSequenceBars(const NoteSequence &sequence, Not
     }
 }
 
-void LaunchpadController::drawNoteSequenceDots(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
+void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
     int ofs = _sequence.navigation.row * 8;
+
+    // draw octave lines
+    int octave = sequence.selectedScale(_project.scale()).notesPerOctave();
+    for (int row = 0; row < 8; ++row) {
+        if (modulo(row + ofs, octave) == 0) {
+            for (int col = 0; col < 8; ++col) {
+            setGridLed(7 - row, col, Color(1, 1));
+            }
+        }
+    }
+
+    // draw notes
     for (int col = 0; col < 8; ++col) {
         int stepIndex = col + _sequence.navigation.col * 8;
         const auto &step = sequence.step(stepIndex);
