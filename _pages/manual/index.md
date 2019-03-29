@@ -1351,7 +1351,59 @@ With a rotation of **-3** the sequence is rotated 3 steps to the left and played
 
 <h3 id="appendix-launchpad">Launchpad</h3>
 
-TODO
+The Novation Launchpad can be used as an advanced control surface for the sequencer, allowing for editing sequences and launching patterns via the 8x8 button matrix. When a Launchpad is connected to the USB port, the sequencer automatically detects the device and immediately starts using it as a control surface.
+
+The following Lauchpad controllers have been tested and are working:
+
+- Launchpad Mini MK1
+- Launchpad Mini MK2
+
+> Note: Support for other Launchpad devices will follow, except for the first version, which does not support USB MIDI and will never be supported.
+
+Launchpad controllers are exclusively used as control surfaces and cannot be used as a standard MIDI device for the routing system or live recording.
+
+<h4>Global Functions</h4>
+
+The `8` button acts as a _shift_ button and can be pressed in combination with other buttons to access secondary functions. The following functions are always available:
+
+| Buttons | Description |
+| :--- | :--- |
+| `8` + `7` | Start and stop the sequencer |
+| `8` + `1` | Switch to sequence mode |
+| `8` + `2` | Switch to pattern mode |
+
+Because the 8x8 grid of the Launchpad can only represent part of the data to be edited, the grid only acts as a window into a larger virtual 64x64 grid. Hold `1` to enter navigation mode, where the position of the window can be selected:
+
+| Buttons | Description |
+| :--- | :--- |
+| `1` + `2` | Move window left |
+| `1` + `3` | Move window right |
+| `1` + `4` | Move window up |
+| `1` + `5` | Move window down |
+| `1` + `GRID` | Move window to specific position |
+
+> Note: Navigation is available in both sequence and pattern mode.
+
+<h4>Sequence Mode</h4>
+
+Sequence mode allows for comprehensive editing of the patterns on all tracks. The grid allows for editing individual step values on the active track and layer. The following functions are available:
+
+| Buttons | Description |
+| :--- | :--- |
+| `A` - `H` | Select active track |
+| `2` + `GRID` | Select active layer |
+| `3` + `GRID` | Select first step |
+| `4` + `GRID` | Select last step |
+| `5` + `GRID` | Select run mode |
+| `1` + `A` - `H` | Mute/unmute track |
+
+The visualization on the grid depends on the selected layer. Binary layers (e.g. _Gate_ and _Slide_) can be visualized directly on the 8x8 grid without the need for navigation. This is useful for programming drum sequences for example. Other layers use navigation to various degree in order to allow programming the steps. When editing the _Note_ layer, the base note (first note per octave) is visualized to help orientation.
+
+<h4>Pattern Mode</h4>
+
+Pattern mode allows selecting the currently playing pattern on all the tracks. Each column on the `GRID` represents one track, allowing to launch individual patterns per track. The `A` - `H` buttons represent scenes, allowing to launch the same pattern number on all the tracks simultaneously. This is very similar to how Ableton Live allows launching clips and scenes on a Launchpad.
+
+In addition, holding `2` while selecting patterns and scenes, allows to use latching mode. This means that the patterns are switched at the moment when `2` is released. Holding `3` while selecting patterns and scenes allows to launch them synchronized to the global _Sync Measure_.
 
 <h3 id="appendix-calibration-procedure">Calibration Procedure</h3>
 
