@@ -235,17 +235,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
     }
 
     auto writeStep = [this] (int stepIndex, int note, int length) {
-        auto &sequence = *_sequence;
-        auto &step = sequence.step(stepIndex);
-
-        const auto &scale = sequence.selectedScale(_model.project().scale());
-        int rootNote = sequence.selectedRootNote(_model.project().rootNote());
-
-        if (scale.isChromatic()) {
-            note = scale.noteFromVolts((note - 60 - rootNote) * (1.f / 12.f));
-        } else {
-            note = scale.noteFromVolts((note - 60) * (1.f / 12.f));
-        }
+        auto &step = _sequence->step(stepIndex);
 
         step.setGate(true);
         step.setGateProbability(NoteSequence::GateProbability::Max);
@@ -254,14 +244,13 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         step.setLength(length);
         step.setLengthVariationRange(0);
         step.setLengthVariationProbability(NoteSequence::LengthVariationProbability::Max);
-        step.setNote(note);
+        step.setNote(noteFromMidiNote(note));
         step.setNoteVariationRange(0);
         step.setNoteVariationProbability(NoteSequence::NoteVariationProbability::Max);
     };
 
     auto clearStep = [this] (int stepIndex) {
-        auto &sequence = *_sequence;
-        auto &step = sequence.step(stepIndex);
+        auto &step = _sequence->step(stepIndex);
 
         step.clear();
     };
@@ -295,6 +284,17 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
     }
 }
 
-uint32_t NoteTrackEngine::applySwing(uint32_t tick) {
+uint32_t NoteTrackEngine::applySwing(uint32_t tick) const {
     return Groove::swing(tick, CONFIG_PPQN / 4, swing());
+}
+
+int NoteTrackEngine::noteFromMidiNote(uint8_t midiNote) const {
+    const auto &scale = _sequence->selectedScale(_model.project().scale());
+    int rootNote = _sequence->selectedRootNote(_model.project().rootNote());
+
+    if (scale.isChromatic()) {
+        return scale.noteFromVolts((midiNote - 60 - rootNote) * (1.f / 12.f));
+    } else {
+        return scale.noteFromVolts((midiNote - 60) * (1.f / 12.f));
+    }
 }

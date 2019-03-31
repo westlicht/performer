@@ -41,7 +41,8 @@ public:
 private:
     void triggerStep(uint32_t tick, uint32_t divisor);
     void recordStep(uint32_t tick, uint32_t divisor);
-    uint32_t applySwing(uint32_t tick);
+    uint32_t applySwing(uint32_t tick) const;
+    int noteFromMidiNote(uint8_t midiNote) const;
 
     NoteTrack &_noteTrack;
 
