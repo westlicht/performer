@@ -13,6 +13,7 @@ public:
     enum class RecordMode : uint8_t {
         Overdub,
         Overwrite,
+        StepRecord,
         Last
     };
 
@@ -20,6 +21,7 @@ public:
         switch (recordMode) {
         case RecordMode::Overdub:   return "Overdub";
         case RecordMode::Overwrite: return "Overwrite";
+        case RecordMode::StepRecord:return "Step Record";
         case RecordMode::Last:      break;
         }
         return nullptr;

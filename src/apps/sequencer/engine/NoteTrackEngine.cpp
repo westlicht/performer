@@ -143,32 +143,40 @@ void NoteTrackEngine::update(float dt) {
     const auto &scale = sequence.selectedScale(_model.project().scale());
     int rootNote = sequence.selectedRootNote(_model.project().rootNote());
 
+    // enable/disable step recording mode
+    if (_engine.recording() && _model.project().recordMode() == Types::RecordMode::StepRecord) {
+        if (_currentRecordStep == -1) {
+            _currentRecordStep = _sequence->firstStep();
+        }
+    } else {
+        _currentRecordStep = -1;
+    }
+
     // override due to monitoring or recording
-    if (!running || recording) {
-        if (!recording && _monitorStepIndex >= 0) {
-            // step monitoring (first priority)
-            const auto &step = sequence.step(_monitorStepIndex);
-            int octave = _noteTrack.octave();
-            int transpose = _noteTrack.transpose();
-            _cvOutputTarget = evalStepNote(step, 0, scale, rootNote, octave, transpose, false);
-            _activity = _gateOutput = true;
-            _monitorOverrideActive = true;
-        } else if (_recordHistory.isNoteActive()) {
-            // midi monitoring (second priority)
-            if (scale.isChromatic()) {
-                int note = scale.noteFromVolts((_recordHistory.activeNote() - 60 - rootNote) * (1.f / 12.f));
-                _cvOutputTarget = scale.noteToVolts(note) + (rootNote / 12.f);
-            } else {
-                int note = scale.noteFromVolts((_recordHistory.activeNote() - 60) * (1.f / 12.f));
-                _cvOutputTarget = scale.noteToVolts(note);
-            }
-            _activity = _gateOutput = true;
-            _monitorOverrideActive = true;
+    bool isStepRecordMode = _model.project().recordMode() == Types::RecordMode::StepRecord;
+    if (!running && (!recording || isStepRecordMode) && _monitorStepIndex >= 0) {
+        // step monitoring (first priority)
+        const auto &step = sequence.step(_monitorStepIndex);
+        int octave = _noteTrack.octave();
+        int transpose = _noteTrack.transpose();
+        _cvOutputTarget = evalStepNote(step, 0, scale, rootNote, octave, transpose, false);
+        _activity = _gateOutput = true;
+        _monitorOverrideActive = true;
+    } else if ((!running || !isStepRecordMode) && _recordHistory.isNoteActive()) {
+        // midi monitoring (second priority)
+        if (scale.isChromatic()) {
+            int note = scale.noteFromVolts((_recordHistory.activeNote() - 60 - rootNote) * (1.f / 12.f));
+            _cvOutputTarget = scale.noteToVolts(note) + (rootNote / 12.f);
         } else {
-            if (_monitorOverrideActive) {
-                _activity = _gateOutput = false;
-                _monitorOverrideActive = false;
-            }
+            int note = scale.noteFromVolts((_recordHistory.activeNote() - 60) * (1.f / 12.f));
+            _cvOutputTarget = scale.noteToVolts(note);
+        }
+        _activity = _gateOutput = true;
+        _monitorOverrideActive = true;
+    } else {
+        if (_monitorOverrideActive) {
+            _activity = _gateOutput = false;
+            _monitorOverrideActive = false;
         }
     }
 
@@ -186,10 +194,31 @@ void NoteTrackEngine::changePattern() {
 
 void NoteTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
     _recordHistory.write(tick, message);
+
+    if (_engine.recording() && _model.project().recordMode() == Types::RecordMode::StepRecord) {
+        if (message.isNoteOn()) {
+            // record to step
+            auto &step = _sequence->step(_currentRecordStep);
+            step.setGate(true);
+            step.setNote(noteFromMidiNote(message.note()));
+
+            // move to next step
+            ++_currentRecordStep;
+            if (_currentRecordStep > _sequence->lastStep()) {
+                _currentRecordStep = _sequence->firstStep();
+            }
+        }
+    }
 }
 
 void NoteTrackEngine::setMonitorStep(int index) {
     _monitorStepIndex = (index >= 0 && index < CONFIG_STEP_COUNT) ? index : -1;
+
+    // in step record mode, select step to start recording recording from
+    if (_engine.recording() && _model.project().recordMode() == Types::RecordMode::StepRecord &&
+        index >= _sequence->firstStep() && index <= _sequence->lastStep()) {
+        _currentRecordStep = index;
+    }
 }
 
 void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
@@ -230,7 +259,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
 }
 
 void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
-    if (!_engine.state().recording() || _sequenceState.lastStep() < 0) {
+    if (!_engine.state().recording() || _model.project().recordMode() == Types::RecordMode::StepRecord || _sequenceState.lastStep() < 0) {
         return;
     }
 

@@ -72,6 +72,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
     const auto &sequence = _project.selectedNoteSequence();
     const auto &scale = sequence.selectedScale(_project.scale());
     int currentStep = trackEngine.isActiveSequence(sequence) ? trackEngine.currentStep() : -1;
+    int currentRecordStep = trackEngine.isActiveSequence(sequence) ? trackEngine.currentRecordStep() : -1;
 
     const int stepWidth = Width / StepCount;
     const int stepOffset = this->stepOffset();
@@ -110,6 +111,18 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         if (step.gate()) {
             canvas.setColor(0xf);
             canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
+        }
+
+        // record step
+        if (layer() == Layer::Note && stepIndex == currentRecordStep) {
+            // draw circle
+            canvas.setColor(step.gate() ? 0x0 : 0xf);
+            canvas.fillRect(x + 6, y + 6, stepWidth - 12, stepWidth - 12);
+            canvas.setColor(0x7);
+            canvas.hline(x + 7, y + 5, 2);
+            canvas.hline(x + 7, y + 10, 2);
+            canvas.vline(x + 5, y + 7, 2);
+            canvas.vline(x + 10, y + 7, 2);
         }
 
         switch (layer()) {

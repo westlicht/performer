@@ -72,6 +72,7 @@ void register_sequencer(py::module &m) {
     py::enum_<Types::RecordMode>(types, "RecordMode")
         .value("Overdub", Types::RecordMode::Overdub)
         .value("Overwrite", Types::RecordMode::Overwrite)
+        .value("StepRecord", Types::RecordMode::StepRecord)
         .export_values()
     ;
 

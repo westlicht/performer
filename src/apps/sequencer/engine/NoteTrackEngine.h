@@ -35,6 +35,7 @@ public:
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
 
     int currentStep() const { return _currentStep; }
+    int currentRecordStep() const { return _currentRecordStep; }
 
     void setMonitorStep(int index);
 
@@ -57,6 +58,7 @@ private:
 
     RecordHistory _recordHistory;
     bool _monitorOverrideActive = false;
+    int _currentRecordStep = -1;
 
     bool _activity;
     bool _gateOutput;
