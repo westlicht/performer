@@ -117,7 +117,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
 
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
         _activity = _gateQueue.front().gate;
-        _gateOutput = (!mute()) && _activity;
+        _gateOutput = (!mute() || fill()) && _activity;
         _gateQueue.pop();
 
         midiOutputEngine.sendGate(_track.trackIndex(), _gateOutput);
