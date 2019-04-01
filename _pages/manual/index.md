@@ -53,6 +53,7 @@ nav: 20
   - [Clock](#pages-clock)
   - [System](#pages-system)
 - [Appendix](#appendix)
+  - [Recording](#appendix-recording)
   - [Divisors](#appendix-divisors)
   - [Run Modes](#appendix-run-modes)
   - [Play Modes](#appendix-play-modes)
@@ -441,7 +442,7 @@ The following parameters are available:
 | Sync Measure | 1 - 128 | Multiple of measures/bars at which to execute _syncing_ (see [Pattern](#pages-pattern) and [Performer](#pages-performer) pages) as well as the duration each pattern slot is played for in song mode (see [Song](#pages-song) page). |
 | Scale | [Scales](#appendix-scales) | Default scale. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Default root note. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
-| Record Mode | Overdub, Overwrite | Recording mode. |
+| Record Mode | Overdub, Overwrite, Step Record | Recording mode (see [Recording](#appendix-recording)). |
 
 > Note: _Tempo_ and _Swing_ are routable parameters.
 
@@ -667,6 +668,7 @@ To adjust the values of the currently selected layer, hold `S[1-16]` and rotate 
 
 - When editing the _Gate_ layer on a sequence of a _Note_ track, pressing `S[1-16]` enables/disables the gate values.
 - When editing any other layer on a sequence of a _Note_ track, holding one or multiple step buttons and pressing the `ENCODER` enables/disables the gate values. This comes in handy for example when editing note values, as gates can easily be enabled/disabled without switching layers.
+- When editing the _Note_ layer, notes can be entered by holding `S[1-16]` and pressing keys on an external MIDI keyboard.
 - When editing layers on a sequence of a _Curve_ track, pressing and rotating the `ENCODER` adjusts the values in smaller steps.
 
 <h4>Advanced Step Selection</h4>
@@ -1096,6 +1098,22 @@ This tab shows the current version of the firmware and allows to reset to the bo
 <!-- Appendix -->
 
 <h2 id="appendix">Appendix</h2>
+
+<!-- Recording -->
+
+<h3 id="appendix-recording">Recording</h3>
+
+Instead of entering note sequences one step at a time, an external MIDI keyboard can be used to speed up the process. There are two ways for recording sequences. First, sequences can be recorded live by just playing the keyboard while the sequencer is running. Secondly, step recording allows to quickly enter one note after the other using a keyboard, either when the sequencer is running or stopped. The recording mode is selected on the [Project](#pages-project) page. Recording is armed and disarmed using `SHIFT` + `PLAY`.
+
+<h4>Live Recording</h4>
+
+The first two record modes, *Overdub* and *Overwrite* enable live recording. While recording is armed and the sequencer is running, notes played on a keyboard are immediately written into the active sequence. In *Overdub* mode, steps are added to the existing sequence, potentially replacing existing steps. In *Overwrite* mode, existing steps are cleared as the play head moves through the sequence, adding new steps when the keyboard is played. The length of the sequence is not changed and has to be set in advance. While *Overdub* mode is intended to gradually build up or evolve a sequence, *Overwrite* mode can be used to quickly replace a sequence with a new one. Arming and disarming recording while playing the keyboard can be challenging. Therefore, recording can also be controlled via a route. This allows for example to use a foot pedal to punch in and out of recording while keeping the hands free for playing.
+
+> Note: Incoming notes from the keyboard have to be translated into the fixed grid of a sequence. Best results are obtained by playing in a way that maps well to a note sequence, e.g. monophonic and as quantized as possible.
+
+<h4>Step Recording</h4>
+
+The *Step Record* mode is used to enter notes one step at a time. When recording is armed, playing notes on a keyboard simply sets one step after the other in the active note sequence. Recording starts at the first step and wraps around at the last step. Again, the length of the sequence has to be set in advance. While on the [Steps](#pages-steps) page and the _Note_ layer, `S[1-16]` can be used to select the current step to record from. The next step to be recorded into is marked with a circle.
 
 <!-- Divisors -->
 
