@@ -15,6 +15,10 @@ public:
 private:
     using Color = LaunchpadDevice::Color;
 
+    inline Color makeColor(bool red, bool green) const {
+        return Color(red ? _brightness : 0, green ? _brightness : 0);
+    }
+
     struct Button {
         int row;
         int col;
@@ -127,7 +131,7 @@ private:
 
     template<typename T>
     void mirrorButton() {
-        auto color = buttonState(T::row, T::col) ? Color(1, 1) : Color(0, 0);
+        auto color = buttonState(T::row, T::col) ? makeColor(true, true) : makeColor(false, false);
         setButtonLed<T>(color);
     }
 
@@ -144,6 +148,7 @@ private:
     Project &_project;
     LaunchpadDevice _device;
     Mode _mode = Mode::Sequence;
+    uint8_t _brightness = 3;
 
     struct {
         Navigation navigation = { 0, 0, 0, 7, 0, 0 };

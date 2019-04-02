@@ -632,9 +632,9 @@ void LaunchpadController::drawTracksGateAndSelected(const Engine &engine, int se
         bool selected = track == selectedTrack;
         setSceneLed(
             track,
-            Color(
-                (mutedActivity || (selected && !unmutedActivity)) ? 1 : 0,
-                (unmutedActivity || (selected && !mutedActivity)) ? 1 : 0
+            makeColor(
+                (mutedActivity || (selected && !unmutedActivity)),
+                (unmutedActivity || (selected && !mutedActivity))
             )
         );
     }
@@ -645,7 +645,7 @@ void LaunchpadController::drawTracksGateAndMute(const Engine &engine, const Play
         const auto &trackEngine = engine.trackEngine(track);
         setSceneLed(
             track,
-            Color(
+            makeColor(
                 trackEngine.mute(),
                 trackEngine.activity()
             )
@@ -665,9 +665,9 @@ LaunchpadController::Color LaunchpadController::stepColor(bool active, bool curr
     // 0      1       red     1   0
     // 1      0       green   0   1
     // 1      1       red     1   0
-    int red = (!active || current) ? 1 : 0;
-    int green = current ? 0 : 1;
-    return Color(red, green);
+    bool red = (!active || current);
+    bool green = current;
+    return makeColor(red, green);
 }
 
 void LaunchpadController::drawNoteSequenceBits(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
@@ -675,7 +675,7 @@ void LaunchpadController::drawNoteSequenceBits(const NoteSequence &sequence, Not
         for (int col = 0; col < 8; ++col) {
             int stepIndex = row * 8 + col;
             const auto &step = sequence.step(stepIndex);
-            setGridLed(row, col, Color(stepIndex == currentStep, step.layerValue(layer) ? 1 : 0));
+            setGridLed(row, col, makeColor(stepIndex == currentStep, step.layerValue(layer) != 0));
         }
     }
 }
