@@ -6,7 +6,7 @@
 
 class LaunchpadController : public Controller {
 public:
-    LaunchpadController(ControllerManager &manager, Model &model, Engine &engine);
+    LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info);
 
     virtual void update() override;
 

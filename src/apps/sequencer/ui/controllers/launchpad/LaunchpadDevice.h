@@ -6,6 +6,7 @@
 #include <bitset>
 #include <functional>
 
+// Compatible with: Launchpad S, Launchpad Mini MK1 and MK2
 class LaunchpadDevice {
 public:
     static constexpr int Rows = 8;

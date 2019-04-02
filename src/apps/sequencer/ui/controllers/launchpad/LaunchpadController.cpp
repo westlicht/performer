@@ -89,7 +89,7 @@ static const RangeMap *curveSequenceLayerRangeMap[] = {
     [int(CurveSequence::Layer::Max)]    = &curveMinMaxRangeMap,
 };
 
-LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine) :
+LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info) :
     Controller(manager, model, engine),
     _project(model.project())
 {

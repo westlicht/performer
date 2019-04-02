@@ -6,6 +6,16 @@
 
 #include "core/midi/MidiMessage.h"
 
+struct ControllerInfo {
+    enum class Type : uint8_t {
+        Launchpad,
+    };
+
+    uint16_t vendorId;
+    uint16_t productId;
+    Type type;
+};
+
 class ControllerManager;
 
 class Controller {
