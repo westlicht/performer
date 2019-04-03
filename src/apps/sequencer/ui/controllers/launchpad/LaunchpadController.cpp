@@ -35,12 +35,6 @@ BUTTON(Fill, LaunchpadDevice::FunctionRow, 6)
 BUTTON(Latch, LaunchpadDevice::FunctionRow, 1)
 BUTTON(Sync, LaunchpadDevice::FunctionRow, 2)
 
-// Colors
-static const LaunchpadDevice::Color Off(0, 0);
-static const LaunchpadDevice::Color Red(1, 0);
-static const LaunchpadDevice::Color Green(0, 1);
-static const LaunchpadDevice::Color Yellow(1, 1);
-
 struct LayerMapItem {
     uint8_t row;
     uint8_t col;
@@ -147,7 +141,7 @@ void LaunchpadController::globalDraw() {
     if (buttonState<Shift>()) {
         for (int col = 0; col < 8; ++col) {
             bool selected = col == int(_mode) || col == 7;
-            setFunctionLed(col, selected ? Yellow : Off);
+            setFunctionLed(col, selected ? colorYellow() : colorOff());
         }
         mirrorButton<Play>();
     }
@@ -165,6 +159,9 @@ bool LaunchpadController::globalButtonDown(const Button &button) {
         case 2:
             // TODO implement performer mode
             // setMode(Mode::Performer);
+            break;
+        case 5:
+            toggleBrightness();
             break;
         case 6:
             _engine.togglePlay();
@@ -414,14 +411,14 @@ void LaunchpadController::sequenceDrawLayer() {
         for (int i = 0; i < noteSequenceLayerMapSize; ++i) {
             const auto &item = noteSequenceLayerMap[i];
             bool selected = i == int(_project.selectedNoteSequenceLayer());
-            setGridLed(item.row, item.col, selected ? Yellow : Green);
+            setGridLed(item.row, item.col, selected ? colorYellow() : colorGreen());
         }
         break;
     case Track::TrackMode::Curve:
         for (int i = 0; i < curveSequenceLayerMapSize; ++i) {
             const auto &item = curveSequenceLayerMap[i];
             bool selected = i == int(_project.selectedCurveSequenceLayer());
-            setGridLed(item.row, item.col, selected ? Yellow : Green);
+            setGridLed(item.row, item.col, selected ? colorYellow() : colorGreen());
         }
         break;
     default:
@@ -536,9 +533,9 @@ void LaunchpadController::patternDraw() {
         for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
             int pattern = playState.trackState(trackIndex).pattern();
             int requestedPattern = playState.trackState(trackIndex).requestedPattern();
-            setGridLed(pattern + _pattern.navigation.row * 8, trackIndex, Green);
+            setGridLed(pattern + _pattern.navigation.row * 8, trackIndex, colorGreen());
             if (pattern != requestedPattern) {
-                setGridLed(requestedPattern + _pattern.navigation.row * 8, trackIndex, Yellow);
+                setGridLed(requestedPattern + _pattern.navigation.row * 8, trackIndex, colorYellow());
             }
         }
     }
@@ -608,7 +605,7 @@ void LaunchpadController::navigationDraw(const Navigation &navigation) {
     for (int row = navigation.bottom; row <= navigation.top; ++row) {
         for (int col = navigation.left; col <= navigation.right; ++col) {
             bool selected = row == navigation.row && col == navigation.col;
-            setGridLed(3 - row, col, selected ? Yellow : Green);
+            setGridLed(3 - row, col, selected ? colorYellow() : colorGreen());
         }
     }
 }
@@ -642,7 +639,7 @@ void LaunchpadController::drawTracksGateAndSelected(const Engine &engine, int se
         bool selected = track == selectedTrack;
         setSceneLed(
             track,
-            makeColor(
+            color(
                 (mutedActivity || (selected && !unmutedActivity)),
                 (unmutedActivity || (selected && !mutedActivity))
             )
@@ -655,7 +652,7 @@ void LaunchpadController::drawTracksGateAndMute(const Engine &engine, const Play
         const auto &trackEngine = engine.trackEngine(track);
         setSceneLed(
             track,
-            makeColor(
+            color(
                 trackEngine.mute(),
                 trackEngine.activity()
             )
@@ -665,7 +662,7 @@ void LaunchpadController::drawTracksGateAndMute(const Engine &engine, const Play
 
 void LaunchpadController::drawRange(int first, int last, int selected) {
     for (int i = first; i <= last; ++i) {
-        setGridLed(i, i == selected ? Yellow : Green);
+        setGridLed(i, i == selected ? colorYellow() : colorGreen());
     }
 }
 
@@ -676,8 +673,8 @@ LaunchpadController::Color LaunchpadController::stepColor(bool active, bool curr
     // 1      0       green   0   1
     // 1      1       red     1   0
     bool red = (!active || current);
-    bool green = current;
-    return makeColor(red, green);
+    bool green = !current;
+    return color(red, green);
 }
 
 void LaunchpadController::drawNoteSequenceBits(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
@@ -685,7 +682,7 @@ void LaunchpadController::drawNoteSequenceBits(const NoteSequence &sequence, Not
         for (int col = 0; col < 8; ++col) {
             int stepIndex = row * 8 + col;
             const auto &step = sequence.step(stepIndex);
-            setGridLed(row, col, makeColor(stepIndex == currentStep, step.layerValue(layer) != 0));
+            setGridLed(row, col, color(stepIndex == currentStep, step.layerValue(layer) != 0));
         }
     }
 }
@@ -737,11 +734,11 @@ void LaunchpadController::drawBar(int col, int value, bool active, bool current)
     int ofs = _sequence.navigation.row * 8;
     if (value >= 0) {
         for (int i = 0; i <= value; ++i) {
-            setGridLed((7 - i) + ofs, col, Yellow);
+            setGridLed((7 - i) + ofs, col, colorYellow());
         }
     } else {
         for (int i = 0; i >= value; --i) {
-            setGridLed((7 - i) + ofs, col, Yellow);
+            setGridLed((7 - i) + ofs, col, colorYellow());
         }
     }
     setGridLed((7 - value) + ofs, col, stepColor(active, current));
