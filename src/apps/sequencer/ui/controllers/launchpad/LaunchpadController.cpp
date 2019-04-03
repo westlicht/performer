@@ -93,11 +93,17 @@ LaunchpadController::LaunchpadController(ControllerManager &manager, Model &mode
     Controller(manager, model, engine),
     _project(model.project())
 {
-    _device.setSendMidiHandler([this] (const MidiMessage &message) {
+    if (info.productId == 0x0069) {
+        _device = _deviceContainer.create<LaunchpadMk2Device>();
+    } else {
+        _device = _deviceContainer.create<LaunchpadDevice>();
+    }
+
+    _device->setSendMidiHandler([this] (const MidiMessage &message) {
         return sendMidi(message);
     });
 
-    _device.setButtonHandler([this] (int row, int col, bool state) {
+    _device->setButtonHandler([this] (int row, int col, bool state) {
         // DBG("button %d/%d - %d", row, col, state);
         if (state) {
             buttonDown(row, col);
@@ -109,18 +115,22 @@ LaunchpadController::LaunchpadController(ControllerManager &manager, Model &mode
     setMode(Mode::Sequence);
 }
 
+LaunchpadController::~LaunchpadController() {
+    _deviceContainer.destroy(_device);
+}
+
 void LaunchpadController::update() {
-    _device.clearLeds();
+    _device->clearLeds();
 
     CALL_MODE_FUNCTION(_mode, Draw)
 
     globalDraw();
 
-    _device.syncLeds();
+    _device->syncLeds();
 }
 
 void LaunchpadController::recvMidi(const MidiMessage &message) {
-    _device.recvMidi(message);
+    _device->recvMidi(message);
 }
 
 void LaunchpadController::setMode(Mode mode) {
@@ -743,25 +753,25 @@ void LaunchpadController::drawBar(int col, int value, bool active, bool current)
 
 void LaunchpadController::setGridLed(int row, int col, Color color) {
     if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-        _device.setLed(row, col, color);
+        _device->setLed(row, col, color);
     }
 }
 
 void LaunchpadController::setGridLed(int index, Color color) {
     if (index >= 0 && index < 64) {
-        _device.setLed(index / 8, index % 8, color);
+        _device->setLed(index / 8, index % 8, color);
     }
 }
 
 void LaunchpadController::setFunctionLed(int col, Color color) {
     if (col >= 0 && col < 8) {
-        _device.setLed(LaunchpadDevice::FunctionRow, col, color);
+        _device->setLed(LaunchpadDevice::FunctionRow, col, color);
     }
 }
 
 void LaunchpadController::setSceneLed(int col, Color color) {
     if (col >= 0 && col < 8) {
-        _device.setLed(LaunchpadDevice::SceneRow, col, color);
+        _device->setLed(LaunchpadDevice::SceneRow, col, color);
     }
 }
 
@@ -790,5 +800,5 @@ void LaunchpadController::buttonUp(int row, int col) {
 }
 
 bool LaunchpadController::buttonState(int row, int col) const {
-    return _device.buttonState(row, col);
+    return _device->buttonState(row, col);
 }

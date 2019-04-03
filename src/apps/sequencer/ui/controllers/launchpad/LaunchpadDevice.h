@@ -6,7 +6,7 @@
 #include <bitset>
 #include <functional>
 
-// Compatible with: Launchpad S, Launchpad Mini MK1 and MK2
+// Compatible with: Launchpad S, Launchpad Mini Mk1 and Mk2
 class LaunchpadDevice {
 public:
     static constexpr int Rows = 8;
@@ -40,7 +40,7 @@ public:
         _sendMidiHandler = sendMidiHandler;
     }
 
-    void recvMidi(const MidiMessage &message);
+    virtual void recvMidi(const MidiMessage &message);
 
     // button handling
 
@@ -58,18 +58,18 @@ public:
         std::fill(_ledState.begin(), _ledState.end(), 0);
     }
 
-    void setLed(int row, int col, Color color) {
+    virtual void setLed(int row, int col, Color color) {
         _ledState[row * Cols + col] = color.data;
     }
 
-    void setLed(int row, int col, int red, int green) {
+    virtual void setLed(int row, int col, int red, int green) {
         uint8_t state = (red & 0x3) | ((green & 0x3) << 4);
         _ledState[row * Cols + col] = state;
     }
 
-    void syncLeds();
+    virtual void syncLeds();
 
-private:
+protected:
     bool sendMidi(const MidiMessage &message) {
         if (_sendMidiHandler) {
             return _sendMidiHandler(message);

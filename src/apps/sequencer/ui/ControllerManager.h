@@ -30,7 +30,7 @@ private:
     Model &_model;
     Engine &_engine;
     MidiPort _port;
-    Container<LaunchpadController> _container;
+    Container<LaunchpadController> _controllerContainer;
     Controller *_controller = nullptr;
 
     friend class Controller;

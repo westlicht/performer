@@ -1,41 +1,40 @@
-#include "LaunchpadDevice.h"
+#include "LaunchpadMk2Device.h"
 
 //  +---+---+---+---+---+---+---+---+
 //  |104|105|106|107|108|109|110|111| < CC messages
 //  +---+---+---+---+---+---+---+---+
 //
 //  +---+---+---+---+---+---+---+---+  +---+
-//  |  0|...|   |   |   |   |   |  7|  |  8|
+//  | 81|...|   |   |   |   |   | 88|  | 89|
 //  +---+---+---+---+---+---+---+---+  +---+
-//  | 16|...|   |   |   |   |   | 23|  | 24|
+//  | 71|...|   |   |   |   |   | 78|  | 79|
 //  +---+---+---+---+---+---+---+---+  +---+
-//  | 32|...|   |   |   |   |   | 39|  | 40|
+//  | 61|...|   |   |   |   |   | 68|  | 69|
 //  +---+---+---+---+---+---+---+---+  +---+
-//  | 48|...|   |   |   |   |   | 55|  | 56|
+//  | 51|...|   |   |   |   |   | 58|  | 59|
 //  +---+---+---+---+---+---+---+---+  +---+
-//  | 64|...|   |   |   |   |   | 71|  | 72|
+//  | 41|...|   |   |   |   |   | 48|  | 49|
 //  +---+---+---+---+---+---+---+---+  +---+
-//  | 80|...|   |   |   |   |   | 87|  | 88|
+//  | 31|...|   |   |   |   |   | 38|  | 39|
 //  +---+---+---+---+---+---+---+---+  +---+
-//  | 96|...|   |   |   |   |   |103|  |104|
+//  | 21|...|   |   |   |   |   | 28|  | 29|
 //  +---+---+---+---+---+---+---+---+  +---+
-//  |112|...|   |   |   |   |   |119|  |120|
+//  | 11|...|   |   |   |   |   | 18|  | 19|
 //  +---+---+---+---+---+---+---+---+  +---+
 
-LaunchpadDevice::LaunchpadDevice()
+LaunchpadMk2Device::LaunchpadMk2Device() :
+    LaunchpadDevice()
 {
-    std::fill(_deviceLedState.begin(), _deviceLedState.end(), 0xff);
-    clearLeds();
 }
 
-void LaunchpadDevice::recvMidi(const MidiMessage &message) {
+void LaunchpadMk2Device::recvMidi(const MidiMessage &message) {
     if (message.isNoteOn()) {
         int index = message.note();
-        int row = index / 16;
-        int col = index % 16;
-        if (row < Rows && col < Cols) {
+        int row = 7 - (index - 11) / 10;
+        int col = (index - 11) % 10;
+        if (row >= 0 && row < Rows && col >= 0 && col < Cols) {
             setButtonState(row, col, message.velocity() != 0);
-        } else if (row < Rows && col == Cols) {
+        } else if (row >= 0 && row < Rows && col == Cols) {
             setButtonState(SceneRow, row, message.velocity() != 0);
         }
     } else if (message.isControlChange()) {
@@ -46,13 +45,13 @@ void LaunchpadDevice::recvMidi(const MidiMessage &message) {
     }
 }
 
-void LaunchpadDevice::syncLeds() {
+void LaunchpadMk2Device::syncLeds() {
     // grid
     for (int row = 0; row < Rows; ++row) {
         for (int col = 0; col < Cols; ++col) {
             int index = row * Cols + col;
             if (_deviceLedState[index] != _ledState[index]) {
-                if (sendMidi(MidiMessage::makeNoteOn(0, row * 16 + col, _ledState[index]))) {
+                if (sendMidi(MidiMessage::makeNoteOn(0, 11 + 10 * (7 - row) + col, _ledState[index]))) {
                     _deviceLedState[index] = _ledState[index];
                 }
             }
@@ -63,7 +62,7 @@ void LaunchpadDevice::syncLeds() {
     for (int col = 0; col < Cols; ++col) {
         int index = SceneRow * Cols + col;
         if (_deviceLedState[index] != _ledState[index]) {
-            if (sendMidi(MidiMessage::makeNoteOn(0, col * 16 + 8, _ledState[index]))) {
+            if (sendMidi(MidiMessage::makeNoteOn(0, 11 + 10 * (7 - col) + 8, _ledState[index]))) {
                 _deviceLedState[index] = _ledState[index];
             }
         }

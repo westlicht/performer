@@ -1,12 +1,16 @@
 #pragma once
 
 #include "LaunchpadDevice.h"
+#include "LaunchpadMk2Device.h"
 
 #include "ui/Controller.h"
+
+#include "core/utils/Container.h"
 
 class LaunchpadController : public Controller {
 public:
     LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info);
+    virtual ~LaunchpadController();
 
     virtual void update() override;
 
@@ -126,7 +130,7 @@ private:
 
     template<typename T>
     void setButtonLed(Color color) {
-        _device.setLed(T::row, T::col, color);
+        _device->setLed(T::row, T::col, color);
     }
 
     template<typename T>
@@ -146,7 +150,8 @@ private:
     }
 
     Project &_project;
-    LaunchpadDevice _device;
+    Container<LaunchpadDevice, LaunchpadMk2Device> _deviceContainer;
+    LaunchpadDevice *_device;
     Mode _mode = Mode::Sequence;
     uint8_t _brightness = 3;
 
