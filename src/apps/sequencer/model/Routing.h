@@ -485,6 +485,12 @@ struct RoutableSet {
     inline void set(Routing::Target target, bool routed) {
         _set.set(int(target) - int(First), routed);
     }
+
+    inline void print(StringBuilder &str, Routing::Target target) const {
+        if (has(target)) {
+            str(" #");
+        }
+    }
 private:
     std::bitset<int(Last) - int(First) + 1> _set;
 };
