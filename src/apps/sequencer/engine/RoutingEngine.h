@@ -32,4 +32,11 @@ private:
     Routing &_routing;
 
     std::array<float, CONFIG_ROUTE_COUNT> _sourceValues;
+
+    struct RouteState {
+        Routing::Target target = Routing::Target::None;
+        uint8_t tracks = 0;
+    };
+
+    std::array<RouteState, CONFIG_ROUTE_COUNT> _routeStates;
 };

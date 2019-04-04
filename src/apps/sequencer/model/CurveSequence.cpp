@@ -72,6 +72,22 @@ void CurveSequence::Step::read(ReadContext &context) {
     reader.read(_max);
 }
 
+void CurveSequence::writeRouted(Routing::Target target, int intValue, float floatValue) {
+    switch (target) {
+    case Routing::Target::RunMode:
+        setRunMode(Types::RunMode(intValue), true);
+        break;
+    case Routing::Target::FirstStep:
+        setFirstStep(intValue, true);
+        break;
+    case Routing::Target::LastStep:
+        setLastStep(intValue, true);
+        break;
+    default:
+        break;
+    }
+}
+
 void CurveSequence::clear() {
     setRange(Types::VoltageRange::Bipolar5V);
     setDivisor(12);
@@ -79,6 +95,9 @@ void CurveSequence::clear() {
     setRunMode(Types::RunMode::Forward);
     setFirstStep(0);
     setLastStep(15);
+
+    _routed.clear();
+
     clearSteps();
 }
 
@@ -111,9 +130,9 @@ void CurveSequence::write(WriteContext &context) const {
     writer.write(_range);
     writer.write(_divisor);
     writer.write(_resetMeasure);
-    writer.write(_runMode);
-    writer.write(_firstStep);
-    writer.write(_lastStep);
+    writer.write(_runMode.base);
+    writer.write(_firstStep.base);
+    writer.write(_lastStep.base);
 
     writeArray(context, _steps);
 }
@@ -123,9 +142,9 @@ void CurveSequence::read(ReadContext &context) {
     reader.read(_range);
     reader.read(_divisor);
     reader.read(_resetMeasure);
-    reader.read(_runMode);
-    reader.read(_firstStep);
-    reader.read(_lastStep);
+    reader.read(_runMode.base);
+    reader.read(_firstStep.base);
+    reader.read(_lastStep.base);
 
     readArray(context, _steps);
 }

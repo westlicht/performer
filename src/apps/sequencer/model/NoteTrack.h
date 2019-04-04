@@ -4,6 +4,7 @@
 #include "Types.h"
 #include "NoteSequence.h"
 #include "Serialize.h"
+#include "Routing.h"
 
 class NoteTrack {
 public:
@@ -79,9 +80,9 @@ public:
 
     // slideTime
 
-    int slideTime() const { return _slideTime; }
-    void setSlideTime(int slideTime) {
-        _slideTime = clamp(slideTime, 0, 100);
+    int slideTime() const { return _slideTime.get(_routed.has(Routing::Target::SlideTime)); }
+    void setSlideTime(int slideTime, bool routed = false) {
+        _slideTime.set(clamp(slideTime, 0, 100), routed);
     }
 
     void editSlideTime(int value, bool shift) {
@@ -94,9 +95,9 @@ public:
 
     // octave
 
-    int octave() const { return _octave; }
-    void setOctave(int octave) {
-        _octave = clamp(octave, -10, 10);
+    int octave() const { return _octave.get(_routed.has(Routing::Target::Octave)); }
+    void setOctave(int octave, bool routed = false) {
+        _octave.set(clamp(octave, -10, 10), routed);
     }
 
     void editOctave(int value, bool shift) {
@@ -109,9 +110,9 @@ public:
 
     // transpose
 
-    int transpose() const { return _transpose; }
-    void setTranspose(int transpose) {
-        _transpose = clamp(transpose, -100, 100);
+    int transpose() const { return _transpose.get(_routed.has(Routing::Target::Transpose)); }
+    void setTranspose(int transpose, bool routed = false) {
+        _transpose.set(clamp(transpose, -100, 100), routed);
     }
 
     void editTranspose(int value, bool shift) {
@@ -124,9 +125,9 @@ public:
 
     // rotate
 
-    int rotate() const { return _rotate; }
-    void setRotate(int rotate) {
-        _rotate = clamp(rotate, -64, 64);
+    int rotate() const { return _rotate.get(_routed.has(Routing::Target::Rotate)); }
+    void setRotate(int rotate, bool routed = false) {
+        _rotate.set(clamp(rotate, -64, 64), routed);
     }
 
     void editRotate(int value, bool shift) {
@@ -139,9 +140,9 @@ public:
 
     // gateProbabilityBias
 
-    int gateProbabilityBias() const { return _gateProbabilityBias; }
-    void setGateProbabilityBias(int gateProbabilityBias) {
-        _gateProbabilityBias = clamp(gateProbabilityBias, -NoteSequence::GateProbability::Range, NoteSequence::GateProbability::Range);
+    int gateProbabilityBias() const { return _gateProbabilityBias.get(_routed.has(Routing::Target::GateProbabilityBias)); }
+    void setGateProbabilityBias(int gateProbabilityBias, bool routed = false) {
+        _gateProbabilityBias.set(clamp(gateProbabilityBias, -NoteSequence::GateProbability::Range, NoteSequence::GateProbability::Range), routed);
     }
 
     void editGateProbabilityBias(int value, bool shift) {
@@ -154,9 +155,9 @@ public:
 
     // retriggerProbabilityBias
 
-    int retriggerProbabilityBias() const { return _retriggerProbabilityBias; }
-    void setRetriggerProbabilityBias(int retriggerProbabilityBias) {
-        _retriggerProbabilityBias = clamp(retriggerProbabilityBias, -NoteSequence::RetriggerProbability::Range, NoteSequence::RetriggerProbability::Range);
+    int retriggerProbabilityBias() const { return _retriggerProbabilityBias.get(_routed.has(Routing::Target::RetriggerProbabilityBias)); }
+    void setRetriggerProbabilityBias(int retriggerProbabilityBias, bool routed = false) {
+        _retriggerProbabilityBias.set(clamp(retriggerProbabilityBias, -NoteSequence::RetriggerProbability::Range, NoteSequence::RetriggerProbability::Range), routed);
     }
 
     void editRetriggerProbabilityBias(int value, bool shift) {
@@ -169,9 +170,9 @@ public:
 
     // lengthBias
 
-    int lengthBias() const { return _lengthBias; }
-    void setLengthBias(int lengthBias) {
-        _lengthBias = clamp(lengthBias, -NoteSequence::Length::Range, NoteSequence::Length::Range);
+    int lengthBias() const { return _lengthBias.get(_routed.has(Routing::Target::LengthBias)); }
+    void setLengthBias(int lengthBias, bool routed = false) {
+        _lengthBias.set(clamp(lengthBias, -NoteSequence::Length::Range, NoteSequence::Length::Range), routed);
     }
 
     void editLengthBias(int value, bool shift) {
@@ -184,9 +185,9 @@ public:
 
     // noteProbabilityBias
 
-    int noteProbabilityBias() const { return _noteProbabilityBias; }
-    void setNoteProbabilityBias(int noteProbabilityBias) {
-        _noteProbabilityBias = clamp(noteProbabilityBias, -NoteSequence::NoteVariationProbability::Range, NoteSequence::NoteVariationProbability::Range);
+    int noteProbabilityBias() const { return _noteProbabilityBias.get(_routed.has(Routing::Target::NoteProbabilityBias)); }
+    void setNoteProbabilityBias(int noteProbabilityBias, bool routed = false) {
+        _noteProbabilityBias.set(clamp(noteProbabilityBias, -NoteSequence::NoteVariationProbability::Range, NoteSequence::NoteVariationProbability::Range), routed);
     }
 
     void editNoteProbabilityBias(int value, bool shift) {
@@ -206,6 +207,13 @@ public:
           NoteSequence &sequence(int index)       { return _sequences[index]; }
 
     //----------------------------------------
+    // Routing
+    //----------------------------------------
+
+    void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    void writeRouted(Routing::Target target, int intValue, float floatValue);
+
+    //----------------------------------------
     // Methods
     //----------------------------------------
 
@@ -220,14 +228,16 @@ private:
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
     CvUpdateMode _cvUpdateMode;
-    uint8_t _slideTime;
-    int8_t _octave;
-    int8_t _transpose;
-    int8_t _rotate;
-    int8_t _gateProbabilityBias;
-    int8_t _retriggerProbabilityBias;
-    int8_t _lengthBias;
-    int8_t _noteProbabilityBias;
+    Routable<uint8_t> _slideTime;
+    Routable<int8_t> _octave;
+    Routable<int8_t> _transpose;
+    Routable<int8_t> _rotate;
+    Routable<int8_t> _gateProbabilityBias;
+    Routable<int8_t> _retriggerProbabilityBias;
+    Routable<int8_t> _lengthBias;
+    Routable<int8_t> _noteProbabilityBias;
+
+    RoutableSet<Routing::Target::TrackFirst, Routing::Target::TrackLast> _routed;
 
     NoteSequenceArray _sequences;
 };

@@ -57,9 +57,9 @@ public:
 
     // tempo
 
-    float tempo() const { return _tempo; }
-    void setTempo(float tempo) {
-        _tempo = clamp(tempo, 1.f, 1000.f);
+    float tempo() const { return _tempo.get(_routed.has(Routing::Target::Tempo)); }
+    void setTempo(float tempo, bool routed = false) {
+        _tempo.set(clamp(tempo, 1.f, 1000.f), routed);
     }
 
     void editTempo(int value, bool shift) {
@@ -72,9 +72,9 @@ public:
 
     // swing
 
-    int swing() const { return _swing; }
-    void setSwing(int swing) {
-        _swing = clamp(swing, 50, 75);
+    int swing() const { return _swing.get(_routed.has(Routing::Target::Swing)); }
+    void setSwing(int swing, bool routed = false) {
+        _swing.set(clamp(swing, 50, 75), routed);
     }
 
     void editSwing(int value, bool shift) {
@@ -283,6 +283,13 @@ public:
           CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
 
     //----------------------------------------
+    // Routing
+    //----------------------------------------
+
+    void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    void writeRouted(Routing::Target target, int intValue, float floatValue);
+
+    //----------------------------------------
     // Observable
     //----------------------------------------
 
@@ -316,12 +323,14 @@ public:
 private:
     uint8_t _slot = uint8_t(-1);
     char _name[NameLength + 1];
-    float _tempo;
-    uint8_t _swing;
+    Routable<float> _tempo;
+    Routable<uint8_t> _swing;
     uint8_t _syncMeasure;
     uint8_t _scale;
     uint8_t _rootNote;
     Types::RecordMode _recordMode;
+
+    RoutableSet<Routing::Target::ProjectFirst, Routing::Target::ProjectLast> _routed;
 
     ClockSetup _clockSetup;
     TrackArray _tracks;

@@ -11,6 +11,7 @@
 #include "core/utils/StringBuilder.h"
 
 #include <array>
+#include <bitset>
 
 #include <cstdint>
 
@@ -32,11 +33,11 @@ public:
         Record,
         EngineLast = Record,
 
-        // Global targets
-        GlobalFirst,
-        Tempo = GlobalFirst,
+        // Project targets
+        ProjectFirst,
+        Tempo = ProjectFirst,
         Swing,
-        GlobalLast = Swing,
+        ProjectLast = Swing,
 
         // Track targets
         TrackFirst,
@@ -92,8 +93,8 @@ public:
         return target >= Target::EngineFirst && target <= Target::EngineLast;
     }
 
-    static bool isGlobalTarget(Target target) {
-        return target >= Target::GlobalFirst && target <= Target::GlobalLast;
+    static bool isProjectTarget(Target target) {
+        return target >= Target::ProjectFirst && target <= Target::ProjectLast;
     }
 
     static bool isTrackTarget(Target target) {
@@ -434,8 +435,8 @@ public:
     int findEmptyRoute() const;
     int findRoute(Target target, int trackIndex) const;
 
-    void writeTarget(Target target, int trackIndex, int patternIndex, float normalized);
-    float readTarget(Target target, int trackIndex, int patternIndex) const;
+    void setRouted(Target target, uint8_t tracks, int patternIndex, bool routed);
+    void writeTarget(Target target, uint8_t tracks, int patternIndex, float normalized);
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
@@ -444,11 +445,6 @@ public:
     void clearDirty() { _dirty = false; }
 
 private:
-    void writeTarget(Target target, int trackIndex, int patternIndex, float floatValue, int intValue);
-    void writeTrackTarget(Target target, int trackIndex, int patternIndex, float floatValue, int intValue);
-    void writeNoteSequenceTarget(NoteSequence &sequence, Target target, float floatValue, int intValue);
-    void writeCurveSequenceTarget(CurveSequence &sequence, Target target, float floatValue, int intValue);
-
     static float normalizeTargetValue(Target target, float value);
     static float denormalizeTargetValue(Target target, float normalized);
     static std::pair<float, float> normalizedDefaultRange(Target target);
@@ -458,4 +454,37 @@ private:
     Project &_project;
     RouteArray _routes;
     bool _dirty;
+};
+
+// Routable parameters store both a base and routed value.
+template<typename T>
+struct Routable {
+    union {
+        struct {
+            T base;
+            T routed;
+        };
+        T values[2];
+    };
+
+    inline void set(T value, bool selectRouted) { values[selectRouted] = value; }
+    inline T get(bool selectRouted) const { return values[selectRouted]; }
+};
+
+// Routable set.
+template<Routing::Target First, Routing::Target Last>
+struct RoutableSet {
+    inline void clear() {
+        _set.reset();
+    }
+
+    inline bool has(Routing::Target target) const {
+        return _set.test(int(target) - int(First));
+    }
+
+    inline void set(Routing::Target target, bool routed) {
+        _set.set(int(target) - int(First), routed);
+    }
+private:
+    std::bitset<int(Last) - int(First) + 1> _set;
 };

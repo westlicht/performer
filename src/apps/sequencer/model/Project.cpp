@@ -14,6 +14,19 @@ Project::Project() :
     clear();
 }
 
+void Project::writeRouted(Routing::Target target, int intValue, float floatValue) {
+    switch (target) {
+    case Routing::Target::Tempo:
+        setTempo(floatValue, true);
+        break;
+    case Routing::Target::Swing:
+        setSwing(intValue, true);
+        break;
+    default:
+        break;
+    }
+}
+
 void Project::clear() {
     _slot = uint8_t(-1);
     StringUtils::copy(_name, "INIT", sizeof(_name));
@@ -23,6 +36,8 @@ void Project::clear() {
     setScale(0);
     setRootNote(0);
     setRecordMode(Types::RecordMode::Overdub);
+
+    _routed.clear();
 
     _clockSetup.clear();
 
@@ -80,8 +95,8 @@ void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
 
 void Project::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_tempo);
-    writer.write(_swing);
+    writer.write(_tempo.base);
+    writer.write(_swing.base);
     writer.write(_syncMeasure);
     writer.write(_scale);
     writer.write(_rootNote);
@@ -108,8 +123,8 @@ bool Project::read(ReadContext &context) {
     clear();
 
     auto &reader = context.reader;
-    reader.read(_tempo);
-    reader.read(_swing);
+    reader.read(_tempo.base);
+    reader.read(_swing.base);
     reader.read(_syncMeasure);
     reader.read(_scale);
     reader.read(_rootNote);
