@@ -57,13 +57,15 @@ public:
 
     // tempo
 
-    float tempo() const { return _tempo.get(_routed.has(Routing::Target::Tempo)); }
+    float tempo() const { return _tempo.get(isRouted(Routing::Target::Tempo)); }
     void setTempo(float tempo, bool routed = false) {
         _tempo.set(clamp(tempo, 1.f, 1000.f), routed);
     }
 
     void editTempo(int value, bool shift) {
-        setTempo(tempo() + value * (shift ? 0.1f : 1.f));
+        if (!isRouted(Routing::Target::Tempo)) {
+            setTempo(tempo() + value * (shift ? 0.1f : 1.f));
+        }
     }
 
     void printTempo(StringBuilder &str) const {
@@ -72,13 +74,15 @@ public:
 
     // swing
 
-    int swing() const { return _swing.get(_routed.has(Routing::Target::Swing)); }
+    int swing() const { return _swing.get(isRouted(Routing::Target::Swing)); }
     void setSwing(int swing, bool routed = false) {
         _swing.set(clamp(swing, 50, 75), routed);
     }
 
     void editSwing(int value, bool shift) {
-        setSwing(ModelUtils::adjustedByStep(swing(), value, 5, !shift));
+        if (!isRouted(Routing::Target::Tempo)) {
+            setSwing(ModelUtils::adjustedByStep(swing(), value, 5, !shift));
+        }
     }
 
     void printSwing(StringBuilder &str) const {
@@ -286,7 +290,8 @@ public:
     // Routing
     //----------------------------------------
 
-    void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
+    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
     void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------

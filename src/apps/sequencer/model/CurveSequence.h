@@ -152,13 +152,15 @@ public:
 
     // runMode
 
-    Types::RunMode runMode() const { return _runMode.get(_routed.has(Routing::Target::RunMode)); }
+    Types::RunMode runMode() const { return _runMode.get(isRouted(Routing::Target::RunMode)); }
     void setRunMode(Types::RunMode runMode, bool routed = false) {
         _runMode.set(ModelUtils::clampedEnum(runMode), routed);
     }
 
     void editRunMode(int value, bool shift) {
-        setRunMode(ModelUtils::adjustedEnum(runMode(), value));
+        if (!isRouted(Routing::Target::RunMode)) {
+            setRunMode(ModelUtils::adjustedEnum(runMode(), value));
+        }
     }
 
     void printRunMode(StringBuilder &str) const {
@@ -167,13 +169,15 @@ public:
 
     // firstStep
 
-    int firstStep() const { return _firstStep.get(_routed.has(Routing::Target::FirstStep)); }
+    int firstStep() const { return _firstStep.get(isRouted(Routing::Target::FirstStep)); }
     void setFirstStep(int firstStep, bool routed = false) {
         _firstStep.set(clamp(firstStep, 0, lastStep()), routed);
     }
 
     void editFirstStep(int value, bool shift) {
-        setFirstStep(firstStep() + value);
+        if (!isRouted(Routing::Target::FirstStep)) {
+            setFirstStep(firstStep() + value);
+        }
     }
 
     void printFirstStep(StringBuilder &str) const {
@@ -182,13 +186,15 @@ public:
 
     // lastStep
 
-    int lastStep() const { return _lastStep.get(_routed.has(Routing::Target::LastStep)); }
+    int lastStep() const { return _lastStep.get(isRouted(Routing::Target::LastStep)); }
     void setLastStep(int lastStep, bool routed = false) {
         _lastStep.set(clamp(lastStep, firstStep(), CONFIG_STEP_COUNT - 1), routed);
     }
 
     void editLastStep(int value, bool shift) {
-        setLastStep(lastStep() + value);
+        if (!isRouted(Routing::Target::LastStep)) {
+            setLastStep(lastStep() + value);
+        }
     }
 
     void printLastStep(StringBuilder &str) const {
@@ -207,7 +213,8 @@ public:
     // Routing
     //----------------------------------------
 
-    void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
+    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
     void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------

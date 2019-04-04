@@ -50,13 +50,15 @@ public:
 
     // rotate
 
-    int rotate() const { return _rotate.get(_routed.has(Routing::Target::Rotate)); }
+    int rotate() const { return _rotate.get(isRouted(Routing::Target::Rotate)); }
     void setRotate(int rotate, bool routed = false) {
         _rotate.set(clamp(rotate, -64, 64), routed);
     }
 
     void editRotate(int value, bool shift) {
-        setRotate(rotate() + value);
+        if (!isRouted(Routing::Target::Rotate)) {
+            setRotate(rotate() + value);
+        }
     }
 
     void printRotate(StringBuilder &str) const {
@@ -75,7 +77,8 @@ public:
     // Routing
     //----------------------------------------
 
-    void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
+    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
     void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------

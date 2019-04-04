@@ -80,13 +80,15 @@ public:
 
     // slideTime
 
-    int slideTime() const { return _slideTime.get(_routed.has(Routing::Target::SlideTime)); }
+    int slideTime() const { return _slideTime.get(isRouted(Routing::Target::SlideTime)); }
     void setSlideTime(int slideTime, bool routed = false) {
         _slideTime.set(clamp(slideTime, 0, 100), routed);
     }
 
     void editSlideTime(int value, bool shift) {
-        setSlideTime(ModelUtils::adjustedByStep(slideTime(), value, 5, !shift));
+        if (!isRouted(Routing::Target::SlideTime)) {
+            setSlideTime(ModelUtils::adjustedByStep(slideTime(), value, 5, !shift));
+        }
     }
 
     void printSlideTime(StringBuilder &str) const {
@@ -95,13 +97,15 @@ public:
 
     // octave
 
-    int octave() const { return _octave.get(_routed.has(Routing::Target::Octave)); }
+    int octave() const { return _octave.get(isRouted(Routing::Target::Octave)); }
     void setOctave(int octave, bool routed = false) {
         _octave.set(clamp(octave, -10, 10), routed);
     }
 
     void editOctave(int value, bool shift) {
-        setOctave(octave() + value);
+        if (!isRouted(Routing::Target::Octave)) {
+            setOctave(octave() + value);
+        }
     }
 
     void printOctave(StringBuilder &str) const {
@@ -110,13 +114,15 @@ public:
 
     // transpose
 
-    int transpose() const { return _transpose.get(_routed.has(Routing::Target::Transpose)); }
+    int transpose() const { return _transpose.get(isRouted(Routing::Target::Transpose)); }
     void setTranspose(int transpose, bool routed = false) {
         _transpose.set(clamp(transpose, -100, 100), routed);
     }
 
     void editTranspose(int value, bool shift) {
-        setTranspose(transpose() + value);
+        if (!isRouted(Routing::Target::Transpose)) {
+            setTranspose(transpose() + value);
+        }
     }
 
     void printTranspose(StringBuilder &str) const {
@@ -125,13 +131,15 @@ public:
 
     // rotate
 
-    int rotate() const { return _rotate.get(_routed.has(Routing::Target::Rotate)); }
+    int rotate() const { return _rotate.get(isRouted(Routing::Target::Rotate)); }
     void setRotate(int rotate, bool routed = false) {
         _rotate.set(clamp(rotate, -64, 64), routed);
     }
 
     void editRotate(int value, bool shift) {
-        setRotate(rotate() + value);
+        if (!isRouted(Routing::Target::Rotate)) {
+            setRotate(rotate() + value);
+        }
     }
 
     void printRotate(StringBuilder &str) const {
@@ -140,13 +148,15 @@ public:
 
     // gateProbabilityBias
 
-    int gateProbabilityBias() const { return _gateProbabilityBias.get(_routed.has(Routing::Target::GateProbabilityBias)); }
+    int gateProbabilityBias() const { return _gateProbabilityBias.get(isRouted(Routing::Target::GateProbabilityBias)); }
     void setGateProbabilityBias(int gateProbabilityBias, bool routed = false) {
         _gateProbabilityBias.set(clamp(gateProbabilityBias, -NoteSequence::GateProbability::Range, NoteSequence::GateProbability::Range), routed);
     }
 
     void editGateProbabilityBias(int value, bool shift) {
-        setGateProbabilityBias(gateProbabilityBias() + value);
+        if (!isRouted(Routing::Target::GateProbabilityBias)) {
+            setGateProbabilityBias(gateProbabilityBias() + value);
+        }
     }
 
     void printGateProbabilityBias(StringBuilder &str) const {
@@ -155,13 +165,15 @@ public:
 
     // retriggerProbabilityBias
 
-    int retriggerProbabilityBias() const { return _retriggerProbabilityBias.get(_routed.has(Routing::Target::RetriggerProbabilityBias)); }
+    int retriggerProbabilityBias() const { return _retriggerProbabilityBias.get(isRouted(Routing::Target::RetriggerProbabilityBias)); }
     void setRetriggerProbabilityBias(int retriggerProbabilityBias, bool routed = false) {
         _retriggerProbabilityBias.set(clamp(retriggerProbabilityBias, -NoteSequence::RetriggerProbability::Range, NoteSequence::RetriggerProbability::Range), routed);
     }
 
     void editRetriggerProbabilityBias(int value, bool shift) {
-        setRetriggerProbabilityBias(retriggerProbabilityBias() + value);
+        if (!isRouted(Routing::Target::RetriggerProbabilityBias)) {
+            setRetriggerProbabilityBias(retriggerProbabilityBias() + value);
+        }
     }
 
     void printRetriggerProbabilityBias(StringBuilder &str) const {
@@ -170,13 +182,15 @@ public:
 
     // lengthBias
 
-    int lengthBias() const { return _lengthBias.get(_routed.has(Routing::Target::LengthBias)); }
+    int lengthBias() const { return _lengthBias.get(isRouted(Routing::Target::LengthBias)); }
     void setLengthBias(int lengthBias, bool routed = false) {
         _lengthBias.set(clamp(lengthBias, -NoteSequence::Length::Range, NoteSequence::Length::Range), routed);
     }
 
     void editLengthBias(int value, bool shift) {
-        setLengthBias(lengthBias() + value);
+        if (!isRouted(Routing::Target::LengthBias)) {
+            setLengthBias(lengthBias() + value);
+        }
     }
 
     void printLengthBias(StringBuilder &str) const {
@@ -185,13 +199,15 @@ public:
 
     // noteProbabilityBias
 
-    int noteProbabilityBias() const { return _noteProbabilityBias.get(_routed.has(Routing::Target::NoteProbabilityBias)); }
+    int noteProbabilityBias() const { return _noteProbabilityBias.get(isRouted(Routing::Target::NoteProbabilityBias)); }
     void setNoteProbabilityBias(int noteProbabilityBias, bool routed = false) {
         _noteProbabilityBias.set(clamp(noteProbabilityBias, -NoteSequence::NoteVariationProbability::Range, NoteSequence::NoteVariationProbability::Range), routed);
     }
 
     void editNoteProbabilityBias(int value, bool shift) {
-        setNoteProbabilityBias(noteProbabilityBias() + value);
+        if (!isRouted(Routing::Target::NoteProbabilityBias)) {
+            setNoteProbabilityBias(noteProbabilityBias() + value);
+        }
     }
 
     void printNoteProbabilityBias(StringBuilder &str) const {
@@ -210,7 +226,8 @@ public:
     // Routing
     //----------------------------------------
 
-    void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
+    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
     void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------
