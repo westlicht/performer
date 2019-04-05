@@ -25,6 +25,7 @@ private:
     void copySequence();
     void pasteSequence();
     void duplicateSequence();
+    void initRoute();
 
     CurveSequenceListModel _listModel;
 };

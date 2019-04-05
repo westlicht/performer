@@ -12,6 +12,7 @@ enum class ContextAction {
     Copy,
     Paste,
     Duplicate,
+    Route,
     Last
 };
 
@@ -20,6 +21,7 @@ static const ContextMenuModel::Item contextMenuItems[] = {
     { "COPY" },
     { "PASTE" },
     { "DUPL" },
+    { "ROUTE" },
 };
 
 
@@ -89,6 +91,9 @@ void NoteSequencePage::contextAction(int index) {
     case ContextAction::Duplicate:
         duplicateSequence();
         break;
+    case ContextAction::Route:
+        initRoute();
+        break;
     case ContextAction::Last:
         break;
     }
@@ -98,6 +103,8 @@ bool NoteSequencePage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
         return _model.clipBoard().canPasteNoteSequence();
+    case ContextAction::Route:
+        return _listModel.routingTarget(selectedRow()) != Routing::Target::None;
     default:
         return true;
     }
@@ -122,4 +129,8 @@ void NoteSequencePage::duplicateSequence() {
     // TODO
     // _project.selectedNoteSequence().duplicate();
     showMessage("SEQUENCE DUPLICATED");
+}
+
+void NoteSequencePage::initRoute() {
+    _manager.pages().top.editRoute(_listModel.routingTarget(selectedRow()), _project.selectedTrackIndex());
 }
