@@ -14,7 +14,9 @@ void SequenceState::reset() {
 }
 
 void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastStep, Random &rng) {
-    _lastStep = _step;
+     ASSERT(firstStep <= lastStep, "invalid first/last step");
+
+   _lastStep = _step;
 
     if (_step == -1) {
         // first step
@@ -73,6 +75,8 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
 }
 
 void SequenceState::advanceAligned(int absoluteStep, Types::RunMode runMode, int firstStep, int lastStep, Random &rng) {
+     ASSERT(firstStep <= lastStep, "invalid first/last step");
+
     _lastStep = _step;
 
     int stepCount = lastStep - firstStep + 1;
