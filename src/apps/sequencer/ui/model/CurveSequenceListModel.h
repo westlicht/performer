@@ -2,11 +2,11 @@
 
 #include "Config.h"
 
-#include "ListModel.h"
+#include "RoutableListModel.h"
 
 #include "model/CurveSequence.h"
 
-class CurveSequenceListModel : public ListModel {
+class CurveSequenceListModel : public RoutableListModel {
 public:
     enum Item {
         FirstStep,
@@ -57,6 +57,19 @@ public:
 
     virtual void setIndexed(int row, int index) override {
         setIndexedValue(Item(row), index);
+    }
+
+    virtual Routing::Target routingTarget(int row) const override {
+        switch (Item(row)) {
+        case FirstStep:
+            return Routing::Target::FirstStep;
+        case LastStep:
+            return Routing::Target::LastStep;
+        case RunMode:
+            return Routing::Target::RunMode;
+        default:
+            return Routing::Target::None;
+        }
     }
 
 private:

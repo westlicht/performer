@@ -6,6 +6,7 @@
 #include "ModelUtils.h"
 #include "Types.h"
 #include "Curve.h"
+#include "Routing.h"
 
 #include "core/math/Math.h"
 #include "core/utils/StringBuilder.h"
@@ -151,47 +152,56 @@ public:
 
     // runMode
 
-    Types::RunMode runMode() const { return _runMode; }
-    void setRunMode(Types::RunMode runMode) {
-        _runMode = ModelUtils::clampedEnum(runMode);
+    Types::RunMode runMode() const { return _runMode.get(isRouted(Routing::Target::RunMode)); }
+    void setRunMode(Types::RunMode runMode, bool routed = false) {
+        _runMode.set(ModelUtils::clampedEnum(runMode), routed);
     }
 
     void editRunMode(int value, bool shift) {
-        setRunMode(ModelUtils::adjustedEnum(runMode(), value));
+        if (!isRouted(Routing::Target::RunMode)) {
+            setRunMode(ModelUtils::adjustedEnum(runMode(), value));
+        }
     }
 
     void printRunMode(StringBuilder &str) const {
         str(Types::runModeName(runMode()));
+        _routed.print(str, Routing::Target::RunMode);
     }
 
     // firstStep
 
-    int firstStep() const { return _firstStep; }
-    void setFirstStep(int firstStep) {
-        _firstStep = clamp(firstStep, 0, lastStep());
+    int firstStep() const { return _firstStep.get(isRouted(Routing::Target::FirstStep)); }
+    void setFirstStep(int firstStep, bool routed = false) {
+        _firstStep.set(clamp(firstStep, 0, lastStep()), routed);
     }
 
     void editFirstStep(int value, bool shift) {
-        setFirstStep(firstStep() + value);
+        if (!isRouted(Routing::Target::FirstStep)) {
+            setFirstStep(firstStep() + value);
+        }
     }
 
     void printFirstStep(StringBuilder &str) const {
         str("%d", firstStep() + 1);
+        _routed.print(str, Routing::Target::FirstStep);
     }
 
     // lastStep
 
-    int lastStep() const { return _lastStep; }
-    void setLastStep(int lastStep) {
-        _lastStep = clamp(lastStep, firstStep(), CONFIG_STEP_COUNT - 1);
+    int lastStep() const { return _lastStep.get(isRouted(Routing::Target::LastStep)); }
+    void setLastStep(int lastStep, bool routed = false) {
+        _lastStep.set(clamp(lastStep, firstStep(), CONFIG_STEP_COUNT - 1), routed);
     }
 
     void editLastStep(int value, bool shift) {
-        setLastStep(lastStep() + value);
+        if (!isRouted(Routing::Target::LastStep)) {
+            setLastStep(lastStep() + value);
+        }
     }
 
     void printLastStep(StringBuilder &str) const {
         str("%d", lastStep() + 1);
+        _routed.print(str, Routing::Target::LastStep);
     }
 
     // steps
@@ -201,6 +211,14 @@ public:
 
     const Step &step(int index) const { return _steps[index]; }
           Step &step(int index)       { return _steps[index]; }
+
+    //----------------------------------------
+    // Routing
+    //----------------------------------------
+
+    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
+    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------
     // Methods
@@ -222,8 +240,11 @@ private:
     Types::VoltageRange _range;
     uint8_t _divisor;
     uint8_t _resetMeasure;
-    Types::RunMode _runMode;
-    uint8_t _firstStep;
-    uint8_t _lastStep;
+    Routable<Types::RunMode> _runMode;
+    Routable<uint8_t> _firstStep;
+    Routable<uint8_t> _lastStep;
+
+    RoutableSet<Routing::Target::SequenceFirst, Routing::Target::SequenceLast> _routed;
+
     StepArray _steps;
 };

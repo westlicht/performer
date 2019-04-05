@@ -123,22 +123,33 @@ void RoutingEngine::updateSources() {
 void RoutingEngine::updateSinks() {
     for (int routeIndex = 0; routeIndex < CONFIG_ROUTE_COUNT; ++routeIndex) {
         const auto &route = _routing.route(routeIndex);
+        auto &routeState = _routeStates[routeIndex];
+
+        // TODO handle pattern
+
+        bool routeChanged = route.target() != routeState.target || route.tracks() != routeState.tracks;
+
+        if (routeChanged) {
+            // disable previous routing
+            _routing.setRouted(routeState.target, routeState.tracks, 0xf, false);
+        }
+
         if (route.active()) {
             auto target = route.target();
             float value = route.min() + _sourceValues[routeIndex] * (route.max() - route.min());
-            // TODO handle pattern
             if (Routing::isEngineTarget(target)) {
                 writeEngineTarget(target, value);
-            } else if (Routing::isGlobalTarget(target)) {
-                _routing.writeTarget(target, 0, 0, value);
-            } else if (Routing::isTrackTarget(target) || Routing::isSequenceTarget(target)) {
-                uint8_t tracks = route.tracks();
-                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                    if (tracks & (1<<trackIndex)) {
-                        _routing.writeTarget(target, trackIndex, 0, value);
-                    }
-                }
+            } else {
+                _routing.writeTarget(target, route.tracks(), 0xf, value);
             }
+        }
+
+        if (routeChanged) {
+            // enable new routing
+            _routing.setRouted(route.target(), route.tracks(), 0xf, true);
+            // save state
+            routeState.target = route.target();
+            routeState.tracks = route.tracks();
         }
     }
 }

@@ -151,20 +151,64 @@ int Routing::findRoute(Target target, int trackIndex) const {
     return -1;
 }
 
-void Routing::writeTarget(Target target, int trackIndex, int patternIndex, float normalized) {
-    float floatValue = denormalizeTargetValue(target, normalized);
-    int intValue = std::round(floatValue);
-    writeTarget(target, trackIndex, patternIndex, floatValue, intValue);
+void Routing::setRouted(Target target, uint8_t tracks, uint16_t patterns, bool routed) {
+    if (isProjectTarget(target)) {
+        _project.setRouted(target, routed);
+    } else if (isTrackTarget(target) || isSequenceTarget(target)) {
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            if (tracks & (1<<trackIndex)) {
+                auto &track = _project.track(trackIndex);
+                if (track.trackMode() == Track::TrackMode::Note) {
+                    if (isTrackTarget(target)) {
+                        track.noteTrack().setRouted(target, routed);
+                    } else {
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.noteTrack().sequence(patternIndex).setRouted(target, routed);
+                        }
+                    }
+                } else if (track.trackMode() == Track::TrackMode::Curve) {
+                    if (isTrackTarget(target)) {
+                        track.curveTrack().setRouted(target, routed);
+                    } else {
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.curveTrack().sequence(patternIndex).setRouted(target, routed);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
-float Routing::readTarget(Target target, int patternIndex, int trackIndex) const {
-    switch (target) {
-    case Target::Tempo:
-        return _project.tempo();
-    case Target::Swing:
-        return _project.swing();
-    default:
-        return 0.f;
+void Routing::writeTarget(Target target, uint8_t tracks, uint16_t patterns, float normalized) {
+    float floatValue = denormalizeTargetValue(target, normalized);
+    int intValue = std::round(floatValue);
+
+    if (isProjectTarget(target)) {
+        _project.writeRouted(target, intValue, floatValue);
+    } else if (isTrackTarget(target) || isSequenceTarget(target)) {
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            if (tracks & (1<<trackIndex)) {
+                auto &track = _project.track(trackIndex);
+                if (track.trackMode() == Track::TrackMode::Note) {
+                    if (isTrackTarget(target)) {
+                        track.noteTrack().writeRouted(target, intValue, floatValue);
+                    } else {
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.noteTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
+                        }
+                    }
+                } else if (track.trackMode() == Track::TrackMode::Curve) {
+                    if (isTrackTarget(target)) {
+                        track.curveTrack().writeRouted(target, intValue, floatValue);
+                    } else {
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.curveTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -175,111 +219,6 @@ void Routing::write(WriteContext &context) const {
 void Routing::read(ReadContext &context) {
     readArray(context, _routes);
 }
-
-
-void Routing::writeTarget(Target target, int trackIndex, int patternIndex, float floatValue, int intValue) {
-    switch (target) {
-    case Target::Tempo:
-        _project.setTempo(floatValue);
-        break;
-    case Target::Swing:
-        _project.setSwing(intValue);
-        break;
-    default:
-        writeTrackTarget(target, trackIndex, patternIndex, floatValue, intValue);
-        break;
-    }
-}
-
-void Routing::writeTrackTarget(Target target, int trackIndex, int patternIndex, float floatValue, int intValue) {
-    auto &track = _project.track(trackIndex);
-    switch (track.trackMode()) {
-    case Track::TrackMode::Note: {
-        auto &noteTrack = track.noteTrack();
-        switch (target) {
-        case Target::SlideTime:
-            noteTrack.setSlideTime(intValue);
-            break;
-        case Target::Octave:
-            noteTrack.setOctave(intValue);
-            break;
-        case Target::Transpose:
-            noteTrack.setTranspose(intValue);
-            break;
-        case Target::Rotate:
-            noteTrack.setRotate(intValue);
-            break;
-        case Target::GateProbabilityBias:
-            noteTrack.setGateProbabilityBias(intValue);
-            break;
-        case Target::RetriggerProbabilityBias:
-            noteTrack.setRetriggerProbabilityBias(intValue);
-            break;
-        case Target::LengthBias:
-            noteTrack.setLengthBias(intValue);
-            break;
-        case Target::NoteProbabilityBias:
-            noteTrack.setNoteProbabilityBias(intValue);
-            break;
-        default:
-            writeNoteSequenceTarget(noteTrack.sequence(patternIndex), target, floatValue, intValue);
-            break;
-        }
-        break;
-    }
-    case Track::TrackMode::Curve: {
-        auto &curveTrack = track.curveTrack();
-        switch (target) {
-        case Target::Rotate:
-            curveTrack.setRotate(intValue);
-            break;
-        default:
-            writeCurveSequenceTarget(curveTrack.sequence(patternIndex), target, floatValue, intValue);
-            break;
-        }
-        break;
-    }
-    case Track::TrackMode::MidiCv: {
-        // auto &midiCvTrack = track.midiCvTrack();
-        break;
-    }
-    case Track::TrackMode::Last:
-        break;
-    }
-}
-
-void Routing::writeNoteSequenceTarget(NoteSequence &sequence, Target target, float floatValue, int intValue) {
-    switch (target) {
-    case Target::RunMode:
-        sequence.setRunMode(Types::RunMode(intValue));
-        break;
-    case Target::FirstStep:
-        sequence.setFirstStep(intValue);
-        break;
-    case Target::LastStep:
-        sequence.setLastStep(intValue);
-        break;
-    default:
-        break;
-    }
-}
-
-void Routing::writeCurveSequenceTarget(CurveSequence &sequence, Target target, float floatValue, int intValue) {
-    switch (target) {
-    case Target::RunMode:
-        sequence.setRunMode(Types::RunMode(intValue));
-        break;
-    case Target::FirstStep:
-        sequence.setFirstStep(intValue);
-        break;
-    case Target::LastStep:
-        sequence.setLastStep(intValue);
-        break;
-    default:
-        break;
-    }
-}
-
 
 struct TargetInfo {
     int16_t min;

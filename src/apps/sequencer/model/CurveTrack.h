@@ -4,6 +4,7 @@
 #include "Types.h"
 #include "CurveSequence.h"
 #include "Serialize.h"
+#include "Routing.h"
 
 class CurveTrack {
 public:
@@ -49,15 +50,20 @@ public:
 
     // rotate
 
-    int rotate() const { return _rotate; }
-    void setRotate(int rotate) { _rotate = clamp(rotate, -64, 64); }
+    int rotate() const { return _rotate.get(isRouted(Routing::Target::Rotate)); }
+    void setRotate(int rotate, bool routed = false) {
+        _rotate.set(clamp(rotate, -64, 64), routed);
+    }
 
     void editRotate(int value, bool shift) {
-        setRotate(rotate() + value);
+        if (!isRouted(Routing::Target::Rotate)) {
+            setRotate(rotate() + value);
+        }
     }
 
     void printRotate(StringBuilder &str) const {
         str("%+d", rotate());
+        _routed.print(str, Routing::Target::Rotate);
     }
 
     // sequences
@@ -67,6 +73,14 @@ public:
 
     const CurveSequence &sequence(int index) const { return _sequences[index]; }
           CurveSequence &sequence(int index)       { return _sequences[index]; }
+
+    //----------------------------------------
+    // Routing
+    //----------------------------------------
+
+    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
+    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------
     // Methods
@@ -82,6 +96,9 @@ public:
 private:
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
-    int8_t _rotate;
+    Routable<int8_t> _rotate;
+
+    RoutableSet<Routing::Target::TrackFirst, Routing::Target::TrackLast> _routed;
+
     CurveSequenceArray _sequences;
 };
