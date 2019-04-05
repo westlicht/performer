@@ -131,7 +131,7 @@ void RoutingEngine::updateSinks() {
 
         if (routeChanged) {
             // disable previous routing
-            _routing.setRouted(routeState.target, routeState.tracks, 0, false);
+            _routing.setRouted(routeState.target, routeState.tracks, 0xf, false);
         }
 
         if (route.active()) {
@@ -140,13 +140,13 @@ void RoutingEngine::updateSinks() {
             if (Routing::isEngineTarget(target)) {
                 writeEngineTarget(target, value);
             } else {
-                _routing.writeTarget(target, route.tracks(), 0, value);
+                _routing.writeTarget(target, route.tracks(), 0xf, value);
             }
         }
 
         if (routeChanged) {
             // enable new routing
-            _routing.setRouted(route.target(), route.tracks(), 0, true);
+            _routing.setRouted(route.target(), route.tracks(), 0xf, true);
             // save state
             routeState.target = route.target();
             routeState.tracks = route.tracks();

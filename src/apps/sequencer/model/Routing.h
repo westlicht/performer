@@ -435,8 +435,8 @@ public:
     int findEmptyRoute() const;
     int findRoute(Target target, int trackIndex) const;
 
-    void setRouted(Target target, uint8_t tracks, int patternIndex, bool routed);
-    void writeTarget(Target target, uint8_t tracks, int patternIndex, float normalized);
+    void setRouted(Target target, uint8_t tracks, uint16_t patterns, bool routed);
+    void writeTarget(Target target, uint8_t tracks, uint16_t patterns, float normalized);
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);

@@ -151,7 +151,7 @@ int Routing::findRoute(Target target, int trackIndex) const {
     return -1;
 }
 
-void Routing::setRouted(Target target, uint8_t tracks, int patternIndex, bool routed) {
+void Routing::setRouted(Target target, uint8_t tracks, uint16_t patterns, bool routed) {
     if (isProjectTarget(target)) {
         _project.setRouted(target, routed);
     } else if (isTrackTarget(target) || isSequenceTarget(target)) {
@@ -162,13 +162,17 @@ void Routing::setRouted(Target target, uint8_t tracks, int patternIndex, bool ro
                     if (isTrackTarget(target)) {
                         track.noteTrack().setRouted(target, routed);
                     } else {
-                        track.noteTrack().sequence(patternIndex).setRouted(target, routed);
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.noteTrack().sequence(patternIndex).setRouted(target, routed);
+                        }
                     }
                 } else if (track.trackMode() == Track::TrackMode::Curve) {
                     if (isTrackTarget(target)) {
                         track.curveTrack().setRouted(target, routed);
                     } else {
-                        track.curveTrack().sequence(patternIndex).setRouted(target, routed);
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.curveTrack().sequence(patternIndex).setRouted(target, routed);
+                        }
                     }
                 }
             }
@@ -176,7 +180,7 @@ void Routing::setRouted(Target target, uint8_t tracks, int patternIndex, bool ro
     }
 }
 
-void Routing::writeTarget(Target target, uint8_t tracks, int patternIndex, float normalized) {
+void Routing::writeTarget(Target target, uint8_t tracks, uint16_t patterns, float normalized) {
     float floatValue = denormalizeTargetValue(target, normalized);
     int intValue = std::round(floatValue);
 
@@ -190,13 +194,17 @@ void Routing::writeTarget(Target target, uint8_t tracks, int patternIndex, float
                     if (isTrackTarget(target)) {
                         track.noteTrack().writeRouted(target, intValue, floatValue);
                     } else {
-                        track.noteTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.noteTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
+                        }
                     }
                 } else if (track.trackMode() == Track::TrackMode::Curve) {
                     if (isTrackTarget(target)) {
                         track.curveTrack().writeRouted(target, intValue, floatValue);
                     } else {
-                        track.curveTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.curveTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
+                        }
                     }
                 }
             }
