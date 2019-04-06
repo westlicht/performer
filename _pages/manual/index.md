@@ -902,7 +902,7 @@ When changing the route parameters, they will not immediately be active. Press `
 
 In order to simplify assigning MIDI controllers to target parameters, press `F4` to enter MIDI learn mode. Simply rotate an encoder or press a key/button on the connected MIDI controller to assign it to the target parameter. MIDI learn mode is active when the _Learn_ button is highlighted. Press `F4` again to exit MIDI learn mode without assigning a MIDI controller.
 
-> Note: When creating a route, the original value the target parameter was set to before creating the route is lost. This also implies that the target parameter will not go back to its original value when a route is deleted.
+> Note: Routed parameters are marked with an arrow when displayed on other pages.
 
 <!-- Midi Output -->
 
@@ -1375,8 +1375,11 @@ The following Lauchpad controllers have been tested and are working:
 
 - Launchpad Mini MK1
 - Launchpad Mini MK2
+- Launchpad S
+- Launchpad Mk2
+- Launchpad Pro
 
-> Note: Support for other Launchpad devices will follow, except for the first version, which does not support USB MIDI and will never be supported.
+> Note: Support for the very first version of Launchpad will never happen, as it is not a USB MIDI class compliant device.
 
 Launchpad controllers are exclusively used as control surfaces and cannot be used as a standard MIDI device for the routing system or live recording.
 
