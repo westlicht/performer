@@ -89,6 +89,8 @@ LaunchpadController::LaunchpadController(ControllerManager &manager, Model &mode
 {
     if (info.productId == 0x0069) {
         _device = _deviceContainer.create<LaunchpadMk2Device>();
+    } else if (info.productId == 0x0051) {
+        _device = _deviceContainer.create<LaunchpadProDevice>();
     } else {
         _device = _deviceContainer.create<LaunchpadDevice>();
     }

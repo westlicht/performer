@@ -2,6 +2,7 @@
 
 #include "LaunchpadDevice.h"
 #include "LaunchpadMk2Device.h"
+#include "LaunchpadProDevice.h"
 
 #include "ui/Controller.h"
 
@@ -156,7 +157,7 @@ private:
     }
 
     Project &_project;
-    Container<LaunchpadDevice, LaunchpadMk2Device> _deviceContainer;
+    Container<LaunchpadDevice, LaunchpadMk2Device, LaunchpadProDevice> _deviceContainer;
     LaunchpadDevice *_device;
     Mode _mode = Mode::Sequence;
 
