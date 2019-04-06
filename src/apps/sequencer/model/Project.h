@@ -69,8 +69,8 @@ public:
     }
 
     void printTempo(StringBuilder &str) const {
-        str("%.1f", tempo());
         _routed.print(str, Routing::Target::Tempo);
+        str("%.1f", tempo());
     }
 
     // swing
@@ -87,8 +87,8 @@ public:
     }
 
     void printSwing(StringBuilder &str) const {
-        str("%d%%", swing());
         _routed.print(str, Routing::Target::Swing);
+        str("%d%%", swing());
     }
 
     // syncMeasure

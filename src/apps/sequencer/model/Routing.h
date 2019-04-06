@@ -488,7 +488,7 @@ struct RoutableSet {
 
     inline void print(StringBuilder &str, Routing::Target target) const {
         if (has(target)) {
-            str(" #");
+            str("\x1a");
         }
     }
 private:

@@ -164,8 +164,8 @@ public:
     }
 
     void printRunMode(StringBuilder &str) const {
-        str(Types::runModeName(runMode()));
         _routed.print(str, Routing::Target::RunMode);
+        str(Types::runModeName(runMode()));
     }
 
     // firstStep
@@ -182,8 +182,8 @@ public:
     }
 
     void printFirstStep(StringBuilder &str) const {
-        str("%d", firstStep() + 1);
         _routed.print(str, Routing::Target::FirstStep);
+        str("%d", firstStep() + 1);
     }
 
     // lastStep
@@ -200,8 +200,8 @@ public:
     }
 
     void printLastStep(StringBuilder &str) const {
-        str("%d", lastStep() + 1);
         _routed.print(str, Routing::Target::LastStep);
+        str("%d", lastStep() + 1);
     }
 
     // steps

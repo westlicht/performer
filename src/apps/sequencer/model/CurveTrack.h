@@ -62,8 +62,8 @@ public:
     }
 
     void printRotate(StringBuilder &str) const {
-        str("%+d", rotate());
         _routed.print(str, Routing::Target::Rotate);
+        str("%+d", rotate());
     }
 
     // sequences

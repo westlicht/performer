@@ -92,8 +92,8 @@ public:
     }
 
     void printSlideTime(StringBuilder &str) const {
-        str("%d%%", slideTime());
         _routed.print(str, Routing::Target::SlideTime);
+        str("%d%%", slideTime());
     }
 
     // octave
@@ -110,8 +110,8 @@ public:
     }
 
     void printOctave(StringBuilder &str) const {
-        str("%+d", octave());
         _routed.print(str, Routing::Target::Octave);
+        str("%+d", octave());
     }
 
     // transpose
@@ -128,8 +128,8 @@ public:
     }
 
     void printTranspose(StringBuilder &str) const {
-        str("%+d", transpose());
         _routed.print(str, Routing::Target::Transpose);
+        str("%+d", transpose());
     }
 
     // rotate
@@ -146,8 +146,8 @@ public:
     }
 
     void printRotate(StringBuilder &str) const {
-        str("%+d", rotate());
         _routed.print(str, Routing::Target::Rotate);
+        str("%+d", rotate());
     }
 
     // gateProbabilityBias
@@ -164,8 +164,8 @@ public:
     }
 
     void printGateProbabilityBias(StringBuilder &str) const {
-        str("%+.1f%%", gateProbabilityBias() * 12.5f);
         _routed.print(str, Routing::Target::GateProbabilityBias);
+        str("%+.1f%%", gateProbabilityBias() * 12.5f);
     }
 
     // retriggerProbabilityBias
@@ -182,8 +182,8 @@ public:
     }
 
     void printRetriggerProbabilityBias(StringBuilder &str) const {
-        str("%+.1f%%", retriggerProbabilityBias() * 12.5f);
         _routed.print(str, Routing::Target::RetriggerProbabilityBias);
+        str("%+.1f%%", retriggerProbabilityBias() * 12.5f);
     }
 
     // lengthBias
@@ -200,8 +200,8 @@ public:
     }
 
     void printLengthBias(StringBuilder &str) const {
-        str("%+.1f%%", lengthBias() * 12.5f);
         _routed.print(str, Routing::Target::LengthBias);
+        str("%+.1f%%", lengthBias() * 12.5f);
     }
 
     // noteProbabilityBias
@@ -218,8 +218,8 @@ public:
     }
 
     void printNoteProbabilityBias(StringBuilder &str) const {
-        str("%+.1f%%", noteProbabilityBias() * 12.5f);
         _routed.print(str, Routing::Target::NoteProbabilityBias);
+        str("%+.1f%%", noteProbabilityBias() * 12.5f);
     }
 
     // sequences
