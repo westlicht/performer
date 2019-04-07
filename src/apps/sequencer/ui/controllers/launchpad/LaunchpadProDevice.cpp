@@ -3,7 +3,7 @@
 //         +---+---+---+---+---+---+---+---+
 //         | 91| 92| 93| 94| 95| 96| 97| 98| < CC messages
 //         +---+---+---+---+---+---+---+---+
-//
+//    v CC messages                 CC messages v
 //  +---+  +---+---+---+---+---+---+---+---+  +---+
 //  | 80|  | 81|...|   |   |   |   |   | 88|  | 89|
 //  +---+  +---+---+---+---+---+---+---+---+  +---+
@@ -39,13 +39,13 @@ void LaunchpadProDevice::recvMidi(const MidiMessage &message) {
         int col = (index - 11) % 10;
         if (row >= 0 && row < Rows && col >= 0 && col < Cols) {
             setButtonState(row, col, message.velocity() != 0);
-        } else if (row >= 0 && row < Rows && col == Cols) {
-            setButtonState(SceneRow, row, message.velocity() != 0);
         }
     } else if (message.isControlChange()) {
         int index = message.controlNumber();
         if (index >= 91 && index <= 98) {
             setButtonState(FunctionRow, index - 91, message.controlValue() != 0);
+        } else if (index >= 19 && index <= 89 && (index % 10) == 9) {
+            setButtonState(SceneRow, 7 - (index - 19) / 10, message.controlValue() != 0);
         }
     }
 }
@@ -67,7 +67,7 @@ void LaunchpadProDevice::syncLeds() {
     for (int col = 0; col < Cols; ++col) {
         int index = SceneRow * Cols + col;
         if (_deviceLedState[index] != _ledState[index]) {
-            if (sendMidi(MidiMessage::makeNoteOn(0, 11 + 10 * (7 - col) + 8, _ledState[index]))) {
+            if (sendMidi(MidiMessage::makeControlChange(0, 11 + 10 * (7 - col) + 8, _ledState[index]))) {
                 _deviceLedState[index] = _ledState[index];
             }
         }
