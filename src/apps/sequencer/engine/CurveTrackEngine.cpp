@@ -47,13 +47,11 @@ void CurveTrackEngine::tick(uint32_t tick) {
             reset();
         }
 
-        relativeTick %= divisor;
-
-        if (relativeTick == 0) {
+        if (relativeTick % divisor == 0) {
             // advance sequence
             switch (_curveTrack.playMode()) {
             case Types::PlayMode::Aligned:
-                _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                _sequenceState.advanceAligned(relativeTick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
             case Types::PlayMode::Free:
                 _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
@@ -89,7 +87,7 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
     const auto &step = sequence.step(_currentStep);
 
-    _currentStepFraction = float(relativeTick) / divisor;
+    _currentStepFraction = float(relativeTick % divisor) / divisor;
 
     float value = evalStepShape(step, _currentStepFraction);
     const auto range = Types::voltageRangeInfo(sequence.range());

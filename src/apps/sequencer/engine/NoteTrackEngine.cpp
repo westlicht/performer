@@ -75,7 +75,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
         _linkData = *linkData;
         _sequenceState = *linkData->sequenceState;
 
-        if (linkData->relativeTick == 0) {
+        if (linkData->relativeTick % linkData->divisor == 0) {
             recordStep(tick, linkData->divisor);
             triggerStep(tick, linkData->divisor);
         }
@@ -89,13 +89,11 @@ void NoteTrackEngine::tick(uint32_t tick) {
             reset();
         }
 
-        relativeTick %= divisor;
-
         // advance sequence
-        if (relativeTick == 0) {
+        if (relativeTick % divisor == 0) {
             switch (_noteTrack.playMode()) {
             case Types::PlayMode::Aligned:
-                _sequenceState.advanceAligned(tick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                _sequenceState.advanceAligned(relativeTick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 break;
             case Types::PlayMode::Free:
                 _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
