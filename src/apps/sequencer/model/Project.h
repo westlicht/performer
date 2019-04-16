@@ -19,8 +19,15 @@
 
 class Project {
 public:
+    // added NoteTrack::cvUpdateMode
     static constexpr uint32_t Version4 = 4;
-    static constexpr uint32_t Version = Version4;
+
+    // added storing user scales with project
+    // added Project::name
+    // added UserScale::name
+    static constexpr uint32_t Version5 = 5;
+
+    static constexpr uint32_t Version = Version5;
 
     //----------------------------------------
     // Types

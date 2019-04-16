@@ -1,4 +1,5 @@
 #include "UserScale.h"
+#include "Project.h"
 
 UserScale::Array UserScale::userScales;
 
@@ -25,6 +26,7 @@ void UserScale::clearItems() {
 void UserScale::write(WriteContext &context) const {
     auto &writer = context.writer;
 
+    writer.write(_name, NameLength + 1);
     writer.write(_mode);
     writer.write(_size);
 
@@ -40,6 +42,7 @@ bool UserScale::read(ReadContext &context) {
 
     auto &reader = context.reader;
 
+    reader.read(_name, NameLength + 1, Project::Version5);
     reader.read(_mode);
     reader.read(_size);
 
@@ -66,7 +69,7 @@ fs::Error UserScale::write(const char *path) const {
 
     VersionedSerializedWriter writer(
         [&fileWriter] (const void *data, size_t len) { fileWriter.write(data, len); },
-        Version
+        Project::Version
     );
 
     WriteContext context = { writer };
@@ -83,15 +86,19 @@ fs::Error UserScale::read(const char *path) {
 
     FileHeader header;
     fileReader.read(&header, sizeof(header));
-    header.readName(_name, sizeof(_name));
 
     VersionedSerializedReader reader(
         [&fileReader] (void *data, size_t len) { fileReader.read(data, len); },
-        Version
+        Project::Version
     );
 
     ReadContext context = { reader };
     bool success = read(context);
+
+    // TODO at some point we should remove this because name is also stored with data as of version 5
+    if (success) {
+        header.readName(_name, sizeof(_name));
+    }
 
     auto error = fileReader.finish();
     if (error == fs::OK && !success) {

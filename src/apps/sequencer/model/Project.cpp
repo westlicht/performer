@@ -55,6 +55,10 @@ void Project::clear() {
     _routing.clear();
     _midiOutput.clear();
 
+    for (auto &userScale : UserScale::userScales) {
+        userScale.clear();
+    }
+
     setSelectedTrackIndex(0);
     setSelectedPatternIndex(0);
 
@@ -95,6 +99,7 @@ void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
 
 void Project::write(WriteContext &context) const {
     auto &writer = context.writer;
+    writer.write(_name, NameLength + 1);
     writer.write(_tempo.base);
     writer.write(_swing.base);
     writer.write(_syncMeasure);
@@ -113,6 +118,8 @@ void Project::write(WriteContext &context) const {
     _routing.write(context);
     _midiOutput.write(context);
 
+    writeArray(context, UserScale::userScales);
+
     writer.write(_selectedTrackIndex);
     writer.write(_selectedPatternIndex);
 
@@ -123,6 +130,7 @@ bool Project::read(ReadContext &context) {
     clear();
 
     auto &reader = context.reader;
+    reader.read(_name, NameLength + 1, Version5);
     reader.read(_tempo.base);
     reader.read(_swing.base);
     reader.read(_syncMeasure);
@@ -140,6 +148,10 @@ bool Project::read(ReadContext &context) {
     _playState.read(context);
     _routing.read(context);
     _midiOutput.read(context);
+
+    if (reader.dataVersion() >= Version5) {
+        readArray(context, UserScale::userScales);
+    }
 
     reader.read(_selectedTrackIndex);
     reader.read(_selectedPatternIndex);
@@ -191,7 +203,10 @@ fs::Error Project::read(const char *path) {
     ReadContext context = { reader };
     bool success = read(context);
 
-    header.readName(_name, sizeof(_name));
+    // TODO at some point we should remove this because name is also stored with data as of version 5
+    if (success) {
+        header.readName(_name, sizeof(_name));
+    }
 
     auto error = fileReader.finish();
     if (error == fs::OK && !success) {
