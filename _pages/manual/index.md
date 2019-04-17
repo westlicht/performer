@@ -1422,9 +1422,11 @@ The visualization on the grid depends on the selected layer. Binary layers (e.g.
 
 <h4>Pattern Mode</h4>
 
-Pattern mode allows selecting the currently playing pattern on all the tracks. Each column on the `GRID` represents one track, allowing to launch individual patterns per track. The `A` - `H` buttons represent scenes, allowing to launch the same pattern number on all the tracks simultaneously. This is very similar to how Ableton Live allows launching clips and scenes on a Launchpad.
+Pattern mode allows selecting the currently playing pattern on all the tracks. Each column on the `GRID` represents one track, allowing to launch individual patterns per track. The `A` - `H` buttons represent scenes, allowing to launch the same pattern number on all the tracks simultaneously. This is very similar to how Ableton Live allows launching clips and scenes on a Launchpad. Active patterns are shown as bright green, non-empty patterns are shown in dim colors, yellow for note tracks, red for curve tracks.
 
 In addition, holding `2` while selecting patterns and scenes, allows to use latching mode. This means that the patterns are switched at the moment when `2` is released. Holding `3` while selecting patterns and scenes allows to launch them synchronized to the global _Sync Measure_.
+
+Requested patterns due to latching or syncing are shown in dim green.
 
 <h3 id="appendix-calibration-procedure">Calibration Procedure</h3>
 
