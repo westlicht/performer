@@ -1,4 +1,5 @@
 #include "NoteSequence.h"
+#include "Project.h"
 
 #include "ModelUtils.h"
 
@@ -102,6 +103,8 @@ void NoteSequence::Step::setLayerValue(Layer layer, int value) {
 }
 
 void NoteSequence::Step::clear() {
+    _data0.raw = 0;
+    _data1.raw = 1;
     setGate(false);
     setSlide(false);
     setRetrigger(0);
@@ -125,6 +128,9 @@ void NoteSequence::Step::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_data0.raw);
     reader.read(_data1.raw);
+    if (reader.dataVersion() < Project::Version5) {
+        _data1.raw &= 0x1f;
+    }
 }
 
 void NoteSequence::writeRouted(Routing::Target target, int intValue, float floatValue) {
@@ -161,6 +167,16 @@ void NoteSequence::clearSteps() {
     for (auto &step : _steps) {
         step.clear();
     }
+}
+
+bool NoteSequence::isEdited() const {
+    auto clearStep = Step();
+    for (const auto &step : _steps) {
+        if (step != clearStep) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void NoteSequence::setGates(std::initializer_list<int> gates) {

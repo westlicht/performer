@@ -162,9 +162,6 @@ bool LaunchpadController::globalButtonDown(const Button &button) {
             // TODO implement performer mode
             // setMode(Mode::Performer);
             break;
-        case 5:
-            toggleBrightness();
-            break;
         case 6:
             _engine.togglePlay();
             break;
@@ -531,13 +528,34 @@ void LaunchpadController::patternDraw() {
     if (buttonState<Navigate>()) {
         navigationDraw(_pattern.navigation);
     } else {
-        // selected patterns
         for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+            // draw edited patterns (note tracks -> dim yellow, curve tracks -> dim red)
+            for (int row = 0; row < 8; ++row) {
+                int patternIndex = row - _pattern.navigation.row * 8;
+                const auto &track = _project.track(trackIndex);
+
+                switch (track.trackMode()) {
+                case Track::TrackMode::Note:
+                    if (track.noteTrack().sequence(patternIndex).isEdited()) {
+                        setGridLed(row, trackIndex, colorYellow(1));
+                    }
+                    break;
+                case Track::TrackMode::Curve:
+                    if (track.curveTrack().sequence(patternIndex).isEdited()) {
+                        setGridLed(row, trackIndex, colorRed(1));
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            // draw selected (green) & requested (dim green) patterns
             int pattern = playState.trackState(trackIndex).pattern();
             int requestedPattern = playState.trackState(trackIndex).requestedPattern();
             setGridLed(pattern + _pattern.navigation.row * 8, trackIndex, colorGreen());
             if (pattern != requestedPattern) {
-                setGridLed(requestedPattern + _pattern.navigation.row * 8, trackIndex, colorYellow());
+                setGridLed(requestedPattern + _pattern.navigation.row * 8, trackIndex, colorGreen(1));
             }
         }
     }
@@ -705,7 +723,7 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
     for (int row = 0; row < 8; ++row) {
         if (modulo(row + ofs, octave) == 0) {
             for (int col = 0; col < 8; ++col) {
-            setGridLed(7 - row, col, Color(1, 1));
+            setGridLed(7 - row, col, colorYellow(1));
             }
         }
     }

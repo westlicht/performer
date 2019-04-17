@@ -20,16 +20,14 @@ public:
 private:
     using Color = LaunchpadDevice::Color;
 
-    inline Color color(bool red, bool green) const {
-        return Color(red ? _brightness : 0, green ? _brightness : 0);
+    inline Color color(bool red, bool green, int brightness = 3) const {
+        return Color(red ? brightness : 0, green ? brightness : 0);
     }
 
     inline Color colorOff() const { return Color(0, 0); }
-    inline Color colorRed() const { return Color(_brightness, 0); }
-    inline Color colorGreen() const { return Color(0, _brightness); }
-    inline Color colorYellow() const { return Color(_brightness, _brightness); }
-
-    inline void toggleBrightness() { _brightness = (_brightness % 3) + 1; }
+    inline Color colorRed(int brightness = 3) const { return Color(brightness, 0); }
+    inline Color colorGreen(int brightness = 3) const { return Color(0, brightness); }
+    inline Color colorYellow(int brightness = 3) const { return Color(brightness, brightness); }
 
     struct Button {
         int row;
@@ -160,8 +158,6 @@ private:
     Container<LaunchpadDevice, LaunchpadMk2Device, LaunchpadProDevice> _deviceContainer;
     LaunchpadDevice *_device;
     Mode _mode = Mode::Sequence;
-
-    uint8_t _brightness = 3;
 
     struct {
         Navigation navigation = { 0, 0, 0, 7, 0, 0 };

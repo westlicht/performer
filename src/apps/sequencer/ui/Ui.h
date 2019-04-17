@@ -51,7 +51,7 @@ private:
     uint8_t _frameBufferData[CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT];
     FrameBuffer8bit _frameBuffer;
     Canvas _canvas;
-    uint32_t _lastUpdateTicks;
+    uint32_t _lastFrameBufferUpdateTicks;
 
     KeyState _pageKeyState;
     KeyState _globalKeyState;
@@ -65,4 +65,5 @@ private:
     Pages _pages;
 
     ControllerManager _controllerManager;
+    uint32_t _lastControllerUpdateTicks;
 };

@@ -107,6 +107,16 @@ void CurveSequence::clearSteps() {
     }
 }
 
+bool CurveSequence::isEdited() const {
+    auto clearStep = Step();
+    for (const auto &step : _steps) {
+        if (step != clearStep) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void CurveSequence::setShapes(std::initializer_list<int> shapes) {
     size_t step = 0;
     for (auto shape : shapes) {

@@ -22,6 +22,8 @@ public:
 
     void update();
 
+    int fps() const { return 50; }
+
     bool recvMidi(MidiPort port, const MidiMessage &message);
 
 private:

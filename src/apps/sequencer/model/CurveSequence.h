@@ -45,6 +45,10 @@ public:
 
     class Step {
     public:
+        //----------------------------------------
+        // Properties
+        //----------------------------------------
+
         // shape
 
         int shape() const { return _shape; }
@@ -72,14 +76,27 @@ public:
 
         float maxNormalized() const { return float(_max) / Max::Max; }
 
-
         int layerValue(Layer layer) const;
         void setLayerValue(Layer layer, int value);
+
+        //----------------------------------------
+        // Methods
+        //----------------------------------------
+
+        Step() { clear(); }
 
         void clear();
 
         void write(WriteContext &context) const;
         void read(ReadContext &context);
+
+        bool operator==(const Step &other) const {
+            return _shape == other._shape && _min == other._min && _max == other._max;
+        }
+
+        bool operator!=(const Step &other) const {
+            return !(*this == other);
+        }
 
     private:
         uint8_t _shape;
@@ -224,8 +241,12 @@ public:
     // Methods
     //----------------------------------------
 
+    CurveSequence() { clear(); }
+
     void clear();
     void clearSteps();
+
+    bool isEdited() const;
 
     void setShapes(std::initializer_list<int> shapes);
 

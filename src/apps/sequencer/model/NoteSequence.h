@@ -68,6 +68,10 @@ public:
 
     class Step {
     public:
+        //----------------------------------------
+        // Properties
+        //----------------------------------------
+
         // gate
 
         bool gate() const { return _data0.gate ? true : false; }
@@ -150,10 +154,24 @@ public:
         int layerValue(Layer layer) const;
         void setLayerValue(Layer layer, int value);
 
+        //----------------------------------------
+        // Methods
+        //----------------------------------------
+
+        Step() { clear(); }
+
         void clear();
 
         void write(WriteContext &context) const;
         void read(ReadContext &context);
+
+        bool operator==(const Step &other) const {
+            return _data0.raw == other._data0.raw && _data1.raw == other._data1.raw;
+        }
+
+        bool operator!=(const Step &other) const {
+            return !(*this == other);
+        }
 
     private:
         union {
@@ -350,8 +368,12 @@ public:
     // Methods
     //----------------------------------------
 
+    NoteSequence() { clear(); }
+
     void clear();
     void clearSteps();
+
+    bool isEdited() const;
 
     void setGates(std::initializer_list<int> gates);
     void setNotes(std::initializer_list<int> notes);
@@ -375,6 +397,8 @@ private:
     RoutableSet<Routing::Target::SequenceFirst, Routing::Target::SequenceLast> _routed;
 
     StepArray _steps;
+
+    uint8_t _edited;
 
     friend class Project;
 };

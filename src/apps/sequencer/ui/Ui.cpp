@@ -62,7 +62,8 @@ void Ui::init() {
         _messageManager.showMessage(text, duration);
     });
 
-    _lastUpdateTicks = os::ticks();
+    _lastFrameBufferUpdateTicks = os::ticks();
+    _lastControllerUpdateTicks = os::ticks();
 }
 
 void Ui::update() {
@@ -82,16 +83,20 @@ void Ui::update() {
     // update display at target fps
     uint32_t currentTicks = os::ticks();
     uint32_t intervalTicks = os::time::ms(1000 / _pageManager.fps());
-    if (currentTicks - _lastUpdateTicks >= intervalTicks) {
+    if (currentTicks - _lastFrameBufferUpdateTicks >= intervalTicks) {
         _pageManager.draw(_canvas);
         _messageManager.update();
         _messageManager.draw(_canvas);
         _lcd.draw(_frameBuffer.data());
-        _lastUpdateTicks += intervalTicks;
+        _lastFrameBufferUpdateTicks += intervalTicks;
     }
 
-    if (!_engine.isLocked()) {
-        _controllerManager.update();
+    intervalTicks = os::time::ms(1000 / _controllerManager.fps());
+    if (currentTicks - _lastControllerUpdateTicks >= intervalTicks) {
+        if (!_engine.isLocked()) {
+            _controllerManager.update();
+        }
+        _lastControllerUpdateTicks += intervalTicks;
     }
 }
 
