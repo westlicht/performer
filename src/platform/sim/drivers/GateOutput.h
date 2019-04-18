@@ -14,7 +14,7 @@ public:
 
     void update() {
         for (int i = 0; i < 8; ++i) {
-            _simulator.writeGateOutput(i, (gates >> i) & 1);
+            _simulator.writeGateOutput(i, (_gates >> i) & 1);
         }
     }
 
