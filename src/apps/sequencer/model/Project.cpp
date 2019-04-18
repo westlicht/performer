@@ -36,6 +36,7 @@ void Project::clear() {
     setScale(0);
     setRootNote(0);
     setRecordMode(Types::RecordMode::Overdub);
+    setCvGateInput(Types::CvGateInput::Off);
 
     _routed.clear();
 
@@ -106,6 +107,7 @@ void Project::write(WriteContext &context) const {
     writer.write(_scale);
     writer.write(_rootNote);
     writer.write(_recordMode);
+    writer.write(_cvGateInput);
 
     _clockSetup.write(context);
 
@@ -137,6 +139,7 @@ bool Project::read(ReadContext &context) {
     reader.read(_scale);
     reader.read(_rootNote);
     reader.read(_recordMode);
+    reader.read(_cvGateInput, Version6);
 
     _clockSetup.read(context);
 

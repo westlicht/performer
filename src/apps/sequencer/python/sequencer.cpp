@@ -38,6 +38,7 @@ void register_sequencer(py::module &m) {
         .def_property("scale", &Project::scale, &Project::setScale)
         .def_property("rootNote", &Project::rootNote, &Project::setRootNote)
         .def_property("recordMode", &Project::recordMode, &Project::setRecordMode)
+        .def_property("cvGateInput", &Project::cvGateInput, &Project::setCvGateInput)
         .def_property_readonly("clockSetup", [] (Project &project) { return &project.clockSetup(); })
         .def_property_readonly("tracks", [] (Project &project) {
             py::list result;
@@ -74,6 +75,13 @@ void register_sequencer(py::module &m) {
         .value("Overdub", Types::RecordMode::Overdub)
         .value("Overwrite", Types::RecordMode::Overwrite)
         .value("StepRecord", Types::RecordMode::StepRecord)
+        .export_values()
+    ;
+
+    py::enum_<Types::CvGateInput>(types, "CvGateInput")
+        .value("Off", Types::CvGateInput::Off)
+        .value("Cv1Cv2", Types::CvGateInput::Cv1Cv2)
+        .value("Cv3Cv4", Types::CvGateInput::Cv3Cv4)
         .export_values()
     ;
 

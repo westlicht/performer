@@ -16,68 +16,57 @@ enum class Function {
 
 static const char *functionNames[] = { "CV IN", "CV OUT", "MIDI", "STATS", nullptr };
 
-static void formatMidiPort(StringBuilder &str, MidiPort port) {
-    switch (port) {
-    case MidiPort::Midi:
-        str("MIDI");
-        break;
-    case MidiPort::UsbMidi:
-        str("USB MIDI");
-        break;
-    }
-}
-
-static void formatMidiMessage(StringBuilder &str1, StringBuilder &str2, const MidiMessage &msg) {
+static void formatMidiMessage(StringBuilder &eventStr, StringBuilder &dataStr, const MidiMessage &msg) {
     if (msg.isChannelMessage()) {
         switch (msg.channelMessage()) {
         case MidiMessage::NoteOff:
-            str1("NOTE OFF");
-            str2("CH=%d NOTE=%d VEL=%d", msg.channel(), msg.note(), msg.velocity());
+            eventStr("NOTE OFF");
+            dataStr("CH=%d NOTE=%d VEL=%d", msg.channel(), msg.note(), msg.velocity());
             return;
         case MidiMessage::NoteOn:
-            str1("NOTE ON");
-            str2("CH=%d NOTE=%d VEL=%d", msg.channel(), msg.note(), msg.velocity());
+            eventStr("NOTE ON");
+            dataStr("CH=%d NOTE=%d VEL=%d", msg.channel(), msg.note(), msg.velocity());
             return;
         case MidiMessage::KeyPressure:
-            str1("KEY PRESSURE");
-            str2("CH=%d NOTE=%d PRE=%d", msg.channel(), msg.note(), msg.keyPressure());
+            eventStr("KEY PRESSURE");
+            dataStr("CH=%d NOTE=%d PRE=%d", msg.channel(), msg.note(), msg.keyPressure());
             return;
         case MidiMessage::ControlChange:
-            str1("CONTROL CHANGE");
-            str2("CH=%d NUM=%d VAL=%d", msg.channel(), msg.controlNumber(), msg.controlValue());
+            eventStr("CONTROL CHANGE");
+            dataStr("CH=%d NUM=%d VAL=%d", msg.channel(), msg.controlNumber(), msg.controlValue());
             return;
         case MidiMessage::ProgramChange:
-            str1("PROGRAM CHANGE");
-            str2("CH=%d NUM=%d", msg.channel(), msg.programNumber());
+            eventStr("PROGRAM CHANGE");
+            dataStr("CH=%d NUM=%d", msg.channel(), msg.programNumber());
             return;
         case MidiMessage::ChannelPressure:
-            str1("CHANNEL PRESSURE");
-            str2("CH=%d PRE=%d", msg.channel(), msg.channelPressure());
+            eventStr("CHANNEL PRESSURE");
+            dataStr("CH=%d PRE=%d", msg.channel(), msg.channelPressure());
             return;
         case MidiMessage::PitchBend:
-            str1("PITCH BEND");
-            str2("CH=%d VAL=%d", msg.channel(), msg.pitchBend());
+            eventStr("PITCH BEND");
+            dataStr("CH=%d VAL=%d", msg.channel(), msg.pitchBend());
             return;
         }
     } else if (msg.isSystemMessage()) {
         switch (msg.systemMessage()) {
         case MidiMessage::SystemExclusive:
-            str1("SYSEX");
+            eventStr("SYSEX");
             return;
         case MidiMessage::TimeCode:
-            str1("TIME CODE");
-            str2("DATA=%02x", msg.data0());
+            eventStr("TIME CODE");
+            dataStr("DATA=%02x", msg.data0());
             return;
         case MidiMessage::SongPosition:
-            str1("SONG POSITION");
-            str2("POS=%d", msg.songPosition());
+            eventStr("SONG POSITION");
+            dataStr("POS=%d", msg.songPosition());
             return;
         case MidiMessage::SongSelect:
-            str1("SONG SELECT");
-            str2("NUM=%d", msg.songNumber());
+            eventStr("SONG SELECT");
+            dataStr("NUM=%d", msg.songNumber());
             return;
         case MidiMessage::TuneRequest:
-            str1("TUNE REQUEST");
+            eventStr("TUNE REQUEST");
             return;
         default: break;
         }
@@ -200,17 +189,12 @@ void MonitorPage::drawCvOut(Canvas &canvas) {
 void MonitorPage::drawMidi(Canvas &canvas) {
 
     if (os::ticks() - _lastMidiMessageTicks < os::time::ms(1000)) {
-        FixedStringBuilder<32> str1;
-
-        formatMidiPort(str1, _lastMidiMessagePort);
-        canvas.drawTextCentered(0, 24 - 8, Width, 16, str1);
-
-        str1.reset();
-        FixedStringBuilder<32> str2;
-
-        formatMidiMessage(str1, str2, _lastMidiMessage);
-        canvas.drawTextCentered(0, 32 - 8, Width, 16, str1);
-        canvas.drawTextCentered(0, 40 - 8, Width, 16, str2);
+        FixedStringBuilder<32> eventStr;
+        FixedStringBuilder<32> dataStr;
+        formatMidiMessage(eventStr, dataStr, _lastMidiMessage);
+        canvas.drawTextCentered(0, 24 - 8, Width, 16, midiPortName(_lastMidiMessagePort));
+        canvas.drawTextCentered(0, 32 - 8, Width, 16, eventStr);
+        canvas.drawTextCentered(0, 40 - 8, Width, 16, dataStr);
     }
 }
 

@@ -98,8 +98,6 @@ void Engine::update() {
         }
     }
 
-    receiveMidi();
-
     // update tempo
     _nudgeTempo.update(dt);
     _clock.setMasterBpm(_model.project().tempo() * (1.f + _nudgeTempo.strength() * 0.1f));
@@ -115,6 +113,9 @@ void Engine::update() {
 
     // update cv inputs
     _cvInput.update();
+
+    // receive midi events
+    receiveMidi();
 
     // update routings
     _routingEngine.update();
@@ -272,6 +273,9 @@ bool Engine::sendMidi(MidiPort port, const MidiMessage &message) {
         return _midi.send(message);
     case MidiPort::UsbMidi:
         return _usbMidi.send(message);
+    case MidiPort::CvGate:
+        // input only
+        break;
     }
     return false;
 }
@@ -543,6 +547,25 @@ void Engine::receiveMidi() {
     while (_usbMidi.recv(&message)) {
         receiveMidi(MidiPort::UsbMidi, message);
     }
+
+    // derive MIDI messages from CV/Gate input
+    switch (_model.project().cvGateInput()) {
+    case Types::CvGateInput::Off:
+        _cvGateToMidiConverter.reset();
+        break;
+    case Types::CvGateInput::Cv1Cv2:
+        _cvGateToMidiConverter.convert(_cvInput.channel(0), _cvInput.channel(1), 0, [this] (const MidiMessage &message) {
+            receiveMidi(MidiPort::CvGate, message);
+        });
+        break;
+    case Types::CvGateInput::Cv3Cv4:
+        _cvGateToMidiConverter.convert(_cvInput.channel(2), _cvInput.channel(3), 1, [this] (const MidiMessage &message) {
+            receiveMidi(MidiPort::CvGate, message);
+        });
+        break;
+    case Types::CvGateInput::Last:
+        break;
+    }
 }
 
 void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
@@ -558,15 +581,17 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
         }
     }
 
-    // let midi learn inspect messages
-    _midiLearn.receiveMidi(port, message);
+    // let midi learn inspect messages (except from virtual CV/Gate messages)
+    if (port != MidiPort::CvGate) {
+        _midiLearn.receiveMidi(port, message);
+    }
 
     // let routing engine consume messages
     if (_routingEngine.receiveMidi(port, message)) {
         return;
     }
 
-    // let track engines consume messages
+    // let track engines consume messages (only MIDI/CV tracks)
     for (auto trackEngine : _trackEngines) {
         if (trackEngine->receiveMidi(port, message)) {
             return;

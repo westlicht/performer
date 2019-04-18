@@ -14,6 +14,7 @@
 #include "MidiOutputEngine.h"
 #include "MidiPort.h"
 #include "MidiLearn.h"
+#include "CvGateToMidiConverter.h"
 
 #include "model/Model.h"
 
@@ -188,6 +189,8 @@ private:
     MidiReceiveHandler _midiReceiveHandler;
     UsbMidiConnectHandler _usbMidiConnectHandler;
     UsbMidiDisconnectHandler _usbMidiDisconnectHandler;
+
+    CvGateToMidiConverter _cvGateToMidiConverter;
 
     // locking
     volatile uint32_t _requestLock = 0;

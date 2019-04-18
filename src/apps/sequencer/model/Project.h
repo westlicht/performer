@@ -27,7 +27,10 @@ public:
     // added UserScale::name
     static constexpr uint32_t Version5 = 5;
 
-    static constexpr uint32_t Version = Version5;
+    // added Project::cvGateInput
+    static constexpr uint32_t Version6 = 6;
+
+    static constexpr uint32_t Version = Version6;
 
     //----------------------------------------
     // Types
@@ -160,6 +163,21 @@ public:
 
     void printRecordMode(StringBuilder &str) const {
         str(Types::recordModeName(_recordMode));
+    }
+
+    // cvGateInput
+
+    Types::CvGateInput cvGateInput() const { return _cvGateInput; }
+    void setCvGateInput(Types::CvGateInput cvGateInput) {
+        _cvGateInput = ModelUtils::clampedEnum(cvGateInput);
+    }
+
+    void editCvGateInput(int value, bool shift) {
+        _cvGateInput = ModelUtils::adjustedEnum(_cvGateInput, value);
+    }
+
+    void printCvGateInput(StringBuilder &str) const {
+        str(Types::cvGateInputName(_cvGateInput));
     }
 
     // clockSetup
@@ -343,6 +361,7 @@ private:
     uint8_t _scale;
     uint8_t _rootNote;
     Types::RecordMode _recordMode;
+    Types::CvGateInput _cvGateInput;
 
     RoutableSet<Routing::Target::ProjectFirst, Routing::Target::ProjectLast> _routed;
 

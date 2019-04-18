@@ -54,6 +54,7 @@ private:
         Scale,
         RootNote,
         RecordMode,
+        CvGateInput,
         Last
     };
 
@@ -66,6 +67,7 @@ private:
         case Scale:             return "Scale";
         case RootNote:          return "Root Note";
         case RecordMode:        return "Record Mode";
+        case CvGateInput:       return "CV/Gate Input";
         case Last:              break;
         }
         return nullptr;
@@ -98,6 +100,9 @@ private:
         case RecordMode:
             _project.printRecordMode(str);
             break;
+        case CvGateInput:
+            _project.printCvGateInput(str);
+            break;
         case Last:
             break;
         }
@@ -124,6 +129,9 @@ private:
             break;
         case RecordMode:
             _project.editRecordMode(value, shift);
+            break;
+        case CvGateInput:
+            _project.editCvGateInput(value, shift);
             break;
         case Last:
             break;

@@ -27,6 +27,25 @@ public:
         return nullptr;
     }
 
+    // CvGateInput
+
+    enum class CvGateInput : uint8_t {
+        Off,
+        Cv1Cv2,
+        Cv3Cv4,
+        Last
+    };
+
+    static const char *cvGateInputName(CvGateInput cvGateInput) {
+        switch (cvGateInput) {
+        case CvGateInput::Off:      return "Off";
+        case CvGateInput::Cv1Cv2:   return "CV1/CV2";
+        case CvGateInput::Cv3Cv4:   return "CV3/CV4";
+        case CvGateInput::Last:     break;
+        }
+        return nullptr;
+    }
+
     // PlayMode
 
     enum class PlayMode : uint8_t {
