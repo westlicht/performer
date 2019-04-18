@@ -443,6 +443,7 @@ The following parameters are available:
 | Scale | [Scales](#appendix-scales) | Default scale. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Default root note. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Record Mode | Overdub, Overwrite, Step Record | Recording mode (see [Recording](#appendix-recording)). |
+| CV/Gate Input | Off, CV1/CV2, CV3/CV4 | Enable CV/Gate input on CV inputs. |
 
 > Note: _Tempo_ and _Swing_ are routable parameters.
 
