@@ -10,11 +10,12 @@ public:
 
     void init();
 
+    void update();
+
     inline uint8_t gates() const { return _gates; }
 
     inline void setGates(uint8_t gates) {
         _gates = gates;
-        _shiftRegister.write(2, _gates);
     }
 
     inline void setGate(int index, bool value) {
@@ -23,8 +24,6 @@ public:
         } else {
             _gates &= ~(1 << index);
         }
-
-        _shiftRegister.write(2, _gates);
     }
 
 private:

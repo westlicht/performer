@@ -6,3 +6,7 @@ GateOutput::GateOutput(ShiftRegister &shiftRegister) :
 
 void GateOutput::init() {
 }
+
+void GateOutput::update() {
+    _shiftRegister.write(2, _gates);
+}

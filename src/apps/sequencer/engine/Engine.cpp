@@ -70,6 +70,7 @@ void Engine::update() {
         _cvInput.update();
         updateOverrides();
         _cvOutput.update();
+        _gateOutput.update();
         return;
     }
 
@@ -146,8 +147,9 @@ void Engine::update() {
 
     updateOverrides();
 
-    // update cv outputs
+    // update cv/gate outputs
     _cvOutput.update();
+    _gateOutput.update();
 }
 
 void Engine::lock() {
