@@ -257,7 +257,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
 }
 
 void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
-    if (!_engine.state().recording() || _model.project().recordMode() == Types::RecordMode::StepRecord || _sequenceState.lastStep() < 0) {
+    if (!_engine.state().recording() || _model.project().recordMode() == Types::RecordMode::StepRecord || _sequenceState.prevStep() < 0) {
         return;
     }
 
@@ -300,14 +300,14 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         if (noteStart <= stepStart + margin && noteEnd >= stepStart + margin) {
             int length = std::min(noteEnd, stepEnd) - std::max(noteStart, stepStart);
             length = (length * NoteSequence::Length::Range) / divisor;
-            writeStep(_sequenceState.lastStep(), note, length);
+            writeStep(_sequenceState.prevStep(), note, length);
             written = true;
             break;
         }
     }
 
     if (isSelected() && !written && _model.project().recordMode() == Types::RecordMode::Overwrite) {
-        clearStep(_sequenceState.lastStep());
+        clearStep(_sequenceState.prevStep());
     }
 }
 
