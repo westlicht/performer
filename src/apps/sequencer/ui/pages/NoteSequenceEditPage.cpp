@@ -133,6 +133,13 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
                 step.gateProbability() + 1, NoteSequence::GateProbability::Range
             );
             break;
+        case Layer::GateOffset:
+            SequencePainter::drawOffset(
+                canvas,
+                x + 2, y + 18, stepWidth - 4, 2,
+                step.gateOffset(), NoteSequence::GateOffset::Min - 1, NoteSequence::GateOffset::Max + 1
+            );
+            break;
         case Layer::Retrigger:
             SequencePainter::drawRetrigger(
                 canvas,
@@ -349,6 +356,12 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
                     step.gateProbability() + event.value()
                 );
                 break;
+            case Layer::GateOffset:
+                step.setGateOffset(
+                    setToFirst ? firstStep.gateOffset() :
+                    step.gateOffset() + event.value()
+                );
+                break;
             case Layer::Retrigger:
                 step.setRetrigger(
                     setToFirst ? firstStep.retrigger() :
@@ -446,6 +459,9 @@ void NoteSequenceEditPage::switchLayer(int functionKey) {
         case Layer::Gate: setLayer(Layer::GateProbability);
             break;
         case Layer::GateProbability:
+            setLayer(Layer::GateOffset);
+            break;
+        case Layer::GateOffset:
             setLayer(Layer::Slide);
             break;
         default:
@@ -496,6 +512,7 @@ int NoteSequenceEditPage::activeFunctionKey() {
     switch (layer()) {
     case Layer::Gate:
     case Layer::GateProbability:
+    case Layer::GateOffset:
     case Layer::Slide:
         return 0;
     case Layer::Retrigger:
@@ -556,6 +573,19 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%.1f%%", 100.f * (step.gateProbability() + 1.f) / NoteSequence::GateProbability::Range);
+        canvas.setColor(0xf);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+    case Layer::GateOffset:
+        SequencePainter::drawOffset(
+            canvas,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
+            step.gateOffset(), NoteSequence::GateOffset::Min - 1, NoteSequence::GateOffset::Max + 1
+        );
+        str.reset();
+        if (step.gateOffset() != 0) {
+            str("%+d/%d", step.gateOffset(), NoteSequence::GateOffset::Max + 1);
+        }
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;

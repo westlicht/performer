@@ -22,6 +22,7 @@ public:
     //----------------------------------------
 
     typedef UnsignedValue<3> GateProbability;
+    typedef SignedValue<4> GateOffset;
     typedef UnsignedValue<2> Retrigger;
     typedef UnsignedValue<3> RetriggerProbability;
     typedef UnsignedValue<3> Length;
@@ -34,6 +35,8 @@ public:
     enum class Layer {
         Gate,
         GateProbability,
+        GateOffset,
+        Slide,
         Retrigger,
         RetriggerProbability,
         Length,
@@ -42,7 +45,6 @@ public:
         Note,
         NoteVariationRange,
         NoteVariationProbability,
-        Slide,
         Last
     };
 
@@ -50,6 +52,8 @@ public:
         switch (layer) {
         case Layer::Gate:                       return "GATE";
         case Layer::GateProbability:            return "GATE PROB";
+        case Layer::GateOffset:                 return "GATE OFFSET";
+        case Layer::Slide:                      return "SLIDE";
         case Layer::Retrigger:                  return "RETRIG";
         case Layer::RetriggerProbability:       return "RETRIG PROB";
         case Layer::Length:                     return "LENGTH";
@@ -58,7 +62,6 @@ public:
         case Layer::Note:                       return "NOTE";
         case Layer::NoteVariationRange:         return "NOTE RANGE";
         case Layer::NoteVariationProbability:   return "NOTE PROB";
-        case Layer::Slide:                      return "SLIDE";
         case Layer::Last:                       break;
         }
         return nullptr;
@@ -83,6 +86,13 @@ public:
         int gateProbability() const { return _data0.gateProbability; }
         void setGateProbability(int gateProbability) {
             _data0.gateProbability = GateProbability::clamp(gateProbability);
+        }
+
+        // gateOffset
+
+        int gateOffset() const { return GateOffset::Min + _data1.gateOffset; }
+        void setGateOffset(int gateOffset) {
+            _data1.gateOffset = GateOffset::clamp(gateOffset) - GateOffset::Min;
         }
 
         // slide
@@ -190,7 +200,8 @@ public:
             uint16_t raw;
             BitField<uint16_t, 0, Retrigger::Bits> retrigger;
             BitField<uint16_t, 2, RetriggerProbability::Bits> retriggerProbability;
-            // 11 bits left
+            BitField<uint16_t, 5, GateOffset::Bits> gateOffset;
+            // 7 bits left
         } _data1;
     };
 

@@ -30,7 +30,10 @@ public:
     // added Project::cvGateInput
     static constexpr uint32_t Version6 = 6;
 
-    static constexpr uint32_t Version = Version6;
+    // added NoteSequence::Step::gateOffset
+    static constexpr uint32_t Version7 = 7;
+
+    static constexpr uint32_t Version = Version7;
 
     //----------------------------------------
     // Types
