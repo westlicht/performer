@@ -450,6 +450,7 @@ private:
         for (int i = 0; i < 8; ++i) {
             gateOutput.setGate(i, _gateOutputs[i]);
         }
+        gateOutput.update();
     }
 
     Mode _mode = Mode(0);
