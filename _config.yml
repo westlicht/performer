@@ -33,3 +33,8 @@ collections:
 exclude:
   - Gemfile
   - Gemfile.lock
+  - _pages/manual/config
+  - _pages/manual/resources
+  - _pages/manual/build
+  - _pages/manual/build-pdf
+  

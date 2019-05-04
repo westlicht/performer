@@ -1,0 +1,43 @@
+body {
+    font-size: 0.5em;
+}
+
+a {
+    text-decoration: none;
+}
+
+table {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+th, td  {
+    padding-right: 1em;
+    border-bottom: 1px solid #eee;
+}
+
+blockquote {
+    background-color: #eee;
+    border: none;
+    padding: 1em;
+}
+
+blockquote > p {
+    margin: 0;
+    padding: 0;
+}
+
+:not(pre) > code {
+    color: white;
+    background-color: #444;
+    border: none;
+    border-radius: 0.2em;
+    padding: 0 0.2em;
+    margin: 0 0.1em;
+}
+
+pre {
+    border: none;
+    background-color: #eee;
+    padding: 1em;
+}

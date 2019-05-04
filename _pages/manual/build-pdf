@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import os
+from subprocess import call
+import re
+import json
+
+MARKDOWN_FILE = "index.md"
+PREPROCESSED_MARKDOWN_FILE = "index.md.tmp"
+PDF_FILE = "manual.pdf"
+
+
+# preprocess markdown file
+md = open(MARKDOWN_FILE, "r").read()
+
+# remove frontmatter
+md = re.sub(r"---\n(.*\n)*---", "", md)
+
+# remove pdf exclude blocks
+md = re.sub(r"<!-- pdf-exclude-begin -->\n.*<!-- pdf-exclude-end -->\n", "", md, flags=re.DOTALL)
+
+# add page breaks
+page_break = '<div style="page-break-after: always;"></div>'
+md = re.sub(r"(<!-- page-break -->)", page_break + r"\n\1", md)
+
+open(PREPROCESSED_MARKDOWN_FILE, "w").write(md)
+
+
+# convert to pdf
+remarkable_options = json.dumps({
+    "html": True
+})
+
+call(["markdown-pdf", "-s", "config/pdf.css", "-z", "config/highlight.css", "-m", remarkable_options, "-o", PDF_FILE, PREPROCESSED_MARKDOWN_FILE])
+
+os.remove(PREPROCESSED_MARKDOWN_FILE)

@@ -5,14 +5,18 @@ layout: manual
 nav: 20
 ---
 
-<h1>User Manual</h1>
+<h1>PER&vert;FORMER User Manual</h1>
+
+<!-- pdf-exclude-begin -->
+> The user manual is also available as a PDF [here](./manual.pdf).
+<!-- pdf-exclude-end -->
 
 <!-- TOC -->
 
-<h2 id="toc">Table Of Contents</h2>
+<h2>Table Of Contents</h2>
 
 <!-- toc-begin -->
-- [Table Of Contents](#toc)
+
 - [Introduction](#introduction)
   - [Features](#introduction-features)
 - [Concepts](#concepts)
@@ -63,13 +67,16 @@ nav: 20
   - [Launchpad](#appendix-launchpad)
   - [Calibration Procedure](#appendix-calibration-procedure)
   - [Firmware Update](#appendix-firmware-update)
+
 <!-- toc-end -->
 
 <!-- Introduction -->
 
+<!-- page-break -->
+
 <h2 id="introduction">Introduction</h2>
 
-**PER\|FORMER** is an open source and open hardware eurorack sequencer module. It packs a lot of functionality into a small form factor and was designed both as a versatile sequencer in the studio as well as for live performance. To fully take advantage of all the features available in this module, it is highly recommended to study this document carefully.
+**PER&vert;FORMER** is an open source and open hardware eurorack sequencer module. It packs a lot of functionality into a small form factor and was designed both as a versatile sequencer in the studio as well as for live performance. To fully take advantage of all the features available in this module, it is highly recommended to study this document carefully.
 
 The [Concepts](#concepts) chapter introduces the overall architecture and functionality of the sequencer. The [User Interface](#ui) chapter gives an overview of the user interface and introduces key concepts of how to use the sequencer. The [Pages](#pages) chapter goes into more detail in terms of functionality and user interface of the various modes and contexts in the sequencer and introduces common workflows.
 
@@ -77,7 +84,7 @@ The [Concepts](#concepts) chapter introduces the overall architecture and functi
 
 <h3 id="introduction-features">Features</h3>
 
-The following list describes the key features of the **PER\|FORMER** sequencer:
+The following list describes the key features of the **PER&vert;FORMER** sequencer:
 
 - 8 track sequencer
 - 16 sequences per track
@@ -101,6 +108,8 @@ The following list describes the key features of the **PER\|FORMER** sequencer:
 
 <!-- Concepts -->
 
+<!-- page-break -->
+
 <h2 id="concepts">Concepts</h2>
 
 This chapter introduces the basic concepts of the sequencer and should familiarize readers with the overall functionality of the sequencer. More in-depth information about specific features are provided in the following chapters.
@@ -119,7 +128,7 @@ Projects are split into two data regions. The first region contains all the glob
 
 <h3 id="concepts-track">Track</h3>
 
-A track is responsible for generating note or modulation signals used to control other modules in the eurorack system using the CV/gate outputs. The **PER\|FORMER** sequencer can run up to 8 tracks, that primarily use step sequencing to generate these signals, where each track can run independent of the other tracks. This means that every sequence in a track can have a different time division, run mode, duration or scale among other properties.
+A track is responsible for generating note or modulation signals used to control other modules in the eurorack system using the CV/gate outputs. The **PER&vert;FORMER** sequencer can run up to 8 tracks, that primarily use step sequencing to generate these signals, where each track can run independent of the other tracks. This means that every sequence in a track can have a different time division, run mode, duration or scale among other properties.
 
 <h4>Track Mode</h4>
 
@@ -181,7 +190,7 @@ The playback of the sequence is controlled by the same set of parameters as in t
 
 In MIDI/CV mode, a track acts as a MIDI to CV converter, taking MIDI note data from either the MIDI or USBMIDI input and coverting it to voltages at the CV/gate outputs. This allows for playing voices live from a keyboard or use an external MIDI sequencer to control them.
 
-> Note: MIDI/CV mode allows for using the **PER\|FORMER** module as a pure MIDI/CV converter with up to 8 CV/Gate outputs.
+> Note: MIDI/CV mode allows for using the **PER&vert;FORMER** module as a pure MIDI/CV converter with up to 8 CV/Gate outputs.
 
 <!-- Pattern -->
 
@@ -207,7 +216,7 @@ A song consists of up to 16 slots, each holding a set of patterns to be played o
 
 <h3 id="concepts-scale">Scale</h3>
 
-In contrast to many other sequencers that directly operate on chromatic note values, the **PER\|FORMER** sequencer is using the concept of voltage tables. Each note is stored as an index into a voltage table that does not necessarily have a specific musical meaning. While offering many of the more commonly used scales in form of presets, the sequencer also provides some scales beyond the typical western chromatic variants, for example a 24 tone equal temperament scale. The additional 4 user scales allow for even more experimentation as well as setting up voltage tables to specifically address discrete values of a CV input on another module. This allows for example to select a specific sample slot, choose a wavetable or similar applications.
+In contrast to many other sequencers that directly operate on chromatic note values, the **PER&vert;FORMER** sequencer is using the concept of voltage tables. Each note is stored as an index into a voltage table that does not necessarily have a specific musical meaning. While offering many of the more commonly used scales in form of presets, the sequencer also provides some scales beyond the typical western chromatic variants, for example a 24 tone equal temperament scale. The additional 4 user scales allow for even more experimentation as well as setting up voltage tables to specifically address discrete values of a CV input on another module. This allows for example to select a specific sample slot, choose a wavetable or similar applications.
 
 A global default scale and root note can be specified on the [Project](#pages-project) page which can be overridden for individual sequences in the [Sequence](#pages-sequence) page. The user scales can be edited on the [User Scale](#pages-user-scale) page. See [Scales](#appendix-scales) appendix for a list of all preset scales.
 
@@ -269,6 +278,8 @@ The reason for using a slot system rather than traditional filenames is in order
 
 <!-- User Interface -->
 
+<!-- page-break -->
+
 <h2 id="ui">User Interface</h2>
 
 <!-- Overview -->
@@ -277,7 +288,7 @@ The reason for using a slot system rather than traditional filenames is in order
 
 ![](images/user-interface.png)
 
-The user interface of the **PER\|FORMER** sequencer is made up from the following components:
+The user interface of the **PER&vert;FORMER** sequencer is made up from the following components:
 
 - OLED display
 - Rotary encoder with button
@@ -417,6 +428,8 @@ Copy/paste actions are provided in the context menu when holding `SHIFT` + `PAGE
 > Note: Due to memory limitations, the clipboard can only hold one object at a time and shares memory across all different types. This means that copying an object always results in the previously copied object being cleared from the clipboard.
 
 <!-- Pages -->
+
+<!-- page-break -->
 
 <h2 id="pages">Pages</h2>
 
@@ -568,7 +581,7 @@ If a track is in MIDI/CV mode, the following parameters are available:
 | :--- | :--- | :--- |
 | Source | MIDI, USB | MIDI source port (hold `SHIFT` and rotate `ENCODER` to select MIDI channel). |
 | Voices | 1 - 8 | Number of voices. |
-| Voice Config | Pitch, Pitch\|Vel, Pitch\|Vel\|Press | CV signals to generate for each voice. |
+| Voice Config | Pitch, Pitch&vert;Vel, Pitch&vert;Vel&vert;Press | CV signals to generate for each voice. |
 | Pitch Bend | off, 1 - 48 semitones | Pitch bend range. |
 | Mod Range | 1-5V Unipolar, 1-5V Bipolar | CV output voltage range for modulation signals (velocity and pressure). |
 | Retrigger | no, yes | Retrigger voices on each received _Note On_ MIDI message. |
@@ -829,8 +842,6 @@ Note that the pattern indicators at the top-left of the screen change to **SNAP*
 After editing the snapshot, press `F4` to commit the changes back to the original patterns. To commit the changes to a new set of patterns, press `S[1-16]` + `F4`. This will automatically change all tracks to play the selected pattern after the snapshot is committed.
 
 Press `F3` to revert the edits done on the snapshot and go back to playing the set of patterns that have been playing before taking the snapshot. Press `S[1-16]` + `F3` to revert the snapshot but continue playing a new set of patterns.
-
-<h4>Actions</h4>
 
 <!-- Performer -->
 
@@ -1097,6 +1108,8 @@ Press `F5` to show the update tab.
 This tab shows the current version of the firmware and allows to reset to the bootloader to easily initiate the firmware update procedure. See [Firmware Update](#appendix-firmware-update) for more information.
 
 <!-- Appendix -->
+
+<!-- page-break -->
 
 <h2 id="appendix">Appendix</h2>
 

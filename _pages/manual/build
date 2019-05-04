@@ -81,7 +81,7 @@ def generate_toc():
     text = open(MARKDOWN_FILE).read()
     lines = text.split("\n")
     headings = re.findall(r"<h(\d) id=\"([\w-]+)\">(.+)</h\1>", text)
-    toc = ""
+    toc = "\n"
 
     for heading in headings:
         level = int(heading[0])
@@ -90,6 +90,8 @@ def generate_toc():
         if TOC_MIN_LEVEL <= level <= TOC_MAX_LEVEL:
             level -= TOC_MIN_LEVEL
             toc += "%s- [%s](#%s)\n" % (level * "  ", title, anchor)
+
+    toc += "\n"
 
     text = re.sub(r"(<!-- toc-begin -->\n)(.*)(<!-- toc-end -->\n)", r"\g<1>" + toc + r"\g<3>", text, flags=re.DOTALL)
 
