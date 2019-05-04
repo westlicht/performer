@@ -5,7 +5,7 @@ layout: manual
 nav: 20
 ---
 
-<h1>PER&vert;FORMER User Manual</h1>
+<h1>User Manual</h1>
 
 <!-- pdf-exclude-begin -->
 > The user manual is also available as a PDF [here](./manual.pdf).
