@@ -21,6 +21,7 @@ blockquote {
     background-color: #eee;
     border: none;
     padding: 1em;
+    margin: 1em 10%;
 }
 
 blockquote > p {
@@ -41,4 +42,11 @@ pre {
     border: none;
     background-color: #eee;
     padding: 1em;
+}
+
+img {
+    object-fit: contain;
+    margin: 1em 10%;
+    /* margin: 1em 0; */
+    width: 80%;
 }
