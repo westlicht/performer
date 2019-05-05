@@ -1117,7 +1117,7 @@ This tab shows the current version of the firmware and allows to reset to the bo
 
 <h3 id="appendix-recording">Recording</h3>
 
-Instead of entering note sequences one step at a time, an external MIDI keyboard can be used to speed up the process. There are two ways for recording sequences. First, sequences can be recorded live by just playing the keyboard while the sequencer is running. Secondly, step recording allows to quickly enter one note after the other using a keyboard, either when the sequencer is running or stopped. The recording mode is selected on the [Project](#pages-project) page. Recording is armed and disarmed using `SHIFT` + `PLAY`.
+Instead of entering note sequences one step at a time, an external MIDI keyboard can be used to speed up the process. There are two ways for recording sequences. First, sequences can be recorded live by just playing the keyboard while the sequencer is running. Secondly, step recording allows to quickly enter one note after the other using a keyboard, either when the sequencer is running or stopped. The recording mode is selected on the [Project](#pages-project) page. Recording is armed and disarmed using `PAGE` + `PLAY`.
 
 <h4>Live Recording</h4>
 
