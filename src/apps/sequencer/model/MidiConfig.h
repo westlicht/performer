@@ -13,9 +13,9 @@ class MidiConfig {
 public:
     void edit(int value, bool shift) {
         if (shift) {
-            editChannel(value, false);
-        } else {
             editPort(value, false);
+        } else {
+            setIndexed(indexed() + value);
         }
     }
 
@@ -91,6 +91,16 @@ public:
     }
 
 private:
+    int indexed() const {
+        return int(port()) * (IsSource ? 17 : 16) + channel() + (IsSource ? 1 : 0);
+    }
+
+    void setIndexed(int index) {
+        index = clamp(index, 0, int(Types::MidiPort::Last) * (IsSource ? 17 : 16) - 1);
+        setPort(Types::MidiPort(index / (IsSource ? 17 : 16)));
+        setChannel(index % (IsSource ? 17 : 16) - (IsSource ? 1 : 0));
+    }
+
     Types::MidiPort _port;
     int8_t _channel;
 };
