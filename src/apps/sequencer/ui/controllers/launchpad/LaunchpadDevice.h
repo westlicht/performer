@@ -33,6 +33,7 @@ public:
     };
 
     LaunchpadDevice();
+    virtual ~LaunchpadDevice();
 
     // midi handling
 

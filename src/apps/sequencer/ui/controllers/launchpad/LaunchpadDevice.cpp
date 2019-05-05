@@ -28,6 +28,9 @@ LaunchpadDevice::LaunchpadDevice()
     clearLeds();
 }
 
+LaunchpadDevice::~LaunchpadDevice() {
+}
+
 void LaunchpadDevice::recvMidi(const MidiMessage &message) {
     if (message.isNoteOn()) {
         int index = message.note();
