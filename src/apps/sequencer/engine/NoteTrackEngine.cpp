@@ -234,18 +234,19 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
     if (stepGate) {
         uint32_t stepLength = (divisor * evalStepLength(step, _noteTrack.lengthBias())) / NoteSequence::Length::Range;
+        uint32_t gateOffset = (divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
         int stepRetrigger = evalStepRetrigger(step, _noteTrack.retriggerProbabilityBias());
         if (stepRetrigger > 1) {
             uint32_t retriggerLength = divisor / stepRetrigger;
-            uint32_t stepOffset = 0;
-            while (stepRetrigger-- > 0 && stepOffset <= stepLength) {
-                _gateQueue.push({ applySwing(tick + stepOffset), true });
-                _gateQueue.push({ applySwing(tick + stepOffset + retriggerLength / 2), false });
-                stepOffset += retriggerLength;
+            uint32_t retriggerOffset = 0;
+            while (stepRetrigger-- > 0 && retriggerOffset <= stepLength) {
+                _gateQueue.pushReplace({ applySwing(tick + gateOffset + retriggerOffset), true });
+                _gateQueue.pushReplace({ applySwing(tick + gateOffset + retriggerOffset + retriggerLength / 2), false });
+                retriggerOffset += retriggerLength;
             }
         } else {
-            _gateQueue.push({ applySwing(tick), true });
-            _gateQueue.push({ applySwing(tick + stepLength), false });
+            _gateQueue.pushReplace({ applySwing(tick + gateOffset), true });
+            _gateQueue.pushReplace({ applySwing(tick + gateOffset + stepLength), false });
         }
     }
 
