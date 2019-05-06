@@ -583,9 +583,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
             step.gateOffset(), NoteSequence::GateOffset::Min - 1, NoteSequence::GateOffset::Max + 1
         );
         str.reset();
-        if (step.gateOffset() != 0) {
-            str("%+d/%d", step.gateOffset(), NoteSequence::GateOffset::Max + 1);
-        }
+        str("%.1f%%", 100.f * step.gateOffset() / float(NoteSequence::GateOffset::Max + 1));
         canvas.setColor(0xf);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
