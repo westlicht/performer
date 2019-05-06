@@ -160,6 +160,8 @@ Each step is defined through a number of properties, also called layers, to cont
 
 The _Gate_ layer defines what steps of the sequence create a gate signal. To introduce some random variation, the _Gate Probability_ layer is used to control how often an active gate is actually generated.
 
+The _Gate Offset_ layer is used to offset gate signals into the future, adding a delay before triggering a note.
+
 The _Length_ layer controls the duration of the gate signal and allows to tie notes together if set to the maximum. Again, to introduce some random variation, the _Length Variation Range_ and _Length Variation Probability_ layers control a maximum random deviation of the gate length and the probability of actually randomizing the gate length.
 
 The _Retrigger_ layer allows each gate signal to be retriggered multiple times within the duration of the step, allowing for faster gates and ratcheting effects. Retriggering can also be randomized using the _Retrigger Probability_ layer.
@@ -659,7 +661,7 @@ The following layers are available in _Note_ mode:
 
 | Button | Layers |
 | :--- | :--- |
-| `F1` | Gate, Gate Probability, Slide |
+| `F1` | Gate, Gate Probability, Gate Offset, Slide |
 | `F2` | Retrigger, Retrigger Probability |
 | `F3` | Length, Length Variation Range, Length Variation Probability |
 | `F4` | Note, Note Variation Range, Note Variation Probability |
