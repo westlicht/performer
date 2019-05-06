@@ -231,33 +231,35 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
     const auto &step = evalSequence.step(_currentStep);
 
+    uint32_t gateOffset = (divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
+
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
     if (stepGate) {
         uint32_t stepLength = (divisor * evalStepLength(step, _noteTrack.lengthBias())) / NoteSequence::Length::Range;
         int stepRetrigger = evalStepRetrigger(step, _noteTrack.retriggerProbabilityBias());
         if (stepRetrigger > 1) {
             uint32_t retriggerLength = divisor / stepRetrigger;
-            uint32_t stepOffset = 0;
-            while (stepRetrigger-- > 0 && stepOffset <= stepLength) {
-                _gateQueue.push({ applySwing(tick + stepOffset), true });
-                _gateQueue.push({ applySwing(tick + stepOffset + retriggerLength / 2), false });
-                stepOffset += retriggerLength;
+            uint32_t retriggerOffset = 0;
+            while (stepRetrigger-- > 0 && retriggerOffset <= stepLength) {
+                _gateQueue.pushReplace({ applySwing(tick + gateOffset + retriggerOffset), true });
+                _gateQueue.pushReplace({ applySwing(tick + gateOffset + retriggerOffset + retriggerLength / 2), false });
+                retriggerOffset += retriggerLength;
             }
         } else {
-            _gateQueue.push({ applySwing(tick), true });
-            _gateQueue.push({ applySwing(tick + stepLength), false });
+            _gateQueue.pushReplace({ applySwing(tick + gateOffset), true });
+            _gateQueue.pushReplace({ applySwing(tick + gateOffset + stepLength), false });
         }
     }
 
     if (stepGate || _noteTrack.cvUpdateMode() == NoteTrack::CvUpdateMode::Always) {
         const auto &scale = evalSequence.selectedScale(_model.project().scale());
         int rootNote = evalSequence.selectedRootNote(_model.project().rootNote());
-        _cvQueue.push({ applySwing(tick), evalStepNote(step, _noteTrack.noteProbabilityBias(), scale, rootNote, octave, transpose), step.slide() });
+        _cvQueue.push({ applySwing(tick + gateOffset), evalStepNote(step, _noteTrack.noteProbabilityBias(), scale, rootNote, octave, transpose), step.slide() });
     }
 }
 
 void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
-    if (!_engine.state().recording() || _model.project().recordMode() == Types::RecordMode::StepRecord || _sequenceState.lastStep() < 0) {
+    if (!_engine.state().recording() || _model.project().recordMode() == Types::RecordMode::StepRecord || _sequenceState.prevStep() < 0) {
         return;
     }
 
@@ -300,14 +302,14 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         if (noteStart <= stepStart + margin && noteEnd >= stepStart + margin) {
             int length = std::min(noteEnd, stepEnd) - std::max(noteStart, stepStart);
             length = (length * NoteSequence::Length::Range) / divisor;
-            writeStep(_sequenceState.lastStep(), note, length);
+            writeStep(_sequenceState.prevStep(), note, length);
             written = true;
             break;
         }
     }
 
     if (isSelected() && !written && _model.project().recordMode() == Types::RecordMode::Overwrite) {
-        clearStep(_sequenceState.lastStep());
+        clearStep(_sequenceState.prevStep());
     }
 }
 

@@ -11,6 +11,23 @@ void SequencePainter::drawLoopEnd(Canvas &canvas, int x, int y, int w) {
     canvas.point(x - 1, y);
 }
 
+void SequencePainter::drawOffset(Canvas &canvas, int x, int y, int w, int h, int offset, int minOffset, int maxOffset) {
+    auto remap = [w, minOffset, maxOffset] (int value) {
+        return ((w - 1) * (value - minOffset)) / (maxOffset - minOffset);
+    };
+
+    canvas.setBlendMode(BlendMode::Set);
+
+    canvas.setColor(0x7);
+    canvas.fillRect(x, y, w, h);
+
+    canvas.setColor(0);
+    canvas.vline(x + remap(0), y, h);
+
+    canvas.setColor(0xf);
+    canvas.vline(x + remap(offset), y, h);
+}
+
 void SequencePainter::drawRetrigger(Canvas &canvas, int x, int y, int w, int h, int retrigger, int maxRetrigger) {
     canvas.setBlendMode(BlendMode::Set);
 

@@ -7,6 +7,7 @@ public:
     static void drawLoopStart(Canvas &canvas, int x, int y, int w);
     static void drawLoopEnd(Canvas &canvas, int x, int y, int w);
 
+    static void drawOffset(Canvas &canvas, int x, int y, int w, int h, int offset, int minOffset, int maxOffset);
     static void drawRetrigger(Canvas &canvas, int x, int y, int w, int h, int retrigger, int maxRetrigger);
     static void drawProbability(Canvas &canvas, int x, int y, int w, int h, int probability, int maxProbability);
     static void drawLength(Canvas &canvas, int x, int y, int w, int h, int length, int maxLength);

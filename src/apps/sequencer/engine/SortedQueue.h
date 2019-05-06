@@ -29,20 +29,12 @@ public:
     }
 
     void push(const T &value) {
-        Compare compare;
-        size_t pos = _write;
-        _queue[pos] = value;
+        insert(value);
+    }
 
-        // insert sort
-        size_t cur = _write;
-        size_t prev = decrease(cur);
-        while (cur != _read && compare(_queue[cur], _queue[prev])) {
-            std::swap(_queue[cur], _queue[prev]);
-            cur = prev;
-            prev = decrease(cur);
-        }
-
-        _write = increase(_write);
+    void pushReplace(const T &value) {
+        size_t pos = insert(value);
+        _write = increase(pos);
     }
 
     const T &front() const { return _queue[_read]; }
@@ -64,6 +56,26 @@ public:
     }
 
 private:
+    // insert into queue and return index of inserted value
+    size_t insert(const T &value) {
+        Compare compare;
+        size_t pos = _write;
+        _queue[pos] = value;
+
+        // insert sort
+        size_t cur = _write;
+        size_t prev = decrease(cur);
+        while (cur != _read && compare(_queue[cur], _queue[prev])) {
+            std::swap(_queue[cur], _queue[prev]);
+            cur = prev;
+            prev = decrease(cur);
+        }
+
+        _write = increase(_write);
+
+        return cur;
+    }
+
     inline size_t increase(size_t pos) const {
         return (pos + 1) % Capacity;
     }

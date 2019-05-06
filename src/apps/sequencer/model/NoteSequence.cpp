@@ -13,6 +13,9 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
         return { 0, 1 };
     case Layer::Slide:
         return { 0, 1 };
+    case Layer::GateOffset:
+        // TODO: allow negative gate delay in the future
+        return { 0, GateOffset::Max };
     CASE(GateProbability)
     CASE(Retrigger)
     CASE(RetriggerProbability)
@@ -39,6 +42,8 @@ int NoteSequence::Step::layerValue(Layer layer) const {
         return slide() ? 1 : 0;
     case Layer::GateProbability:
         return gateProbability();
+    case Layer::GateOffset:
+        return gateOffset();
     case Layer::Retrigger:
         return retrigger();
     case Layer::RetriggerProbability:
@@ -73,6 +78,9 @@ void NoteSequence::Step::setLayerValue(Layer layer, int value) {
     case Layer::GateProbability:
         setGateProbability(value);
         break;
+    case Layer::GateOffset:
+        setGateOffset(value);
+        break;
     case Layer::Retrigger:
         setRetrigger(value);
         break;
@@ -106,10 +114,11 @@ void NoteSequence::Step::clear() {
     _data0.raw = 0;
     _data1.raw = 1;
     setGate(false);
+    setGateProbability(GateProbability::Max);
+    setGateOffset(0);
     setSlide(false);
     setRetrigger(0);
     setRetriggerProbability(RetriggerProbability::Max);
-    setGateProbability(GateProbability::Max);
     setLength(Length::Max / 2);
     setLengthVariationRange(0);
     setLengthVariationProbability(LengthVariationProbability::Max);
@@ -130,6 +139,9 @@ void NoteSequence::Step::read(ReadContext &context) {
     reader.read(_data1.raw);
     if (reader.dataVersion() < Project::Version5) {
         _data1.raw &= 0x1f;
+    }
+    if (reader.dataVersion() < Project::Version7) {
+        setGateOffset(0);
     }
 }
 

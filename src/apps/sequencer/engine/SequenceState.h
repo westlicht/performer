@@ -9,7 +9,7 @@
 class SequenceState {
 public:
     int step() const { return _step; }
-    int lastStep() const { return _lastStep; }
+    int prevStep() const { return _prevStep; }
     int direction() const { return _direction; }
 
     void reset();
@@ -21,6 +21,6 @@ private:
     void advanceRandomWalk(int firstStep, int lastStep, Random &rng);
 
     int8_t _step;
-    int8_t _lastStep;
+    int8_t _prevStep;
     int8_t _direction;
 };
