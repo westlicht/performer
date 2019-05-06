@@ -92,7 +92,8 @@ public:
 
         int gateOffset() const { return GateOffset::Min + _data1.gateOffset; }
         void setGateOffset(int gateOffset) {
-            _data1.gateOffset = GateOffset::clamp(gateOffset) - GateOffset::Min;
+            // TODO: allow negative gate delay in the future
+            _data1.gateOffset = std::max(0, GateOffset::clamp(gateOffset)) - GateOffset::Min;
         }
 
         // slide
