@@ -73,26 +73,45 @@ static Model model;
 static CCMRAM_BSS Engine engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi);
 static CCMRAM_BSS Ui ui(model, engine, lcd, blm, encoder);
 
+
+static constexpr uint32_t TaskAliveCount = 4;
+static constexpr uint32_t TaskAliveMask = (1 << TaskAliveCount) - 1;
+static uint32_t taskAliveState;
+
+static void taskAlive(uint32_t task) {
+    os::InterruptLock lock;
+    taskAliveState |= (1 << task);
+    if ((taskAliveState & TaskAliveMask) == TaskAliveMask) {
+        System::resetWatchdog();
+        taskAliveState = 0;
+    }
+}
+
 static CCMRAM_BSS os::PeriodicTask<CONFIG_DRIVER_TASK_STACK_SIZE> driverTask("driver", CONFIG_DRIVER_TASK_PRIORITY, os::time::ms(1), [] () {
     shiftRegister.process();
     blm.process();
     encoder.process();
+    taskAlive(0);
 });
 
 static CCMRAM_BSS os::PeriodicTask<CONFIG_ENGINE_TASK_STACK_SIZE> engineTask("engine", CONFIG_ENGINE_TASK_PRIORITY, os::time::ms(1), [] () {
     engine.update();
+    taskAlive(1);
 });
 
 static CCMRAM_BSS os::PeriodicTask<CONFIG_USBH_TASK_STACK_SIZE> usbhTask("usbh", CONFIG_USBH_TASK_PRIORITY, os::time::ms(1), [] () {
     usbh.process();
+    taskAlive(2);
 });
 
 static CCMRAM_BSS os::PeriodicTask<CONFIG_UI_TASK_STACK_SIZE> uiTask("ui", CONFIG_UI_TASK_PRIORITY, os::time::ms(1), [] () {
     ui.update();
+    taskAlive(3);
 });
 
 static os::PeriodicTask<CONFIG_FILE_TASK_STACK_SIZE> fsTask("file", CONFIG_FILE_TASK_PRIORITY, os::time::ms(10), [] () {
     FileManager::processTask();
+    // no task alive handling because processTask() can take a long time to complete
 });
 
 #if CONFIG_ENABLE_PROFILER || CONFIG_ENABLE_TASK_PROFILER
@@ -108,10 +127,21 @@ static CCMRAM_BSS os::PeriodicTask<CONFIG_PROFILER_TASK_STACK_SIZE> profilerTask
 
 static void assert_handler(const char *filename, int line, const char *msg) {
     ui.showAssert(filename, line, msg);
+    // keep watchdog satisfied but reset on encoder down
+    while (1) {
+        System::resetWatchdog();
+        encoder.process();
+        Encoder::Event event;
+        if (encoder.nextEvent(event) && event == Encoder::Event::Down) {
+            System::reset();
+            while (1) {}
+        }
+    }
 }
 
 int main(void) {
     System::init();
+    System::startWatchdog(1000);
     Console::init();
     HighResolutionTimer::init();
 
@@ -139,6 +169,8 @@ int main(void) {
 
     engine.init();
     ui.init();
+
+    System::resetWatchdog();
 
 	os::startScheduler();
 }

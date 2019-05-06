@@ -22,9 +22,19 @@ void System::init() {
 }
 
 void System::reset() {
+    iwdg_set_period_ms(0);
     iwdg_start();
 }
 
 void System::tick() {
     ++_ticks;
+}
+
+void System::startWatchdog(uint32_t ms) {
+    iwdg_set_period_ms(ms);
+    iwdg_start();
+}
+
+void System::resetWatchdog() {
+    iwdg_reset();
 }

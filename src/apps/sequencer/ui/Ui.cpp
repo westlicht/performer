@@ -116,6 +116,8 @@ void Ui::showAssert(const char *filename, int line, const char *msg) {
         _canvas.drawTextMultiline(4, 40, CONFIG_LCD_WIDTH - 8, str);
     }
 
+    _canvas.drawText(4, 58, "PRESS ENCODER TO RESET");
+
     _lcd.draw(_frameBuffer.data());
 }
 

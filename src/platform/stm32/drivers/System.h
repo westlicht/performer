@@ -12,4 +12,7 @@ public:
 
     static uint32_t ticks() { return _ticks; }
     static void tick();
+
+    static void startWatchdog(uint32_t ms);
+    static void resetWatchdog();
 };
