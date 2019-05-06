@@ -36,5 +36,4 @@ exclude:
   - _pages/manual/config
   - _pages/manual/resources
   - _pages/manual/build
-  - _pages/manual/build-pdf
   

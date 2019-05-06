@@ -13,7 +13,7 @@ nav: 20
 
 <!-- TOC -->
 
-<h2>Table Of Contents</h2>
+<h4>Table Of Contents</h4>
 
 <!-- toc-begin -->
 

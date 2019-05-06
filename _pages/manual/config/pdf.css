@@ -10,6 +10,7 @@ a {
 table {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
+    margin: 2em 0;
 }
 
 th, td  {
@@ -46,7 +47,6 @@ pre {
 
 img {
     object-fit: contain;
-    margin: 1em 10%;
-    /* margin: 1em 0; */
+    margin: 2em 10%;
     width: 80%;
 }
