@@ -36,6 +36,8 @@ public:
 
     virtual Routing::Target routingTarget(int row) const override {
         switch (Item(row)) {
+        case SlideTime:
+            return Routing::Target::SlideTime;
         case Rotate:
             return Routing::Target::Rotate;
         default:
@@ -47,6 +49,7 @@ private:
     enum Item {
         PlayMode,
         FillMode,
+        SlideTime,
         Rotate,
         Last
     };
@@ -55,6 +58,7 @@ private:
         switch (item) {
         case PlayMode:  return "Play Mode";
         case FillMode:  return "Fill Mode";
+        case SlideTime: return "Slide Time";
         case Rotate:    return "Rotate";
         case Last:      break;
         }
@@ -73,6 +77,9 @@ private:
         case FillMode:
             _track->printFillMode(str);
             break;
+        case SlideTime:
+            _track->printSlideTime(str);
+            break;
         case Rotate:
             _track->printRotate(str);
             break;
@@ -88,6 +95,9 @@ private:
             break;
         case FillMode:
             _track->editFillMode(value, shift);
+            break;
+        case SlideTime:
+            _track->editSlideTime(value, shift);
             break;
         case Rotate:
             _track->editRotate(value, shift);
