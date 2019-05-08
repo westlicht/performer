@@ -121,7 +121,6 @@ void Engine::update() {
     _routingEngine.update();
 
     uint32_t tick;
-    bool updateOutputs = true;
     while (_clock.checkTick(&tick)) {
         _tick = tick;
 
@@ -132,20 +131,14 @@ void Engine::update() {
             trackEngine->tick(tick);
         }
 
-        updateTrackOutputs();
-        updateOutputs = false;
-
         _midiOutputEngine.tick(tick);
-    }
-
-    if (updateOutputs) {
-        updateTrackOutputs();
     }
 
     for (auto trackEngine : _trackEngines) {
         trackEngine->update(dt);
     }
 
+    updateTrackOutputs();
     updateOverrides();
 
     // update cv/gate outputs
