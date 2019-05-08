@@ -569,9 +569,10 @@ If a track is in _Curve_, the following parameters are available:
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
 | Fill Mode | None, Gates, Next Pattern | This parameter currently has no effect. |
+| Slide Time | 0% - 100% | Global slide time (slew limiter) applied to curve. |
 | Rotate | [Rotation](#appendix-rotation) | Amount of rotation applied to the sequence. |
 
-> Note: _Rotate_ is a routable parameter.
+> Note: _Slide Time_ and _Rotate_ are routable parameters.
 
 <h4>MIDI/CV Track</h4>
 
