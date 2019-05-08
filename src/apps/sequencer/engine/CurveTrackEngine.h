@@ -46,5 +46,6 @@ private:
     int _currentStep;
     float _currentStepFraction;
 
-    float _cvOutput;
+    float _cvOutput = 0.f;
+    float _cvOutputTarget = 0.f;
 };

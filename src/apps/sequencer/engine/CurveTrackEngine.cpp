@@ -70,6 +70,13 @@ void CurveTrackEngine::tick(uint32_t tick) {
 }
 
 void CurveTrackEngine::update(float dt) {
+    if (_curveTrack.slideTime() > 0) {
+        float factor = 1.f - 0.01f * _curveTrack.slideTime();
+        factor = 500.f * factor * factor;
+        _cvOutput += (_cvOutputTarget - _cvOutput) * std::min(1.f, dt * factor);
+    } else {
+        _cvOutput = _cvOutputTarget;
+    }
 }
 
 void CurveTrackEngine::changePattern() {
@@ -92,7 +99,7 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     float value = evalStepShape(step, _currentStepFraction);
     const auto range = Types::voltageRangeInfo(sequence.range());
     value = range->lo + value * (range->hi - range->lo);
-    _cvOutput = value;
+    _cvOutputTarget = value;
 
-    _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutput);
+    _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutputTarget);
 }

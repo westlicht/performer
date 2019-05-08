@@ -33,7 +33,10 @@ public:
     // added NoteSequence::Step::gateOffset
     static constexpr uint32_t Version7 = 7;
 
-    static constexpr uint32_t Version = Version7;
+    // added CurveTrack::slideTime
+    static constexpr uint32_t Version8 = 8;
+
+    static constexpr uint32_t Version = Version8;
 
     //----------------------------------------
     // Types

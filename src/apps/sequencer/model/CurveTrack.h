@@ -48,6 +48,24 @@ public:
         str(Types::fillModeName(fillMode()));
     }
 
+    // slideTime
+
+    int slideTime() const { return _slideTime.get(isRouted(Routing::Target::SlideTime)); }
+    void setSlideTime(int slideTime, bool routed = false) {
+        _slideTime.set(clamp(slideTime, 0, 100), routed);
+    }
+
+    void editSlideTime(int value, bool shift) {
+        if (!isRouted(Routing::Target::SlideTime)) {
+            setSlideTime(ModelUtils::adjustedByStep(slideTime(), value, 5, !shift));
+        }
+    }
+
+    void printSlideTime(StringBuilder &str) const {
+        _routed.print(str, Routing::Target::SlideTime);
+        str("%d%%", slideTime());
+    }
+
     // rotate
 
     int rotate() const { return _rotate.get(isRouted(Routing::Target::Rotate)); }
@@ -96,6 +114,7 @@ public:
 private:
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
+    Routable<uint8_t> _slideTime;
     Routable<int8_t> _rotate;
 
     RoutableSet<Routing::Target::TrackFirst, Routing::Target::TrackLast> _routed;
