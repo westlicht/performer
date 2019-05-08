@@ -22,7 +22,7 @@
 #define CONFIG_ENABLE_PROFILER          0
 #define CONFIG_ENABLE_TASK_PROFILER     1
 
-// Sanitzation
+// Sanitization
 #define CONFIG_ENABLE_SANITIZE          1
 
 // USB host
