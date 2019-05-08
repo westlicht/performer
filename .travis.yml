@@ -54,6 +54,9 @@ matrix:
       - printf '#!/bin/sh\nmake setup_www\n(cd build/sim/www && make)' > build-www.sh
       - chmod a+x build-www.sh
       - docker exec -it emscripten bash ./build-www.sh
-      after_success:
       # Deploy to github pages
-      - make deploy-simulator
+      deploy:
+        provider: script
+        script: make deploy-simulator
+        on:
+          tags: true
