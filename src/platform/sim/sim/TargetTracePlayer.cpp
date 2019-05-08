@@ -29,7 +29,7 @@ struct TracePlayer : public TracePlayerBase {
         }
     }
 
-    int pos = 0;
+    size_t pos = 0;
     const T &trace;
     std::function<void(const Record &)> func;
 };
