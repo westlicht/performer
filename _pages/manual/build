@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import os
-from subprocess import call
+import shutil
+from subprocess import call, DEVNULL
 import re
 import json
 
@@ -24,6 +25,14 @@ def process_images():
 
     def outfile(filename):
         return os.path.join(IMAGE_OUTPUT_DIR, filename)
+
+    def copyIfChanged(infile, outfile):
+        comparefile = "_compare.png"
+        if call(["compare", "-quiet", "-metric", "ae", infile, outfile, comparefile], stdout=DEVNULL, stderr=DEVNULL) == 1:
+            shutil.copyfile(infile, outfile)
+        else:
+            os.remove(infile)
+        os.remove(comparefile)
 
     pages = [
         "page-clock.png",
@@ -66,14 +75,18 @@ def process_images():
 
     print("Processing images ...")
 
+    tmpfile = "tmp.png"
+
     # rescale page images
     for filename in pages:
         print("Resizing %s" % (filename))
-        call(["convert", infile(filename), *COLORIZE, "-filter", "Box", "-resize", "512x128", outfile(filename)])
+        call(["convert", infile(filename), *COLORIZE, "-filter", "Box", "-resize", "512x128", tmpfile])
+        copyIfChanged(tmpfile, outfile(filename))
 
     # create section images
     def section_image(filename):
-        call(["convert", infile("page-layout-mode.png"), *COLORIZE, "-filter", "Box", "-resize", "512x128", infile(filename), "-compose", "lighten", "-composite", outfile(filename)])
+        call(["convert", infile("page-layout-mode.png"), *COLORIZE, "-filter", "Box", "-resize", "512x128", infile(filename), "-compose", "lighten", "-composite", tmpfile])
+        copyIfChanged(tmpfile, outfile(filename))
 
     section_image("section-header.png")
     section_image("section-main.png")
