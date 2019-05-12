@@ -24,8 +24,8 @@ public:
     static const char *voiceConfigName(VoiceConfig voiceConfig) {
         switch (voiceConfig) {
         case VoiceConfig::Pitch:                return "Pitch";
-        case VoiceConfig::PitchVelocity:        return "Pitch|Vel";
-        case VoiceConfig::PitchVelocityPressure:return "Pitch|Vel|Press";
+        case VoiceConfig::PitchVelocity:        return "Pitch+Vel";
+        case VoiceConfig::PitchVelocityPressure:return "Pitch+Vel+Press";
         case VoiceConfig::Last:                 break;
         }
         return nullptr;
