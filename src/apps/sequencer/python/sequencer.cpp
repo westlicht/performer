@@ -262,6 +262,7 @@ void register_sequencer(py::module &m) {
         .def_property("pitchBendRange", &MidiCvTrack::pitchBendRange, &MidiCvTrack::setPitchBendRange)
         .def_property("modulationRange", &MidiCvTrack::modulationRange, &MidiCvTrack::setModulationRange)
         .def_property("retrigger", &MidiCvTrack::retrigger, &MidiCvTrack::setRetrigger)
+        .def_property_readonly("arpeggiator", [] (MidiCvTrack &midiCvTrack) { return &midiCvTrack.arpeggiator(); })
         .def("clear", &MidiCvTrack::clear)
     ;
 
@@ -269,6 +270,35 @@ void register_sequencer(py::module &m) {
         .value("Pitch", MidiCvTrack::VoiceConfig::Pitch)
         .value("PitchVelocity", MidiCvTrack::VoiceConfig::PitchVelocity)
         .value("PitchVelocityPressure", MidiCvTrack::VoiceConfig::PitchVelocityPressure)
+        .export_values()
+    ;
+
+    // ------------------------------------------------------------------------
+    // Arpeggiator
+    // ------------------------------------------------------------------------
+
+    py::class_<Arpeggiator> arpeggiator(m, "Arpeggiator");
+    arpeggiator
+        .def_property("enabled", &Arpeggiator::enabled, &Arpeggiator::setEnabled)
+        .def_property("hold", &Arpeggiator::hold, &Arpeggiator::setHold)
+        .def_property("mode", &Arpeggiator::mode, &Arpeggiator::setMode)
+        .def_property("divisor", &Arpeggiator::divisor, &Arpeggiator::setDivisor)
+        .def_property("gateLength", &Arpeggiator::gateLength, &Arpeggiator::setGateLength)
+        .def_property("octaves", &Arpeggiator::octaves, &Arpeggiator::setOctaves)
+        .def("clear", &Arpeggiator::clear)
+    ;
+
+    py::enum_<Arpeggiator::Mode>(arpeggiator, "Mode")
+        .value("PlayOrder", Arpeggiator::Mode::PlayOrder)
+        .value("Up", Arpeggiator::Mode::Up)
+        .value("Down", Arpeggiator::Mode::Down)
+        .value("UpDown", Arpeggiator::Mode::UpDown)
+        .value("DownUp", Arpeggiator::Mode::DownUp)
+        .value("UpAndDown", Arpeggiator::Mode::UpAndDown)
+        .value("DownAndUp", Arpeggiator::Mode::DownAndUp)
+        .value("Converge", Arpeggiator::Mode::Converge)
+        .value("Diverge", Arpeggiator::Mode::Diverge)
+        .value("Random", Arpeggiator::Mode::Random)
         .export_values()
     ;
 
