@@ -23,6 +23,7 @@ set(sources
     # intro
     intro/Intro.cpp
     # model
+    model/Arpeggiator.cpp
     model/Calibration.cpp
     model/ClipBoard.cpp
     model/ClockSetup.cpp

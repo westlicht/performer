@@ -7,6 +7,7 @@ void MidiCvTrack::clear() {
     setPitchBendRange(2);
     setModulationRange(Types::VoltageRange::Unipolar5V);
     setRetrigger(false);
+    _arpeggiator.clear();
 }
 
 void MidiCvTrack::gateOutputName(int index, StringBuilder &str) const {
@@ -34,6 +35,7 @@ void MidiCvTrack::write(WriteContext &context) const {
     writer.write(_pitchBendRange);
     writer.write(_modulationRange);
     writer.write(_retrigger);
+    _arpeggiator.write(context);
 }
 
 void MidiCvTrack::read(ReadContext &context) {
@@ -44,4 +46,5 @@ void MidiCvTrack::read(ReadContext &context) {
     reader.read(_pitchBendRange);
     reader.read(_modulationRange);
     reader.read(_retrigger);
+    _arpeggiator.read(context);
 }

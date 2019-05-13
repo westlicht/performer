@@ -5,6 +5,7 @@
 #include "MidiConfig.h"
 #include "ModelUtils.h"
 #include "Serialize.h"
+#include "Arpeggiator.h"
 
 #include "core/math/Math.h"
 
@@ -119,6 +120,11 @@ public:
         ModelUtils::printYesNo(str, retrigger());
     }
 
+    // arpeggiator
+
+    const Arpeggiator &arpeggiator() const { return _arpeggiator; }
+          Arpeggiator &arpeggiator()       { return _arpeggiator; }
+
     //----------------------------------------
     // Methods
     //----------------------------------------
@@ -140,4 +146,5 @@ private:
     uint8_t _pitchBendRange;
     Types::VoltageRange _modulationRange;
     bool _retrigger;
+    Arpeggiator _arpeggiator;
 };
