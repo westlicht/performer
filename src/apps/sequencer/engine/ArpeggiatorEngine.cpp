@@ -53,7 +53,7 @@ void ArpeggiatorEngine::tick(uint32_t tick) {
             if (_stepIndex == 0) {
                 _octaveIndex = (_octaveIndex + 1) % _arpeggiator.octaves();
             }
-            uint32_t length = std::max(1u, (divisor * _arpeggiator.gateLength()) / 100);
+            uint32_t length = std::max(uint32_t(1), uint32_t((divisor * _arpeggiator.gateLength()) / 100));
             uint8_t note = uint8_t(clamp(_notes[_noteIndex].note + _octaveIndex * 12, 0, 127));
             _eventQueue.push({ Event::NoteOn, tick, note, 127 });
             _eventQueue.push({ Event::NoteOff, tick + length, note, 0 });
