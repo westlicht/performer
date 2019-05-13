@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TrackEngine.h"
+#include "ArpeggiatorEngine.h"
 
 #include "model/Track.h"
 
@@ -8,7 +9,8 @@ class MidiCvTrackEngine : public TrackEngine {
 public:
     MidiCvTrackEngine(Engine &engine, const Model &model, Track &track, const TrackEngine *linkedTrackEngine) :
         TrackEngine(engine, model, track, linkedTrackEngine),
-        _midiCvTrack(track.midiCvTrack())
+        _midiCvTrack(track.midiCvTrack()),
+        _arpeggiatorEngine(_midiCvTrack.arpeggiator())
     {
         reset();
     }
@@ -26,6 +28,9 @@ public:
     virtual float cvOutput(int index) const override;
 
 private:
+    void updateArpeggiator();
+    void tickArpeggiator(uint32_t tick);
+
     float noteToCv(int note) const;
     float valueToCv(int value) const;
     float pitchBendToCv(int value) const;
@@ -33,6 +38,9 @@ private:
     struct Voice;
 
     void resetVoices();
+    void addVoice(int note, int velocity);
+    void removeVoice(int note);
+
     Voice *allocateVoice(int note, int numVoices);
     void freeVoice(int note, int numVoices);
 
@@ -47,6 +55,11 @@ private:
     static constexpr int RetriggerDelay = 2;
 
     const MidiCvTrack &_midiCvTrack;
+
+    ArpeggiatorEngine _arpeggiatorEngine;
+    bool _arpeggiatorEnabled;
+    float _arpeggiatorTime;
+    uint32_t _arpeggiatorTick;
 
     struct Voice {
         uint32_t ticks = 0;

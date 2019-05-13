@@ -1,5 +1,5 @@
 #include "MidiCvTrackEngine.h"
-
+#include "Engine.h"
 #include "MidiUtils.h"
 
 #include "os/os.h"
@@ -9,6 +9,7 @@
 
 
 void MidiCvTrackEngine::reset() {
+    _arpeggiatorEnabled = false;
     _activity = false;
     _pitchBendCv = 0.f;
     _channelPressureCv = 0.f;
@@ -16,40 +17,64 @@ void MidiCvTrackEngine::reset() {
 }
 
 void MidiCvTrackEngine::tick(uint32_t tick) {
+    if (_arpeggiatorEnabled) {
+        tickArpeggiator(tick);
+    }
 }
 
 void MidiCvTrackEngine::update(float dt) {
+    updateArpeggiator();
+
+    // run arpeggiator even if clock is not running
+    if (_arpeggiatorEnabled && !_engine.clockRunning()) {
+        _arpeggiatorTime += dt;
+        float tickDuration = _engine.clock().tickDuration();
+        while (_arpeggiatorTime > tickDuration) {
+            tickArpeggiator(_arpeggiatorTick);
+            _arpeggiatorTime -= tickDuration;
+            ++_arpeggiatorTick;
+        }
+    }
 }
 
 bool MidiCvTrackEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
     bool consumed = false;
 
-    if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
-        if (message.isNoteOn()) {
-            int note = message.note();
-            auto voice = allocateVoice(note, _midiCvTrack.voices());
-            voice->ticks = os::ticks();
-            voice->note = note;
-            voice->pitchCv = noteToCv(note);
-            voice->velocityCv = valueToCv(message.velocity());
-            voice->pressureCv = 0.f;
-            // printVoices();
-        } else if (message.isNoteOff()) {
-            freeVoice(message.note(), _midiCvTrack.voices());
-            // printVoices();
-        } else if (message.isKeyPressure()) {
-            auto voice = findVoice(0, _voices.size(), message.note());
-            voice->pressureCv = valueToCv(message.keyPressure());
-        } else if (message.isChannelPressure()) {
-            _channelPressureCv = valueToCv(message.channelPressure());
-        } else if (message.isPitchBend()) {
-            _pitchBendCv = pitchBendToCv(message.pitchBend());
+    if (_arpeggiatorEnabled) {
+        if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
+            if (message.isNoteOn()) {
+                _arpeggiatorEngine.noteOn(message.note());
+            } else if (message.isNoteOff()) {
+                _arpeggiatorEngine.noteOff(message.note());
+            }
+
+            consumed = true;
         }
+    } else {
+        if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
+            if (message.isNoteOn()) {
+                addVoice(message.note(), message.velocity());
+                // printVoices();
+            } else if (message.isNoteOff()) {
+                removeVoice(message.note());
+                // printVoices();
+            } else if (message.isKeyPressure()) {
+                auto voice = findVoice(0, _voices.size(), message.note());
+                if (voice) {
+                    voice->pressureCv = valueToCv(message.keyPressure());
+                }
+            } else if (message.isChannelPressure()) {
+                _channelPressureCv = valueToCv(message.channelPressure());
+            } else if (message.isPitchBend()) {
+                _pitchBendCv = pitchBendToCv(message.pitchBend());
+            }
 
-        updateActivity();
+            updateActivity();
 
-        consumed = true;
+            consumed = true;
+        }
     }
+
 
     return consumed;
 }
@@ -83,6 +108,37 @@ float MidiCvTrackEngine::cvOutput(int index) const {
     return 0.f;
 }
 
+void MidiCvTrackEngine::updateArpeggiator() {
+    const auto &arpeggiator = _midiCvTrack.arpeggiator();
+    if (arpeggiator.enabled() && !_arpeggiatorEnabled) {
+        // enable arpeggiator
+        resetVoices();
+        _arpeggiatorEngine.reset();
+        _arpeggiatorEnabled = true;
+        _arpeggiatorTime = 0.f;
+        _arpeggiatorTick = 0;
+    } else if (!arpeggiator.enabled() && _arpeggiatorEnabled) {
+        // disable arpeggiator
+        resetVoices();
+        _arpeggiatorEnabled = false;
+    }
+}
+
+void MidiCvTrackEngine::tickArpeggiator(uint32_t tick) {
+    _arpeggiatorEngine.tick(tick);
+
+    ArpeggiatorEngine::Event event;
+    while (_arpeggiatorEngine.getEvent(tick, event)) {
+        if (event.action == ArpeggiatorEngine::Event::NoteOn) {
+            addVoice(event.note, event.velocity);
+        } else if (event.action == ArpeggiatorEngine::Event::NoteOff) {
+            removeVoice(event.note);
+        }
+
+        updateActivity();
+    }
+}
+
 float MidiCvTrackEngine::noteToCv(int note) const {
     return (note - 60) * (1.f / 12.f);
 }
@@ -100,6 +156,19 @@ void MidiCvTrackEngine::resetVoices() {
     for (auto &voice : _voices) {
         voice.ticks = 0;
     }
+}
+
+void MidiCvTrackEngine::addVoice(int note, int velocity) {
+    auto voice = allocateVoice(note, _midiCvTrack.voices());
+    voice->ticks = os::ticks();
+    voice->note = note;
+    voice->pitchCv = noteToCv(note);
+    voice->velocityCv = valueToCv(velocity);
+    voice->pressureCv = 0.f;
+}
+
+void MidiCvTrackEngine::removeVoice(int note) {
+    freeVoice(note, _midiCvTrack.voices());
 }
 
 MidiCvTrackEngine::Voice *MidiCvTrackEngine::allocateVoice(int note, int numVoices) {
