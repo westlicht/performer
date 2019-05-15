@@ -61,6 +61,8 @@ public:
 
     virtual Routing::Target routingTarget(int row) const override {
         switch (Item(row)) {
+        case Divisor:
+            return Routing::Target::Divisor;
         case FirstStep:
             return Routing::Target::FirstStep;
         case LastStep:

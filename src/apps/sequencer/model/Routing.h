@@ -53,7 +53,8 @@ public:
 
         // Sequence targets
         SequenceFirst,
-        RunMode = SequenceFirst,
+        Divisor = SequenceFirst,
+        RunMode,
         FirstStep,
         LastStep,
         SequenceLast = LastStep,
@@ -80,6 +81,7 @@ public:
         case Target::LengthBias:        return "Length Bias";
         case Target::NoteProbabilityBias: return "Note P. Bias";
 
+        case Target::Divisor:           return "Divisor";
         case Target::RunMode:           return "Run Mode";
         case Target::FirstStep:         return "First Step";
         case Target::LastStep:          return "Last Step";
