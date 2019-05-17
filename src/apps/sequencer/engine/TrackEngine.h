@@ -38,6 +38,7 @@ public:
         changePattern();
     }
 
+    const TrackEngine *linkedTrackEngine() const { return _linkedTrackEngine; }
     void setLinkedTrackEngine(const TrackEngine *linkedTrackEngine) {
         _linkedTrackEngine = linkedTrackEngine;
     }
