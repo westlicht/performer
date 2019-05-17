@@ -239,6 +239,14 @@ public:
     bool isActiveSensing() const { return isRealTimeMessage<ActiveSensing>(status()); }
     bool isReset() const { return isRealTimeMessage<Reset>(status()); }
 
+    // Utilities
+
+    void fixFakeNoteOff() {
+        if (isNoteOn() && velocity() == 0) {
+            _raw[0] = NoteOff | (_raw[0] & 0xf);
+        }
+    }
+
     // Constructor
 
     MidiMessage() = default;

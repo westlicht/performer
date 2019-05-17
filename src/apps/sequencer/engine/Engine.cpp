@@ -535,9 +535,11 @@ void Engine::usbMidiDisconnect() {
 void Engine::receiveMidi() {
     MidiMessage message;
     while (_midi.recv(&message)) {
+        message.fixFakeNoteOff();
         receiveMidi(MidiPort::Midi, message);
     }
     while (_usbMidi.recv(&message)) {
+        message.fixFakeNoteOff();
         receiveMidi(MidiPort::UsbMidi, message);
     }
 
