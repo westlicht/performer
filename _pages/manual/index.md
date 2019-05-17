@@ -92,6 +92,7 @@ The following list describes the key features of the **PER\|FORMER** sequencer:
 - 64 steps per sequence
 - Multiple track and sequence modes
 - Note and modulation sequencing
+- Arpeggiator
 - Snapshot system
 - Sequence generators
 - Advanced clock system
