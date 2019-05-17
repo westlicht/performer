@@ -176,12 +176,13 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             );
             break;
         case Layer::Note: {
+            int rootNote = sequence.selectedRootNote(_model.project().rootNote());
             canvas.setColor(0xf);
             FixedStringBuilder<8> str;
-            scale.noteName(str, step.note(), Scale::Short1);
+            scale.noteName(str, step.note() + rootNote, Scale::Short1);
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
             str.reset();
-            scale.noteName(str, step.note(), Scale::Short2);
+            scale.noteName(str, step.note() + rootNote, Scale::Short2);
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
             break;
         }
@@ -545,7 +546,8 @@ void NoteSequenceEditPage::updateMonitorStep() {
 
 void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &step) {
 
-    const auto &scale = _project.selectedNoteSequence().selectedScale(_project.scale());
+    const auto &sequence = _project.selectedNoteSequence();
+    const auto &scale = sequence.selectedScale(_project.scale());
 
     FixedStringBuilder<16> str;
 
@@ -644,7 +646,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         break;
     case Layer::Note:
         str.reset();
-        scale.noteName(str, step.note(), Scale::Long);
+        scale.noteName(str, step.note() + sequence.selectedRootNote(_model.project().rootNote()), Scale::Long);
         canvas.setFont(Font::Small);
         canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
         break;

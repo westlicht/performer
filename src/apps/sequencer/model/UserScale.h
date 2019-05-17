@@ -202,20 +202,18 @@ public:
 
 private:
     void noteNameChromaticMode(StringBuilder &str, int note, Format format) const {
-        static const char *names[] = { "1", "1#", "2", "2#", "3", "4", "4#", "5", "5#", "6", "6#", "7" };
+        bool printNote = format == Short1 || format == Long;
+        bool printOctave = format == Short2 || format == Long;
 
         int octave = roundDownDivide(note, _size);
-        int index = note - octave * _size;
-        switch (format) {
-        case Short1:
-            str(names[_items[index]]);
-            break;
-        case Short2:
+
+        if (printNote) {
+            int index = _items[note - octave * _size];
+            Types::printNote(str, index);
+        }
+
+        if (printOctave) {
             str("%+d", octave);
-            break;
-        case Long:
-            str("%s%+d", names[index], octave);
-            break;
         }
     }
 

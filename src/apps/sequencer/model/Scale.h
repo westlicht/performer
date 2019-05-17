@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Types.h"
+
 #include "core/utils/StringBuilder.h"
 #include "core/math/Math.h"
 
@@ -54,18 +56,23 @@ public:
     }
 
     void noteName(StringBuilder &str, int note, Format format) const override {
+        bool printNote = format == Short1 || format == Long;
+        bool printOctave = format == Short2 || format == Long;
+
         int octave = roundDownDivide(note, _noteCount);
-        int index = note - octave * _noteCount + 1;
-        switch (format) {
-        case Short1:
-            str("%d", index);
-            break;
-        case Short2:
+
+        if (printNote) {
+            if (isChromatic()) {
+                int index = _notes[note - octave * _noteCount] / 128;
+                Types::printNote(str, index);
+            } else {
+                int index = note - octave * _noteCount + 1;
+                str("%d", index);
+            }
+        }
+
+        if (printOctave) {
             str("%+d", octave);
-            break;
-        case Long:
-            str("%d%+d", index, octave);
-            break;
         }
     }
 
