@@ -53,6 +53,7 @@ static float evalStepNote(const NoteSequence::Step &step, int probabilityBias, c
 }
 
 void NoteTrackEngine::reset() {
+    _freeRelativeTick = 0;
     _sequenceState.reset();
     _currentStep = -1;
     _activity = false;
@@ -90,20 +91,27 @@ void NoteTrackEngine::tick(uint32_t tick) {
         }
 
         // advance sequence
-        if (relativeTick % divisor == 0) {
-            switch (_noteTrack.playMode()) {
-            case Types::PlayMode::Aligned:
+        switch (_noteTrack.playMode()) {
+        case Types::PlayMode::Aligned:
+            if (relativeTick % divisor == 0) {
                 _sequenceState.advanceAligned(relativeTick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-                break;
-            case Types::PlayMode::Free:
-                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-                break;
-            case Types::PlayMode::Last:
-                break;
+                recordStep(tick, divisor);
+                triggerStep(tick, divisor);
             }
-
-            recordStep(tick, divisor);
-            triggerStep(tick, divisor);
+            break;
+        case Types::PlayMode::Free:
+            relativeTick = _freeRelativeTick;
+            if (++_freeRelativeTick >= divisor) {
+                _freeRelativeTick = 0;
+            }
+            if (relativeTick == 0) {
+                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                recordStep(tick, divisor);
+                triggerStep(tick, divisor);
+            }
+            break;
+        case Types::PlayMode::Last:
+            break;
         }
 
         _linkData.divisor = divisor;

@@ -147,6 +147,9 @@ void NoteSequence::Step::read(ReadContext &context) {
 
 void NoteSequence::writeRouted(Routing::Target target, int intValue, float floatValue) {
     switch (target) {
+    case Routing::Target::Divisor:
+        setDivisor(intValue, true);
+        break;
     case Routing::Target::RunMode:
         setRunMode(Types::RunMode(intValue), true);
         break;
@@ -222,7 +225,7 @@ void NoteSequence::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_scale);
     writer.write(_rootNote);
-    writer.write(_divisor);
+    writer.write(_divisor.base);
     writer.write(_resetMeasure);
     writer.write(_runMode.base);
     writer.write(_firstStep.base);
@@ -235,7 +238,7 @@ void NoteSequence::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_scale);
     reader.read(_rootNote);
-    reader.read(_divisor);
+    reader.read(_divisor.base);
     reader.read(_resetMeasure);
     reader.read(_runMode.base);
     reader.read(_firstStep.base);

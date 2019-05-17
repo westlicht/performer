@@ -319,10 +319,10 @@ void Engine::onClockMidi(uint8_t data) {
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         auto &track = _model.project().track(trackIndex);
+        int linkTrack = track.linkTrack();
+        const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
 
         if (!_trackEngines[trackIndex] || _trackEngines[trackIndex]->trackMode() != track.trackMode()) {
-            int linkTrack = track.linkTrack();
-            const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
             auto &trackEngine = _trackEngines[trackIndex];
             auto &trackContainer = _trackEngineContainers[trackIndex];
 
@@ -340,6 +340,9 @@ void Engine::updateTrackSetups() {
                 break;
             }
         }
+
+        // update linked track engine
+        _trackEngines[trackIndex]->setLinkedTrackEngine(linkedTrackEngine);
     }
 }
 

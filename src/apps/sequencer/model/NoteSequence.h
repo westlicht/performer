@@ -266,9 +266,9 @@ public:
 
     // divisor
 
-    int divisor() const { return _divisor; }
-    void setDivisor(int divisor) {
-        _divisor = clamp(divisor, 1, 192);
+    int divisor() const { return _divisor.get(isRouted(Routing::Target::Divisor)); }
+    void setDivisor(int divisor, bool routed = false) {
+        _divisor.set(clamp(divisor, 1, 192), routed);
     }
 
     int indexedDivisor() const { return ModelUtils::divisorToIndex(divisor()); }
@@ -284,6 +284,7 @@ public:
     }
 
     void printDivisor(StringBuilder &str) const {
+        _routed.print(str, Routing::Target::Divisor);
         ModelUtils::printDivisor(str, divisor());
     }
 
@@ -400,7 +401,7 @@ public:
 private:
     int8_t _scale;
     int8_t _rootNote;
-    uint8_t _divisor;
+    Routable<uint8_t> _divisor;
     uint8_t _resetMeasure;
     Routable<Types::RunMode> _runMode;
     Routable<uint8_t> _firstStep;

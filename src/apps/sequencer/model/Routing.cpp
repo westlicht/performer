@@ -242,6 +242,7 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::RetriggerProbabilityBias)]        = { -8,     8,      -8,     8       },
     [int(Routing::Target::LengthBias)]                      = { -8,     8,      -8,     8       },
     [int(Routing::Target::NoteProbabilityBias)]             = { -8,     8,      -8,     8       },
+    [int(Routing::Target::Divisor)]                         = { 1,      192,    6,      24      },
     [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
     [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
     [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63      },
@@ -291,6 +292,9 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::LengthBias:
     case Target::NoteProbabilityBias:
         str("%+.1f%%", value * 12.5f);
+        break;
+    case Target::Divisor:
+        ModelUtils::printDivisor(str, intValue);
         break;
     case Target::RunMode:
         str("%s", Types::runModeName(Types::RunMode(intValue)));
