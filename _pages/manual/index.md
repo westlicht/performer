@@ -64,6 +64,7 @@ nav: 20
   - [Rotation](#appendix-rotation)
   - [Scales](#appendix-scales)
   - [Shapes](#appendix-shapes)
+  - [Arpeggiator Modes](#appendix-arpeggiator-modes)
   - [Launchpad](#appendix-launchpad)
   - [Calibration Procedure](#appendix-calibration-procedure)
   - [Firmware Update](#appendix-firmware-update)
@@ -190,7 +191,7 @@ The playback of the sequence is controlled by the same set of parameters as in t
 
 <h3 id="concepts-midi-cv-track">MIDI/CV Track</h3>
 
-In MIDI/CV mode, a track acts as a MIDI to CV converter, taking MIDI note data from either the MIDI or USBMIDI input and coverting it to voltages at the CV/gate outputs. This allows for playing voices live from a keyboard or use an external MIDI sequencer to control them.
+In MIDI/CV mode, a track acts as a MIDI to CV converter, taking MIDI note data from either the MIDI or USBMIDI input and converting it to voltages at the CV/gate outputs. This allows for playing voices live from a keyboard or use an external MIDI sequencer to control them. MIDI/CV mode also provides a powerful arpeggiator to further help playing live.
 
 > Note: MIDI/CV mode allows for using the **PER\|FORMER** module as a pure MIDI/CV converter with up to 8 CV/Gate outputs.
 
@@ -588,6 +589,12 @@ If a track is in MIDI/CV mode, the following parameters are available:
 | Pitch Bend | off, 1 - 48 semitones | Pitch bend range. |
 | Mod Range | 1-5V Unipolar, 1-5V Bipolar | CV output voltage range for modulation signals (velocity and pressure). |
 | Retrigger | no, yes | Retrigger voices on each received _Note On_ MIDI message. |
+| Arpeggiator | no, yes | Enable arpeggiator mode. |
+| Hold | no, yes | Hold chords in arpeggiator after keys are released. |
+| Mode | [Arpeggiator Modes](#appendix-arpeggiator-modes) | Arpeggiator mode (sequence). |
+| Divisor | [Divisors](#appendix-divisors) | Divisor for arpeggiator sequence. |
+| Gate Length | 1-100% | Gate length generated notes. |
+| Octaves | 1-5 | Number of octaves to play the arpeggiator sequence. |
 
 <!-- Sequence -->
 
@@ -1381,6 +1388,25 @@ With a rotation of **-3** the sequence is rotated 3 steps to the left and played
 | Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Shapes | <img width="32" height="64" style="max-width: none" src="images/shape-001.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-002.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-003.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-004.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-005.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-006.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-007.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-008.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-009.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-010.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-011.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-012.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-013.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-014.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-015.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-016.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-017.png"/> |
+
+<!-- Arpeggiator Modes -->
+
+<h3 id="appendix-arpeggiator-modes">Arpeggiator Modes</h3>
+
+The following arpeggiator modes are available. The example note order is based on a chord with 5 notes:
+
+| Mode | Sequence |
+| :--- | :--- |
+| Play Order | Played back in the order the notes were entered. |
+| Up | `1 2 3 4 5 | 1 2 3 4 5 | ...` |
+| Down | `5 4 3 2 1 | 5 4 3 2 1 | ...` |
+| Up Down | `1 2 3 4 5 4 3 2 | 1 2 3 4 5 4 3 2 | ...` |
+| Down Up | `5 4 3 2 1 2 3 4 | 5 4 3 2 1 2 3 4 | ...` |
+| Up & Down | `1 2 3 4 5 5 4 3 2 1 | 1 2 3 4 5 5 4 3 2 1 | ...` |
+| Down & Up | `5 4 3 2 1 1 2 3 4 5 | 5 4 3 2 1 1 2 3 4 5 | ...` |
+| Converge | `1 5 2 4 3 | 1 5 2 4 3 | ...` |
+| Diverge | `3 2 4 1 5 | 3 2 4 1 5 | ...` |
+| Random | Played back in random order. |
 
 <!-- Launchpad -->
 
