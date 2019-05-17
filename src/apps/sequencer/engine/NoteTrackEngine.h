@@ -51,6 +51,8 @@ private:
 
     NoteSequence *_sequence;
     const NoteSequence *_fillSequence;
+
+    uint32_t _freeRelativeTick;
     SequenceState _sequenceState;
     int _currentStep;
 
