@@ -36,7 +36,10 @@ public:
     // added CurveTrack::slideTime
     static constexpr uint32_t Version8 = 8;
 
-    static constexpr uint32_t Version = Version8;
+    // added MidiCvTrack::arpeggiator
+    static constexpr uint32_t Version9 = 9;
+
+    static constexpr uint32_t Version = Version9;
 
     //----------------------------------------
     // Types

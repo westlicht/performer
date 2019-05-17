@@ -4,6 +4,7 @@ set(sources
     # asteroids
     asteroids/Asteroids.cpp
     # engine
+    engine/ArpeggiatorEngine.cpp
     engine/Clock.cpp
     engine/CurveTrackEngine.cpp
     engine/CvInput.cpp
@@ -23,6 +24,7 @@ set(sources
     # intro
     intro/Intro.cpp
     # model
+    model/Arpeggiator.cpp
     model/Calibration.cpp
     model/ClipBoard.cpp
     model/ClockSetup.cpp
