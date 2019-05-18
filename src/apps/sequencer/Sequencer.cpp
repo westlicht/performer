@@ -35,7 +35,7 @@
 // There are two RAM regions on the STM32F405:
 // - 128kB SRAM at 0x20000000
 // - 64kB CCMRAM at 0x10000000
-// CCMRAM (core-coupled-memory) may be faster than SRAM but cannot be used for DMA tranfers!
+// CCMRAM (core-coupled-memory) may be faster than SRAM but cannot be used for DMA transfers!
 // We use CCMRAM for all the drivers not using DMA, all tasks and some of the application objects (engine, ui).
 // This leaves most of the SRAM for the model, which needs a large contiguous block of memory.
 
