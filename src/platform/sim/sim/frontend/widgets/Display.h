@@ -16,7 +16,7 @@ public:
         Widget(pos, size),
         _resolution(resolution),
         _color(color),
-        _frameBuffer(new uint32_t[resolution.x() * resolution.y()])
+        _frameBuffer(new uint32_t[resolution.prod()])
     {
     }
 
