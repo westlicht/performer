@@ -12,6 +12,8 @@ Types::LayerRange CurveSequence::layerRange(Layer layer) {
     case Layer::ShapeVariation:
         return { 0, int(Curve::Last) - 1 };
     CASE(ShapeVariationProbability)
+    case Layer::Tie:
+        return { 0, 1 };
     CASE(Min)
     CASE(Max)
     CASE(Gate)
@@ -33,6 +35,8 @@ int CurveSequence::Step::layerValue(Layer layer) const {
         return shapeVariation();
     case Layer::ShapeVariationProbability:
         return shapeVariationProbability();
+    case Layer::Tie:
+        return tie() ? 1 : 0;
     case Layer::Min:
         return min();
     case Layer::Max:
@@ -59,6 +63,9 @@ void CurveSequence::Step::setLayerValue(Layer layer, int value) {
     case Layer::ShapeVariationProbability:
         setShapeVariationProbability(value);
         break;
+    case Layer::Tie:
+        setTie(value);
+        break;
     case Layer::Min:
         setMin(value);
         break;
@@ -82,6 +89,7 @@ void CurveSequence::Step::clear() {
     setShape(0);
     setShapeVariation(0);
     setShapeVariationProbability(0);
+    setTie(false);
     setMin(0);
     setMax(Max::Max);
     setGate(0);

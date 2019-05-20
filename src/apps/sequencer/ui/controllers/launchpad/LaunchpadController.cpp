@@ -62,6 +62,7 @@ static const LayerMapItem curveSequenceLayerMap[] = {
     [int(CurveSequence::Layer::Shape)]                      =  { 0, 0 },
     [int(CurveSequence::Layer::ShapeVariation)]             =  { 1, 0 },
     [int(CurveSequence::Layer::ShapeVariationProbability)]  =  { 2, 0 },
+    [int(CurveSequence::Layer::Tie)]                        =  { 3, 0 },
     [int(CurveSequence::Layer::Min)]                        =  { 0, 1 },
     [int(CurveSequence::Layer::Max)]                        =  { 0, 2 },
     [int(CurveSequence::Layer::Gate)]                       =  { 0, 3 },
@@ -87,6 +88,7 @@ static const RangeMap *curveSequenceLayerRangeMap[] = {
     [int(CurveSequence::Layer::Shape)]                      = nullptr,
     [int(CurveSequence::Layer::ShapeVariation)]             = nullptr,
     [int(CurveSequence::Layer::ShapeVariationProbability)]  = nullptr,
+    [int(CurveSequence::Layer::Tie)]                        = nullptr,
     [int(CurveSequence::Layer::Min)]                        = &curveMinMaxRangeMap,
     [int(CurveSequence::Layer::Max)]                        = &curveMinMaxRangeMap,
     [int(CurveSequence::Layer::Gate)]                       = nullptr,
@@ -529,6 +531,9 @@ void LaunchpadController::sequenceDrawCurveSequence() {
     case CurveSequence::Layer::GateProbability:
         drawCurveSequenceBars(sequence, layer, currentStep);
         break;
+    case CurveSequence::Layer::Tie:
+        drawCurveSequenceBits(sequence, layer, currentStep);
+        break;
     default:
         break;
     }
@@ -778,6 +783,16 @@ void LaunchpadController::drawCurveSequenceBars(const CurveSequence &sequence, C
         int stepIndex = col + _sequence.navigation.col * 8;
         const auto &step = sequence.step(stepIndex);
         drawBar(col, step.layerValue(layer), true, stepIndex == currentStep);
+    }
+}
+
+void LaunchpadController::drawCurveSequenceBits(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep) {
+    for (int row = 0; row < 8; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            int stepIndex = row * 8 + col;
+            const auto &step = sequence.step(stepIndex);
+            setGridLed(row, col, color(stepIndex == currentStep, step.layerValue(layer) != 0));
+        }
     }
 }
 

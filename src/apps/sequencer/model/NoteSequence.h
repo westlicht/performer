@@ -83,7 +83,7 @@ public:
         // gate
 
         bool gate() const { return _data0.gate ? true : false; }
-        void setGate(bool gate) { _data0.gate = gate; }
+        void setGate(bool gate) { _data0.gate = gate ? 1 : 0; }
         void toggleGate() { setGate(!gate()); }
 
         // gateProbability
@@ -105,7 +105,7 @@ public:
 
         bool slide() const { return _data0.slide ? true : false; }
         void setSlide(bool slide) {
-            _data0.slide = slide;
+            _data0.slide = slide ? 1 : 0;
         }
         void toggleSlide() {
             setSlide(!slide());

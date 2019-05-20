@@ -32,6 +32,7 @@ public:
         Shape,
         ShapeVariation,
         ShapeVariationProbability,
+        Tie,
         Min,
         Max,
         Gate,
@@ -44,6 +45,7 @@ public:
         case Layer::Shape:                      return "SHAPE";
         case Layer::ShapeVariation:             return "SHAPE VAR";
         case Layer::ShapeVariationProbability:  return "SHAPE PROB";
+        case Layer::Tie:                        return "TIE";
         case Layer::Min:                        return "MIN";
         case Layer::Max:                        return "MAX";
         case Layer::Gate:                       return "GATE";
@@ -80,6 +82,13 @@ public:
         int shapeVariationProbability() const { return _data0.shapeVariationProbability; }
         void setShapeVariationProbability(int shapeVariationProbability) {
             _data0.shapeVariationProbability = clamp(shapeVariationProbability, 0, 8);
+        }
+
+        // tie
+
+        bool tie() const { return _data1.tie ? true : false; }
+        void setTie(bool tie) {
+            _data1.tie = tie ? 1 : 0;
         }
 
         // min
@@ -157,6 +166,7 @@ public:
             uint16_t raw;
             BitField<uint16_t, 0, Gate::Bits> gate;
             BitField<uint16_t, 4, GateProbability::Bits> gateProbability;
+            BitField<uint32_t, 7, 1> tie;
             // 9 bits left
         } _data1;
     };
