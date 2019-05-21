@@ -314,6 +314,10 @@ public:
     const Step &step(int index) const { return _steps[index]; }
           Step &step(int index)       { return _steps[index]; }
 
+    std::pair<int, int> stepRegion(int index) const;
+    int stepRegionLength(int index) const;
+    void setStepRegionLength(int index, int length);
+
     //----------------------------------------
     // Routing
     //----------------------------------------

@@ -96,6 +96,12 @@ void SequencePainter::drawSlide(Canvas &canvas, int x, int y, int w, int h, bool
     }
 }
 
+void SequencePainter::drawTie(Canvas &canvas, int x, int y, int w, int h, bool active) {
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(active ? 0xf : 0x7);
+    canvas.fillRect(x, y, w, h);
+}
+
 void SequencePainter::drawSequenceProgress(Canvas &canvas, int x, int y, int w, int h, float progress) {
     if (progress < 0.f) {
         return;

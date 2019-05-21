@@ -122,6 +122,59 @@ void CurveSequence::Step::read(VersionedSerializedReader &reader) {
     }
 }
 
+std::pair<int, int> CurveSequence::stepRegion(int index) const {
+    if (step(index).tie() || (index < _steps.size() - 1 && step(index + 1).tie())) {
+        int left = index;
+        while (left > 0 && step(left).tie()) {
+            --left;
+        }
+        int right = index;
+        while (right < _steps.size() - 1 && step(right + 1).tie()) {
+            ++right;
+        }
+        return { left, right };
+    } else {
+        return { index, index };
+    }
+}
+
+int CurveSequence::stepRegionLength(int index) const {
+    if (step(index).tie()) {
+        return 0;
+    }
+    int length = 1;
+    while (index + length < _steps.size() && step(index + length).tie()) {
+        ++length;
+    }
+    return length;
+}
+
+void CurveSequence::setStepRegionLength(int index, int length) {
+    if (step(index).tie()) {
+        return;
+    }
+    length = std::max(1, length);
+    while (index < _steps.size() - 1) {
+        ++index;
+        if (--length > 0) {
+            step(index).setTie(true);
+        } else {
+            if (step(index).tie()) {
+                step(index).setTie(false);
+            } else {
+                break;
+            }
+        }
+    }
+    // int prevLength = stepRegionLength(index);
+    // int pos = 1;
+    // while (index + pos < _steps.size()) {
+    //     if (pos < )
+    //     ++pos;
+    // }
+
+}
+
 void CurveSequence::writeRouted(Routing::Target target, int intValue, float floatValue) {
     switch (target) {
     case Routing::Target::Divisor:

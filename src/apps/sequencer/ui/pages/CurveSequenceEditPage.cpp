@@ -47,11 +47,11 @@ static const CurveSequenceListModel::Item quickEditItems[8] = {
     CurveSequenceListModel::Item::Last
 };
 
-static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, const Curve::Function function, float min, float max) {
+static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, const Curve::Function function, float min, float max, float start, float end) {
     const int Step = 1;
 
     auto eval = [=] (float x) {
-        return (1.f - (function(x) * (max - min) + min)) * h;
+        return (1.f - (function(start + x * (end - start)) * (max - min) + min)) * h;
     };
 
     float fy0 = y + eval(0.f);
@@ -149,6 +149,10 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
         float min = step.minNormalized();
         float max = step.maxNormalized();
 
+        auto region = sequence.stepRegion(stepIndex);
+        int regionLength = region.second - region.first + 1;
+        const auto &baseStep = sequence.step(region.first);
+
         int x = i * stepWidth;
         int y = 20;
 
@@ -169,12 +173,28 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
         // curve
         {
-            const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
+            float min = baseStep.minNormalized();
+            float max = baseStep.maxNormalized();
+            const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, baseStep.shape())));
+            float start = float(stepIndex - region.first) / regionLength;
+            float end = float(stepIndex - region.first + 1) / regionLength;
 
             canvas.setColor(drawShapeVariation ? 0x5 : 0xf);
             canvas.setBlendMode(BlendMode::Add);
 
-            drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastY, function, min, max);
+            drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastY, function, min, max, start, end);
+        }
+
+        switch (layer()) {
+        case Layer::Tie:
+            SequencePainter::drawTie(
+                canvas,
+                x + 4, y + 24, stepWidth - 8, 4,
+                step.tie()
+            );
+            break;
+        default:
+            break;
         }
 
         if (drawShapeVariation) {
@@ -355,6 +375,13 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::ShapeVariationProbability:
                 step.setShapeVariationProbability(step.shapeVariationProbability() + event.value());
                 break;
+            case Layer::Tie:
+                sequence.setStepRegionLength(stepIndex, sequence.stepRegionLength(stepIndex) + event.value());
+                // step.setTie(
+                //     setToFirst ? firstStep.tie() :
+                //     event.value() > 0
+                // );
+                break;
             case Layer::Min:
             case Layer::Max: {
                 bool functionPressed = globalKeyState()[MatrixMap::fromFunction(activeFunctionKey())];
@@ -418,6 +445,9 @@ void CurveSequenceEditPage::switchLayer(int functionKey, bool shift) {
             setLayer(Layer::ShapeVariationProbability);
             break;
         case Layer::ShapeVariationProbability:
+            setLayer(Layer::Tie);
+            break;
+        case Layer::Tie:
             setLayer(Layer::Shape);
             break;
         default:
@@ -452,6 +482,7 @@ int CurveSequenceEditPage::activeFunctionKey() {
     case Layer::Shape:
     case Layer::ShapeVariation:
     case Layer::ShapeVariationProbability:
+    case Layer::Tie:
         return 0;
     case Layer::Min:
         return 1;

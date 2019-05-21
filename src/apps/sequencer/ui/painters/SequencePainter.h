@@ -13,6 +13,7 @@ public:
     static void drawLength(Canvas &canvas, int x, int y, int w, int h, int length, int maxLength);
     static void drawLengthRange(Canvas &canvas, int x, int y, int w, int h, int length, int range, int maxLength);
     static void drawSlide(Canvas &canvas, int x, int y, int w, int h, bool active);
+    static void drawTie(Canvas &canvas, int x, int y, int w, int h, bool active);
 
     static void drawSequenceProgress(Canvas &canvas, int x, int y, int w, int h, float progress);
 };
