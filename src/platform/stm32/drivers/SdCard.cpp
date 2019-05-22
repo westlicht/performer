@@ -151,8 +151,8 @@ SdCard::Error SdCard::sendCommandWait(uint32_t cmd, uint32_t arg) {
     Error result;
     sendCommand(cmd, arg);
     while ((result = commandResult()) == InProgress) {
-        // TODO should only yield if this busy loop takes up too much time
-        // os::this_task::yield();
+        // allow other tasks to run
+        os::this_task::yield();
     }
     return result;
 }
@@ -369,8 +369,8 @@ bool SdCard::readBlock(uint32_t address, void *buffer) {
                                             SDIO_STA_DATAEND);
 
     while (!dma_get_interrupt_flag(DMA2, DMA_STREAM3, DMA_TCIF)) {
-        // TODO maybe we'd better use interrupts
-        // os::this_task::yield();
+        // allow other tasks to run
+        os::this_task::yield();
     }
 
     while (true) {
@@ -385,8 +385,8 @@ bool SdCard::readBlock(uint32_t address, void *buffer) {
             }
         }
 
-        // TODO maybe we'd better use interrupts
-        // os::this_task::yield();
+        // allow other tasks to run
+        os::this_task::yield();
     }
 
     return true;
@@ -452,8 +452,8 @@ bool SdCard::writeBlock(uint32_t address, const void *buffer) {
                                             SDIO_STA_DATAEND);
 
     while (!dma_get_interrupt_flag(DMA2, DMA_STREAM3, DMA_TCIF)) {
-        // TODO maybe we'd better use interrupts
-        // os::this_task::yield();
+        // allow other tasks to run
+        os::this_task::yield();
     }
 
     while (true) {
@@ -468,8 +468,8 @@ bool SdCard::writeBlock(uint32_t address, const void *buffer) {
             }
         }
 
-        // TODO maybe we'd better use interrupts
-        // os::this_task::yield();
+        // allow other tasks to run
+        os::this_task::yield();
     }
 
     return true;
