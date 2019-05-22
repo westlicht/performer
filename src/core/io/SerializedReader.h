@@ -16,6 +16,13 @@ public:
         read(&value, sizeof(value));
     }
 
+    template<typename ReadT, typename T>
+    void readAs(T &value) {
+        ReadT tmp;
+        read(tmp);
+        value = tmp;
+    }
+
     void read(void *data, size_t len) {
         _reader(data, len);
     }

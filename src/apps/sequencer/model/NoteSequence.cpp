@@ -239,9 +239,7 @@ void NoteSequence::read(ReadContext &context) {
     reader.read(_scale);
     reader.read(_rootNote);
     if (reader.dataVersion() < Project::Version10) {
-        uint8_t divisor;
-        reader.read(divisor);
-        _divisor.base = divisor;
+        reader.readAs<uint8_t>(_divisor.base);
     } else {
         reader.read(_divisor.base);
     }

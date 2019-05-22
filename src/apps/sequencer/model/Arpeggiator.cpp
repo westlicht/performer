@@ -27,9 +27,7 @@ void Arpeggiator::read(ReadContext &context) {
     reader.read(_hold, Project::Version9);
     reader.read(_mode, Project::Version9);
     if (reader.dataVersion() < Project::Version10) {
-        uint8_t divisor;
-        reader.read(divisor, Project::Version9);
-        _divisor = divisor;
+        reader.readAs<uint8_t>(_divisor, Project::Version9);
     } else {
         reader.read(_divisor);
     }

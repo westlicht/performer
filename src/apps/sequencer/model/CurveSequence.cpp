@@ -155,9 +155,7 @@ void CurveSequence::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_range);
     if (reader.dataVersion() < Project::Version10) {
-        uint8_t divisor;
-        reader.read(divisor);
-        _divisor.base = divisor;
+        reader.readAs<uint8_t>(_divisor.base);
     } else {
         reader.read(_divisor.base);
     }
