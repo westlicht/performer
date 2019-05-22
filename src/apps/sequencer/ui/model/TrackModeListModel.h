@@ -30,9 +30,17 @@ public:
     }
 
     void toProject(Project &project) {
+        // Cache the new track modes because calling setTrackMode will actually
+        // trigger a reload of the track setup page and reinitialize the
+        // TrackModeListModel leading to only the first track with a new track
+        // mode to be updated.
+        Track::TrackMode newTrackModes[CONFIG_TRACK_COUNT];
         for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
-            if (_trackModes[i] != project.track(i).trackMode()) {
-                project.setTrackMode(i, _trackModes[i]);
+            newTrackModes[i] = _trackModes[i];
+        }
+        for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
+            if (newTrackModes[i] != project.track(i).trackMode()) {
+                project.setTrackMode(i, newTrackModes[i]);
             }
         }
     }
