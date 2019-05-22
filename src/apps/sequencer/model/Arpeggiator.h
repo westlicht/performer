@@ -97,7 +97,7 @@ public:
 
     int divisor() const { return _divisor; }
     void setDivisor(int divisor) {
-        _divisor = clamp(divisor, 1, 192);
+        _divisor = ModelUtils::clampDivisor(divisor);
     }
 
     void editDivisor(int value, bool shift) {
@@ -151,7 +151,7 @@ private:
     bool _enabled;
     bool _hold;
     Mode _mode;
-    uint8_t _divisor;
+    uint16_t _divisor;
     uint8_t _gateLength;
     uint8_t _octaves;
 };

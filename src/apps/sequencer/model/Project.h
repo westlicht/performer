@@ -39,7 +39,10 @@ public:
     // added MidiCvTrack::arpeggiator
     static constexpr uint32_t Version9 = 9;
 
-    static constexpr uint32_t Version = Version9;
+    // expanded divisor to 16 bits
+    static constexpr uint32_t Version10 = 10;
+
+    static constexpr uint32_t Version = Version10;
 
     //----------------------------------------
     // Types

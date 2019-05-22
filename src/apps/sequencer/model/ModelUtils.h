@@ -33,6 +33,9 @@ void printDivisor(StringBuilder &str, int value);
 int divisorToIndex(int divisor);
 int indexToDivisor(int index);
 
+static int clampDivisor(int divisor) {
+    return clamp(divisor, 2, 768);
+}
 
 template<typename Step, size_t N>
 static void shiftSteps(std::array<Step, N> &steps, int direction) {
