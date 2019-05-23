@@ -18,34 +18,35 @@ static const char *functionNames[] = { "CV IN", "CV OUT", "MIDI", "STATS", nullp
 
 static void formatMidiMessage(StringBuilder &eventStr, StringBuilder &dataStr, const MidiMessage &msg) {
     if (msg.isChannelMessage()) {
+        int channel = msg.channel() + 1;
         switch (msg.channelMessage()) {
         case MidiMessage::NoteOff:
             eventStr("NOTE OFF");
-            dataStr("CH=%d NOTE=%d VEL=%d", msg.channel(), msg.note(), msg.velocity());
+            dataStr("CH=%d NOTE=%d VEL=%d", channel, msg.note(), msg.velocity());
             return;
         case MidiMessage::NoteOn:
             eventStr("NOTE ON");
-            dataStr("CH=%d NOTE=%d VEL=%d", msg.channel(), msg.note(), msg.velocity());
+            dataStr("CH=%d NOTE=%d VEL=%d", channel, msg.note(), msg.velocity());
             return;
         case MidiMessage::KeyPressure:
             eventStr("KEY PRESSURE");
-            dataStr("CH=%d NOTE=%d PRE=%d", msg.channel(), msg.note(), msg.keyPressure());
+            dataStr("CH=%d NOTE=%d PRE=%d", channel, msg.note(), msg.keyPressure());
             return;
         case MidiMessage::ControlChange:
             eventStr("CONTROL CHANGE");
-            dataStr("CH=%d NUM=%d VAL=%d", msg.channel(), msg.controlNumber(), msg.controlValue());
+            dataStr("CH=%d NUM=%d VAL=%d", channel, msg.controlNumber(), msg.controlValue());
             return;
         case MidiMessage::ProgramChange:
             eventStr("PROGRAM CHANGE");
-            dataStr("CH=%d NUM=%d", msg.channel(), msg.programNumber());
+            dataStr("CH=%d NUM=%d", channel, msg.programNumber());
             return;
         case MidiMessage::ChannelPressure:
             eventStr("CHANNEL PRESSURE");
-            dataStr("CH=%d PRE=%d", msg.channel(), msg.channelPressure());
+            dataStr("CH=%d PRE=%d", channel, msg.channelPressure());
             return;
         case MidiMessage::PitchBend:
             eventStr("PITCH BEND");
-            dataStr("CH=%d VAL=%d", msg.channel(), msg.pitchBend());
+            dataStr("CH=%d VAL=%d", channel, msg.pitchBend());
             return;
         }
     } else if (msg.isSystemMessage()) {
