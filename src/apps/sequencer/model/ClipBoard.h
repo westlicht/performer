@@ -30,9 +30,9 @@ public:
 
     void pasteTrack(Track &track) const;
     void pasteNoteSequence(NoteSequence &noteSequence) const;
-    void pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps);
+    void pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps) const;
     void pasteCurveSequence(CurveSequence &curveSequence) const;
-    void pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps);
+    void pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps) const;
     void pastePattern(int patternIndex) const;
     void pasteUserScale(UserScale &userScale) const;
 

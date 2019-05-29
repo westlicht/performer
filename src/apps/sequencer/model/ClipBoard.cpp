@@ -82,7 +82,7 @@ void ClipBoard::pasteNoteSequence(NoteSequence &noteSequence) const {
     }
 }
 
-void ClipBoard::pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps) {
+void ClipBoard::pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps) const {
     if (canPasteNoteSequenceSteps()) {
         const auto &noteSequenceSteps = _container.as<NoteSequenceSteps>();
         ModelUtils::copySteps(noteSequenceSteps.sequence.steps(), noteSequenceSteps.selected, noteSequence.steps(), selectedSteps);
@@ -96,7 +96,7 @@ void ClipBoard::pasteCurveSequence(CurveSequence &curveSequence) const {
     }
 }
 
-void ClipBoard::pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps) {
+void ClipBoard::pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps) const {
     if (canPasteCurveSequenceSteps()) {
         const auto &curveSequenceSteps = _container.as<CurveSequenceSteps>();
         ModelUtils::copySteps(curveSequenceSteps.sequence.steps(), curveSequenceSteps.selected, curveSequence.steps(), selectedSteps);
