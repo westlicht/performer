@@ -23,6 +23,8 @@
 #include "QuickEditPage.h"
 #include "RoutingPage.h"
 #include "SongPage.h"
+#include "StageSequenceEditPage.h"
+#include "StageSequencePage.h"
 #include "StartupPage.h"
 #include "SystemPage.h"
 #include "TempoPage.h"
@@ -46,8 +48,10 @@ struct Pages {
     TrackPage track;
     NoteSequencePage noteSequence;
     CurveSequencePage curveSequence;
+    StageSequencePage stageSequence;
     NoteSequenceEditPage noteSequenceEdit;
     CurveSequenceEditPage curveSequenceEdit;
+    StageSequenceEditPage stageSequenceEdit;
     PatternPage pattern;
     PerformerPage performer;
     SongPage song;
@@ -87,8 +91,10 @@ struct Pages {
         track(manager, context),
         noteSequence(manager, context),
         curveSequence(manager, context),
+        stageSequence(manager, context),
         noteSequenceEdit(manager, context),
         curveSequenceEdit(manager, context),
+        stageSequenceEdit(manager, context),
         pattern(manager, context),
         performer(manager, context),
         song(manager, context),

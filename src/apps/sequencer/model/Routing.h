@@ -18,6 +18,7 @@
 class Project;
 class NoteSequence;
 class CurveSequence;
+class StageSequence;
 
 class Routing {
 public:

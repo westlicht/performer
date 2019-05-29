@@ -308,6 +308,11 @@ public:
     CurveSequence::Layer selectedCurveSequenceLayer() const { return _selectedCurveSequenceLayer; }
     void setSelectedCurveSequenceLayer(CurveSequence::Layer layer) { _selectedCurveSequenceLayer = layer; }
 
+    // selectedStageSequenceLayer
+
+    StageSequence::Layer selectedStageSequenceLayer() const { return _selectedStageSequenceLayer; }
+    void setSelectedStageSequenceLayer(StageSequence::Layer layer) { _selectedStageSequenceLayer = layer; }
+
     // selectedTrack
 
     const Track &selectedTrack() const { return _tracks[_selectedTrackIndex]; }
@@ -332,6 +337,16 @@ public:
 
     const CurveSequence &selectedCurveSequence() const { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
           CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
+
+    // stageSequence
+
+    const StageSequence &stageSequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].stageTrack().sequence(patternIndex); }
+          StageSequence &stageSequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].stageTrack().sequence(patternIndex); }
+
+    // selectedStageSequence
+
+    const StageSequence &selectedStageSequence() const { return stageSequence(_selectedTrackIndex, selectedPatternIndex()); }
+          StageSequence &selectedStageSequence()       { return stageSequence(_selectedTrackIndex, selectedPatternIndex()); }
 
     //----------------------------------------
     // Routing
@@ -395,6 +410,7 @@ private:
     int _selectedPatternIndex = 0;
     NoteSequence::Layer _selectedNoteSequenceLayer = NoteSequence::Layer(0);
     CurveSequence::Layer _selectedCurveSequenceLayer = CurveSequence::Layer(0);
+    StageSequence::Layer _selectedStageSequenceLayer = StageSequence::Layer(0);
 
     Observable<Event, 2> _observable;
 };

@@ -43,6 +43,18 @@ void ClipBoard::copyCurveSequenceSteps(const CurveSequence &curveSequence, const
     curveSequenceSteps.selected = selectedSteps;
 }
 
+void ClipBoard::copyStageSequence(const StageSequence &stageSequence) {
+    _type = Type::StageSequence;
+    _container.as<StageSequence>() = stageSequence;
+}
+
+void ClipBoard::copyStageSequenceSteps(const StageSequence &stageSequence, const SelectedSteps &selectedSteps) {
+    _type = Type::StageSequenceSteps;
+    auto &stageSequenceSteps = _container.as<StageSequenceSteps>();
+    stageSequenceSteps.sequence = stageSequence;
+    stageSequenceSteps.selected = selectedSteps;
+}
+
 void ClipBoard::copyPattern(int patternIndex) {
     _type = Type::Pattern;
     auto &pattern = _container.as<Pattern>();
@@ -55,6 +67,9 @@ void ClipBoard::copyPattern(int patternIndex) {
             break;
         case Track::TrackMode::Curve:
             pattern.sequences[trackIndex].data.curve = track.curveTrack().sequence(patternIndex);
+            break;
+        case Track::TrackMode::Stage:
+            pattern.sequences[trackIndex].data.stage = track.stageTrack().sequence(patternIndex);
             break;
         default:
             break;
@@ -100,6 +115,20 @@ void ClipBoard::pasteCurveSequenceSteps(CurveSequence &curveSequence, const Sele
     if (canPasteCurveSequenceSteps()) {
         const auto &curveSequenceSteps = _container.as<CurveSequenceSteps>();
         ModelUtils::copySteps(curveSequenceSteps.sequence.steps(), curveSequenceSteps.selected, curveSequence.steps(), selectedSteps);
+    }
+}
+
+void ClipBoard::pasteStageSequence(StageSequence &stageSequence) const {
+    if (canPasteStageSequence()) {
+        Model::WriteLock lock;
+        stageSequence = _container.as<StageSequence>();
+    }
+}
+
+void ClipBoard::pasteStageSequenceSteps(StageSequence &stageSequence, const SelectedSteps &selectedSteps) const {
+    if (canPasteStageSequenceSteps()) {
+        const auto &stageSequenceSteps = _container.as<StageSequenceSteps>();
+        ModelUtils::copySteps(stageSequenceSteps.sequence.steps(), stageSequenceSteps.selected, stageSequence.steps(), selectedSteps);
     }
 }
 
@@ -149,6 +178,14 @@ bool ClipBoard::canPasteCurveSequence() const {
 
 bool ClipBoard::canPasteCurveSequenceSteps() const {
     return _type == Type::CurveSequenceSteps;
+}
+
+bool ClipBoard::canPasteStageSequence() const {
+    return _type == Type::StageSequence;
+}
+
+bool ClipBoard::canPasteStageSequenceSteps() const {
+    return _type == Type::StageSequenceSteps;
 }
 
 bool ClipBoard::canPastePattern() const {

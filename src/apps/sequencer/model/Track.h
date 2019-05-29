@@ -6,6 +6,7 @@
 #include "ModelUtils.h"
 #include "NoteTrack.h"
 #include "CurveTrack.h"
+#include "StageTrack.h"
 #include "MidiCvTrack.h"
 
 #include "core/Debug.h"
@@ -33,6 +34,7 @@ public:
     enum class TrackMode : uint8_t {
         Note,
         Curve,
+        Stage,
         MidiCv,
         Last,
         Default = Note
@@ -42,6 +44,7 @@ public:
         switch (trackMode) {
         case TrackMode::Note:   return "Note";
         case TrackMode::Curve:  return "Curve";
+        case TrackMode::Stage:  return "Stage";
         case TrackMode::MidiCv: return "MIDI/CV";
         case TrackMode::Last:   break;
         }
@@ -53,6 +56,7 @@ public:
         case TrackMode::Note:   return 0;
         case TrackMode::Curve:  return 1;
         case TrackMode::MidiCv: return 2;
+        case TrackMode::Stage:  return 3;
         case TrackMode::Last:   break;
         }
         return 0;
@@ -104,6 +108,11 @@ public:
     const CurveTrack &curveTrack() const { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Curve); return *_track.curve; }
           CurveTrack &curveTrack()       { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Curve); return *_track.curve; }
 
+    // stageTrack
+
+    const StageTrack &stageTrack() const { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Stage); return *_track.stage; }
+          StageTrack &stageTrack()       { SANITIZE_TRACK_MODE(_trackMode, TrackMode::Stage); return *_track.stage; }
+
     // midiCvTrack
 
     const MidiCvTrack &midiCvTrack() const { SANITIZE_TRACK_MODE(_trackMode, TrackMode::MidiCv); return *_track.midiCv; }
@@ -154,10 +163,11 @@ private:
     TrackMode _trackMode;
     int8_t _linkTrack;
 
-    Container<NoteTrack, CurveTrack, MidiCvTrack> _container;
+    Container<NoteTrack, CurveTrack, StageTrack, MidiCvTrack> _container;
     union {
         NoteTrack *note;
         CurveTrack *curve;
+        StageTrack *stage;
         MidiCvTrack *midiCv;
     } _track;
 

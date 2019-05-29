@@ -375,6 +375,9 @@ void Engine::updateTrackSetups() {
             case Track::TrackMode::Curve:
                 trackEngine = trackContainer.create<CurveTrackEngine>(*this, _model, track, linkedTrackEngine);
                 break;
+            case Track::TrackMode::Stage:
+                trackEngine = trackContainer.create<StageTrackEngine>(*this, _model, track, linkedTrackEngine);
+                break;
             case Track::TrackMode::MidiCv:
                 trackEngine = trackContainer.create<MidiCvTrackEngine>(*this, _model, track, linkedTrackEngine);
                 break;

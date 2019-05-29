@@ -136,6 +136,8 @@ void OverviewPage::draw(Canvas &canvas) {
         case Track::TrackMode::Curve:
             drawCurveTrack(canvas, trackIndex, trackEngine.as<CurveTrackEngine>(), track.curveTrack().sequence(trackState.pattern()));
             break;
+        case Track::TrackMode::Stage:
+            break;
         case Track::TrackMode::MidiCv:
             break;
         case Track::TrackMode::Last:

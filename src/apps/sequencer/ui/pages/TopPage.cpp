@@ -225,6 +225,9 @@ void TopPage::setSequencePage() {
     case Track::TrackMode::Curve:
         setMainPage(pages.curveSequence);
         break;
+    case Track::TrackMode::Stage:
+        setMainPage(pages.stageSequence);
+        break;
     case Track::TrackMode::MidiCv:
         setMainPage(pages.track);
         break;
@@ -242,6 +245,9 @@ void TopPage::setSequenceEditPage() {
         break;
     case Track::TrackMode::Curve:
         setMainPage(pages.curveSequenceEdit);
+        break;
+    case Track::TrackMode::Stage:
+        setMainPage(pages.stageSequenceEdit);
         break;
     case Track::TrackMode::MidiCv:
         setMainPage(pages.track);

@@ -203,6 +203,14 @@ void Routing::writeTarget(Target target, uint8_t tracks, float normalized) {
                         track.midiCvTrack().writeRouted(target, intValue, floatValue);
                     }
                     break;
+                case Track::TrackMode::Stage:
+                    if (isTrackTarget(target)) {
+                        track.stageTrack().writeRouted(target, intValue, floatValue);
+                    } else {
+                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
+                            track.stageTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
+                        }
+                    }
                 case Track::TrackMode::Last:
                     break;
                 }

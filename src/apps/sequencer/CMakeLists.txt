@@ -10,6 +10,7 @@ set(sources
     engine/CvInput.cpp
     engine/CvOutput.cpp
     engine/Engine.cpp
+    engine/StageTrackEngine.cpp
     engine/MidiCvTrackEngine.cpp
     engine/MidiLearn.cpp
     engine/MidiOutputEngine.cpp
@@ -32,6 +33,8 @@ set(sources
     model/CurveSequence.cpp
     model/CurveTrack.cpp
     model/FileManager.cpp
+    model/StageSequence.cpp
+    model/StageTrack.cpp
     model/MidiCvTrack.cpp
     model/MidiOutput.cpp
     model/Model.cpp
@@ -76,6 +79,8 @@ set(sources
     ui/pages/IntroPage.cpp
     ui/pages/LayoutPage.cpp
     ui/pages/ListPage.cpp
+    ui/pages/StageSequenceEditPage.cpp
+    ui/pages/StageSequencePage.cpp
     ui/pages/MidiOutputPage.cpp
     ui/pages/MonitorPage.cpp
     ui/pages/NoteSequenceEditPage.cpp
