@@ -1427,6 +1427,8 @@ The following Lauchpad controllers have been tested and are working:
 
 Launchpad controllers are exclusively used as control surfaces and cannot be used as a standard MIDI device for the routing system or live recording.
 
+When using a Launchpad Mini or Launchpad S, it should preferably be configured to operate in the _Low Power_ mode. This is important in order to not draw too much current which can lead to the Launchpad spuriously disconnect. The procedure to switch between _Low Power_ and _Full Power_ mode can be looked up [here](https://customer.novationmusic.com/sites/customer/files/novation/downloads/6961/launchpad-s-and-mini-advanced-features-guide_0.pdf).
+
 <h4>Global Functions</h4>
 
 The `8` button acts as a _shift_ button and can be pressed in combination with other buttons to access secondary functions. The following functions are always available:
