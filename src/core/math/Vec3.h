@@ -14,8 +14,8 @@ struct Vec3 {
         set(c);
     }
 
-    Vec3(float x, float y, float z) {
-        set(x, y, z);
+    Vec3(float x_, float y_, float z_) {
+        set(x_, y_, z_);
     }
 
     Vec3(const Vec3 &v) {
@@ -30,10 +30,10 @@ struct Vec3 {
         set(c, c, c);
     }
 
-    void set(float x, float y, float z) {
-        this->x = x;
-        this->y = y;
-        this->z = z;
+    void set(float x_, float y_, float z_) {
+        x = x_;
+        y = y_;
+        z = z_;
     }
 
     Vec3 cross(const Vec3 &b) const {

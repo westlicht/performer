@@ -16,8 +16,8 @@ struct Vec4 {
         set(c);
     }
 
-    Vec4(float x, float y, float z, float w) {
-        set(x, y, z, w);
+    Vec4(float x_, float y_, float z_, float w_) {
+        set(x_, y_, z_, w_);
     }
 
     Vec4(const Vec4 &v) {
@@ -36,11 +36,11 @@ struct Vec4 {
         set(c, c, c, c);
     }
 
-    void set(float x, float y, float z, float w) {
-        this->x = x;
-        this->y = y;
-        this->z = z;
-        this->w = w;
+    void set(float x_, float y_, float z_, float w_) {
+        x = x_;
+        y = y_;
+        z = z_;
+        w = w_;
     }
 
     void invert() {

@@ -535,7 +535,6 @@ void Engine::updatePlayState(bool ticked) {
             }
 
             // update patterns
-            const auto &slot = song.slot(songState.currentSlot());
             for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
                 playState.trackState(trackIndex).setPattern(slot.pattern(trackIndex));
                 _trackEngines[trackIndex]->restart();
@@ -582,14 +581,16 @@ void Engine::usbMidiDisconnect() {
 }
 
 void Engine::receiveMidi() {
-    MidiMessage message;
-    while (_midi.recv(&message)) {
-        message.fixFakeNoteOff();
-        receiveMidi(MidiPort::Midi, message);
-    }
-    while (_usbMidi.recv(&message)) {
-        message.fixFakeNoteOff();
-        receiveMidi(MidiPort::UsbMidi, message);
+    {
+        MidiMessage message;
+        while (_midi.recv(&message)) {
+            message.fixFakeNoteOff();
+            receiveMidi(MidiPort::Midi, message);
+        }
+        while (_usbMidi.recv(&message)) {
+            message.fixFakeNoteOff();
+            receiveMidi(MidiPort::UsbMidi, message);
+        }
     }
 
     // derive MIDI messages from CV/Gate input

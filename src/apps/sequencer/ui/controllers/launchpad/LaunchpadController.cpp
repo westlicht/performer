@@ -658,11 +658,11 @@ void LaunchpadController::navigationDraw(const Navigation &navigation) {
 }
 
 void LaunchpadController::navigationButtonDown(Navigation &navigation, const Button &button) {
-    int col = button.is<Left>() ? -1 : button.is<Right>() ? 1 : 0;
-    navigation.col = clamp(navigation.col + col, int(navigation.left), int(navigation.right));
+    int colOfs = button.is<Left>() ? -1 : button.is<Right>() ? 1 : 0;
+    navigation.col = clamp(navigation.col + colOfs, int(navigation.left), int(navigation.right));
 
-    int row = button.is<Down>() ? -1 : button.is<Up>() ? 1 : 0;
-    navigation.row = clamp(navigation.row + row, int(navigation.bottom), int(navigation.top));
+    int rowOfs = button.is<Down>() ? -1 : button.is<Up>() ? 1 : 0;
+    navigation.row = clamp(navigation.row + rowOfs, int(navigation.bottom), int(navigation.top));
 
     if (button.isGrid()) {
         int col = button.col;

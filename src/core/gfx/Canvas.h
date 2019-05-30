@@ -114,8 +114,8 @@ private:
             int x0 = x, x1 = x + w - 1;
             hclip(x0);
             hclip(x1);
-            for (int x = x0; x <= x1; ++x) {
-                blit(_frameBuffer, x, y, _color);
+            for (int ix = x0; ix <= x1; ++ix) {
+                blit(_frameBuffer, ix, y, _color);
             }
         }
     }
@@ -127,8 +127,8 @@ private:
             int y0 = y, y1 = y + h - 1;
             vclip(y0);
             vclip(y1);
-            for (int y = y0; y <= y1; ++y) {
-                blit(_frameBuffer, x, y, _color);
+            for (int iy = y0; iy <= y1; ++iy) {
+                blit(_frameBuffer, x, iy, _color);
             }
         }
     }
@@ -223,9 +223,9 @@ private:
         int y0 = y, y1 = y + h - 1;
         clip(x0, y0);
         clip(x1, y1);
-        for (int y = y0; y <= y1; ++y) {
-            for (int x = x0; x <= x1; ++x) {
-                blit(_frameBuffer, x, y, _color);
+        for (int iy = y0; iy <= y1; ++iy) {
+            for (int ix = x0; ix <= x1; ++ix) {
+                blit(_frameBuffer, ix, iy, _color);
             }
         }
     }
@@ -241,8 +241,8 @@ private:
 
         const uint8_t mask = (1 << Bpp) - 1;
         int shift = 0;
-        for (int y = y0; y <= y1; ++y) {
-            for (int x = x0; x <= x1; ++x) {
+        for (int iy = y0; iy <= y1; ++iy) {
+            for (int ix = x0; ix <= x1; ++ix) {
                 // uint8_t pixel = ((*bitmap >> shift) & mask) << (8 - Bpp);
                 uint8_t pixel = ((*bitmap >> shift) & mask) * _color;
                 shift += Bpp;
@@ -250,8 +250,8 @@ private:
                     ++bitmap;
                     shift = 0;
                 }
-                if (inside(x, y)) {
-                    blit(_frameBuffer, x, y, pixel);
+                if (inside(ix, iy)) {
+                    blit(_frameBuffer, ix, iy, pixel);
                 }
             }
         }

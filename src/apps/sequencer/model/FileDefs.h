@@ -20,17 +20,17 @@ struct FileHeader {
 
     FileHeader() = default;
 
-    FileHeader(FileType type, uint8_t version, const char *name) {
-        this->type = type;
-        this->version = version;
-        size_t len = strlen(name);
-        std::memset(this->name, 0, sizeof(this->name));
-        std::memcpy(this->name, name, std::min(sizeof(this->name), len));
+    FileHeader(FileType type_, uint8_t version_, const char *name_) {
+        type = type_;
+        version = version_;
+        size_t len = strlen(name_);
+        std::memset(name, 0, sizeof(name));
+        std::memcpy(name, name_, std::min(sizeof(name), len));
     }
 
-    void readName(char *name, size_t len) {
-        std::memcpy(name, this->name, std::min(sizeof(this->name), len));
-        name[std::min(sizeof(this->name), len - 1)] = '\0';
+    void readName(char *name_, size_t len) {
+        std::memcpy(name_, name, std::min(sizeof(name), len));
+        name_[std::min(sizeof(name), len - 1)] = '\0';
     }
 
 } __attribute__((packed));

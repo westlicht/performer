@@ -29,7 +29,7 @@ public:
             uint8_t data;
         };
 
-        Color(int red, int green) : red(red), green(green) {}
+        Color(int red_, int green_) : red(red_), green(green_) {}
     };
 
     LaunchpadDevice();

@@ -14,8 +14,8 @@ struct Vec2 {
         set(c);
     }
 
-    Vec2(float x, float y) {
-        set(x, y);
+    Vec2(float x_, float y_) {
+        set(x_, y_);
     }
 
     Vec2(const Vec2 &v) {
@@ -30,9 +30,9 @@ struct Vec2 {
         set(c, c);
     }
 
-    void set(float x, float y) {
-        this->x = x;
-        this->y = y;
+    void set(float x_, float y_) {
+        x = x_;
+        y = y_;
     }
 
     void invert() {

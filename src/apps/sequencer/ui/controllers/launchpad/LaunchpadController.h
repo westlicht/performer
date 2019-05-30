@@ -33,7 +33,7 @@ private:
         int row;
         int col;
 
-        Button(int row, int col) : row(row), col(col) {}
+        Button(int row_, int col_) : row(row_), col(col_) {}
 
         template<typename T>
         bool is() const {
