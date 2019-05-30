@@ -36,7 +36,7 @@ void LayoutPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
-        if (_mode == Mode::TrackMode && key.function() == 4) {
+        if (key.function() == 4 && _mode == Mode::TrackMode && !_trackModeListModel.sameAsProject(_project)) {
             _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
                 if (result) {
                     setEdit(false);
