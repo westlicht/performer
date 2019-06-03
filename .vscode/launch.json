@@ -8,7 +8,7 @@
             "program": "${workspaceRoot}/build/stm32/release/src/apps/sequencer/sequencer",
             "targetArchitecture": "arm",
             // "MIMode": "gdb",
-            "miDebuggerPath": "${workspaceRoot}/host/bin/arm-none-eabi-gdb",
+            "miDebuggerPath": "${workspaceRoot}/tools/gcc-arm-none-eabi/bin/arm-none-eabi-gdb",
             // "miDebuggerServerAddress": "localhost:3333",
             "cwd": "${workspaceRoot}",
             "setupCommands": [
