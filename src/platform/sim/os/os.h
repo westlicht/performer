@@ -46,6 +46,7 @@ namespace os {
 
         inline void suspend() {}
         inline void resume() {}
+        inline void yield() {}
 
     } // namespace this_task
 

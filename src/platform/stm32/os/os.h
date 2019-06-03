@@ -105,6 +105,7 @@ namespace os {
 
         inline void suspend() { os::suspend(handle()); }
         inline void resume() { os::suspend(handle()); }
+        inline void yield() { taskYIELD(); }
 
     } // namespace this_task
 
