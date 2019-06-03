@@ -130,8 +130,10 @@ bool ProjectPage::contextActionEnabled(int index) const {
 void ProjectPage::initProject() {
     _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
         if (result) {
+            _engine.lock();
             _project.clear();
             showMessage("PROJECT INITIALIZED");
+            _engine.unlock();
         }
     });
 }
