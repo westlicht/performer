@@ -34,7 +34,7 @@ int divisorToIndex(int divisor);
 int indexToDivisor(int index);
 
 static int clampDivisor(int divisor) {
-    return clamp(divisor, 2, 768);
+    return clamp(divisor, 1, 768);
 }
 
 template<typename Step, size_t N>
