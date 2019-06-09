@@ -36,11 +36,14 @@ public:
     static constexpr int ColsButton = CONFIG_BLM_COLS_BUTTON;
     static constexpr int ColsLed = CONFIG_BLM_COLS_LED;
 
-    ButtonLedMatrix(ShiftRegister &shiftRegister);
+    ButtonLedMatrix(ShiftRegister &shiftRegister, bool invertLeds = false);
 
     void init();
 
     void setLed(int index, uint8_t red, uint8_t green) {
+        if (_invertLeds) {
+            std::swap(red, green);
+        }
         _ledState[index].red.intensity = red >> 4;
         _ledState[index].green.intensity = green >> 4;
         if (red == 0) {
@@ -103,6 +106,7 @@ private:
     };
 
     ShiftRegister &_shiftRegister;
+    bool _invertLeds;
 
     ButtonState _buttonState[Rows * ColsButton];
     LedState _ledState[Rows * ColsLed];

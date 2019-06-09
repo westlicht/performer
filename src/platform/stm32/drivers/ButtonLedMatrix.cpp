@@ -5,8 +5,9 @@
 
 #include <cstring>
 
-ButtonLedMatrix::ButtonLedMatrix(ShiftRegister &shiftRegister) :
-    _shiftRegister(shiftRegister)
+ButtonLedMatrix::ButtonLedMatrix(ShiftRegister &shiftRegister, bool invertLeds) :
+    _shiftRegister(shiftRegister),
+    _invertLeds(invertLeds)
 {
 }
 

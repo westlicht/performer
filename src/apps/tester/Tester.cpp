@@ -45,8 +45,8 @@ struct {
 
 static ClockTimer clockTimer;
 static ShiftRegister shiftRegister;
-static ButtonLedMatrix blm(shiftRegister);
-static Encoder encoder(HardwareConfig::reversedEncoder());
+static ButtonLedMatrix blm(shiftRegister, HardwareConfig::invertLeds());
+static Encoder encoder(HardwareConfig::reverseEncoder());
 static Lcd lcd;
 static Adc adc;
 static Dac dac;

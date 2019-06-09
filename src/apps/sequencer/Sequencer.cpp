@@ -53,8 +53,8 @@ struct {
 
 static CCMRAM_BSS ClockTimer clockTimer;
 static CCMRAM_BSS ShiftRegister shiftRegister;
-static CCMRAM_BSS ButtonLedMatrix blm(shiftRegister);
-static CCMRAM_BSS Encoder encoder(HardwareConfig::reversedEncoder());
+static CCMRAM_BSS ButtonLedMatrix blm(shiftRegister, HardwareConfig::invertLeds());
+static CCMRAM_BSS Encoder encoder(HardwareConfig::reverseEncoder());
 static Lcd lcd;
 static Adc adc;
 static CCMRAM_BSS Dac dac;
