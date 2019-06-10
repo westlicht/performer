@@ -9,23 +9,27 @@ DEPLOY_DIR = 'build/deploy'
 items = [
     {
         'name': 'Bootloader',
-        'srcs': ['build/stm32/release/src/apps/bootloader/bootloader' + ext for ext in ['.hex', '.srec']],
+        'srcs': ['build/stm32/release/src/apps/bootloader/bootloader.hex'],
         'dst': 'bootloader'
     },
     {
         'name': 'Hardware Configuration',
-        'srcs': ['build/stm32/release/src/apps/hwconfig/hwconfig_default' + ext for ext in ['.hex', '.srec']] +
-                ['build/stm32/release/src/apps/hwconfig/hwconfig_reversed_encoder' + ext for ext in ['.hex', '.srec']],
+        'srcs': [
+            'build/stm32/release/src/apps/hwconfig/hwconfig_default.hex',
+            'build/stm32/release/src/apps/hwconfig/hwconfig_reverse_encoder.hex',
+            'build/stm32/release/src/apps/hwconfig/hwconfig_invert_leds.hex',
+            'build/stm32/release/src/apps/hwconfig/hwconfig_reverse_encoder_invert_leds.hex'
+        ],
         'dst': 'hwconfig'
     },
     {
         'name': 'Sequencer',
-        'srcs': ['build/stm32/release/src/apps/sequencer/sequencer' + ext for ext in ['.hex', '.srec']],
+        'srcs': ['build/stm32/release/src/apps/sequencer/sequencer.hex'],
         'dst': 'sequencer'
     },
     {
         'name': 'Tester',
-        'srcs': ['build/stm32/release/src/apps/tester/tester' + ext for ext in ['.hex', '.srec']],
+        'srcs': ['build/stm32/release/src/apps/tester/tester.hex'],
         'dst': 'tester'
     },
     {
