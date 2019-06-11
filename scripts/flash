@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+import argparse
+import subprocess
+
+INTERFACE = 'interface/ftdi/olimex-arm-usb-ocd-h.cfg'
+TARGET = 'target/stm32f4x.cfg'
+
+# parse arguments
+
+parser = argparse.ArgumentParser(prog='flash')
+parser.add_argument('files', metavar='FILE', type=str, nargs='+', help='files to flash')
+args = parser.parse_args()
+
+# assemble openocd commands
+
+commands = [
+    'init',
+    'reset halt',
+] + [
+    'program %s verify' % (f) for f in args.files
+] + [
+    'reset',
+    'exit'
+]
+
+# assemble openocd command line
+
+flatten = lambda l: [item for sublist in l for item in sublist]
+
+args = [
+    'openocd',
+    '-f', INTERFACE,
+    '-f', TARGET
+] + flatten([
+    ('-c', c) for c in commands
+])
+
+# execute openocd
+
+subprocess.call(args)
