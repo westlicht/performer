@@ -32,7 +32,7 @@ LaunchpadDevice::~LaunchpadDevice() {
 }
 
 void LaunchpadDevice::recvMidi(const MidiMessage &message) {
-    if (message.isNoteOn()) {
+    if (message.isNoteOn() || message.isNoteOff()) {
         int index = message.note();
         int row = index / 16;
         int col = index % 16;
