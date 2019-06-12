@@ -1462,6 +1462,7 @@ Sequence mode allows for comprehensive editing of the patterns on all tracks. Th
 | `3` + `GRID` | Select first step |
 | `4` + `GRID` | Select last step |
 | `5` + `GRID` | Select run mode |
+| `7` + `A` - `H` | Fill track |
 | `8` + `A` - `H` | Mute/unmute track |
 
 The visualization on the grid depends on the selected layer. Binary layers (e.g. _Gate_ and _Slide_) can be visualized directly on the 8x8 grid without the need for navigation. This is useful for programming drum sequences for example. Other layers use navigation to various degree in order to allow programming the steps. When editing the _Note_ layer, the base note (first note per octave) is visualized to help orientation.
