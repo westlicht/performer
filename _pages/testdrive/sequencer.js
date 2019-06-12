@@ -193,7 +193,7 @@ Module['FS_createPath']('/assets', 'drumkit', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 77172, "filename": "/assets/frontpanel.png"}, {"start": 77172, "audio": 0, "end": 174136, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 174136, "audio": 1, "end": 196232, "filename": "/assets/drumkit/kick.wav"}, {"start": 196232, "audio": 1, "end": 214134, "filename": "/assets/drumkit/tom2.wav"}, {"start": 214134, "audio": 1, "end": 236168, "filename": "/assets/drumkit/clap.wav"}, {"start": 236168, "audio": 1, "end": 242828, "filename": "/assets/drumkit/hh1.wav"}, {"start": 242828, "audio": 1, "end": 244864, "filename": "/assets/drumkit/rim.wav"}, {"start": 244864, "audio": 1, "end": 305688, "filename": "/assets/drumkit/hh2.wav"}, {"start": 305688, "audio": 1, "end": 320044, "filename": "/assets/drumkit/snare.wav"}, {"start": 320044, "audio": 1, "end": 337580, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 337580, "package_uuid": "99d299a5-a84b-4ef5-89f2-28b6281650e5"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 77172, "filename": "/assets/frontpanel.png"}, {"start": 77172, "audio": 0, "end": 174136, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 174136, "audio": 1, "end": 196232, "filename": "/assets/drumkit/kick.wav"}, {"start": 196232, "audio": 1, "end": 214134, "filename": "/assets/drumkit/tom2.wav"}, {"start": 214134, "audio": 1, "end": 236168, "filename": "/assets/drumkit/clap.wav"}, {"start": 236168, "audio": 1, "end": 242828, "filename": "/assets/drumkit/hh1.wav"}, {"start": 242828, "audio": 1, "end": 244864, "filename": "/assets/drumkit/rim.wav"}, {"start": 244864, "audio": 1, "end": 305688, "filename": "/assets/drumkit/hh2.wav"}, {"start": 305688, "audio": 1, "end": 320044, "filename": "/assets/drumkit/snare.wav"}, {"start": 320044, "audio": 1, "end": 337580, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 337580, "package_uuid": "ab81fa79-1b5a-49d9-a27f-969dcf97d691"});
 
 })();
 
@@ -226,10 +226,15 @@ Module['postRun'] = [];
 var ENVIRONMENT_IS_WEB = false;
 var ENVIRONMENT_IS_WORKER = false;
 var ENVIRONMENT_IS_NODE = false;
+var ENVIRONMENT_HAS_NODE = false;
 var ENVIRONMENT_IS_SHELL = false;
 ENVIRONMENT_IS_WEB = typeof window === 'object';
 ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof require === 'function' && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
+// A web environment like Electron.js can have Node enabled, so we must
+// distinguish between Node-enabled environments and Node environments per se.
+// This will allow the former to do things like mount NODEFS.
+ENVIRONMENT_HAS_NODE = typeof process === 'object' && typeof require === 'function';
+ENVIRONMENT_IS_NODE = ENVIRONMENT_HAS_NODE && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
 ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 
 
@@ -425,12 +430,10 @@ var STACK_ALIGN = 16;
 function dynamicAlloc(size) {
   var ret = HEAP32[DYNAMICTOP_PTR>>2];
   var end = (ret + size + 15) & -16;
-  if (end <= _emscripten_get_heap_size()) {
-    HEAP32[DYNAMICTOP_PTR>>2] = end;
-  } else {
-    var success = _emscripten_resize_heap(end);
-    if (!success) return 0;
+  if (end > _emscripten_get_heap_size()) {
+    abort();
   }
+  HEAP32[DYNAMICTOP_PTR>>2] = end;
   return ret;
 }
 
@@ -687,6 +690,25 @@ if (typeof WebAssembly !== 'object') {
 }
 
 
+// In MINIMAL_RUNTIME, setValue() and getValue() are only available when building with safe heap enabled, for heap safety checking.
+// In traditional runtime, setValue() and getValue() are always available (although their use is highly discouraged due to perf penalties)
+
+/** @type {function(number, number, string, boolean=)} */
+function setValue(ptr, value, type, noSafe) {
+  type = type || 'i8';
+  if (type.charAt(type.length-1) === '*') type = 'i32'; // pointers are 32-bit
+    switch(type) {
+      case 'i1': HEAP8[((ptr)>>0)]=value; break;
+      case 'i8': HEAP8[((ptr)>>0)]=value; break;
+      case 'i16': HEAP16[((ptr)>>1)]=value; break;
+      case 'i32': HEAP32[((ptr)>>2)]=value; break;
+      case 'i64': (tempI64 = [value>>>0,(tempDouble=value,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((ptr)>>2)]=tempI64[0],HEAP32[(((ptr)+(4))>>2)]=tempI64[1]); break;
+      case 'float': HEAPF32[((ptr)>>2)]=value; break;
+      case 'double': HEAPF64[((ptr)>>3)]=value; break;
+      default: abort('invalid type for setValue: ' + type);
+    }
+}
+
 /** @type {function(number, string, boolean=)} */
 function getValue(ptr, type, noSafe) {
   type = type || 'i8';
@@ -703,6 +725,7 @@ function getValue(ptr, type, noSafe) {
     }
   return null;
 }
+
 
 
 
@@ -801,22 +824,6 @@ function cwrap(ident, returnType, argTypes, opts) {
   return function() {
     return ccall(ident, returnType, argTypes, arguments, opts);
   }
-}
-
-/** @type {function(number, number, string, boolean=)} */
-function setValue(ptr, value, type, noSafe) {
-  type = type || 'i8';
-  if (type.charAt(type.length-1) === '*') type = 'i32'; // pointers are 32-bit
-    switch(type) {
-      case 'i1': HEAP8[((ptr)>>0)]=value; break;
-      case 'i8': HEAP8[((ptr)>>0)]=value; break;
-      case 'i16': HEAP16[((ptr)>>1)]=value; break;
-      case 'i32': HEAP32[((ptr)>>2)]=value; break;
-      case 'i64': (tempI64 = [value>>>0,(tempDouble=value,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((ptr)>>2)]=tempI64[0],HEAP32[(((ptr)+(4))>>2)]=tempI64[1]); break;
-      case 'float': HEAPF32[((ptr)>>2)]=value; break;
-      case 'double': HEAPF64[((ptr)>>3)]=value; break;
-      default: abort('invalid type for setValue: ' + type);
-    }
 }
 
 var ALLOC_NORMAL = 0; // Tries to use _malloc()
@@ -1364,11 +1371,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 141344,
+    STACK_BASE = 141408,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5384224,
-    DYNAMIC_BASE = 5384224,
-    DYNAMICTOP_PTR = 141312;
+    STACK_MAX = 5384288,
+    DYNAMIC_BASE = 5384288,
+    DYNAMICTOP_PTR = 141376;
 
 
 
@@ -1655,6 +1662,7 @@ function getBinaryPromise() {
   });
 }
 
+
 // Create the wasm instance.
 // Receives the wasm imports, returns the exports.
 function createWasm(env) {
@@ -1680,6 +1688,42 @@ function createWasm(env) {
   }
   addRunDependency('wasm-instantiate');
 
+
+  function receiveInstantiatedSource(output) {
+    // 'output' is a WebAssemblyInstantiatedSource object which has both the module and instance.
+    // receiveInstance() will swap in the exports (to Module.asm) so they can be called
+      // TODO: Due to Closure regression https://github.com/google/closure-compiler/issues/3193, the above line no longer optimizes out down to the following line.
+      // When the regression is fixed, can restore the above USE_PTHREADS-enabled path.
+    receiveInstance(output['instance']);
+  }
+
+  function instantiateArrayBuffer(receiver) {
+    return getBinaryPromise().then(function(binary) {
+      return WebAssembly.instantiate(binary, info);
+    }).then(receiver, function(reason) {
+      err('failed to asynchronously prepare wasm: ' + reason);
+      abort(reason);
+    });
+  }
+
+  // Prefer streaming instantiation if available.
+  function instantiateAsync() {
+    if (!Module['wasmBinary'] &&
+        typeof WebAssembly.instantiateStreaming === 'function' &&
+        !isDataURI(wasmBinaryFile) &&
+        typeof fetch === 'function') {
+      return WebAssembly.instantiateStreaming(fetch(wasmBinaryFile, { credentials: 'same-origin' }), info)
+        .then(receiveInstantiatedSource, function(reason) {
+          // We expect the most common failure cause to be a bad MIME type for the binary,
+          // in which case falling back to ArrayBuffer instantiation should work.
+          err('wasm streaming compile failed: ' + reason);
+          err('falling back to ArrayBuffer instantiation');
+          instantiateArrayBuffer(receiveInstantiatedSource);
+        });
+    } else {
+      return instantiateArrayBuffer(receiveInstantiatedSource);
+    }
+  }
   // User shell pages can write their own Module.instantiateWasm = function(imports, successCallback) callback
   // to manually instantiate the Wasm module themselves. This allows pages to run the instantiation parallel
   // to any other async startup actions they are performing.
@@ -1692,37 +1736,7 @@ function createWasm(env) {
     }
   }
 
-  function receiveInstantiatedSource(output) {
-    // 'output' is a WebAssemblyInstantiatedSource object which has both the module and instance.
-    // receiveInstance() will swap in the exports (to Module.asm) so they can be called
-      // TODO: Due to Closure regression https://github.com/google/closure-compiler/issues/3193, the above line no longer optimizes out down to the following line.
-      // When the regression is fixed, can restore the above USE_PTHREADS-enabled path.
-    receiveInstance(output['instance']);
-  }
-  function instantiateArrayBuffer(receiver) {
-    getBinaryPromise().then(function(binary) {
-      return WebAssembly.instantiate(binary, info);
-    }).then(receiver, function(reason) {
-      err('failed to asynchronously prepare wasm: ' + reason);
-      abort(reason);
-    });
-  }
-  // Prefer streaming instantiation if available.
-  if (!Module['wasmBinary'] &&
-      typeof WebAssembly.instantiateStreaming === 'function' &&
-      !isDataURI(wasmBinaryFile) &&
-      typeof fetch === 'function') {
-    WebAssembly.instantiateStreaming(fetch(wasmBinaryFile, { credentials: 'same-origin' }), info)
-      .then(receiveInstantiatedSource, function(reason) {
-        // We expect the most common failure cause to be a bad MIME type for the binary,
-        // in which case falling back to ArrayBuffer instantiation should work.
-        err('wasm streaming compile failed: ' + reason);
-        err('falling back to ArrayBuffer instantiation');
-        instantiateArrayBuffer(receiveInstantiatedSource);
-      });
-  } else {
-    instantiateArrayBuffer(receiveInstantiatedSource);
-  }
+  instantiateAsync();
   return {}; // no exports yet; we'll fill them in later
 }
 
@@ -1797,7 +1811,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 
-// STATICTOP = STATIC_BASE + 140320;
+// STATICTOP = STATIC_BASE + 140384;
 /* global initializers */  __ATINIT__.push({ func: function() { globalCtors() } });
 
 
@@ -1808,7 +1822,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 /* no memory initializer */
-var tempDoublePtr = 141328
+var tempDoublePtr = 141392
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
   HEAP8[tempDoublePtr] = HEAP8[ptr];
@@ -1893,57 +1907,38 @@ function copyTempDouble(ptr) {
     }
 
   
+  var ___exception_infos={};
   
-  function ___cxa_free_exception(ptr) {
-      try {
-        return _free(ptr);
-      } catch(e) { // XXX FIXME
+  var ___exception_caught= [];
+  
+  function ___exception_addRef(ptr) {
+      if (!ptr) return;
+      var info = ___exception_infos[ptr];
+      info.refcount++;
+    }
+  
+  function ___exception_deAdjust(adjusted) {
+      if (!adjusted || ___exception_infos[adjusted]) return adjusted;
+      for (var key in ___exception_infos) {
+        var ptr = +key; // the iteration key is a string, and if we throw this, it must be an integer as that is what we look for
+        var adj = ___exception_infos[ptr].adjusted;
+        var len = adj.length;
+        for (var i = 0; i < len; i++) {
+          if (adj[i] === adjusted) {
+            return ptr;
+          }
+        }
       }
-    }var EXCEPTIONS={last:0,caught:[],infos:{},deAdjust:function (adjusted) {
-        if (!adjusted || EXCEPTIONS.infos[adjusted]) return adjusted;
-        for (var key in EXCEPTIONS.infos) {
-          var ptr = +key; // the iteration key is a string, and if we throw this, it must be an integer as that is what we look for
-          var adj = EXCEPTIONS.infos[ptr].adjusted;
-          var len = adj.length;
-          for (var i = 0; i < len; i++) {
-            if (adj[i] === adjusted) {
-              return ptr;
-            }
-          }
-        }
-        return adjusted;
-      },addRef:function (ptr) {
-        if (!ptr) return;
-        var info = EXCEPTIONS.infos[ptr];
-        info.refcount++;
-      },decRef:function (ptr) {
-        if (!ptr) return;
-        var info = EXCEPTIONS.infos[ptr];
-        assert(info.refcount > 0);
-        info.refcount--;
-        // A rethrown exception can reach refcount 0; it must not be discarded
-        // Its next handler will clear the rethrown flag and addRef it, prior to
-        // final decRef and destruction here
-        if (info.refcount === 0 && !info.rethrown) {
-          if (info.destructor) {
-            Module['dynCall_vi'](info.destructor, ptr);
-          }
-          delete EXCEPTIONS.infos[ptr];
-          ___cxa_free_exception(ptr);
-        }
-      },clearRef:function (ptr) {
-        if (!ptr) return;
-        var info = EXCEPTIONS.infos[ptr];
-        info.refcount = 0;
-      }};function ___cxa_begin_catch(ptr) {
-      var info = EXCEPTIONS.infos[ptr];
+      return adjusted;
+    }function ___cxa_begin_catch(ptr) {
+      var info = ___exception_infos[ptr];
       if (info && !info.caught) {
         info.caught = true;
         __ZSt18uncaught_exceptionv.uncaught_exception--;
       }
       if (info) info.rethrown = false;
-      EXCEPTIONS.caught.push(ptr);
-      EXCEPTIONS.addRef(EXCEPTIONS.deAdjust(ptr));
+      ___exception_caught.push(ptr);
+      ___exception_addRef(___exception_deAdjust(ptr));
       return ptr;
     }
 
@@ -1953,47 +1948,8 @@ function copyTempDouble(ptr) {
     }
 
   
-  
-  function ___resumeException(ptr) {
-      if (!EXCEPTIONS.last) { EXCEPTIONS.last = ptr; }
-      throw ptr;
-    }function ___cxa_find_matching_catch() {
-      var thrown = EXCEPTIONS.last;
-      if (!thrown) {
-        // just pass through the null ptr
-        return ((setTempRet0(0),0)|0);
-      }
-      var info = EXCEPTIONS.infos[thrown];
-      var throwntype = info.type;
-      if (!throwntype) {
-        // just pass through the thrown ptr
-        return ((setTempRet0(0),thrown)|0);
-      }
-      var typeArray = Array.prototype.slice.call(arguments);
-  
-      var pointer = Module['___cxa_is_pointer_type'](throwntype);
-      // can_catch receives a **, add indirection
-      if (!___cxa_find_matching_catch.buffer) ___cxa_find_matching_catch.buffer = _malloc(4);
-      HEAP32[((___cxa_find_matching_catch.buffer)>>2)]=thrown;
-      thrown = ___cxa_find_matching_catch.buffer;
-      // The different catch blocks are denoted by different types.
-      // Due to inheritance, those types may not precisely match the
-      // type of the thrown object. Find one which matches, and
-      // return the type of the catch block which should be called.
-      for (var i = 0; i < typeArray.length; i++) {
-        if (typeArray[i] && Module['___cxa_can_catch'](typeArray[i], throwntype, thrown)) {
-          thrown = HEAP32[((thrown)>>2)]; // undo indirection
-          info.adjusted.push(thrown);
-          return ((setTempRet0(typeArray[i]),thrown)|0);
-        }
-      }
-      // Shouldn't happen unless we have bogus data in typeArray
-      // or encounter a type for which emscripten doesn't have suitable
-      // typeinfo defined. Best-efforts match just in case.
-      thrown = HEAP32[((thrown)>>2)]; // undo indirection
-      return ((setTempRet0(throwntype),thrown)|0);
-    }function ___cxa_throw(ptr, type, destructor) {
-      EXCEPTIONS.infos[ptr] = {
+  var ___exception_last=0;function ___cxa_throw(ptr, type, destructor) {
+      ___exception_infos[ptr] = {
         ptr: ptr,
         adjusted: [ptr],
         type: type,
@@ -2002,7 +1958,7 @@ function copyTempDouble(ptr) {
         caught: false,
         rethrown: false
       };
-      EXCEPTIONS.last = ptr;
+      ___exception_last = ptr;
       if (!("uncaught_exception" in __ZSt18uncaught_exceptionv)) {
         __ZSt18uncaught_exceptionv.uncaught_exception = 1;
       } else {
@@ -2929,7 +2885,7 @@ function copyTempDouble(ptr) {
         // Buffer.alloc has been added with Buffer.from together, so check it instead
         return Buffer.alloc ? Buffer.from(arrayBuffer) : new Buffer(arrayBuffer);
       },mount:function (mount) {
-        assert(ENVIRONMENT_IS_NODE);
+        assert(ENVIRONMENT_HAS_NODE);
         return NODEFS.createNode(null, '/', NODEFS.getMode(mount.opts.root), 0);
       },createNode:function (parent, name, mode, dev) {
         if (!FS.isDir(mode) && !FS.isFile(mode) && !FS.isLink(mode)) {
@@ -7071,11 +7027,7 @@ function copyTempDouble(ptr) {
       } else if (target.webkitRequestFullscreen) {
         target.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
       } else {
-        if (typeof JSEvents.fullscreenEnabled() === 'undefined') {
-          return -1;
-        } else {
-          return -3;
-        }
+        return JSEvents.fullscreenEnabled() ? -3 : -1;
       }
   
       if (strategy.canvasResizedCallback) {
@@ -7084,7 +7036,7 @@ function copyTempDouble(ptr) {
   
       return 0;
     }function _emscripten_exit_fullscreen() {
-      if (typeof JSEvents.fullscreenEnabled() === 'undefined') return -1;
+      if (!JSEvents.fullscreenEnabled()) return -1;
       // Make sure no queued up calls will fire after this.
       JSEvents.removeDeferredCalls(_JSEvents_requestFullscreen);
   
@@ -8549,8 +8501,7 @@ function copyTempDouble(ptr) {
 
   
   function __emscripten_do_request_fullscreen(target, strategy) {
-      if (typeof JSEvents.fullscreenEnabled() === 'undefined') return -1;
-      if (!JSEvents.fullscreenEnabled()) return -3;
+      if (!JSEvents.fullscreenEnabled()) return -1;
       if (!target) target = '#canvas';
       target = __findEventTarget(target);
       if (!target) return -4;
@@ -8606,71 +8557,6 @@ function copyTempDouble(ptr) {
       }
   
       return __requestPointerLock(target);
-    }
-
-  
-  function abortOnCannotGrowMemory(requestedSize) {
-      abort('OOM');
-    }
-  
-  function emscripten_realloc_buffer(size) {
-      var PAGE_MULTIPLE = 65536;
-      size = alignUp(size, PAGE_MULTIPLE); // round up to wasm page size
-      var oldSize = buffer.byteLength;
-      // native wasm support
-      // note that this is *not* threadsafe. multiple threads can call .grow(), and each
-      // presents a delta, so in theory we may over-allocate here (e.g. if two threads
-      // ask to grow from 256MB to 512MB, we get 2 requests to add +256MB, and may end
-      // up growing to 768MB (even though we may have been able to make do with 512MB).
-      // TODO: consider decreasing the step sizes in emscripten_resize_heap
-      try {
-        var result = wasmMemory.grow((size - oldSize) / 65536); // .grow() takes a delta compared to the previous size
-        if (result !== (-1 | 0)) {
-          // success in native wasm memory growth, get the buffer from the memory
-          buffer = wasmMemory.buffer;
-          return true;
-        } else {
-          return false;
-        }
-      } catch(e) {
-        return false;
-      }
-    }function _emscripten_resize_heap(requestedSize) {
-      var oldSize = _emscripten_get_heap_size();
-      // With pthreads, races can happen (another thread might increase the size in between), so return a failure, and let the caller retry.
-  
-  
-      var PAGE_MULTIPLE = 65536;
-      var LIMIT = 2147483648 - PAGE_MULTIPLE; // We can do one page short of 2GB as theoretical maximum.
-  
-      if (requestedSize > LIMIT) {
-        return false;
-      }
-  
-      var MIN_TOTAL_MEMORY = 16777216;
-      var newSize = Math.max(oldSize, MIN_TOTAL_MEMORY); // So the loop below will not be infinite, and minimum asm.js memory size is 16MB.
-  
-      // TODO: see realloc_buffer - for PTHREADS we may want to decrease these jumps
-      while (newSize < requestedSize) { // Keep incrementing the heap size as long as it's less than what is requested.
-        if (newSize <= 536870912) {
-          newSize = alignUp(2 * newSize, PAGE_MULTIPLE); // Simple heuristic: double until 1GB...
-        } else {
-          // ..., but after that, add smaller increments towards 2GB, which we cannot reach
-          newSize = Math.min(alignUp((3 * newSize + 2147483648) / 4, PAGE_MULTIPLE), LIMIT);
-        }
-      }
-  
-  
-  
-      if (!emscripten_realloc_buffer(newSize)) {
-        return false;
-      }
-  
-      updateGlobalBufferViews();
-  
-  
-  
-      return true;
     }
 
   function _emscripten_sample_gamepad_data() {
@@ -8769,7 +8655,7 @@ function copyTempDouble(ptr) {
       };
       JSEvents.registerOrRemoveHandler(eventHandler);
     }function _emscripten_set_fullscreenchange_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
-      if (typeof JSEvents.fullscreenEnabled() === 'undefined') return -1;
+      if (!JSEvents.fullscreenEnabled()) return -1;
       target = target ? __findEventTarget(target) : __specialEventTargets[1];
       if (!target) return -4;
       __registerFullscreenChangeEventCallback(target, userData, useCapture, callbackfunc, 19, "fullscreenchange", targetThread);
@@ -9667,8 +9553,16 @@ function copyTempDouble(ptr) {
       return 0;
     }function _nanosleep(rqtp, rmtp) {
       // int nanosleep(const struct timespec  *rqtp, struct timespec *rmtp);
+      if (rqtp === 0) {
+        ___setErrNo(22);
+        return -1;
+      }
       var seconds = HEAP32[((rqtp)>>2)];
       var nanoseconds = HEAP32[(((rqtp)+(4))>>2)];
+      if (nanoseconds < 0 || nanoseconds > 999999999 || seconds < 0) {
+        ___setErrNo(22);
+        return -1;
+      }
       if (rmtp !== 0) {
         HEAP32[((rmtp)>>2)]=0;
         HEAP32[(((rmtp)+(4))>>2)]=0;
@@ -9682,7 +9576,71 @@ function copyTempDouble(ptr) {
 
   function _pthread_mutexattr_init() {}
 
-   
+  
+  
+  function abortOnCannotGrowMemory(requestedSize) {
+      abort('OOM');
+    }
+  
+  function emscripten_realloc_buffer(size) {
+      var PAGE_MULTIPLE = 65536;
+      size = alignUp(size, PAGE_MULTIPLE); // round up to wasm page size
+      var oldSize = buffer.byteLength;
+      // native wasm support
+      // note that this is *not* threadsafe. multiple threads can call .grow(), and each
+      // presents a delta, so in theory we may over-allocate here (e.g. if two threads
+      // ask to grow from 256MB to 512MB, we get 2 requests to add +256MB, and may end
+      // up growing to 768MB (even though we may have been able to make do with 512MB).
+      // TODO: consider decreasing the step sizes in emscripten_resize_heap
+      try {
+        var result = wasmMemory.grow((size - oldSize) / 65536); // .grow() takes a delta compared to the previous size
+        if (result !== (-1 | 0)) {
+          // success in native wasm memory growth, get the buffer from the memory
+          buffer = wasmMemory.buffer;
+          return true;
+        } else {
+          return false;
+        }
+      } catch(e) {
+        return false;
+      }
+    }function _emscripten_resize_heap(requestedSize) {
+      var oldSize = _emscripten_get_heap_size();
+      // With pthreads, races can happen (another thread might increase the size in between), so return a failure, and let the caller retry.
+  
+  
+      var PAGE_MULTIPLE = 65536;
+      var LIMIT = 2147483648 - PAGE_MULTIPLE; // We can do one page short of 2GB as theoretical maximum.
+  
+      if (requestedSize > LIMIT) {
+        return false;
+      }
+  
+      var MIN_TOTAL_MEMORY = 16777216;
+      var newSize = Math.max(oldSize, MIN_TOTAL_MEMORY); // So the loop below will not be infinite, and minimum asm.js memory size is 16MB.
+  
+      // TODO: see realloc_buffer - for PTHREADS we may want to decrease these jumps
+      while (newSize < requestedSize) { // Keep incrementing the heap size as long as it's less than what is requested.
+        if (newSize <= 536870912) {
+          newSize = alignUp(2 * newSize, PAGE_MULTIPLE); // Simple heuristic: double until 1GB...
+        } else {
+          // ..., but after that, add smaller increments towards 2GB, which we cannot reach
+          newSize = Math.min(alignUp((3 * newSize + 2147483648) / 4, PAGE_MULTIPLE), LIMIT);
+        }
+      }
+  
+  
+  
+      if (!emscripten_realloc_buffer(newSize)) {
+        return false;
+      }
+  
+      updateGlobalBufferViews();
+  
+  
+  
+      return true;
+    } 
 
   function _sigaction(signum, act, oldact) {
       //int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
@@ -9770,7 +9728,27 @@ function copyTempDouble(ptr) {
         '%R': '%H:%M',                    // Replaced by the time in 24-hour notation
         '%T': '%H:%M:%S',                 // Replaced by the time
         '%x': '%m/%d/%y',                 // Replaced by the locale's appropriate date representation
-        '%X': '%H:%M:%S'                  // Replaced by the locale's appropriate date representation
+        '%X': '%H:%M:%S',                 // Replaced by the locale's appropriate time representation
+        // Modified Conversion Specifiers
+        '%Ec': '%c',                      // Replaced by the locale's alternative appropriate date and time representation.
+        '%EC': '%C',                      // Replaced by the name of the base year (period) in the locale's alternative representation.
+        '%Ex': '%m/%d/%y',                // Replaced by the locale's alternative date representation.
+        '%EX': '%H:%M:%S',                // Replaced by the locale's alternative time representation.
+        '%Ey': '%y',                      // Replaced by the offset from %EC (year only) in the locale's alternative representation.
+        '%EY': '%Y',                      // Replaced by the full alternative year representation.
+        '%Od': '%d',                      // Replaced by the day of the month, using the locale's alternative numeric symbols, filled as needed with leading zeros if there is any alternative symbol for zero; otherwise, with leading <space> characters.
+        '%Oe': '%e',                      // Replaced by the day of the month, using the locale's alternative numeric symbols, filled as needed with leading <space> characters.
+        '%OH': '%H',                      // Replaced by the hour (24-hour clock) using the locale's alternative numeric symbols.
+        '%OI': '%I',                      // Replaced by the hour (12-hour clock) using the locale's alternative numeric symbols.
+        '%Om': '%m',                      // Replaced by the month using the locale's alternative numeric symbols.
+        '%OM': '%M',                      // Replaced by the minutes using the locale's alternative numeric symbols.
+        '%OS': '%S',                      // Replaced by the seconds using the locale's alternative numeric symbols.
+        '%Ou': '%u',                      // Replaced by the weekday as a number in the locale's alternative representation (Monday=1).
+        '%OU': '%U',                      // Replaced by the week number of the year (Sunday as the first day of the week, rules corresponding to %U ) using the locale's alternative numeric symbols.
+        '%OV': '%V',                      // Replaced by the week number of the year (Monday as the first day of the week, rules corresponding to %V ) using the locale's alternative numeric symbols.
+        '%Ow': '%w',                      // Replaced by the number of the weekday (Sunday=0) using the locale's alternative numeric symbols.
+        '%OW': '%W',                      // Replaced by the week number of the year (Monday as the first day of the week) using the locale's alternative numeric symbols.
+        '%Oy': '%y',                      // Replaced by the year (offset from %C ) using the locale's alternative numeric symbols.
       };
       for (var rule in EXPANSION_RULES_1) {
         pattern = pattern.replace(new RegExp(rule, 'g'), EXPANSION_RULES_1[rule]);
@@ -9920,8 +9898,7 @@ function copyTempDouble(ptr) {
           return '\t';
         },
         '%u': function(date) {
-          var day = new Date(date.tm_year+1900, date.tm_mon+1, date.tm_mday, 0, 0, 0, 0);
-          return day.getDay() || 7;
+          return date.tm_wday || 7;
         },
         '%U': function(date) {
           // Replaced by the week number of the year as a decimal number [00,53].
@@ -9978,8 +9955,7 @@ function copyTempDouble(ptr) {
           return leadingNulls(Math.ceil(daysDifference/7), 2);
         },
         '%w': function(date) {
-          var day = new Date(date.tm_year+1900, date.tm_mon+1, date.tm_mday, 0, 0, 0, 0);
-          return day.getDay();
+          return date.tm_wday;
         },
         '%W': function(date) {
           // Replaced by the week number of the year as a decimal number [00,53].
@@ -10041,7 +10017,7 @@ function copyTempDouble(ptr) {
     }
 
 FS.staticInit();Module["FS_createFolder"] = FS.createFolder;Module["FS_createPath"] = FS.createPath;Module["FS_createDataFile"] = FS.createDataFile;Module["FS_createPreloadedFile"] = FS.createPreloadedFile;Module["FS_createLazyFile"] = FS.createLazyFile;Module["FS_createLink"] = FS.createLink;Module["FS_createDevice"] = FS.createDevice;Module["FS_unlink"] = FS.unlink;;
-if (ENVIRONMENT_IS_NODE) { var fs = require("fs"); var NODEJS_PATH = require("path"); NODEFS.staticInit(); };
+if (ENVIRONMENT_HAS_NODE) { var fs = require("fs"); var NODEJS_PATH = require("path"); NODEFS.staticInit(); };
 if (ENVIRONMENT_IS_NODE) {
     _emscripten_get_now = function _emscripten_get_now_actual() {
       var t = process['hrtime']();
@@ -10111,15 +10087,14 @@ var asmLibraryArg = {
   "___buildEnvironment": ___buildEnvironment,
   "___cxa_allocate_exception": ___cxa_allocate_exception,
   "___cxa_begin_catch": ___cxa_begin_catch,
-  "___cxa_find_matching_catch": ___cxa_find_matching_catch,
-  "___cxa_free_exception": ___cxa_free_exception,
   "___cxa_pure_virtual": ___cxa_pure_virtual,
   "___cxa_throw": ___cxa_throw,
   "___cxa_uncaught_exception": ___cxa_uncaught_exception,
+  "___exception_addRef": ___exception_addRef,
+  "___exception_deAdjust": ___exception_deAdjust,
   "___gxx_personality_v0": ___gxx_personality_v0,
   "___lock": ___lock,
   "___map_file": ___map_file,
-  "___resumeException": ___resumeException,
   "___setErrNo": ___setErrNo,
   "___syscall140": ___syscall140,
   "___syscall145": ___syscall145,
