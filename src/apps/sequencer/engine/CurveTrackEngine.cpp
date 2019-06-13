@@ -97,8 +97,8 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     _currentStepFraction = float(relativeTick % divisor) / divisor;
 
     float value = evalStepShape(step, _currentStepFraction);
-    const auto range = Types::voltageRangeInfo(sequence.range());
-    value = range.lo + value * (range.hi - range.lo);
+    const auto &range = Types::voltageRangeInfo(sequence.range());
+    value = range.denormalize(value);
     _cvOutputTarget = value;
 
     _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutputTarget);

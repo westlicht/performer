@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/utils/StringBuilder.h"
+#include "core/math/Math.h"
 
 #include <array>
 
@@ -143,6 +144,14 @@ public:
     struct VoltageRangeInfo {
         float lo;
         float hi;
+
+        float normalize(float value) const {
+            return clamp((value - lo) / (hi - lo), 0.f, 1.f);
+        }
+
+        float denormalize(float value) const {
+            return clamp(value, 0.f, 1.f) * (hi - lo) + lo;
+        }
     };
 
     static const VoltageRangeInfo &voltageRangeInfo(VoltageRange voltageRange) {
