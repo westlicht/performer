@@ -94,7 +94,7 @@ void RoutingEngine::updateSources() {
             case Routing::Source::CvIn4: {
                 auto range = Types::voltageRangeInfo(route.cvSource().range());
                 int index = int(route.source()) - int(Routing::Source::CvIn1);
-                sourceValue = clamp((_engine.cvInput().channel(index) - range->lo) / (range->hi - range->lo), 0.f, 1.f);
+                sourceValue = clamp((_engine.cvInput().channel(index) - range.lo) / (range.hi - range.lo), 0.f, 1.f);
                 break;
             }
             case Routing::Source::CvOut1:
@@ -107,7 +107,7 @@ void RoutingEngine::updateSources() {
             case Routing::Source::CvOut8: {
                 auto range = Types::voltageRangeInfo(route.cvSource().range());
                 int index = int(route.source()) - int(Routing::Source::CvOut1);
-                sourceValue = clamp((_engine.cvOutput().channel(index) - range->lo) / (range->hi - range->lo), 0.f, 1.f);
+                sourceValue = clamp((_engine.cvOutput().channel(index) - range.lo) / (range.hi - range.lo), 0.f, 1.f);
                 break;
             }
             case Routing::Source::Midi:

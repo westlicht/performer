@@ -145,8 +145,8 @@ public:
         float hi;
     };
 
-    static const VoltageRangeInfo *voltageRangeInfo(VoltageRange voltageRange) {
-        return &voltageRangeInfos[int(voltageRange)];
+    static const VoltageRangeInfo &voltageRangeInfo(VoltageRange voltageRange) {
+        return voltageRangeInfos[int(voltageRange)];
     }
 
     // MidiPort

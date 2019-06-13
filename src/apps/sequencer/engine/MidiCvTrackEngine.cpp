@@ -145,7 +145,7 @@ float MidiCvTrackEngine::noteToCv(int note) const {
 
 float MidiCvTrackEngine::valueToCv(int value) const {
     const auto range = Types::voltageRangeInfo(_midiCvTrack.modulationRange());
-    return value * (1.f / 127.f) * (range->hi - range->lo) + range->lo;
+    return value * (1.f / 127.f) * (range.hi - range.lo) + range.lo;
 }
 
 float MidiCvTrackEngine::pitchBendToCv(int value) const {
