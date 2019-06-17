@@ -30,6 +30,9 @@ public:
     virtual bool activity() const override { return _activity; }
     virtual bool gateOutput(int index) const override { return _gateOutput; }
     virtual float cvOutput(int index) const override { return _cvOutput; }
+    virtual float sequenceProgress() const override {
+        return _currentStep < 0 ? 0.f : float(_currentStep - _sequence->firstStep()) / (_sequence->lastStep() - _sequence->firstStep());
+    }
 
     const NoteSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }

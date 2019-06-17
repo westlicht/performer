@@ -27,6 +27,9 @@ public:
     virtual bool activity() const override { return false; }
     virtual bool gateOutput(int index) const override { return !mute(); }
     virtual float cvOutput(int index) const override { return _cvOutput; }
+    virtual float sequenceProgress() const override {
+        return _currentStep < 0 ? 0.f : float(_currentStep - _sequence->firstStep()) / (_sequence->lastStep() - _sequence->firstStep());
+    }
 
     const CurveSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const CurveSequence &sequence) const { return &sequence == _sequence; }

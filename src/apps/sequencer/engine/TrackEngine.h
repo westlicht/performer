@@ -76,6 +76,8 @@ public:
     virtual bool gateOutput(int index) const = 0;
     virtual float cvOutput(int index) const = 0;
 
+    virtual float sequenceProgress() const { return -1.f; }
+
     // helpers
 
     bool isSelected() const { return _model.project().selectedTrackIndex() == _track.trackIndex(); }

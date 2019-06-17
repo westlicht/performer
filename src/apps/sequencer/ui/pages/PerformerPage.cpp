@@ -58,20 +58,32 @@ void PerformerPage::draw(Canvas &canvas) {
 
         x += 8;
 
+        // draw track number (highlight when fill is active)
         canvas.setColor(trackState.fill() ? 0xf : 0x7);
         canvas.drawTextCentered(x, y - 2, w, 8, FixedStringBuilder<8>("T%d", trackIndex + 1));
 
         y += 8;
 
+        // draw outer rectangle (track activity)
         canvas.setColor(trackEngine.activity() ? 0xf : 0x7);
         canvas.drawRect(x, y, w, h);
 
+        // draw mutes and mute requests
         canvas.setColor(0xf);
         if (trackState.hasMuteRequest() && trackState.mute() != trackState.requestedMute()) {
             hasRequested = true;
             canvas.fillRect(x + BorderRequested, y + BorderRequested, w - 2 * BorderRequested, h - 2 * BorderRequested);
         } else if (trackState.mute()) {
             canvas.fillRect(x + Border, y + Border, w - 2 * Border, h - 2 * Border);
+        }
+
+        // draw sequence progress
+        float progress = trackEngine.sequenceProgress();
+        if (progress >= 0.f) {
+            canvas.setColor(0x7);
+            canvas.fillRect(x, y + h + 4, w, 2);
+            canvas.setColor(0xf);
+            canvas.vline(x + int(std::floor(progress * w)), y + h + 4, 2);
         }
     }
 
