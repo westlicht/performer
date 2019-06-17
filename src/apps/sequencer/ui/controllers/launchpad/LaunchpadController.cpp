@@ -270,12 +270,20 @@ void LaunchpadController::sequenceButtonUp(const Button &button) {
 void LaunchpadController::sequenceUpdateNavigation() {
     switch (_project.selectedTrack().trackMode()) {
     case Track::TrackMode::Note: {
+        auto layer = _project.selectedNoteSequenceLayer();
+        _sequence.navigation.left = 0;
+        _sequence.navigation.right = layer == NoteSequence::Layer::Gate || layer == NoteSequence::Layer::Slide ? 0 : 7;
+
         auto range = NoteSequence::layerRange(_project.selectedNoteSequenceLayer());
         _sequence.navigation.top = range.max / 8;
         _sequence.navigation.bottom = (range.min - 7) / 8;
+
         break;
     }
     case Track::TrackMode::Curve: {
+        _sequence.navigation.left = 0;
+        _sequence.navigation.right = 7;
+
         auto range = CurveSequence::layerRange(_project.selectedCurveSequenceLayer());
         auto rangeMap = curveSequenceLayerRangeMap[int(_project.selectedCurveSequenceLayer())];
         if (rangeMap) {
