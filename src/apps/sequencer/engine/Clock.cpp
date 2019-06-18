@@ -1,5 +1,7 @@
 #include "Clock.h"
 
+#include "Groove.h"
+
 #include "os/os.h"
 #include "core/Debug.h"
 #include "core/math/Math.h"
@@ -268,6 +270,11 @@ void Clock::outputConfigure(int divisor, int pulse) {
     _output.pulse = pulse;
 }
 
+void Clock::outputConfigureSwing(int swing) {
+    os::InterruptLock lock;
+    _output.swing = swing;
+}
+
 #define CHECK(_event_)                  \
     if (_requestedEvents & _event_) {   \
         _requestedEvents &= ~_event_;   \
@@ -336,6 +343,7 @@ void Clock::resetTicks() {
     _tick = 0;
     _tickProcessed = 0;
     _slaveSubTicksPending = 0;
+    _output.nextTick = 0;
 }
 
 void Clock::requestStart() {
@@ -403,12 +411,27 @@ void Clock::outputTick(uint32_t tick) {
         outputMidiMessage(MidiMessage::Tick);
     }
 
-    uint32_t divisor = _output.divisor;
-    uint32_t clockTick = tick % divisor;
-    uint32_t clockDuration = clamp(uint32_t(_masterBpm * _ppqn * _output.pulse / (60 * 1000)), uint32_t(1), uint32_t(divisor - 1));
-    if (clockTick == 0) {
+    // generate output clock with swing
+
+    auto applySwing = [this] (uint32_t tick) {
+        return _output.swing != 0 ? Groove::swing(tick, CONFIG_PPQN / 4, _output.swing) : tick;
+    };
+
+    if (tick == _output.nextTick) {
+        uint32_t divisor = _output.divisor;
+        uint32_t clockDuration = std::max(uint32_t(1), uint32_t(_masterBpm * _ppqn * _output.pulse / (60 * 1000)));
+
+        _output.nextTickOn = applySwing(_output.nextTick);
+        _output.nextTickOff = std::min(_output.nextTickOn + clockDuration, applySwing(_output.nextTick + divisor) - 1);
+
+        _output.nextTick += divisor;
+    }
+
+    if (tick == _output.nextTickOn) {
         outputClock(true);
-    } else if (clockTick == clockDuration) {
+    }
+
+    if (tick == _output.nextTickOff) {
         outputClock(false);
     }
 }

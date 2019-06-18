@@ -76,6 +76,7 @@ public:
 
     // Clock output
     void outputConfigure(int divisor, int pulse);
+    void outputConfigureSwing(int swing);
     const OutputState &outputState() const { return _outputState; }
 
     // Sequencer interface
@@ -134,6 +135,10 @@ private:
     struct Output {
         int divisor;
         int pulse;
+        int swing;
+        uint32_t nextTick;
+        uint32_t nextTickOn;
+        uint32_t nextTickOff;
     };
     Output _output;
     OutputState _outputState;

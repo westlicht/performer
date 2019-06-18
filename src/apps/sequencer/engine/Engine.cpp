@@ -700,6 +700,9 @@ void Engine::initClock() {
 void Engine::updateClockSetup() {
     auto &clockSetup = _model.project().clockSetup();
 
+    // Update clock swing
+    _clock.outputConfigureSwing(clockSetup.clockOutputSwing() ? _model.project().swing() : 0);
+
     if (!clockSetup.isDirty()) {
         return;
     }
