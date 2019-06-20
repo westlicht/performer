@@ -167,6 +167,23 @@ public:
         str(Types::cvGateInputName(_cvGateInput));
     }
 
+    // curveCvInput
+
+    Types::CurveCvInput curveCvInput() const { return _curveCvInput; }
+    void setCurveCvInput(Types::CurveCvInput curveCvInput) {
+        _curveCvInput = ModelUtils::clampedEnum(curveCvInput);
+    }
+
+    void editCurveCvInput(int value, bool shift) {
+        _curveCvInput = ModelUtils::adjustedEnum(_curveCvInput, value);
+    }
+
+    void printCurveCvInput(StringBuilder &str) const {
+        str(Types::curveCvInput(_curveCvInput));
+    }
+
+    // curveMidiInput
+
     // clockSetup
 
     const ClockSetup &clockSetup() const { return _clockSetup; }
@@ -349,6 +366,7 @@ private:
     uint8_t _rootNote;
     Types::RecordMode _recordMode;
     Types::CvGateInput _cvGateInput;
+    Types::CurveCvInput _curveCvInput;
 
     RoutableSet<Routing::Target::ProjectFirst, Routing::Target::ProjectLast> _routed;
 

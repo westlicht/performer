@@ -55,6 +55,7 @@ private:
         RootNote,
         RecordMode,
         CvGateInput,
+        CurveCvInput,
         Last
     };
 
@@ -68,6 +69,7 @@ private:
         case RootNote:          return "Root Note";
         case RecordMode:        return "Record Mode";
         case CvGateInput:       return "CV/Gate Input";
+        case CurveCvInput:      return "Curve CV Input";
         case Last:              break;
         }
         return nullptr;
@@ -103,6 +105,9 @@ private:
         case CvGateInput:
             _project.printCvGateInput(str);
             break;
+        case CurveCvInput:
+            _project.printCurveCvInput(str);
+            break;
         case Last:
             break;
         }
@@ -132,6 +137,9 @@ private:
             break;
         case CvGateInput:
             _project.editCvGateInput(value, shift);
+            break;
+        case CurveCvInput:
+            _project.editCurveCvInput(value, shift);
             break;
         case Last:
             break;

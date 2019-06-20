@@ -24,6 +24,7 @@ namespace ProjectVersion {
     static constexpr uint32_t Version10 = 10;
 
     // added ClockSetup::clockOutputSwing
+    // added Project::curveCvInput
     static constexpr uint32_t Version11 = 11;
 
     static constexpr uint32_t Version = Version11;

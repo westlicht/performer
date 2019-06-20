@@ -47,6 +47,27 @@ public:
         return nullptr;
     }
 
+    enum class CurveCvInput : uint8_t {
+        Off,
+        Cv1,
+        Cv2,
+        Cv3,
+        Cv4,
+        Last
+    };
+
+    static const char *curveCvInput(CurveCvInput curveCvInput) {
+        switch (curveCvInput) {
+        case CurveCvInput::Off:     return "Off";
+        case CurveCvInput::Cv1:     return "CV1";
+        case CurveCvInput::Cv2:     return "CV2";
+        case CurveCvInput::Cv3:     return "CV3";
+        case CurveCvInput::Cv4:     return "CV4";
+        case CurveCvInput::Last:    break;
+        }
+        return nullptr;
+    }
+
     // PlayMode
 
     enum class PlayMode : uint8_t {

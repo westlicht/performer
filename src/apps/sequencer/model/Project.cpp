@@ -38,6 +38,7 @@ void Project::clear() {
     setRootNote(0);
     setRecordMode(Types::RecordMode::Overdub);
     setCvGateInput(Types::CvGateInput::Off);
+    setCurveCvInput(Types::CurveCvInput::Off);
 
     _routed.clear();
 
@@ -109,6 +110,7 @@ void Project::write(WriteContext &context) const {
     writer.write(_rootNote);
     writer.write(_recordMode);
     writer.write(_cvGateInput);
+    writer.write(_curveCvInput);
 
     _clockSetup.write(context);
 
@@ -141,6 +143,7 @@ bool Project::read(ReadContext &context) {
     reader.read(_rootNote);
     reader.read(_recordMode);
     reader.read(_cvGateInput, ProjectVersion::Version6);
+    reader.read(_curveCvInput, ProjectVersion::Version11);
 
     _clockSetup.read(context);
 
