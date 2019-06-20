@@ -1,6 +1,5 @@
 #include "Arpeggiator.h"
-
-#include "Project.h"
+#include "ProjectVersion.h"
 
 void Arpeggiator::clear() {
     setEnabled(false);
@@ -23,14 +22,14 @@ void Arpeggiator::write(WriteContext &context) const {
 
 void Arpeggiator::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_enabled, Project::Version9);
-    reader.read(_hold, Project::Version9);
-    reader.read(_mode, Project::Version9);
-    if (reader.dataVersion() < Project::Version10) {
-        reader.readAs<uint8_t>(_divisor, Project::Version9);
+    reader.read(_enabled, ProjectVersion::Version9);
+    reader.read(_hold, ProjectVersion::Version9);
+    reader.read(_mode, ProjectVersion::Version9);
+    if (reader.dataVersion() < ProjectVersion::Version10) {
+        reader.readAs<uint8_t>(_divisor, ProjectVersion::Version9);
     } else {
         reader.read(_divisor);
     }
-    reader.read(_gateLength, Project::Version9);
-    reader.read(_octaves, Project::Version9);
+    reader.read(_gateLength, ProjectVersion::Version9);
+    reader.read(_octaves, ProjectVersion::Version9);
 }

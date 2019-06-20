@@ -1,5 +1,5 @@
 #include "NoteTrack.h"
-#include "Project.h"
+#include "ProjectVersion.h"
 
 void NoteTrack::writeRouted(Routing::Target target, int intValue, float floatValue) {
     switch (target) {
@@ -72,7 +72,7 @@ void NoteTrack::read(ReadContext &context) {
     auto reader = context.reader;
     reader.read(_playMode);
     reader.read(_fillMode);
-    reader.read(_cvUpdateMode, Project::Version4);
+    reader.read(_cvUpdateMode, ProjectVersion::Version4);
     reader.read(_slideTime.base);
     reader.read(_octave.base);
     reader.read(_transpose.base);

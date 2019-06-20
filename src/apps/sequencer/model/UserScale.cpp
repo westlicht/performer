@@ -1,5 +1,5 @@
 #include "UserScale.h"
-#include "Project.h"
+#include "ProjectVersion.h"
 
 UserScale::Array UserScale::userScales;
 
@@ -42,7 +42,7 @@ bool UserScale::read(ReadContext &context) {
 
     auto &reader = context.reader;
 
-    reader.read(_name, NameLength + 1, Project::Version5);
+    reader.read(_name, NameLength + 1, ProjectVersion::Version5);
     reader.read(_mode);
     reader.read(_size);
 
@@ -69,7 +69,7 @@ fs::Error UserScale::write(const char *path) const {
 
     VersionedSerializedWriter writer(
         [&fileWriter] (const void *data, size_t len) { fileWriter.write(data, len); },
-        Project::Version
+        ProjectVersion::Version
     );
 
     WriteContext context = { writer };
@@ -89,7 +89,7 @@ fs::Error UserScale::read(const char *path) {
 
     VersionedSerializedReader reader(
         [&fileReader] (void *data, size_t len) { fileReader.read(data, len); },
-        Project::Version
+        ProjectVersion::Version
     );
 
     ReadContext context = { reader };

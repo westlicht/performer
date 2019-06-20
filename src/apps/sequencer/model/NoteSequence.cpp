@@ -1,5 +1,5 @@
 #include "NoteSequence.h"
-#include "Project.h"
+#include "ProjectVersion.h"
 
 #include "ModelUtils.h"
 
@@ -137,10 +137,10 @@ void NoteSequence::Step::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_data0.raw);
     reader.read(_data1.raw);
-    if (reader.dataVersion() < Project::Version5) {
+    if (reader.dataVersion() < ProjectVersion::Version5) {
         _data1.raw &= 0x1f;
     }
-    if (reader.dataVersion() < Project::Version7) {
+    if (reader.dataVersion() < ProjectVersion::Version7) {
         setGateOffset(0);
     }
 }
@@ -238,7 +238,7 @@ void NoteSequence::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_scale);
     reader.read(_rootNote);
-    if (reader.dataVersion() < Project::Version10) {
+    if (reader.dataVersion() < ProjectVersion::Version10) {
         reader.readAs<uint8_t>(_divisor.base);
     } else {
         reader.read(_divisor.base);

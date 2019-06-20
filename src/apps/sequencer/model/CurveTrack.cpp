@@ -1,5 +1,5 @@
 #include "CurveTrack.h"
-#include "Project.h"
+#include "ProjectVersion.h"
 
 void CurveTrack::writeRouted(Routing::Target target, int intValue, float floatValue) {
     switch (target) {
@@ -40,7 +40,7 @@ void CurveTrack::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_playMode);
     reader.read(_fillMode);
-    reader.read(_slideTime.base, Project::Version8);
+    reader.read(_slideTime.base, ProjectVersion::Version8);
     reader.read(_rotate.base);
     readArray(context, _sequences);
 }

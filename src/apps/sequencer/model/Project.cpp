@@ -1,4 +1,5 @@
 #include "Project.h"
+#include "ProjectVersion.h"
 
 #include "core/fs/FileWriter.h"
 #include "core/fs/FileReader.h"
@@ -132,14 +133,14 @@ bool Project::read(ReadContext &context) {
     clear();
 
     auto &reader = context.reader;
-    reader.read(_name, NameLength + 1, Version5);
+    reader.read(_name, NameLength + 1, ProjectVersion::Version5);
     reader.read(_tempo.base);
     reader.read(_swing.base);
     reader.read(_syncMeasure);
     reader.read(_scale);
     reader.read(_rootNote);
     reader.read(_recordMode);
-    reader.read(_cvGateInput, Version6);
+    reader.read(_cvGateInput, ProjectVersion::Version6);
 
     _clockSetup.read(context);
 
@@ -152,7 +153,7 @@ bool Project::read(ReadContext &context) {
     _routing.read(context);
     _midiOutput.read(context);
 
-    if (reader.dataVersion() >= Version5) {
+    if (reader.dataVersion() >= ProjectVersion::Version5) {
         readArray(context, UserScale::userScales);
     }
 
@@ -180,7 +181,7 @@ fs::Error Project::write(const char *path) const {
 
     VersionedSerializedWriter writer(
         [&fileWriter] (const void *data, size_t len) { fileWriter.write(data, len); },
-        Version
+        ProjectVersion::Version
     );
 
     WriteContext context = { writer };
@@ -200,7 +201,7 @@ fs::Error Project::read(const char *path) {
 
     VersionedSerializedReader reader(
         [&fileReader] (void *data, size_t len) { fileReader.read(data, len); },
-        Version
+        ProjectVersion::Version
     );
 
     ReadContext context = { reader };

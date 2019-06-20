@@ -1,5 +1,5 @@
 #include "ClockSetup.h"
-#include "Project.h"
+#include "ProjectVersion.h"
 
 void ClockSetup::clear() {
     _mode = Mode::Auto;
@@ -40,7 +40,7 @@ void ClockSetup::read(ReadContext &context) {
     reader.read(_clockInputDivisor);
     reader.read(_clockInputMode);
     reader.read(_clockOutputDivisor);
-    reader.read(_clockOutputSwing, Project::Version11);
+    reader.read(_clockOutputSwing, ProjectVersion::Version11);
     reader.read(_clockOutputPulse);
     reader.read(_clockOutputMode);
     reader.read(_midiRx);
