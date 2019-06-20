@@ -65,6 +65,9 @@ public:
         }
 
         float minNormalized() const { return float(_min) / Min::Max; }
+        void setMinNormalized(float min) {
+            setMin(int(std::round(min * Min::Max)));
+        }
 
         // max
 
@@ -75,6 +78,9 @@ public:
         }
 
         float maxNormalized() const { return float(_max) / Max::Max; }
+        void setMaxNormalized(float max) {
+            setMax(int(std::round(max * Max::Max)));
+        }
 
         int layerValue(Layer layer) const;
         void setLayerValue(Layer layer, int value);

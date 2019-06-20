@@ -2,6 +2,7 @@
 
 #include "TrackEngine.h"
 #include "SequenceState.h"
+#include "CurveRecorder.h"
 
 #include "model/Track.h"
 
@@ -40,11 +41,18 @@ public:
 private:
     void updateOutput(uint32_t relativeTick, uint32_t divisor);
 
-    const CurveTrack &_curveTrack;
+    bool isRecording() const;
+    void updateRecordValue();
+    void updateRecording(uint32_t relativeTick, uint32_t divisor);
+
+    CurveTrack &_curveTrack;
 
     TrackLinkData _linkData;
 
-    const CurveSequence *_sequence;
+    float _recordValue;
+    CurveRecorder _recorder;
+
+    CurveSequence *_sequence;
     SequenceState _sequenceState;
     int _currentStep;
     float _currentStepFraction;

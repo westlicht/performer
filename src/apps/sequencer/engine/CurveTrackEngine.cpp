@@ -25,6 +25,8 @@ void CurveTrackEngine::reset() {
     _currentStep = -1;
     _currentStepFraction = 0.f;
 
+    _recorder.reset();
+
     changePattern();
 }
 
@@ -46,6 +48,8 @@ void CurveTrackEngine::tick(uint32_t tick) {
         if (relativeTick == 0) {
             reset();
         }
+
+        updateRecording(relativeTick, divisor);
 
         if (relativeTick % divisor == 0) {
             // advance sequence
@@ -70,6 +74,14 @@ void CurveTrackEngine::tick(uint32_t tick) {
 }
 
 void CurveTrackEngine::update(float dt) {
+    // override due to recording
+    if (isRecording()) {
+        updateRecordValue();
+        const auto &range = Types::voltageRangeInfo(_sequence->range());
+        _cvOutputTarget = range.denormalize(_recordValue);
+        _cvOutput = _cvOutputTarget;
+    }
+
     if (_curveTrack.slideTime() > 0) {
         float factor = 1.f - 0.01f * _curveTrack.slideTime();
         factor = 500.f * factor * factor;
@@ -102,4 +114,48 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     _cvOutputTarget = value;
 
     _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutputTarget);
+}
+
+bool CurveTrackEngine::isRecording() const {
+    return
+        _engine.state().recording() &&
+        _model.project().curveCvInput() != Types::CurveCvInput::Off &&
+        _model.project().selectedTrackIndex() == _track.trackIndex();
+}
+
+void CurveTrackEngine::updateRecordValue() {
+    auto &sequence = *_sequence;
+    const auto &range = Types::voltageRangeInfo(sequence.range());
+    auto curveCvInput = _model.project().curveCvInput();
+
+    switch (curveCvInput) {
+    case Types::CurveCvInput::Cv1:
+    case Types::CurveCvInput::Cv2:
+    case Types::CurveCvInput::Cv3:
+    case Types::CurveCvInput::Cv4:
+        _recordValue = range.normalize(_engine.cvInput().channel(int(curveCvInput) - int(Types::CurveCvInput::Cv1)));
+        break;
+    default:
+        _recordValue = 0.f;
+        break;
+    }
+}
+
+void CurveTrackEngine::updateRecording(uint32_t relativeTick, uint32_t divisor) {
+    if (!isRecording()) {
+        _recorder.reset();
+        return;
+    }
+
+    updateRecordValue();
+
+    if (_recorder.write(relativeTick, divisor, _recordValue) && _sequenceState.step() >= 0) {
+        auto &sequence = *_sequence;
+        int rotate = _curveTrack.rotate();
+        auto &step = sequence.step(SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate));
+        auto match = _recorder.matchCurve();
+        step.setShape(match.type);
+        step.setMinNormalized(match.min);
+        step.setMaxNormalized(match.max);
+    }
 }
