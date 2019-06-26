@@ -193,7 +193,7 @@ Module['FS_createPath']('/assets', 'drumkit', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 77172, "filename": "/assets/frontpanel.png"}, {"start": 77172, "audio": 0, "end": 174136, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 174136, "audio": 1, "end": 196232, "filename": "/assets/drumkit/kick.wav"}, {"start": 196232, "audio": 1, "end": 214134, "filename": "/assets/drumkit/tom2.wav"}, {"start": 214134, "audio": 1, "end": 236168, "filename": "/assets/drumkit/clap.wav"}, {"start": 236168, "audio": 1, "end": 242828, "filename": "/assets/drumkit/hh1.wav"}, {"start": 242828, "audio": 1, "end": 244864, "filename": "/assets/drumkit/rim.wav"}, {"start": 244864, "audio": 1, "end": 305688, "filename": "/assets/drumkit/hh2.wav"}, {"start": 305688, "audio": 1, "end": 320044, "filename": "/assets/drumkit/snare.wav"}, {"start": 320044, "audio": 1, "end": 337580, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 337580, "package_uuid": "44ef9eac-9125-4f52-ae18-9339a20f8e6f"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 77172, "filename": "/assets/frontpanel.png"}, {"start": 77172, "audio": 0, "end": 174136, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 174136, "audio": 1, "end": 196232, "filename": "/assets/drumkit/kick.wav"}, {"start": 196232, "audio": 1, "end": 214134, "filename": "/assets/drumkit/tom2.wav"}, {"start": 214134, "audio": 1, "end": 236168, "filename": "/assets/drumkit/clap.wav"}, {"start": 236168, "audio": 1, "end": 242828, "filename": "/assets/drumkit/hh1.wav"}, {"start": 242828, "audio": 1, "end": 244864, "filename": "/assets/drumkit/rim.wav"}, {"start": 244864, "audio": 1, "end": 305688, "filename": "/assets/drumkit/hh2.wav"}, {"start": 305688, "audio": 1, "end": 320044, "filename": "/assets/drumkit/snare.wav"}, {"start": 320044, "audio": 1, "end": 337580, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 337580, "package_uuid": "323d3a9e-dd77-4359-842c-705d51cb01a1"});
 
 })();
 
@@ -1371,11 +1371,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 141408,
+    STACK_BASE = 149584,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5384288,
-    DYNAMIC_BASE = 5384288,
-    DYNAMICTOP_PTR = 141376;
+    STACK_MAX = 5392464,
+    DYNAMIC_BASE = 5392464,
+    DYNAMICTOP_PTR = 149552;
 
 
 
@@ -1459,8 +1459,7 @@ function preRun() {
   callRuntimeCallbacks(__ATPRERUN__);
 }
 
-function ensureInitRuntime() {
-  if (runtimeInitialized) return;
+function initRuntime() {
   runtimeInitialized = true;
   if (!Module["noFSInit"] && !FS.init.initialized) FS.init();
 TTY.init();
@@ -1663,6 +1662,7 @@ function getBinaryPromise() {
 }
 
 
+
 // Create the wasm instance.
 // Receives the wasm imports, returns the exports.
 function createWasm(env) {
@@ -1697,6 +1697,7 @@ function createWasm(env) {
     receiveInstance(output['instance']);
   }
 
+
   function instantiateArrayBuffer(receiver) {
     return getBinaryPromise().then(function(binary) {
       return WebAssembly.instantiate(binary, info);
@@ -1712,14 +1713,16 @@ function createWasm(env) {
         typeof WebAssembly.instantiateStreaming === 'function' &&
         !isDataURI(wasmBinaryFile) &&
         typeof fetch === 'function') {
-      return WebAssembly.instantiateStreaming(fetch(wasmBinaryFile, { credentials: 'same-origin' }), info)
-        .then(receiveInstantiatedSource, function(reason) {
-          // We expect the most common failure cause to be a bad MIME type for the binary,
-          // in which case falling back to ArrayBuffer instantiation should work.
-          err('wasm streaming compile failed: ' + reason);
-          err('falling back to ArrayBuffer instantiation');
-          instantiateArrayBuffer(receiveInstantiatedSource);
-        });
+      fetch(wasmBinaryFile, { credentials: 'same-origin' }).then(function (response) {
+        return WebAssembly.instantiateStreaming(response, info)
+          .then(receiveInstantiatedSource, function(reason) {
+            // We expect the most common failure cause to be a bad MIME type for the binary,
+            // in which case falling back to ArrayBuffer instantiation should work.
+            err('wasm streaming compile failed: ' + reason);
+            err('falling back to ArrayBuffer instantiation');
+            instantiateArrayBuffer(receiveInstantiatedSource);
+          });
+      });
     } else {
       return instantiateArrayBuffer(receiveInstantiatedSource);
     }
@@ -1750,8 +1753,8 @@ Module['asm'] = function(global, env, providedBuffer) {
   ;
   // import table
   env['table'] = wasmTable = new WebAssembly.Table({
-    'initial': 3153,
-    'maximum': 3153,
+    'initial': 3145,
+    'maximum': 3145,
     'element': 'anyfunc'
   });
   // With the wasm backend __memory_base and __table_base and only needed for
@@ -1811,7 +1814,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 
-// STATICTOP = STATIC_BASE + 140384;
+// STATICTOP = STATIC_BASE + 148560;
 /* global initializers */  __ATINIT__.push({ func: function() { globalCtors() } });
 
 
@@ -1822,7 +1825,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 /* no memory initializer */
-var tempDoublePtr = 141392
+var tempDoublePtr = 149568
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
   HEAP8[tempDoublePtr] = HEAP8[ptr];
@@ -5046,12 +5049,16 @@ function copyTempDouble(ptr) {
   try {
    // llseek
       var stream = SYSCALLS.getStreamFromFD(), offset_high = SYSCALLS.get(), offset_low = SYSCALLS.get(), result = SYSCALLS.get(), whence = SYSCALLS.get();
-      // Can't handle 64-bit integers
-      if (!(offset_high == -1 && offset_low < 0) &&
-          !(offset_high == 0 && offset_low >= 0)) {
+      var HIGH_OFFSET = 0x100000000; // 2^32
+      // use an unsigned operator on low and shift high by 32-bits
+      var offset = offset_high * HIGH_OFFSET + (offset_low >>> 0);
+  
+      var DOUBLE_LIMIT = 0x20000000000000; // 2^53
+      // we also check for equality since DOUBLE_LIMIT + 1 == DOUBLE_LIMIT
+      if (offset <= -DOUBLE_LIMIT || offset >= DOUBLE_LIMIT) {
         return -75;
       }
-      var offset = offset_low;
+  
       FS.llseek(stream, offset, whence);
       (tempI64 = [stream.position>>>0,(tempDouble=stream.position,(+(Math_abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math_min((+(Math_floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math_ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((result)>>2)]=tempI64[0],HEAP32[(((result)+(4))>>2)]=tempI64[1]);
       if (stream.getdents && offset === 0 && whence === 0) stream.getdents = null; // reset readdir state
@@ -7663,15 +7670,9 @@ function copyTempDouble(ptr) {
     }
 
   function _emscripten_glGetError() {
-      // First return any GL error generated by the emscripten library_webgl.js interop layer.
-      if (GL.lastError) {
-        var error = GL.lastError;
-        GL.lastError = 0/*GL_NO_ERROR*/;
-        return error;
-      } else
-      { // If there were none, return the GL error from the browser GL context.
-        return GLctx.getError();
-      }
+      var error = GLctx.getError() || GL.lastError;
+      GL.lastError = 0/*GL_NO_ERROR*/;
+      return error;
     }
 
   function _emscripten_glGetFloatv(name_, p) {
@@ -9279,15 +9280,9 @@ function copyTempDouble(ptr) {
   function _glGenerateMipmap(x0) { GLctx['generateMipmap'](x0) }
 
   function _glGetError() {
-      // First return any GL error generated by the emscripten library_webgl.js interop layer.
-      if (GL.lastError) {
-        var error = GL.lastError;
-        GL.lastError = 0/*GL_NO_ERROR*/;
-        return error;
-      } else
-      { // If there were none, return the GL error from the browser GL context.
-        return GLctx.getError();
-      }
+      var error = GLctx.getError() || GL.lastError;
+      GL.lastError = 0/*GL_NO_ERROR*/;
+      return error;
     }
 
   function _glGetProgramInfoLog(program, maxLength, length, infoLog) {
@@ -9627,6 +9622,7 @@ function copyTempDouble(ptr) {
           // ..., but after that, add smaller increments towards 2GB, which we cannot reach
           newSize = Math.min(alignUp((3 * newSize + 2147483648) / 4, PAGE_MULTIPLE), LIMIT);
         }
+  
       }
   
   
@@ -10543,6 +10539,10 @@ var dynCall_ff = Module["dynCall_ff"] = function() {
   return Module["asm"]["dynCall_ff"].apply(null, arguments)
 };
 
+var dynCall_fi = Module["dynCall_fi"] = function() {
+  return Module["asm"]["dynCall_fi"].apply(null, arguments)
+};
+
 var dynCall_fii = Module["dynCall_fii"] = function() {
   return Module["asm"]["dynCall_fii"].apply(null, arguments)
 };
@@ -10830,8 +10830,6 @@ Module['callMain'] = function callMain(args) {
 
   args = args || [];
 
-  ensureInitRuntime();
-
   var argc = args.length+1;
   var argv = stackAlloc((argc + 1) * 4);
   HEAP32[argv >> 2] = allocateUTF8OnStack(Module['thisProgram']);
@@ -10894,7 +10892,7 @@ function run(args) {
 
     if (ABORT) return;
 
-    ensureInitRuntime();
+    initRuntime();
 
     preMain();
 
@@ -10954,7 +10952,7 @@ function abort(what) {
   if (what !== undefined) {
     out(what);
     err(what);
-    what = JSON.stringify(what)
+    what = '"' + what + '"';
   } else {
     what = '';
   }
