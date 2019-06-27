@@ -271,8 +271,11 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         return;
     }
 
-    auto writeStep = [this] (int stepIndex, int note, int length) {
+    bool stepWritten = false;
+
+    auto writeStep = [this, divisor, &stepWritten] (int stepIndex, int note, int lengthTicks) {
         auto &step = _sequence->step(stepIndex);
+        int length = (lengthTicks * NoteSequence::Length::Range) / divisor;
 
         step.setGate(true);
         step.setGateProbability(NoteSequence::GateProbability::Max);
@@ -284,6 +287,8 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         step.setNote(noteFromMidiNote(note));
         step.setNoteVariationRange(0);
         step.setNoteVariationProbability(NoteSequence::NoteVariationProbability::Max);
+
+        stepWritten = true;
     };
 
     auto clearStep = [this] (int stepIndex) {
@@ -294,9 +299,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
 
     uint32_t stepStart = tick - divisor;
     uint32_t stepEnd = tick;
-    uint32_t margin = divisor / 3;
-
-    bool written = false;
+    uint32_t margin = divisor / 2;
 
     for (size_t i = 0; i < _recordHistory.size(); ++i) {
         if (_recordHistory[i].type != RecordHistory::Type::NoteOn) {
@@ -307,16 +310,25 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         uint32_t noteStart = _recordHistory[i].tick;
         uint32_t noteEnd = i + 1 < _recordHistory.size() ? _recordHistory[i + 1].tick : tick;
 
-        if (noteStart <= stepStart + margin && noteEnd >= stepStart + margin) {
-            int length = std::min(noteEnd, stepEnd) - std::max(noteStart, stepStart);
-            length = (length * NoteSequence::Length::Range) / divisor;
+        if (noteStart >= stepStart - margin && noteStart < stepStart + margin) {
+            // note on during step start phase
+            if (noteEnd >= stepEnd) {
+                // note hold during step
+                int length = std::min(noteEnd, stepEnd) - stepStart;
+                writeStep(_sequenceState.prevStep(), note, length);
+            } else {
+                // note released during step
+                int length = noteEnd - noteStart;
+                writeStep(_sequenceState.prevStep(), note, length);
+            }
+        } else if (noteStart < stepStart && noteEnd > stepStart) {
+            // note on during previous step
+            int length = std::min(noteEnd, stepEnd) - stepStart;
             writeStep(_sequenceState.prevStep(), note, length);
-            written = true;
-            break;
         }
     }
 
-    if (isSelected() && !written && _model.project().recordMode() == Types::RecordMode::Overwrite) {
+    if (isSelected() && !stepWritten && _model.project().recordMode() == Types::RecordMode::Overwrite) {
         clearStep(_sequenceState.prevStep());
     }
 }

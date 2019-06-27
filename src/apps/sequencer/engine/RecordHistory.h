@@ -65,7 +65,7 @@ public:
     }
 
     const Event &operator[](int index) const {
-        return _events[(_write + index - _size) % _events.size()];
+        return _events[(_write + index - _size + _events.size()) % _events.size()];
     }
 
     bool isNoteActive() const {
