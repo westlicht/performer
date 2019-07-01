@@ -230,7 +230,6 @@ public:
     // solos
 
     void soloTrack(int track, ExecuteType executeType = Immediate);
-    void unsoloTrack(int track, ExecuteType executeType = Immediate);
 
     // fills
 

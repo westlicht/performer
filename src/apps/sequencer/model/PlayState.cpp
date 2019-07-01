@@ -104,14 +104,6 @@ void PlayState::soloTrack(int track, ExecuteType executeType) {
     }
 }
 
-void PlayState::unsoloTrack(int track, ExecuteType executeType) {
-    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        if (track != trackIndex) {
-            unmuteTrack(trackIndex, executeType);
-        }
-    }
-}
-
 void PlayState::fillTrack(int track, bool fill) {
     _trackStates[track].setFill(fill);
     notify(Immediate);
