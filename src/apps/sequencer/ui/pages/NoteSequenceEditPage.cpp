@@ -298,7 +298,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isFunction()) {
-        switchLayer(key.function());
+        switchLayer(key.function(), key.shiftModifier());
         event.consume();
     }
 
@@ -453,7 +453,25 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
     }
 }
 
-void NoteSequenceEditPage::switchLayer(int functionKey) {
+void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
+    if (shift) {
+        switch (Function(functionKey)) {
+        case Function::Gate:
+            setLayer(Layer::Gate);
+            break;
+        case Function::Retrigger:
+            setLayer(Layer::Retrigger);
+            break;
+        case Function::Length:
+            setLayer(Layer::Length);
+            break;
+        case Function::Note:
+            setLayer(Layer::Note);
+            break;
+        }
+        return;
+    }
+
     switch (Function(functionKey)) {
     case Function::Gate:
         switch (layer()) {

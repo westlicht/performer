@@ -214,7 +214,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     _stepSelection.keyPress(event, stepOffset());
 
     if (key.isFunction()) {
-        switchLayer(key.function());
+        switchLayer(key.function(), key.shiftModifier());
         event.consume();
     }
 
@@ -277,7 +277,22 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
     event.consume();
 }
 
-void CurveSequenceEditPage::switchLayer(int functionKey) {
+void CurveSequenceEditPage::switchLayer(int functionKey, bool shift) {
+    if (shift) {
+        switch (Function(functionKey)) {
+        case Function::Shape:
+            setLayer(Layer::Shape);
+            break;
+        case Function::Min:
+            setLayer(Layer::Min);
+            break;
+        case Function::Max:
+            setLayer(Layer::Max);
+            break;
+        }
+        return;
+    }
+
     switch (Function(functionKey)) {
     case Function::Shape:
         setLayer(Layer::Shape);

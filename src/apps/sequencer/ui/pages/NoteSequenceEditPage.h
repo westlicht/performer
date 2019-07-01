@@ -32,7 +32,7 @@ private:
 
     int stepOffset() const { return _section * StepCount; }
 
-    void switchLayer(int functionKey);
+    void switchLayer(int functionKey, bool shift);
     int activeFunctionKey();
 
     void updateMonitorStep();
