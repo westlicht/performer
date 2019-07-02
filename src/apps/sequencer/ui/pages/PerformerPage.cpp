@@ -183,10 +183,6 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-    if (key.isTrackSelect()) {
-        event.consume();
-    }
-
     // use immediate by default
     // use latched when LATCH is pressed
     // use synced when SYNC is pressed
@@ -212,10 +208,11 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isTrackSelect()) {
-        playState.toggleMuteTrack(key.track(), executeType);
-        event.consume();
-    } else if (key.isStep() && key.step() < 8) {
-        playState.soloTrack(key.step(), executeType);
+        if (key.shiftModifier()) {
+            playState.soloTrack(key.track(), executeType);
+        } else {
+            playState.toggleMuteTrack(key.track(), executeType);
+        }
         event.consume();
     }
 }
