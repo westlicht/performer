@@ -460,7 +460,8 @@ The following parameters are available:
 | Scale | [Scales](#appendix-scales) | Default scale. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Default root note. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Record Mode | Overdub, Overwrite, Step Record | Recording mode (see [Recording](#appendix-recording)). |
-| CV/Gate Input | Off, CV1/CV2, CV3/CV4 | Enable CV/Gate input on CV inputs. |
+| CV/Gate Input | Off, CV1/CV2, CV3/CV4 | Enable CV/Gate input on CV inputs for monitoring and recording (equivalent to a MIDI keyboard). |
+| Curve CV Input | Off, CV1, CV2, CV3, CV4 | Select CV input for curve recording. |
 
 > Note: _Tempo_ and _Swing_ are routable parameters.
 
@@ -1058,6 +1059,7 @@ This page is used to setup the clock system of the sequencer using the following
 | Input Divisor | [Divisors](#appendix-divisors) | Musical note duration at which to interpret incoming clock pulses. The divisor is actually used as a clock multiplier to generate the internal 192 PPQN clock resolution. |
 | Input Mode | Reset, Run, Start/Stop | Mode in which to handle the incoming clock control signal. In _Reset_ mode, the clock is kept in reset state while a high signal is read. In _Run_ mode, the clock is only run when the signal is high. In _Start/Stop_ mode, the clock is started when a high signal is read and stopped/paused when a low signal is read. |
 | Output Divisor | [Divisors](#appendix-divisors) | Musical note duration at which to generate outgoing clock pulses. The divisor is used to divide the internal 192 PPQN clock resolution to generate the outgoing clock pulses. |
+| Output Swing | yes, no | Enable clock output with swing amount set on [Project](#pages-project) page. |
 | Output Pulse | 1 - 20 ms | Duration of the outgoing clock pulses. |
 | Output Mode | Reset, Run | Mode for generating the outgoing clock control signal. In _Reset_ mode, the signal is high when the clock is stopped and in reset state. In _Run_ mode, the signal is high when the clock is currently running. |
 | MIDI RX | yes, no | Receive MIDI clock from MIDI. |
@@ -1167,6 +1169,12 @@ Divisors are used to divide clock ticks with a resolution of 48 PPQN into period
 | 128 | 1T    | Triplet whole note          |
 | 144 | 1/2.  | Dotted half note            |
 | 192 | 1     | Whole note                  |
+| 256 | 2T    | Triplet double note         |
+| 288 | 1.    | Dotted whole note           |
+| 384 | 2     | Double note                 |
+| 512 | 4T    | Triplet quadruple note      |
+| 576 | 2.    | Dotted double note          |
+| 768 | 4     | Quadruple note              |
 
 <!-- Run Modes -->
 
