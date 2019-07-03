@@ -85,6 +85,12 @@ void PerformerPage::draw(Canvas &canvas) {
             canvas.setColor(0xf);
             canvas.vline(x + int(std::floor(progress * w)), y + h + 4, 2);
         }
+
+        // draw fill & fill amount amount
+        canvas.setColor(trackState.fill() ? 0x7 : 0x3);
+        canvas.fillRect(x, y + h + 8, w, 2);
+        canvas.setColor(trackState.fill() ? 0xf : 0x7);
+        canvas.fillRect(x, y + h + 8, (trackState.fillAmount() * w) / 100, 2);
     }
 
     if (playState.hasSyncedRequests() && hasRequested) {
@@ -218,6 +224,11 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
 }
 
 void PerformerPage::encoder(EncoderEvent &event) {
+    for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+        if (pageKeyState()[MatrixMap::fromStep(trackIndex)]) {
+            _project.playState().trackState(trackIndex).editFillAmount(event.value(), false);
+        }
+    }
 }
 
 void PerformerPage::updateFills() {
