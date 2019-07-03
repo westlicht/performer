@@ -108,14 +108,14 @@ void PlayState::soloTrack(int track, ExecuteType executeType) {
     }
 }
 
-void PlayState::fillTrack(int track, bool fill) {
-    _trackStates[track].setFill(fill);
+void PlayState::fillTrack(int track, bool fill, bool hold) {
+    _trackStates[track].setFill(fill, hold);
     notify(Immediate);
 }
 
-void PlayState::fillAll(bool fill) {
+void PlayState::fillAll(bool fill, bool hold) {
     for (int track = 0; track < CONFIG_TRACK_COUNT; ++track) {
-        fillTrack(track, fill);
+        fillTrack(track, fill, hold);
     }
 }
 

@@ -77,14 +77,15 @@ public:
             Mute                    = 1<<0,
             RequestedMute           = 1<<1,
             Fill                    = 1<<2,
+            FillHold                = 1<<3,
 
-            ImmediateMuteRequest    = 1<<3,
-            SyncedMuteRequest       = 1<<4,
-            LatchedMuteRequest      = 1<<5,
+            ImmediateMuteRequest    = 1<<4,
+            SyncedMuteRequest       = 1<<5,
+            LatchedMuteRequest      = 1<<6,
 
-            ImmediatePatternRequest = 1<<6,
-            SyncedPatternRequest    = 1<<7,
-            LatchedPatternRequest   = 1<<8,
+            ImmediatePatternRequest = 1<<7,
+            SyncedPatternRequest    = 1<<8,
+            LatchedPatternRequest   = 1<<9,
 
             MuteRequests = ImmediateMuteRequest | SyncedMuteRequest | LatchedMuteRequest,
             PatternRequests = ImmediatePatternRequest | SyncedPatternRequest | LatchedPatternRequest,
@@ -94,11 +95,11 @@ public:
         };
 
         static State muteRequestFromExecuteType(ExecuteType type) {
-            return State(1<<(3 + type));
+            return State(int(ImmediateMuteRequest) << int(type));
         }
 
         static State patternRequestFromExecuteType(ExecuteType type) {
-            return State(1<<(6 + type));
+            return State(int(ImmediatePatternRequest) << int(type));
         }
 
         void setRequests(int requests) {
@@ -129,11 +130,18 @@ public:
             }
         }
 
-        void setFill(bool fill) {
+        void setFill(bool fill, bool hold) {
             if (fill) {
                 _state |= Fill;
+                if (hold) {
+                    _state |= FillHold;
+                } else {
+                    _state &= ~FillHold;
+                }
             } else {
-                _state &= ~Fill;
+                if (!(_state & FillHold)) {
+                    _state &= ~Fill;
+                }
             }
         }
 
@@ -267,8 +275,8 @@ public:
 
     // fills
 
-    void fillTrack(int track, bool fill);
-    void fillAll(bool fill);
+    void fillTrack(int track, bool fill, bool hold = false);
+    void fillAll(bool fill, bool hold = false);
 
     // pattern change
 

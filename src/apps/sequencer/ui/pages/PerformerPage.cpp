@@ -171,11 +171,17 @@ void PerformerPage::keyUp(KeyEvent &event) {
     }
 
     if (key.isStep()) {
+        closePage = true;
         updateFills();
         event.consume();
     }
 
-    bool canClose = _modal && !_latching && !_syncing && !globalKeyState()[Key::Performer];
+    bool stepKeyPressed = false;
+    for (int step = 0; step < 16; ++step) {
+        stepKeyPressed |= pageKeyState()[MatrixMap::fromStep(step)];
+    }
+
+    bool canClose = _modal && !_latching && !_syncing && !globalKeyState()[Key::Performer] && !stepKeyPressed;
     if (canClose && closePage) {
         close();
     }
@@ -234,9 +240,10 @@ void PerformerPage::encoder(EncoderEvent &event) {
 void PerformerPage::updateFills() {
     auto &playState = _project.playState();
     bool fillPressed = pageKeyState()[MatrixMap::fromFunction(int(Function::Fill))];
+    bool holdPressed = pageKeyState()[Key::Shift];
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         bool trackFill = pageKeyState()[MatrixMap::fromStep(8 + trackIndex)];
-        playState.fillTrack(trackIndex, trackFill || fillPressed);
+        playState.fillTrack(trackIndex, trackFill || fillPressed, holdPressed);
     }
 }
