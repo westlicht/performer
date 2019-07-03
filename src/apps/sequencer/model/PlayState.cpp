@@ -1,6 +1,7 @@
 #include "PlayState.h"
 
 #include "Project.h"
+#include "ProjectVersion.h"
 
 // PlayState::TrackState
 
@@ -8,6 +9,7 @@ void PlayState::TrackState::clear() {
     _state = 0;
     _pattern = 0;
     _requestedPattern = 0;
+    _fillAmount = 100;
 }
 
 void PlayState::TrackState::write(WriteContext &context) const {
@@ -17,6 +19,7 @@ void PlayState::TrackState::write(WriteContext &context) const {
     // make sure to not write snapshot state
     uint8_t patternValue = _pattern < CONFIG_PATTERN_COUNT ? _pattern : 0;
     writer.write(patternValue);
+    writer.write(_fillAmount);
 }
 
 void PlayState::TrackState::read(ReadContext &context) {
@@ -25,6 +28,7 @@ void PlayState::TrackState::read(ReadContext &context) {
     reader.read(muteValue);
     setMute(muteValue);
     reader.read(_pattern);
+    reader.read(_fillAmount, ProjectVersion::Version12);
 }
 
 // PlayState::SongState

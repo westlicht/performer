@@ -27,6 +27,9 @@ namespace ProjectVersion {
     // added Project::curveCvInput
     static constexpr uint32_t Version11 = 11;
 
-    static constexpr uint32_t Version = Version11;
+    // added TrackState::fillAmount
+    static constexpr uint32_t Version12 = 12;
+
+    static constexpr uint32_t Version = Version12;
 
 } // namespace ProjectVersion

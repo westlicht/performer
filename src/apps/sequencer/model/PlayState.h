@@ -4,6 +4,8 @@
 
 #include "Serialize.h"
 
+#include "ModelUtils.h"
+
 #include <array>
 
 #include <cstdint>
@@ -24,15 +26,46 @@ public:
 
     class TrackState {
     public:
+        //----------------------------------------
+        // Properties
+        //----------------------------------------
+
+        // fillAmount
+
+        int fillAmount() const { return _fillAmount; }
+        void setFillAmount(int fillAmount) {
+            _fillAmount = clamp(fillAmount, 0, 100);
+        }
+
+        void editFillAmount(int value, bool shift) {
+            setFillAmount(ModelUtils::adjustedByStep(fillAmount(), value, 10, shift));
+        }
+
+        void printFillAmount(StringBuilder &str) const {
+            str("%d%%", fillAmount());
+        }
+
+        //----------------------------------------
+        // State
+        //----------------------------------------
+
         bool mute() const { return _state & Mute; }
         bool requestedMute() const { return _state & RequestedMute; }
         bool hasMuteRequest() const { return hasRequests(State::MuteRequests); }
 
         bool fill() const { return _state & Fill; }
 
+        //----------------------------------------
+        // Pattern
+        //----------------------------------------
+
         int pattern() const { return _pattern; }
         int requestedPattern() const { return _requestedPattern; }
         bool hasPatternRequest() const { return hasRequests(State::PatternRequests); }
+
+        //----------------------------------------
+        // Methods
+        //----------------------------------------
 
         void clear();
 
@@ -115,6 +148,7 @@ public:
         uint16_t _state;
         uint8_t _pattern;
         uint8_t _requestedPattern;
+        uint8_t _fillAmount;
 
         friend class PlayState;
         friend class Engine;
