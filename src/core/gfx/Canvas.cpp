@@ -125,17 +125,36 @@ void Canvas::drawText(int x, int y, const char *str) {
 }
 
 void Canvas::drawTextCentered(int x, int y, int w, int h, const char *str) {
-
-    // drawRect(x, y, w, h);
-
-    // const auto &font = bitmapFont(_font);
-    x += (w - textWidth(str)) / 2;
-    y += (h - textHeight(str)) / 2 + bitmapFontOffset(_font);
-    // y += font.yAdvance - 3;
-    drawText(x, y, str);
+    drawTextAligned(x, y, w, h, HorizontalAlign::Center, VerticalAlign::Center, str);
 }
 
 void Canvas::drawTextAligned(int x, int y, int w, int h, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign, const char *str) {
+    // drawRect(x, y, w, h);
+
+    switch (horizontalAlign) {
+    case HorizontalAlign::Left:
+        break;
+    case HorizontalAlign::Right:
+        x += w - textWidth(str);
+        break;
+    case HorizontalAlign::Center:
+        x += (w - textWidth(str) + 1) / 2;
+        break;
+    }
+
+    switch (verticalAlign) {
+    case VerticalAlign::Top:
+        break;
+    case VerticalAlign::Bottom:
+        y += h - textHeight(str);
+        break;
+    case VerticalAlign::Center:
+        y += (h - textHeight(str) + 1) / 2;
+        break;
+    }
+    y += bitmapFontOffset(_font);
+
+    drawText(x, y, str);
 }
 
 void Canvas::drawTextMultiline(int x, int y, int w, const char *str) {
