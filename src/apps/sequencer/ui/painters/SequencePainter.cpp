@@ -95,3 +95,15 @@ void SequencePainter::drawSlide(Canvas &canvas, int x, int y, int w, int h, bool
         canvas.hline(x, y + h, w);
     }
 }
+
+void SequencePainter::drawSequenceProgress(Canvas &canvas, int x, int y, int w, int h, float progress) {
+    if (progress < 0.f) {
+        return;
+    }
+
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0x7);
+    canvas.fillRect(x, y, w, h);
+    canvas.setColor(0xf);
+    canvas.vline(x + int(std::floor(progress * w)), y, h);
+}
