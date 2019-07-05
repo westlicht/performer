@@ -24,6 +24,12 @@ public:
         write(&value, sizeof(value));
     }
 
+    template<typename Enum, typename SerializeFunc>
+    void writeEnum(Enum e, SerializeFunc serialize) {
+        auto value = serialize(e);
+        write(value);
+    }
+
     void write(const void *data, size_t len) {
         _hash(data, len);
         _writer(data, len);

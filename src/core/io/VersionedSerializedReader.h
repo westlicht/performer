@@ -25,6 +25,23 @@ public:
         read(&value, sizeof(value), addedInVersion);
     }
 
+    // This is potentially slow as we call serialize for every enum value until a match is found.
+    // However, the nice thing about using a switch state in the serialize function is that the
+    // compiler can warn us when new enum values are added without updating the serialize function.
+    template<typename Enum, typename SerializeFunc>
+    void readEnum(Enum &e, SerializeFunc serialize, uint32_t addedInVersion = 0) {
+        if (_dataVersion >= addedInVersion) {
+            auto i = serialize(Enum(0));
+            read(i);
+            for (e = Enum(0); int(e) < int(Enum::Last); e = Enum(int(e) + 1)) {
+                if (serialize(e) == i) {
+                    return;
+                }
+            }
+            e = Enum(0);
+        }
+    }
+
     template<typename ReadT, typename T>
     void readAs(T &value, uint32_t addedInVersion = 0) {
         if (_dataVersion >= addedInVersion) {
