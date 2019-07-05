@@ -18,6 +18,28 @@ static bool evalStepGate(const NoteSequence::Step &step, int probabilityBias) {
     return step.gate() && int(rng.nextRange(NoteSequence::GateProbability::Range)) <= probability;
 }
 
+// evaluate step condition
+static bool evalStepCondition(const NoteSequence::Step &step, int iteration, bool fill, bool &prevCondition) {
+    auto condition = step.condition();
+    switch (condition) {
+    case Types::Condition::Off:                                         return true;
+    case Types::Condition::Fill:        prevCondition = fill;           return prevCondition;
+    case Types::Condition::NotFill:     prevCondition = !fill;          return prevCondition;
+    case Types::Condition::Pre:                                         return prevCondition;
+    case Types::Condition::NotPre:                                      return !prevCondition;
+    case Types::Condition::First:       prevCondition = iteration == 0; return prevCondition;
+    case Types::Condition::NotFirst:    prevCondition = iteration != 0; return prevCondition;
+    default:
+        int index = int(condition);
+        if (index >= int(Types::Condition::Loop) && index < int(Types::Condition::Last)) {
+            auto loop = Types::conditionLoop(condition);
+            prevCondition = iteration % loop.base == loop.offset;
+            return prevCondition;
+        }
+    }
+    return true;
+}
+
 // evaluate step retrigger count
 static int evalStepRetrigger(const NoteSequence::Step &step, int probabilityBias) {
     int probability = clamp(step.retriggerProbability() + probabilityBias, -1, NoteSequence::RetriggerProbability::Max);
@@ -56,6 +78,7 @@ void NoteTrackEngine::reset() {
     _freeRelativeTick = 0;
     _sequenceState.reset();
     _currentStep = -1;
+    _prevCondition = false;
     _activity = false;
     _gateOutput = false;
     _cvOutput = 0.f;
@@ -234,6 +257,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     bool fillStep = fill() && (rng.nextRange(100) < uint32_t(fillAmount()));
     bool useFillGates = fillStep && _noteTrack.fillMode() == Types::FillMode::Gates;
     bool useFillSequence = fillStep && _noteTrack.fillMode() == Types::FillMode::NextPattern;
+    bool useFillCondition = fillStep && _noteTrack.fillMode() == Types::FillMode::Condition;
 
     const auto &sequence = *_sequence;
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
@@ -243,6 +267,10 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     uint32_t gateOffset = (divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
 
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
+    if (stepGate) {
+        stepGate = evalStepCondition(step, _sequenceState.iteration(), useFillCondition, _prevCondition);
+    }
+
     if (stepGate) {
         uint32_t stepLength = (divisor * evalStepLength(step, _noteTrack.lengthBias())) / NoteSequence::Length::Range;
         int stepRetrigger = evalStepRetrigger(step, _noteTrack.retriggerProbabilityBias());
@@ -288,6 +316,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         step.setNote(noteFromMidiNote(note));
         step.setNoteVariationRange(0);
         step.setNoteVariationProbability(NoteSequence::NoteVariationProbability::Max);
+        step.setCondition(Types::Condition::Off);
 
         stepWritten = true;
     };

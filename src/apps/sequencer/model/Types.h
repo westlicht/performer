@@ -91,6 +91,7 @@ public:
         None,
         Gates,
         NextPattern,
+        Condition,
         Last
     };
 
@@ -99,6 +100,7 @@ public:
         case FillMode::None:        return "None";
         case FillMode::Gates:       return "Gates";
         case FillMode::NextPattern: return "Next Pattern";
+        case FillMode::Condition:   return "Condition";
         case FillMode::Last:        break;
         }
         return nullptr;
@@ -127,6 +129,75 @@ public:
         case RunMode::Last:         break;
         }
         return nullptr;
+    }
+
+    // Condition
+
+    enum class Condition : uint8_t {
+        Off,
+        Fill,
+        NotFill,
+        Pre,
+        NotPre,
+        First,
+        NotFirst,
+        Loop,
+        Loop2 = Loop,
+        Loop3 = Loop2 + 2,
+        Loop4 = Loop3 + 3,
+        Loop5 = Loop4 + 4,
+        Loop6 = Loop5 + 5,
+        Loop7 = Loop6 + 6,
+        Loop8 = Loop7 + 7,
+        Last = Loop8 + 8
+    };
+
+    struct ConditionInfo {
+        const char *name;
+        const char *short1;
+        const char *short2;
+    };
+
+    struct ConditionLoop {
+        uint8_t offset;
+        uint8_t base;
+    };
+
+    enum class ConditionFormat : uint8_t {
+        Long,
+        Short1,
+        Short2
+    };
+
+    static ConditionLoop conditionLoop(Condition condition) {
+        static const uint8_t offset[] = { 0, 1,   0, 1, 2,   0, 1, 2, 3,   0, 1, 2, 3, 4,   0, 1, 2, 3, 4, 5,   0, 1, 2, 3, 4, 5, 6,   0, 1, 2, 3, 4, 5, 6, 7 };
+        static const uint8_t base[]   = { 2, 2,   3, 3, 3,   4, 4, 4, 4,   5, 5, 5, 5, 5,   6, 6, 6, 6, 6, 6,   7, 7, 7, 7, 7, 7, 7,   8, 8, 8, 8, 8, 8, 8, 8 };
+        int index = int(condition);
+        if (index >= int(Condition::Loop) && index < int(Condition::Last)) {
+            index -= int(Condition::Loop);
+            return { offset[index], base[index] };
+        } else {
+            return { 0, 0 };
+        }
+    }
+
+    static void printCondition(StringBuilder &str, Condition condition, ConditionFormat format = ConditionFormat::Long) {
+        int index = int(condition);
+        if (index >= 0 && index < int(Condition::Loop)) {
+            const auto &info = conditionInfos[index];
+            switch (format) {
+            case ConditionFormat::Long: str(info.name); break;
+            case ConditionFormat::Short1: str(info.short1); break;
+            case ConditionFormat::Short2: str(info.short2); break;
+            }
+        } else if (index >= int(Condition::Loop) && index < int(Condition::Last)) {
+            auto loop = conditionLoop(condition);
+            switch (format) {
+            case ConditionFormat::Long: str("%d:%d", loop.offset + 1, loop.base); break;
+            case ConditionFormat::Short1: str("%d", loop.offset + 1); break;
+            case ConditionFormat::Short2: str("%d", loop.base); break;
+            }
+        }
     }
 
     // VoltageRange
@@ -226,6 +297,7 @@ public:
     }
 
 private:
+    static const ConditionInfo conditionInfos[];
     static const VoltageRangeInfo voltageRangeInfos[];
 
 }; // namespace Types

@@ -53,6 +53,7 @@ static const LayerMapItem noteSequenceLayerMap[] = {
     [int(NoteSequence::Layer::Note)]                        =  { 0, 3 },
     [int(NoteSequence::Layer::NoteVariationRange)]          =  { 1, 3 },
     [int(NoteSequence::Layer::NoteVariationProbability)]    =  { 2, 3 },
+    [int(NoteSequence::Layer::Condition)]                   =  { 0, 4 },
 };
 
 static constexpr int noteSequenceLayerMapSize = sizeof(noteSequenceLayerMap) / sizeof(noteSequenceLayerMap[0]);
@@ -493,6 +494,9 @@ void LaunchpadController::sequenceDrawNoteSequence() {
     case NoteSequence::Layer::Note:
         drawNoteSequenceNotes(sequence, layer, currentStep);
         break;
+    case NoteSequence::Layer::Condition:
+        drawNoteSequenceDots(sequence, layer, currentStep);
+        break;
     default:
         drawNoteSequenceBars(sequence, layer, currentStep);
         break;
@@ -721,6 +725,16 @@ void LaunchpadController::drawNoteSequenceBars(const NoteSequence &sequence, Not
         int stepIndex = col + _sequence.navigation.col * 8;
         const auto &step = sequence.step(stepIndex);
         drawBar(col, step.layerValue(layer), step.gate(), stepIndex == currentStep);
+    }
+}
+
+void LaunchpadController::drawNoteSequenceDots(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
+    int ofs = _sequence.navigation.row * 8;
+    for (int col = 0; col < 8; ++col) {
+        int stepIndex = col + _sequence.navigation.col * 8;
+        const auto &step = sequence.step(stepIndex);
+        int value = step.layerValue(layer);
+        setGridLed((7 - value) + ofs, col, stepColor(true, stepIndex == currentStep));
     }
 }
 

@@ -11,6 +11,7 @@ public:
     int step() const { return _step; }
     int prevStep() const { return _prevStep; }
     int direction() const { return _direction; }
+    uint32_t iteration() const { return _iteration; }
 
     void reset();
 
@@ -23,4 +24,5 @@ private:
     int8_t _step;
     int8_t _prevStep;
     int8_t _direction;
+    uint32_t _iteration;
 };
