@@ -3,8 +3,8 @@
 #include "Config.h"
 
 #include "Serialize.h"
-
 #include "ModelUtils.h"
+#include "Routing.h"
 
 #include <array>
 
@@ -309,6 +309,12 @@ public:
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
+
+    //----------------------------------------
+    // Routing
+    //----------------------------------------
+
+    void writeRouted(Routing::Target target, uint8_t tracks, int intValue, float floatValue);
 
 private:
     void selectTrackPatternUnsafe(int track, int pattern, ExecuteType executeType = Immediate);

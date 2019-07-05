@@ -252,3 +252,39 @@ void PlayState::selectTrackPatternUnsafe(int track, int pattern, ExecuteType exe
     trackState.setRequestedPattern(pattern);
     notify(executeType);
 }
+
+void PlayState::writeRouted(Routing::Target target, uint8_t tracks, int intValue, float floatValue) {
+    bool active = intValue != 0;
+
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        if (tracks & (1 << trackIndex)) {
+            auto &trackState = this->trackState(trackIndex);
+            switch (target) {
+            case Routing::Target::Mute:
+                if (trackState.mute() != active || trackState.requestedMute() != active) {
+                    if (active) {
+                        muteTrack(trackIndex);
+                    } else {
+                        unmuteTrack(trackIndex);
+                    }
+                }
+                break;
+            case Routing::Target::Fill:
+                if (trackState.fill() != active) {
+                    fillTrack(trackIndex, active);
+                }
+                break;
+            case Routing::Target::FillAmount:
+                trackState.setFillAmount(intValue);
+                break;
+            case Routing::Target::Pattern:
+                if (trackState.pattern() != intValue || trackState.requestedPattern() != intValue) {
+                    selectTrackPattern(trackIndex, intValue);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
+}

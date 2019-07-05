@@ -39,6 +39,14 @@ public:
         Swing,
         ProjectLast = Swing,
 
+        // PlayState targets
+        PlayStateFirst,
+        Mute = PlayStateFirst,
+        Fill,
+        FillAmount,
+        Pattern,
+        PlayStateLast = Pattern,
+
         // Track targets
         TrackFirst,
         SlideTime = TrackFirst,
@@ -72,6 +80,11 @@ public:
         case Target::Tempo:             return "Tempo";
         case Target::Swing:             return "Swing";
 
+        case Target::Mute:              return "Mute";
+        case Target::Fill:              return "Fill";
+        case Target::FillAmount:        return "Fill Amount";
+        case Target::Pattern:           return "Pattern";
+
         case Target::SlideTime:         return "Slide Time";
         case Target::Octave:            return "Octave";
         case Target::Transpose:         return "Transpose";
@@ -91,12 +104,46 @@ public:
         return nullptr;
     }
 
+    static uint8_t targetSerialize(Target target) {
+        switch (target) {
+        case Target::None:                      return 0;
+        case Target::Play:                      return 1;
+        case Target::Record:                    return 2;
+        case Target::Tempo:                     return 3;
+        case Target::Swing:                     return 4;
+        case Target::SlideTime:                 return 5;
+        case Target::Octave:                    return 6;
+        case Target::Transpose:                 return 7;
+        case Target::Rotate:                    return 8;
+        case Target::GateProbabilityBias:       return 9;
+        case Target::RetriggerProbabilityBias:  return 10;
+        case Target::LengthBias:                return 11;
+        case Target::NoteProbabilityBias:       return 12;
+        case Target::Divisor:                   return 13;
+        case Target::RunMode:                   return 14;
+        case Target::FirstStep:                 return 15;
+        case Target::LastStep:                  return 16;
+
+        case Target::Mute:                      return 17;
+        case Target::Fill:                      return 18;
+        case Target::FillAmount:                return 19;
+        case Target::Pattern:                   return 20;
+
+        case Target::Last:                      break;
+        }
+        return 0;
+    }
+
     static bool isEngineTarget(Target target) {
         return target >= Target::EngineFirst && target <= Target::EngineLast;
     }
 
     static bool isProjectTarget(Target target) {
         return target >= Target::ProjectFirst && target <= Target::ProjectLast;
+    }
+
+    static bool isPlayStateTarget(Target target) {
+        return target >= Target::PlayStateFirst && target <= Target::PlayStateLast;
     }
 
     static bool isTrackTarget(Target target) {
@@ -316,7 +363,7 @@ public:
         }
 
         void printTracks(StringBuilder &str) const {
-            if (isTrackTarget(_target) || isSequenceTarget(_target)) {
+            if (isPlayStateTarget(_target) || isTrackTarget(_target) || isSequenceTarget(_target)) {
                 for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
                     str("%c", (_tracks & (1<<i)) ? 'X' : '-');
                 }

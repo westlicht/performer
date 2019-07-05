@@ -78,7 +78,7 @@ void Routing::Route::clear() {
 
 void Routing::Route::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_target);
+    writer.writeEnum(_target, targetSerialize);
     writer.write(_tracks);
     writer.write(_min);
     writer.write(_max);
@@ -93,7 +93,7 @@ void Routing::Route::write(WriteContext &context) const {
 
 void Routing::Route::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_target);
+    reader.readEnum(_target, targetSerialize);
     reader.read(_tracks);
     reader.read(_min);
     reader.read(_max);
@@ -186,6 +186,8 @@ void Routing::writeTarget(Target target, uint8_t tracks, uint16_t patterns, floa
 
     if (isProjectTarget(target)) {
         _project.writeRouted(target, intValue, floatValue);
+    } else if (isPlayStateTarget(target)) {
+        _project.playState().writeRouted(target, tracks, intValue, floatValue);
     } else if (isTrackTarget(target) || isSequenceTarget(target)) {
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             if (tracks & (1<<trackIndex)) {
@@ -228,12 +230,19 @@ struct TargetInfo {
 };
 
 const TargetInfo targetInfos[int(Routing::Target::Last)] = {
-    // Target                                                   min     max     minDef  maxDef
     [int(Routing::Target::None)]                            = { 0,      0,      0,      0       },
+    // Engine targets
     [int(Routing::Target::Play)]                            = { 0,      1,      0,      1       },
     [int(Routing::Target::Record)]                          = { 0,      1,      0,      1       },
+    // Project targets
     [int(Routing::Target::Tempo)]                           = { 20,     500,    100,    200     },
     [int(Routing::Target::Swing)]                           = { 50,     75,     50,     75      },
+    // PlayState targets
+    [int(Routing::Target::Mute)]                            = { 0,      1,      0,      1       },
+    [int(Routing::Target::Fill)]                            = { 0,      1,      0,      1       },
+    [int(Routing::Target::FillAmount)]                      = { 0,      100,    0,      100     },
+    [int(Routing::Target::Pattern)]                         = { 0,      15,     0,      15      },
+    // Track targets
     [int(Routing::Target::SlideTime)]                       = { 0,      100,    0,      100,    },
     [int(Routing::Target::Octave)]                          = { -10,    10,     -1,     1       },
     [int(Routing::Target::Transpose)]                       = { -60,    60,     -12,    12      },
@@ -242,6 +251,7 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::RetriggerProbabilityBias)]        = { -8,     8,      -8,     8       },
     [int(Routing::Target::LengthBias)]                      = { -8,     8,      -8,     8       },
     [int(Routing::Target::NoteProbabilityBias)]             = { -8,     8,      -8,     8       },
+    // Sequence targets
     [int(Routing::Target::Divisor)]                         = { 1,      768,    6,      24      },
     [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
     [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
@@ -280,6 +290,7 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
         break;
     case Target::Swing:
     case Target::SlideTime:
+    case Target::FillAmount:
         str("%d%%", intValue);
         break;
     case Target::Octave:
@@ -301,7 +312,12 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
         break;
     case Target::FirstStep:
     case Target::LastStep:
+    case Target::Pattern:
         str("%d", intValue + 1);
+        break;
+    case Target::Mute:
+    case Target::Fill:
+        str(intValue ? "on" : "off");
         break;
     default:
         str("%d", intValue);
