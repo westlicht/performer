@@ -14,7 +14,7 @@ void Arpeggiator::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_enabled);
     writer.write(_hold);
-    writer.write(_mode);
+    writer.writeEnum(_mode, modeSerialize);
     writer.write(_divisor);
     writer.write(_gateLength);
     writer.write(_octaves);
@@ -24,7 +24,7 @@ void Arpeggiator::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_enabled, ProjectVersion::Version9);
     reader.read(_hold, ProjectVersion::Version9);
-    reader.read(_mode, ProjectVersion::Version9);
+    reader.readEnum(_mode, modeSerialize, ProjectVersion::Version9);
     if (reader.dataVersion() < ProjectVersion::Version10) {
         reader.readAs<uint8_t>(_divisor, ProjectVersion::Version9);
     } else {

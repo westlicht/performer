@@ -44,6 +44,23 @@ public:
         return nullptr;
     }
 
+    static uint8_t modeSerialize(Mode mode) {
+        switch (mode) {
+        case Mode::PlayOrder:   return 0;
+        case Mode::Up:          return 1;
+        case Mode::Down:        return 2;
+        case Mode::UpDown:      return 3;
+        case Mode::DownUp:      return 4;
+        case Mode::UpAndDown:   return 5;
+        case Mode::DownAndUp:   return 6;
+        case Mode::Converge:    return 7;
+        case Mode::Diverge:     return 8;
+        case Mode::Random:      return 9;
+        case Mode::Last:        break;
+        }
+        return 0;
+    }
+
     //----------------------------------------
     // Properties
     //----------------------------------------
