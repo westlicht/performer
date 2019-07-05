@@ -27,9 +27,11 @@ public:
 
     template<typename ReadT, typename T>
     void readAs(T &value, uint32_t addedInVersion = 0) {
-        ReadT tmp;
-        read(tmp, addedInVersion);
-        value = tmp;
+        if (_dataVersion >= addedInVersion) {
+            ReadT tmp;
+            read(tmp);
+            value = tmp;
+        }
     }
 
     void read(void *data, size_t len, uint32_t addedInVersion) {
