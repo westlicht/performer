@@ -72,34 +72,34 @@ public:
 
     static const char *targetName(Target target) {
         switch (target) {
-        case Target::None:              return "None";
+        case Target::None:                      return "None";
 
-        case Target::Play:              return "Play";
-        case Target::Record:            return "Record";
+        case Target::Play:                      return "Play";
+        case Target::Record:                    return "Record";
 
-        case Target::Tempo:             return "Tempo";
-        case Target::Swing:             return "Swing";
+        case Target::Tempo:                     return "Tempo";
+        case Target::Swing:                     return "Swing";
 
-        case Target::Mute:              return "Mute";
-        case Target::Fill:              return "Fill";
-        case Target::FillAmount:        return "Fill Amount";
-        case Target::Pattern:           return "Pattern";
+        case Target::Mute:                      return "Mute";
+        case Target::Fill:                      return "Fill";
+        case Target::FillAmount:                return "Fill Amount";
+        case Target::Pattern:                   return "Pattern";
 
-        case Target::SlideTime:         return "Slide Time";
-        case Target::Octave:            return "Octave";
-        case Target::Transpose:         return "Transpose";
-        case Target::Rotate:            return "Rotate";
-        case Target::GateProbabilityBias: return "Gate P. Bias";
-        case Target::RetriggerProbabilityBias: return "Retrig P. Bias";
-        case Target::LengthBias:        return "Length Bias";
-        case Target::NoteProbabilityBias: return "Note P. Bias";
+        case Target::SlideTime:                 return "Slide Time";
+        case Target::Octave:                    return "Octave";
+        case Target::Transpose:                 return "Transpose";
+        case Target::Rotate:                    return "Rotate";
+        case Target::GateProbabilityBias:       return "Gate P. Bias";
+        case Target::RetriggerProbabilityBias:  return "Retrig P. Bias";
+        case Target::LengthBias:                return "Length Bias";
+        case Target::NoteProbabilityBias:       return "Note P. Bias";
 
-        case Target::Divisor:           return "Divisor";
-        case Target::RunMode:           return "Run Mode";
-        case Target::FirstStep:         return "First Step";
-        case Target::LastStep:          return "Last Step";
+        case Target::Divisor:                   return "Divisor";
+        case Target::RunMode:                   return "Run Mode";
+        case Target::FirstStep:                 return "First Step";
+        case Target::LastStep:                  return "Last Step";
 
-        case Target::Last:              break;
+        case Target::Last:                      break;
         }
         return nullptr;
     }
