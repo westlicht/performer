@@ -58,6 +58,7 @@ private:
     uint32_t _freeRelativeTick;
     SequenceState _sequenceState;
     int _currentStep;
+    bool _prevCondition;
 
     int _monitorStepIndex = -1;
 
