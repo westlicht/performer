@@ -87,6 +87,7 @@ public:
     int pattern() const { return _trackState.pattern(); }
     bool mute() const { return _trackState.mute(); }
     bool fill() const { return _trackState.fill(); }
+    int fillAmount() const { return _trackState.fillAmount(); }
 
 protected:
     Engine &_engine;

@@ -4,6 +4,8 @@
 
 #include "Serialize.h"
 
+#include "ModelUtils.h"
+
 #include <array>
 
 #include <cstdint>
@@ -24,15 +26,46 @@ public:
 
     class TrackState {
     public:
+        //----------------------------------------
+        // Properties
+        //----------------------------------------
+
+        // fillAmount
+
+        int fillAmount() const { return _fillAmount; }
+        void setFillAmount(int fillAmount) {
+            _fillAmount = clamp(fillAmount, 0, 100);
+        }
+
+        void editFillAmount(int value, bool shift) {
+            setFillAmount(ModelUtils::adjustedByStep(fillAmount(), value, 10, shift));
+        }
+
+        void printFillAmount(StringBuilder &str) const {
+            str("%d%%", fillAmount());
+        }
+
+        //----------------------------------------
+        // State
+        //----------------------------------------
+
         bool mute() const { return _state & Mute; }
         bool requestedMute() const { return _state & RequestedMute; }
         bool hasMuteRequest() const { return hasRequests(State::MuteRequests); }
 
         bool fill() const { return _state & Fill; }
 
+        //----------------------------------------
+        // Pattern
+        //----------------------------------------
+
         int pattern() const { return _pattern; }
         int requestedPattern() const { return _requestedPattern; }
         bool hasPatternRequest() const { return hasRequests(State::PatternRequests); }
+
+        //----------------------------------------
+        // Methods
+        //----------------------------------------
 
         void clear();
 
@@ -44,14 +77,15 @@ public:
             Mute                    = 1<<0,
             RequestedMute           = 1<<1,
             Fill                    = 1<<2,
+            FillHold                = 1<<3,
 
-            ImmediateMuteRequest    = 1<<3,
-            SyncedMuteRequest       = 1<<4,
-            LatchedMuteRequest      = 1<<5,
+            ImmediateMuteRequest    = 1<<4,
+            SyncedMuteRequest       = 1<<5,
+            LatchedMuteRequest      = 1<<6,
 
-            ImmediatePatternRequest = 1<<6,
-            SyncedPatternRequest    = 1<<7,
-            LatchedPatternRequest   = 1<<8,
+            ImmediatePatternRequest = 1<<7,
+            SyncedPatternRequest    = 1<<8,
+            LatchedPatternRequest   = 1<<9,
 
             MuteRequests = ImmediateMuteRequest | SyncedMuteRequest | LatchedMuteRequest,
             PatternRequests = ImmediatePatternRequest | SyncedPatternRequest | LatchedPatternRequest,
@@ -61,11 +95,11 @@ public:
         };
 
         static State muteRequestFromExecuteType(ExecuteType type) {
-            return State(1<<(3 + type));
+            return State(int(ImmediateMuteRequest) << int(type));
         }
 
         static State patternRequestFromExecuteType(ExecuteType type) {
-            return State(1<<(6 + type));
+            return State(int(ImmediatePatternRequest) << int(type));
         }
 
         void setRequests(int requests) {
@@ -96,11 +130,18 @@ public:
             }
         }
 
-        void setFill(bool fill) {
+        void setFill(bool fill, bool hold) {
             if (fill) {
                 _state |= Fill;
+                if (hold) {
+                    _state |= FillHold;
+                } else {
+                    _state &= ~FillHold;
+                }
             } else {
-                _state &= ~Fill;
+                if (!(_state & FillHold)) {
+                    _state &= ~Fill;
+                }
             }
         }
 
@@ -115,6 +156,7 @@ public:
         uint16_t _state;
         uint8_t _pattern;
         uint8_t _requestedPattern;
+        uint8_t _fillAmount;
 
         friend class PlayState;
         friend class Engine;
@@ -233,8 +275,8 @@ public:
 
     // fills
 
-    void fillTrack(int track, bool fill);
-    void fillAll(bool fill);
+    void fillTrack(int track, bool fill, bool hold = false);
+    void fillAll(bool fill, bool hold = false);
 
     // pattern change
 

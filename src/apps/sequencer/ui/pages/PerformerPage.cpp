@@ -4,6 +4,7 @@
 
 #include "ui/LedPainter.h"
 #include "ui/painters/WindowPainter.h"
+#include "ui/painters/SequencePainter.h"
 
 #include "core/utils/StringBuilder.h"
 
@@ -78,13 +79,13 @@ void PerformerPage::draw(Canvas &canvas) {
         }
 
         // draw sequence progress
-        float progress = trackEngine.sequenceProgress();
-        if (progress >= 0.f) {
-            canvas.setColor(0x7);
-            canvas.fillRect(x, y + h + 4, w, 2);
-            canvas.setColor(0xf);
-            canvas.vline(x + int(std::floor(progress * w)), y + h + 4, 2);
-        }
+        SequencePainter::drawSequenceProgress(canvas, x, y + h + 2, w, 2, trackEngine.sequenceProgress());
+
+        // draw fill & fill amount amount
+        canvas.setColor(trackState.fill() ? 0x7 : 0x3);
+        canvas.fillRect(x, y + h + 6, w, 4);
+        canvas.setColor(trackState.fill() ? 0xf : 0x7);
+        canvas.fillRect(x, y + h + 6, (trackState.fillAmount() * w) / 100, 4);
     }
 
     if (playState.hasSyncedRequests() && hasRequested) {
@@ -165,11 +166,17 @@ void PerformerPage::keyUp(KeyEvent &event) {
     }
 
     if (key.isStep()) {
+        closePage = true;
         updateFills();
         event.consume();
     }
 
-    bool canClose = _modal && !_latching && !_syncing && !globalKeyState()[Key::Performer];
+    bool stepKeyPressed = false;
+    for (int step = 0; step < 16; ++step) {
+        stepKeyPressed |= pageKeyState()[MatrixMap::fromStep(step)];
+    }
+
+    bool canClose = _modal && !_latching && !_syncing && !globalKeyState()[Key::Performer] && !stepKeyPressed;
     if (canClose && closePage) {
         close();
     }
@@ -218,14 +225,20 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
 }
 
 void PerformerPage::encoder(EncoderEvent &event) {
+    for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+        if (pageKeyState()[MatrixMap::fromStep(trackIndex)]) {
+            _project.playState().trackState(trackIndex).editFillAmount(event.value(), false);
+        }
+    }
 }
 
 void PerformerPage::updateFills() {
     auto &playState = _project.playState();
     bool fillPressed = pageKeyState()[MatrixMap::fromFunction(int(Function::Fill))];
+    bool holdPressed = pageKeyState()[Key::Shift];
 
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         bool trackFill = pageKeyState()[MatrixMap::fromStep(8 + trackIndex)];
-        playState.fillTrack(trackIndex, trackFill || fillPressed);
+        playState.fillTrack(trackIndex, trackFill || fillPressed, holdPressed);
     }
 }
