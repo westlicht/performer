@@ -28,6 +28,7 @@ namespace ProjectVersion {
     static constexpr uint32_t Version11 = 11;
 
     // added TrackState::fillAmount
+    // added NoteSequence::Step::condition
     static constexpr uint32_t Version12 = 12;
 
     static constexpr uint32_t Version = Version12;

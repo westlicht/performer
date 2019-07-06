@@ -150,6 +150,9 @@ void NoteSequence::Step::read(ReadContext &context) {
     if (reader.dataVersion() < ProjectVersion::Version7) {
         setGateOffset(0);
     }
+    if (reader.dataVersion() < ProjectVersion::Version12) {
+        setCondition(Types::Condition(0));
+    }
 }
 
 void NoteSequence::writeRouted(Routing::Target target, int intValue, float floatValue) {
