@@ -984,7 +984,7 @@ As with the preset scales, user scales can either be in _Chromatic_ or _Voltage_
 
 The number of items in the scale is set with the _Size_ parameter and can be up to 32 items.
 
-When in _Chromatic_ mode, each item can be assigned a semitone: **1**, **1#**, **2**, **2#**, **3**, **4**, **4#**, **5**, **5#**, **6**, **6#** or **7**.
+When in _Chromatic_ mode, each item can be assigned a semitone: **C**, **C#**, **D**, **D#**, **E**, **F**, **F#**, **G**, **G#**, **A**, **A#** or **B**.
 
 When in _Voltage_ mode, each item can be assigned a voltage between -5V and +5V with millivolts accuracy.
 
