@@ -27,6 +27,7 @@ nav: 20
   - [MIDI/CV Track](#concepts-midi-cv-track)
   - [Pattern](#concepts-pattern)
   - [Snapshot](#concepts-snapshot)
+  - [Fills](#concepts-fills)
   - [Song](#concepts-song)
   - [Scale](#concepts-scale)
   - [Clock](#concepts-clock)
@@ -62,6 +63,7 @@ nav: 20
   - [Run Modes](#appendix-run-modes)
   - [Play Modes](#appendix-play-modes)
   - [Rotation](#appendix-rotation)
+  - [Step Conditions](#appendix-step-conditions)
   - [Scales](#appendix-scales)
   - [Shapes](#appendix-shapes)
   - [Arpeggiator Modes](#appendix-arpeggiator-modes)
@@ -170,6 +172,8 @@ The _Retrigger_ layer allows each gate signal to be retriggered multiple times w
 
 The generated CV signal is controlled by the _Note_ layer, which basically defines the voltage to be output for each step. Each note is stored as an index to an entry in a [Scale](#concepts-scale), allowing the generated CV signals to be used both for controlling note pitch as well as other arbitrary modulation signals. Using the _Note Variation Range_ and _Note Variation Probability_ layers some random variation can be applied to the CV signal. The _Slide_ layer controls if the generate CV signal is changed immediately on the start of a gate or smoothly slides to the new voltage.
 
+Finally, the _Condition_ layer is used to conditionally trigger steps based on certain rules. This allows to create relatively short sequences that feel more complex, for example by only playing steps every few iterations. See [Step Conditions](#appendix-step-conditions) for additional information.
+
 The playback of the sequence is controlled by additional parameters:
 
 - _Divisor_ controls the rate at which steps are played back
@@ -207,6 +211,12 @@ In _Note_ and _Curve_ mode, each of the 8 tracks contains up to 16 sequences, al
 <h3 id="concepts-snapshot">Snapshot</h3>
 
 In addition to the 16 patterns per track, there is an additional snapshot pattern which can temporarily be used to edit sequences without affecting the original. When taking a snapshot, all patterns that are currently playing in each track are copied to the snapshot. Snapshots come in handy during live performance for quickly changing sequences on the fly. The changes can later be committed or reverted. Snapshots are controlled from the [Pattern](#pages-pattern) page.
+
+<!-- Fills -->
+
+<h3 id="concepts-fills">Fills</h3>
+
+Fills can be used as an effective tool during live performance. They allow to temporarily change the playback of a sequence to add some variation or tension. Each track can be configured with a specific fill mode. The default mode will simply trigger every step of a sequence no matter if the gate is enabled or disabled. Other fill modes allow to temporarily play steps from the next sequence or trigger steps that have the _Fill_ condition set. To make things more interesting, each track also has a _Fill Amount_ associated which is a probability value that controls how often a step is affected by the selected fill mode. This for example allows to morph between two patterns by selectively playing a given amount of steps from either pattern. Fills can then be controlled from the [Performer](#pages-performer) page.
 
 <!-- Song -->
 
@@ -549,7 +559,7 @@ If a track is in _Note_ mode, the following parameters are available:
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
-| Fill Mode | None, Gates, Next Pattern | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. |
+| Fill Mode | None, Gates, Next Pattern, Condition | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. _Condition_ plays steps that have the _Fill_ condition set, and does not play steps that have the _!Fill_ condition set. |
 | CV Update Mode | Gate, Always | Mode used for updating the CV output of this track. _Gate_ only updates the CV output if the step gate is active, _Always_ always updates the CV output independent of the step gate. |
 | Slide Time | 0% - 100% | Duration of voltage slides for steps that have _Slide_ enabled. |
 | Octave | -10 - +10 | Number of octaves to transpose the sequence up or down. |
@@ -571,7 +581,7 @@ If a track is in _Curve_, the following parameters are available:
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
-| Fill Mode | None, Gates, Next Pattern | This parameter currently has no effect. |
+| Fill Mode | None, Gates, Next Pattern, Condition | This parameter currently has no effect. |
 | Slide Time | 0% - 100% | Global slide time (slew limiter) applied to curve. |
 | Rotate | [Rotation](#appendix-rotation) | Amount of rotation applied to the sequence. |
 
@@ -665,7 +675,7 @@ This page allows editing the currently selected sequence on the currently select
 
 <h4>Layer Selection</h4>
 
-Sequence data is organized in layers (see [Note Track](#concepts-note-track) and [Curve Track](#concepts-curve-track)). Press `F1`, `F2`, `F3`, `F4` or `F5` to select different layers. The currently selected layer is shown in the header and the graphical representation of the sequence will change accordingly. Note that each function button can represent a group of layers, in which case pressing the same function button repeatedly will cycle through the layers contained in the group.
+Sequence data is organized in layers (see [Note Track](#concepts-note-track) and [Curve Track](#concepts-curve-track)). Press `F1`, `F2`, `F3`, `F4` or `F5` to select different layers. The currently selected layer is shown in the header and the graphical representation of the sequence will change accordingly. Note that each function button can represent a group of layers, in which case pressing the same function button repeatedly will cycle through the layers contained in the group. Press `SHIFT` + `F[1-5]` to quickly switch to the first layer of a group.
 
 The following layers are available in _Note_ mode:
 
@@ -675,6 +685,9 @@ The following layers are available in _Note_ mode:
 | `F2` | Retrigger, Retrigger Probability |
 | `F3` | Length, Length Variation Range, Length Variation Probability |
 | `F4` | Note, Note Variation Range, Note Variation Probability |
+| `F5` | Condition |
+
+> Note: See [Step Conditions](#appendix-step-conditions) for a description of the different step conditions.
 
 The following layers are available in _Curve_ mode:
 
@@ -819,6 +832,8 @@ The _Pattern_ page can either be permanently entered using `PAGE` + `PATT` or ju
 
 On this page you can handle pattern changes as well as selecting the currently edited pattern. Pattern changes can be scheduled by using _latching_ or _syncing_. In addition, this page gives access to the snapshot system and allows for copy/pasting patterns.
 
+> Note: The currently playing _Pattern_ can be selected as a routing target on the [Routing](#pages-routing) page.
+
 <h4>Editing Pattern</h4>
 
 To change the pattern for editing which is indicated in the header as **E[1-16]** simple rotate the `ENCODER` or press `PREV` and `NEXT`. Alternatively you can use `SHIFT` + `S[1-16]` to select the editing pattern.
@@ -867,9 +882,13 @@ On this page you can handle mutes/solos as well as fills. Similar as with patter
 
 The temporary mode is very handy to quickly trigger performance actions while working on another page.
 
+The page visualizes the current mute state for every track. In addition, the currently playing step of a sequence is visualized right below. Finally, a percentage bar is used to visualize the current _Fill_ state and the selected _Fill Amount_.
+
+> Note: _Mute_, _Fill_ and _Fill Amount_ can be selected as routing targets on the [Routing](#pages-routing) page to be controlled from external sources or even internal sequences.
+
 <h4>Mutes/Solos</h4>
 
-Press `T[1-8]` to mute and unmute tracks or `S[1-8]` to solo a track. Press `F3` to unmute all tracks at once.
+Press `T[1-8]` to mute and unmute tracks or `SHIFT` + `T[1-8]` to solo a track. Press `F3` to unmute all tracks at once.
 
 <h4>Latching Mutes/Solos</h4>
 
@@ -887,7 +906,9 @@ To execute actions on a musical beat, hold `F2` while executing mute, unmute or 
 
 <h4>Fills</h4>
 
-Hold `S[9-16]` to enable fills on individual tracks. Hold `F4` to fill all tracks at once.
+Hold `S[9-16]` to temporarily enable fills on individual tracks. Press `SHIFT` + `S[9-16]` to permanently enable fill on a track and disable fill by simply pressing `S[9-16]` again later on. Hold `F4` to temporarily fill all tracks at once. Press `SHIFT` + `F4` to permanently enable fill on all tracks.
+
+To control the _Fill Amount_ of a track, hold `S[1-8]` and rotate the `ENCODER`.
 
 > Note: There are different fill modes that can be configured per track on the [Track](#pages-track) page using the _Fill Mode_ parameter.
 
@@ -1265,6 +1286,24 @@ With a rotation of **-3** the sequence is rotated 3 steps to the left and played
 ```
 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 ...
 ```
+
+<!-- Step Conditions -->
+
+<h3 id="appendix-step-conditions">Step Conditions</h3>
+
+Step conditions allow individual steps to only be played if a certain condition is met. In addition to the various probabilistic variations of a step, this allows for even more dynamic sequences. The following conditions are available:
+
+| Condition | Description |
+| :--- | :--- |
+| Fill | Step is only played if _Fill_ is enabled (and the track has _Fill Mode_ set to _Condition_ mode). |
+| !Fill | Step is only played if _Fill_ is disabled (and the track has _Fill Mode_ set to _Condition_ mode). |
+| Pre | Step is only played if the most recently evaluated step condition was true. |
+| !Pre | Step is only played if the most recently evaluated step condition was false. |
+| First | Step is only played on the very first iteration of the playback. |
+| !First | Step is played on every but the very first iteration of the playback. |
+| N:M | Step is played on the Nth iteration every M iterations. So for example, 2:4 plays the step on iteration 2, 6, 10 etc. |
+
+> Note: Step conditions are only evaluated if the step is actually triggered. That means that if a step is not triggered due to _Gate Probability_ the assigned step condition will not be evaluated and has no effect.
 
 <!-- Scales -->
 
