@@ -154,6 +154,10 @@ public:
         return target >= Target::SequenceFirst && target <= Target::SequenceLast;
     }
 
+    static bool isPerTrackTarget(Target target) {
+        return isPlayStateTarget(target) || isTrackTarget(target) || isSequenceTarget(target);
+    }
+
     enum class Source : uint8_t {
         None,
         CvIn1,
@@ -363,7 +367,7 @@ public:
         }
 
         void printTracks(StringBuilder &str) const {
-            if (isPlayStateTarget(_target) || isTrackTarget(_target) || isSequenceTarget(_target)) {
+            if (isPerTrackTarget(_target)) {
                 for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {
                     str("%c", (_tracks & (1<<i)) ? 'X' : '-');
                 }
@@ -483,6 +487,7 @@ public:
 
     int findEmptyRoute() const;
     int findRoute(Target target, int trackIndex) const;
+    int checkRouteConflict(const Route &editedRoute, const Route &existingRoute) const;
 
     void setRouted(Target target, uint8_t tracks, uint16_t patterns, bool routed);
     void writeTarget(Target target, uint8_t tracks, uint16_t patterns, float normalized);

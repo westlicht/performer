@@ -151,6 +151,23 @@ int Routing::findRoute(Target target, int trackIndex) const {
     return -1;
 }
 
+int Routing::checkRouteConflict(const Route &editedRoute, const Route &existingRoute) const {
+    for (size_t i = 0; i < _routes.size(); ++i) {
+        const auto &route = _routes[i];
+        if (&route != &existingRoute && route.active() && route.target() == editedRoute.target()) {
+            if (isPerTrackTarget(route.target())) {
+                if ((route.tracks() & editedRoute.tracks()) != 0) {
+                    return i;
+                }
+            } else {
+                return i;
+            }
+        }
+    }
+
+    return -1;
+}
+
 void Routing::setRouted(Target target, uint8_t tracks, uint16_t patterns, bool routed) {
     if (isProjectTarget(target)) {
         _project.setRouted(target, routed);

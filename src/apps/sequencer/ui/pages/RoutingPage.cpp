@@ -84,9 +84,14 @@ void RoutingPage::keyPress(KeyPressEvent &event) {
             break;
         case Function::Commit:
             _engine.midiLearn().stop();
-            *_route = _editRoute;
-            setEdit(false);
-            showMessage("ROUTE CHANGED");
+            int conflict = _project.routing().checkRouteConflict(_editRoute, *_route);
+            if (conflict >= 0) {
+                showMessage(FixedStringBuilder<64>("ROUTE SETTINGS CONFLICT WITH ROUTE %d", conflict + 1));
+            } else {
+                *_route = _editRoute;
+                setEdit(false);
+                showMessage("ROUTE CHANGED");
+            }
             break;
         }
         event.consume();
