@@ -122,7 +122,7 @@ void RoutingPage::showRoute(int routeIndex, const Routing::Route *initialValue) 
 void RoutingPage::drawCell(Canvas &canvas, int row, int column, int x, int y, int w, int h) {
     if (row == int(RouteListModel::Item::Tracks) &&
         column == 1 &&
-        (Routing::isTrackTarget(_editRoute.target()) || Routing::isSequenceTarget(_editRoute.target()))
+        Routing::isPerTrackTarget(_editRoute.target())
     ) {
         canvas.setFont(Font::Tiny);
         canvas.setBlendMode(BlendMode::Set);
