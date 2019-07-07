@@ -353,16 +353,19 @@ public:
 
         // tracks
 
-        uint8_t tracks() const { return _tracks; }
+        uint8_t tracks() const { return isPerTrackTarget(_target) ? _tracks : 0; }
         void setTracks(uint8_t tracks) {
-            _tracks = tracks;
+            if (isPerTrackTarget(_target)) {
+                _tracks = tracks;
+            }
         }
 
         void toggleTrack(int trackIndex) {
-            if (tracks() & (1<<trackIndex)) {
-                setTracks(tracks() & ~(1<<trackIndex));
+            uint8_t trackBit = (1<<trackIndex);
+            if (tracks() & trackBit) {
+                setTracks(tracks() & ~trackBit);
             } else {
-                setTracks(tracks() | (1<<trackIndex));
+                setTracks(tracks() | trackBit);
             }
         }
 
