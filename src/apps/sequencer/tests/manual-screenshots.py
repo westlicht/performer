@@ -53,7 +53,7 @@ project.clear()
 
 # page-routing
 c.selectPage("routing").screenshot("page-routing")
-c.pressEncoder().rotateEncoder(6).screenshot("page-routing-edit")
+c.pressEncoder().rotateEncoder(10).screenshot("page-routing-edit")
 
 # page-midi-output
 c.selectPage("midiout").screenshot("page-midi-output")
