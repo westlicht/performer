@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.1.23 (8 Jul 2019)
+
+#### Improvements
+
+- Check and disallow to create conflicting routes (#95)
+- Added new _Note Range_ MIDI event type for routes (#96)
+
+#### Fixes
+
+- Fixed track selection for new routing targets added in previous release
+- Fixed hidden editing of route tracks
+
 ## v0.1.22 (6 Jul 2019)
 
 #### Improvements
