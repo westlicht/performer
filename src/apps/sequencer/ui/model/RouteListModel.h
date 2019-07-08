@@ -21,6 +21,7 @@ public:
         FirstMidiEventConfig,
         MidiControlNumber = FirstMidiEventConfig,
         MidiNote = FirstMidiEventConfig,
+        MidiNoteRange,
         Last
     };
 
@@ -33,12 +34,13 @@ public:
         bool isCvSource = Routing::isCvSource(_route.source());
         bool isMidiSource = Routing::isMidiSource(_route.source());
         bool hasNoteOrController = _route.midiSource().event() != Routing::MidiSource::Event::PitchBend;
+        bool hasNoteRange = _route.midiSource().event() == Routing::MidiSource::Event::NoteRange;
         if (isEmpty) {
             return 1;
         } else if (isCvSource) {
             return FirstSource + 1;
         } else if (isMidiSource) {
-            return hasNoteOrController ? Last : int(Last) - 1;
+            return hasNoteOrController ? (hasNoteRange ? Last : int(Last) - 1) : int(Last) - 2;
         } else {
             return FirstSource;
         }
@@ -76,6 +78,7 @@ private:
         // case MidiControlNumber:
         case MidiNote:
                             return _route.midiSource().isControlEvent() ? "CC Number" : "Note";
+        case MidiNoteRange: return "Note Range";
         case Last:          break;
         }
         return nullptr;
@@ -121,6 +124,9 @@ private:
                 _route.midiSource().printNote(str);
             }
             break;
+        case MidiNoteRange:
+            _route.midiSource().printNoteRange(str);
+            break;
         case Last:
             break;
         }
@@ -161,6 +167,9 @@ private:
             } else {
                 _route.midiSource().editNote(value, shift);
             }
+            break;
+        case MidiNoteRange:
+            _route.midiSource().editNoteRange(value, shift);
             break;
         case Last:
             break;

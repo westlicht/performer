@@ -70,6 +70,12 @@ bool RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
                     consumed = true;
                 }
                 break;
+            case Routing::MidiSource::Event::NoteRange:
+                if (message.isNoteOn() && message.note() >= midiSource.note() && message.note() < midiSource.note() + midiSource.noteRange()) {
+                    sourceValue = (message.note() - midiSource.note()) / float(midiSource.noteRange() - 1);
+                    consumed = true;
+                }
+                break;
             case Routing::MidiSource::Event::Last:
                 break;
             }

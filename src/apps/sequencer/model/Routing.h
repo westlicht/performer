@@ -247,6 +247,7 @@ public:
             NoteMomentary,
             NoteToggle,
             NoteVelocity,
+            NoteRange,
             Last,
         };
 
@@ -258,6 +259,7 @@ public:
             case Event::NoteMomentary:  return "Note Momentary";
             case Event::NoteToggle:     return "Note Toggle";
             case Event::NoteVelocity:   return "Note Velocity";
+            case Event::NoteRange:      return "Note Range";
             case Event::Last:           break;
             }
             return nullptr;
@@ -287,21 +289,6 @@ public:
             return int(_event) <= int(Event::LastControlEvent);
         }
 
-        // note
-
-        int note() const { return _controlNumberOrNote; }
-        void setNote(int note) {
-            _controlNumberOrNote = clamp(note, 0, 127);
-        }
-
-        void editNote(int value, bool shift) {
-            setNote(note() + value);
-        }
-
-        void printNote(StringBuilder &str) const {
-            Types::printMidiNote(str, note());
-        }
-
         // controlNumber
 
         int controlNumber() const { return _controlNumberOrNote; }
@@ -317,6 +304,36 @@ public:
             str("%d", note());
         }
 
+        // note
+
+        int note() const { return _controlNumberOrNote; }
+        void setNote(int note) {
+            _controlNumberOrNote = clamp(note, 0, 127);
+        }
+
+        void editNote(int value, bool shift) {
+            setNote(note() + value);
+        }
+
+        void printNote(StringBuilder &str) const {
+            Types::printMidiNote(str, note());
+        }
+
+        // noteRange
+
+        int noteRange() const { return _noteRange; }
+        void setNoteRange(int noteRange) {
+            _noteRange = clamp(noteRange, 2, 64);
+        }
+
+        void editNoteRange(int value, bool shift) {
+            setNoteRange(noteRange() + value);
+        }
+
+        void printNoteRange(StringBuilder &str) const {
+            str("%d", noteRange());
+        }
+
         void clear();
 
         void write(WriteContext &context) const;
@@ -328,6 +345,7 @@ public:
         MidiSourceConfig _source;
         Event _event;
         uint8_t _controlNumberOrNote;
+        uint8_t _noteRange;
     };
 
     class Route {
