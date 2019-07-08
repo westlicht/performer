@@ -1,6 +1,7 @@
 #include "RoutingEngine.h"
 
 #include "Engine.h"
+#include "MidiUtils.h"
 
 // for allowing direct mapping
 static_assert(int(MidiPort::Midi) == int(Types::MidiPort::Midi), "invalid mapping");
@@ -23,8 +24,7 @@ bool RoutingEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
         const auto &route = _routing.route(routeIndex);
         if (route.active() &&
             route.source() == Routing::Source::Midi &&
-            route.midiSource().source().port() == Types::MidiPort(port) &&
-            (route.midiSource().source().channel() == 0 || route.midiSource().source().channel() == message.channel() + 1)
+            MidiUtils::matchSource(port, message, route.midiSource().source())
         ) {
             const auto &midiSource = route.midiSource();
             auto &sourceValue = _sourceValues[routeIndex];

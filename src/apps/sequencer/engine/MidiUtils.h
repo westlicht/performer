@@ -9,7 +9,7 @@
 namespace MidiUtils {
 
 static bool matchSource(MidiPort port, const MidiMessage &message, const MidiSourceConfig &source) {
-    return port == MidiPort(source.port()) && (source.channel() == -1 || message.channel() == source.channel());
+    return port == MidiPort(source.port()) && (source.isOmni() || message.channel() == source.channel());
 }
 
 } // namespace MidiUtils

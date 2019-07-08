@@ -60,6 +60,10 @@ public:
         Types::printMidiChannel(str, channel());
     }
 
+    bool isOmni() const {
+        return _channel == -1;
+    }
+
 
     MidiConfig() {
         clear();
