@@ -36,6 +36,9 @@ enum ProjectVersion {
     // swapped Curve::Type::Low with Curve::Type::High
     Version14 = 14,
 
+    // changed CurveSequence::Step layout
+    Version15 = 15,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

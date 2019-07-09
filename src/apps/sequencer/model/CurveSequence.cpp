@@ -53,6 +53,7 @@ void CurveSequence::Step::setLayerValue(Layer layer, int value) {
 }
 
 void CurveSequence::Step::clear() {
+    _data0.raw = 0;
     setShape(0);
     setMin(0);
     setMax(Max::Max);
@@ -60,21 +61,27 @@ void CurveSequence::Step::clear() {
 
 void CurveSequence::Step::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_shape);
-    writer.write(_min);
-    writer.write(_max);
+    writer.write(_data0);
 }
 
 void CurveSequence::Step::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_shape);
-    reader.read(_min);
-    reader.read(_max);
+    if (reader.dataVersion() < ProjectVersion::Version15) {
+        uint8_t shape, min, max;
+        reader.read(shape);
+        reader.read(min);
+        reader.read(max);
+        _data0.shape = shape;
+        _data0.min = min;
+        _data0.max = max;
 
-    if (reader.dataVersion() < ProjectVersion::Version14) {
-        if (_shape <= 1) {
-            _shape = (_shape + 1) % 2;
+        if (reader.dataVersion() < ProjectVersion::Version14) {
+            if (_data0.shape <= 1) {
+                _data0.shape = (_data0.shape + 1) % 2;
+            }
         }
+    } else {
+        reader.read(_data0);
     }
 }
 

@@ -21,6 +21,7 @@ public:
     // Types
     //----------------------------------------
 
+    typedef UnsignedValue<6> Shape;
     typedef UnsignedValue<8> Min;
     typedef UnsignedValue<8> Max;
 
@@ -51,33 +52,33 @@ public:
 
         // shape
 
-        int shape() const { return _shape; }
+        int shape() const { return _data0.shape; }
         void setShape(int shape) {
-            _shape = clamp(shape, 0, int(Curve::Last) - 1);
+            _data0.shape = clamp(shape, 0, int(Curve::Last) - 1);
         }
 
         // min
 
-        int min() const { return _min; }
+        int min() const { return _data0.min; }
         void setMin(int min) {
-            _min = Min::clamp(min);
-            _max = std::max(_max, _min);
+            _data0.min = Min::clamp(min);
+            _data0.max = std::max(max(), this->min());
         }
 
-        float minNormalized() const { return float(_min) / Min::Max; }
+        float minNormalized() const { return float(min()) / Min::Max; }
         void setMinNormalized(float min) {
             setMin(int(std::round(min * Min::Max)));
         }
 
         // max
 
-        int max() const { return _max; }
+        int max() const { return _data0.max; }
         void setMax(int max) {
-            _max = Max::clamp(max);
-            _min = std::min(_min, _max);
+            _data0.max = Max::clamp(max);
+            _data0.min = std::min(min(), this->max());
         }
 
-        float maxNormalized() const { return float(_max) / Max::Max; }
+        float maxNormalized() const { return float(max()) / Max::Max; }
         void setMaxNormalized(float max) {
             setMax(int(std::round(max * Max::Max)));
         }
@@ -97,7 +98,7 @@ public:
         void read(ReadContext &context);
 
         bool operator==(const Step &other) const {
-            return _shape == other._shape && _min == other._min && _max == other._max;
+            return _data0.raw == other._data0.raw;
         }
 
         bool operator!=(const Step &other) const {
@@ -105,9 +106,14 @@ public:
         }
 
     private:
-        uint8_t _shape;
-        uint8_t _min;
-        uint8_t _max;
+        union {
+            uint32_t raw;
+            BitField<uint32_t, 0, 6> shape;
+            // 2 bits left
+            BitField<uint32_t, 8, 8> min;
+            BitField<uint32_t, 16, 8> max;
+            // 8 bits left
+        } _data0;
     };
 
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;
