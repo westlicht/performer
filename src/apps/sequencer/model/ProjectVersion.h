@@ -34,6 +34,6 @@ namespace ProjectVersion {
     // added Routing::MidiSource::Event::NoteRange
     static constexpr uint32_t Version13 = 13;
 
-    static constexpr uint32_t Version = Version12;
+    static constexpr uint32_t Version = Version13;
 
 } // namespace ProjectVersion
