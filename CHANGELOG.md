@@ -1,6 +1,14 @@
 # Changelog
 
+## v0.1.24 (9 Jul 2019)
+
+#### Fixes
+
+- Fixed writing incorrect project version
+
 ## v0.1.23 (8 Jul 2019)
+
+**PLEASE DO NOT USE THIS VERSION, IT WRITES THE INCORRECT PROJECT FILE VERSION!**
 
 #### Improvements
 
