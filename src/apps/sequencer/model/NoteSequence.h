@@ -171,7 +171,7 @@ public:
 
         Types::Condition condition() const { return Types::Condition(int(_data1.condition)); }
         void setCondition(Types::Condition condition) {
-            _data1.condition = Condition::clamp(int(condition));
+            _data1.condition = int(ModelUtils::clampedEnum(condition));
         }
 
         int layerValue(Layer layer) const;
