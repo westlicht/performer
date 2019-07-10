@@ -66,7 +66,7 @@ public:
         case Layer::Note:                       return "NOTE";
         case Layer::NoteVariationRange:         return "NOTE RANGE";
         case Layer::NoteVariationProbability:   return "NOTE PROB";
-        case Layer::Condition:                  return "COND";
+        case Layer::Condition:                  return "CONDITION";
         case Layer::Last:                       break;
         }
         return nullptr;
