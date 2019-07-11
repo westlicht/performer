@@ -115,7 +115,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         }
 
         // record step
-        if (layer() == Layer::Note && stepIndex == currentRecordStep) {
+        if (stepIndex == currentRecordStep) {
             // draw circle
             canvas.setColor(step.gate() ? 0x0 : 0xf);
             canvas.fillRect(x + 6, y + 6, stepWidth - 12, stepWidth - 12);
