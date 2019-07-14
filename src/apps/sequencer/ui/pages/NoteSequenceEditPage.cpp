@@ -497,7 +497,8 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
     switch (Function(functionKey)) {
     case Function::Gate:
         switch (layer()) {
-        case Layer::Gate: setLayer(Layer::GateProbability);
+        case Layer::Gate:
+            setLayer(Layer::GateProbability);
             break;
         case Layer::GateProbability:
             setLayer(Layer::GateOffset);
