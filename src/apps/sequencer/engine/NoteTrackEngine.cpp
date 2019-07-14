@@ -86,6 +86,7 @@ void NoteTrackEngine::reset() {
     _slideActive = false;
     _gateQueue.clear();
     _cvQueue.clear();
+    _recordHistory.clear();
 
     changePattern();
 }
