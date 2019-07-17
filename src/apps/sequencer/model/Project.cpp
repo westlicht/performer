@@ -40,8 +40,6 @@ void Project::clear() {
     setCvGateInput(Types::CvGateInput::Off);
     setCurveCvInput(Types::CurveCvInput::Off);
 
-    _routed.clear();
-
     _clockSetup.clear();
 
     for (auto &track : _tracks) {

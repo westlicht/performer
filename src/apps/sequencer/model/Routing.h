@@ -510,14 +510,18 @@ public:
     int findRoute(Target target, int trackIndex) const;
     int checkRouteConflict(const Route &editedRoute, const Route &existingRoute) const;
 
-    void setRouted(Target target, uint8_t tracks, uint16_t patterns, bool routed);
-    void writeTarget(Target target, uint8_t tracks, uint16_t patterns, float normalized);
+    void writeTarget(Target target, uint8_t tracks, float normalized);
 
     void write(WriteContext &context) const;
     void read(ReadContext &context);
 
     bool isDirty() const { return _dirty; }
     void clearDirty() { _dirty = false; }
+
+    // global state for keeping active set of routed targets
+    static bool isRouted(Target target, int trackIndex = -1);
+    static void setRouted(Target target, uint8_t tracks, bool routed);
+    static void printRouted(StringBuilder &str, Target target, int trackIndex = -1);
 
 private:
     static float normalizeTargetValue(Target target, float value);
@@ -544,28 +548,4 @@ struct Routable {
 
     inline void set(T value, bool selectRouted) { values[selectRouted] = value; }
     inline T get(bool selectRouted) const { return values[selectRouted]; }
-};
-
-// Routable set.
-template<Routing::Target First, Routing::Target Last>
-struct RoutableSet {
-    inline void clear() {
-        _set.reset();
-    }
-
-    inline bool has(Routing::Target target) const {
-        return _set.test(int(target) - int(First));
-    }
-
-    inline void set(Routing::Target target, bool routed) {
-        _set.set(int(target) - int(First), routed);
-    }
-
-    inline void print(StringBuilder &str, Routing::Target target) const {
-        if (has(target)) {
-            str("\x1a");
-        }
-    }
-private:
-    std::bitset<int(Last) - int(First) + 1> _set;
 };

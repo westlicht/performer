@@ -131,13 +131,11 @@ void RoutingEngine::updateSinks() {
         const auto &route = _routing.route(routeIndex);
         auto &routeState = _routeStates[routeIndex];
 
-        // TODO handle pattern
-
         bool routeChanged = route.target() != routeState.target || route.tracks() != routeState.tracks;
 
         if (routeChanged) {
             // disable previous routing
-            _routing.setRouted(routeState.target, routeState.tracks, 0xf, false);
+            Routing::setRouted(routeState.target, routeState.tracks, false);
         }
 
         if (route.active()) {
@@ -146,13 +144,13 @@ void RoutingEngine::updateSinks() {
             if (Routing::isEngineTarget(target)) {
                 writeEngineTarget(target, value);
             } else {
-                _routing.writeTarget(target, route.tracks(), 0xf, value);
+                _routing.writeTarget(target, route.tracks(), value);
             }
         }
 
         if (routeChanged) {
             // enable new routing
-            _routing.setRouted(route.target(), route.tracks(), 0xf, true);
+            Routing::setRouted(route.target(), route.tracks(), true);
             // save state
             routeState.target = route.target();
             routeState.tracks = route.tracks();

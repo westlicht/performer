@@ -183,8 +183,6 @@ void NoteSequence::clear() {
     setFirstStep(0);
     setLastStep(15);
 
-    _routed.clear();
-
     clearSteps();
 }
 

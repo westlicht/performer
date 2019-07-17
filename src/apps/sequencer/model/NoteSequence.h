@@ -303,7 +303,7 @@ public:
     }
 
     void printDivisor(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::Divisor);
+        printRouted(str, Routing::Target::Divisor);
         ModelUtils::printDivisor(str, divisor());
     }
 
@@ -340,7 +340,7 @@ public:
     }
 
     void printRunMode(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::RunMode);
+        printRouted(str, Routing::Target::RunMode);
         str(Types::runModeName(runMode()));
     }
 
@@ -358,7 +358,7 @@ public:
     }
 
     void printFirstStep(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::FirstStep);
+        printRouted(str, Routing::Target::FirstStep);
         str("%d", firstStep() + 1);
     }
 
@@ -376,7 +376,7 @@ public:
     }
 
     void printLastStep(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::LastStep);
+        printRouted(str, Routing::Target::LastStep);
         str("%d", lastStep() + 1);
     }
 
@@ -392,8 +392,8 @@ public:
     // Routing
     //----------------------------------------
 
-    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
-    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    inline bool isRouted(Routing::Target target) const { return Routing::isRouted(target, _trackIndex); }
+    inline void printRouted(StringBuilder &str, Routing::Target target) const { Routing::printRouted(str, target, _trackIndex); }
     void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------
@@ -428,8 +428,6 @@ private:
     Routable<Types::RunMode> _runMode;
     Routable<uint8_t> _firstStep;
     Routable<uint8_t> _lastStep;
-
-    RoutableSet<Routing::Target::SequenceFirst, Routing::Target::SequenceLast> _routed;
 
     StepArray _steps;
 

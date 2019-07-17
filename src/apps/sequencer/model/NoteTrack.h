@@ -92,7 +92,7 @@ public:
     }
 
     void printSlideTime(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::SlideTime);
+        printRouted(str, Routing::Target::SlideTime);
         str("%d%%", slideTime());
     }
 
@@ -110,7 +110,7 @@ public:
     }
 
     void printOctave(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::Octave);
+        printRouted(str, Routing::Target::Octave);
         str("%+d", octave());
     }
 
@@ -128,7 +128,7 @@ public:
     }
 
     void printTranspose(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::Transpose);
+        printRouted(str, Routing::Target::Transpose);
         str("%+d", transpose());
     }
 
@@ -146,7 +146,7 @@ public:
     }
 
     void printRotate(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::Rotate);
+        printRouted(str, Routing::Target::Rotate);
         str("%+d", rotate());
     }
 
@@ -164,7 +164,7 @@ public:
     }
 
     void printGateProbabilityBias(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::GateProbabilityBias);
+        printRouted(str, Routing::Target::GateProbabilityBias);
         str("%+.1f%%", gateProbabilityBias() * 12.5f);
     }
 
@@ -182,7 +182,7 @@ public:
     }
 
     void printRetriggerProbabilityBias(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::RetriggerProbabilityBias);
+        printRouted(str, Routing::Target::RetriggerProbabilityBias);
         str("%+.1f%%", retriggerProbabilityBias() * 12.5f);
     }
 
@@ -200,7 +200,7 @@ public:
     }
 
     void printLengthBias(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::LengthBias);
+        printRouted(str, Routing::Target::LengthBias);
         str("%+.1f%%", lengthBias() * 12.5f);
     }
 
@@ -218,7 +218,7 @@ public:
     }
 
     void printNoteProbabilityBias(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::NoteProbabilityBias);
+        printRouted(str, Routing::Target::NoteProbabilityBias);
         str("%+.1f%%", noteProbabilityBias() * 12.5f);
     }
 
@@ -234,8 +234,8 @@ public:
     // Routing
     //----------------------------------------
 
-    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
-    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    inline bool isRouted(Routing::Target target) const { return Routing::isRouted(target, _trackIndex); }
+    inline void printRouted(StringBuilder &str, Routing::Target target) const { Routing::printRouted(str, target, _trackIndex); }
     void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------
@@ -269,8 +269,6 @@ private:
     Routable<int8_t> _retriggerProbabilityBias;
     Routable<int8_t> _lengthBias;
     Routable<int8_t> _noteProbabilityBias;
-
-    RoutableSet<Routing::Target::TrackFirst, Routing::Target::TrackLast> _routed;
 
     NoteSequenceArray _sequences;
 

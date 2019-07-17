@@ -62,7 +62,7 @@ public:
     }
 
     void printSlideTime(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::SlideTime);
+        printRouted(str, Routing::Target::SlideTime);
         str("%d%%", slideTime());
     }
 
@@ -80,7 +80,7 @@ public:
     }
 
     void printRotate(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::Rotate);
+        printRouted(str, Routing::Target::Rotate);
         str("%+d", rotate());
     }
 
@@ -96,8 +96,8 @@ public:
     // Routing
     //----------------------------------------
 
-    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
-    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    inline bool isRouted(Routing::Target target) const { return Routing::isRouted(target, _trackIndex); }
+    inline void printRouted(StringBuilder &str, Routing::Target target) const { Routing::printRouted(str, target, _trackIndex); }
     void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------
@@ -124,8 +124,6 @@ private:
     Types::FillMode _fillMode;
     Routable<uint8_t> _slideTime;
     Routable<int8_t> _rotate;
-
-    RoutableSet<Routing::Target::TrackFirst, Routing::Target::TrackLast> _routed;
 
     CurveSequenceArray _sequences;
 

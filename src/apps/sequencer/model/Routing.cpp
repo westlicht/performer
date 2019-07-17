@@ -173,36 +173,7 @@ int Routing::checkRouteConflict(const Route &editedRoute, const Route &existingR
     return -1;
 }
 
-void Routing::setRouted(Target target, uint8_t tracks, uint16_t patterns, bool routed) {
-    if (isProjectTarget(target)) {
-        _project.setRouted(target, routed);
-    } else if (isTrackTarget(target) || isSequenceTarget(target)) {
-        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-            if (tracks & (1<<trackIndex)) {
-                auto &track = _project.track(trackIndex);
-                if (track.trackMode() == Track::TrackMode::Note) {
-                    if (isTrackTarget(target)) {
-                        track.noteTrack().setRouted(target, routed);
-                    } else {
-                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
-                            track.noteTrack().sequence(patternIndex).setRouted(target, routed);
-                        }
-                    }
-                } else if (track.trackMode() == Track::TrackMode::Curve) {
-                    if (isTrackTarget(target)) {
-                        track.curveTrack().setRouted(target, routed);
-                    } else {
-                        for (int patternIndex = 0; patternIndex < CONFIG_PATTERN_COUNT; ++patternIndex) {
-                            track.curveTrack().sequence(patternIndex).setRouted(target, routed);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-void Routing::writeTarget(Target target, uint8_t tracks, uint16_t patterns, float normalized) {
+void Routing::writeTarget(Target target, uint8_t tracks, float normalized) {
     float floatValue = denormalizeTargetValue(target, normalized);
     int intValue = std::round(floatValue);
 
@@ -242,6 +213,36 @@ void Routing::write(WriteContext &context) const {
 
 void Routing::read(ReadContext &context) {
     readArray(context, _routes);
+}
+
+static std::array<uint8_t, size_t(Routing::Target::Last)> routedSet;
+static_assert(sizeof(uint8_t) * 8 >= CONFIG_TRACK_COUNT, "track bits do not fit");
+
+bool Routing::isRouted(Target target, int trackIndex) {
+    size_t targetIndex = size_t(target);
+    if (isTrackTarget(target)) {
+        if (trackIndex >= 0 && trackIndex < CONFIG_TRACK_COUNT) {
+            return (routedSet[targetIndex] & (1 << trackIndex)) != 0;
+        }
+    } else {
+        return routedSet[targetIndex] != 0;
+    }
+    return false;
+}
+
+void Routing::setRouted(Target target, uint8_t tracks, bool routed) {
+    size_t targetIndex = size_t(target);
+    if (isTrackTarget(target)) {
+        routedSet[targetIndex] = routed ? tracks : 0;
+    } else {
+        routedSet[targetIndex] = routed ? 1 : 0;
+    }
+}
+
+void Routing::printRouted(StringBuilder &str, Target target, int trackIndex) {
+    if (isRouted(target, trackIndex)) {
+        str("\x1a");
+    }
 }
 
 struct TargetInfo {

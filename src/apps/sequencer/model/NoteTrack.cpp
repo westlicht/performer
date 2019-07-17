@@ -45,8 +45,6 @@ void NoteTrack::clear() {
     setLengthBias(0);
     setNoteProbabilityBias(0);
 
-    _routed.clear();
-
     for (auto &sequence : _sequences) {
         sequence.clear();
     }

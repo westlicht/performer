@@ -66,7 +66,7 @@ public:
     }
 
     void printTempo(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::Tempo);
+        printRouted(str, Routing::Target::Tempo);
         str("%.1f", tempo());
     }
 
@@ -84,7 +84,7 @@ public:
     }
 
     void printSwing(StringBuilder &str) const {
-        _routed.print(str, Routing::Target::Swing);
+        printRouted(str, Routing::Target::Swing);
         str("%d%%", swing());
     }
 
@@ -321,8 +321,8 @@ public:
     // Routing
     //----------------------------------------
 
-    inline bool isRouted(Routing::Target target) const { return _routed.has(target); }
-    inline void setRouted(Routing::Target target, bool routed) { _routed.set(target, routed); }
+    inline bool isRouted(Routing::Target target) const { return Routing::isRouted(target); }
+    inline void printRouted(StringBuilder &str, Routing::Target target) const { Routing::printRouted(str, target); }
     void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------
@@ -367,8 +367,6 @@ private:
     Types::RecordMode _recordMode;
     Types::CvGateInput _cvGateInput;
     Types::CurveCvInput _curveCvInput;
-
-    RoutableSet<Routing::Target::ProjectFirst, Routing::Target::ProjectLast> _routed;
 
     ClockSetup _clockSetup;
     TrackArray _tracks;

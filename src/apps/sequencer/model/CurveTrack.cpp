@@ -20,8 +20,6 @@ void CurveTrack::clear() {
     setSlideTime(0);
     setRotate(0);
 
-    _routed.clear();
-
     for (auto &sequence : _sequences) {
         sequence.clear();
     }
