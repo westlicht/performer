@@ -225,6 +225,10 @@ public:
     // Properties
     //----------------------------------------
 
+    // trackIndex
+
+    int trackIndex() const { return _trackIndex; }
+
     // scale
 
     int scale() const { return _scale; }
@@ -414,6 +418,9 @@ public:
     void read(ReadContext &context);
 
 private:
+    void setTrackIndex(int trackIndex) { _trackIndex = trackIndex; }
+
+    int8_t _trackIndex = -1;
     int8_t _scale;
     int8_t _rootNote;
     Routable<uint16_t> _divisor;
@@ -428,5 +435,5 @@ private:
 
     uint8_t _edited;
 
-    friend class Project;
+    friend class NoteTrack;
 };

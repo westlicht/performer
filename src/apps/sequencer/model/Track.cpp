@@ -126,4 +126,27 @@ void Track::initContainer() {
     case TrackMode::Last:
         break;
     }
+
+    setContainerTrackIndex(_trackIndex);
+}
+
+void Track::setTrackIndex(int trackIndex) {
+    _trackIndex = trackIndex;
+    setContainerTrackIndex(_trackIndex);
+}
+
+void Track::setContainerTrackIndex(int trackIndex) {
+    switch (_trackMode) {
+    case TrackMode::Note:
+        _track.note->setTrackIndex(trackIndex);
+        break;
+    case TrackMode::Curve:
+        _track.curve->setTrackIndex(trackIndex);
+        break;
+    case TrackMode::MidiCv:
+        _track.midiCv->setTrackIndex(trackIndex);
+        break;
+    case TrackMode::Last:
+        break;
+    }
 }

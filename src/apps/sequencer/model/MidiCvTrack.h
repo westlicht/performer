@@ -140,6 +140,11 @@ public:
     void read(ReadContext &context);
 
 private:
+    void setTrackIndex(int trackIndex) {
+        _trackIndex = trackIndex;
+    }
+
+    int8_t _trackIndex = -1;
     MidiSourceConfig _source;
     uint8_t _voices;
     VoiceConfig _voiceConfig;
@@ -147,4 +152,6 @@ private:
     Types::VoltageRange _modulationRange;
     bool _retrigger;
     Arpeggiator _arpeggiator;
+
+    friend class Track;
 };

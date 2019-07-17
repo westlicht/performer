@@ -120,11 +120,13 @@ public:
         ASSERT(_trackMode == other._trackMode, "invalid track mode");
         _linkTrack = other._linkTrack;
         _container = other._container;
+        setContainerTrackIndex(_trackIndex);
         return *this;
     }
 
 private:
-    void setTrackIndex(int trackIndex) { _trackIndex = trackIndex; }
+    void setTrackIndex(int trackIndex);
+    void setContainerTrackIndex(int trackIndex);
 
     // Note: always call through Project::setTrackMode
     void setTrackMode(TrackMode trackMode) {

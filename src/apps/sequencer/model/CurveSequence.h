@@ -116,6 +116,10 @@ public:
     // Properties
     //----------------------------------------
 
+    // trackIndex
+
+    int trackIndex() const { return _trackIndex; }
+
     // range
 
     Types::VoltageRange range() const { return _range; }
@@ -267,6 +271,9 @@ public:
     void read(ReadContext &context);
 
 private:
+    void setTrackIndex(int trackIndex) { _trackIndex = trackIndex; }
+
+    int8_t _trackIndex = -1;
     Types::VoltageRange _range;
     Routable<uint16_t> _divisor;
     uint8_t _resetMeasure;
@@ -277,4 +284,6 @@ private:
     RoutableSet<Routing::Target::SequenceFirst, Routing::Target::SequenceLast> _routed;
 
     StepArray _steps;
+
+    friend class CurveTrack;
 };

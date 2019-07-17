@@ -112,6 +112,14 @@ public:
     void read(ReadContext &context);
 
 private:
+    void setTrackIndex(int trackIndex) {
+        _trackIndex = trackIndex;
+        for (auto &sequence : _sequences) {
+            sequence.setTrackIndex(trackIndex);
+        }
+    }
+
+    int8_t _trackIndex = -1;
     Types::PlayMode _playMode;
     Types::FillMode _fillMode;
     Routable<uint8_t> _slideTime;
@@ -120,4 +128,6 @@ private:
     RoutableSet<Routing::Target::TrackFirst, Routing::Target::TrackLast> _routed;
 
     CurveSequenceArray _sequences;
+
+    friend class Track;
 };
