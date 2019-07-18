@@ -220,7 +220,7 @@ static_assert(sizeof(uint8_t) * 8 >= CONFIG_TRACK_COUNT, "track bits do not fit"
 
 bool Routing::isRouted(Target target, int trackIndex) {
     size_t targetIndex = size_t(target);
-    if (isTrackTarget(target)) {
+    if (isPerTrackTarget(target)) {
         if (trackIndex >= 0 && trackIndex < CONFIG_TRACK_COUNT) {
             return (routedSet[targetIndex] & (1 << trackIndex)) != 0;
         }
@@ -232,8 +232,12 @@ bool Routing::isRouted(Target target, int trackIndex) {
 
 void Routing::setRouted(Target target, uint8_t tracks, bool routed) {
     size_t targetIndex = size_t(target);
-    if (isTrackTarget(target)) {
-        routedSet[targetIndex] = routed ? tracks : 0;
+    if (isPerTrackTarget(target)) {
+        if (routed) {
+            routedSet[targetIndex] |= tracks;
+        } else {
+            routedSet[targetIndex] &= ~tracks;
+        }
     } else {
         routedSet[targetIndex] = routed ? 1 : 0;
     }
