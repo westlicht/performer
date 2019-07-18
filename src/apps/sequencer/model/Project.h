@@ -78,7 +78,7 @@ public:
     }
 
     void editSwing(int value, bool shift) {
-        if (!isRouted(Routing::Target::Tempo)) {
+        if (!isRouted(Routing::Target::Swing)) {
             setSwing(ModelUtils::adjustedByStep(swing(), value, 5, !shift));
         }
     }

@@ -293,7 +293,9 @@ public:
     }
 
     void editDivisor(int value, bool shift) {
-        setDivisor(ModelUtils::adjustedByDivisor(divisor(), value, shift));
+        if (!isRouted(Routing::Target::Divisor)) {
+            setDivisor(ModelUtils::adjustedByDivisor(divisor(), value, shift));
+        }
     }
 
     void printDivisor(StringBuilder &str) const {
