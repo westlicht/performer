@@ -13,15 +13,22 @@ public:
     void keyDown(KeyEvent &event, int stepOffset) {
         const auto &key = event.key();
 
-        if (key.pageModifier() || key.shiftModifier()) {
+        if (key.pageModifier()) {
             return;
         }
 
         if (key.isStep()) {
-            // switch to immediate mode
-            if (_mode == Mode::Persist) {
+            if (_mode == Mode::Immediate && key.shiftModifier()) {
+                // switch to persist mode
+                _selected.reset();
+                _mode = Mode::Persist;
+                _first = -1;
+            }
+            if (_mode == Mode::Persist && !key.shiftModifier()) {
+                // switch to immediate mode
                 _selected.reset();
                 _mode = Mode::Immediate;
+                _first = -1;
             }
 
             int stepIndex = stepOffset + key.step();
@@ -30,7 +37,7 @@ public:
                 _first = stepIndex;
             }
 
-            _selected.set(stepIndex);
+            _selected.flip(stepIndex);
 
             event.consume();
         }
@@ -39,11 +46,11 @@ public:
     void keyUp(KeyEvent &event, int stepOffset) {
         const auto &key = event.key();
 
-        if (key.pageModifier() || key.shiftModifier()) {
+        if (key.pageModifier()) {
             return;
         }
 
-        if (key.isStep()) {
+        if (key.isStep() && _mode == Mode::Immediate) {
             int stepIndex = stepOffset + key.step();
 
             _selected.reset(stepIndex);
@@ -70,47 +77,19 @@ public:
                 clear();
             }
             event.consume();
-            return;
         }
 
-        if (key.isStep()) {
+        if (key.isStep() && event.count() == 2 && _mode == Mode::Persist) {
             int stepIndex = stepOffset + key.step();
-
-            // switch to persist mode
-            if (_mode == Mode::Immediate) {
-                _selected.reset();
-                _mode = Mode::Persist;
-                _first = -1;
-            }
-
-            int count = event.count();
-
-            if (count == 1) {
-                if (_selected[stepIndex]) {
-                    _selected[stepIndex] = false;
-                    if (_first == stepIndex) {
-                        _first = firstSetIndex();
-                    }
-                } else {
-                    _selected[stepIndex] = true;
-                    if (_first == -1) {
-                        _first = stepIndex;
-                    }
+            int otherStep = otherPressedStepKey(key.state(), key.step());
+            if (otherStep >= 0) {
+                int firstIndex = stepOffset + otherStep;
+                int interval = stepIndex - firstIndex;
+                for (int i = firstIndex; i >= 0 && i < int(_selected.size()); i += interval) {
+                    _selected.set(i);
                 }
-            } else if (count == 2) {
-                int otherStep = otherPressedStepKey(key.state(), key.step());
-                if (otherStep >= 0) {
-                    int firstIndex = stepOffset + otherStep;
-                    int interval = stepIndex - firstIndex;
-                    for (int i = firstIndex; i >= 0 && i < int(_selected.size()); i += interval) {
-                        _selected[i] = true;
-                    }
-                } else {
-                    // TODO select all "equal" steps
-                }
+                event.consume();
             }
-
-            event.consume();
         }
     }
 
