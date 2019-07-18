@@ -243,30 +243,19 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         return;
     }
 
-    const auto &firstStep = sequence.step(_stepSelection.first());
-
     for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
-            bool setToFirst = int(stepIndex) != _stepSelection.first() && globalKeyState()[Key::Shift];
+            bool shift = globalKeyState()[Key::Shift];
             switch (layer()) {
             case Layer::Shape:
-                step.setShape(
-                    setToFirst ? firstStep.shape() :
-                    step.shape() + event.value()
-                );
+                step.setShape(step.shape() + event.value());
                 break;
             case Layer::Min:
-                step.setMin(
-                    setToFirst ? firstStep.min() :
-                    step.min() + event.value() * (event.pressed() ? 1 : 8)
-                );
+                step.setMin(step.min() + event.value() * ((shift || event.pressed()) ? 1 : 8));
                 break;
             case Layer::Max:
-                step.setMax(
-                    setToFirst ? firstStep.max() :
-                    step.max() + event.value() * (event.pressed() ? 1 : 8)
-                );
+                step.setMax(step.max() + event.value() * ((shift || event.pressed()) ? 1 : 8));
                 break;
             default:
                 break;

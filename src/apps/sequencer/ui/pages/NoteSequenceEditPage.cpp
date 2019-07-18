@@ -343,6 +343,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
 
 void NoteSequenceEditPage::encoder(EncoderEvent &event) {
     auto &sequence = _project.selectedNoteSequence();
+    const auto &scale = sequence.selectedScale(_project.scale());
 
     if (_stepSelection.any()) {
         _showDetail = true;
@@ -351,92 +352,51 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
         return;
     }
 
-    const auto &firstStep = sequence.step(_stepSelection.first());
-
     for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
-            bool setToFirst = int(stepIndex) != _stepSelection.first() && globalKeyState()[Key::Shift];
+            bool shift = globalKeyState()[Key::Shift];
             switch (layer()) {
             case Layer::Gate:
-                step.setGate(
-                    setToFirst ? firstStep.gate() :
-                    event.value() > 0
-                );
+                step.setGate(event.value() > 0);
                 break;
             case Layer::GateProbability:
-                step.setGateProbability(
-                    setToFirst ? firstStep.gateProbability() :
-                    step.gateProbability() + event.value()
-                );
+                step.setGateProbability(step.gateProbability() + event.value());
                 break;
             case Layer::GateOffset:
-                step.setGateOffset(
-                    setToFirst ? firstStep.gateOffset() :
-                    step.gateOffset() + event.value()
-                );
+                step.setGateOffset(step.gateOffset() + event.value());
                 break;
             case Layer::Retrigger:
-                step.setRetrigger(
-                    setToFirst ? firstStep.retrigger() :
-                    step.retrigger() + event.value()
-                );
+                step.setRetrigger(step.retrigger() + event.value());
                 break;
             case Layer::RetriggerProbability:
-                step.setRetriggerProbability(
-                    setToFirst ? firstStep.retriggerProbability() :
-                    step.retriggerProbability() + event.value()
-                );
+                step.setRetriggerProbability(step.retriggerProbability() + event.value());
                 break;
             case Layer::Length:
-                step.setLength(
-                    setToFirst ? firstStep.length() :
-                    step.length() + event.value()
-                );
+                step.setLength(step.length() + event.value());
                 break;
             case Layer::LengthVariationRange:
-                step.setLengthVariationRange(
-                    setToFirst ? firstStep.lengthVariationRange() :
-                    step.lengthVariationRange() + event.value()
-                );
+                step.setLengthVariationRange(step.lengthVariationRange() + event.value());
                 break;
             case Layer::LengthVariationProbability:
-                step.setLengthVariationProbability(
-                    setToFirst ? firstStep.lengthVariationProbability() :
-                    step.lengthVariationProbability() + event.value()
-                );
+                step.setLengthVariationProbability(step.lengthVariationProbability() + event.value());
                 break;
             case Layer::Note:
-                step.setNote(
-                    setToFirst ? firstStep.note() :
-                    step.note() + event.value()
-                );
+                step.setNote(step.note() + event.value() * ((shift && scale.isChromatic()) ? scale.notesPerOctave() : 1));
                 updateMonitorStep();
                 break;
             case Layer::NoteVariationRange:
-                step.setNoteVariationRange(
-                    setToFirst ? firstStep.noteVariationRange() :
-                    step.noteVariationRange() + event.value()
-                );
+                step.setNoteVariationRange(step.noteVariationRange() + event.value() * ((shift && scale.isChromatic()) ? scale.notesPerOctave() : 1));
                 updateMonitorStep();
                 break;
             case Layer::NoteVariationProbability:
-                step.setNoteVariationProbability(
-                    setToFirst ? firstStep.noteVariationProbability() :
-                    step.noteVariationProbability() + event.value()
-                );
+                step.setNoteVariationProbability(step.noteVariationProbability() + event.value());
                 break;
             case Layer::Slide:
-                step.setSlide(
-                    setToFirst ? firstStep.slide() :
-                    event.value() > 0
-                );
+                step.setSlide(event.value() > 0);
                 break;
             case Layer::Condition:
-                step.setCondition(
-                    setToFirst ? firstStep.condition() :
-                    ModelUtils::adjustedEnum(step.condition(), event.value())
-                );
+                step.setCondition(ModelUtils::adjustedEnum(step.condition(), event.value()));
                 break;
             case Layer::Last:
                 break;
