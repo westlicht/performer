@@ -7,12 +7,12 @@
 static const float Pi = 3.1415926536f;
 static const float TwoPi = 2.f * Pi;
 
-static float high(float x) {
-    return 1.f;
-}
-
 static float low(float x) {
     return 0.f;
+}
+
+static float high(float x) {
+    return 1.f;
 }
 
 static float stepUp(float x) {
@@ -76,8 +76,8 @@ static float expDown4x(float x) {
 }
 
 static Curve::Function functions[] = {
-    &high,
     &low,
+    &high,
     &stepUp,
     &stepDown,
     &rampUp,

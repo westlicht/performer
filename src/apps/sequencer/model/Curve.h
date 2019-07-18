@@ -5,8 +5,8 @@ public:
     typedef float (*Function)(float x);
 
     enum Type {
-        High,
         Low,
+        High,
         StepUp,
         StepDown,
         RampUp,
