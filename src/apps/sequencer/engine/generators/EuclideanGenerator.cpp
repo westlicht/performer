@@ -37,10 +37,9 @@ void EuclideanGenerator::printParam(int index, StringBuilder &str) const {
 void EuclideanGenerator::update()  {
     _pattern = Rhythm::euclidean(_beats, _steps).shifted(_offset);
 
-    _builder.clear();
     _builder.setLength(_steps);
 
-    for (size_t i = 0; i < _pattern.size(); ++i) {
-        _builder.setValue(i, _pattern[i] ? 1.f : 0.f);
+    for (size_t i = 0; i < CONFIG_STEP_COUNT; ++i) {
+        _builder.setValue(i, _pattern[i % _pattern.size()] ? 1.f : 0.f);
     }
 }

@@ -64,9 +64,6 @@ void RandomGenerator::update()  {
         _pattern[i] = clamp(value, 0, 255);
     }
 
-    // _builder.clear();
-    // _builder.setLength(_steps);
-
     for (size_t i = 0; i < _pattern.size(); ++i) {
         _builder.setValue(i, _pattern[i] * (1.f / 255.f));
     }
