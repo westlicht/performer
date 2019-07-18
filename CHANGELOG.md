@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.1.25 (18 Jul 2019)
+
+#### Improvements
+
+- Allow chromatic note values to be changed in octaves by holding `SHIFT` (#101)
+- Swapped high and low curve types and default curve sequence to be all low curves (#101)
+- Show active step on all layers during step recording
+
+#### Fixes
+
+- Fixed euclidean generator from being destructive (#97)
+- Fixed handling of active routing targets (#98)
+- Fixed some edge cases in the step selection UI
+- Fixed ghost live recording from past events
+- Fixed condition layer value editing (clamp to valid values)
+
 ## v0.1.24 (9 Jul 2019)
 
 #### Fixes
