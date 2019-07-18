@@ -708,7 +708,9 @@ To adjust the values of the currently selected layer, hold `S[1-16]` and rotate 
 - When editing the _Gate_ layer on a sequence of a _Note_ track, pressing `S[1-16]` enables/disables the gate values.
 - When editing any other layer on a sequence of a _Note_ track, holding one or multiple step buttons and pressing the `ENCODER` enables/disables the gate values. This comes in handy for example when editing note values, as gates can easily be enabled/disabled without switching layers.
 - When editing the _Note_ layer, notes can be entered by holding `S[1-16]` and pressing keys on an external MIDI keyboard.
+- When editing the _Note_ or _Note Range_ layer on a sequence with a chromatic scale, holding `SHIFT` and rotating the `ENCODER` will move notes up and down by octaves.
 - When editing layers on a sequence of a _Curve_ track, pressing and rotating the `ENCODER` adjusts the values in smaller steps.
+- When editing the _Min_ or _Max_ layer on a sequence of a _Curve_ track, pressing `SHIFT` or `ENCODER` and rotating the `ENCODER` will adjust the value in smaller steps.
 
 <h4>Advanced Step Selection</h4>
 
@@ -1474,7 +1476,7 @@ The following Lauchpad controllers have been tested and are working:
 
 Launchpad controllers are exclusively used as control surfaces and cannot be used as a standard MIDI device for the routing system or live recording.
 
-When using a Launchpad Mini or Launchpad S, it should preferably be configured to operate in the _Low Power_ mode. This is important in order to not draw too much current which can lead to the Launchpad spuriously disconnect. The procedure to switch between _Low Power_ and _Full Power_ mode can be looked up [here](https://customer.novationmusic.com/sites/customer/files/novation/downloads/6961/launchpad-s-and-mini-advanced-features-guide_0.pdf).
+When using a Launchpad Mini or Launchpad S, it should preferably be configured to operate in the _Low Power_ mode. This is important in order to not draw too much current which can lead to the Launchpad spuriously disconnect. In addition, make sure that the Launchpad is configured to use ID 1, otherwise it will be detected as a general MIDI controller by the sequencer. The procedure to switch between _Low Power_ and _Full Power_ mode and setting the ID can be looked up [here](https://customer.novationmusic.com/sites/customer/files/novation/downloads/6961/launchpad-s-and-mini-advanced-features-guide_0.pdf).
 
 <h4>Global Functions</h4>
 
