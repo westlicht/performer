@@ -31,7 +31,8 @@ public:
         EngineFirst,
         Play = EngineFirst,
         Record,
-        EngineLast = Record,
+        TapTempo,
+        EngineLast = TapTempo,
 
         // Project targets
         ProjectFirst,
@@ -76,6 +77,7 @@ public:
 
         case Target::Play:                      return "Play";
         case Target::Record:                    return "Record";
+        case Target::TapTempo:                  return "Tap Tempo";
 
         case Target::Tempo:                     return "Tempo";
         case Target::Swing:                     return "Swing";
@@ -128,6 +130,8 @@ public:
         case Target::Fill:                      return 18;
         case Target::FillAmount:                return 19;
         case Target::Pattern:                   return 20;
+
+        case Target::TapTempo:                  return 21;
 
         case Target::Last:                      break;
         }

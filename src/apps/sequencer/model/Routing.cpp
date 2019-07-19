@@ -261,6 +261,7 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     // Engine targets
     [int(Routing::Target::Play)]                            = { 0,      1,      0,      1       },
     [int(Routing::Target::Record)]                          = { 0,      1,      0,      1       },
+    [int(Routing::Target::TapTempo)]                        = { 0,      1,      0,      1       },
     // Project targets
     [int(Routing::Target::Tempo)]                           = { 20,     500,    100,    200     },
     [int(Routing::Target::Swing)]                           = { 50,     75,     50,     75      },

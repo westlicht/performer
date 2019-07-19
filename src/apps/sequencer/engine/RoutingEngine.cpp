@@ -172,6 +172,17 @@ void RoutingEngine::writeEngineTarget(Routing::Target target, float normalized) 
             _engine.toggleRecording();
         }
         break;
+    case Routing::Target::TapTempo:
+        {
+            static bool lastActive = false;
+            if (active != lastActive) {
+                if (active) {
+                    _engine.tapTempoTap();
+                }
+                lastActive = active;
+            }
+        }
+        break;
     default:
         break;
     }
