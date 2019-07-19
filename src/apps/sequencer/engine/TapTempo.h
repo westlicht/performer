@@ -5,31 +5,35 @@
 class TapTempo {
 public:
     TapTempo() {
-        reset(120.f);
+        reset();
     }
 
-    float bpm() const { return _bpm; }
-
-    void reset(float bpm) {
-        _bpm = bpm;
+    void reset() {
         _lastTime = 0;
-        _intervalAverage.reset();
-        _intervalAverage.push(uint32_t(60000000 / bpm));
+        _lastInterval = 0;
     }
 
-    void tap() {
+    float tap(float bpm) {
         uint32_t currentTime = HighResolutionTimer::us();
+        uint32_t interval = currentTime - _lastTime;
 
-        if (_lastTime) {
-            _intervalAverage.push(currentTime - _lastTime);
-            _bpm = 60000000.f / _intervalAverage();
+        // reset averaging on first tap or if current interval is far off the last interval
+        if (_lastTime == 0 || (interval < _lastInterval / 2 || interval > _lastInterval * 2)) {
+            _intervalAverage.reset();
+            _intervalAverage.push(uint32_t(60000000 / bpm));
+        } else {
+            _intervalAverage.push(interval);
+            bpm = 60000000.f / _intervalAverage();
         }
 
         _lastTime = currentTime;
+        _lastInterval = interval;
+
+        return bpm;
     }
 
 private:
-    float _bpm;
     uint32_t _lastTime;
+    uint32_t _lastInterval;
     MovingAverage<uint32_t, 8> _intervalAverage;
 };

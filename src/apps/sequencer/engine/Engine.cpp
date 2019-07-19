@@ -230,12 +230,13 @@ bool Engine::recording() const {
 }
 
 void Engine::tapTempoReset() {
-    _tapTempo.reset(_model.project().tempo());
+    _tapTempo.reset();
 }
 
 void Engine::tapTempoTap() {
-    _tapTempo.tap();
-    _model.project().setTempo(_tapTempo.bpm());
+    float bpm = _model.project().tempo();
+    bpm = _tapTempo.tap(bpm);
+    _model.project().setTempo(bpm);
 }
 
 void Engine::nudgeTempoSetDirection(int direction) {
