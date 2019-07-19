@@ -60,9 +60,14 @@ static int evalStepLength(const NoteSequence::Step &step, int lengthBias) {
     return length;
 }
 
+// evaluate transposition
+static int evalTransposition(const Scale &scale, int octave, int transpose) {
+    return octave * scale.notesPerOctave() + transpose;
+}
+
 // evaluate note voltage
 static float evalStepNote(const NoteSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, bool useVariation = true) {
-    int note = step.note() + (scale.isChromatic() ? rootNote : 0) + octave * scale.notesPerOctave() + transpose;
+    int note = step.note() + (scale.isChromatic() ? rootNote : 0) + evalTransposition(scale, octave, transpose);
     int probability = clamp(step.noteVariationProbability() + probabilityBias, -1, NoteSequence::NoteVariationProbability::Max);
     if (useVariation && int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) <= probability) {
         int offset = step.noteVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.noteVariationRange()) + 1);
@@ -172,6 +177,8 @@ void NoteTrackEngine::update(float dt) {
     const auto &sequence = *_sequence;
     const auto &scale = sequence.selectedScale(_model.project().scale());
     int rootNote = sequence.selectedRootNote(_model.project().rootNote());
+    int octave = _noteTrack.octave();
+    int transpose = _noteTrack.transpose();
 
     // enable/disable step recording mode
     if (_engine.recording() && _model.project().recordMode() == Types::RecordMode::StepRecord) {
@@ -187,20 +194,13 @@ void NoteTrackEngine::update(float dt) {
     if (!running && (!recording || isStepRecordMode) && _monitorStepIndex >= 0) {
         // step monitoring (first priority)
         const auto &step = sequence.step(_monitorStepIndex);
-        int octave = _noteTrack.octave();
-        int transpose = _noteTrack.transpose();
         _cvOutputTarget = evalStepNote(step, 0, scale, rootNote, octave, transpose, false);
         _activity = _gateOutput = true;
         _monitorOverrideActive = true;
     } else if ((!running || !isStepRecordMode) && _recordHistory.isNoteActive()) {
         // midi monitoring (second priority)
-        if (scale.isChromatic()) {
-            int note = scale.noteFromVolts((_recordHistory.activeNote() - 60 - rootNote) * (1.f / 12.f));
-            _cvOutputTarget = scale.noteToVolts(note) + (rootNote / 12.f);
-        } else {
-            int note = scale.noteFromVolts((_recordHistory.activeNote() - 60) * (1.f / 12.f));
-            _cvOutputTarget = scale.noteToVolts(note);
-        }
+        int note = noteFromMidiNote(_recordHistory.activeNote()) + evalTransposition(scale, octave, transpose);
+        _cvOutputTarget = scale.noteToVolts(note);
         _activity = _gateOutput = true;
         _monitorOverrideActive = true;
     } else {
