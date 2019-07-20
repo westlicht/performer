@@ -37,6 +37,8 @@ NOTE_SCALE(tet24Scale, "24-tet", false, 0, 64, 128, 192, 256, 320, 384, 448, 512
 
 static const VoltScale voltageScale("Voltage", 0.1f);
 
+static ChordScale chordScale("Chord");
+
 static const Scale *scales[] = {
     &semitoneScale,
 
@@ -63,7 +65,9 @@ static const Scale *scales[] = {
     &tet22Scale,
     &tet24Scale,
 
-    &voltageScale
+    &voltageScale,
+
+    &chordScale
 };
 
 static const int BuiltinCount = sizeof(scales) / sizeof(Scale *);
@@ -91,4 +95,8 @@ const char *Scale::name(int index) {
         }
     }
     return nullptr;
+}
+
+ChordScale &Scale::chordScale() {
+    return ::chordScale;
 }

@@ -43,6 +43,11 @@ void ClipBoard::copyCurveSequenceSteps(const CurveSequence &curveSequence, const
     curveSequenceSteps.selected = selectedSteps;
 }
 
+void ClipBoard::copyHarmonySequence(const HarmonySequence &harmonySequence) {
+    _type = Type::HarmonySequence;
+    _container.as<HarmonySequence>() = harmonySequence;
+}
+
 void ClipBoard::copyPattern(int patternIndex) {
     _type = Type::Pattern;
     auto &pattern = _container.as<Pattern>();
@@ -55,6 +60,9 @@ void ClipBoard::copyPattern(int patternIndex) {
             break;
         case Track::TrackMode::Curve:
             pattern.sequences[trackIndex].data.curve = track.curveTrack().sequence(patternIndex);
+            break;
+        case Track::TrackMode::Harmony:
+            pattern.sequences[trackIndex].data.list = track.harmonyTrack().sequence(patternIndex);
             break;
         default:
             break;
@@ -100,6 +108,13 @@ void ClipBoard::pasteCurveSequenceSteps(CurveSequence &curveSequence, const Sele
     if (canPasteCurveSequenceSteps()) {
         const auto &curveSequenceSteps = _container.as<CurveSequenceSteps>();
         ModelUtils::copySteps(curveSequenceSteps.sequence.steps(), curveSequenceSteps.selected, curveSequence.steps(), selectedSteps);
+    }
+}
+
+void ClipBoard::pasteHarmonySequence(HarmonySequence &harmonySequence) const {
+    if (canPasteHarmonySequence()) {
+        Model::WriteLock lock;
+        harmonySequence = _container.as<HarmonySequence>();
     }
 }
 
@@ -149,6 +164,10 @@ bool ClipBoard::canPasteCurveSequence() const {
 
 bool ClipBoard::canPasteCurveSequenceSteps() const {
     return _type == Type::CurveSequenceSteps;
+}
+
+bool ClipBoard::canPasteHarmonySequence() const {
+    return _type == Type::HarmonySequence;
 }
 
 bool ClipBoard::canPastePattern() const {

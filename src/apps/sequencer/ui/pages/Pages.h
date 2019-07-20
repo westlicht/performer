@@ -12,6 +12,8 @@
 #include "GeneratorPage.h"
 #include "GeneratorSelectPage.h"
 #include "LayoutPage.h"
+#include "HarmonySequenceEditPage.h"
+#include "HarmonySequencePage.h"
 #include "MidiOutputPage.h"
 #include "MonitorPage.h"
 #include "NoteSequenceEditPage.h"
@@ -46,8 +48,10 @@ struct Pages {
     TrackPage track;
     NoteSequencePage noteSequence;
     CurveSequencePage curveSequence;
+    HarmonySequencePage harmonySequence;
     NoteSequenceEditPage noteSequenceEdit;
     CurveSequenceEditPage curveSequenceEdit;
+    HarmonySequenceEditPage harmonySequenceEdit;
     PatternPage pattern;
     PerformerPage performer;
     SongPage song;
@@ -87,8 +91,10 @@ struct Pages {
         track(manager, context),
         noteSequence(manager, context),
         curveSequence(manager, context),
+        harmonySequence(manager, context),
         noteSequenceEdit(manager, context),
         curveSequenceEdit(manager, context),
+        harmonySequenceEdit(manager, context),
         pattern(manager, context),
         performer(manager, context),
         song(manager, context),

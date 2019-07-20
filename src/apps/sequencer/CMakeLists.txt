@@ -10,6 +10,7 @@ set(sources
     engine/CvInput.cpp
     engine/CvOutput.cpp
     engine/Engine.cpp
+    engine/HarmonyTrackEngine.cpp
     engine/MidiCvTrackEngine.cpp
     engine/MidiLearn.cpp
     engine/MidiOutputEngine.cpp
@@ -26,12 +27,15 @@ set(sources
     # model
     model/Arpeggiator.cpp
     model/Calibration.cpp
+    model/Chord.cpp
     model/ClipBoard.cpp
     model/ClockSetup.cpp
     model/Curve.cpp
     model/CurveSequence.cpp
     model/CurveTrack.cpp
     model/FileManager.cpp
+    model/HarmonySequence.cpp
+    model/HarmonyTrack.cpp
     model/MidiCvTrack.cpp
     model/MidiOutput.cpp
     model/Model.cpp
@@ -76,6 +80,8 @@ set(sources
     ui/pages/IntroPage.cpp
     ui/pages/LayoutPage.cpp
     ui/pages/ListPage.cpp
+    ui/pages/HarmonySequenceEditPage.cpp
+    ui/pages/HarmonySequencePage.cpp
     ui/pages/MidiOutputPage.cpp
     ui/pages/MonitorPage.cpp
     ui/pages/NoteSequenceEditPage.cpp

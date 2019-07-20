@@ -4,6 +4,7 @@
 
 #include "ui/model/NoteTrackListModel.h"
 #include "ui/model/CurveTrackListModel.h"
+#include "ui/model/HarmonyTrackListModel.h"
 #include "ui/model/MidiCvTrackListModel.h"
 
 class TrackPage : public ListPage {
@@ -33,5 +34,6 @@ private:
     RoutableListModel *_listModel;
     NoteTrackListModel _noteTrackListModel;
     CurveTrackListModel _curveTrackListModel;
+    HarmonyTrackListModel _harmonyTrackListModel;
     MidiCvTrackListModel _midiCvTrackListModel;
 };

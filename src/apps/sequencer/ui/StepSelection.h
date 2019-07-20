@@ -189,3 +189,73 @@ private:
     int8_t _lastPressedIndex;
     std::function<bool(int, int)> _stepCompare;
 };
+
+template<size_t N>
+class HarmonyStepSelection {
+public:
+    void keyDown(KeyEvent &event, int stepOffset) {
+        const auto &key = event.key();
+
+        if (key.pageModifier() || key.shiftModifier()) {
+            return;
+        }
+
+        if (key.isStep()) {
+            int stepIndex = stepOffset + key.step();
+            selectStep(stepIndex);
+
+            event.consume();
+        }
+    }
+
+    void keyUp(KeyEvent &event, int stepOffset) {
+    }
+
+    void keyPress(KeyPressEvent &event, int stepOffset) {
+    }
+
+    void clear() {
+        selectStep(0);
+    }
+
+    void selectAll() {
+        _selected.set();
+        _first = 0;
+    }
+
+    int first() const {
+        return _first;
+    }
+
+    bool none() const {
+        return _selected.none();
+    }
+
+    bool any() const {
+        return _selected.any();
+    }
+
+    size_t size() const {
+        return _selected.size();
+    }
+
+    size_t count() const {
+        return _selected.count();
+    }
+
+    const std::bitset<N> &selected() const { return _selected; }
+
+    bool operator[](int index) const {
+        return _selected[index];
+    }
+
+private:
+    void selectStep(int stepIndex) {
+        _selected.reset();
+        _selected.set(stepIndex);
+        _first = stepIndex;
+    }
+
+    std::bitset<N> _selected;
+    int _first = 0;
+};

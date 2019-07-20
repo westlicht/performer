@@ -79,6 +79,10 @@ void TrackPage::setTrack(Track &track) {
         _curveTrackListModel.setTrack(track.curveTrack());
         newListModel = &_curveTrackListModel;
         break;
+    case Track::TrackMode::Harmony:
+        _harmonyTrackListModel.setTrack(track.harmonyTrack());
+        newListModel = &_harmonyTrackListModel;
+        break;
     case Track::TrackMode::MidiCv:
         _midiCvTrackListModel.setTrack(track.midiCvTrack());
         newListModel = &_midiCvTrackListModel;

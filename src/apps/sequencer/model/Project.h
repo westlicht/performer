@@ -333,6 +333,16 @@ public:
     const CurveSequence &selectedCurveSequence() const { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
           CurveSequence &selectedCurveSequence()       { return curveSequence(_selectedTrackIndex, selectedPatternIndex()); }
 
+    // harmonySequence
+
+    const HarmonySequence &harmonySequence(int trackIndex, int patternIndex) const { return _tracks[trackIndex].harmonyTrack().sequence(patternIndex); }
+          HarmonySequence &harmonySequence(int trackIndex, int patternIndex)       { return _tracks[trackIndex].harmonyTrack().sequence(patternIndex); }
+
+    // selectedHarmonySequence
+
+    const HarmonySequence &selectedHarmonySequence() const { return harmonySequence(_selectedTrackIndex, selectedPatternIndex()); }
+          HarmonySequence &selectedHarmonySequence()       { return harmonySequence(_selectedTrackIndex, selectedPatternIndex()); }
+
     //----------------------------------------
     // Routing
     //----------------------------------------

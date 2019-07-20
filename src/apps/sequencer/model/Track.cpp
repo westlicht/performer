@@ -16,6 +16,9 @@ void Track::clearPattern(int patternIndex) {
     case TrackMode::Curve:
         _track.curve->sequence(patternIndex).clear();
         break;
+    case TrackMode::Harmony:
+        _track.harmony->sequence(patternIndex).clear();
+        break;
     case TrackMode::MidiCv:
         break;
     case TrackMode::Last:
@@ -31,6 +34,9 @@ void Track::copyPattern(int src, int dst) {
     case TrackMode::Curve:
         _track.curve->sequence(dst) = _track.curve->sequence(src);
         break;
+    case TrackMode::Harmony:
+        _track.harmony->sequence(dst) = _track.harmony->sequence(src);
+        break;
     case TrackMode::MidiCv:
         break;
     case TrackMode::Last:
@@ -42,6 +48,7 @@ void Track::gateOutputName(int index, StringBuilder &str) const {
     switch (_trackMode) {
     case TrackMode::Note:
     case TrackMode::Curve:
+    case TrackMode::Harmony:
         str("Gate");
         break;
     case TrackMode::MidiCv:
@@ -56,6 +63,7 @@ void Track::cvOutputName(int index, StringBuilder &str) const {
     switch (_trackMode) {
     case TrackMode::Note:
     case TrackMode::Curve:
+    case TrackMode::Harmony:
         str("CV");
         break;
     case TrackMode::MidiCv:
@@ -76,6 +84,9 @@ void Track::write(VersionedSerializedWriter &writer) const {
         break;
     case TrackMode::Curve:
         _track.curve->write(writer);
+        break;
+    case TrackMode::Harmony:
+        _track.harmony->write(context);
         break;
     case TrackMode::MidiCv:
         _track.midiCv->write(writer);
@@ -98,6 +109,9 @@ void Track::read(VersionedSerializedReader &reader) {
     case TrackMode::Curve:
         _track.curve->read(reader);
         break;
+    case TrackMode::Harmony:
+        _track.harmony->read(context);
+        break;
     case TrackMode::MidiCv:
         _track.midiCv->read(reader);
         break;
@@ -109,6 +123,7 @@ void Track::read(VersionedSerializedReader &reader) {
 void Track::initContainer() {
     _track.note = nullptr;
     _track.curve = nullptr;
+    _track.harmony = nullptr;
     _track.midiCv = nullptr;
 
     switch (_trackMode) {
@@ -117,6 +132,9 @@ void Track::initContainer() {
         break;
     case TrackMode::Curve:
         _track.curve = _container.create<CurveTrack>();
+        break;
+    case TrackMode::Harmony:
+        _track.harmony = _container.create<HarmonyTrack>();
         break;
     case TrackMode::MidiCv:
         _track.midiCv = _container.create<MidiCvTrack>();
@@ -140,6 +158,9 @@ void Track::setContainerTrackIndex(int trackIndex) {
         break;
     case TrackMode::Curve:
         _track.curve->setTrackIndex(trackIndex);
+        break;
+    case TrackMode::Harmony:
+        _track.harmony->setTrackIndex(trackIndex);
         break;
     case TrackMode::MidiCv:
         _track.midiCv->setTrackIndex(trackIndex);

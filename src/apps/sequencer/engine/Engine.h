@@ -7,6 +7,7 @@
 #include "TrackEngine.h"
 #include "NoteTrackEngine.h"
 #include "CurveTrackEngine.h"
+#include "HarmonyTrackEngine.h"
 #include "MidiCvTrackEngine.h"
 #include "CvInput.h"
 #include "CvOutput.h"
@@ -32,7 +33,7 @@
 
 class Engine : private Clock::Listener {
 public:
-    typedef Container<NoteTrackEngine, CurveTrackEngine, MidiCvTrackEngine> TrackEngineContainer;
+    typedef Container<NoteTrackEngine, CurveTrackEngine, HarmonyTrackEngine, MidiCvTrackEngine> TrackEngineContainer;
     typedef std::array<TrackEngineContainer, CONFIG_TRACK_COUNT> TrackEngineContainerArray;
     typedef std::array<TrackEngine *, CONFIG_TRACK_COUNT> TrackEngineArray;
 

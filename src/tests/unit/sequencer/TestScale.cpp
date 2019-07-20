@@ -2,6 +2,7 @@
 
 #include "core/utils/StringBuilder.h"
 
+#include "apps/sequencer/model/Chord.cpp"
 #include "apps/sequencer/model/Scale.cpp"
 #include "apps/sequencer/model/UserScale.cpp"
 
