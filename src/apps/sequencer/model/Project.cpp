@@ -182,7 +182,7 @@ fs::Error Project::write(const char *path) const {
 
     VersionedSerializedWriter writer(
         [&fileWriter] (const void *data, size_t len) { fileWriter.write(data, len); },
-        ProjectVersion::Version
+        ProjectVersion::Latest
     );
 
     WriteContext context = { writer };
@@ -202,7 +202,7 @@ fs::Error Project::read(const char *path) {
 
     VersionedSerializedReader reader(
         [&fileReader] (void *data, size_t len) { fileReader.read(data, len); },
-        ProjectVersion::Version
+        ProjectVersion::Latest
     );
 
     ReadContext context = { reader };
