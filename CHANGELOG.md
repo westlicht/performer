@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.26 (20 Jul 2019)
+
+#### Improvements
+
+- Evaluate transposition (octave/transpose) when monitoring and recording notes (#102)
+- Added routing target for tap tempo (#100)
+
 ## v0.1.25 (18 Jul 2019)
 
 #### Improvements
