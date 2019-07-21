@@ -48,6 +48,17 @@ public:
         return nullptr;
     }
 
+    static uint8_t trackModeSerialize(TrackMode trackMode) {
+        switch (trackMode) {
+        case TrackMode::Note:   return 0;
+        case TrackMode::Curve:  return 1;
+        case TrackMode::MidiCv: return 2;
+        case TrackMode::Last:   break;
+        }
+        return 0;
+    }
+
+
     //----------------------------------------
     // Properties
     //----------------------------------------

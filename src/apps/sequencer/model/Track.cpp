@@ -68,7 +68,7 @@ void Track::cvOutputName(int index, StringBuilder &str) const {
 
 void Track::write(WriteContext &context) const {
     auto &writer = context.writer;
-    writer.write(_trackMode);
+    writer.writeEnum(_trackMode, trackModeSerialize);
     writer.write(_linkTrack);
 
     switch (_trackMode) {
@@ -88,7 +88,7 @@ void Track::write(WriteContext &context) const {
 
 void Track::read(ReadContext &context) {
     auto &reader = context.reader;
-    reader.read(_trackMode);
+    reader.readEnum(_trackMode, trackModeSerialize);
     reader.read(_linkTrack);
 
     initContainer();
