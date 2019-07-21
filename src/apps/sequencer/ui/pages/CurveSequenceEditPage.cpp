@@ -341,11 +341,24 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                 step.setShapeVariationProbability(step.shapeVariationProbability() + event.value());
                 break;
             case Layer::Min:
-                step.setMin(step.min() + event.value() * ((shift || event.pressed()) ? 1 : 8));
+            case Layer::Max: {
+                bool functionPressed = globalKeyState()[MatrixMap::fromFunction(activeFunctionKey())];
+                int offset = event.value() * ((shift || event.pressed()) ? 1 : 8);
+                if (functionPressed) {
+                    // adjust both min and max
+                    offset = clamp(offset, -step.min(), CurveSequence::Max::max() - step.max());
+                    step.setMin(step.min() + offset);
+                    step.setMax(step.max() + offset);
+                } else {
+                    // adjust min or max
+                    if (layer() == Layer::Min) {
+                        step.setMin(step.min() + offset);
+                    } else {
+                        step.setMax(step.max() + offset);
+                    }
+                }
                 break;
-            case Layer::Max:
-                step.setMax(step.max() + event.value() * ((shift || event.pressed()) ? 1 : 8));
-                break;
+                }
             case Layer::Gate:
                 step.setGate(step.gate() + event.value());
                 break;
