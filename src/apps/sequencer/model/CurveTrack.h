@@ -14,6 +14,27 @@ public:
 
     typedef std::array<CurveSequence, CONFIG_PATTERN_COUNT + CONFIG_SNAPSHOT_COUNT> CurveSequenceArray;
 
+    // FillMode
+
+    enum class FillMode : uint8_t {
+        None,
+        Variation,
+        NextPattern,
+        Invert,
+        Last
+    };
+
+    static const char *fillModeName(FillMode fillMode) {
+        switch (fillMode) {
+        case FillMode::None:        return "None";
+        case FillMode::Variation:   return "Variation";
+        case FillMode::NextPattern: return "Next Pattern";
+        case FillMode::Invert:      return "Invert";
+        case FillMode::Last:        break;
+        }
+        return nullptr;
+    }
+
     //----------------------------------------
     // Properties
     //----------------------------------------
@@ -35,8 +56,8 @@ public:
 
     // fillMode
 
-    Types::FillMode fillMode() const { return _fillMode; }
-    void setFillMode(Types::FillMode fillMode) {
+    FillMode fillMode() const { return _fillMode; }
+    void setFillMode(FillMode fillMode) {
         _fillMode = ModelUtils::clampedEnum(fillMode);
     }
 
@@ -45,7 +66,7 @@ public:
     }
 
     void printFillMode(StringBuilder &str) const {
-        str(Types::fillModeName(fillMode()));
+        str(fillModeName(fillMode()));
     }
 
     // slideTime
@@ -121,7 +142,7 @@ private:
 
     int8_t _trackIndex = -1;
     Types::PlayMode _playMode;
-    Types::FillMode _fillMode;
+    FillMode _fillMode;
     Routable<uint8_t> _slideTime;
     Routable<int8_t> _rotate;
 

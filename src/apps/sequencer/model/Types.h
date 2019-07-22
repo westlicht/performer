@@ -85,27 +85,6 @@ public:
         return nullptr;
     }
 
-    // FillMode
-
-    enum class FillMode : uint8_t {
-        None,
-        Gates,
-        NextPattern,
-        Condition,
-        Last
-    };
-
-    static const char *fillModeName(FillMode fillMode) {
-        switch (fillMode) {
-        case FillMode::None:        return "None";
-        case FillMode::Gates:       return "Gates";
-        case FillMode::NextPattern: return "Next Pattern";
-        case FillMode::Condition:   return "Condition";
-        case FillMode::Last:        break;
-        }
-        return nullptr;
-    }
-
     // RunMode
 
     enum class RunMode : uint8_t {

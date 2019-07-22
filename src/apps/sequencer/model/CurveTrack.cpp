@@ -16,7 +16,7 @@ void CurveTrack::writeRouted(Routing::Target target, int intValue, float floatVa
 
 void CurveTrack::clear() {
     setPlayMode(Types::PlayMode::Aligned);
-    setFillMode(Types::FillMode::None);
+    setFillMode(FillMode::None);
     setSlideTime(0);
     setRotate(0);
 
