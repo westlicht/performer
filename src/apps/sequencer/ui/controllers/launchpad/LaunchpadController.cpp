@@ -60,8 +60,12 @@ static constexpr int noteSequenceLayerMapSize = sizeof(noteSequenceLayerMap) / s
 
 static const LayerMapItem curveSequenceLayerMap[] = {
     [int(CurveSequence::Layer::Shape)]                      =  { 0, 0 },
+    [int(CurveSequence::Layer::ShapeVariation)]             =  { 1, 0 },
+    [int(CurveSequence::Layer::ShapeVariationProbability)]  =  { 2, 0 },
     [int(CurveSequence::Layer::Min)]                        =  { 0, 1 },
     [int(CurveSequence::Layer::Max)]                        =  { 0, 2 },
+    [int(CurveSequence::Layer::Gate)]                       =  { 0, 3 },
+    [int(CurveSequence::Layer::GateProbability)]            =  { 1, 3 },
 };
 
 static constexpr int curveSequenceLayerMapSize = sizeof(curveSequenceLayerMap) / sizeof(curveSequenceLayerMap[0]);
@@ -80,9 +84,13 @@ struct RangeMap {
 static const RangeMap curveMinMaxRangeMap = { { 0, 0 }, { 255, 7 } };
 
 static const RangeMap *curveSequenceLayerRangeMap[] = {
-    [int(CurveSequence::Layer::Shape)]  = nullptr,
-    [int(CurveSequence::Layer::Min)]    = &curveMinMaxRangeMap,
-    [int(CurveSequence::Layer::Max)]    = &curveMinMaxRangeMap,
+    [int(CurveSequence::Layer::Shape)]                      = nullptr,
+    [int(CurveSequence::Layer::ShapeVariation)]             = nullptr,
+    [int(CurveSequence::Layer::ShapeVariationProbability)]  = nullptr,
+    [int(CurveSequence::Layer::Min)]                        = &curveMinMaxRangeMap,
+    [int(CurveSequence::Layer::Max)]                        = &curveMinMaxRangeMap,
+    [int(CurveSequence::Layer::Gate)]                       = nullptr,
+    [int(CurveSequence::Layer::GateProbability)]            = nullptr,
 };
 
 LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info) :
@@ -511,9 +519,15 @@ void LaunchpadController::sequenceDrawCurveSequence() {
 
     switch (layer) {
     case CurveSequence::Layer::Shape:
+    case CurveSequence::Layer::ShapeVariation:
     case CurveSequence::Layer::Min:
     case CurveSequence::Layer::Max:
+    case CurveSequence::Layer::Gate:
         drawCurveSequenceDots(sequence, layer, currentStep);
+        break;
+    case CurveSequence::Layer::ShapeVariationProbability:
+    case CurveSequence::Layer::GateProbability:
+        drawCurveSequenceBars(sequence, layer, currentStep);
         break;
     default:
         break;
@@ -756,6 +770,14 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
         int stepIndex = col + _sequence.navigation.col * 8;
         const auto &step = sequence.step(stepIndex);
         setGridLed((7 - step.layerValue(layer)) + ofs, col, stepColor(step.gate(), stepIndex == currentStep));
+    }
+}
+
+void LaunchpadController::drawCurveSequenceBars(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep) {
+    for (int col = 0; col < 8; ++col) {
+        int stepIndex = col + _sequence.navigation.col * 8;
+        const auto &step = sequence.step(stepIndex);
+        drawBar(col, step.layerValue(layer), true, stepIndex == currentStep);
     }
 }
 

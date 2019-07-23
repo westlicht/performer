@@ -105,6 +105,42 @@ public:
         str("%+d", rotate());
     }
 
+    // shapeProbabilityBias
+
+    int shapeProbabilityBias() const { return _shapeProbabilityBias.get(isRouted(Routing::Target::ShapeProbabilityBias)); }
+    void setShapeProbabilityBias(int shapeProbabilityBias, bool routed = false) {
+        _shapeProbabilityBias.set(clamp(shapeProbabilityBias, -8, 8), routed);
+    }
+
+    void editShapeProbabilityBias(int value, bool shift) {
+        if (!isRouted(Routing::Target::ShapeProbabilityBias)) {
+            setShapeProbabilityBias(shapeProbabilityBias() + value);
+        }
+    }
+
+    void printShapeProbabilityBias(StringBuilder &str) const {
+        printRouted(str, Routing::Target::ShapeProbabilityBias);
+        str("%+.1f%%", shapeProbabilityBias() * 12.5f);
+    }
+
+    // gateProbabilityBias
+
+    int gateProbabilityBias() const { return _gateProbabilityBias.get(isRouted(Routing::Target::GateProbabilityBias)); }
+    void setGateProbabilityBias(int gateProbabilityBias, bool routed = false) {
+        _gateProbabilityBias.set(clamp(gateProbabilityBias, -CurveSequence::GateProbability::Range, CurveSequence::GateProbability::Range), routed);
+    }
+
+    void editGateProbabilityBias(int value, bool shift) {
+        if (!isRouted(Routing::Target::GateProbabilityBias)) {
+            setGateProbabilityBias(gateProbabilityBias() + value);
+        }
+    }
+
+    void printGateProbabilityBias(StringBuilder &str) const {
+        printRouted(str, Routing::Target::GateProbabilityBias);
+        str("%+.1f%%", gateProbabilityBias() * 12.5f);
+    }
+
     // sequences
 
     const CurveSequenceArray &sequences() const { return _sequences; }
@@ -145,6 +181,8 @@ private:
     FillMode _fillMode;
     Routable<uint8_t> _slideTime;
     Routable<int8_t> _rotate;
+    Routable<int8_t> _shapeProbabilityBias;
+    Routable<int8_t> _gateProbabilityBias;
 
     CurveSequenceArray _sequences;
 

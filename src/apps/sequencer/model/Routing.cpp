@@ -279,6 +279,7 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::RetriggerProbabilityBias)]        = { -8,     8,      -8,     8       },
     [int(Routing::Target::LengthBias)]                      = { -8,     8,      -8,     8       },
     [int(Routing::Target::NoteProbabilityBias)]             = { -8,     8,      -8,     8       },
+    [int(Routing::Target::ShapeProbabilityBias)]            = { -8,     8,      -8,     8       },
     // Sequence targets
     [int(Routing::Target::Divisor)]                         = { 1,      768,    6,      24      },
     [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },

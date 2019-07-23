@@ -9,9 +9,13 @@ Types::LayerRange CurveSequence::layerRange(Layer layer) {
 
     switch (layer) {
     case Layer::Shape:
+    case Layer::ShapeVariation:
         return { 0, int(Curve::Last) - 1 };
+    CASE(ShapeVariationProbability)
     CASE(Min)
     CASE(Max)
+    CASE(Gate)
+    CASE(GateProbability)
     case Layer::Last:
         break;
     }
@@ -25,10 +29,18 @@ int CurveSequence::Step::layerValue(Layer layer) const {
     switch (layer) {
     case Layer::Shape:
         return shape();
+    case Layer::ShapeVariation:
+        return shapeVariation();
+    case Layer::ShapeVariationProbability:
+        return shapeVariationProbability();
     case Layer::Min:
         return min();
     case Layer::Max:
         return max();
+    case Layer::Gate:
+        return gate();
+    case Layer::GateProbability:
+        return gateProbability();
     case Layer::Last:
         break;
     }
@@ -41,11 +53,23 @@ void CurveSequence::Step::setLayerValue(Layer layer, int value) {
     case Layer::Shape:
         setShape(value);
         break;
+    case Layer::ShapeVariation:
+        setShapeVariation(value);
+        break;
+    case Layer::ShapeVariationProbability:
+        setShapeVariationProbability(value);
+        break;
     case Layer::Min:
         setMin(value);
         break;
     case Layer::Max:
         setMax(value);
+        break;
+    case Layer::Gate:
+        setGate(value);
+        break;
+    case Layer::GateProbability:
+        setGateProbability(value);
         break;
     case Layer::Last:
         break;
@@ -54,14 +78,20 @@ void CurveSequence::Step::setLayerValue(Layer layer, int value) {
 
 void CurveSequence::Step::clear() {
     _data0.raw = 0;
+    _data1.raw = 0;
     setShape(0);
+    setShapeVariation(0);
+    setShapeVariationProbability(0);
     setMin(0);
     setMax(Max::Max);
+    setGate(0);
+    setGateProbability(GateProbability::Max);
 }
 
 void CurveSequence::Step::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_data0);
+    writer.write(_data1);
 }
 
 void CurveSequence::Step::read(ReadContext &context) {
@@ -82,6 +112,7 @@ void CurveSequence::Step::read(ReadContext &context) {
         }
     } else {
         reader.read(_data0);
+        reader.read(_data1);
     }
 }
 

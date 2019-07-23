@@ -58,7 +58,8 @@ public:
         RetriggerProbabilityBias,
         LengthBias,
         NoteProbabilityBias,
-        TrackLast = NoteProbabilityBias,
+        ShapeProbabilityBias,
+        TrackLast = ShapeProbabilityBias,
 
         // Sequence targets
         SequenceFirst,
@@ -95,6 +96,7 @@ public:
         case Target::RetriggerProbabilityBias:  return "Retrig P. Bias";
         case Target::LengthBias:                return "Length Bias";
         case Target::NoteProbabilityBias:       return "Note P. Bias";
+        case Target::ShapeProbabilityBias:      return "Shape P. Bias";
 
         case Target::Divisor:                   return "Divisor";
         case Target::RunMode:                   return "Run Mode";
@@ -132,6 +134,8 @@ public:
         case Target::Pattern:                   return 20;
 
         case Target::TapTempo:                  return 21;
+
+        case Target::ShapeProbabilityBias:      return 22;
 
         case Target::Last:                      break;
         }

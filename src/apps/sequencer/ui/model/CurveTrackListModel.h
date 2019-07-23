@@ -40,6 +40,10 @@ public:
             return Routing::Target::SlideTime;
         case Rotate:
             return Routing::Target::Rotate;
+        case ShapeProbabilityBias:
+            return Routing::Target::ShapeProbabilityBias;
+        case GateProbabilityBias:
+            return Routing::Target::GateProbabilityBias;
         default:
             return Routing::Target::None;
         }
@@ -51,16 +55,20 @@ private:
         FillMode,
         SlideTime,
         Rotate,
+        ShapeProbabilityBias,
+        GateProbabilityBias,
         Last
     };
 
     static const char *itemName(Item item) {
         switch (item) {
-        case PlayMode:  return "Play Mode";
-        case FillMode:  return "Fill Mode";
-        case SlideTime: return "Slide Time";
-        case Rotate:    return "Rotate";
-        case Last:      break;
+        case PlayMode:              return "Play Mode";
+        case FillMode:              return "Fill Mode";
+        case SlideTime:             return "Slide Time";
+        case Rotate:                return "Rotate";
+        case ShapeProbabilityBias:  return "Shape P. Bias";
+        case GateProbabilityBias:   return "Gate P. Bias";
+        case Last:                  break;
         }
         return nullptr;
     }
@@ -83,6 +91,12 @@ private:
         case Rotate:
             _track->printRotate(str);
             break;
+        case ShapeProbabilityBias:
+            _track->printShapeProbabilityBias(str);
+            break;
+        case GateProbabilityBias:
+            _track->printGateProbabilityBias(str);
+            break;
         case Last:
             break;
         }
@@ -101,6 +115,12 @@ private:
             break;
         case Rotate:
             _track->editRotate(value, shift);
+            break;
+        case ShapeProbabilityBias:
+            _track->editShapeProbabilityBias(value, shift);
+            break;
+        case GateProbabilityBias:
+            _track->editGateProbabilityBias(value, shift);
             break;
         case Last:
             break;
