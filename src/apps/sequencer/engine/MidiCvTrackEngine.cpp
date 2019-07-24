@@ -38,6 +38,13 @@ void MidiCvTrackEngine::update(float dt) {
 }
 
 bool MidiCvTrackEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
+    // filter notes that are not in the key range
+    if (message.isNoteOn() || message.isNoteOff()) {
+        if (message.note() < _midiCvTrack.lowNote() || message.note() > _midiCvTrack.highNote()) {
+            return false;
+        }
+    }
+
     bool consumed = false;
 
     if (_arpeggiatorEnabled) {

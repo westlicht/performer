@@ -71,6 +71,36 @@ public:
         str(voiceConfigName(_voiceConfig));
     }
 
+    // lowNote
+
+    int lowNote() const { return _lowNote; }
+    void setLowNote(int lowNote) {
+        _lowNote = clamp(lowNote, 0, highNote());
+    }
+
+    void editLowNote(int value, bool shift) {
+        setLowNote(lowNote() + value * (shift ? 12 : 1));
+    }
+
+    void printLowNote(StringBuilder &str) const {
+        Types::printMidiNote(str, lowNote());
+    }
+
+    // highNote
+
+    int highNote() const { return _highNote; }
+    void setHighNote(int highNote) {
+        _highNote = clamp(highNote, lowNote(), 127);
+    }
+
+    void editHighNote(int value, bool shift) {
+        setHighNote(highNote() + value * (shift ? 12 : 1));
+    }
+
+    void printHighNote(StringBuilder &str) const {
+        Types::printMidiNote(str, highNote());
+    }
+
     // pitchBendRange
 
     int pitchBendRange() const { return _pitchBendRange; }
@@ -148,6 +178,8 @@ private:
     MidiSourceConfig _source;
     uint8_t _voices;
     VoiceConfig _voiceConfig;
+    uint8_t _lowNote;
+    uint8_t _highNote;
     uint8_t _pitchBendRange;
     Types::VoltageRange _modulationRange;
     bool _retrigger;

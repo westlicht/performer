@@ -43,6 +43,8 @@ private:
         Source,
         Voices,
         VoiceConfig,
+        LowNote,
+        HighNote,
         PitchBendRange,
         ModulationRange,
         Retrigger,
@@ -60,6 +62,8 @@ private:
         case Source:                return "Source";
         case Voices:                return "Voices";
         case VoiceConfig:           return "Voice Config";
+        case LowNote:               return "Low Note";
+        case HighNote:              return "High Note";
         case PitchBendRange:        return "Pitch Bend";
         case ModulationRange:       return "Mod Range";
         case Retrigger:             return "Retrigger";
@@ -90,6 +94,12 @@ private:
             break;
         case VoiceConfig:
             _track->printVoiceConfig(str);
+            break;
+        case LowNote:
+            _track->printLowNote(str);
+            break;
+        case HighNote:
+            _track->printHighNote(str);
             break;
         case PitchBendRange:
             _track->printPitchBendRange(str);
@@ -135,6 +145,12 @@ private:
             break;
         case VoiceConfig:
             _track->editVoiceConfig(value, shift);
+            break;
+        case LowNote:
+            _track->editLowNote(value, shift);
+            break;
+        case HighNote:
+            _track->editHighNote(value, shift);
             break;
         case PitchBendRange:
             _track->editPitchBendRange(value, shift);
