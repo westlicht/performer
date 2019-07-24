@@ -247,7 +247,7 @@ void register_sequencer(py::module &m) {
         .def("clear", &NoteTrack::clear)
     ;
 
-    py::enum_<NoteTrack::FillMode>(types, "FillMode")
+    py::enum_<NoteTrack::FillMode>(noteTrack, "FillMode")
         .value("None", NoteTrack::FillMode::None)
         .value("Gates", NoteTrack::FillMode::Gates)
         .value("NextPattern", NoteTrack::FillMode::NextPattern)
@@ -283,7 +283,7 @@ void register_sequencer(py::module &m) {
         .def("clear", &CurveTrack::clear)
     ;
 
-    py::enum_<CurveTrack::FillMode>(types, "FillMode")
+    py::enum_<CurveTrack::FillMode>(curveTrack, "FillMode")
         .value("None", CurveTrack::FillMode::None)
         .value("Variation", CurveTrack::FillMode::Variation)
         .value("NextPattern", CurveTrack::FillMode::NextPattern)
