@@ -34,6 +34,8 @@ private:
     void switchLayer(int functionKey, bool shift);
     int activeFunctionKey();
 
+    void drawDetail(Canvas &canvas, const CurveSequence::Step &step);
+
     void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
@@ -52,6 +54,8 @@ private:
     ContextMenu _contextMenu;
 
     int _section = 0;
+    bool _showDetail;
+    uint32_t _showDetailTicks;
 
     CurveSequenceListModel _listModel;
 

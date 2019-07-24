@@ -14,6 +14,29 @@ public:
 
     typedef std::array<NoteSequence, CONFIG_PATTERN_COUNT + CONFIG_SNAPSHOT_COUNT> NoteSequenceArray;
 
+    // FillMode
+
+    enum class FillMode : uint8_t {
+        None,
+        Gates,
+        NextPattern,
+        Condition,
+        Last
+    };
+
+    static const char *fillModeName(FillMode fillMode) {
+        switch (fillMode) {
+        case FillMode::None:        return "None";
+        case FillMode::Gates:       return "Gates";
+        case FillMode::NextPattern: return "Next Pattern";
+        case FillMode::Condition:   return "Condition";
+        case FillMode::Last:        break;
+        }
+        return nullptr;
+    }
+
+    // CvUpdateMode
+
     enum class CvUpdateMode : uint8_t {
         Gate,
         Always,
@@ -50,8 +73,8 @@ public:
 
     // fillMode
 
-    Types::FillMode fillMode() const { return _fillMode; }
-    void setFillMode(Types::FillMode fillMode) {
+    FillMode fillMode() const { return _fillMode; }
+    void setFillMode(FillMode fillMode) {
         _fillMode = ModelUtils::clampedEnum(fillMode);
     }
 
@@ -60,7 +83,7 @@ public:
     }
 
     void printFillMode(StringBuilder &str) const {
-        str(Types::fillModeName(fillMode()));
+        str(fillModeName(fillMode()));
     }
 
     // cvUpdateMode
@@ -259,7 +282,7 @@ private:
 
     int8_t _trackIndex = -1;
     Types::PlayMode _playMode;
-    Types::FillMode _fillMode;
+    FillMode _fillMode;
     CvUpdateMode _cvUpdateMode;
     Routable<uint8_t> _slideTime;
     Routable<int8_t> _octave;

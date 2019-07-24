@@ -256,9 +256,9 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     int transpose = _noteTrack.transpose();
     int rotate = _noteTrack.rotate();
     bool fillStep = fill() && (rng.nextRange(100) < uint32_t(fillAmount()));
-    bool useFillGates = fillStep && _noteTrack.fillMode() == Types::FillMode::Gates;
-    bool useFillSequence = fillStep && _noteTrack.fillMode() == Types::FillMode::NextPattern;
-    bool useFillCondition = fillStep && _noteTrack.fillMode() == Types::FillMode::Condition;
+    bool useFillGates = fillStep && _noteTrack.fillMode() == NoteTrack::FillMode::Gates;
+    bool useFillSequence = fillStep && _noteTrack.fillMode() == NoteTrack::FillMode::NextPattern;
+    bool useFillCondition = fillStep && _noteTrack.fillMode() == NoteTrack::FillMode::Condition;
 
     const auto &sequence = *_sequence;
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;

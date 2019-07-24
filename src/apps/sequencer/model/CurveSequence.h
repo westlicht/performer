@@ -21,22 +21,34 @@ public:
     // Types
     //----------------------------------------
 
+    typedef UnsignedValue<6> Shape;
+    typedef UnsignedValue<4> ShapeVariationProbability;
     typedef UnsignedValue<8> Min;
     typedef UnsignedValue<8> Max;
+    typedef UnsignedValue<4> Gate;
+    typedef UnsignedValue<3> GateProbability;
 
     enum class Layer {
         Shape,
+        ShapeVariation,
+        ShapeVariationProbability,
         Min,
         Max,
+        Gate,
+        GateProbability,
         Last
     };
 
     static const char *layerName(Layer layer) {
         switch (layer) {
-        case Layer::Shape:  return "SHAPE";
-        case Layer::Min:    return "MIN";
-        case Layer::Max:    return "MAX";
-        case Layer::Last:   break;
+        case Layer::Shape:                      return "SHAPE";
+        case Layer::ShapeVariation:             return "SHAPE VAR";
+        case Layer::ShapeVariationProbability:  return "SHAPE PROB";
+        case Layer::Min:                        return "MIN";
+        case Layer::Max:                        return "MAX";
+        case Layer::Gate:                       return "GATE";
+        case Layer::GateProbability:            return "GATE PROB";
+        case Layer::Last:                       break;
         }
         return nullptr;
     }
@@ -51,35 +63,63 @@ public:
 
         // shape
 
-        int shape() const { return _shape; }
+        int shape() const { return _data0.shape; }
         void setShape(int shape) {
-            _shape = clamp(shape, 0, int(Curve::Last) - 1);
+            _data0.shape = clamp(shape, 0, int(Curve::Last) - 1);
+        }
+
+        // shapeVariation
+
+        int shapeVariation() const { return _data0.shapeVariation; }
+        void setShapeVariation(int shapeVariation) {
+            _data0.shapeVariation = clamp(shapeVariation, 0, int(Curve::Last) - 1);
+        }
+
+        // shapeVariationProbability
+
+        int shapeVariationProbability() const { return _data0.shapeVariationProbability; }
+        void setShapeVariationProbability(int shapeVariationProbability) {
+            _data0.shapeVariationProbability = clamp(shapeVariationProbability, 0, 8);
         }
 
         // min
 
-        int min() const { return _min; }
+        int min() const { return _data0.min; }
         void setMin(int min) {
-            _min = Min::clamp(min);
-            _max = std::max(_max, _min);
+            _data0.min = Min::clamp(min);
+            _data0.max = std::max(max(), this->min());
         }
 
-        float minNormalized() const { return float(_min) / Min::Max; }
+        float minNormalized() const { return float(min()) / Min::Max; }
         void setMinNormalized(float min) {
             setMin(int(std::round(min * Min::Max)));
         }
 
         // max
 
-        int max() const { return _max; }
+        int max() const { return _data0.max; }
         void setMax(int max) {
-            _max = Max::clamp(max);
-            _min = std::min(_min, _max);
+            _data0.max = Max::clamp(max);
+            _data0.min = std::min(min(), this->max());
         }
 
-        float maxNormalized() const { return float(_max) / Max::Max; }
+        float maxNormalized() const { return float(max()) / Max::Max; }
         void setMaxNormalized(float max) {
             setMax(int(std::round(max * Max::Max)));
+        }
+
+        // gate
+
+        int gate() const { return _data1.gate; }
+        void setGate(int gate) {
+            _data1.gate = Gate::clamp(gate);
+        }
+
+        // gateProbability
+
+        int gateProbability() const { return _data1.gateProbability; }
+        void setGateProbability(int gateProbability) {
+            _data1.gateProbability = GateProbability::clamp(gateProbability);
         }
 
         int layerValue(Layer layer) const;
@@ -97,7 +137,7 @@ public:
         void read(ReadContext &context);
 
         bool operator==(const Step &other) const {
-            return _shape == other._shape && _min == other._min && _max == other._max;
+            return _data0.raw == other._data0.raw;
         }
 
         bool operator!=(const Step &other) const {
@@ -105,9 +145,20 @@ public:
         }
 
     private:
-        uint8_t _shape;
-        uint8_t _min;
-        uint8_t _max;
+        union {
+            uint32_t raw;
+            BitField<uint32_t, 0, Shape::Bits> shape;
+            BitField<uint32_t, 6, Shape::Bits> shapeVariation;
+            BitField<uint32_t, 12, ShapeVariationProbability::Bits> shapeVariationProbability;
+            BitField<uint32_t, 16, Min::Bits> min;
+            BitField<uint32_t, 24, Max::Bits> max;
+        } _data0;
+        union {
+            uint16_t raw;
+            BitField<uint16_t, 0, Gate::Bits> gate;
+            BitField<uint16_t, 4, GateProbability::Bits> gateProbability;
+            // 9 bits left
+        } _data1;
     };
 
     typedef std::array<Step, CONFIG_STEP_COUNT> StepArray;

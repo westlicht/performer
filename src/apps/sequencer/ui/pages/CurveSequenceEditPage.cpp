@@ -31,9 +31,10 @@ enum class Function {
     Shape   = 0,
     Min     = 1,
     Max     = 2,
+    Gate    = 3,
 };
 
-static const char *functionNames[] = { "SHAPE", "MIN", "MAX", nullptr, nullptr };
+static const char *functionNames[] = { "SHAPE", "MIN", "MAX", "GATE", nullptr };
 
 static const CurveSequenceListModel::Item quickEditItems[8] = {
     CurveSequenceListModel::Item::FirstStep,
@@ -68,11 +69,26 @@ static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, 
     lastY = fy0;
 }
 
+static void drawMinMax(Canvas &canvas, int x, int y, int w, int h, float minMax) {
+    y += std::round((1.f - minMax) * h);
+    canvas.hline(x, y, w);
+}
+
+static void drawGatePattern(Canvas &canvas, int x, int y, int w, int h, int gate) {
+    int gs = w / 4;
+    int gw = w / 8;
+    for (int i = 0; i < 4; ++i) {
+        canvas.setColor((gate & (1 << i)) ? 0xf : 0x7);
+        canvas.fillRect(x + i * gs, y, gw, h);
+    }
+}
+
 CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
 
 void CurveSequenceEditPage::enter() {
+    _showDetail = false;
 }
 
 void CurveSequenceEditPage::exit() {
@@ -95,7 +111,10 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
     const int loopY = 16;
     const int curveY = 24;
-    const int curveHeight = 24;
+    const int curveHeight = 20;
+    const int bottomY = 48;
+
+    bool drawShapeVariation = layer() == Layer::ShapeVariation || layer() == Layer::ShapeVariationProbability;
 
     // draw loop points
     canvas.setBlendMode(BlendMode::Set);
@@ -104,18 +123,25 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     SequencePainter::drawLoopEnd(canvas, (sequence.lastStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
 
     // draw grid
-    canvas.setColor(0x3);
-    for (int stepIndex = 1; stepIndex < StepCount; ++stepIndex) {
-        int x = stepIndex * stepWidth;
-        canvas.vline(x, curveY, curveHeight);
+    if (!drawShapeVariation) {
+        canvas.setColor(0x3);
+        for (int stepIndex = 1; stepIndex < StepCount; ++stepIndex) {
+            int x = stepIndex * stepWidth;
+            for (int y = 0; y <= curveHeight; y += 2) {
+                canvas.point(x, curveY + y);
+            }
+        }
     }
 
     // draw curve
     canvas.setColor(0xf);
     float lastY = -1.f;
+    float lastYVariation = -1.f;
     for (int i = 0; i < StepCount; ++i) {
         int stepIndex = stepOffset + i;
         const auto &step = sequence.step(stepIndex);
+        float min = step.minNormalized();
+        float max = step.maxNormalized();
 
         int x = i * stepWidth;
         int y = 20;
@@ -137,14 +163,62 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
         // curve
         {
-            float min = step.minNormalized();
-            float max = step.maxNormalized();
             const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
+
+            canvas.setColor(drawShapeVariation ? 0x5 : 0xf);
+            canvas.setBlendMode(BlendMode::Add);
+
+            drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastY, function, min, max);
+        }
+
+        if (drawShapeVariation) {
+            const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shapeVariation())));
 
             canvas.setColor(0xf);
             canvas.setBlendMode(BlendMode::Add);
 
-            drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastY, function, min, max);
+            drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastYVariation, function, min, max);
+        }
+
+        switch (layer()) {
+        case Layer::Shape:
+            break;
+        case Layer::ShapeVariation:
+            break;
+        case Layer::ShapeVariationProbability:
+            SequencePainter::drawProbability(
+                canvas,
+                x + 2, bottomY, stepWidth - 4, 2,
+                step.shapeVariationProbability(), 8
+            );
+            break;
+        case Layer::Min:
+        case Layer::Max: {
+            bool functionPressed = globalKeyState()[MatrixMap::fromFunction(activeFunctionKey())];
+            canvas.setColor(0x5);
+            canvas.setBlendMode(BlendMode::Add);
+            if (layer() == Layer::Min || functionPressed) {
+                drawMinMax(canvas, x, curveY, stepWidth, curveHeight, min);
+            }
+            if (layer() == Layer::Max || functionPressed) {
+                drawMinMax(canvas, x, curveY, stepWidth, curveHeight, max);
+            }
+            break;
+        }
+        case Layer::Gate:
+            canvas.setColor(0xf);
+            canvas.setBlendMode(BlendMode::Set);
+            drawGatePattern(canvas, x, bottomY, stepWidth, 2, step.gate());
+            break;
+        case Layer::GateProbability:
+            SequencePainter::drawProbability(
+                canvas,
+                x + 2, bottomY, stepWidth - 4, 2,
+                step.gateProbability() + 1, CurveSequence::GateProbability::Range
+            );
+            break;
+        case Layer::Last:
+            break;
         }
     }
 
@@ -153,6 +227,21 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
         canvas.setColor(0xf);
         int x = ((trackEngine.currentStep() - stepOffset) + trackEngine.currentStepFraction()) * stepWidth;
         canvas.vline(x, curveY, curveHeight);
+    }
+
+    // handle detail display
+
+    if (_showDetail) {
+        if (!(layer() == Layer::ShapeVariationProbability || layer() == Layer::GateProbability) || _stepSelection.none()) {
+            _showDetail = false;
+        }
+        if (_stepSelection.isPersisted() && os::ticks() > _showDetailTicks + os::time::ms(500)) {
+            _showDetail = false;
+        }
+    }
+
+    if (_showDetail) {
+        drawDetail(canvas, sequence.step(_stepSelection.first()));
     }
 }
 
@@ -239,7 +328,10 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
 void CurveSequenceEditPage::encoder(EncoderEvent &event) {
     auto &sequence = _project.selectedCurveSequence();
 
-    if (!_stepSelection.any()) {
+    if (_stepSelection.any()) {
+        _showDetail = true;
+        _showDetailTicks = os::ticks();
+    } else {
         return;
     }
 
@@ -251,13 +343,38 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Shape:
                 step.setShape(step.shape() + event.value());
                 break;
+            case Layer::ShapeVariation:
+                step.setShapeVariation(step.shapeVariation() + event.value());
+                break;
+            case Layer::ShapeVariationProbability:
+                step.setShapeVariationProbability(step.shapeVariationProbability() + event.value());
+                break;
             case Layer::Min:
-                step.setMin(step.min() + event.value() * ((shift || event.pressed()) ? 1 : 8));
+            case Layer::Max: {
+                bool functionPressed = globalKeyState()[MatrixMap::fromFunction(activeFunctionKey())];
+                int offset = event.value() * ((shift || event.pressed()) ? 1 : 8);
+                if (functionPressed) {
+                    // adjust both min and max
+                    offset = clamp(offset, -step.min(), CurveSequence::Max::max() - step.max());
+                    step.setMin(step.min() + offset);
+                    step.setMax(step.max() + offset);
+                } else {
+                    // adjust min or max
+                    if (layer() == Layer::Min) {
+                        step.setMin(step.min() + offset);
+                    } else {
+                        step.setMax(step.max() + offset);
+                    }
+                }
                 break;
-            case Layer::Max:
-                step.setMax(step.max() + event.value() * ((shift || event.pressed()) ? 1 : 8));
+            }
+            case Layer::Gate:
+                step.setGate(step.gate() + event.value());
                 break;
-            default:
+            case Layer::GateProbability:
+                step.setGateProbability(step.gateProbability() + event.value());
+                break;
+            case Layer::Last:
                 break;
             }
         }
@@ -278,13 +395,29 @@ void CurveSequenceEditPage::switchLayer(int functionKey, bool shift) {
         case Function::Max:
             setLayer(Layer::Max);
             break;
+        case Function::Gate:
+            setLayer(Layer::Gate);
+            break;
         }
         return;
     }
 
     switch (Function(functionKey)) {
     case Function::Shape:
-        setLayer(Layer::Shape);
+        switch (layer()) {
+        case Layer::Shape:
+            setLayer(Layer::ShapeVariation);
+            break;
+        case Layer::ShapeVariation:
+            setLayer(Layer::ShapeVariationProbability);
+            break;
+        case Layer::ShapeVariationProbability:
+            setLayer(Layer::Shape);
+            break;
+        default:
+            setLayer(Layer::Shape);
+            break;
+        }
         break;
     case Function::Min:
         setLayer(Layer::Min);
@@ -292,22 +425,93 @@ void CurveSequenceEditPage::switchLayer(int functionKey, bool shift) {
     case Function::Max:
         setLayer(Layer::Max);
         break;
+    case Function::Gate:
+        switch (layer()) {
+        case Layer::Gate:
+            setLayer(Layer::GateProbability);
+            break;
+        case Layer::GateProbability:
+            setLayer(Layer::Gate);
+            break;
+        default:
+            setLayer(Layer::Gate);
+            break;
+        }
+        break;
     }
 }
 
 int CurveSequenceEditPage::activeFunctionKey() {
     switch(layer()) {
     case Layer::Shape:
+    case Layer::ShapeVariation:
+    case Layer::ShapeVariationProbability:
         return 0;
     case Layer::Min:
         return 1;
     case Layer::Max:
         return 2;
+    case Layer::Gate:
+    case Layer::GateProbability:
+        return 3;
     case Layer::Last:
         break;
     }
 
     return -1;
+}
+
+void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step &step) {
+
+    FixedStringBuilder<16> str;
+
+    WindowPainter::drawFrame(canvas, 64, 16, 128, 32);
+
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+    canvas.vline(64 + 32, 16, 32);
+
+    canvas.setFont(Font::Small);
+    str("%d", _stepSelection.first() + 1);
+    if (_stepSelection.count() > 1) {
+        str("*");
+    }
+    canvas.drawTextCentered(64, 16, 32, 32, str);
+
+    canvas.setFont(Font::Tiny);
+
+    switch (layer()) {
+    case Layer::Shape:
+    case Layer::ShapeVariation:
+        break;
+    case Layer::ShapeVariationProbability:
+        SequencePainter::drawProbability(
+            canvas,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
+            step.shapeVariationProbability(), 8
+        );
+        str.reset();
+        str("%.1f%%", 100.f * step.shapeVariationProbability() / 8.f);
+        canvas.setColor(0xf);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+    case Layer::Min:
+    case Layer::Max:
+    case Layer::Gate:
+    case Layer::GateProbability:
+        SequencePainter::drawProbability(
+            canvas,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
+            step.gateProbability() + 1, CurveSequence::GateProbability::Range
+        );
+        str.reset();
+        str("%.1f%%", 100.f * (step.gateProbability() + 1.f) / CurveSequence::GateProbability::Range);
+        canvas.setColor(0xf);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+    case Layer::Last:
+        break;
+    }
 }
 
 void CurveSequenceEditPage::contextShow() {
