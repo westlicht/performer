@@ -123,11 +123,13 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     SequencePainter::drawLoopEnd(canvas, (sequence.lastStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
 
     // draw grid
-    canvas.setColor(0x3);
-    for (int stepIndex = 1; stepIndex < StepCount; ++stepIndex) {
-        int x = stepIndex * stepWidth;
-        for (int y = 0; y <= curveHeight; y += 2) {
-            canvas.point(x, curveY + y);
+    if (!drawShapeVariation) {
+        canvas.setColor(0x3);
+        for (int stepIndex = 1; stepIndex < StepCount; ++stepIndex) {
+            int x = stepIndex * stepWidth;
+            for (int y = 0; y <= curveHeight; y += 2) {
+                canvas.point(x, curveY + y);
+            }
         }
     }
 
@@ -191,11 +193,18 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
             );
             break;
         case Layer::Min:
-        case Layer::Max:
+        case Layer::Max: {
+            bool functionPressed = globalKeyState()[MatrixMap::fromFunction(activeFunctionKey())];
             canvas.setColor(0x5);
             canvas.setBlendMode(BlendMode::Add);
-            drawMinMax(canvas, x, curveY, stepWidth, curveHeight, layer() == Layer::Min ? min : max);
+            if (layer() == Layer::Min || functionPressed) {
+                drawMinMax(canvas, x, curveY, stepWidth, curveHeight, min);
+            }
+            if (layer() == Layer::Max || functionPressed) {
+                drawMinMax(canvas, x, curveY, stepWidth, curveHeight, max);
+            }
             break;
+        }
         case Layer::Gate:
             canvas.setColor(0xf);
             canvas.setBlendMode(BlendMode::Set);
@@ -358,7 +367,7 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                     }
                 }
                 break;
-                }
+            }
             case Layer::Gate:
                 step.setGate(step.gate() + event.value());
                 break;
