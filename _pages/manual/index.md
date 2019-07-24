@@ -186,9 +186,11 @@ Sequences are edited on the [Steps](#pages-steps) page and sequence parameters c
 
 <h3 id="concepts-curve-track">Curve Track</h3>
 
-In _Curve_ mode, a track also uses step sequencing with similar playback features to the note track. However, in this track mode only a CV signal is output and each step is defined as a curve shape, making this mode useful to generate modulation signals.
+In _Curve_ mode, a track also uses step sequencing with similar playback features to the note track. However, in this track mode the CV signal is defined by a series of curve shapes, making this mode useful to generate modulation signals. This mode also allows to output gate patterns, but it is different from how the _Note_ mode works.
 
-The generated CV signal is controlled by the _Curve_ layer, which defines a curve shape to be output over the duration of one step. The _Minimum_ and _Maximum_ layers define the lower and upper voltage that is output for each step.
+The generated CV signal is controlled by the _Shape_ layer, which defines a curve shape to be output over the duration of one step. The _Minimum_ and _Maximum_ layers define the lower and upper voltage that is output for each step. To introduce some random variation, the _Shape Variation_ and _Shape Variation Probability_ layers can be used to define altered shapes that are used instead of the primary shape with some probability.
+
+The generated gate signal is controlled by the _Gate_ layer. It allows to define a pattern of up to 4 gate triggers per step. To introduce some random variation, the _Gate Probability_ layer is used to control how often a gate is actually played.
 
 The playback of the sequence is controlled by the same set of parameters as in the note track.
 
@@ -581,11 +583,13 @@ If a track is in _Curve_, the following parameters are available:
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
-| Fill Mode | None, Gates, Next Pattern, Condition | This parameter currently has no effect. |
+| Fill Mode | None, Variation, Next Pattern, Invert | Mode used when fill is activated for the track. _None_ does nothing. _Variation_ plays the curve shapes defined in the _Shape Variation_ layer independent of their probability. _Next Pattern_ uses the step data of the next pattern on the same track. _Invert_ plays the curve shapes inverted. |
 | Slide Time | 0% - 100% | Global slide time (slew limiter) applied to curve. |
 | Rotate | [Rotation](#appendix-rotation) | Amount of rotation applied to the sequence. |
+| Shape P. Bias | -100% - +100% | Shape probability bias that is added to the sequence. |
+| Gate P. Bias | -100% - +100% | Gate probability bias that is added to the sequence. |
 
-> Note: _Slide Time_ and _Rotate_ are routable parameters.
+> Note: _Slide Time_, _Rotate_, _Shape P. Bias_ and _Gate P. Bias_ are routable parameters.
 
 <h4>MIDI/CV Track</h4>
 
@@ -598,6 +602,8 @@ If a track is in MIDI/CV mode, the following parameters are available:
 | Source | MIDI, USB | MIDI source port (hold `SHIFT` and rotate `ENCODER` to select MIDI channel). |
 | Voices | 1 - 8 | Number of voices. |
 | Voice Config | Pitch, Pitch+Vel, Pitch+Vel+Press | CV signals to generate for each voice. |
+| Low Note | C-1 - G9 | Low MIDI note of the key range this track listens to. |
+| High Note | C-1 - G9 | High MIDI note of the key range this track listens to. |
 | Pitch Bend | off, 1 - 48 semitones | Pitch bend range. |
 | Mod Range | 1-5V Unipolar, 1-5V Bipolar | CV output voltage range for modulation signals (velocity and pressure). |
 | Retrigger | no, yes | Retrigger voices on each received _Note On_ MIDI message. |
@@ -607,6 +613,8 @@ If a track is in MIDI/CV mode, the following parameters are available:
 | Divisor | [Divisors](#appendix-divisors) | Divisor for arpeggiator sequence. |
 | Gate Length | 1-100% | Gate length generated notes. |
 | Octaves | 1-5 | Number of octaves to play the arpeggiator sequence. |
+
+> Note: _Low Note_ and _High Note_ can be used to setup key ranges such that multiple MIDI/CV tracks can be played in split keyboard mode.
 
 <!-- Sequence -->
 
@@ -693,9 +701,10 @@ The following layers are available in _Curve_ mode:
 
 | Button | Layers |
 | :--- | :--- |
-| `F1` | Shape |
+| `F1` | Shape, Shape Variation, Shape Variation Probability |
 | `F2` | Minimum |
 | `F3` | Maximum |
+| `F4` | Gate, Gate Probability |
 
 <h4>Section Selection</h4>
 
@@ -711,6 +720,7 @@ To adjust the values of the currently selected layer, hold `S[1-16]` and rotate 
 - When editing the _Note_ or _Note Range_ layer on a sequence with a chromatic scale, holding `SHIFT` and rotating the `ENCODER` will move notes up and down by octaves.
 - When editing layers on a sequence of a _Curve_ track, pressing and rotating the `ENCODER` adjusts the values in smaller steps.
 - When editing the _Min_ or _Max_ layer on a sequence of a _Curve_ track, pressing `SHIFT` or `ENCODER` and rotating the `ENCODER` will adjust the value in smaller steps.
+- When editing the _Min_ or _Max_ layer on a sequence of a _Curve_ track while holding `F2` or `F3`, the curve shape is offset up and down (adjusting min/max at the same time).
 
 <h4>Advanced Step Selection</h4>
 
