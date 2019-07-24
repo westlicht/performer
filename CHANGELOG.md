@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.1.27 (24 Jul 2019)
+
+This release primarily focuses on improvements of curve tracks.
+
+#### Improvements
+
+- Added _shape variation_ and _shape variation probability_ layers to curve sequences (#108)
+- Added _gate_ and _gate probability_ layer to curve sequences (#108)
+- Added _shape probability bias_ and _gate probability bias_ parameters to curve tracks (#108)
+- Added better support for track linking on curve tracks including recording (#108)
+- Added specific fill modes for curve tracks (variation, next pattern and invert) (#108)
+- Added support for mutes on curve tracks (keep CV value at last position and mute gates) (#108)
+- Added support for offsetting curves up and down by holding min or max function buttons (#103)
+
 ## v0.1.26 (20 Jul 2019)
 
 #### Improvements
