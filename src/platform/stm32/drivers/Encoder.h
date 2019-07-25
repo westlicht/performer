@@ -37,6 +37,5 @@ private:
 
     Debouncer<3> _switchDebouncer;
     bool _switchState = false;
-    Debouncer<3> _encoderDebouncer[2];
-    bool _encoderState[2] = { false, false };
+    uint8_t _encoderState = 0;
 };
