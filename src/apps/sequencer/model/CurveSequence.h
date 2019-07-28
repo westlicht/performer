@@ -260,7 +260,9 @@ public:
     }
 
     void editFirstStep(int value, bool shift) {
-        if (!isRouted(Routing::Target::FirstStep)) {
+        if (shift) {
+            offsetFirstAndLastStep(value);
+        } else if (!isRouted(Routing::Target::FirstStep)) {
             setFirstStep(firstStep() + value);
         }
     }
@@ -282,7 +284,9 @@ public:
     }
 
     void editLastStep(int value, bool shift) {
-        if (!isRouted(Routing::Target::LastStep)) {
+        if (shift) {
+            offsetFirstAndLastStep(value);
+        } else if (!isRouted(Routing::Target::LastStep)) {
             setLastStep(lastStep() + value);
         }
     }
@@ -330,6 +334,17 @@ public:
 
 private:
     void setTrackIndex(int trackIndex) { _trackIndex = trackIndex; }
+
+    void offsetFirstAndLastStep(int value) {
+        value = clamp(value, -firstStep(), CONFIG_STEP_COUNT - 1 - lastStep());
+        if (value > 0) {
+            editLastStep(value, false);
+            editFirstStep(value, false);
+        } else {
+            editFirstStep(value, false);
+            editLastStep(value, false);
+        }
+    }
 
     int8_t _trackIndex = -1;
     Types::VoltageRange _range;
