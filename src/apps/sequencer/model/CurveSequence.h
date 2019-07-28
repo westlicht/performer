@@ -251,7 +251,10 @@ public:
 
     // firstStep
 
-    int firstStep() const { return _firstStep.get(isRouted(Routing::Target::FirstStep)); }
+    int firstStep() const {
+        return _firstStep.get(isRouted(Routing::Target::FirstStep));
+    }
+
     void setFirstStep(int firstStep, bool routed = false) {
         _firstStep.set(clamp(firstStep, 0, lastStep()), routed);
     }
@@ -269,7 +272,11 @@ public:
 
     // lastStep
 
-    int lastStep() const { return _lastStep.get(isRouted(Routing::Target::LastStep)); }
+    int lastStep() const {
+        // make sure last step is always >= first step even if stored value is invalid (due to routing changes)
+        return std::max(firstStep(), int(_lastStep.get(isRouted(Routing::Target::LastStep))));
+    }
+
     void setLastStep(int lastStep, bool routed = false) {
         _lastStep.set(clamp(lastStep, firstStep(), CONFIG_STEP_COUNT - 1), routed);
     }
