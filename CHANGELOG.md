@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.1.28 (28 Jul 2019)
+
+#### Improvements
+
+- Allow editing first/last step parameter together (#114)
+
+#### Fixes
+
+- Fixed rare edge case where first/last step parameter could end up in invalid state and crash the firmware
+- Fixed glitchy encoder by using a full state machine decoding the encoders gray code (#112)
+
 ## v0.1.27 (24 Jul 2019)
 
 This release primarily focuses on improvements of curve tracks.
