@@ -43,6 +43,7 @@ private:
         Source,
         Voices,
         VoiceConfig,
+        NotePriority,
         LowNote,
         HighNote,
         PitchBendRange,
@@ -62,6 +63,7 @@ private:
         case Source:                return "Source";
         case Voices:                return "Voices";
         case VoiceConfig:           return "Voice Config";
+        case NotePriority:          return "Note Priority";
         case LowNote:               return "Low Note";
         case HighNote:              return "High Note";
         case PitchBendRange:        return "Pitch Bend";
@@ -94,6 +96,9 @@ private:
             break;
         case VoiceConfig:
             _track->printVoiceConfig(str);
+            break;
+        case NotePriority:
+            _track->printNotePriority(str);
             break;
         case LowNote:
             _track->printLowNote(str);
@@ -145,6 +150,9 @@ private:
             break;
         case VoiceConfig:
             _track->editVoiceConfig(value, shift);
+            break;
+        case NotePriority:
+            _track->editNotePriority(value, shift);
             break;
         case LowNote:
             _track->editLowNote(value, shift);

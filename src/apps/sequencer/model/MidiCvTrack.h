@@ -32,6 +32,25 @@ public:
         return nullptr;
     }
 
+    enum class NotePriority : uint8_t {
+        LastNote,
+        FirstNote,
+        LowestNote,
+        HighestNote,
+        Last,
+    };
+
+    static const char *notePriorityName(NotePriority notePriority) {
+        switch (notePriority) {
+        case NotePriority::LastNote:    return "Last Note";
+        case NotePriority::FirstNote:   return "First Note";
+        case NotePriority::LowestNote:  return "Lowest Note";
+        case NotePriority::HighestNote: return "Highest Note";
+        case NotePriority::Last:        break;
+        }
+        return nullptr;
+    }
+
     //----------------------------------------
     // Properties
     //----------------------------------------
@@ -69,6 +88,21 @@ public:
 
     void printVoiceConfig(StringBuilder &str) const {
         str(voiceConfigName(_voiceConfig));
+    }
+
+    // notePriority
+
+    NotePriority notePriority() const { return _notePriority; }
+    void setNotePriority(NotePriority notePriority) {
+        _notePriority = notePriority;
+    }
+
+    void editNotePriority(int value, bool shift) {
+        setNotePriority(ModelUtils::adjustedEnum(notePriority(), value));
+    }
+
+    void printNotePriority(StringBuilder &str) const {
+        str(notePriorityName(notePriority()));
     }
 
     // lowNote
@@ -178,6 +212,7 @@ private:
     MidiSourceConfig _source;
     uint8_t _voices;
     VoiceConfig _voiceConfig;
+    NotePriority _notePriority;
     uint8_t _lowNote;
     uint8_t _highNote;
     uint8_t _pitchBendRange;

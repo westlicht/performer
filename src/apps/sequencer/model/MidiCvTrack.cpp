@@ -6,6 +6,7 @@ void MidiCvTrack::clear() {
     _source.clear();
     setVoices(1);
     setVoiceConfig(VoiceConfig::Pitch);
+    setNotePriority(NotePriority::LowestNote);
     setLowNote(0);
     setHighNote(127);
     setPitchBendRange(2);
@@ -36,6 +37,7 @@ void MidiCvTrack::write(WriteContext &context) const {
     _source.write(context);
     writer.write(_voices);
     writer.write(_voiceConfig);
+    writer.write(_notePriority);
     writer.write(_lowNote);
     writer.write(_highNote);
     writer.write(_pitchBendRange);
@@ -49,6 +51,7 @@ void MidiCvTrack::read(ReadContext &context) {
     _source.read(context);
     reader.read(_voices);
     reader.read(_voiceConfig);
+    reader.read(_notePriority, ProjectVersion::Version16);
     reader.read(_lowNote, ProjectVersion::Version15);
     reader.read(_highNote, ProjectVersion::Version15);
     reader.read(_pitchBendRange);
