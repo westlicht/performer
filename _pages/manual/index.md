@@ -425,7 +425,7 @@ On pages that provide a context menu, the labels dynamically change to the conte
 
 Pages that expose configuration options are typically presented as a list of items, each having the name shown on the left and the value on the right side.
 
-Rotate the `ENCODER` or use `PREV`, `NEXT` to navigate up and down the list. Press `ENCODER` to enter and leave edit mode which is indicated by moving the highlight from the item name to the item value and back. While in edit mode, rotate the `ENCODER` or use `PREV`, `NEXT` to adjust the value. Hold `SHIFT` to change the value in larger or smaller steps depending on item being edited.
+Rotate the `ENCODER` or use `PREV`, `NEXT` to navigate up and down the list. Press `ENCODER` to enter and leave edit mode which is indicated by moving the highlight from the item name to the item value and back. While in edit mode, rotate the `ENCODER` or use `PREV`, `NEXT` to adjust the value. Hold `SHIFT` to change the value in larger or smaller steps depending on the item being edited.
 
 <!-- Copy/Paste -->
 
@@ -647,8 +647,8 @@ If a track is in _Note_ mode, the following parameters are available:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
-| First Step | 1 - 64 | First step to play. |
-| Last Step | 1 - 64 | Last step to play. |
+| First Step | 1 - 64 | First step to play. Hold `SHIFT` to edit both first and last step together. |
+| Last Step | 1 - 64 | Last step to play. Hold `SHIFT` to edit both first and last step together. |
 | Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
 | Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
 | Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
@@ -663,8 +663,8 @@ If a track is in _Curve_ mode, the following parameters are available:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
-| First Step | 1 - 64 | First step to play. |
-| Last Step | 1 - 64 | Last step to play. |
+| First Step | 1 - 64 | First step to play. Hold `SHIFT` to edit both first and last step together. |
+| Last Step | 1 - 64 | Last step to play. Hold `SHIFT` to edit both first and last step together. |
 | Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
 | Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
 | Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
@@ -769,6 +769,8 @@ Depending on the _Track Mode_, the following parameters are available through qu
 While holding the `PAGE` button, the selected sequence parameter can be adjusted by rotating the `ENCODER` or by pressing `S[1-16]` to select the most common values. Releasing the `PAGE` button will return to the normal state of the steps page.
 
 > Note: When quick access is active, the step LEDs will indicate the range of values that can be selected in green as well as the current selection in red.
+
+> Note: Pressing the `ENCODER` while rotating it has the same effect as pressing `SHIFT` when editing the same parameter through the menu.
 
 <!-- Song -->
 
