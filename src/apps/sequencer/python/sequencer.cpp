@@ -300,6 +300,9 @@ void register_sequencer(py::module &m) {
         .def_property_readonly("source", [] (MidiCvTrack &midiCvTrack) { return &midiCvTrack.source(); })
         .def_property("voices", &MidiCvTrack::voices, &MidiCvTrack::setVoices)
         .def_property("voiceConfig", &MidiCvTrack::voiceConfig, &MidiCvTrack::setVoiceConfig)
+        .def_property("notePriority", &MidiCvTrack::notePriority, &MidiCvTrack::setNotePriority)
+        .def_property("lowNote", &MidiCvTrack::lowNote, &MidiCvTrack::setLowNote)
+        .def_property("highNote", &MidiCvTrack::highNote, &MidiCvTrack::setHighNote)
         .def_property("pitchBendRange", &MidiCvTrack::pitchBendRange, &MidiCvTrack::setPitchBendRange)
         .def_property("modulationRange", &MidiCvTrack::modulationRange, &MidiCvTrack::setModulationRange)
         .def_property("retrigger", &MidiCvTrack::retrigger, &MidiCvTrack::setRetrigger)
@@ -311,6 +314,14 @@ void register_sequencer(py::module &m) {
         .value("Pitch", MidiCvTrack::VoiceConfig::Pitch)
         .value("PitchVelocity", MidiCvTrack::VoiceConfig::PitchVelocity)
         .value("PitchVelocityPressure", MidiCvTrack::VoiceConfig::PitchVelocityPressure)
+        .export_values()
+    ;
+
+    py::enum_<MidiCvTrack::NotePriority>(midiCvTrack, "NotePriority")
+        .value("LastNote", MidiCvTrack::NotePriority::LastNote)
+        .value("FirstNote", MidiCvTrack::NotePriority::FirstNote)
+        .value("LowestNote", MidiCvTrack::NotePriority::LowestNote)
+        .value("HighestNote", MidiCvTrack::NotePriority::HighestNote)
         .export_values()
     ;
 
