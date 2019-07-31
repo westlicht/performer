@@ -7,7 +7,7 @@ void Arpeggiator::clear() {
     setMode(Mode::PlayOrder);
     setDivisor(12);
     setGateLength(50);
-    setOctaves(1);
+    setOctaves(0);
 }
 
 void Arpeggiator::write(WriteContext &context) const {
@@ -31,5 +31,10 @@ void Arpeggiator::read(ReadContext &context) {
         reader.read(_divisor);
     }
     reader.read(_gateLength, ProjectVersion::Version9);
-    reader.read(_octaves, ProjectVersion::Version9);
+    if (reader.dataVersion() < ProjectVersion::Version17) {
+        reader.readAs<uint8_t>(_octaves, ProjectVersion::Version9);
+        --_octaves;
+    } else {
+        reader.read(_octaves, ProjectVersion::Version17);
+    }
 }

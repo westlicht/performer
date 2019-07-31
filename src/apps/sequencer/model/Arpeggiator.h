@@ -144,7 +144,7 @@ public:
 
     int octaves() const { return _octaves; }
     void setOctaves(int octaves) {
-        _octaves = clamp(octaves, 1, 5);
+        _octaves = clamp(octaves, -10, 10);
     }
 
     void editOctaves(int value, bool shift) {
@@ -152,7 +152,18 @@ public:
     }
 
     void printOctaves(StringBuilder &str) const {
-        str("%d", _octaves);
+        int value = octaves();
+        if (value > 5) {
+            str("Up Down %d", value - 5);
+        } else if (value > 0) {
+            str("Up %d", value);
+        } else if (value == 0) {
+            str("Off");
+        } else if (value >= -5) {
+            str("Down %d", -value);
+        } else if (value >= -10) {
+            str("Down Up %d", -(value + 5));
+        }
     }
 
     //----------------------------------------
@@ -170,5 +181,5 @@ private:
     Mode _mode;
     uint16_t _divisor;
     uint8_t _gateLength;
-    uint8_t _octaves;
+    int8_t _octaves;
 };

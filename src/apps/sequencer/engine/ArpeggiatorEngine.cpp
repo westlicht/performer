@@ -19,9 +19,11 @@ ArpeggiatorEngine::ArpeggiatorEngine(const Arpeggiator &arpeggiator) :
 
 void ArpeggiatorEngine::reset() {
     _stepIndex = -1;
-    _octaveIndex = -1;
     _noteIndex = 0;
     _noteOrder = 0;
+
+    _octave = 0;
+    _octaveDirection = 0;
 
     _noteCount = 0;
     _noteHoldCount = 0;
@@ -51,10 +53,14 @@ void ArpeggiatorEngine::tick(uint32_t tick) {
         if (_noteCount > 0) {
             advanceStep();
             if (_stepIndex == 0) {
-                _octaveIndex = (_octaveIndex + 1) % _arpeggiator.octaves();
+                advanceOctave();
             }
+
+            // flip pattern direction when going down octaves
+            int noteIndex = _octaveDirection == -1 ? _noteCount - _noteIndex - 1 : _noteIndex;
+
+            uint8_t note = uint8_t(clamp(_notes[noteIndex].note + _octave * 12, 0, 127));
             uint32_t length = std::max(uint32_t(1), uint32_t((divisor * _arpeggiator.gateLength()) / 100));
-            uint8_t note = uint8_t(clamp(_notes[_noteIndex].note + _octaveIndex * 12, 0, 127));
             _eventQueue.push({ Event::NoteOn, tick, note, 127 });
             _eventQueue.push({ Event::NoteOff, tick + length, note, 0 });
         }
@@ -196,5 +202,50 @@ void ArpeggiatorEngine::advanceStep() {
         break;
     default:
         break;
+    }
+}
+
+void ArpeggiatorEngine::advanceOctave() {
+    int octaves = _arpeggiator.octaves();
+
+    bool bothDirections = false;
+    if (octaves > 5) {
+        octaves -= 5;
+        bothDirections = true;
+    }
+    if (octaves < -5) {
+        octaves += 5;
+        bothDirections = true;
+    }
+
+    if (octaves == 0) {
+        _octave = 0;
+        _octaveDirection = 0;
+    } else if (octaves > 0) {
+        if (_octaveDirection == 0) {
+            _octaveDirection = 1;
+        } else {
+            _octave += _octaveDirection;
+            if (_octave > octaves) {
+                _octave = bothDirections ? octaves : 0;
+                _octaveDirection = bothDirections ? -1 : 1;
+            } else if (_octave < 0) {
+                _octave = 0;
+                _octaveDirection = 1;
+            }
+        }
+    } else if (octaves < 0) {
+        if (_octaveDirection == 0) {
+            _octaveDirection = -1;
+        } else {
+            _octave += _octaveDirection;
+            if (_octave < octaves) {
+                _octave = bothDirections ? octaves : 0;
+                _octaveDirection = bothDirections ? 1 : -1;
+            } else if (_octave > 0) {
+                _octave = 0;
+                _octaveDirection = -1;
+            }
+        }
     }
 }
