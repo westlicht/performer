@@ -85,7 +85,13 @@ static void drawGatePattern(Canvas &canvas, int x, int y, int w, int h, int gate
 
 CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
-{}
+{
+    _stepSelection.setStepCompare([this] (int a, int b) {
+        auto layer = _project.selectedCurveSequenceLayer();
+        const auto &sequence = _project.selectedCurveSequence();
+        return sequence.step(a).layerValue(layer) == sequence.step(b).layerValue(layer);
+    });
+}
 
 void CurveSequenceEditPage::enter() {
     _showDetail = false;

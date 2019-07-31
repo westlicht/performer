@@ -52,7 +52,13 @@ static const NoteSequenceListModel::Item quickEditItems[8] = {
 
 NoteSequenceEditPage::NoteSequenceEditPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
-{}
+{
+    _stepSelection.setStepCompare([this] (int a, int b) {
+        auto layer = _project.selectedNoteSequenceLayer();
+        const auto &sequence = _project.selectedNoteSequence();
+        return sequence.step(a).layerValue(layer) == sequence.step(b).layerValue(layer);
+    });
+}
 
 void NoteSequenceEditPage::enter() {
     updateMonitorStep();
@@ -543,6 +549,7 @@ int NoteSequenceEditPage::activeFunctionKey() {
 void NoteSequenceEditPage::updateMonitorStep() {
     auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
 
+    // TODO should we monitor an all layers not just note?
     if (layer() == Layer::Note && !_stepSelection.isPersisted() && _stepSelection.any()) {
         trackEngine.setMonitorStep(_stepSelection.first());
     } else {

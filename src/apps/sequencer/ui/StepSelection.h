@@ -3,6 +3,7 @@
 #include "Key.h"
 
 #include <bitset>
+#include <functional>
 
 #include <cstdint>
 #include <cstdlib>
@@ -89,6 +90,9 @@ public:
                     _selected.set(i);
                 }
                 event.consume();
+            } else {
+                selectEqualSteps(stepIndex);
+                event.consume();
             }
         }
     }
@@ -103,6 +107,19 @@ public:
         _selected.set();
         _mode = Mode::Persist;
         _first = 0;
+    }
+
+    void selectEqualSteps(int stepIndex) {
+        _mode = Mode::Persist;
+        for (int i = 0; i < int(_selected.size()); ++i) {
+            if (i == stepIndex || (_stepCompare && _stepCompare(stepIndex, i))) {
+                _selected.set(i);
+            }
+        }
+    }
+
+    void setStepCompare(std::function<bool(int, int)> stepCompare) {
+        _stepCompare = stepCompare;
     }
 
     bool isPersisted() const {
@@ -170,4 +187,5 @@ private:
     std::bitset<N> _selected;
     int _first = -1;
     int8_t _lastPressedIndex;
+    std::function<bool(int, int)> _stepCompare;
 };
