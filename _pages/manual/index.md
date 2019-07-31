@@ -602,6 +602,7 @@ If a track is in MIDI/CV mode, the following parameters are available:
 | Source | MIDI, USB | MIDI source port (hold `SHIFT` and rotate `ENCODER` to select MIDI channel). |
 | Voices | 1 - 8 | Number of voices. |
 | Voice Config | Pitch, Pitch+Vel, Pitch+Vel+Press | CV signals to generate for each voice. |
+| Note Priority | Last Note, First Note, Lowest Note, Highest Note | Determines which active notes have the highest priority to be output. |
 | Low Note | C-1 - G9 | Low MIDI note of the key range this track listens to. |
 | High Note | C-1 - G9 | High MIDI note of the key range this track listens to. |
 | Pitch Bend | off, 1 - 48 semitones | Pitch bend range. |
@@ -726,9 +727,9 @@ To adjust the values of the currently selected layer, hold `S[1-16]` and rotate 
 
 When holding `SHIFT` and pressing any of the step buttons, steps are selected in a _persistent_ mode. This means that steps are kept selected even when the step buttons are released. This allows to select multiple steps across different sections. Steps can also be removed from the selection by holding `SHIFT` and pressing step buttons corresponding to selected steps again. To clear the entire selection, simply press any step button without holding `SHIFT` or quickly press `SHIFT` twice (double tap). When the selection is empty, double tap `SHIFT` to select all 64 steps.
 
-Finally, there is a shortcut to select a series of steps. For example, to select steps 1, 5, 9, 13 and so forth, hold `SHIFT` and `S1` and then double tap `S5` while holding the other two buttons. With this shortcut, any series of steps with a common interval can be selected quickly, great to build rhythms.
+There are two additional functions for selecting groups of steps. To select a series of steps, for example steps 1, 5, 9, 13 and so forth, hold `SHIFT` and `S1` and then double tap `S5` while holding the other two buttons. With this function, any series of steps with a common interval can be selected quickly, great to build rhythms. To select all steps that have the same value on the currently selected layer, hold `SHIFT` and double tap one of the step keys.
 
-> Note: Different series can be combined by applying the shortcut multiple times. Each time it is executed, the steps of the series are added to the selection.
+> Note: When selecting groups of steps they are added to the current selection. This allows to quickly combine multiple groups of steps into a single selection.
 
 <h4>Shifting Steps</h4>
 
