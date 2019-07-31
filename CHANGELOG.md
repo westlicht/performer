@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.29 (31 Jul 2019)
+
+#### Improvements
+
+- Added ability to select all steps with an equal value on the selected layer using `SHIFT` + double tap a step (#117)
+- Added _Note Priority_ parameter to MIDI/CV track (#115)
+
 ## v0.1.28 (28 Jul 2019)
 
 #### Improvements
