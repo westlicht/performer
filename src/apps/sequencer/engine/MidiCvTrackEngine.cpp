@@ -11,8 +11,8 @@
 void MidiCvTrackEngine::reset() {
     _arpeggiatorEnabled = false;
     _activity = false;
-    _pitchBendCv = 0.f;
-    _channelPressureCv = 0.f;
+    _pitchBend = 0;
+    _channelPressure = 0;
     resetVoices();
 }
 
@@ -47,41 +47,34 @@ bool MidiCvTrackEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
 
     bool consumed = false;
 
-    if (_arpeggiatorEnabled) {
-        if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
+    if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
+        if (_arpeggiatorEnabled) {
             if (message.isNoteOn()) {
                 _arpeggiatorEngine.noteOn(message.note());
             } else if (message.isNoteOff()) {
                 _arpeggiatorEngine.noteOff(message.note());
             }
-
-            consumed = true;
-        }
-    } else {
-        if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
+        } else {
             if (message.isNoteOn()) {
                 addVoice(message.note(), message.velocity());
-                // printVoices();
             } else if (message.isNoteOff()) {
                 removeVoice(message.note());
-                // printVoices();
             } else if (message.isKeyPressure()) {
-                auto voice = findVoice(0, _voices.size(), message.note());
+                auto voice = findVoice(message.note());
                 if (voice) {
-                    voice->pressureCv = valueToCv(message.keyPressure());
+                    voice->pressure = message.keyPressure();
                 }
             } else if (message.isChannelPressure()) {
-                _channelPressureCv = valueToCv(message.channelPressure());
+                _channelPressure = message.channelPressure();
             } else if (message.isPitchBend()) {
-                _pitchBendCv = pitchBendToCv(message.pitchBend());
+                _pitchBend = message.pitchBend();
             }
 
             updateActivity();
-
-            consumed = true;
         }
-    }
 
+        consumed = true;
+    }
 
     return consumed;
 }
@@ -91,12 +84,13 @@ bool MidiCvTrackEngine::activity() const {
 }
 
 bool MidiCvTrackEngine::gateOutput(int index) const {
-    auto ticks = _voices[index % _midiCvTrack.voices()].ticks;
-    if (_midiCvTrack.retrigger()) {
-        return ticks > 0 && ticks - os::ticks() > RetriggerDelay;
-    } else {
-        return ticks > 0;
+    int voiceIndex = _voiceByOutput[index % _midiCvTrack.voices()];
+    if (voiceIndex != -1) {
+        const auto &voice = _voices[voiceIndex];
+        uint32_t delay = _midiCvTrack.retrigger() ? RetriggerDelay : 0;
+        return voice.isActive() && (voice.ticks - os::ticks()) >= delay;
     }
+    return false;
 }
 
 float MidiCvTrackEngine::cvOutput(int index) const {
@@ -106,13 +100,23 @@ float MidiCvTrackEngine::cvOutput(int index) const {
     index %= totalOutputs;
     int voiceIndex = index % voices;
     int signalIndex = index / voices;
-    const auto &voice = _voices[voiceIndex];
-    switch (signalIndex) {
-    case 0: return voice.pitchCv + _pitchBendCv;
-    case 1: return voice.velocityCv;
-    case 2: return voice.pressureCv + _channelPressureCv;
+
+    voiceIndex = _voiceByOutput[index % _midiCvTrack.voices()];
+    if (voiceIndex != -1) {
+        const auto &voice = _voices[voiceIndex];
+        switch (signalIndex) {
+        case 0: return noteToCv(voice.note) + pitchBendToCv(_pitchBend);
+        case 1: return valueToCv(voice.velocity);
+        case 2: return valueToCv(voice.pressure) + valueToCv(_channelPressure);
+        }
     }
     return 0.f;
+}
+
+void MidiCvTrackEngine::updateActivity() {
+    _activity = std::any_of(_voices.begin(), _voices.end(), [] (const Voice &voice) {
+        return voice.isActive();
+    });
 }
 
 void MidiCvTrackEngine::updateArpeggiator() {
@@ -161,97 +165,137 @@ float MidiCvTrackEngine::pitchBendToCv(int value) const {
 
 void MidiCvTrackEngine::resetVoices() {
     for (auto &voice : _voices) {
-        voice.ticks = 0;
+        voice.reset();
     }
+    _voiceByOutput.fill(-1);
+    _nextOutput = -1;
 }
 
 void MidiCvTrackEngine::addVoice(int note, int velocity) {
-    auto voice = allocateVoice(note, _midiCvTrack.voices());
-    voice->ticks = os::ticks();
-    voice->note = note;
-    voice->pitchCv = noteToCv(note);
-    voice->velocityCv = valueToCv(velocity);
-    voice->pressureCv = 0.f;
+    // find a free voice
+    const auto it = std::find_if(_voices.begin(), _voices.end(), [] (const Voice &voice) {
+        return !voice.isActive() && !voice.isAllocated();
+    });
+
+    // override last voice (lowest priority) if all are used
+    auto &voice = it == _voices.end() ? _voices.back() : *it;
+
+    voice.reset();
+    voice.ticks = os::ticks();
+    voice.note = note;
+    voice.velocity = velocity;
+    voice.pressure = 0;
+
+    sortVoices();
 }
 
 void MidiCvTrackEngine::removeVoice(int note) {
-    freeVoice(note, _midiCvTrack.voices());
-}
-
-MidiCvTrackEngine::Voice *MidiCvTrackEngine::allocateVoice(int note, int numVoices) {
-    auto lruActive = lruVoice(0, numVoices);
-    auto lruInactive = lruVoice(numVoices, _voices.size());
-    if (lruInactive) {
-        std::swap(*lruActive, *lruInactive);
+    auto voice = findVoice(note);
+    if (voice) {
+        voice->release();
     }
-    return lruActive;
+
+    sortVoices();
 }
 
-void MidiCvTrackEngine::freeVoice(int note, int numVoices) {
-    Voice *active = nullptr;
+MidiCvTrackEngine::Voice *MidiCvTrackEngine::findVoice(int note) {
+    auto it = std::find_if(_voices.begin(), _voices.end(), [note] (const Voice &voice) {
+        return voice.isActive() && voice.note == note;
+    });
+
+    return it == _voices.end() ? nullptr : it;
+}
+
+void MidiCvTrackEngine::sortVoices() {
+    // move all active voices to front of array
+    auto activeEnd = std::stable_partition(_voices.begin(), _voices.end(), [] (const Voice &voice) {
+        return voice.isActive();
+    });
+
+    // sort based on note priority
+    auto notePriority = _midiCvTrack.notePriority();
+    std::sort(_voices.begin(), activeEnd, [notePriority] (const Voice &a, const Voice &b) {
+        switch (notePriority) {
+        case MidiCvTrack::NotePriority::LastNote:
+            return a.ticks > b.ticks;
+        case MidiCvTrack::NotePriority::FirstNote:
+            return a.ticks < b.ticks;
+        case MidiCvTrack::NotePriority::LowestNote:
+            return a.note < b.note;
+        case MidiCvTrack::NotePriority::HighestNote:
+            return a.note > b.note;
+        case MidiCvTrack::NotePriority::Last:
+            break;
+        }
+        return false;
+    });
+
+    // update voice allocation
+    int voices = _midiCvTrack.voices();
+
+    // reset excess voices
     for (int i = 0; i < int(_voices.size()); ++i) {
-        auto voice = &_voices[i];
-        if (voice->ticks > 0 && voice->note == note) {
-            voice->ticks = 0;
-            if (!active && i < numVoices) {
-                active = voice;
+        auto &voice = _voices[i];
+        if (voice.output >= voices) {
+            voice.reset();
+        }
+    }
+
+    // helper to allocate a new voice output
+    auto allocateOutput = [this, voices] () -> int {
+        // try to allocate output in round-fashion, either a new output or released voice
+        for (int i = 0; i < int(VoiceCount); ++i) {
+            ++_nextOutput;
+            _nextOutput = _nextOutput >= voices ? 0 : _nextOutput;
+            bool isFree = std::none_of(_voices.begin(), _voices.end(), [this] (const Voice &v) {
+                return v.isActive() && v.output == _nextOutput;
+            });
+            if (isFree) {
+                for (auto &voice : _voices) {
+                    if (voice.output == _nextOutput) {
+                        voice.output = -1;
+                    }
+                }
+                return _nextOutput;
             }
         }
-    }
 
-    if (active) {
-        auto mruInactive = mruVoice(numVoices, _voices.size());
-        if (mruInactive) {
-            std::swap(*active, *mruInactive);
+        // otherwise steal lowest priority output
+        for (int i = int(_voices.size()) - 1; i >= 0; --i) {
+            auto &voice = _voices[i];
+            if (voice.isAllocated()) {
+                int output = voice.output;
+                voice.output = -1;
+                return output;
+            }
+        }
+
+        return -1;
+    };
+
+    // allocate new voices in round-robin fashion
+    for (int i = 0; i < voices; ++i) {
+        auto &voice = _voices[i];
+        if (voice.isActive() && !voice.isAllocated()) {
+            voice.output = allocateOutput();
         }
     }
-}
 
-MidiCvTrackEngine::Voice *MidiCvTrackEngine::findVoice(int begin, int end, int note) {
-    for (int i = begin; i < end; ++i) {
-        auto voice = &_voices[i];
-        if (voice->ticks > 0 && voice->note == note) {
-            return voice;
+    // update allocation map
+    _voiceByOutput.fill(-1);
+    for (int i = 0; i < int(_voices.size()); ++i) {
+        const auto &voice = _voices[i];
+        if (voice.isAllocated()) {
+            _voiceByOutput[voice.output] = i;
         }
     }
-    return nullptr;
-}
 
-MidiCvTrackEngine::Voice *MidiCvTrackEngine::lruVoice(int begin, int end) {
-    Voice *lru = nullptr;
-    for (int i = begin; i < end; ++i) {
-        auto voice = &_voices[i];
-        if (!lru || voice->ticks < lru->ticks) {
-            lru = voice;
-        }
-    }
-    return lru;
-}
-
-MidiCvTrackEngine::Voice *MidiCvTrackEngine::mruVoice(int begin, int end) {
-    Voice *mru = nullptr;
-    for (int i = begin; i < end; ++i) {
-        auto voice = &_voices[i];
-        if (voice->ticks > 0 && (!mru || voice->ticks > mru->ticks)) {
-            mru = voice;
-        }
-    }
-    return mru;
+    // printVoices();
 }
 
 void MidiCvTrackEngine::printVoices() {
     DBG("voices");
     for (auto voice : _voices) {
-        DBG("%" PRIu32 " %" PRIu8, voice.ticks, voice.note);
-    }
-}
-
-void MidiCvTrackEngine::updateActivity() {
-    _activity = false;
-    for (int i = 0; i < _midiCvTrack.voices(); ++i) {
-        if (_voices[i].ticks > 0) {
-            _activity = true;
-            break;
-        }
+        DBG("%" PRIu32 " %d %d", voice.ticks, int(voice.note), int(voice.output));
     }
 }
