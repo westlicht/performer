@@ -51,6 +51,9 @@ enum ProjectVersion {
     // added Project::timeSignature
     Version18 = 18,
 
+    // expanded Song::slots to 64 entries
+    Version19 = 19,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

@@ -34,15 +34,15 @@ static void writeArray(WriteContext &context, const std::array<uint8_t, N> &arra
 }
 
 template<typename T, size_t N>
-static void readArray(ReadContext &context, std::array<T, N> &array) {
-    for (size_t i = 0; i < array.size(); ++i) {
+static void readArray(ReadContext &context, std::array<T, N> &array, size_t size = N) {
+    for (size_t i = 0; i < size; ++i) {
         array[i].read(context);
     }
 }
 
 template<size_t N>
-static void readArray(ReadContext &context, std::array<uint8_t, N> &array) {
-    for (size_t i = 0; i < array.size(); ++i) {
+static void readArray(ReadContext &context, std::array<uint8_t, N> &array, size_t size = N) {
+    for (size_t i = 0; i < size; ++i) {
         context.reader.read(array[i]);
     }
 }

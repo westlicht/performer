@@ -1,5 +1,7 @@
 #include "Song.h"
 
+#include "ProjectVersion.h"
+
 // Song::Slot
 
 void Song::Slot::clear() {
@@ -103,7 +105,11 @@ void Song::write(WriteContext &context) const {
 void Song::read(ReadContext &context) {
     auto &reader = context.reader;
 
-    readArray(context, _slots);
+    if (reader.dataVersion() < ProjectVersion::Version18) {
+        readArray(context, _slots, 16);
+    } else {
+        readArray(context, _slots);
+    }
 
     reader.read(_slotCount);
 }
