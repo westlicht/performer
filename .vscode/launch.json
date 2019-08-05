@@ -3,26 +3,36 @@
     "configurations": [
         {
             "name": "Debug",
+            "type": "cortex-debug",
+            "request": "launch",
+            "preLaunchTask": "Build (Release)",
+            "servertype": "openocd",
+            "executable": "${workspaceFolder}/build/stm32/release/src/apps/sequencer/sequencer",
+            "configFiles": [
+                "${workspaceFolder}/tools/openocd/share/openocd/scripts/interface/ftdi/olimex-arm-usb-ocd-h.cfg",
+                "${workspaceFolder}/tools/openocd/share/openocd/scripts/target/stm32f4x.cfg",
+            ],
+            "showDevDebugOutput": true,
+            // "rtos": "FreeRTOS",
+            "runToMain": true
+        },
+        {
+            "name": "Debug Simulator",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/build/stm32/release/src/apps/sequencer/sequencer",
-            "targetArchitecture": "arm",
-            // "MIMode": "gdb",
-            "miDebuggerPath": "${workspaceRoot}/tools/gcc-arm-none-eabi/bin/arm-none-eabi-gdb",
-            // "miDebuggerServerAddress": "localhost:3333",
-            "cwd": "${workspaceRoot}",
-            "setupCommands": [
-                // { "text": "-exec -gdb-set target-async off" },
-                // { "text": "-enable-pretty-printing" },
-                { "text": "file ${workspaceRoot}/build/stm32/release/src/apps/sequencer/sequencer" },
-                { "text": "target remote localhost:3333"},
-                { "text": "monitor reset halt" },
-                { "text": "load" },
-                { "text": "break main" }
-            ],
-            "preLaunchTask": "build",
-            "externalConsole": false
-            // "logging": { "trace": true, "traceResponse": true, "engineLogging": true }
+            "preLaunchTask": "Build Simulator",
+            "program": "${workspaceFolder}/build/sim/debug/src/apps/sequencer/sequencer",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/build/sim/debug",
+            "environment": [],
+            "externalConsole": false,
+            "osx": {
+                "MIMode": "lldb"
+            },
+            "linux": {
+                "MIMode": "gdb"
+            }
         }
     ]
 }
