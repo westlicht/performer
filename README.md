@@ -36,13 +36,17 @@ Make sure you have a recent version of CMake installed. If you are on Linux, you
 sudo apt-get install libtool autoconf cmake libusb-1.0.0-dev libftdi-dev pkg-config
 ```
 
-Next, you have to setup the toolchain and build directories:
+To compile for the hardware and allow flashing firmware you have to install the ARM toolchain and build OpenOCD:
+
+```
+make tools_install
+```
+
+Next, you have to setup the build directories:
 
 ```
 make setup_stm32
 ```
-
-This will download the compiler toolchain for ARM and build OpenOCD as well as setup the directories for building the firmware for the hardware.
 
 If you also want to compile/run the simulator use:
 
@@ -50,7 +54,7 @@ If you also want to compile/run the simulator use:
 make setup_sim
 ```
 
-This will create the directories for building the firmware for the simulator. The simulator is great when developing new features. It allows for a faster development cycle and a better debugging experience.
+The simulator is great when developing new features. It allows for a faster development cycle and a better debugging experience.
 
 ### Setup on Windows
 
