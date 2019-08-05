@@ -240,7 +240,7 @@ static void bootloader() {
     }
 
     if (success && writeUpdate) {
-        printf("writing update image to 0x%08lx ...\n", CONFIG_APPLICATION_ADDR);
+        printf("writing update image to 0x%08ux ...\n", CONFIG_APPLICATION_ADDR);
 
         flash_unlock();
 
