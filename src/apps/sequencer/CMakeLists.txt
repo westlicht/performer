@@ -1,5 +1,3 @@
-set(update_file "UPDATE.DAT")
-
 set(sources
     # asteroids
     asteroids/Asteroids.cpp
@@ -100,35 +98,35 @@ set(sources
     ui/painters/WindowPainter.cpp
 )
 
-include_directories(.)
-
 if(${PLATFORM} STREQUAL "stm32")
     add_library(sequencer_shared ${sources})
+    target_include_directories(sequencer_shared PUBLIC .)
     target_link_libraries(sequencer_shared core)
 
     add_executable(sequencer Sequencer.cpp)
     target_link_libraries(sequencer sequencer_shared)
+    target_linker_script(sequencer sequencer.ld)
     platform_postprocess_executable(sequencer)
-    # override linker script
-    set_target_properties(sequencer PROPERTIES LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/sequencer.ld")
 
     # create update file
-    add_custom_command(TARGET sequencer POST_BUILD COMMAND ${CMAKE_SOURCE_DIR}/scripts/makeupdate sequencer.bin ${update_file})
+    add_custom_command(TARGET sequencer POST_BUILD COMMAND ${CMAKE_SOURCE_DIR}/scripts/makeupdate sequencer.bin "UPDATE.DAT")
 
     add_executable(sequencer_standalone Sequencer.cpp)
     target_link_libraries(sequencer_standalone sequencer_shared)
+    target_linker_script(sequencer_standalone sequencer_standalone.ld)
     platform_postprocess_executable(sequencer_standalone)
-    # override linker script
-    set_target_properties(sequencer_standalone PROPERTIES LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/sequencer_standalone.ld")
 endif()
 
 if(${PLATFORM} STREQUAL "sim")
     add_library(sequencer_shared ${sources})
+    target_include_directories(sequencer_shared PUBLIC .)
     target_link_libraries(sequencer_shared core)
 
     add_executable(sequencer SequencerSim.cpp)
     target_link_libraries(sequencer sequencer_shared)
     platform_postprocess_executable(sequencer)
+
+    # create symlink to assets
     add_custom_command(TARGET sequencer COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/../../platform/sim/assets ${CMAKE_BINARY_DIR}/assets)
 
     if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")

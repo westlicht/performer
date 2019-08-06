@@ -1,4 +1,5 @@
 set(sources
+    Bootloader.cpp
     Canvas.cpp
     Console.cpp
     Encoder.cpp
@@ -13,14 +14,12 @@ set(sources
     lib/ff/ff.c
 )
 
-include_directories(.)
-
 if(${PLATFORM} STREQUAL "stm32")
-    add_executable(bootloader Bootloader.cpp ${sources})
+    add_executable(bootloader ${sources})
+    target_include_directories(bootloader PRIVATE .)
     target_link_libraries(bootloader ${platform_libraries})
+    target_linker_script(bootloader bootloader.ld)
+    target_compile_options(bootloader PRIVATE "-Os")
     platform_postprocess_executable(bootloader)
     add_dependencies(bootloader ${platform_dependencies})
-    # override linker script
-    set_target_properties(bootloader PROPERTIES LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/bootloader.ld")
-    set_target_properties(bootloader PROPERTIES COMPILE_FLAGS "-Os")
 endif()

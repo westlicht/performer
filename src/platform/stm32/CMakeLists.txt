@@ -114,3 +114,8 @@ function(platform_postprocess_executable executable)
 endfunction(platform_postprocess_executable)
 
 add_custom_target(openocd COMMAND ${OPENOCD} -f interface/${OPENOCD_INTERFACE}.cfg -f target/${OPENOCD_TARGET}.cfg)
+
+# convenience macro to set a linker script
+macro(target_linker_script target script)
+    set_target_properties(${target} PROPERTIES LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/${script}")
+endmacro()
