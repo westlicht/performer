@@ -93,4 +93,7 @@ void vApplicationStackOverflowHook(TaskHandle_t task, const char *name) {
 	while (1);
 }
 
+// For FreeRTOS aware OpenOCD debugging
+static const int __attribute__((used)) uxTopUsedPriority = configMAX_PRIORITIES - 1;
+
 } // extern "C"
