@@ -10,12 +10,21 @@
 
 #include "core/utils/StringBuilder.h"
 
+enum class ContextAction {
+    Init,
+    Last
+};
+
+static const ContextMenuModel::Item contextMenuItems[] = {
+    { "INIT" },
+};
+
 enum class Function {
-    Clear       = 0,
-    Chain       = 1,
-    Add         = 2,
-    Remove      = 3,
-    PlayStop    = 4,
+    Chain           = 0,
+    Add             = 1,
+    Remove          = 2,
+    Duplicate       = 3,
+    PlayStopJump    = 4,
 };
 
 SongPage::SongPage(PageManager &manager, PageContext &context) :
@@ -39,8 +48,10 @@ void SongPage::draw(Canvas &canvas) {
     const auto &playState = _project.playState();
     const auto &songState = playState.songState();
 
+    bool isShift = globalKeyState()[Key::Shift];
     bool isPlaying = songState.playing();
-    const char *functionNames[] = { "CLEAR", "CHAIN", "ADD", "REMOVE", isPlaying ? "STOP" : "PLAY" };
+    const char *playText = isPlaying ? (isShift ? "JUMP" : "STOP") : "PLAY";
+    const char *functionNames[] = { "CHAIN", isShift ? "INSERT" : "ADD", "REMOVE", "DUPL", playText };
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SONG");
@@ -134,17 +145,18 @@ void SongPage::keyPress(KeyPressEvent &event) {
     auto &song = _project.song();
     auto &playState = _project.playState();
 
+    if (key.isContextMenu()) {
+        contextShow();
+        event.consume();
+        return;
+    }
+
     if (key.pageModifier()) {
         return;
     }
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
-        case Function::Clear:
-            playState.stopSong();
-            song.clear();
-            setSelectedSlot(_selectedSlot);
-            break;
         case Function::Add:
             if (key.shiftModifier()) {
                 song.insertSlot(std::max(0, _selectedSlot));
@@ -158,9 +170,17 @@ void SongPage::keyPress(KeyPressEvent &event) {
             song.removeSlot(_selectedSlot);
             setSelectedSlot(_selectedSlot);
             break;
-        case Function::PlayStop:
+        case Function::Duplicate:
+            song.duplicateSlot(_selectedSlot);
+            setSelectedSlot(_selectedSlot + 1);
+            break;
+        case Function::PlayStopJump:
             if (playState.songState().playing()) {
+                if (key.shiftModifier()) {
+                    playState.playSong(_selectedSlot);
+                } else {
                 playState.stopSong();
+                }
             } else {
                 playState.playSong(_selectedSlot, key.shiftModifier() ? PlayState::ExecuteType::Synced : PlayState::ExecuteType::Immediate);
                 if (!_engine.clockRunning()) {
@@ -235,4 +255,37 @@ void SongPage::moveSelectedSlot(int offset, bool moveSlot) {
         _project.song().swapSlot(_selectedSlot, _selectedSlot + offset);
     }
     setSelectedSlot(_selectedSlot + offset);
+}
+
+void SongPage::contextShow() {
+    showContextMenu(ContextMenu(
+        contextMenuItems,
+        int(ContextAction::Last),
+        [&] (int index) { contextAction(index); },
+        [&] (int index) { return contextActionEnabled(index); }
+    ));
+}
+
+void SongPage::contextAction(int index) {
+    switch (ContextAction(index)) {
+    case ContextAction::Init:
+        initSong();
+        break;
+    case ContextAction::Last:
+        break;
+    }
+}
+
+bool SongPage::contextActionEnabled(int index) const {
+    switch (ContextAction(index)) {
+    default:
+        return true;
+    }
+}
+
+void SongPage::initSong() {
+    _project.playState().stopSong();
+    _project.song().clear();
+    setSelectedSlot(_selectedSlot);
+    showMessage("SONG INITIALIZED");
 }

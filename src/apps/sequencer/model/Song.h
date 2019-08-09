@@ -78,6 +78,7 @@ public:
     void chainPattern(int pattern);
     void insertSlot(int slotIndex);
     void removeSlot(int slotIndex);
+    void duplicateSlot(int slotIndex);
     void swapSlot(int fromIndex, int toIndex);
 
     void setPattern(int slotIndex, int trackIndex, int pattern);

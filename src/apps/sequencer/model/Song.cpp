@@ -57,6 +57,13 @@ void Song::removeSlot(int slotIndex) {
     }
 }
 
+void Song::duplicateSlot(int slotIndex) {
+    if (!isFull() && slotIndex >= 0 && slotIndex < int(_slots.size()) && _slotCount < int(_slots.size())) {
+        insertSlot(slotIndex + 1);
+        _slots[slotIndex + 1] = _slots[slotIndex];
+    }
+}
+
 void Song::swapSlot(int fromIndex, int toIndex) {
     if (fromIndex >= 0 && fromIndex < _slotCount && toIndex >= 0 && toIndex < _slotCount) {
         std::swap(slot(fromIndex), slot(toIndex));

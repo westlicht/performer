@@ -25,6 +25,12 @@ private:
     void setSelectedSlot(int slot);
     void moveSelectedSlot(int offset, bool moveSlot);
 
+    void contextShow();
+    void contextAction(int index);
+    bool contextActionEnabled(int index) const;
+
+    void initSong();
+
     enum class Mode : uint8_t {
         Idle,
         Chain
