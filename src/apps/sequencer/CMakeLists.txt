@@ -44,6 +44,7 @@ set(sources
     model/Scale.cpp
     model/Settings.cpp
     model/Song.cpp
+    model/TimeSignature.cpp
     model/Track.cpp
     model/Types.cpp
     model/UserScale.cpp

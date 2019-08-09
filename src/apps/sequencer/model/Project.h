@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "Observable.h"
 #include "Types.h"
+#include "TimeSignature.h"
 #include "ClockSetup.h"
 #include "Track.h"
 #include "Song.h"
@@ -86,6 +87,21 @@ public:
     void printSwing(StringBuilder &str) const {
         printRouted(str, Routing::Target::Swing);
         str("%d%%", swing());
+    }
+
+    // timeSignature
+
+    TimeSignature timeSignature() const { return _timeSignature; }
+    void setTimeSignature(TimeSignature timeSignature) {
+        _timeSignature = timeSignature;
+    }
+
+    void editTimeSignature(int value, bool shift) {
+        _timeSignature.edit(value, shift);
+    }
+
+    void printTimeSignature(StringBuilder &str) const {
+        _timeSignature.print(str);
     }
 
     // syncMeasure
@@ -361,6 +377,7 @@ private:
     char _name[NameLength + 1];
     Routable<float> _tempo;
     Routable<uint8_t> _swing;
+    TimeSignature _timeSignature;
     uint8_t _syncMeasure;
     uint8_t _scale;
     uint8_t _rootNote;

@@ -50,6 +50,7 @@ private:
         Name,
         Tempo,
         Swing,
+        TimeSignature,
         SyncMeasure,
         Scale,
         RootNote,
@@ -64,6 +65,7 @@ private:
         case Name:              return "Name";
         case Tempo:             return "Tempo";
         case Swing:             return "Swing";
+        case TimeSignature:     return "Time Signature";
         case SyncMeasure:       return "Sync Measure";
         case Scale:             return "Scale";
         case RootNote:          return "Root Note";
@@ -89,6 +91,9 @@ private:
             break;
         case Swing:
             _project.printSwing(str);
+            break;
+        case TimeSignature:
+            _project.printTimeSignature(str);
             break;
         case SyncMeasure:
             _project.printSyncMeasure(str);
@@ -122,6 +127,9 @@ private:
             break;
         case Swing:
             _project.editSwing(value, shift);
+            break;
+        case TimeSignature:
+            _project.editTimeSignature(value, shift);
             break;
         case SyncMeasure:
             _project.editSyncMeasure(value, shift);

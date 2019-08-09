@@ -48,6 +48,9 @@ enum ProjectVersion {
     // changed Arpeggiator::octaves
     Version17 = 17,
 
+    // added Project::timeSignature
+    Version18 = 18,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

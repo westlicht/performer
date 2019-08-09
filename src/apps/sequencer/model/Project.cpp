@@ -33,6 +33,7 @@ void Project::clear() {
     StringUtils::copy(_name, "INIT", sizeof(_name));
     setTempo(120.f);
     setSwing(50);
+    setTimeSignature(TimeSignature());
     setSyncMeasure(1);
     setScale(0);
     setRootNote(0);
@@ -103,6 +104,7 @@ void Project::write(WriteContext &context) const {
     writer.write(_name, NameLength + 1);
     writer.write(_tempo.base);
     writer.write(_swing.base);
+    _timeSignature.write(context);
     writer.write(_syncMeasure);
     writer.write(_scale);
     writer.write(_rootNote);
@@ -136,6 +138,9 @@ bool Project::read(ReadContext &context) {
     reader.read(_name, NameLength + 1, ProjectVersion::Version5);
     reader.read(_tempo.base);
     reader.read(_swing.base);
+    if (reader.dataVersion() >= ProjectVersion::Version18) {
+        _timeSignature.read(context);
+    }
     reader.read(_syncMeasure);
     reader.read(_scale);
     reader.read(_rootNote);
