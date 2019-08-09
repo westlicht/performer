@@ -27,6 +27,8 @@ public:
     static void drawFooter(Canvas &canvas);
     static void drawFooter(Canvas &canvas, const char *names[], const KeyState &keyState, int highlight = -1);
 
+    static void drawScrollbar(Canvas &canvas, int x, int y, int w, int h, int totalRows, int visibleRows, int displayRow);
+
 private:
     const static int PageWidth = CONFIG_LCD_WIDTH;
     const static int PageHeight = CONFIG_LCD_HEIGHT;

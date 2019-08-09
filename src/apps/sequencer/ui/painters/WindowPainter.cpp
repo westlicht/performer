@@ -140,3 +140,18 @@ void WindowPainter::drawFooter(Canvas &canvas) {
 void WindowPainter::drawFooter(Canvas &canvas, const char *names[], const KeyState &keyState, int highlight) {
     drawFunctionKeys(canvas, names, keyState, highlight);
 }
+
+void WindowPainter::drawScrollbar(Canvas &canvas, int x, int y, int w, int h, int totalRows, int visibleRows, int displayRow) {
+    if (visibleRows >= totalRows) {
+        return;
+    }
+
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0x7);
+    canvas.drawRect(x, y, w, h);
+
+    int bh = (visibleRows * h) / totalRows;
+    int by = (displayRow * h) / totalRows;
+    canvas.setColor(0xf);
+    canvas.fillRect(x, y + by, w, bh);
+}
