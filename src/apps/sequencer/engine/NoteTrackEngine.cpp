@@ -96,6 +96,12 @@ void NoteTrackEngine::reset() {
     changePattern();
 }
 
+void NoteTrackEngine::restart() {
+    _freeRelativeTick = 0;
+    _sequenceState.reset();
+    _currentStep = -1;
+}
+
 void NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;

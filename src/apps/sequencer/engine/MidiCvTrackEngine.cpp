@@ -16,6 +16,9 @@ void MidiCvTrackEngine::reset() {
     resetVoices();
 }
 
+void MidiCvTrackEngine::restart() {
+}
+
 void MidiCvTrackEngine::tick(uint32_t tick) {
     if (_arpeggiatorEnabled) {
         tickArpeggiator(tick);

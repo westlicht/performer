@@ -18,6 +18,7 @@ public:
     virtual Track::TrackMode trackMode() const override { return Track::TrackMode::MidiCv; }
 
     virtual void reset() override;
+    virtual void restart() override;
     virtual void tick(uint32_t tick) override;
     virtual void update(float dt) override;
 

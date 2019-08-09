@@ -49,6 +49,12 @@ void CurveTrackEngine::reset() {
     changePattern();
 }
 
+void CurveTrackEngine::restart() {
+    _sequenceState.reset();
+    _currentStep = -1;
+    _currentStepFraction = 0.f;
+}
+
 void CurveTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;

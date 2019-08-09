@@ -493,7 +493,7 @@ void Engine::updatePlayState(bool ticked) {
             const auto &slot = song.slot(songState.currentSlot());
             for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
                 playState.trackState(trackIndex).setPattern(slot.pattern(trackIndex));
-                _trackEngines[trackIndex]->reset();
+                _trackEngines[trackIndex]->restart();
             }
         }
     }
