@@ -13,7 +13,8 @@
                 "-j"
             ],
             "problemMatcher": {
-                "base": "$gcc"
+                "base": "$gcc",
+                "fileLocation": "absolute"
             }
         },
         {
@@ -38,7 +39,8 @@
                 "-j"
             ],
             "problemMatcher": {
-                "base": "$gcc"
+                "base": "$gcc",
+                "fileLocation": "absolute"
             }
         },
         {
@@ -75,7 +77,8 @@
                 "-j"
             ],
             "problemMatcher": {
-                "base": "$gcc"
+                "base": "$gcc",
+                "fileLocation": "absolute"
             }
         },
         {
@@ -89,7 +92,8 @@
                 "clean"
             ],
             "problemMatcher": {
-                "base": "$gcc"
+                "base": "$gcc",
+                "fileLocation": "absolute"
             }
         },
 
