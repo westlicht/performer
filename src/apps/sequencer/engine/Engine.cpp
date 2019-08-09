@@ -248,7 +248,7 @@ float Engine::nudgeTempoStrength() const {
 }
 
 float Engine::syncMeasureFraction() const {
-    uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
+    uint32_t measureDivisor = _model.project().syncMeasure() * _model.project().timeSignature().ticks();
     return float(_tick % measureDivisor) / measureDivisor;
 }
 
@@ -389,7 +389,7 @@ void Engine::updatePlayState(bool ticked) {
     bool handleLatchedRequests = playState.executeLatchedRequests();
     bool hasRequests = hasImmediateRequests || hasSyncedRequests || handleLatchedRequests;
 
-    uint32_t measureDivisor = (_model.project().syncMeasure() * CONFIG_PPQN * 4);
+    uint32_t measureDivisor = _model.project().syncMeasure() * _model.project().timeSignature().ticks();
     bool handleSyncedRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
     bool handleSongAdvance = ticked && (_tick % measureDivisor == measureDivisor - 1);
 

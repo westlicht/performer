@@ -227,7 +227,7 @@ public:
         if (resetMeasure() == 0) {
             str("off");
         } else {
-            str("%d", resetMeasure());
+            str("%d %s", resetMeasure(), resetMeasure() > 1 ? "bars" : "bar");
         }
     }
 

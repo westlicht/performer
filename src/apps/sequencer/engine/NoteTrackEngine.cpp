@@ -111,7 +111,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
         }
     } else {
         uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
-        uint32_t measureDivisor = (sequence.resetMeasure() * CONFIG_PPQN * 4);
+        uint32_t measureDivisor = sequence.resetMeasure() * _model.project().timeSignature().ticks();
         uint32_t relativeTick = measureDivisor == 0 ? tick : tick % measureDivisor;
 
         // handle reset measure

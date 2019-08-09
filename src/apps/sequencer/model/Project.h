@@ -116,7 +116,7 @@ public:
     }
 
     void printSyncMeasure(StringBuilder &str) const {
-        str("%d", syncMeasure());
+        str("%d %s", syncMeasure(), syncMeasure() > 1 ? "bars" : "bar");
     }
 
     // scale
