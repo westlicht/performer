@@ -69,8 +69,12 @@ public:
         str("%d/%d", beats(), note());
     }
 
-    uint32_t ticks() const {
-        return (beats() * CONFIG_PPQN * 4) / note();
+    uint32_t noteDivisor() const {
+        return (CONFIG_PPQN * 4) / note();
+    }
+
+    uint32_t measureDivisor() const {
+        return beats() * noteDivisor();
     }
 
     void write(WriteContext &context) const {

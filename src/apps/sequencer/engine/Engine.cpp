@@ -247,9 +247,21 @@ float Engine::nudgeTempoStrength() const {
     return _nudgeTempo.strength();
 }
 
-float Engine::syncMeasureFraction() const {
-    uint32_t measureDivisor = _model.project().syncMeasure() * _model.project().timeSignature().ticks();
-    return float(_tick % measureDivisor) / measureDivisor;
+uint32_t Engine::noteDivisor() const {
+    return _model.project().timeSignature().noteDivisor();
+}
+
+uint32_t Engine::measureDivisor() const {
+    return _model.project().timeSignature().measureDivisor();
+}
+
+uint32_t Engine::syncDivisor() const {
+    return _model.project().syncMeasure() * measureDivisor();
+}
+
+float Engine::syncFraction() const {
+    uint32_t divisor = syncDivisor();
+    return float(_tick % divisor) / divisor;
 }
 
 bool Engine::trackEnginesConsistent() const {
@@ -389,9 +401,15 @@ void Engine::updatePlayState(bool ticked) {
     bool handleLatchedRequests = playState.executeLatchedRequests();
     bool hasRequests = hasImmediateRequests || hasSyncedRequests || handleLatchedRequests;
 
-    uint32_t measureDivisor = _model.project().syncMeasure() * _model.project().timeSignature().ticks();
-    bool handleSyncedRequests = (_tick % measureDivisor == 0 || _tick % measureDivisor == measureDivisor - 1);
-    bool handleSongAdvance = ticked && (_tick % measureDivisor == measureDivisor - 1);
+    bool handleSyncedRequests = ([this] () {
+        uint32_t divisor = syncDivisor();
+        return _tick % divisor == 0 || _tick % divisor == divisor - 1;
+    })();
+
+    bool handleSongAdvance = ([this, ticked] () {
+        uint32_t divisor = measureDivisor();
+        return ticked && _tick > 0 && (_tick % divisor == 0);
+    })();
 
     // handle mute & pattern requests
 

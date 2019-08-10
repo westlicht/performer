@@ -59,7 +59,7 @@ void SongPage::draw(Canvas &canvas) {
 
     const int slotWidth = Width / SlotCount;
 
-    float syncMeasureFraction = _engine.syncMeasureFraction();
+    float syncFraction = _engine.syncFraction();
 
     // draw selection cursor
     canvas.setBlendMode(BlendMode::Set);
@@ -71,7 +71,7 @@ void SongPage::draw(Canvas &canvas) {
         SongPainter::drawArrowUp(canvas, songState.currentSlot() * slotWidth + 1, 44, slotWidth - 2);
 
         int currentSlot = songState.currentSlot();
-        float progress = (songState.currentRepeat() + syncMeasureFraction) / song.slot(currentSlot).repeats();
+        float progress = (songState.currentRepeat() + syncFraction) / song.slot(currentSlot).repeats();
         SongPainter::drawProgress(canvas, currentSlot * slotWidth + 2, 48, slotWidth - 4, 2, progress);
     }
 
@@ -101,7 +101,7 @@ void SongPage::draw(Canvas &canvas) {
 
     if (playState.hasSyncedRequests() && songState.hasPlayRequests()) {
         canvas.setColor(0xf);
-        canvas.hline(0, 10, syncMeasureFraction * Width);
+        canvas.hline(0, 10, syncFraction * Width);
     }
 }
 
