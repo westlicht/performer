@@ -168,6 +168,7 @@ private:
     void updateClockSetup();
 
     Model &_model;
+    Project &_project;
     Dio &_dio;
     GateOutput &_gateOutput;
     Midi &_midi;

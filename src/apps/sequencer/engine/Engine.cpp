@@ -9,6 +9,7 @@
 
 Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi) :
     _model(model),
+    _project(model.project()),
     _dio(dio),
     _gateOutput(gateOutput),
     _midi(midi),
@@ -100,7 +101,7 @@ void Engine::update() {
 
     // update tempo
     _nudgeTempo.update(dt);
-    _clock.setMasterBpm(_model.project().tempo() * (1.f + _nudgeTempo.strength() * 0.1f));
+    _clock.setMasterBpm(_project.tempo() * (1.f + _nudgeTempo.strength() * 0.1f));
 
     // update clock setup
     updateClockSetup();
@@ -171,7 +172,7 @@ bool Engine::isLocked() {
 
 void Engine::togglePlay(bool shift) {
     if (shift) {
-        switch (_model.project().clockSetup().shiftMode()) {
+        switch (_project.clockSetup().shiftMode()) {
         case ClockSetup::ShiftMode::Restart:
             // restart
             clockStart();
@@ -234,9 +235,9 @@ void Engine::tapTempoReset() {
 }
 
 void Engine::tapTempoTap() {
-    float bpm = _model.project().tempo();
+    float bpm = _project.tempo();
     bpm = _tapTempo.tap(bpm);
-    _model.project().setTempo(bpm);
+    _project.setTempo(bpm);
 }
 
 void Engine::nudgeTempoSetDirection(int direction) {
@@ -248,15 +249,15 @@ float Engine::nudgeTempoStrength() const {
 }
 
 uint32_t Engine::noteDivisor() const {
-    return _model.project().timeSignature().noteDivisor();
+    return _project.timeSignature().noteDivisor();
 }
 
 uint32_t Engine::measureDivisor() const {
-    return _model.project().timeSignature().measureDivisor();
+    return _project.timeSignature().measureDivisor();
 }
 
 uint32_t Engine::syncDivisor() const {
-    return _model.project().syncMeasure() * measureDivisor();
+    return _project.syncMeasure() * measureDivisor();
 }
 
 float Engine::syncFraction() const {
@@ -266,7 +267,7 @@ float Engine::syncFraction() const {
 
 bool Engine::trackEnginesConsistent() const {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        if (trackEngine(trackIndex).trackMode() != _model.project().track(trackIndex).trackMode()) {
+        if (trackEngine(trackIndex).trackMode() != _project.track(trackIndex).trackMode()) {
             return false;
         }
     }
@@ -306,7 +307,7 @@ Engine::Stats Engine::stats() const {
 
 void Engine::onClockOutput(const Clock::OutputState &state) {
     _dio.clockOutput.set(state.clock);
-    switch (_model.project().clockSetup().clockOutputMode()) {
+    switch (_project.clockSetup().clockOutputMode()) {
     case ClockSetup::ClockOutputMode::Reset:
         _dio.resetOutput.set(state.reset);
         break;
@@ -320,7 +321,7 @@ void Engine::onClockOutput(const Clock::OutputState &state) {
 
 void Engine::onClockMidi(uint8_t data) {
     // TODO we should send a single byte with priority
-    const auto &clockSetup = _model.project().clockSetup();
+    const auto &clockSetup = _project.clockSetup();
     if (clockSetup.midiTx()) {
         _midi.send(MidiMessage(data));
     }
@@ -331,7 +332,7 @@ void Engine::onClockMidi(uint8_t data) {
 
 void Engine::updateTrackSetups() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-        auto &track = _model.project().track(trackIndex);
+        auto &track = _project.track(trackIndex);
         int linkTrack = track.linkTrack();
         const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
 
@@ -360,8 +361,8 @@ void Engine::updateTrackSetups() {
 }
 
 void Engine::updateTrackOutputs() {
-    const auto &gateOutputTracks = _model.project().gateOutputTracks();
-    const auto &cvOutputTracks = _model.project().cvOutputTracks();
+    const auto &gateOutputTracks = _project.gateOutputTracks();
+    const auto &cvOutputTracks = _project.cvOutputTracks();
 
     int trackGateIndex[CONFIG_TRACK_COUNT];
     int trackCvIndex[CONFIG_TRACK_COUNT];
@@ -392,9 +393,9 @@ void Engine::reset() {
 }
 
 void Engine::updatePlayState(bool ticked) {
-    auto &playState = _model.project().playState();
+    auto &playState = _project.playState();
     auto &songState = playState.songState();
-    const auto &song = _model.project().song();
+    const auto &song = _project.song();
 
     bool hasImmediateRequests = playState.hasImmediateRequests();
     bool hasSyncedRequests = playState.hasSyncedRequests();
@@ -566,7 +567,7 @@ void Engine::receiveMidi() {
     }
 
     // derive MIDI messages from CV/Gate input
-    switch (_model.project().cvGateInput()) {
+    switch (_project.cvGateInput()) {
     case Types::CvGateInput::Off:
         _cvGateToMidiConverter.reset();
         break;
@@ -625,7 +626,7 @@ void Engine::monitorMidi(const MidiMessage &message) {
         _trackEngines[trackIndex]->monitorMidi(_tick, message);
     };
 
-    auto currentTrack = _model.project().selectedTrackIndex();
+    auto currentTrack = _project.selectedTrackIndex();
 
     // detect when selected track has changed and a note is still active -> send note off
     if (int(_midiMonitoring.lastNote) != -1 && int(_midiMonitoring.lastTrack) != -1 && currentTrack != _midiMonitoring.lastTrack) {
@@ -652,7 +653,7 @@ void Engine::monitorMidi(const MidiMessage &message) {
 void Engine::initClock() {
     _clock.setListener(this);
 
-    const auto &clockSetup = _model.project().clockSetup();
+    const auto &clockSetup = _project.clockSetup();
 
     // Forward external clock signals to clock
     _dio.clockInput.setHandler([&] (bool value) {
@@ -717,10 +718,10 @@ void Engine::initClock() {
 }
 
 void Engine::updateClockSetup() {
-    auto &clockSetup = _model.project().clockSetup();
+    auto &clockSetup = _project.clockSetup();
 
     // Update clock swing
-    _clock.outputConfigureSwing(clockSetup.clockOutputSwing() ? _model.project().swing() : 0);
+    _clock.outputConfigureSwing(clockSetup.clockOutputSwing() ? _project.swing() : 0);
 
     if (!clockSetup.isDirty()) {
         return;
