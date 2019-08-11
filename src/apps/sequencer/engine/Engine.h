@@ -93,6 +93,7 @@ public:
     uint32_t tick() const { return _tick; }
     uint32_t noteDivisor() const;
     uint32_t measureDivisor() const;
+    float measureFraction() const;
     uint32_t syncDivisor() const;
     float syncFraction() const;
 

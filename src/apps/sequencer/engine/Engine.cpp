@@ -256,6 +256,11 @@ uint32_t Engine::measureDivisor() const {
     return _project.timeSignature().measureDivisor();
 }
 
+float Engine::measureFraction() const {
+    uint32_t divisor = measureDivisor();
+    return float(_tick % divisor) / divisor;
+}
+
 uint32_t Engine::syncDivisor() const {
     return _project.syncMeasure() * measureDivisor();
 }
@@ -402,15 +407,8 @@ void Engine::updatePlayState(bool ticked) {
     bool handleLatchedRequests = playState.executeLatchedRequests();
     bool hasRequests = hasImmediateRequests || hasSyncedRequests || handleLatchedRequests;
 
-    bool handleSyncedRequests = ([this] () {
-        uint32_t divisor = syncDivisor();
-        return _tick % divisor == 0 || _tick % divisor == divisor - 1;
-    })();
-
-    bool handleSongAdvance = ([this, ticked] () {
-        uint32_t divisor = measureDivisor();
-        return ticked && _tick > 0 && (_tick % divisor == 0);
-    })();
+    bool handleSyncedRequests = _tick % syncDivisor() == 0;
+    bool handleSongAdvance = ticked && _tick > 0 && _tick % measureDivisor() == 0;
 
     // handle mute & pattern requests
 

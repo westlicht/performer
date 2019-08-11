@@ -41,7 +41,6 @@ void PerformerPage::draw(Canvas &canvas) {
     constexpr int Border = 4;
     constexpr int BorderRequested = 6;
 
-    float syncFraction = _engine.syncFraction();
     bool hasRequested = false;
 
     canvas.setFont(Font::Tiny);
@@ -90,7 +89,7 @@ void PerformerPage::draw(Canvas &canvas) {
 
     if (playState.hasSyncedRequests() && hasRequested) {
         canvas.setColor(0xf);
-        canvas.hline(0, 10, syncFraction * Width);
+        canvas.hline(0, 10, _engine.syncFraction() * Width);
     }
 }
 
