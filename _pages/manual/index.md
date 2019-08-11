@@ -226,7 +226,7 @@ Fills can be used as an effective tool during live performance. They allow to te
 
 Songs are used to chain together a sequence of patterns for each track. This can either be used to quickly chain together patterns during a live performance to get more variation or to create an entire arrangement of a song.
 
-A song consists of up to 16 slots, each holding a set of patterns to be played on the 8 tracks in addition to specifying how many times the slot is repeated when played back. Songs are controlled from the [Song](#pages-song) page.
+A song consists of up to 64 slots, each holding a set of patterns to be played on the 8 tracks in addition to specifying for how many bars/measures the slot is played for. Songs are controlled from the [Song](#pages-song) page.
 
 <!-- Scale -->
 
@@ -468,7 +468,9 @@ The following parameters are available:
 | Name | - | Press `ENCODER` to enter text editor for changing the project name. |
 | Tempo | 1.0 - 1000.0 BPM | Tempo of the master clock. |
 | Swing | 50% - 75% | Global swing amount. |
-| Sync Measure | 1 - 128 | Multiple of measures/bars at which to execute _syncing_ (see [Pattern](#pages-pattern) and [Performer](#pages-performer) pages) as well as the duration each pattern slot is played for in song mode (see [Song](#pages-song) page). |
+| Time Signature | Beats/Note | Time signature defining the musical measure/bar length for _Sync Measure_ and _Reset Measure_ on sequences. The time signature is also used to define the length of a bar in song mode. | 
+| Sync Measure | 1 - 128 bars | Multiple of measures/bars at which to execute _syncing_ (see [Pattern](#pages-pattern) and [Performer](#pages-performer) pages). |
+ page). |
 | Scale | [Scales](#appendix-scales) | Default scale. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Default root note. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Record Mode | Overdub, Overwrite, Step Record | Recording mode (see [Recording](#appendix-recording)). |
@@ -613,7 +615,7 @@ If a track is in MIDI/CV mode, the following parameters are available:
 | Mode | [Arpeggiator Modes](#appendix-arpeggiator-modes) | Arpeggiator mode (sequence). |
 | Divisor | [Divisors](#appendix-divisors) | Divisor for arpeggiator sequence. |
 | Gate Length | 1-100% | Gate length generated notes. |
-| Octaves | 1-5 | Number of octaves to play the arpeggiator sequence. |
+| Octaves | Off, Up 1-5, Up Down 1-5, Down 1-5, Down Up 1-5 | Order and number of octaves to play the arpeggiator sequence over. The note order is reverse when playing _down_ the octaves. |
 
 > Note: _Low Note_ and _High Note_ can be used to setup key ranges such that multiple MIDI/CV tracks can be played in split keyboard mode.
 
@@ -652,7 +654,7 @@ If a track is in _Note_ mode, the following parameters are available:
 | Last Step | 1 - 64 | Last step to play. Hold `SHIFT` to edit both first and last step together. |
 | Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
 | Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
-| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
+| Reset Measure | off, 1 - 128 bars | Number of measures/bars at which to reset the sequence. |
 | Scale | [Scales](#appendix-scales) | Scale to use for this sequence. If set to _Default_, uses the default scale set on the [Project](#pages-project) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Root note to use for this sequence. If set to _Default_, uses the default root note set on the [Project](#pages-project) page. |
 
@@ -668,7 +670,7 @@ If a track is in _Curve_ mode, the following parameters are available:
 | Last Step | 1 - 64 | Last step to play. Hold `SHIFT` to edit both first and last step together. |
 | Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
 | Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
-| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
+| Reset Measure | off, 1 - 128 bars | Number of measures/bars at which to reset the sequence. |
 | Range | 1V - 5V Unipolar, 1V - 5V Bipolar | Voltage range to use for this sequence. |
 
 <!-- Steps -->
@@ -781,37 +783,49 @@ The _Song_ page is entered using `PAGE` + `SONG`.
 
 ![](images/page-song.png)
 
-A song consists of up to 16 slots, each referencing a set of 8 patterns to be played on the 8 tracks. Each slot is played for the duration set by _Sync Measure_ on the [Project](#pages-project) page and can be repeated up to 8 times.
+A song consists of up to 64 slots, each referencing a set of 8 patterns to be played on the 8 tracks. Each slot is played for a number of bars/measures which duration is defined by the _Time Signature_ on the [Project](#pages-project) page.
+
+<h4>Context Menu</h4>
+
+Hold `SHIFT` + `PAGE` to open the context menu and access the following functions:
+
+| Button | Function | Description |
+| :--- | :--- | :--- |
+| `F1` | Init | Initialize the song. |
 
 <h4>Pattern Chaining</h4>
 
-A quick way to create songs on the fly is pattern chaining. This mode is specifically made for live performance to quickly create more interesting structures by chaining multiple patterns together.
+A quick way to create songs on the fly is pattern chaining. This function is specifically made for live performance to quickly create more interesting structures by chaining multiple patterns together.
 
-To create a pattern chain, hold `F2` and press `S[1-16]` to select the pattern to be played for the newly created slot. If the same pattern is added multiple times by pressing `S[1-16]` again, the repeat count of the last added slot is incremented. For example, holding `F2` and pressing the sequence `S1`, `S1`, `S1`, `S2`, `S1`, `S1`, `S1`, `S3` will create the following slot list:
+To create a pattern chain, hold `F1` and press `S[1-16]` to select the pattern to be played for the newly created slot. If the same pattern is added multiple times by pressing `S[1-16]` again, the bar/measure count of the last added slot is incremented. For example, holding `F1` and pressing the sequence `S1`, `S1`, `S1`, `S2`, `S1`, `S1`, `S1`, `S3` will create the following slot list:
 
 ![](images/page-song-chain-example.png)
 
-Note that when creating pattern chains, the song mode is automatically started.
+> Note: When creating a pattern chain, the song is immediately activated for playback and the sequencer clock is started if not already running.
 
-<h4>Editing</h4>
+<h4>Editing Slots</h4>
 
-- Rotate the `ENCODER` or use `PREV` and `NEXT` to select any of the assigned slots indicated with the small cursor above the slots.
-- Press `F1` to clear the slot list.
-- Press `F3` to add a slot at the end of the list.
-- Press `SHIFT` + `F3` to insert a slot at the current cursor position.
-- Press `F4` to remove the selected slot.
-- Hold `SHIFT` and rotate the `ENCODER` or use `PREV` and `NEXT` to move the selected slot forward and backward in the slot list.
+- Rotate the `ENCODER` or use `PREV` and `NEXT` to select a slot in the list.
+- Press `F2` to add a slot at the end of the list.
+- Press `SHIFT` + `F2` to insert a slot at the current cursor position.
+- Press `F3` to remove the selected slot.
+- Press `F4` to duplicate the selected slot.
+- Hold `SHIFT` and press `PREV` or `NEXT` to move the selected slot backward and forward in the list.
+- Hold `SHIFT` and rotate the `ENCODER` to adjust the number of bars/measures a slot is played for.
+- Hold `SHIFT` and press `S[1-16]` to selected the number of bars/measures (1-16).
 - Press `S[1-16]` to assign a pattern to all tracks of the selected slot.
+- Hold any combination of `T[1-8]` and rotate the `ENCODER` to adjust the patterns of a group of tracks of the selected slot.
 - Hold any combination of `T[1-8]` and press `S[1-16]` to assign a pattern to a group of tracks of the selected slot.
-- Press and rotate the `ENCODER` to adjust the number of repeats on the selected slot.
 
 <h4>Playback</h4>
 
-Song playback can be started and stopped independently of the sequencer actually running. This allows to engage song playback while the sequencer is already running, or stop song playback without stopping the sequencer. Song playback simply changes the playing patterns automatically and in sync.
+Song playback can be started and stopped independently of the sequencer actually running. This allows to engage song playback while the sequencer is already running, or stop song playback without stopping the sequencer. When song playback is activated, the sequencer simply changes the playing patterns automatically and in sync.
 
-Press `F5` to start playback of the song from the currently selected slot. This will also start the sequencer if it is not already running. Playback will be immediate, meaning that the currently playing pattern is switched instantaneously. To start playback on the next _Sync Measure_, use `SHIFT` + `F5` to start playback. A progress bar will appear at the top of the page, indicating the time until playback is started. To stop playback, simply press `F5` again.
+Press `F5` to start playback of the song from the currently selected slot. This will also start the sequencer if it is not already running. Playback will be immediate, meaning that the currently playing pattern is switched instantaneously. To start playback on the next _Sync Measure_, use `SHIFT` + `F5`. A progress bar will appear at the top of the page, indicating the time until playback is started. To stop playback, simply press `F5` again. Playback can also be started by selecting a slot and pressing the `ENCODER`. This is also useful quickly switch to a different slot while playback is active. Again, to switch slot on the next _Sync Measure_, hold `SHIFT` and press the `ENCODER`.
 
-During playback, the current slot being played is indicated by a small cursor below the slot list with a small progress bar indicating the progress through the slot. In addition, the currently playing pattern in the header list is highlighted.
+During playback, the current slot is indicated with a small arrow and also shown on the left side together with a progress bar, indicating the duration for which the slot is played for. In the top left corner, the current bar and note is also displayed.
+
+![](images/page-song-playback.png)
 
 > Note: Song mode can also be used to toggle between different sets of patterns. Simply use slots to define the pattern sets and then select a slot and press `F5` twice to quickly start/stop song playback to switch to a new set of patterns.
 
