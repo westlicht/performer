@@ -28,11 +28,12 @@ def process_images():
 
     def copyIfChanged(infile, outfile):
         comparefile = "_compare.png"
-        if call(["compare", "-quiet", "-metric", "ae", infile, outfile, comparefile], stdout=DEVNULL, stderr=DEVNULL) == 1:
+        if not os.path.exists(outfile) or call(["compare", "-quiet", "-metric", "ae", infile, outfile, comparefile], stdout=DEVNULL, stderr=DEVNULL) == 1:
             shutil.copyfile(infile, outfile)
         else:
             os.remove(infile)
-        os.remove(comparefile)
+        if os.path.exists(comparefile):
+            os.remove(comparefile)
 
     pages = [
         "page-clock.png",
@@ -62,6 +63,7 @@ def process_images():
         "page-routing-edit.png",
         "page-routing.png",
         "page-song-chain-example.png",
+        "page-song-playback.png",
         "page-song.png",
         "page-system-cal-edit.png",
         "page-system-cal.png",
