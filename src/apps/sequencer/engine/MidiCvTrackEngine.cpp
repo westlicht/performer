@@ -48,8 +48,6 @@ bool MidiCvTrackEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
         }
     }
 
-    bool consumed = false;
-
     if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
         if (_arpeggiatorEnabled) {
             if (message.isNoteOn()) {
@@ -75,11 +73,10 @@ bool MidiCvTrackEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
 
             updateActivity();
         }
-
-        consumed = true;
     }
 
-    return consumed;
+    // do not consume midi events to allow other midi/cv tracks react to the same events
+    return false;
 }
 
 bool MidiCvTrackEngine::activity() const {
