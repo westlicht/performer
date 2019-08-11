@@ -39,6 +39,7 @@ public:
         }
 
         void setPattern(int trackIndex, int pattern) {
+            pattern = clamp(pattern, 0, CONFIG_PATTERN_COUNT - 1);
             uint32_t patterns = _patterns & ~(0xf << (trackIndex << 2));
             patterns |= (pattern & 0xf) << (trackIndex << 2);
             _patterns = patterns;
@@ -49,7 +50,7 @@ public:
         }
 
         void setRepeats(int repeats) {
-            _repeats = clamp(repeats, 1, 8);
+            _repeats = clamp(repeats, 1, 128);
         }
 
         uint32_t _patterns;
@@ -81,8 +82,9 @@ public:
     void duplicateSlot(int slotIndex);
     void swapSlot(int fromIndex, int toIndex);
 
-    void setPattern(int slotIndex, int trackIndex, int pattern);
     void setPattern(int slotIndex, int pattern);
+    void setPattern(int slotIndex, int trackIndex, int pattern);
+    void editPattern(int slotIndex, int trackIndex, int value);
     void setRepeats(int slotIndex, int repeats);
     void editRepeats(int slotIndex, int value);
 

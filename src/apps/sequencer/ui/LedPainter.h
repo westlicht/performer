@@ -22,7 +22,7 @@ public:
 
     static void drawMutes(Leds &leds, uint8_t activeMutes, uint8_t requestedMutes);
     static void drawFills(Leds &leds, uint8_t activeFills);
-    static void drawSongSlot(Leds &leds, uint8_t activePattern, uint16_t usedPatterns);
+    static void drawSongSlot(Leds &leds, uint16_t usedPatterns);
 
     static void drawMode(Leds &leds, int index, int count);
     static void drawValue(Leds &leds, int index, int count);

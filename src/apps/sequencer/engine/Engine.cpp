@@ -465,6 +465,11 @@ void Engine::updatePlayState(bool ticked) {
                 songState.setCurrentRepeat(0);
                 songState.setPlaying(true);
                 handleSongAdvance = false;
+
+                // start clock if not running
+                if (!clockRunning()) {
+                    clockStart();
+                }
             }
         }
 

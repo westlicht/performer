@@ -20,10 +20,14 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    static const int SlotCount = 16;
+    static const int SlotCount = CONFIG_SONG_SLOT_COUNT;
+    static const int RowCount = 4;
 
     void setSelectedSlot(int slot);
     void moveSelectedSlot(int offset, bool moveSlot);
+    void scrollTo(int row);
+
+    uint8_t pressedTrackKeys() const;
 
     void contextShow();
     void contextAction(int index);
@@ -38,4 +42,5 @@ private:
 
     Mode _mode;
     int _selectedSlot = -1;
+    int _displayRow = 0;
 };

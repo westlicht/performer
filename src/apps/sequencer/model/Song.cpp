@@ -70,15 +70,21 @@ void Song::swapSlot(int fromIndex, int toIndex) {
     }
 }
 
+void Song::setPattern(int slotIndex, int pattern) {
+    if (isActiveSlot(slotIndex)) {
+        slot(slotIndex).setPattern(pattern);
+    }
+}
+
 void Song::setPattern(int slotIndex, int trackIndex, int pattern) {
     if (isActiveSlot(slotIndex)) {
         slot(slotIndex).setPattern(trackIndex, pattern);
     }
 }
 
-void Song::setPattern(int slotIndex, int pattern) {
+void Song::editPattern(int slotIndex, int trackIndex, int value) {
     if (isActiveSlot(slotIndex)) {
-        slot(slotIndex).setPattern(pattern);
+        slot(slotIndex).setPattern(trackIndex, slot(slotIndex).pattern(trackIndex) + value);
     }
 }
 

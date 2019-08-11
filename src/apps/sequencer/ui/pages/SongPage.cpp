@@ -20,11 +20,11 @@ static const ContextMenuModel::Item contextMenuItems[] = {
 };
 
 enum class Function {
-    Chain           = 0,
-    Add             = 1,
-    Remove          = 2,
-    Duplicate       = 3,
-    PlayStopJump    = 4,
+    Chain       = 0,
+    Add         = 1,
+    Remove      = 2,
+    Duplicate   = 3,
+    PlayStop    = 4,
 };
 
 SongPage::SongPage(PageManager &manager, PageContext &context) :
@@ -50,69 +50,137 @@ void SongPage::draw(Canvas &canvas) {
 
     bool isShift = globalKeyState()[Key::Shift];
     bool isPlaying = songState.playing();
-    const char *playText = isPlaying ? (isShift ? "JUMP" : "STOP") : "PLAY";
-    const char *functionNames[] = { "CHAIN", isShift ? "INSERT" : "ADD", "REMOVE", "DUPL", playText };
+    const char *functionNames[] = { "CHAIN", isShift ? "INSERT" : "ADD", "REMOVE", "DUPL", isPlaying ? "STOP" : "PLAY" };
+
+    uint8_t selectedTracks = pressedTrackKeys();
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SONG");
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
-    const int slotWidth = Width / SlotCount;
+    const int colWidth[] = { 16, 16, 20, 20, 20, 20, 20, 20, 20, 20 };
+    const char *colHeader[] = { "#", "N", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8" };
+    const int rowHeight = 8;
+    const int tableOriginX = 60;
+    const int tableOriginY = 11;
 
-    float syncFraction = _engine.syncFraction();
+    int y = tableOriginY;
 
-    // draw selection cursor
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    SongPainter::drawArrowDown(canvas, _selectedSlot * slotWidth + 1, 16, slotWidth - 2);
 
-    // draw play cursor and slot progress
-    if (songState.playing()) {
-        SongPainter::drawArrowUp(canvas, songState.currentSlot() * slotWidth + 1, 44, slotWidth - 2);
+    auto isHighlighted = [isShift, selectedTracks] (int colIndex) {
+        return
+            (colIndex == 0) ||                          // always highlight id column
+            (!isShift && selectedTracks == 0) ||        // highlight by default
+            (isShift && colIndex == 1) ||               // highlight repeats column
+            (selectedTracks & (1 << (colIndex - 2)));   // highlight track columns
+    };
 
-        int currentSlot = songState.currentSlot();
-        float progress = (songState.currentRepeat() + syncFraction) / song.slot(currentSlot).repeats();
-        SongPainter::drawProgress(canvas, currentSlot * slotWidth + 2, 48, slotWidth - 4, 2, progress);
+    // draw table header
+    {
+        int x = tableOriginX;
+        for (int colIndex = 0; colIndex < 10; ++colIndex) {
+            canvas.setColor(isHighlighted(colIndex) ? 0xf : 0x7);
+            canvas.drawTextCentered(x, y, colWidth[colIndex], rowHeight, colHeader[colIndex]);
+            x += colWidth[colIndex];
+        }
+        y += rowHeight;
     }
 
-    for (int i = 0; i < SlotCount; ++i) {
-        int slotIndex = i;
+    // draw table entries
+    for (int rowIndex = 0; rowIndex < RowCount; ++rowIndex) {
+        int slotIndex = _displayRow + rowIndex;
         const auto &slot = song.slot(slotIndex);
-        bool active = slotIndex < song.slotCount();
+        bool slotActive = slotIndex < song.slotCount();
 
-        int x = i * slotWidth;
-        int y = 20;
+        int x = tableOriginX;
 
-        // pattern block
-        canvas.setColor(active ? 0xf : 0x7);
-        canvas.drawRect(x + 2, y + 2, slotWidth - 4, slotWidth - 4);
-
-        // details
-        if (active) {
+        // draw play cursor
+        if (songState.playing() && slotIndex == songState.currentSlot()) {
             canvas.setColor(0xf);
-            FixedStringBuilder<8> patternStr("%d", slot.pattern(_project.selectedTrackIndex()) + 1);
-            canvas.drawText(x + (slotWidth - canvas.textWidth(patternStr) + 1) / 2, y + 9, patternStr);
-            if (slot.repeats() > 0) {
-                FixedStringBuilder<8> repeatsStr("*%d", slot.repeats());
-                canvas.drawText(x + (slotWidth - canvas.textWidth(repeatsStr) + 1) / 2, y + 20, repeatsStr);
-            }
+            SongPainter::drawArrowRight(canvas, x - 4, y, 4, rowHeight);
         }
+
+        // draw table cells
+        for (int colIndex = 0; colIndex < 10; ++colIndex) {
+            canvas.setColor(slotIndex == _selectedSlot && isHighlighted(colIndex) ? 0xf : 0x7);
+            FixedStringBuilder<8> str;
+            if (colIndex == 0) {
+                str("%d", slotIndex + 1);
+            } else if (colIndex == 1) {
+                if (slotActive) {
+                    str("%d", slot.repeats());
+                } else {
+                    str("-");
+                }
+            } else {
+                if (slotActive) {
+                    int trackIndex = colIndex - 2;
+                    str("P%d", slot.pattern(trackIndex) + 1);
+                } else {
+                    str("-");
+                }
+            }
+            canvas.drawTextCentered(x, y, colWidth[colIndex], rowHeight, str);
+            x += colWidth[colIndex];
+        }
+        y += rowHeight;
+    }
+
+    WindowPainter::drawScrollbar(canvas, 252, tableOriginY + rowHeight + 2, 4, RowCount * rowHeight - 2, song.slotCount(), RowCount, _displayRow);
+
+    // draw play info
+    if (songState.playing()) {
+        int currentSlot = songState.currentSlot();
+        int currentRepeat = songState.currentRepeat();
+        int repeats = song.slot(currentSlot).repeats();
+        float slotProgress = (currentRepeat + _engine.measureFraction()) / repeats;
+
+        uint32_t beatsPerMeasure = _project.timeSignature().beats();
+        uint32_t beat = _engine.tick() / _engine.noteDivisor();
+
+        canvas.setBlendMode(BlendMode::Set);
+        canvas.setColor(0xf);
+
+        canvas.setFont(Font::Tiny);
+        canvas.drawTextCentered(8, 10, 32, 10, FixedStringBuilder<16>("%d.%d", beat / beatsPerMeasure + 1, beat % beatsPerMeasure + 1));
+
+        canvas.setFont(Font::Small);
+        canvas.drawTextCentered(8, 25, 32, 10, FixedStringBuilder<8>("S%d", currentSlot + 1));
+
+        canvas.setFont(Font::Tiny);
+        SongPainter::drawProgress(canvas, 8, 40, 32, 2, slotProgress);
     }
 
     if (playState.hasSyncedRequests() && songState.hasPlayRequests()) {
         canvas.setColor(0xf);
-        canvas.hline(0, 10, syncFraction * Width);
+        canvas.hline(0, 10, _engine.syncFraction() * Width);
     }
 }
 
 void SongPage::updateLeds(Leds &leds) {
+    bool isShift = globalKeyState()[Key::Shift];
+    uint8_t selectedTracks = pressedTrackKeys();
+
+    LedPainter::drawTrackGates(leds, _engine, _project.playState());
+
     if (_selectedSlot >= 0) {
         const auto &slot = _project.song().slot(_selectedSlot);
-        uint16_t usedPatterns = 0;
-        for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
-            usedPatterns |= (1<<slot.pattern(trackIndex));
+        if (isShift) {
+            int repeats = slot.repeats();
+            if (repeats <= 16) {
+                leds.set(MatrixMap::fromStep(repeats - 1), true, true);
+            }
+        } else {
+            uint16_t usedPatterns = 0;
+            for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+                if (selectedTracks == 0 || selectedTracks & (1 << trackIndex)) {
+                    usedPatterns |= (1 << slot.pattern(trackIndex));
+                }
+            }
+            LedPainter::drawSongSlot(leds, usedPatterns);
         }
-        LedPainter::drawSongSlot(leds, slot.pattern(_project.selectedTrackIndex()), usedPatterns);
     }
 }
 
@@ -155,6 +223,10 @@ void SongPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.isTrackSelect()) {
+        event.consume();
+    }
+
     if (key.isFunction()) {
         switch (Function(key.function())) {
         case Function::Add:
@@ -174,18 +246,11 @@ void SongPage::keyPress(KeyPressEvent &event) {
             song.duplicateSlot(_selectedSlot);
             setSelectedSlot(_selectedSlot + 1);
             break;
-        case Function::PlayStopJump:
+        case Function::PlayStop:
             if (playState.songState().playing()) {
-                if (key.shiftModifier()) {
-                    playState.playSong(_selectedSlot);
-                } else {
                 playState.stopSong();
-                }
             } else {
-                playState.playSong(_selectedSlot, key.shiftModifier() ? PlayState::ExecuteType::Synced : PlayState::ExecuteType::Immediate);
-                if (!_engine.clockRunning()) {
-                    _engine.clockStart();
-                }
+                playState.playSong(_selectedSlot, (key.shiftModifier() && _engine.clockRunning()) ? PlayState::ExecuteType::Synced : PlayState::ExecuteType::Immediate);
             }
             break;
         default:
@@ -195,12 +260,20 @@ void SongPage::keyPress(KeyPressEvent &event) {
         event.consume();
     }
 
-    if (key.isStep()) {
-        int pattern = key.step();
+    if (key.isEncoder()) {
+        playState.playSong(_selectedSlot, (key.shiftModifier() && _engine.clockRunning()) ? PlayState::ExecuteType::Synced : PlayState::ExecuteType::Immediate);
 
-        switch (_mode) {
-        case Mode::Idle:
-            if (_selectedSlot >= 0) {
+        event.consume();
+    }
+
+    if (key.isStep()) {
+        if (key.shiftModifier()) {
+            song.setRepeats(_selectedSlot, key.step() + 1);
+        } else {
+            int pattern = key.step();
+
+            switch (_mode) {
+            case Mode::Idle: {
                 bool globalChange = true;
                 for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
                     if (globalKeyState()[MatrixMap::fromTrack(trackIndex)]) {
@@ -211,17 +284,18 @@ void SongPage::keyPress(KeyPressEvent &event) {
                 if (globalChange) {
                     song.setPattern(_selectedSlot, pattern);
                 }
+                break;
             }
-            break;
-        case Mode::Chain:
-            song.chainPattern(pattern);
-            if (!playState.songState().playing()) {
-                playState.playSong(0);
+            case Mode::Chain:
+                song.chainPattern(pattern);
+                if (!playState.songState().playing()) {
+                    playState.playSong(0);
+                }
+                setSelectedSlot(SlotCount);
+                break;
+            default:
+                break;
             }
-            setSelectedSlot(SlotCount);
-            break;
-        default:
-            break;
         }
 
         event.consume();
@@ -238,16 +312,28 @@ void SongPage::keyPress(KeyPressEvent &event) {
 }
 
 void SongPage::encoder(EncoderEvent &event) {
-    if (event.pressed()) {
+    bool isShift = globalKeyState()[Key::Shift];
+    uint8_t selectedTracks = pressedTrackKeys();
+
+    if (isShift) {
         _project.song().editRepeats(_selectedSlot, event.value());
+    } else if (selectedTracks) {
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            if (selectedTracks & (1 << trackIndex)) {
+                _project.song().editPattern(_selectedSlot, trackIndex, event.value());
+            }
+        }
     } else {
-        moveSelectedSlot(event.value(), globalKeyState()[Key::Shift]);
+        moveSelectedSlot(event.value(), false);
     }
+
+    event.consume();
 }
 
 void SongPage::setSelectedSlot(int slot) {
     int slotCount = _project.song().slotCount();
     _selectedSlot = slotCount > 0 ? clamp(slot, 0, slotCount - 1) : -1;
+    scrollTo(_selectedSlot);
 }
 
 void SongPage::moveSelectedSlot(int offset, bool moveSlot) {
@@ -255,6 +341,27 @@ void SongPage::moveSelectedSlot(int offset, bool moveSlot) {
         _project.song().swapSlot(_selectedSlot, _selectedSlot + offset);
     }
     setSelectedSlot(_selectedSlot + offset);
+}
+
+void SongPage::scrollTo(int row) {
+    if (row < _displayRow) {
+        _displayRow = std::max(0, row);
+    } else if (row >= _displayRow + RowCount) {
+        _displayRow = row - (RowCount - 1);
+    }
+    if (_displayRow + RowCount >= _project.song().slotCount()) {
+        _displayRow = std::max(0, _project.song().slotCount() - RowCount);
+    }
+}
+
+uint8_t SongPage::pressedTrackKeys() const {
+    uint8_t tracks = 0;
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        if (globalKeyState()[MatrixMap::fromTrack(trackIndex)]) {
+            tracks |= (1 << trackIndex);
+        }
+    }
+    return tracks;
 }
 
 void SongPage::contextShow() {
