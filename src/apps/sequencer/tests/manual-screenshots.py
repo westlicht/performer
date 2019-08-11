@@ -100,7 +100,9 @@ c.selectPage("track").screenshot("page-midi-cv-track")
 
 # page-song
 c.selectPage("song").screenshot("page-song")
-c.down("f2").wait(100).press("step1").press("step1").press("step1").press("step2").press("step1").press("step1").press("step1").press("step3").up("f2").wait(100).screenshot("page-song-chain-example")
+c.down("f1").wait(100).press("step1").press("step1").press("step1").press("step2").press("step1").press("step1").press("step1").press("step3").up("f1").wait(100).press("play").press("f5").screenshot("page-song-chain-example")
+c.rotateEncoder(-5).press("f5").wait(1500).screenshot("page-song-playback")
+c.press("f5").press("play").wait(100)
 
 # page-system
 c.selectPage("system").screenshot("page-system-confirm")
