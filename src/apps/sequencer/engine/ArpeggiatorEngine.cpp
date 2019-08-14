@@ -1,6 +1,7 @@
 #include "ArpeggiatorEngine.h"
 
 #include "Config.h"
+#include "Groove.h"
 
 #include "core/Debug.h"
 #include "core/utils/Random.h"
@@ -42,7 +43,7 @@ void ArpeggiatorEngine::noteOff(int note) {
     // printNotes();
 }
 
-void ArpeggiatorEngine::tick(uint32_t tick) {
+void ArpeggiatorEngine::tick(uint32_t tick, int swing) {
     if (!_arpeggiator.hold() && _noteHoldCount == 0) {
         reset();
     }
@@ -61,9 +62,10 @@ void ArpeggiatorEngine::tick(uint32_t tick) {
 
             uint8_t note = uint8_t(clamp(_notes[noteIndex].note + _octave * 12, 0, 127));
             uint32_t length = std::max(uint32_t(1), uint32_t((divisor * _arpeggiator.gateLength()) / 100));
-            // delay note on if gate length is at maximum to enable legato style playback
-            _eventQueue.push({ Event::NoteOn, tick + _arpeggiator.gateLength() == 100 ? 1 : 0, note, 127 });
-            _eventQueue.push({ Event::NoteOff, tick + length, note, 0 });
+            // delay note off if gate length is at maximum to enable legato style playback
+            length += _arpeggiator.gateLength() == 100 ? 1u : 0u;
+            _eventQueue.push({ Event::NoteOn, Groove::applySwing(tick, swing), note, 127 });
+            _eventQueue.push({ Event::NoteOff, Groove::applySwing(tick + length, swing), note, 0 });
         }
     }
 }

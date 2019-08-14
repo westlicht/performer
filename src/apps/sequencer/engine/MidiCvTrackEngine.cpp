@@ -147,7 +147,7 @@ void MidiCvTrackEngine::updateArpeggiator() {
 }
 
 void MidiCvTrackEngine::tickArpeggiator(uint32_t tick) {
-    _arpeggiatorEngine.tick(tick);
+    _arpeggiatorEngine.tick(tick, swing());
 
     ArpeggiatorEngine::Event event;
     while (_arpeggiatorEngine.getEvent(tick, event)) {
