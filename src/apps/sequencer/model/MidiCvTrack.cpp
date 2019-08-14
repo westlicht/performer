@@ -16,7 +16,7 @@ void MidiCvTrack::clear() {
     _source.clear();
     setVoices(1);
     setVoiceConfig(VoiceConfig::Pitch);
-    setNotePriority(NotePriority::LowestNote);
+    setNotePriority(NotePriority::LastNote);
     setLowNote(0);
     setHighNote(127);
     setPitchBendRange(2);
