@@ -83,4 +83,9 @@ private:
 
     int16_t _pitchBend;
     uint8_t _channelPressure;
+
+    // slides for pitch, only valid in monophonic mode
+    bool _slideActive;
+    float _pitchCvOutputTarget;
+    float _pitchCvOutput;
 };

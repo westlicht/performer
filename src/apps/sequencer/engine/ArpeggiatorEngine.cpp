@@ -61,7 +61,8 @@ void ArpeggiatorEngine::tick(uint32_t tick) {
 
             uint8_t note = uint8_t(clamp(_notes[noteIndex].note + _octave * 12, 0, 127));
             uint32_t length = std::max(uint32_t(1), uint32_t((divisor * _arpeggiator.gateLength()) / 100));
-            _eventQueue.push({ Event::NoteOn, tick, note, 127 });
+            // delay note on if gate length is at maximum to enable legato style playback
+            _eventQueue.push({ Event::NoteOn, tick + _arpeggiator.gateLength() == 100 ? 1 : 0, note, 127 });
             _eventQueue.push({ Event::NoteOff, tick + length, note, 0 });
         }
     }
