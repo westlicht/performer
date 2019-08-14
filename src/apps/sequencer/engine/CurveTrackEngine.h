@@ -48,8 +48,6 @@ private:
     void updateRecordValue();
     void updateRecording(uint32_t relativeTick, uint32_t divisor);
 
-    uint32_t applySwing(uint32_t tick) const;
-
     CurveTrack &_curveTrack;
 
     TrackLinkData _linkData;

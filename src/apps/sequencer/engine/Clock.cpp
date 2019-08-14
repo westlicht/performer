@@ -414,7 +414,7 @@ void Clock::outputTick(uint32_t tick) {
     // generate output clock with swing
 
     auto applySwing = [this] (uint32_t tick) {
-        return _output.swing != 0 ? Groove::swing(tick, CONFIG_PPQN / 4, _output.swing) : tick;
+        return _output.swing != 0 ? Groove::applySwing(tick, _output.swing) : tick;
     };
 
     if (tick == _output.nextTick) {

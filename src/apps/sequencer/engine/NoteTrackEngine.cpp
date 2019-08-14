@@ -285,20 +285,20 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
             uint32_t retriggerLength = divisor / stepRetrigger;
             uint32_t retriggerOffset = 0;
             while (stepRetrigger-- > 0 && retriggerOffset <= stepLength) {
-                _gateQueue.pushReplace({ applySwing(tick + gateOffset + retriggerOffset), true });
-                _gateQueue.pushReplace({ applySwing(tick + gateOffset + retriggerOffset + retriggerLength / 2), false });
+                _gateQueue.pushReplace({ Groove::applySwing(tick + gateOffset + retriggerOffset, swing()), true });
+                _gateQueue.pushReplace({ Groove::applySwing(tick + gateOffset + retriggerOffset + retriggerLength / 2, swing()), false });
                 retriggerOffset += retriggerLength;
             }
         } else {
-            _gateQueue.pushReplace({ applySwing(tick + gateOffset), true });
-            _gateQueue.pushReplace({ applySwing(tick + gateOffset + stepLength), false });
+            _gateQueue.pushReplace({ Groove::applySwing(tick + gateOffset, swing()), true });
+            _gateQueue.pushReplace({ Groove::applySwing(tick + gateOffset + stepLength, swing()), false });
         }
     }
 
     if (stepGate || _noteTrack.cvUpdateMode() == NoteTrack::CvUpdateMode::Always) {
         const auto &scale = evalSequence.selectedScale(_model.project().scale());
         int rootNote = evalSequence.selectedRootNote(_model.project().rootNote());
-        _cvQueue.push({ applySwing(tick + gateOffset), evalStepNote(step, _noteTrack.noteProbabilityBias(), scale, rootNote, octave, transpose), step.slide() });
+        _cvQueue.push({ Groove::applySwing(tick + gateOffset, swing()), evalStepNote(step, _noteTrack.noteProbabilityBias(), scale, rootNote, octave, transpose), step.slide() });
     }
 }
 
@@ -368,10 +368,6 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
     if (isSelected() && !stepWritten && _model.project().recordMode() == Types::RecordMode::Overwrite) {
         clearStep(_sequenceState.prevStep());
     }
-}
-
-uint32_t NoteTrackEngine::applySwing(uint32_t tick) const {
-    return Groove::swing(tick, CONFIG_PPQN / 4, swing());
 }
 
 int NoteTrackEngine::noteFromMidiNote(uint8_t midiNote) const {

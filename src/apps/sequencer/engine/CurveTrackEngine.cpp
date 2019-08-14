@@ -160,8 +160,8 @@ void CurveTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
         if (gate & (1 << i) && evalGate(step, gateProbabilityBias)) {
             uint32_t gateStart = (divisor * i) / 4;
             uint32_t gateLength = divisor / 8;
-            _gateQueue.pushReplace({ applySwing(tick + gateStart), true });
-            _gateQueue.pushReplace({ applySwing(tick + gateStart + gateLength), false });
+            _gateQueue.pushReplace({ Groove::applySwing(tick + gateStart, swing()), true });
+            _gateQueue.pushReplace({ Groove::applySwing(tick + gateStart + gateLength, swing()), false });
         }
     }
 }
@@ -232,8 +232,4 @@ void CurveTrackEngine::updateRecording(uint32_t relativeTick, uint32_t divisor) 
         step.setMinNormalized(match.min);
         step.setMaxNormalized(match.max);
     }
-}
-
-uint32_t CurveTrackEngine::applySwing(uint32_t tick) const {
-    return Groove::swing(tick, CONFIG_PPQN / 4, swing());
 }
