@@ -2,6 +2,16 @@
 
 #include "ProjectVersion.h"
 
+void MidiCvTrack::writeRouted(Routing::Target target, int intValue, float floatValue) {
+    switch (target) {
+    case Routing::Target::SlideTime:
+        setSlideTime(intValue, true);
+        break;
+    default:
+        break;
+    }
+}
+
 void MidiCvTrack::clear() {
     _source.clear();
     setVoices(1);
@@ -12,6 +22,7 @@ void MidiCvTrack::clear() {
     setPitchBendRange(2);
     setModulationRange(Types::VoltageRange::Unipolar5V);
     setRetrigger(false);
+    setSlideTime(0);
     _arpeggiator.clear();
 }
 
@@ -43,6 +54,7 @@ void MidiCvTrack::write(WriteContext &context) const {
     writer.write(_pitchBendRange);
     writer.write(_modulationRange);
     writer.write(_retrigger);
+    writer.write(_slideTime.base);
     _arpeggiator.write(context);
 }
 
@@ -57,5 +69,6 @@ void MidiCvTrack::read(ReadContext &context) {
     reader.read(_pitchBendRange);
     reader.read(_modulationRange);
     reader.read(_retrigger);
+    reader.read(_slideTime.base, ProjectVersion::Version20);
     _arpeggiator.read(context);
 }

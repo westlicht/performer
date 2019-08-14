@@ -54,6 +54,9 @@ enum ProjectVersion {
     // expanded Song::slots to 64 entries
     Version19 = 19,
 
+    // added MidiCvTrack::slideTime
+    Version20 = 20,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

@@ -35,7 +35,12 @@ public:
     }
 
     virtual Routing::Target routingTarget(int row) const override {
-        return Routing::Target::None;
+        switch (Item(row)) {
+        case SlideTime:
+            return Routing::Target::SlideTime;
+        default:
+            return Routing::Target::None;
+        }
     }
 
 private:
@@ -49,6 +54,7 @@ private:
         PitchBendRange,
         ModulationRange,
         Retrigger,
+        SlideTime,
         ArpeggiatorEnabled,
         ArpeggiatorHold,
         ArpeggiatorMode,
@@ -69,6 +75,7 @@ private:
         case PitchBendRange:        return "Pitch Bend";
         case ModulationRange:       return "Mod Range";
         case Retrigger:             return "Retrigger";
+        case SlideTime:             return "Slide Time";
         case ArpeggiatorEnabled:    return "Arpeggiator";
         case ArpeggiatorHold:       return "Hold";
         case ArpeggiatorMode:       return "Mode";
@@ -114,6 +121,9 @@ private:
             break;
         case Retrigger:
             _track->printRetrigger(str);
+            break;
+        case SlideTime:
+            _track->printSlideTime(str);
             break;
         case ArpeggiatorEnabled:
             arpeggiator.printEnabled(str);
@@ -168,6 +178,9 @@ private:
             break;
         case Retrigger:
             _track->editRetrigger(value, shift);
+            break;
+        case SlideTime:
+            _track->editSlideTime(value, shift);
             break;
         case ArpeggiatorEnabled:
             arpeggiator.editEnabled(value, shift);

@@ -6,6 +6,7 @@
 #include "ModelUtils.h"
 #include "Serialize.h"
 #include "Arpeggiator.h"
+#include "Routing.h"
 
 #include "core/math/Math.h"
 
@@ -184,10 +185,36 @@ public:
         ModelUtils::printYesNo(str, retrigger());
     }
 
+    // slideTime
+
+    int slideTime() const { return _slideTime.get(isRouted(Routing::Target::SlideTime)); }
+    void setSlideTime(int slideTime, bool routed = false) {
+        _slideTime.set(clamp(slideTime, 0, 100), routed);
+    }
+
+    void editSlideTime(int value, bool shift) {
+        if (!isRouted(Routing::Target::SlideTime)) {
+            setSlideTime(ModelUtils::adjustedByStep(slideTime(), value, 5, !shift));
+        }
+    }
+
+    void printSlideTime(StringBuilder &str) const {
+        printRouted(str, Routing::Target::SlideTime);
+        str("%d%%", slideTime());
+    }
+
     // arpeggiator
 
     const Arpeggiator &arpeggiator() const { return _arpeggiator; }
           Arpeggiator &arpeggiator()       { return _arpeggiator; }
+
+    //----------------------------------------
+    // Routing
+    //----------------------------------------
+
+    inline bool isRouted(Routing::Target target) const { return Routing::isRouted(target, _trackIndex); }
+    inline void printRouted(StringBuilder &str, Routing::Target target) const { Routing::printRouted(str, target, _trackIndex); }
+    void writeRouted(Routing::Target target, int intValue, float floatValue);
 
     //----------------------------------------
     // Methods
@@ -218,6 +245,7 @@ private:
     uint8_t _pitchBendRange;
     Types::VoltageRange _modulationRange;
     bool _retrigger;
+    Routable<uint8_t> _slideTime;
     Arpeggiator _arpeggiator;
 
     friend class Track;

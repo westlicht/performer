@@ -185,7 +185,8 @@ void Routing::writeTarget(Target target, uint8_t tracks, float normalized) {
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             if (tracks & (1<<trackIndex)) {
                 auto &track = _project.track(trackIndex);
-                if (track.trackMode() == Track::TrackMode::Note) {
+                switch (track.trackMode()) {
+                case Track::TrackMode::Note:
                     if (isTrackTarget(target)) {
                         track.noteTrack().writeRouted(target, intValue, floatValue);
                     } else {
@@ -193,7 +194,8 @@ void Routing::writeTarget(Target target, uint8_t tracks, float normalized) {
                             track.noteTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
                         }
                     }
-                } else if (track.trackMode() == Track::TrackMode::Curve) {
+                    break;
+                case Track::TrackMode::Curve:
                     if (isTrackTarget(target)) {
                         track.curveTrack().writeRouted(target, intValue, floatValue);
                     } else {
@@ -201,6 +203,14 @@ void Routing::writeTarget(Target target, uint8_t tracks, float normalized) {
                             track.curveTrack().sequence(patternIndex).writeRouted(target, intValue, floatValue);
                         }
                     }
+                    break;
+                case Track::TrackMode::MidiCv:
+                    if (isTrackTarget(target)) {
+                        track.midiCvTrack().writeRouted(target, intValue, floatValue);
+                    }
+                    break;
+                case Track::TrackMode::Last:
+                    break;
                 }
             }
         }
