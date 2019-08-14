@@ -61,7 +61,7 @@ private:
 
     struct EventCompare {
         bool operator()(const Event &a, const Event &b) {
-            return a.tick < b.tick;;
+            return a.tick < b.tick;
         }
     };
 

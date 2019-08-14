@@ -75,7 +75,7 @@ private:
 
     struct GateCompare {
         bool operator()(const Gate &a, const Gate &b) {
-            return a.tick < b.tick;;
+            return a.tick < b.tick;
         }
     };
 
