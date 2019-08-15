@@ -99,7 +99,7 @@ bool MidiCvTrackEngine::gateOutput(int index) const {
     if (voiceIndex != -1) {
         const auto &voice = _voices[voiceIndex];
         uint32_t delay = _midiCvTrack.retrigger() ? RetriggerDelay : 0;
-        return voice.isActive() && (voice.ticks - os::ticks()) >= delay;
+        return !mute() && voice.isActive() && (voice.ticks - os::ticks()) >= delay;
     }
     return false;
 }
