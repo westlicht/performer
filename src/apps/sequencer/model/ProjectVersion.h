@@ -57,6 +57,9 @@ enum ProjectVersion {
     // added MidiCvTrack::slideTime
     Version20 = 20,
 
+    // added MidiCvTrack::transpose
+    Version21 = 21,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

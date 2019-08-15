@@ -7,6 +7,9 @@ void MidiCvTrack::writeRouted(Routing::Target target, int intValue, float floatV
     case Routing::Target::SlideTime:
         setSlideTime(intValue, true);
         break;
+    case Routing::Target::Transpose:
+        setTranspose(intValue, true);
+        break;
     default:
         break;
     }
@@ -23,6 +26,7 @@ void MidiCvTrack::clear() {
     setModulationRange(Types::VoltageRange::Unipolar5V);
     setRetrigger(false);
     setSlideTime(0);
+    setTranspose(0);
     _arpeggiator.clear();
 }
 
@@ -55,6 +59,7 @@ void MidiCvTrack::write(WriteContext &context) const {
     writer.write(_modulationRange);
     writer.write(_retrigger);
     writer.write(_slideTime.base);
+    writer.write(_transpose.base);
     _arpeggiator.write(context);
 }
 
@@ -70,5 +75,6 @@ void MidiCvTrack::read(ReadContext &context) {
     reader.read(_modulationRange);
     reader.read(_retrigger);
     reader.read(_slideTime.base, ProjectVersion::Version20);
+    reader.read(_transpose.base, ProjectVersion::Version21);
     _arpeggiator.read(context);
 }

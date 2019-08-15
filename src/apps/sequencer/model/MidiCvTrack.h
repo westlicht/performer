@@ -203,6 +203,24 @@ public:
         str("%d%%", slideTime());
     }
 
+    // transpose
+
+    int transpose() const { return _transpose.get(isRouted(Routing::Target::Transpose)); }
+    void setTranspose(int transpose, bool routed = false) {
+        _transpose.set(clamp(transpose, -100, 100), routed);
+    }
+
+    void editTranspose(int value, bool shift) {
+        if (!isRouted(Routing::Target::Transpose)) {
+            setTranspose(transpose() + value);
+        }
+    }
+
+    void printTranspose(StringBuilder &str) const {
+        printRouted(str, Routing::Target::Transpose);
+        str("%+d", transpose());
+    }
+
     // arpeggiator
 
     const Arpeggiator &arpeggiator() const { return _arpeggiator; }
@@ -246,6 +264,7 @@ private:
     Types::VoltageRange _modulationRange;
     bool _retrigger;
     Routable<uint8_t> _slideTime;
+    Routable<int8_t> _transpose;
     Arpeggiator _arpeggiator;
 
     friend class Track;
