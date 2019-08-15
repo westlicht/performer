@@ -68,6 +68,7 @@ nav: 20
   - [Shapes](#appendix-shapes)
   - [Arpeggiator Modes](#appendix-arpeggiator-modes)
   - [Launchpad](#appendix-launchpad)
+  - [USB MIDI Devices](#appendix-usb-midi-devices)
   - [Calibration Procedure](#appendix-calibration-procedure)
   - [Firmware Update](#appendix-firmware-update)
 
@@ -565,7 +566,7 @@ If a track is in _Note_ mode, the following parameters are available:
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
 | Fill Mode | None, Gates, Next Pattern, Condition | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. _Condition_ plays steps that have the _Fill_ condition set, and does not play steps that have the _!Fill_ condition set. |
 | CV Update Mode | Gate, Always | Mode used for updating the CV output of this track. _Gate_ only updates the CV output if the step gate is active, _Always_ always updates the CV output independent of the step gate. |
-| Slide Time | 0% - 100% | Duration of voltage slides for steps that have _Slide_ enabled. |
+| Slide Time | 0% - 100% | Duration of pitch slides for steps that have _Slide_ enabled. |
 | Octave | -10 - +10 | Number of octaves to transpose the sequence up or down. |
 | Transpose | -100 - +100 | Number of notes to transpose the sequence up or down. Note that this depends on the current [Scale](#appendix-scales) of the sequence.
 | Rotate | [Rotation](#appendix-rotation) |Amount of rotation applied to the sequence. |
@@ -610,12 +611,16 @@ If a track is in MIDI/CV mode, the following parameters are available:
 | Pitch Bend | off, 1 - 48 semitones | Pitch bend range. |
 | Mod Range | 1-5V Unipolar, 1-5V Bipolar | CV output voltage range for modulation signals (velocity and pressure). |
 | Retrigger | no, yes | Retrigger voices on each received _Note On_ MIDI message. |
+| Slide Time | 0% - 100% | Duration of pitch slides for legato notes when configured in monophonic mode (e.g. 1 voice). |
+| Transpose | -100 - +100 | Number of notes to transpose the notes up or down. |
 | Arpeggiator | no, yes | Enable arpeggiator mode. |
 | Hold | no, yes | Hold chords in arpeggiator after keys are released. |
 | Mode | [Arpeggiator Modes](#appendix-arpeggiator-modes) | Arpeggiator mode (sequence). |
 | Divisor | [Divisors](#appendix-divisors) | Divisor for arpeggiator sequence. |
 | Gate Length | 1-100% | Gate length generated notes. |
 | Octaves | Off, Up 1-5, Up Down 1-5, Down 1-5, Down Up 1-5 | Order and number of octaves to play the arpeggiator sequence over. The note order is reverse when playing _down_ the octaves. |
+
+> Note: _Slide Time_ and _Transpose_ are routable parameters.
 
 > Note: _Low Note_ and _High Note_ can be used to setup key ranges such that multiple MIDI/CV tracks can be played in split keyboard mode.
 
@@ -1550,6 +1555,28 @@ Pattern mode allows selecting the currently playing pattern on all the tracks. E
 In addition, holding `2` while selecting patterns and scenes, allows to use latching mode. This means that the patterns are switched at the moment when `2` is released. Holding `3` while selecting patterns and scenes allows to launch them synchronized to the global _Sync Measure_.
 
 Requested patterns due to latching or syncing are shown in dim green.
+
+<h3 id="appendix-usb-midi-devices">USB MIDI Devices</h3>
+
+The following is a list of USB MIDI devices known to be compatible with the **PER\|FORMER** sequencer:
+
+| Manufacturer | Device |
+| :--- | :--- |
+| CME | [XKEY37](https://www.cme-pro.com/xkey37) |
+| Moog | [Minitaur](https://www.moogmusic.com/products/minitaur) |
+| Novation | Launchpad Mini MK1 |
+| Novation | [Launchpad Mini MK2](https://novationmusic.com/launch/launchpad-mini) |
+| Novation | Launchpad S |
+| Novation | [Launchpad Mk2](https://novationmusic.com/launch/launchpad) |
+| Novation | [Launchpad Pro](https://novationmusic.com/launch/launchpad-pro) |
+| Novation | Launchkey Mini |
+
+The following is a list of USB MIDI devices known **not** to be compatible:
+
+| Manufacturer | Device |
+| :--- | :--- |
+| AKAI | [MPK Mini](https://www.akaipro.com/mpk-mini) |
+| Novation | Launchpad |
 
 <h3 id="appendix-calibration-procedure">Calibration Procedure</h3>
 
