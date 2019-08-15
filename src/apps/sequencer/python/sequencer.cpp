@@ -34,6 +34,7 @@ void register_sequencer(py::module &m) {
         .def_property("slot", &Project::slot, &Project::setSlot)
         .def_property("tempo", &Project::tempo, &Project::setTempo)
         .def_property("swing", &Project::swing, &Project::setSwing)
+        .def_property("timeSignature", &Project::timeSignature, &Project::setTimeSignature)
         .def_property("syncMeasure", &Project::syncMeasure, &Project::setSyncMeasure)
         .def_property("scale", &Project::scale, &Project::setScale)
         .def_property("rootNote", &Project::rootNote, &Project::setRootNote)
@@ -306,6 +307,8 @@ void register_sequencer(py::module &m) {
         .def_property("pitchBendRange", &MidiCvTrack::pitchBendRange, &MidiCvTrack::setPitchBendRange)
         .def_property("modulationRange", &MidiCvTrack::modulationRange, &MidiCvTrack::setModulationRange)
         .def_property("retrigger", &MidiCvTrack::retrigger, &MidiCvTrack::setRetrigger)
+        .def_property("slideTime", &MidiCvTrack::slideTime, &MidiCvTrack::setSlideTime)
+        .def_property("transpose", &MidiCvTrack::transpose, &MidiCvTrack::setTranspose)
         .def_property_readonly("arpeggiator", [] (MidiCvTrack &midiCvTrack) { return &midiCvTrack.arpeggiator(); })
         .def("clear", &MidiCvTrack::clear)
     ;
@@ -504,4 +507,31 @@ void register_sequencer(py::module &m) {
     // MidiOutput
     // ------------------------------------------------------------------------
 
+    // ------------------------------------------------------------------------
+    // TimeSignature
+    // ------------------------------------------------------------------------
+
+    py::class_<TimeSignature> timeSignature(m, "TimeSignature");
+    timeSignature
+        .def_property("beats", &TimeSignature::beats, &TimeSignature::setBeats)
+        .def_property("note", &TimeSignature::note, &TimeSignature::setNote)
+    ;
+
+    // ------------------------------------------------------------------------
+    // MidiConfig
+    // ------------------------------------------------------------------------
+
+    py::class_<MidiSourceConfig> midiSourceConfig(m, "MidiSourceConfig");
+    midiSourceConfig
+        .def_property("port", &MidiSourceConfig::port, &MidiSourceConfig::setPort)
+        .def_property("channel", &MidiSourceConfig::channel, &MidiSourceConfig::setChannel)
+        .def("clear", &MidiSourceConfig::clear)
+    ;
+
+    py::class_<MidiTargetConfig> midiTargetConfig(m, "MidiTargetConfig");
+    midiTargetConfig
+        .def_property("port", &MidiTargetConfig::port, &MidiTargetConfig::setPort)
+        .def_property("channel", &MidiTargetConfig::channel, &MidiTargetConfig::setChannel)
+        .def("clear", &MidiTargetConfig::clear)
+    ;
 }
