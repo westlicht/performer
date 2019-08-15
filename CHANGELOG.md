@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.31 (15 Aug 2019)
+
+#### Improvements
+
+- Added _Slide Time_ parameter to MIDI/CV track (#121)
+- Added _Transpose_ parameter to MIDI/CV track (#128)
+- Allow MIDI/CV tracks to be muted
+
+#### Fixes
+
+- Use _Last Note_ note priority as default value on MIDI/CV track
+- Added swing to arpeggiator on MIDI/CV track
+
 ## v0.1.30 (11 Aug 2019)
 
 This release is mostly dedicated to improving song mode. Many things have changed, please consult the manual for learning how to use it.
