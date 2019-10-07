@@ -24,8 +24,15 @@ void TempoPage::draw(Canvas &canvas) {
     canvas.setFont(Font::Small);
     canvas.setColor(0xf);
 
-    FixedStringBuilder<16> tempoString("Tempo: %.1f", _project.tempo());
-    canvas.drawText(50, 34, tempoString);
+    if (globalKeyState()[Key::Pattern]) {
+      //      FixedStringBuilder<16> swingString("Swing: %i%%", _project.tempo(), _project.swing());
+      FixedStringBuilder<16> swingString("Swing: %i%%", _project.swing());
+      canvas.drawText(50, 34, swingString);
+    }
+    else {
+      FixedStringBuilder<16> tempoString("Tempo: %.1f", _project.tempo());
+      canvas.drawText(50, 34, tempoString);
+    }
 
     float nudgeTempoStrength = _engine.nudgeTempoStrength();
 
@@ -78,7 +85,11 @@ void TempoPage::keyUp(KeyEvent &event) {
 }
 
 void TempoPage::encoder(EncoderEvent &event) {
-    _project.setTempo(_project.tempo() + event.value() * (event.pressed() ? 0.1f : 1.f) * (globalKeyState()[Key::Shift] ? 10.f : 1.f));
 
+  if (globalKeyState()[Key::Pattern]) {
+    _project.setSwing(_project.swing() + event.value() * (event.pressed() ? 0.1f : 1.f));
+  } else {
+    _project.setTempo(_project.tempo() + event.value() * (event.pressed() ? 0.1f : 1.f) * (globalKeyState()[Key::Shift] ? 10.f : 1.f));
+  }
     event.consume();
 }
