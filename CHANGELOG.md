@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.32 (9 Oct 2019)
+
+#### Fixes
+
+- Fix _Latch_ and _Sync_ modes on permanent _Performer_ page (#139)
+
 ## v0.1.31 (15 Aug 2019)
 
 #### Improvements
