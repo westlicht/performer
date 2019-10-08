@@ -25,7 +25,6 @@ void TempoPage::draw(Canvas &canvas) {
     canvas.setColor(0xf);
 
     if (globalKeyState()[Key::Pattern]) {
-      //      FixedStringBuilder<16> swingString("Swing: %i%%", _project.tempo(), _project.swing());
       FixedStringBuilder<16> swingString("Swing: %i%%", _project.swing());
       canvas.drawText(50, 34, swingString);
     }
