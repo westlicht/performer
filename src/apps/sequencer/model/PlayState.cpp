@@ -122,7 +122,7 @@ void PlayState::fillAll(bool fill, bool hold) {
 void PlayState::selectTrackPattern(int track, int pattern, ExecuteType executeType) {
     if (_snapshot.active) {
         return;
-}
+    }
 
     selectTrackPatternUnsafe(track, pattern, executeType);
 

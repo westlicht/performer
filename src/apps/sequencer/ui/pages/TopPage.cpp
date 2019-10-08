@@ -157,7 +157,12 @@ void TopPage::setMode(Mode mode) {
         break;
     case Mode::Pattern:
         pages.pattern.setModal(false);
-        setMainPage(pages.pattern);
+        // do not re-enter pattern page when its already the selected page
+        // the reason for this is that when changing a pattern in latched mode, we don't want to loose the latch
+        // state on the page
+        if (_manager.top() != &pages.pattern) {
+            setMainPage(pages.pattern);
+        }
         break;
     case Mode::Performer:
         pages.performer.setModal(false);

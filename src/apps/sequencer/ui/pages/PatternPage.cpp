@@ -277,14 +277,7 @@ void PatternPage::keyPress(KeyPressEvent &event) {
             }
             if (globalChange) {
                 playState.selectPattern(pattern, executeType);
-                // HACK:
-                // setSelectedPatternIndex ends up re-entering this page, resetting the latching/syncing state
-                // to prevent this we cache it in between
-                bool latching = _latching;
-                bool syncing = _syncing;
                 _project.setSelectedPatternIndex(pattern);
-                _latching = latching;
-                _syncing = syncing;
             }
         }
         event.consume();
