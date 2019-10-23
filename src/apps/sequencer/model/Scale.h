@@ -24,7 +24,7 @@ public:
 
     virtual bool isChromatic() const = 0;
 
-    virtual void noteName(StringBuilder &str, int note, Format format = Long) const = 0;
+    virtual void noteName(StringBuilder &str, int note, int rootNote, Format format = Long) const = 0;
     virtual float noteToVolts(int note) const = 0;
     virtual int noteFromVolts(float volts) const = 0;
 
@@ -55,19 +55,28 @@ public:
         return _chromatic;
     }
 
-    void noteName(StringBuilder &str, int note, Format format) const override {
+    void noteName(StringBuilder &str, int note, int rootNote, Format format) const override {
         bool printNote = format == Short1 || format == Long;
         bool printOctave = format == Short2 || format == Long;
 
         int octave = roundDownDivide(note, _noteCount);
 
+        int noteIndex = 0;
+        if (isChromatic()) {
+            noteIndex = _notes[note - octave * _noteCount] / 128 + rootNote;
+            while (noteIndex >= 12) {
+                noteIndex -= 12;
+                octave += 1;
+            }
+        } else {
+            noteIndex = note - octave * _noteCount + 1;
+        }
+
         if (printNote) {
             if (isChromatic()) {
-                int index = _notes[note - octave * _noteCount] / 128;
-                Types::printNote(str, index);
+                Types::printNote(str, noteIndex);
             } else {
-                int index = note - octave * _noteCount + 1;
-                str("%d", index);
+                str("%d", noteIndex);
             }
         }
 
@@ -125,7 +134,7 @@ public:
         return false;
     }
 
-    void noteName(StringBuilder &str, int note, Format format) const override {
+    void noteName(StringBuilder &str, int note, int rootNote, Format format) const override {
         switch (format) {
         case Short1:
             str("%.1f", std::abs(note * _interval));

@@ -25,9 +25,9 @@ UNIT_TEST("Scale") {
                 FixedStringBuilder<8> short1Name;
                 FixedStringBuilder<8> short2Name;
                 FixedStringBuilder<16> longName;
-                scale.noteName(short1Name, note, Scale::Short1);
-                scale.noteName(short2Name, note, Scale::Short2);
-                scale.noteName(longName, note, Scale::Long);
+                scale.noteName(short1Name, note, 0, Scale::Short1);
+                scale.noteName(short2Name, note, 0, Scale::Short2);
+                scale.noteName(longName, note, 0, Scale::Long);
                 float volts = scale.noteToVolts(note);
                 DBG("%-8d %-8.3f %-8s %-8s %-8s", note, volts, (const char *)(short1Name), (const char *)(short2Name), (const char *)(longName));
                 // DBG("note = %d, volts = %f", note, volts);
@@ -52,9 +52,9 @@ UNIT_TEST("Scale") {
                 FixedStringBuilder<8> short1Name;
                 FixedStringBuilder<8> short2Name;
                 FixedStringBuilder<16> longName;
-                scale.noteName(short1Name, note, Scale::Short1);
-                scale.noteName(short2Name, note, Scale::Short2);
-                scale.noteName(longName, note, Scale::Long);
+                scale.noteName(short1Name, note, 0, Scale::Short1);
+                scale.noteName(short2Name, note, 0, Scale::Short2);
+                scale.noteName(longName, note, 0, Scale::Long);
                 float volts = scale.noteToVolts(note);
                 DBG("%-8.3f %-8d %-8.3f %-8s %-8s %-8s", voltsin, note, volts, (const char *)(short1Name), (const char *)(short2Name), (const char *)(longName));
             }

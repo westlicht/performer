@@ -67,7 +67,7 @@ static int evalTransposition(const Scale &scale, int octave, int transpose) {
 
 // evaluate note voltage
 static float evalStepNote(const NoteSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, bool useVariation = true) {
-    int note = step.note() + (scale.isChromatic() ? rootNote : 0) + evalTransposition(scale, octave, transpose);
+    int note = step.note() + evalTransposition(scale, octave, transpose);
     int probability = clamp(step.noteVariationProbability() + probabilityBias, -1, NoteSequence::NoteVariationProbability::Max);
     if (useVariation && int(rng.nextRange(NoteSequence::NoteVariationProbability::Range)) <= probability) {
         int offset = step.noteVariationRange() == 0 ? 0 : rng.nextRange(std::abs(step.noteVariationRange()) + 1);
@@ -76,7 +76,7 @@ static float evalStepNote(const NoteSequence::Step &step, int probabilityBias, c
         }
         note = NoteSequence::Note::clamp(note + offset);
     }
-    return scale.noteToVolts(note);
+    return scale.noteToVolts(note) + (scale.isChromatic() ? rootNote : 0) * (1.f / 12.f);
 }
 
 void NoteTrackEngine::reset() {
@@ -206,7 +206,7 @@ void NoteTrackEngine::update(float dt) {
     } else if ((!running || !isStepRecordMode) && _recordHistory.isNoteActive()) {
         // midi monitoring (second priority)
         int note = noteFromMidiNote(_recordHistory.activeNote()) + evalTransposition(scale, octave, transpose);
-        _cvOutputTarget = scale.noteToVolts(note);
+        _cvOutputTarget = scale.noteToVolts(note) + (scale.isChromatic() ? rootNote : 0) * (1.f / 12.f);
         _activity = _gateOutput = true;
         _monitorOverrideActive = true;
     } else {
