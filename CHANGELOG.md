@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.1.33 (12 Nov 2019)
+
+#### Fixes
+
+- Fixed handling of root note and transposing of note sequences (#147)
+
+#### Improvements
+
+- Add mute mode to curve tracks to allow defining the mute voltage state (#151)
+- Increased double tap time by 50% (#144)
+
 ## v0.1.32 (9 Oct 2019)
 
 #### Fixes
