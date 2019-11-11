@@ -7,12 +7,16 @@ nav: 20
 
 <h1>User Manual</h1>
 
+<!-- pdf-exclude-begin -->
+> The user manual is also available as a PDF [here](./manual.pdf).
+<!-- pdf-exclude-end -->
+
 <!-- TOC -->
 
-<h2 id="toc">Table Of Contents</h2>
+<h4>Table Of Contents</h4>
 
 <!-- toc-begin -->
-- [Table Of Contents](#toc)
+
 - [Introduction](#introduction)
   - [Features](#introduction-features)
 - [Concepts](#concepts)
@@ -23,6 +27,7 @@ nav: 20
   - [MIDI/CV Track](#concepts-midi-cv-track)
   - [Pattern](#concepts-pattern)
   - [Snapshot](#concepts-snapshot)
+  - [Fills](#concepts-fills)
   - [Song](#concepts-song)
   - [Scale](#concepts-scale)
   - [Clock](#concepts-clock)
@@ -53,18 +58,25 @@ nav: 20
   - [Clock](#pages-clock)
   - [System](#pages-system)
 - [Appendix](#appendix)
+  - [Recording](#appendix-recording)
   - [Divisors](#appendix-divisors)
   - [Run Modes](#appendix-run-modes)
   - [Play Modes](#appendix-play-modes)
   - [Rotation](#appendix-rotation)
+  - [Step Conditions](#appendix-step-conditions)
   - [Scales](#appendix-scales)
   - [Shapes](#appendix-shapes)
+  - [Arpeggiator Modes](#appendix-arpeggiator-modes)
   - [Launchpad](#appendix-launchpad)
+  - [USB MIDI Devices](#appendix-usb-midi-devices)
   - [Calibration Procedure](#appendix-calibration-procedure)
   - [Firmware Update](#appendix-firmware-update)
+
 <!-- toc-end -->
 
 <!-- Introduction -->
+
+<!-- page-break -->
 
 <h2 id="introduction">Introduction</h2>
 
@@ -83,6 +95,7 @@ The following list describes the key features of the **PER\|FORMER** sequencer:
 - 64 steps per sequence
 - Multiple track and sequence modes
 - Note and modulation sequencing
+- Arpeggiator
 - Snapshot system
 - Sequence generators
 - Advanced clock system
@@ -99,6 +112,8 @@ The following list describes the key features of the **PER\|FORMER** sequencer:
 - Micro SD card slot
 
 <!-- Concepts -->
+
+<!-- page-break -->
 
 <h2 id="concepts">Concepts</h2>
 
@@ -150,11 +165,15 @@ Each step is defined through a number of properties, also called layers, to cont
 
 The _Gate_ layer defines what steps of the sequence create a gate signal. To introduce some random variation, the _Gate Probability_ layer is used to control how often an active gate is actually generated.
 
+The _Gate Offset_ layer is used to offset gate signals into the future, adding a delay before triggering a note.
+
 The _Length_ layer controls the duration of the gate signal and allows to tie notes together if set to the maximum. Again, to introduce some random variation, the _Length Variation Range_ and _Length Variation Probability_ layers control a maximum random deviation of the gate length and the probability of actually randomizing the gate length.
 
 The _Retrigger_ layer allows each gate signal to be retriggered multiple times within the duration of the step, allowing for faster gates and ratcheting effects. Retriggering can also be randomized using the _Retrigger Probability_ layer.
 
 The generated CV signal is controlled by the _Note_ layer, which basically defines the voltage to be output for each step. Each note is stored as an index to an entry in a [Scale](#concepts-scale), allowing the generated CV signals to be used both for controlling note pitch as well as other arbitrary modulation signals. Using the _Note Variation Range_ and _Note Variation Probability_ layers some random variation can be applied to the CV signal. The _Slide_ layer controls if the generate CV signal is changed immediately on the start of a gate or smoothly slides to the new voltage.
+
+Finally, the _Condition_ layer is used to conditionally trigger steps based on certain rules. This allows to create relatively short sequences that feel more complex, for example by only playing steps every few iterations. See [Step Conditions](#appendix-step-conditions) for additional information.
 
 The playback of the sequence is controlled by additional parameters:
 
@@ -168,9 +187,11 @@ Sequences are edited on the [Steps](#pages-steps) page and sequence parameters c
 
 <h3 id="concepts-curve-track">Curve Track</h3>
 
-In _Curve_ mode, a track also uses step sequencing with similar playback features to the note track. However, in this track mode only a CV signal is output and each step is defined as a curve shape, making this mode useful to generate modulation signals.
+In _Curve_ mode, a track also uses step sequencing with similar playback features to the note track. However, in this track mode the CV signal is defined by a series of curve shapes, making this mode useful to generate modulation signals. This mode also allows to output gate patterns, but it is different from how the _Note_ mode works.
 
-The generated CV signal is controlled by the _Curve_ layer, which defines a curve shape to be output over the duration of one step. The _Minimum_ and _Maximum_ layers define the lower and upper voltage that is output for each step.
+The generated CV signal is controlled by the _Shape_ layer, which defines a curve shape to be output over the duration of one step. The _Minimum_ and _Maximum_ layers define the lower and upper voltage that is output for each step. To introduce some random variation, the _Shape Variation_ and _Shape Variation Probability_ layers can be used to define altered shapes that are used instead of the primary shape with some probability.
+
+The generated gate signal is controlled by the _Gate_ layer. It allows to define a pattern of up to 4 gate triggers per step. To introduce some random variation, the _Gate Probability_ layer is used to control how often a gate is actually played.
 
 The playback of the sequence is controlled by the same set of parameters as in the note track.
 
@@ -178,7 +199,7 @@ The playback of the sequence is controlled by the same set of parameters as in t
 
 <h3 id="concepts-midi-cv-track">MIDI/CV Track</h3>
 
-In MIDI/CV mode, a track acts as a MIDI to CV converter, taking MIDI note data from either the MIDI or USBMIDI input and coverting it to voltages at the CV/gate outputs. This allows for playing voices live from a keyboard or use an external MIDI sequencer to control them.
+In MIDI/CV mode, a track acts as a MIDI to CV converter, taking MIDI note data from either the MIDI or USBMIDI input and converting it to voltages at the CV/gate outputs. This allows for playing voices live from a keyboard or use an external MIDI sequencer to control them. MIDI/CV mode also provides a powerful arpeggiator to further help playing live.
 
 > Note: MIDI/CV mode allows for using the **PER\|FORMER** module as a pure MIDI/CV converter with up to 8 CV/Gate outputs.
 
@@ -194,13 +215,19 @@ In _Note_ and _Curve_ mode, each of the 8 tracks contains up to 16 sequences, al
 
 In addition to the 16 patterns per track, there is an additional snapshot pattern which can temporarily be used to edit sequences without affecting the original. When taking a snapshot, all patterns that are currently playing in each track are copied to the snapshot. Snapshots come in handy during live performance for quickly changing sequences on the fly. The changes can later be committed or reverted. Snapshots are controlled from the [Pattern](#pages-pattern) page.
 
+<!-- Fills -->
+
+<h3 id="concepts-fills">Fills</h3>
+
+Fills can be used as an effective tool during live performance. They allow to temporarily change the playback of a sequence to add some variation or tension. Each track can be configured with a specific fill mode. The default mode will simply trigger every step of a sequence no matter if the gate is enabled or disabled. Other fill modes allow to temporarily play steps from the next sequence or trigger steps that have the _Fill_ condition set. To make things more interesting, each track also has a _Fill Amount_ associated which is a probability value that controls how often a step is affected by the selected fill mode. This for example allows to morph between two patterns by selectively playing a given amount of steps from either pattern. Fills can then be controlled from the [Performer](#pages-performer) page.
+
 <!-- Song -->
 
 <h3 id="concepts-song">Song</h3>
 
 Songs are used to chain together a sequence of patterns for each track. This can either be used to quickly chain together patterns during a live performance to get more variation or to create an entire arrangement of a song.
 
-A song consists of up to 16 slots, each holding a set of patterns to be played on the 8 tracks in addition to specifying how many times the slot is repeated when played back. Songs are controlled from the [Song](#pages-song) page.
+A song consists of up to 64 slots, each holding a set of patterns to be played on the 8 tracks in addition to specifying for how many bars/measures the slot is played for. Songs are controlled from the [Song](#pages-song) page.
 
 <!-- Scale -->
 
@@ -267,6 +294,8 @@ The reason for using a slot system rather than traditional filenames is in order
 > Note: The SD card can easily be backed up to a computer by just copying the files. Slots can freely be rearranged by just renaming the files.
 
 <!-- User Interface -->
+
+<!-- page-break -->
 
 <h2 id="ui">User Interface</h2>
 
@@ -397,7 +426,7 @@ On pages that provide a context menu, the labels dynamically change to the conte
 
 Pages that expose configuration options are typically presented as a list of items, each having the name shown on the left and the value on the right side.
 
-Rotate the `ENCODER` or use `PREV`, `NEXT` to navigate up and down the list. Press `ENCODER` to enter and leave edit mode which is indicated by moving the highlight from the item name to the item value and back. While in edit mode, rotate the `ENCODER` or use `PREV`, `NEXT` to adjust the value. Hold `SHIFT` to change the value in larger or smaller steps depending on item being edited.
+Rotate the `ENCODER` or use `PREV`, `NEXT` to navigate up and down the list. Press `ENCODER` to enter and leave edit mode which is indicated by moving the highlight from the item name to the item value and back. While in edit mode, rotate the `ENCODER` or use `PREV`, `NEXT` to adjust the value. Hold `SHIFT` to change the value in larger or smaller steps depending on the item being edited.
 
 <!-- Copy/Paste -->
 
@@ -416,6 +445,8 @@ Copy/paste actions are provided in the context menu when holding `SHIFT` + `PAGE
 > Note: Due to memory limitations, the clipboard can only hold one object at a time and shares memory across all different types. This means that copying an object always results in the previously copied object being cleared from the clipboard.
 
 <!-- Pages -->
+
+<!-- page-break -->
 
 <h2 id="pages">Pages</h2>
 
@@ -438,10 +469,14 @@ The following parameters are available:
 | Name | - | Press `ENCODER` to enter text editor for changing the project name. |
 | Tempo | 1.0 - 1000.0 BPM | Tempo of the master clock. |
 | Swing | 50% - 75% | Global swing amount. |
-| Sync Measure | 1 - 128 | Multiple of measures/bars at which to execute _syncing_ (see [Pattern](#pages-pattern) and [Performer](#pages-performer) pages) as well as the duration each pattern slot is played for in song mode (see [Song](#pages-song) page). |
+| Time Signature | Beats/Note | Time signature defining the musical measure/bar length for _Sync Measure_ and _Reset Measure_ on sequences. The time signature is also used to define the length of a bar in song mode. | 
+| Sync Measure | 1 - 128 bars | Multiple of measures/bars at which to execute _syncing_ (see [Pattern](#pages-pattern) and [Performer](#pages-performer) pages). |
+ page). |
 | Scale | [Scales](#appendix-scales) | Default scale. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Default root note. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
-| Record Mode | Overdub, Overwrite | Recording mode. |
+| Record Mode | Overdub, Overwrite, Step Record | Recording mode (see [Recording](#appendix-recording)). |
+| CV/Gate Input | Off, CV1/CV2, CV3/CV4 | Enable CV/Gate input on CV inputs for monitoring and recording (equivalent to a MIDI keyboard). |
+| Curve CV Input | Off, CV1, CV2, CV3, CV4 | Select CV input for curve recording. |
 
 > Note: _Tempo_ and _Swing_ are routable parameters.
 
@@ -529,8 +564,9 @@ If a track is in _Note_ mode, the following parameters are available:
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
-| Fill Mode | None, Gates, Next Pattern | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. |
-| Slide Time | 0% - 100% | Duration of voltage slides for steps that have _Slide_ enabled. |
+| Fill Mode | None, Gates, Next Pattern, Condition | Mode used when fill is activated for the track. _None_ does nothing. _Gates_ plays each step of the sequence independent of whether the step gate is active or not. _Next Pattern_ uses the step data of the next pattern on the same track. _Condition_ plays steps that have the _Fill_ condition set, and does not play steps that have the _!Fill_ condition set. |
+| CV Update Mode | Gate, Always | Mode used for updating the CV output of this track. _Gate_ only updates the CV output if the step gate is active, _Always_ always updates the CV output independent of the step gate. |
+| Slide Time | 0% - 100% | Duration of pitch slides for steps that have _Slide_ enabled. |
 | Octave | -10 - +10 | Number of octaves to transpose the sequence up or down. |
 | Transpose | -100 - +100 | Number of notes to transpose the sequence up or down. Note that this depends on the current [Scale](#appendix-scales) of the sequence.
 | Rotate | [Rotation](#appendix-rotation) |Amount of rotation applied to the sequence. |
@@ -550,11 +586,14 @@ If a track is in _Curve_, the following parameters are available:
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
-| Fill Mode | None, Gates, Next Pattern | This parameter currently has no effect. |
+| Fill Mode | None, Variation, Next Pattern, Invert | Mode used when fill is activated for the track. _None_ does nothing. _Variation_ plays the curve shapes defined in the _Shape Variation_ layer independent of their probability. _Next Pattern_ uses the step data of the next pattern on the same track. _Invert_ plays the curve shapes inverted. |
 | Mute Mode | Last Value, 0V, Min, Max | Voltage that is output when track is muted. _Last Value_ keeps the last value before mute is engaged. _0V_ outputs zero volts. _Min_ and _Max_ sets the voltage to the minimum or maximum value of the selected voltage range. |
+| Slide Time | 0% - 100% | Global slide time (slew limiter) applied to curve. |
 | Rotate | [Rotation](#appendix-rotation) | Amount of rotation applied to the sequence. |
+| Shape P. Bias | -100% - +100% | Shape probability bias that is added to the sequence. |
+| Gate P. Bias | -100% - +100% | Gate probability bias that is added to the sequence. |
 
-> Note: _Rotate_ is a routable parameter.
+> Note: _Slide Time_, _Rotate_, _Shape P. Bias_ and _Gate P. Bias_ are routable parameters.
 
 <h4>MIDI/CV Track</h4>
 
@@ -566,10 +605,25 @@ If a track is in MIDI/CV mode, the following parameters are available:
 | :--- | :--- | :--- |
 | Source | MIDI, USB | MIDI source port (hold `SHIFT` and rotate `ENCODER` to select MIDI channel). |
 | Voices | 1 - 8 | Number of voices. |
-| Voice Config | Pitch, Pitch\|Vel, Pitch\|Vel\|Press | CV signals to generate for each voice. |
+| Voice Config | Pitch, Pitch+Vel, Pitch+Vel+Press | CV signals to generate for each voice. |
+| Note Priority | Last Note, First Note, Lowest Note, Highest Note | Determines which active notes have the highest priority to be output. |
+| Low Note | C-1 - G9 | Low MIDI note of the key range this track listens to. |
+| High Note | C-1 - G9 | High MIDI note of the key range this track listens to. |
 | Pitch Bend | off, 1 - 48 semitones | Pitch bend range. |
 | Mod Range | 1-5V Unipolar, 1-5V Bipolar | CV output voltage range for modulation signals (velocity and pressure). |
 | Retrigger | no, yes | Retrigger voices on each received _Note On_ MIDI message. |
+| Slide Time | 0% - 100% | Duration of pitch slides for legato notes when configured in monophonic mode (e.g. 1 voice). |
+| Transpose | -100 - +100 | Number of notes to transpose the notes up or down. |
+| Arpeggiator | no, yes | Enable arpeggiator mode. |
+| Hold | no, yes | Hold chords in arpeggiator after keys are released. |
+| Mode | [Arpeggiator Modes](#appendix-arpeggiator-modes) | Arpeggiator mode (sequence). |
+| Divisor | [Divisors](#appendix-divisors) | Divisor for arpeggiator sequence. |
+| Gate Length | 1-100% | Gate length generated notes. |
+| Octaves | Off, Up 1-5, Up Down 1-5, Down 1-5, Down Up 1-5 | Order and number of octaves to play the arpeggiator sequence over. The note order is reverse when playing _down_ the octaves. |
+
+> Note: _Slide Time_ and _Transpose_ are routable parameters.
+
+> Note: _Low Note_ and _High Note_ can be used to setup key ranges such that multiple MIDI/CV tracks can be played in split keyboard mode.
 
 <!-- Sequence -->
 
@@ -602,11 +656,11 @@ If a track is in _Note_ mode, the following parameters are available:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
-| First Step | 1 - 64 | First step to play. |
-| Last Step | 1 - 64 | Last step to play. |
+| First Step | 1 - 64 | First step to play. Hold `SHIFT` to edit both first and last step together. |
+| Last Step | 1 - 64 | Last step to play. Hold `SHIFT` to edit both first and last step together. |
 | Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
 | Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
-| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
+| Reset Measure | off, 1 - 128 bars | Number of measures/bars at which to reset the sequence. |
 | Scale | [Scales](#appendix-scales) | Scale to use for this sequence. If set to _Default_, uses the default scale set on the [Project](#pages-project) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Root note to use for this sequence. If set to _Default_, uses the default root note set on the [Project](#pages-project) page. |
 
@@ -618,11 +672,11 @@ If a track is in _Curve_ mode, the following parameters are available:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
-| First Step | 1 - 64 | First step to play. |
-| Last Step | 1 - 64 | Last step to play. |
+| First Step | 1 - 64 | First step to play. Hold `SHIFT` to edit both first and last step together. |
+| Last Step | 1 - 64 | Last step to play. Hold `SHIFT` to edit both first and last step together. |
 | Run Mode | [Run Modes](#appendix-run-modes) | Mode in which to play the sequence.  |
 | Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
-| Reset Measure | off, 1 - 128 | Number of measures/bars at which to reset the sequence. |
+| Reset Measure | off, 1 - 128 bars | Number of measures/bars at which to reset the sequence. |
 | Range | 1V - 5V Unipolar, 1V - 5V Bipolar | Voltage range to use for this sequence. |
 
 <!-- Steps -->
@@ -638,24 +692,28 @@ This page allows editing the currently selected sequence on the currently select
 
 <h4>Layer Selection</h4>
 
-Sequence data is organized in layers (see [Note Track](#concepts-note-track) and [Curve Track](#concepts-curve-track)). Press `F1`, `F2`, `F3`, `F4` or `F5` to select different layers. The currently selected layer is shown in the header and the graphical representation of the sequence will change accordingly. Note that each function button can represent a group of layers, in which case pressing the same function button repeatedly will cycle through the layers contained in the group.
+Sequence data is organized in layers (see [Note Track](#concepts-note-track) and [Curve Track](#concepts-curve-track)). Press `F1`, `F2`, `F3`, `F4` or `F5` to select different layers. The currently selected layer is shown in the header and the graphical representation of the sequence will change accordingly. Note that each function button can represent a group of layers, in which case pressing the same function button repeatedly will cycle through the layers contained in the group. Press `SHIFT` + `F[1-5]` to quickly switch to the first layer of a group.
 
 The following layers are available in _Note_ mode:
 
 | Button | Layers |
 | :--- | :--- |
-| `F1` | Gate, Gate Probability, Slide |
+| `F1` | Gate, Gate Probability, Gate Offset, Slide |
 | `F2` | Retrigger, Retrigger Probability |
 | `F3` | Length, Length Variation Range, Length Variation Probability |
 | `F4` | Note, Note Variation Range, Note Variation Probability |
+| `F5` | Condition |
+
+> Note: See [Step Conditions](#appendix-step-conditions) for a description of the different step conditions.
 
 The following layers are available in _Curve_ mode:
 
 | Button | Layers |
 | :--- | :--- |
-| `F1` | Shape |
+| `F1` | Shape, Shape Variation, Shape Variation Probability |
 | `F2` | Minimum |
 | `F3` | Maximum |
+| `F4` | Gate, Gate Probability |
 
 <h4>Section Selection</h4>
 
@@ -667,15 +725,19 @@ To adjust the values of the currently selected layer, hold `S[1-16]` and rotate 
 
 - When editing the _Gate_ layer on a sequence of a _Note_ track, pressing `S[1-16]` enables/disables the gate values.
 - When editing any other layer on a sequence of a _Note_ track, holding one or multiple step buttons and pressing the `ENCODER` enables/disables the gate values. This comes in handy for example when editing note values, as gates can easily be enabled/disabled without switching layers.
+- When editing the _Note_ layer, notes can be entered by holding `S[1-16]` and pressing keys on an external MIDI keyboard.
+- When editing the _Note_ or _Note Range_ layer on a sequence with a chromatic scale, holding `SHIFT` and rotating the `ENCODER` will move notes up and down by octaves.
 - When editing layers on a sequence of a _Curve_ track, pressing and rotating the `ENCODER` adjusts the values in smaller steps.
+- When editing the _Min_ or _Max_ layer on a sequence of a _Curve_ track, pressing `SHIFT` or `ENCODER` and rotating the `ENCODER` will adjust the value in smaller steps.
+- When editing the _Min_ or _Max_ layer on a sequence of a _Curve_ track while holding `F2` or `F3`, the curve shape is offset up and down (adjusting min/max at the same time).
 
 <h4>Advanced Step Selection</h4>
 
 When holding `SHIFT` and pressing any of the step buttons, steps are selected in a _persistent_ mode. This means that steps are kept selected even when the step buttons are released. This allows to select multiple steps across different sections. Steps can also be removed from the selection by holding `SHIFT` and pressing step buttons corresponding to selected steps again. To clear the entire selection, simply press any step button without holding `SHIFT` or quickly press `SHIFT` twice (double tap). When the selection is empty, double tap `SHIFT` to select all 64 steps.
 
-Finally, there is a shortcut to select a series of steps. For example, to select steps 1, 5, 9, 13 and so forth, hold `SHIFT` and `S1` and then double tap `S5` while holding the other two buttons. With this shortcut, any series of steps with a common interval can be selected quickly, great to build rhythms.
+There are two additional functions for selecting groups of steps. To select a series of steps, for example steps 1, 5, 9, 13 and so forth, hold `SHIFT` and `S1` and then double tap `S5` while holding the other two buttons. With this function, any series of steps with a common interval can be selected quickly, great to build rhythms. To select all steps that have the same value on the currently selected layer, hold `SHIFT` and double tap one of the step keys.
 
-> Note: Different series can be combined by applying the shortcut multiple times. Each time it is executed, the steps of the series are added to the selection.
+> Note: When selecting groups of steps they are added to the current selection. This allows to quickly combine multiple groups of steps into a single selection.
 
 <h4>Shifting Steps</h4>
 
@@ -717,6 +779,8 @@ While holding the `PAGE` button, the selected sequence parameter can be adjusted
 
 > Note: When quick access is active, the step LEDs will indicate the range of values that can be selected in green as well as the current selection in red.
 
+> Note: Pressing the `ENCODER` while rotating it has the same effect as pressing `SHIFT` when editing the same parameter through the menu.
+
 <!-- Song -->
 
 <h3 id="pages-song">Song</h3>
@@ -725,37 +789,49 @@ The _Song_ page is entered using `PAGE` + `SONG`.
 
 ![](images/page-song.png)
 
-A song consists of up to 16 slots, each referencing a set of 8 patterns to be played on the 8 tracks. Each slot is played for the duration set by _Sync Measure_ on the [Project](#pages-project) page and can be repeated up to 8 times.
+A song consists of up to 64 slots, each referencing a set of 8 patterns to be played on the 8 tracks. Each slot is played for a number of bars/measures which duration is defined by the _Time Signature_ on the [Project](#pages-project) page.
+
+<h4>Context Menu</h4>
+
+Hold `SHIFT` + `PAGE` to open the context menu and access the following functions:
+
+| Button | Function | Description |
+| :--- | :--- | :--- |
+| `F1` | Init | Initialize the song. |
 
 <h4>Pattern Chaining</h4>
 
-A quick way to create songs on the fly is pattern chaining. This mode is specifically made for live performance to quickly create more interesting structures by chaining multiple patterns together.
+A quick way to create songs on the fly is pattern chaining. This function is specifically made for live performance to quickly create more interesting structures by chaining multiple patterns together.
 
-To create a pattern chain, hold `F2` and press `S[1-16]` to select the pattern to be played for the newly created slot. If the same pattern is added multiple times by pressing `S[1-16]` again, the repeat count of the last added slot is incremented. For example, holding `F2` and pressing the sequence `S1`, `S1`, `S1`, `S2`, `S1`, `S1`, `S1`, `S3` will create the following slot list:
+To create a pattern chain, hold `F1` and press `S[1-16]` to select the pattern to be played for the newly created slot. If the same pattern is added multiple times by pressing `S[1-16]` again, the bar/measure count of the last added slot is incremented. For example, holding `F1` and pressing the sequence `S1`, `S1`, `S1`, `S2`, `S1`, `S1`, `S1`, `S3` will create the following slot list:
 
 ![](images/page-song-chain-example.png)
 
-Note that when creating pattern chains, the song mode is automatically started.
+> Note: When creating a pattern chain, the song is immediately activated for playback and the sequencer clock is started if not already running.
 
-<h4>Editing</h4>
+<h4>Editing Slots</h4>
 
-- Rotate the `ENCODER` or use `PREV` and `NEXT` to select any of the assigned slots indicated with the small cursor above the slots.
-- Press `F1` to clear the slot list.
-- Press `F3` to add a slot at the end of the list.
-- Press `SHIFT` + `F3` to insert a slot at the current cursor position.
-- Press `F4` to remove the selected slot.
-- Hold `SHIFT` and rotate the `ENCODER` or use `PREV` and `NEXT` to move the selected slot forward and backward in the slot list.
+- Rotate the `ENCODER` or use `PREV` and `NEXT` to select a slot in the list.
+- Press `F2` to add a slot at the end of the list.
+- Press `SHIFT` + `F2` to insert a slot at the current cursor position.
+- Press `F3` to remove the selected slot.
+- Press `F4` to duplicate the selected slot.
+- Hold `SHIFT` and press `PREV` or `NEXT` to move the selected slot backward and forward in the list.
+- Hold `SHIFT` and rotate the `ENCODER` to adjust the number of bars/measures a slot is played for.
+- Hold `SHIFT` and press `S[1-16]` to selected the number of bars/measures (1-16).
 - Press `S[1-16]` to assign a pattern to all tracks of the selected slot.
+- Hold any combination of `T[1-8]` and rotate the `ENCODER` to adjust the patterns of a group of tracks of the selected slot.
 - Hold any combination of `T[1-8]` and press `S[1-16]` to assign a pattern to a group of tracks of the selected slot.
-- Press and rotate the `ENCODER` to adjust the number of repeats on the selected slot.
 
 <h4>Playback</h4>
 
-Song playback can be started and stopped independently of the sequencer actually running. This allows to engage song playback while the sequencer is already running, or stop song playback without stopping the sequencer. Song playback simply changes the playing patterns automatically and in sync.
+Song playback can be started and stopped independently of the sequencer actually running. This allows to engage song playback while the sequencer is already running, or stop song playback without stopping the sequencer. When song playback is activated, the sequencer simply changes the playing patterns automatically and in sync.
 
-Press `F5` to start playback of the song from the currently selected slot. This will also start the sequencer if it is not already running. Playback will be immediate, meaning that the currently playing pattern is switched instantaneously. To start playback on the next _Sync Measure_, use `SHIFT` + `F5` to start playback. A progress bar will appear at the top of the page, indicating the time until playback is started. To stop playback, simply press `F5` again.
+Press `F5` to start playback of the song from the currently selected slot. This will also start the sequencer if it is not already running. Playback will be immediate, meaning that the currently playing pattern is switched instantaneously. To start playback on the next _Sync Measure_, use `SHIFT` + `F5`. A progress bar will appear at the top of the page, indicating the time until playback is started. To stop playback, simply press `F5` again. Playback can also be started by selecting a slot and pressing the `ENCODER`. This is also useful quickly switch to a different slot while playback is active. Again, to switch slot on the next _Sync Measure_, hold `SHIFT` and press the `ENCODER`.
 
-During playback, the current slot being played is indicated by a small cursor below the slot list with a small progress bar indicating the progress through the slot. In addition, the currently playing pattern in the header list is highlighted.
+During playback, the current slot is indicated with a small arrow and also shown on the left side together with a progress bar, indicating the duration for which the slot is played for. In the top left corner, the current bar and note is also displayed.
+
+![](images/page-song-playback.png)
 
 > Note: Song mode can also be used to toggle between different sets of patterns. Simply use slots to define the pattern sets and then select a slot and press `F5` twice to quickly start/stop song playback to switch to a new set of patterns.
 
@@ -790,6 +866,8 @@ The _Pattern_ page can either be permanently entered using `PAGE` + `PATT` or ju
 ![](images/page-pattern.png)
 
 On this page you can handle pattern changes as well as selecting the currently edited pattern. Pattern changes can be scheduled by using _latching_ or _syncing_. In addition, this page gives access to the snapshot system and allows for copy/pasting patterns.
+
+> Note: The currently playing _Pattern_ can be selected as a routing target on the [Routing](#pages-routing) page.
 
 <h4>Editing Pattern</h4>
 
@@ -827,8 +905,6 @@ After editing the snapshot, press `F4` to commit the changes back to the origina
 
 Press `F3` to revert the edits done on the snapshot and go back to playing the set of patterns that have been playing before taking the snapshot. Press `S[1-16]` + `F3` to revert the snapshot but continue playing a new set of patterns.
 
-<h4>Actions</h4>
-
 <!-- Performer -->
 
 <h3 id="pages-performer">Performer</h3>
@@ -841,9 +917,13 @@ On this page you can handle mutes/solos as well as fills. Similar as with patter
 
 The temporary mode is very handy to quickly trigger performance actions while working on another page.
 
+The page visualizes the current mute state for every track. In addition, the currently playing step of a sequence is visualized right below. Finally, a percentage bar is used to visualize the current _Fill_ state and the selected _Fill Amount_.
+
+> Note: _Mute_, _Fill_ and _Fill Amount_ can be selected as routing targets on the [Routing](#pages-routing) page to be controlled from external sources or even internal sequences.
+
 <h4>Mutes/Solos</h4>
 
-Press `T[1-8]` to mute and unmute tracks or `S[1-8]` to solo a track. Press `F3` to unmute all tracks at once.
+Press `T[1-8]` to mute and unmute tracks or `SHIFT` + `T[1-8]` to solo a track. Press `F3` to unmute all tracks at once.
 
 <h4>Latching Mutes/Solos</h4>
 
@@ -861,7 +941,9 @@ To execute actions on a musical beat, hold `F2` while executing mute, unmute or 
 
 <h4>Fills</h4>
 
-Hold `S[9-16]` to enable fills on individual tracks. Hold `F4` to fill all tracks at once.
+Hold `S[9-16]` to temporarily enable fills on individual tracks. Press `SHIFT` + `S[9-16]` to permanently enable fill on a track and disable fill by simply pressing `S[9-16]` again later on. Hold `F4` to temporarily fill all tracks at once. Press `SHIFT` + `F4` to permanently enable fill on all tracks.
+
+To control the _Fill Amount_ of a track, hold `S[1-8]` and rotate the `ENCODER`.
 
 > Note: There are different fill modes that can be configured per track on the [Track](#pages-track) page using the _Fill Mode_ parameter.
 
@@ -889,8 +971,8 @@ Once the routing target is selected, the following parameters are available for 
 | Tracks | - | Target tracks to affect by this route. Only available if selected target parameter is a track parameter. Press `ENCODER` to edit the value and press `T[1-8]` to select which tracks are affected. |
 | Source | None, CV In 1-4, CV Out 1-8, MIDI | Source signal to use. _CV In 1-4_ correspond to the physical CV inputs. _CV Out 1-8_ correspond to the CV output signals generated by the sequencer. _MIDI_ uses events from either MIDI or USB. |
 | Range | 1V - 5V Unipolar, 1V - 5V Bipolar | Voltage range to use for the CV source. Only available if source is set to a _CV In 1-4_ or _CV Out 1-8_. |
-| MIDI Source | MIDI, USB | MIDI port (hold `SHIFT` and rotate `ENCODER` to select MIDI channel) used for the source. Only available when source is set to _MIDI_. |
-| MIDI Event | CC Absolute, CC Relative, Pitch Bend, Note Momentary, Note Toggle, Note Velocity | MIDI event to use as the source signal. Only available when source is set to _MIDI_. |
+| MIDI Source | MIDI, USB | MIDI port and channel used for the source. Only available when source is set to _MIDI_. |
+| MIDI Event | CC Absolute, CC Relative, Pitch Bend, Note Momentary, Note Toggle, Note Velocity, Note Range | MIDI event to use as the source signal. Only available when source is set to _MIDI_. |
 | CC Number | 0 - 127 | MIDI CC number to use as the source signal. Only available if MIDI Event is set to _CC Absolute_ or _CC Relative_. |
 | Note | C-1 - G9 | MIDI note number to use as the source signal. Only available if MIDI Event is set to _Note Momentary_, _Note Toggle_ or _Note Velocity_. |
 
@@ -900,7 +982,7 @@ When changing the route parameters, they will not immediately be active. Press `
 
 In order to simplify assigning MIDI controllers to target parameters, press `F4` to enter MIDI learn mode. Simply rotate an encoder or press a key/button on the connected MIDI controller to assign it to the target parameter. MIDI learn mode is active when the _Learn_ button is highlighted. Press `F4` again to exit MIDI learn mode without assigning a MIDI controller.
 
-> Note: When creating a route, the original value the target parameter was set to before creating the route is lost. This also implies that the target parameter will not go back to its original value when a route is deleted.
+> Note: Routed parameters are marked with an arrow when displayed on other pages.
 
 <!-- Midi Output -->
 
@@ -920,7 +1002,7 @@ The following parameters are available for configuration:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
-| Target | MIDI, USB | MIDI port (hold `SHIFT` and rotate `ENCODER` to select MIDI channel) used for sending MIDI data. |
+| Target | MIDI, USB | MIDI port and channel used for sending MIDI data. |
 | Event | None, Note, CC | MIDI event to generate. _None_ generates no events, _Note_ generates MIDI note on/off events, _CC_ generates MIDI control change events. |
 
 When configured to _Note_ event, the following additional parameters are available for configuration:
@@ -931,6 +1013,8 @@ When configured to _Note_ event, the following additional parameters are availab
 | Note Source | Track 1-8, C-1 - G9 | Sequencer track to use as the note source or a constant MIDI note. |
 | Vel. Source | Track 1-8, 0-127 | Sequencer track to use as the velocity source or a constant velocity value. |
 
+The _Gate Source_ controls the generation of MIDI note on/off events. Notes span multiple steps (legato) if step length is set to maximum. The _Note Source_ controls the MIDI note and is derived from a V/Oct CV signal with 0V being a C4. The _Vel. Source_ controls the note velocity and is derived from a unipolar 5V signal which is mapped to 0-127. If the _Gate Source_ contains a slide layer, slides are output as MIDI CC 65 events (portamento on/off). When the sequencer is reset, a MIDI CC 120 event (all notes off) is sent.
+
 When configured to _CC_ event, the following additional parameters are available for configuration:
 
 | Parameter | Range | Description |
@@ -938,9 +1022,9 @@ When configured to _CC_ event, the following additional parameters are available
 | Control Number | 0 - 127 | Control number to use for the event. |
 | Control Source | Track 1-8 | Sequencer track to use as the control value source. |
 
-When changing the MIDI output parameters, they will not immediately be active. Press `F5` to commit the changes and make the new configuration active. An existing MIDI output configuration can be reset to its default state by pressing `F3`. Again, the change has no effect before being committed using `F5`.
+The _Control Source_ controls the MIDI CC values and is derived from a unipolar 5V signal which is mapped to 0-127.
 
-> Note: To generate MIDI data from CV signals, the sequencer maps unipolar 5V signals to 0-127. Notes are generated by assuming a V/Oct CV signal with 0V being a C4.
+When changing the MIDI output parameters, they will not immediately be active. Press `F5` to commit the changes and make the new configuration active. An existing MIDI output configuration can be reset to its default state by pressing `F3`. Again, the change has no effect before being committed using `F5`.
 
 <!-- User Scale -->
 
@@ -956,7 +1040,7 @@ As with the preset scales, user scales can either be in _Chromatic_ or _Voltage_
 
 The number of items in the scale is set with the _Size_ parameter and can be up to 32 items.
 
-When in _Chromatic_ mode, each item can be assigned a semitone: **1**, **1#**, **2**, **2#**, **3**, **4**, **4#**, **5**, **5#**, **6**, **6#** or **7**.
+When in _Chromatic_ mode, each item can be assigned a semitone: **C**, **C#**, **D**, **D#**, **E**, **F**, **F#**, **G**, **G#**, **A**, **A#** or **B**.
 
 When in _Voltage_ mode, each item can be assigned a voltage between -5V and +5V with millivolts accuracy.
 
@@ -1031,6 +1115,7 @@ This page is used to setup the clock system of the sequencer using the following
 | Input Divisor | [Divisors](#appendix-divisors) | Musical note duration at which to interpret incoming clock pulses. The divisor is actually used as a clock multiplier to generate the internal 192 PPQN clock resolution. |
 | Input Mode | Reset, Run, Start/Stop | Mode in which to handle the incoming clock control signal. In _Reset_ mode, the clock is kept in reset state while a high signal is read. In _Run_ mode, the clock is only run when the signal is high. In _Start/Stop_ mode, the clock is started when a high signal is read and stopped/paused when a low signal is read. |
 | Output Divisor | [Divisors](#appendix-divisors) | Musical note duration at which to generate outgoing clock pulses. The divisor is used to divide the internal 192 PPQN clock resolution to generate the outgoing clock pulses. |
+| Output Swing | yes, no | Enable clock output with swing amount set on [Project](#pages-project) page. |
 | Output Pulse | 1 - 20 ms | Duration of the outgoing clock pulses. |
 | Output Mode | Reset, Run | Mode for generating the outgoing clock control signal. In _Reset_ mode, the signal is high when the clock is stopped and in reset state. In _Run_ mode, the signal is high when the clock is currently running. |
 | MIDI RX | yes, no | Receive MIDI clock from MIDI. |
@@ -1093,7 +1178,25 @@ This tab shows the current version of the firmware and allows to reset to the bo
 
 <!-- Appendix -->
 
+<!-- page-break -->
+
 <h2 id="appendix">Appendix</h2>
+
+<!-- Recording -->
+
+<h3 id="appendix-recording">Recording</h3>
+
+Instead of entering note sequences one step at a time, an external MIDI keyboard can be used to speed up the process. There are two ways for recording sequences. First, sequences can be recorded live by just playing the keyboard while the sequencer is running. Secondly, step recording allows to quickly enter one note after the other using a keyboard, either when the sequencer is running or stopped. The recording mode is selected on the [Project](#pages-project) page. Recording is armed and disarmed using `PAGE` + `PLAY`.
+
+<h4>Live Recording</h4>
+
+The first two record modes, _Overdub_ and _Overwrite_ enable live recording. While recording is armed and the sequencer is running, notes played on a keyboard are immediately written into the active sequence. In _Overdub_ mode, steps are added to the existing sequence, potentially replacing existing steps. In _Overwrite_ mode, existing steps are cleared as the play head moves through the sequence, adding new steps when the keyboard is played. The length of the sequence is not changed and has to be set in advance. While _Overdub_ mode is intended to gradually build up or evolve a sequence, _Overwrite_ mode can be used to quickly replace a sequence with a new one. Arming and disarming recording while playing the keyboard can be challenging. Therefore, recording can also be controlled via a route. This allows for example to use a foot pedal to punch in and out of recording while keeping the hands free for playing.
+
+> Note: Incoming notes from the keyboard have to be translated into the fixed grid of a sequence. Best results are obtained by playing in a way that maps well to a note sequence, e.g. monophonic and as quantized as possible.
+
+<h4>Step Recording</h4>
+
+The _Step Record_ mode is used to enter notes one step at a time. When recording is armed, playing notes on a keyboard simply sets one step after the other in the active note sequence. Recording starts at the first step and wraps around at the last step. Again, the length of the sequence has to be set in advance. While on the [Steps](#pages-steps) page and the _Note_ layer, `S[1-16]` can be used to select the current step to record from. The next step to be recorded into is marked with a circle.
 
 <!-- Divisors -->
 
@@ -1122,6 +1225,12 @@ Divisors are used to divide clock ticks with a resolution of 48 PPQN into period
 | 128 | 1T    | Triplet whole note          |
 | 144 | 1/2.  | Dotted half note            |
 | 192 | 1     | Whole note                  |
+| 256 | 2T    | Triplet double note         |
+| 288 | 1.    | Dotted whole note           |
+| 384 | 2     | Double note                 |
+| 512 | 4T    | Triplet quadruple note      |
+| 576 | 2.    | Dotted double note          |
+| 768 | 4     | Quadruple note              |
 
 <!-- Run Modes -->
 
@@ -1212,6 +1321,24 @@ With a rotation of **-3** the sequence is rotated 3 steps to the left and played
 ```
 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 ...
 ```
+
+<!-- Step Conditions -->
+
+<h3 id="appendix-step-conditions">Step Conditions</h3>
+
+Step conditions allow individual steps to only be played if a certain condition is met. In addition to the various probabilistic variations of a step, this allows for even more dynamic sequences. The following conditions are available:
+
+| Condition | Description |
+| :--- | :--- |
+| Fill | Step is only played if _Fill_ is enabled (and the track has _Fill Mode_ set to _Condition_ mode). |
+| !Fill | Step is only played if _Fill_ is disabled (and the track has _Fill Mode_ set to _Condition_ mode). |
+| Pre | Step is only played if the most recently evaluated step condition was true. |
+| !Pre | Step is only played if the most recently evaluated step condition was false. |
+| First | Step is only played on the very first iteration of the playback. |
+| !First | Step is played on every but the very first iteration of the playback. |
+| N:M | Step is played on the Nth iteration every M iterations. So for example, 2:4 plays the step on iteration 2, 6, 10 etc. |
+
+> Note: Step conditions are only evaluated if the step is actually triggered. That means that if a step is not triggered due to _Gate Probability_ the assigned step condition will not be evaluated and has no effect.
 
 <!-- Scales -->
 
@@ -1345,11 +1472,112 @@ With a rotation of **-3** the sequence is rotated 3 steps to the left and played
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Shapes | <img width="32" height="64" style="max-width: none" src="images/shape-001.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-002.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-003.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-004.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-005.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-006.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-007.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-008.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-009.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-010.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-011.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-012.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-013.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-014.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-015.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-016.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-017.png"/> |
 
+<!-- Arpeggiator Modes -->
+
+<h3 id="appendix-arpeggiator-modes">Arpeggiator Modes</h3>
+
+The following arpeggiator modes are available. The example note order is based on a chord with 5 notes:
+
+| Mode | Sequence |
+| :--- | :--- |
+| Play Order | Played back in the order the notes were entered. |
+| Up | `1 2 3 4 5 | 1 2 3 4 5 | ...` |
+| Down | `5 4 3 2 1 | 5 4 3 2 1 | ...` |
+| Up Down | `1 2 3 4 5 4 3 2 | 1 2 3 4 5 4 3 2 | ...` |
+| Down Up | `5 4 3 2 1 2 3 4 | 5 4 3 2 1 2 3 4 | ...` |
+| Up & Down | `1 2 3 4 5 5 4 3 2 1 | 1 2 3 4 5 5 4 3 2 1 | ...` |
+| Down & Up | `5 4 3 2 1 1 2 3 4 5 | 5 4 3 2 1 1 2 3 4 5 | ...` |
+| Converge | `1 5 2 4 3 | 1 5 2 4 3 | ...` |
+| Diverge | `3 2 4 1 5 | 3 2 4 1 5 | ...` |
+| Random | Played back in random order. |
+
 <!-- Launchpad -->
 
 <h3 id="appendix-launchpad">Launchpad</h3>
 
-TODO
+The Novation Launchpad can be used as an advanced control surface for the sequencer, allowing for editing sequences and launching patterns via the 8x8 button matrix. When a Launchpad is connected to the USB port, the sequencer automatically detects the device and immediately starts using it as a control surface.
+
+The following Lauchpad controllers have been tested and are working:
+
+- Launchpad Mini MK1
+- Launchpad Mini MK2
+- Launchpad S
+- Launchpad Mk2
+- Launchpad Pro
+
+> Note: Support for the very first version of Launchpad will never happen, as it is not a USB MIDI class compliant device.
+
+Launchpad controllers are exclusively used as control surfaces and cannot be used as a standard MIDI device for the routing system or live recording.
+
+When using a Launchpad Mini or Launchpad S, it should preferably be configured to operate in the _Low Power_ mode. This is important in order to not draw too much current which can lead to the Launchpad spuriously disconnect. In addition, make sure that the Launchpad is configured to use ID 1, otherwise it will be detected as a general MIDI controller by the sequencer. The procedure to switch between _Low Power_ and _Full Power_ mode and setting the ID can be looked up [here](https://customer.novationmusic.com/sites/customer/files/novation/downloads/6961/launchpad-s-and-mini-advanced-features-guide_0.pdf).
+
+<h4>Global Functions</h4>
+
+The `8` button acts as a _shift_ button and can be pressed in combination with other buttons to access secondary functions. The following functions are always available:
+
+| Buttons | Description |
+| :--- | :--- |
+| `8` + `7` | Start and stop the sequencer |
+| `8` + `1` | Switch to sequence mode |
+| `8` + `2` | Switch to pattern mode |
+
+Because the 8x8 grid of the Launchpad can only represent part of the data to be edited, the grid only acts as a window into a larger virtual 64x64 grid. Hold `1` to enter navigation mode, where the position of the window can be selected:
+
+| Buttons | Description |
+| :--- | :--- |
+| `1` + `2` | Move window left |
+| `1` + `3` | Move window right |
+| `1` + `4` | Move window up |
+| `1` + `5` | Move window down |
+| `1` + `GRID` | Move window to specific position |
+
+> Note: Navigation is available in both sequence and pattern mode.
+
+<h4>Sequence Mode</h4>
+
+Sequence mode allows for comprehensive editing of the patterns on all tracks. The grid allows for editing individual step values on the active track and layer. The following functions are available:
+
+| Buttons | Description |
+| :--- | :--- |
+| `A` - `H` | Select active track |
+| `2` + `GRID` | Select active layer |
+| `3` + `GRID` | Select first step |
+| `4` + `GRID` | Select last step |
+| `5` + `GRID` | Select run mode |
+| `7` + `A` - `H` | Fill track |
+| `8` + `A` - `H` | Mute/unmute track |
+
+The visualization on the grid depends on the selected layer. Binary layers (e.g. _Gate_ and _Slide_) can be visualized directly on the 8x8 grid without the need for navigation. This is useful for programming drum sequences for example. Other layers use navigation to various degree in order to allow programming the steps. When editing the _Note_ layer, the base note (first note per octave) is visualized to help orientation.
+
+<h4>Pattern Mode</h4>
+
+Pattern mode allows selecting the currently playing pattern on all the tracks. Each column on the `GRID` represents one track, allowing to launch individual patterns per track. The `A` - `H` buttons represent scenes, allowing to launch the same pattern number on all the tracks simultaneously. This is very similar to how Ableton Live allows launching clips and scenes on a Launchpad. Active patterns are shown as bright green, non-empty patterns are shown in dim colors, yellow for note tracks, red for curve tracks.
+
+In addition, holding `2` while selecting patterns and scenes, allows to use latching mode. This means that the patterns are switched at the moment when `2` is released. Holding `3` while selecting patterns and scenes allows to launch them synchronized to the global _Sync Measure_.
+
+Requested patterns due to latching or syncing are shown in dim green.
+
+<h3 id="appendix-usb-midi-devices">USB MIDI Devices</h3>
+
+The following is a list of USB MIDI devices known to be compatible with the **PER\|FORMER** sequencer:
+
+| Manufacturer | Device |
+| :--- | :--- |
+| CME | [XKEY37](https://www.cme-pro.com/xkey37) |
+| Moog | [Minitaur](https://www.moogmusic.com/products/minitaur) |
+| Novation | Launchpad Mini MK1 |
+| Novation | [Launchpad Mini MK2](https://novationmusic.com/launch/launchpad-mini) |
+| Novation | Launchpad S |
+| Novation | [Launchpad Mk2](https://novationmusic.com/launch/launchpad) |
+| Novation | [Launchpad Pro](https://novationmusic.com/launch/launchpad-pro) |
+| Novation | Launchkey Mini |
+
+The following is a list of USB MIDI devices known **not** to be compatible:
+
+| Manufacturer | Device |
+| :--- | :--- |
+| AKAI | [MPK Mini](https://www.akaipro.com/mpk-mini) |
+| Novation | Launchpad |
 
 <h3 id="appendix-calibration-procedure">Calibration Procedure</h3>
 

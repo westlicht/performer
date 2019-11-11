@@ -1,25 +1,39 @@
 #!/usr/bin/env python
 
 import os
-from subprocess import call
+import shutil
+from subprocess import call, DEVNULL
 import re
+import json
 
 MARKDOWN_FILE = "index.md"
-IMAGE_INPUT_DIR = "resources"
-IMAGE_OUTPUT_DIR = "images"
+PDF_MARKDOWN_FILE = "manual.pdf.md"
+PDF_FILE = "manual.pdf"
 
 TOC_MIN_LEVEL = 2
 TOC_MAX_LEVEL = 3
 
-COLORIZE = ["(", "-clone", "0", "-fill", "#cce500", "-colorize", "100", ")", "-compose", "multiply", "-composite"]
 
 def process_images():
+    IMAGE_INPUT_DIR = "resources"
+    IMAGE_OUTPUT_DIR = "images"
+
+    COLORIZE = ["(", "-clone", "0", "-fill", "#cce500", "-colorize", "100", ")", "-compose", "multiply", "-composite"]
 
     def infile(filename):
         return os.path.join(IMAGE_INPUT_DIR, filename)
 
     def outfile(filename):
         return os.path.join(IMAGE_OUTPUT_DIR, filename)
+
+    def copyIfChanged(infile, outfile):
+        comparefile = "_compare.png"
+        if not os.path.exists(outfile) or call(["compare", "-quiet", "-metric", "ae", infile, outfile, comparefile], stdout=DEVNULL, stderr=DEVNULL) == 1:
+            shutil.copyfile(infile, outfile)
+        else:
+            os.remove(infile)
+        if os.path.exists(comparefile):
+            os.remove(comparefile)
 
     pages = [
         "page-clock.png",
@@ -49,6 +63,7 @@ def process_images():
         "page-routing-edit.png",
         "page-routing.png",
         "page-song-chain-example.png",
+        "page-song-playback.png",
         "page-song.png",
         "page-system-cal-edit.png",
         "page-system-cal.png",
@@ -60,28 +75,31 @@ def process_images():
         "page-user-scale.png",
     ]
 
-    print("processing images ...")
+    print("Processing images ...")
+
+    tmpfile = "tmp.png"
 
     # rescale page images
     for filename in pages:
-        print("resizing %s" % (filename))
-        call(["convert", infile(filename), *COLORIZE, "-filter", "Box", "-resize", "512x128", outfile(filename)])
+        print("Resizing %s" % (filename))
+        call(["convert", infile(filename), *COLORIZE, "-filter", "Box", "-resize", "512x128", tmpfile])
+        copyIfChanged(tmpfile, outfile(filename))
 
     # create section images
     def section_image(filename):
-        call(["convert", infile("page-layout-mode.png"), *COLORIZE, "-filter", "Box", "-resize", "512x128", infile(filename), "-compose", "lighten", "-composite", outfile(filename)])
+        call(["convert", infile("page-layout-mode.png"), *COLORIZE, "-filter", "Box", "-resize", "512x128", infile(filename), "-compose", "lighten", "-composite", tmpfile])
+        copyIfChanged(tmpfile, outfile(filename))
 
     section_image("section-header.png")
     section_image("section-main.png")
     section_image("section-footer.png")
 
-def generate_toc():
-    print("processing table of contents ...")
 
-    text = open(MARKDOWN_FILE).read()
-    lines = text.split("\n")
-    headings = re.findall(r"<h(\d) id=\"([\w-]+)\">(.+)</h\1>", text)
-    toc = ""
+def generate_toc(markdown):
+    print("Generating table of contents ...")
+
+    headings = re.findall(r"<h(\d) id=\"([\w-]+)\">(.+)</h\1>", markdown)
+    toc = "\n"
 
     for heading in headings:
         level = int(heading[0])
@@ -91,15 +109,18 @@ def generate_toc():
             level -= TOC_MIN_LEVEL
             toc += "%s- [%s](#%s)\n" % (level * "  ", title, anchor)
 
-    text = re.sub(r"(<!-- toc-begin -->\n)(.*)(<!-- toc-end -->\n)", r"\g<1>" + toc + r"\g<3>", text, flags=re.DOTALL)
+    toc += "\n"
 
-    open(MARKDOWN_FILE, "w").write(text)
+    markdown = re.sub(r"(<!-- toc-begin -->\n)(.*)(<!-- toc-end -->\n)", r"\g<1>" + toc + r"\g<3>", markdown, flags=re.DOTALL)
+
+    return markdown
 
 
-def verify_anchors():
-    text = open(MARKDOWN_FILE).read()
-    anchors = re.findall(r"id=\"([\w-]+)\"", text)
-    lines = text.split("\n")
+def verify_anchors(markdown):
+    print("Verifying anchors ...")
+
+    anchors = re.findall(r"id=\"([\w-]+)\"", markdown)
+    lines = markdown.split("\n")
 
     for index, line in enumerate(lines):
         m = re.search(r"\(#([\w-]+)\)", line)
@@ -108,12 +129,75 @@ def verify_anchors():
             if not ref in anchors:
                 print("Found reference to unknown anchor '%s' on line %d" % (ref, index))
 
-def verify_button_labels():
-    text = open(MARKDOWN_FILE).read()
-    anchors = re.findall(r"`\w+`", text)
+
+def verify_button_labels(markdown):
+    print("Verifying button labels ...")
+
+    anchors = re.findall(r"`\w+`", markdown)
     print(sorted(list(set(anchors))))
 
+
+def process_markdown():
+    print("Processing markdown ...")
+
+    markdown = open(MARKDOWN_FILE, "r").read()
+    markdown = generate_toc(markdown)
+    verify_anchors(markdown)
+    verify_button_labels(markdown)
+    open(MARKDOWN_FILE, "w").write(markdown)
+
+
+def process_pdf():
+    print("Processing PDF ...")
+
+    markdown = open(MARKDOWN_FILE, "r").read()
+
+    # remove frontmatter chunk
+    markdown = re.sub(r"---\n(.*\n)*---", "", markdown)
+
+    # remove pdf exclude blocks
+    markdown = re.sub(r"<!-- pdf-exclude-begin -->\n.*<!-- pdf-exclude-end -->\n", "", markdown, flags=re.DOTALL)
+
+    # add page breaks
+    page_break = '<div style="page-break-after: always;"></div>'
+    markdown = re.sub(r"(<!-- page-break -->)", page_break + r"\n\1", markdown)
+
+    # add section numbers
+    if False:
+        headings = re.finditer(r"(<h([\d]).*>)(.*)(</h\2>)", markdown)
+        number = {}
+        sections = {}
+        for heading in headings:
+            # print(heading)
+            level = int(heading.group(2))
+            name = heading.group(3)
+            replacement = name
+            if level >= TOC_MIN_LEVEL and level <= TOC_MAX_LEVEL:
+                level -= TOC_MIN_LEVEL
+                number[level] = number.get(level, 0) + 1
+                number[level + 1] = 0
+                section = ".".join([str(number[i]) for i in range(0, level + 1)])
+                replacement = section + " " + name
+                # print(section, name)
+            sections[heading.group()] = replacement
+            # print(heading.group(2))
+        # print(sections)
+        markdown = re.sub(r"(<h([\d]).*>)(.*)(</h\2>)", lambda m: m.expand(r"\1") + sections[m.group()] + m.expand(r"\4"), markdown)
+
+        markdown = generate_toc(markdown)
+
+    open(PDF_MARKDOWN_FILE, "w").write(markdown)
+
+    # convert to pdf
+    remarkable_options = json.dumps({
+        "html": True
+    })
+
+    call(["markdown-pdf", "-s", "config/pdf.css", "-z", "config/highlight.css", "-m", remarkable_options, "-o", PDF_FILE, PDF_MARKDOWN_FILE])
+
+    os.remove(PDF_MARKDOWN_FILE)
+
+
 process_images()
-generate_toc()
-verify_anchors()
-# verify_button_labels()
+process_markdown()
+process_pdf()

@@ -16,6 +16,7 @@ layout: home
 - 64 steps per sequence
 - Multiple track and sequence modes
 - Note and modulation sequencing
+- Arpeggiator
 - Snapshot system
 - Sequence generators
 - Routing system for CV inputs and external MIDI controllers
