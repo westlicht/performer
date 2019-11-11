@@ -10,7 +10,7 @@ public:
         uint32_t currentTicks = os::ticks();
         uint32_t deltaTicks = currentTicks - _lastTicks;
 
-        if (key.code() != _lastCode || deltaTicks > os::time::ms(200)) {
+        if (key.code() != _lastCode || deltaTicks > os::time::ms(300)) {
             _count = 1;
         } else {
             ++_count;
