@@ -23,6 +23,7 @@ void CurveTrack::writeRouted(Routing::Target target, int intValue, float floatVa
 void CurveTrack::clear() {
     setPlayMode(Types::PlayMode::Aligned);
     setFillMode(FillMode::None);
+    setMuteMode(MuteMode::LastValue);
     setSlideTime(0);
     setRotate(0);
     setShapeProbabilityBias(0);
@@ -37,6 +38,7 @@ void CurveTrack::write(WriteContext &context) const {
     auto &writer = context.writer;
     writer.write(_playMode);
     writer.write(_fillMode);
+    writer.write(_muteMode);
     writer.write(_slideTime.base);
     writer.write(_rotate.base);
     writer.write(_shapeProbabilityBias.base);
@@ -48,6 +50,7 @@ void CurveTrack::read(ReadContext &context) {
     auto &reader = context.reader;
     reader.read(_playMode);
     reader.read(_fillMode);
+    reader.read(_muteMode, ProjectVersion::Version22);
     reader.read(_slideTime.base, ProjectVersion::Version8);
     reader.read(_rotate.base);
     reader.read(_shapeProbabilityBias.base, ProjectVersion::Version15);

@@ -35,6 +35,25 @@ public:
         return nullptr;
     }
 
+    enum class MuteMode : uint8_t {
+        LastValue,
+        Zero,
+        Min,
+        Max,
+        Last
+    };
+
+    static const char *muteModeName(MuteMode muteMode) {
+        switch (muteMode) {
+        case MuteMode::LastValue:   return "Last Value";
+        case MuteMode::Zero:        return "0V";
+        case MuteMode::Min:         return "Min";
+        case MuteMode::Max:         return "Max";
+        case MuteMode::Last:        break;
+        }
+        return nullptr;
+    }
+
     //----------------------------------------
     // Properties
     //----------------------------------------
@@ -67,6 +86,21 @@ public:
 
     void printFillMode(StringBuilder &str) const {
         str(fillModeName(fillMode()));
+    }
+
+    // muteMode
+
+    MuteMode muteMode() const { return _muteMode; }
+    void setMuteMode(MuteMode muteMode) {
+        _muteMode = ModelUtils::clampedEnum(muteMode);
+    }
+
+    void editMuteMode(int value, bool shift) {
+        setMuteMode(ModelUtils::adjustedEnum(muteMode(), value));
+    }
+
+    void printMuteMode(StringBuilder &str) const {
+        str(muteModeName(muteMode()));
     }
 
     // slideTime
@@ -179,6 +213,7 @@ private:
     int8_t _trackIndex = -1;
     Types::PlayMode _playMode;
     FillMode _fillMode;
+    MuteMode _muteMode;
     Routable<uint8_t> _slideTime;
     Routable<int8_t> _rotate;
     Routable<int8_t> _shapeProbabilityBias;

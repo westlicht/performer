@@ -124,14 +124,12 @@ void CurveTrackEngine::update(float dt) {
         _cvOutput = _cvOutputTarget;
     }
 
-    if (!mute()) {
-        if (_curveTrack.slideTime() > 0) {
-            float factor = 1.f - 0.01f * _curveTrack.slideTime();
-            factor = 500.f * factor * factor;
-            _cvOutput += (_cvOutputTarget - _cvOutput) * std::min(1.f, dt * factor);
-        } else {
-            _cvOutput = _cvOutputTarget;
-        }
+    if (_curveTrack.slideTime() > 0) {
+        float factor = 1.f - 0.01f * _curveTrack.slideTime();
+        factor = 500.f * factor * factor;
+        _cvOutput += (_cvOutputTarget - _cvOutput) * std::min(1.f, dt * factor);
+    } else {
+        _cvOutput = _cvOutputTarget;
     }
 }
 
@@ -171,21 +169,38 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
         return;
     }
 
-    bool fillVariation = _fillMode == CurveTrack::FillMode::Variation;
-    bool fillNextPattern = _fillMode == CurveTrack::FillMode::NextPattern;
-    bool fillInvert = _fillMode == CurveTrack::FillMode::Invert;
-
     const auto &sequence = *_sequence;
     const auto &range = Types::voltageRangeInfo(sequence.range());
 
-    const auto &evalSequence = fillNextPattern ? *_fillSequence : *_sequence;
-    const auto &step = evalSequence.step(_currentStep);
+    if (mute()) {
+        switch (_curveTrack.muteMode()) {
+        case CurveTrack::MuteMode::LastValue:
+            // keep value
+            break;
+        case CurveTrack::MuteMode::Zero:
+            _cvOutputTarget = 0.f;
+            break;
+        case CurveTrack::MuteMode::Min:
+            _cvOutputTarget = range.lo;
+            break;
+        case CurveTrack::MuteMode::Max:
+            _cvOutputTarget = range.hi;
+            break;
+        }
+    } else {
+        bool fillVariation = _fillMode == CurveTrack::FillMode::Variation;
+        bool fillNextPattern = _fillMode == CurveTrack::FillMode::NextPattern;
+        bool fillInvert = _fillMode == CurveTrack::FillMode::Invert;
 
-    _currentStepFraction = float(relativeTick % divisor) / divisor;
+        const auto &evalSequence = fillNextPattern ? *_fillSequence : *_sequence;
+        const auto &step = evalSequence.step(_currentStep);
 
-    float value = evalStepShape(step, _shapeVariation || fillVariation, fillInvert, _currentStepFraction);
-    value = range.denormalize(value);
-    _cvOutputTarget = value;
+        _currentStepFraction = float(relativeTick % divisor) / divisor;
+
+        float value = evalStepShape(step, _shapeVariation || fillVariation, fillInvert, _currentStepFraction);
+        value = range.denormalize(value);
+        _cvOutputTarget = value;
+    }
 
     _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutputTarget);
 }

@@ -270,6 +270,7 @@ void register_sequencer(py::module &m) {
     curveTrack
         .def_property("playMode", &CurveTrack::playMode, &CurveTrack::setPlayMode)
         .def_property("fillMode", &CurveTrack::fillMode, &CurveTrack::setFillMode)
+        .def_property("muteMode", &CurveTrack::muteMode, &CurveTrack::setMuteMode)
         .def_property("slideTime", &CurveTrack::slideTime, &CurveTrack::setSlideTime)
         .def_property("rotate", &CurveTrack::rotate, &CurveTrack::setRotate)
         .def_property("shapeProbabilityBias", &CurveTrack::shapeProbabilityBias, &CurveTrack::setShapeProbabilityBias)
@@ -291,6 +292,15 @@ void register_sequencer(py::module &m) {
         .value("Invert", CurveTrack::FillMode::Invert)
         .export_values()
     ;
+
+    py::enum_<CurveTrack::MuteMode>(curveTrack, "MuteMode")
+        .value("LastValue", CurveTrack::MuteMode::LastValue)
+        .value("Zero", CurveTrack::MuteMode::Zero)
+        .value("Min", CurveTrack::MuteMode::Min)
+        .value("Max", CurveTrack::MuteMode::Max)
+        .export_values()
+    ;
+
 
     // ------------------------------------------------------------------------
     // MidiCvTrack

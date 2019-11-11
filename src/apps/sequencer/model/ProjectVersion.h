@@ -60,6 +60,9 @@ enum ProjectVersion {
     // added MidiCvTrack::transpose
     Version21 = 21,
 
+    // added CurveTrack::muteMode
+    Version22 = 22,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,
