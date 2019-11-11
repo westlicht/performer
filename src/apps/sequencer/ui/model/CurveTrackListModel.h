@@ -53,6 +53,7 @@ private:
     enum Item {
         PlayMode,
         FillMode,
+        MuteMode,
         SlideTime,
         Rotate,
         ShapeProbabilityBias,
@@ -64,6 +65,7 @@ private:
         switch (item) {
         case PlayMode:              return "Play Mode";
         case FillMode:              return "Fill Mode";
+        case MuteMode:              return "Mute Mode";
         case SlideTime:             return "Slide Time";
         case Rotate:                return "Rotate";
         case ShapeProbabilityBias:  return "Shape P. Bias";
@@ -84,6 +86,9 @@ private:
             break;
         case FillMode:
             _track->printFillMode(str);
+            break;
+        case MuteMode:
+            _track->printMuteMode(str);
             break;
         case SlideTime:
             _track->printSlideTime(str);
@@ -109,6 +114,9 @@ private:
             break;
         case FillMode:
             _track->editFillMode(value, shift);
+            break;
+        case MuteMode:
+            _track->editMuteMode(value, shift);
             break;
         case SlideTime:
             _track->editSlideTime(value, shift);
