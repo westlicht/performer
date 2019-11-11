@@ -2,6 +2,7 @@
 
 #include "LaunchpadDevice.h"
 #include "LaunchpadMk2Device.h"
+#include "LaunchpadMk3Device.h"
 #include "LaunchpadProDevice.h"
 
 #include "ui/Controller.h"
@@ -178,7 +179,7 @@ private:
     } _buttonTracker;
 
     Project &_project;
-    Container<LaunchpadDevice, LaunchpadMk2Device, LaunchpadProDevice> _deviceContainer;
+    Container<LaunchpadDevice, LaunchpadMk2Device, LaunchpadMk3Device, LaunchpadProDevice> _deviceContainer;
     LaunchpadDevice *_device;
     Mode _mode = Mode::Sequence;
 

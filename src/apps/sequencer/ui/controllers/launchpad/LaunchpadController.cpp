@@ -101,9 +101,14 @@ LaunchpadController::LaunchpadController(ControllerManager &manager, Model &mode
     _project(model.project())
 {
     if (info.productId == 0x0069) {
+        // Launchpad Mini Mk2
         _device = _deviceContainer.create<LaunchpadMk2Device>();
     } else if (info.productId == 0x0051) {
+        // Launchpad Pro
         _device = _deviceContainer.create<LaunchpadProDevice>();
+    } else if (info.productId == 0x0113) {
+        // Launchpad Mini Mk3
+        _device = _deviceContainer.create<LaunchpadMk3Device>();
     } else {
         _device = _deviceContainer.create<LaunchpadDevice>();
     }

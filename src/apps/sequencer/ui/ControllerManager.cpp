@@ -6,6 +6,7 @@ static const ControllerInfo controllerInfos[] = {
     { 0x1235, 0x0037, ControllerInfo::Type::Launchpad },    // Novation Launchpad Mini Mk2
     { 0x1235, 0x0069, ControllerInfo::Type::Launchpad },    // Novation Launchpad Mk2
     { 0x1235, 0x0051, ControllerInfo::Type::Launchpad },    // Novation Launchpad Pro
+    { 0x1235, 0x0113, ControllerInfo::Type::Launchpad },    // Novation Launchpad Mini Mk3
 };
 
 static const ControllerInfo *findController(uint16_t vendorId, uint16_t productId) {
