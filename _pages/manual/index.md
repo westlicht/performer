@@ -551,6 +551,7 @@ If a track is in _Curve_, the following parameters are available:
 | :--- | :--- | :--- |
 | Play Mode | [Play Modes](#appendix-play-modes) | Mode used for playing sequences in this track. |
 | Fill Mode | None, Gates, Next Pattern | This parameter currently has no effect. |
+| Mute Mode | Last Value, 0V, Min, Max | Voltage that is output when track is muted. _Last Value_ keeps the last value before mute is engaged. _0V_ outputs zero volts. _Min_ and _Max_ sets the voltage to the minimum or maximum value of the selected voltage range. |
 | Rotate | [Rotation](#appendix-rotation) | Amount of rotation applied to the sequence. |
 
 > Note: _Rotate_ is a routable parameter.
