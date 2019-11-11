@@ -186,6 +186,8 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
         case CurveTrack::MuteMode::Max:
             _cvOutputTarget = range.hi;
             break;
+        case CurveTrack::MuteMode::Last:
+            break;
         }
     } else {
         bool fillVariation = _fillMode == CurveTrack::FillMode::Variation;
