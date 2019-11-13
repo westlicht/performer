@@ -50,8 +50,7 @@ void NoteTrack::clear() {
     }
 }
 
-void NoteTrack::write(WriteContext &context) const {
-    auto writer = context.writer;
+void NoteTrack::write(VersionedSerializedWriter &writer) const {
     writer.write(_playMode);
     writer.write(_fillMode);
     writer.write(_cvUpdateMode);
@@ -63,11 +62,10 @@ void NoteTrack::write(WriteContext &context) const {
     writer.write(_retriggerProbabilityBias.base);
     writer.write(_lengthBias.base);
     writer.write(_noteProbabilityBias.base);
-    writeArray(context, _sequences);
+    writeArray(writer, _sequences);
 }
 
-void NoteTrack::read(ReadContext &context) {
-    auto reader = context.reader;
+void NoteTrack::read(VersionedSerializedReader &reader) {
     reader.read(_playMode);
     reader.read(_fillMode);
     reader.read(_cvUpdateMode, ProjectVersion::Version4);
@@ -79,5 +77,5 @@ void NoteTrack::read(ReadContext &context) {
     reader.read(_retriggerProbabilityBias.base);
     reader.read(_lengthBias.base);
     reader.read(_noteProbabilityBias.base);
-    readArray(context, _sequences);
+    readArray(reader, _sequences);
 }

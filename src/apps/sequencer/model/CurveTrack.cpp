@@ -34,8 +34,7 @@ void CurveTrack::clear() {
     }
 }
 
-void CurveTrack::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void CurveTrack::write(VersionedSerializedWriter &writer) const {
     writer.write(_playMode);
     writer.write(_fillMode);
     writer.write(_muteMode);
@@ -43,11 +42,10 @@ void CurveTrack::write(WriteContext &context) const {
     writer.write(_rotate.base);
     writer.write(_shapeProbabilityBias.base);
     writer.write(_gateProbabilityBias.base);
-    writeArray(context, _sequences);
+    writeArray(writer, _sequences);
 }
 
-void CurveTrack::read(ReadContext &context) {
-    auto &reader = context.reader;
+void CurveTrack::read(VersionedSerializedReader &reader) {
     reader.read(_playMode);
     reader.read(_fillMode);
     reader.read(_muteMode, ProjectVersion::Version22);
@@ -55,5 +53,5 @@ void CurveTrack::read(ReadContext &context) {
     reader.read(_rotate.base);
     reader.read(_shapeProbabilityBias.base, ProjectVersion::Version15);
     reader.read(_gateProbabilityBias.base, ProjectVersion::Version15);
-    readArray(context, _sequences);
+    readArray(reader, _sequences);
 }

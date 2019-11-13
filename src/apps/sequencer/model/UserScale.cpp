@@ -23,9 +23,7 @@ void UserScale::clearItems() {
     }
 }
 
-void UserScale::write(WriteContext &context) const {
-    auto &writer = context.writer;
-
+void UserScale::write(VersionedSerializedWriter &writer) const {
     writer.write(_name, NameLength + 1);
     writer.write(_mode);
     writer.write(_size);
@@ -37,10 +35,8 @@ void UserScale::write(WriteContext &context) const {
     writer.writeHash();
 }
 
-bool UserScale::read(ReadContext &context) {
+bool UserScale::read(VersionedSerializedReader &reader) {
     clear();
-
-    auto &reader = context.reader;
 
     reader.read(_name, NameLength + 1, ProjectVersion::Version5);
     reader.read(_mode);
@@ -72,8 +68,7 @@ fs::Error UserScale::write(const char *path) const {
         ProjectVersion::Latest
     );
 
-    WriteContext context = { writer };
-    write(context);
+    write(writer);
 
     return fileWriter.finish();
 }
@@ -92,8 +87,7 @@ fs::Error UserScale::read(const char *path) {
         ProjectVersion::Latest
     );
 
-    ReadContext context = { reader };
-    bool success = read(context);
+    bool success = read(reader);
 
     // TODO at some point we should remove this because name is also stored with data as of version 5
     if (success) {

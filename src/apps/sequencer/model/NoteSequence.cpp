@@ -134,14 +134,12 @@ void NoteSequence::Step::clear() {
     setCondition(Types::Condition::Off);
 }
 
-void NoteSequence::Step::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void NoteSequence::Step::write(VersionedSerializedWriter &writer) const {
     writer.write(_data0.raw);
     writer.write(_data1.raw);
 }
 
-void NoteSequence::Step::read(ReadContext &context) {
-    auto &reader = context.reader;
+void NoteSequence::Step::read(VersionedSerializedReader &reader) {
     reader.read(_data0.raw);
     reader.read(_data1.raw);
     if (reader.dataVersion() < ProjectVersion::Version5) {
@@ -229,8 +227,7 @@ void NoteSequence::duplicateSteps() {
     setLastStep(lastStep() + (lastStep() - firstStep() + 1));
 }
 
-void NoteSequence::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void NoteSequence::write(VersionedSerializedWriter &writer) const {
     writer.write(_scale);
     writer.write(_rootNote);
     writer.write(_divisor.base);
@@ -239,11 +236,10 @@ void NoteSequence::write(WriteContext &context) const {
     writer.write(_firstStep.base);
     writer.write(_lastStep.base);
 
-    writeArray(context, _steps);
+    writeArray(writer, _steps);
 }
 
-void NoteSequence::read(ReadContext &context) {
-    auto &reader = context.reader;
+void NoteSequence::read(VersionedSerializedReader &reader) {
     reader.read(_scale);
     reader.read(_rootNote);
     if (reader.dataVersion() < ProjectVersion::Version10) {
@@ -256,5 +252,5 @@ void NoteSequence::read(ReadContext &context) {
     reader.read(_firstStep.base);
     reader.read(_lastStep.base);
 
-    readArray(context, _steps);
+    readArray(reader, _steps);
 }

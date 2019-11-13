@@ -12,8 +12,7 @@ void PlayState::TrackState::clear() {
     _fillAmount = 100;
 }
 
-void PlayState::TrackState::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void PlayState::TrackState::write(VersionedSerializedWriter &writer) const {
     uint8_t muteValue = mute();
     writer.write(muteValue);
     // make sure to not write snapshot state
@@ -22,8 +21,7 @@ void PlayState::TrackState::write(WriteContext &context) const {
     writer.write(_fillAmount);
 }
 
-void PlayState::TrackState::read(ReadContext &context) {
-    auto &reader = context.reader;
+void PlayState::TrackState::read(VersionedSerializedReader &reader) {
     uint8_t muteValue;
     reader.read(muteValue);
     setMute(muteValue);
@@ -237,12 +235,12 @@ void PlayState::clear() {
     _snapshot.active = false;
 }
 
-void PlayState::write(WriteContext &context) const {
-    writeArray(context, _trackStates);
+void PlayState::write(VersionedSerializedWriter &writer) const {
+    writeArray(writer, _trackStates);
 }
 
-void PlayState::read(ReadContext &context) {
-    readArray(context, _trackStates);
+void PlayState::read(VersionedSerializedReader &reader) {
+    readArray(reader, _trackStates);
     notify(Immediate);
 }
 

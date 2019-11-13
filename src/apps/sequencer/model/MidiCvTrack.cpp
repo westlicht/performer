@@ -47,9 +47,8 @@ void MidiCvTrack::cvOutputName(int index, StringBuilder &str) const {
     }
 }
 
-void MidiCvTrack::write(WriteContext &context) const {
-    auto &writer = context.writer;
-    _source.write(context);
+void MidiCvTrack::write(VersionedSerializedWriter &writer) const {
+    _source.write(writer);
     writer.write(_voices);
     writer.write(_voiceConfig);
     writer.write(_notePriority);
@@ -60,12 +59,11 @@ void MidiCvTrack::write(WriteContext &context) const {
     writer.write(_retrigger);
     writer.write(_slideTime.base);
     writer.write(_transpose.base);
-    _arpeggiator.write(context);
+    _arpeggiator.write(writer);
 }
 
-void MidiCvTrack::read(ReadContext &context) {
-    auto &reader = context.reader;
-    _source.read(context);
+void MidiCvTrack::read(VersionedSerializedReader &reader) {
+    _source.read(reader);
     reader.read(_voices);
     reader.read(_voiceConfig);
     reader.read(_notePriority, ProjectVersion::Version16);
@@ -76,5 +74,5 @@ void MidiCvTrack::read(ReadContext &context) {
     reader.read(_retrigger);
     reader.read(_slideTime.base, ProjectVersion::Version20);
     reader.read(_transpose.base, ProjectVersion::Version21);
-    _arpeggiator.read(context);
+    _arpeggiator.read(reader);
 }

@@ -185,8 +185,8 @@ public:
 
         void clear();
 
-        void write(WriteContext &context) const;
-        void read(ReadContext &context);
+        void write(VersionedSerializedWriter &writer) const;
+        void read(VersionedSerializedReader &reader);
 
         bool operator==(const Step &other) const {
             return _data0.raw == other._data0.raw && _data1.raw == other._data1.raw;
@@ -425,8 +425,8 @@ public:
 
     void duplicateSteps();
 
-    void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    void write(VersionedSerializedWriter &writer) const;
+    void read(VersionedSerializedReader &reader);
 
 private:
     void setTrackIndex(int trackIndex) { _trackIndex = trackIndex; }

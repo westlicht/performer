@@ -366,8 +366,8 @@ public:
 
     void setTrackMode(int trackIndex, Track::TrackMode trackMode);
 
-    void write(WriteContext &context) const;
-    bool read(ReadContext &context);
+    void write(VersionedSerializedWriter &writer) const;
+    bool read(VersionedSerializedReader &reader);
 
     fs::Error write(const char *path) const;
     fs::Error read(const char *path);

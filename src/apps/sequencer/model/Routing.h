@@ -236,8 +236,8 @@ public:
 
         void clear();
 
-        void write(WriteContext &context) const;
-        void read(ReadContext &context);
+        void write(VersionedSerializedWriter &writer) const;
+        void read(VersionedSerializedReader &reader);
 
         bool operator==(const CvSource &other) const;
 
@@ -344,8 +344,8 @@ public:
 
         void clear();
 
-        void write(WriteContext &context) const;
-        void read(ReadContext &context);
+        void write(VersionedSerializedWriter &writer) const;
+        void read(VersionedSerializedReader &reader);
 
         bool operator==(const MidiSource &other) const;
 
@@ -472,8 +472,8 @@ public:
 
         bool active() const { return _target != Target::None; }
 
-        void write(WriteContext &context) const;
-        void read(ReadContext &context);
+        void write(VersionedSerializedWriter &writer) const;
+        void read(VersionedSerializedReader &reader);
 
         bool operator==(const Route &other) const;
         bool operator!=(const Route &other) const {
@@ -520,8 +520,8 @@ public:
 
     void writeTarget(Target target, uint8_t tracks, float normalized);
 
-    void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    void write(VersionedSerializedWriter &writer) const;
+    void read(VersionedSerializedReader &reader);
 
     bool isDirty() const { return _dirty; }
     void clearDirty() { _dirty = false; }

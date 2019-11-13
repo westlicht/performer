@@ -17,8 +17,7 @@ void ClockSetup::clear() {
     _dirty = true;
 }
 
-void ClockSetup::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void ClockSetup::write(VersionedSerializedWriter &writer) const {
     writer.write(_mode);
     writer.write(_shiftMode);
     writer.write(_clockInputDivisor);
@@ -33,8 +32,7 @@ void ClockSetup::write(WriteContext &context) const {
     writer.write(_usbTx);
 }
 
-void ClockSetup::read(ReadContext &context) {
-    auto &reader = context.reader;
+void ClockSetup::read(VersionedSerializedReader &reader) {
     reader.read(_mode);
     reader.read(_shiftMode);
     reader.read(_clockInputDivisor);

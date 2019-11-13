@@ -10,10 +10,8 @@ void MidiOutput::Output::clear() {
     std::memset(&_data, 0, sizeof(_data));
 }
 
-void MidiOutput::Output::write(WriteContext &context) const {
-    auto &writer = context.writer;
-
-    _target.write(context);
+void MidiOutput::Output::write(VersionedSerializedWriter &writer) const {
+    _target.write(writer);
     writer.write(_event);
 
     switch (_event) {
@@ -33,10 +31,8 @@ void MidiOutput::Output::write(WriteContext &context) const {
     }
 }
 
-void MidiOutput::Output::read(ReadContext &context) {
-    auto &reader = context.reader;
-
-    _target.read(context);
+void MidiOutput::Output::read(VersionedSerializedReader &reader) {
+    _target.read(reader);
     reader.read(_event);
 
     switch (_event) {
@@ -79,10 +75,10 @@ void MidiOutput::clear() {
     }
 }
 
-void MidiOutput::write(WriteContext &context) const {
-    writeArray(context, _outputs);
+void MidiOutput::write(VersionedSerializedWriter &writer) const {
+    writeArray(writer, _outputs);
 }
 
-void MidiOutput::read(ReadContext &context) {
-    readArray(context, _outputs);
+void MidiOutput::read(VersionedSerializedReader &reader) {
+    readArray(reader, _outputs);
 }

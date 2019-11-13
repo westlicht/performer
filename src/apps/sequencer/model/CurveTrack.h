@@ -199,8 +199,8 @@ public:
 
     void clear();
 
-    void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    void write(VersionedSerializedWriter &writer) const;
+    void read(VersionedSerializedReader &reader);
 
 private:
     void setTrackIndex(int trackIndex) {

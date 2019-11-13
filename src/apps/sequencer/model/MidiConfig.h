@@ -74,14 +74,12 @@ public:
         setChannel(IsSource ? -1 : 0);
     }
 
-    void write(WriteContext &context) const {
-        auto &writer = context.writer;
+    void write(VersionedSerializedWriter &writer) const {
         writer.write(_port);
         writer.write(_channel);
     }
 
-    void read(ReadContext &context) {
-        auto &reader = context.reader;
+    void read(VersionedSerializedReader &reader) {
         reader.read(_port);
         reader.read(_channel);
     }

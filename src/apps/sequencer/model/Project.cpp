@@ -99,12 +99,11 @@ void Project::setTrackMode(int trackIndex, Track::TrackMode trackMode) {
     _observable.notify(TrackModeChanged);
 }
 
-void Project::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void Project::write(VersionedSerializedWriter &writer) const {
     writer.write(_name, NameLength + 1);
     writer.write(_tempo.base);
     writer.write(_swing.base);
-    _timeSignature.write(context);
+    _timeSignature.write(writer);
     writer.write(_syncMeasure);
     writer.write(_scale);
     writer.write(_rootNote);
@@ -112,18 +111,18 @@ void Project::write(WriteContext &context) const {
     writer.write(_cvGateInput);
     writer.write(_curveCvInput);
 
-    _clockSetup.write(context);
+    _clockSetup.write(writer);
 
-    writeArray(context, _tracks);
-    writeArray(context, _cvOutputTracks);
-    writeArray(context, _gateOutputTracks);
+    writeArray(writer, _tracks);
+    writeArray(writer, _cvOutputTracks);
+    writeArray(writer, _gateOutputTracks);
 
-    _song.write(context);
-    _playState.write(context);
-    _routing.write(context);
-    _midiOutput.write(context);
+    _song.write(writer);
+    _playState.write(writer);
+    _routing.write(writer);
+    _midiOutput.write(writer);
 
-    writeArray(context, UserScale::userScales);
+    writeArray(writer, UserScale::userScales);
 
     writer.write(_selectedTrackIndex);
     writer.write(_selectedPatternIndex);
@@ -131,15 +130,14 @@ void Project::write(WriteContext &context) const {
     writer.writeHash();
 }
 
-bool Project::read(ReadContext &context) {
+bool Project::read(VersionedSerializedReader &reader) {
     clear();
 
-    auto &reader = context.reader;
     reader.read(_name, NameLength + 1, ProjectVersion::Version5);
     reader.read(_tempo.base);
     reader.read(_swing.base);
     if (reader.dataVersion() >= ProjectVersion::Version18) {
-        _timeSignature.read(context);
+        _timeSignature.read(reader);
     }
     reader.read(_syncMeasure);
     reader.read(_scale);
@@ -148,19 +146,19 @@ bool Project::read(ReadContext &context) {
     reader.read(_cvGateInput, ProjectVersion::Version6);
     reader.read(_curveCvInput, ProjectVersion::Version11);
 
-    _clockSetup.read(context);
+    _clockSetup.read(reader);
 
-    readArray(context, _tracks);
-    readArray(context, _cvOutputTracks);
-    readArray(context, _gateOutputTracks);
+    readArray(reader, _tracks);
+    readArray(reader, _cvOutputTracks);
+    readArray(reader, _gateOutputTracks);
 
-    _song.read(context);
-    _playState.read(context);
-    _routing.read(context);
-    _midiOutput.read(context);
+    _song.read(reader);
+    _playState.read(reader);
+    _routing.read(reader);
+    _midiOutput.read(reader);
 
     if (reader.dataVersion() >= ProjectVersion::Version5) {
-        readArray(context, UserScale::userScales);
+        readArray(reader, UserScale::userScales);
     }
 
     reader.read(_selectedTrackIndex);
@@ -190,8 +188,7 @@ fs::Error Project::write(const char *path) const {
         ProjectVersion::Latest
     );
 
-    WriteContext context = { writer };
-    write(context);
+    write(writer);
 
     return fileWriter.finish();
 }
@@ -210,8 +207,7 @@ fs::Error Project::read(const char *path) {
         ProjectVersion::Latest
     );
 
-    ReadContext context = { reader };
-    bool success = read(context);
+    bool success = read(reader);
 
     // TODO at some point we should remove this because name is also stored with data as of version 5
     if (success) {

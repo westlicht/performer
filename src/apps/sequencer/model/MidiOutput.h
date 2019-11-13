@@ -201,8 +201,8 @@ public:
 
         void clear();
 
-        void write(WriteContext &context) const;
-        void read(ReadContext &context);
+        void write(VersionedSerializedWriter &writer) const;
+        void read(VersionedSerializedReader &reader);
 
         bool operator==(const Output &other) const;
         bool operator!=(const Output &other) const {
@@ -262,8 +262,8 @@ public:
 
     void clear();
 
-    void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    void write(VersionedSerializedWriter &writer) const;
+    void read(VersionedSerializedReader &reader);
 
     bool isDirty() const { return _dirty; }
     void clearDirty() { _dirty = false; }

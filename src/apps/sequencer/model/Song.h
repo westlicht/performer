@@ -26,8 +26,8 @@ public:
 
         void clear();
 
-        void write(WriteContext &context) const;
-        void read(ReadContext &context);
+        void write(VersionedSerializedWriter &writer) const;
+        void read(VersionedSerializedReader &reader);
 
     private:
         static uint32_t fillPatterns(int pattern) {
@@ -90,8 +90,8 @@ public:
 
     void clear();
 
-    void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    void write(VersionedSerializedWriter &writer) const;
+    void read(VersionedSerializedReader &reader);
 
 private:
     std::array<Slot, CONFIG_SONG_SLOT_COUNT> _slots;

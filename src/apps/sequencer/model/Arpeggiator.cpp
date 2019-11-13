@@ -10,8 +10,7 @@ void Arpeggiator::clear() {
     setOctaves(0);
 }
 
-void Arpeggiator::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void Arpeggiator::write(VersionedSerializedWriter &writer) const {
     writer.write(_enabled);
     writer.write(_hold);
     writer.writeEnum(_mode, modeSerialize);
@@ -20,8 +19,7 @@ void Arpeggiator::write(WriteContext &context) const {
     writer.write(_octaves);
 }
 
-void Arpeggiator::read(ReadContext &context) {
-    auto &reader = context.reader;
+void Arpeggiator::read(VersionedSerializedReader &reader) {
     reader.read(_enabled, ProjectVersion::Version9);
     reader.read(_hold, ProjectVersion::Version9);
     reader.readEnum(_mode, modeSerialize, ProjectVersion::Version9);

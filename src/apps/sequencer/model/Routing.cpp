@@ -13,13 +13,11 @@ void Routing::CvSource::clear() {
     _range = Types::VoltageRange::Bipolar5V;
 }
 
-void Routing::CvSource::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void Routing::CvSource::write(VersionedSerializedWriter &writer) const {
     writer.write(_range);
 }
 
-void Routing::CvSource::read(ReadContext &context) {
-    auto &reader = context.reader;
+void Routing::CvSource::read(VersionedSerializedReader &reader) {
     reader.read(_range);
 }
 
@@ -38,17 +36,15 @@ void Routing::MidiSource::clear() {
     _noteRange = 2;
 }
 
-void Routing::MidiSource::write(WriteContext &context) const {
-    auto &writer = context.writer;
-    _source.write(context);
+void Routing::MidiSource::write(VersionedSerializedWriter &writer) const {
+    _source.write(writer);
     writer.write(_event);
     writer.write(_controlNumberOrNote);
     writer.write(_noteRange);
 }
 
-void Routing::MidiSource::read(ReadContext &context) {
-    auto &reader = context.reader;
-    _source.read(context);
+void Routing::MidiSource::read(VersionedSerializedReader &reader) {
+    _source.read(reader);
     reader.read(_event);
     reader.read(_controlNumberOrNote);
     reader.read(_noteRange, ProjectVersion::Version13);
@@ -81,33 +77,31 @@ void Routing::Route::clear() {
     _midiSource.clear();
 }
 
-void Routing::Route::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void Routing::Route::write(VersionedSerializedWriter &writer) const {
     writer.writeEnum(_target, targetSerialize);
     writer.write(_tracks);
     writer.write(_min);
     writer.write(_max);
     writer.write(_source);
     if (isCvSource(_source)) {
-        _cvSource.write(context);
+        _cvSource.write(writer);
     }
     if (isMidiSource(_source)) {
-        _midiSource.write(context);
+        _midiSource.write(writer);
     }
 }
 
-void Routing::Route::read(ReadContext &context) {
-    auto &reader = context.reader;
+void Routing::Route::read(VersionedSerializedReader &reader) {
     reader.readEnum(_target, targetSerialize);
     reader.read(_tracks);
     reader.read(_min);
     reader.read(_max);
     reader.read(_source);
     if (isCvSource(_source)) {
-        _cvSource.read(context);
+        _cvSource.read(reader);
     }
     if (isMidiSource(_source)) {
-        _midiSource.read(context);
+        _midiSource.read(reader);
     }
 }
 
@@ -217,12 +211,12 @@ void Routing::writeTarget(Target target, uint8_t tracks, float normalized) {
     }
 }
 
-void Routing::write(WriteContext &context) const {
-    writeArray(context, _routes);
+void Routing::write(VersionedSerializedWriter &writer) const {
+    writeArray(writer, _routes);
 }
 
-void Routing::read(ReadContext &context) {
-    readArray(context, _routes);
+void Routing::read(VersionedSerializedReader &reader) {
+    readArray(reader, _routes);
 }
 
 static std::array<uint8_t, size_t(Routing::Target::Last)> routedSet;

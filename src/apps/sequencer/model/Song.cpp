@@ -9,16 +9,12 @@ void Song::Slot::clear() {
     _repeats = 1;
 }
 
-void Song::Slot::write(WriteContext &context) const {
-    auto &writer = context.writer;
-
+void Song::Slot::write(VersionedSerializedWriter &writer) const {
     writer.write(_patterns);
     writer.write(_repeats);
 }
 
-void Song::Slot::read(ReadContext &context) {
-    auto &reader = context.reader;
-
+void Song::Slot::read(VersionedSerializedReader &reader) {
     reader.read(_patterns);
     reader.read(_repeats);
 }
@@ -107,21 +103,17 @@ void Song::clear() {
     _slotCount = 0;
 }
 
-void Song::write(WriteContext &context) const {
-    auto &writer = context.writer;
-
-    writeArray(context, _slots);
+void Song::write(VersionedSerializedWriter &writer) const {
+    writeArray(writer, _slots);
 
     writer.write(_slotCount);
 }
 
-void Song::read(ReadContext &context) {
-    auto &reader = context.reader;
-
+void Song::read(VersionedSerializedReader &reader) {
     if (reader.dataVersion() < ProjectVersion::Version18) {
-        readArray(context, _slots, 16);
+        readArray(reader, _slots, 16);
     } else {
-        readArray(context, _slots);
+        readArray(reader, _slots);
     }
 
     reader.read(_slotCount);

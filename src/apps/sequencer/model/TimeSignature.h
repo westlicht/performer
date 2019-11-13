@@ -77,14 +77,12 @@ public:
         return beats() * noteDivisor();
     }
 
-    void write(WriteContext &context) const {
-        auto &writer = context.writer;
+    void write(VersionedSerializedWriter &writer) const {
         writer.write(_beats);
         writer.write(_note);
     }
 
-    void read(ReadContext &context) {
-        auto &reader = context.reader;
+    void read(VersionedSerializedReader &reader) {
         reader.read(_beats);
         reader.read(_note);
     }

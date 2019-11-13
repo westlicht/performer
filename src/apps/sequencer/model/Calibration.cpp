@@ -6,15 +6,13 @@ void Calibration::CvOutput::clear() {
     }
 }
 
-void Calibration::CvOutput::write(WriteContext &context) const {
-    auto &writer = context.writer;
+void Calibration::CvOutput::write(VersionedSerializedWriter &writer) const {
     for (size_t i = 0; i < _items.size(); ++i) {
         writer.write(_items[i]);
     }
 }
 
-void Calibration::CvOutput::read(ReadContext &context) {
-    auto &reader = context.reader;
+void Calibration::CvOutput::read(VersionedSerializedReader &reader) {
     for (size_t i = 0; i < _items.size(); ++i) {
         reader.read(_items[i]);
     }
@@ -64,14 +62,14 @@ void Calibration::clear() {
     }
 }
 
-void Calibration::write(WriteContext &context) const {
+void Calibration::write(VersionedSerializedWriter &writer) const {
     for (const auto &cvOutput : _cvOutputs) {
-        cvOutput.write(context);
+        cvOutput.write(writer);
     }
 }
 
-void Calibration::read(ReadContext &context) {
+void Calibration::read(VersionedSerializedReader &reader) {
     for (auto &cvOutput : _cvOutputs) {
-        cvOutput.read(context);
+        cvOutput.read(reader);
     }
 }

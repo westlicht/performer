@@ -10,18 +10,18 @@ void Settings::clear() {
     _calibration.clear();
 }
 
-void Settings::write(WriteContext &context) const {
-    _calibration.write(context);
+void Settings::write(VersionedSerializedWriter &writer) const {
+    _calibration.write(writer);
 
-    context.writer.writeHash();
+    writer.writeHash();
 }
 
-bool Settings::read(ReadContext &context) {
+bool Settings::read(VersionedSerializedReader &reader) {
     clear();
 
-    _calibration.read(context);
+    _calibration.read(reader);
 
-    bool success = context.reader.checkHash();
+    bool success = reader.checkHash();
     if (!success) {
         clear();
     }
@@ -43,8 +43,7 @@ fs::Error Settings::write(const char *path) const {
         Version
     );
 
-    WriteContext context = { writer };
-    write(context);
+    write(writer);
 
     return fileWriter.finish();
 }
@@ -63,8 +62,7 @@ fs::Error Settings::read(const char *path) {
         Version
     );
 
-    ReadContext context = { reader };
-    bool success = read(context);
+    bool success = read(reader);
 
     auto error = fileReader.finish();
     if (error == fs::OK && !success) {
@@ -80,8 +78,7 @@ void Settings::write(FlashWriter &flashWriter) const {
         Version
     );
 
-    WriteContext context = { writer };
-    write(context);
+    write(writer);
 
     flashWriter.finish();
 }
@@ -92,8 +89,7 @@ bool Settings::read(FlashReader &flashReader) {
         Version
     );
 
-    ReadContext context = { reader };
-    return read(context);
+    return read(reader);
 }
 
 void Settings::writeToFlash() const {

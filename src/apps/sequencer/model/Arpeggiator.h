@@ -172,8 +172,8 @@ public:
 
     void clear();
 
-    void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    void write(VersionedSerializedWriter &writer) const;
+    void read(VersionedSerializedReader &reader);
 
 private:
     bool _enabled;

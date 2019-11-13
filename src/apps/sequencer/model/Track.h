@@ -124,8 +124,8 @@ public:
     void gateOutputName(int index, StringBuilder &str) const;
     void cvOutputName(int index, StringBuilder &str) const;
 
-    void write(WriteContext &context) const;
-    void read(ReadContext &context);
+    void write(VersionedSerializedWriter &writer) const;
+    void read(VersionedSerializedReader &reader);
 
     Track &operator=(const Track &other) {
         ASSERT(_trackMode == other._trackMode, "invalid track mode");
