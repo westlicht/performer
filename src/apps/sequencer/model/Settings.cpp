@@ -1,4 +1,6 @@
 #include "Settings.h"
+#include "FlashWriter.h"
+#include "FlashReader.h"
 
 const char *Settings::Filename = "SETTINGS.DAT";
 

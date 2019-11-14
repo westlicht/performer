@@ -2,9 +2,6 @@
 
 #include "Calibration.h"
 #include "Serialize.h"
-#include "FileDefs.h"
-#include "FlashWriter.h"
-#include "FlashReader.h"
 
 class Settings {
 public:

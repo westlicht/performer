@@ -2,6 +2,8 @@
 
 #include "drivers/Flash.h"
 
+#include <cstring>
+
 class FlashReader {
 public:
     FlashReader(uint32_t address) :
@@ -11,7 +13,7 @@ public:
 
     void read(void *data, size_t len) {
 #ifdef PLATFORM_STM32
-        memcpy(data, _address, len);
+        std::memcpy(data, _address, len);
 #endif
         _address += len;
     }

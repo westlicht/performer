@@ -2,6 +2,8 @@
 
 #include "drivers/Flash.h"
 
+#include <cstring>
+
 class FlashWriter {
 public:
     FlashWriter(uint32_t address, uint32_t sector) :
@@ -31,7 +33,7 @@ public:
 
         while (len > 0) {
             size_t chunk = std::min(len, sizeof(_buffer) - _pos);
-            memcpy(&buffer[_pos], src, chunk);
+            std::memcpy(&buffer[_pos], src, chunk);
             _pos += chunk;
             src += chunk;
             len -= chunk;
