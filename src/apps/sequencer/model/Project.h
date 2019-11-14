@@ -369,9 +369,6 @@ public:
     void write(VersionedSerializedWriter &writer) const;
     bool read(VersionedSerializedReader &reader);
 
-    fs::Error write(const char *path) const;
-    fs::Error read(const char *path);
-
 private:
     uint8_t _slot = uint8_t(-1);
     char _name[NameLength + 1];

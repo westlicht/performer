@@ -3,6 +3,7 @@
 #include "FileDefs.h"
 #include "Project.h"
 #include "UserScale.h"
+#include "Settings.h"
 
 #include "core/fs/FileSystem.h"
 
@@ -26,6 +27,15 @@ public:
 
     static fs::Error saveUserScale(const UserScale &userScale, int slot);
     static fs::Error loadUserScale(UserScale &userScale, int slot);
+
+    static fs::Error writeProject(const Project &project, const char *path);
+    static fs::Error readProject(Project &project, const char *path);
+
+    static fs::Error writeUserScale(const UserScale &userScale, const char *path);
+    static fs::Error readUserScale(UserScale &userScale, const char *path);
+
+    static fs::Error writeSettings(const Settings &settings, const char *path);
+    static fs::Error readSettings(Settings &settings, const char *path);
 
     // Slot information
 

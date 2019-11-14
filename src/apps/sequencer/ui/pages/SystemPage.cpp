@@ -345,7 +345,7 @@ void SystemPage::backupSettingsToFile() {
     _manager.pages().busy.show("BACKING UP SETTINGS ...");
 
     FileManager::task([this] () {
-        return _model.settings().write(Settings::Filename);
+        return FileManager::writeSettings(_model.settings(), Settings::Filename);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
             showMessage("SETTINGS BACKED UP");
@@ -363,7 +363,7 @@ void SystemPage::restoreSettingsFromFile() {
     _manager.pages().busy.show("RESTORING SETTINGS ...");
 
     FileManager::task([this] () {
-        return _model.settings().read(Settings::Filename);
+        return FileManager::readSettings(_model.settings(), Settings::Filename);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
             showMessage("SETTINGS RESTORED");

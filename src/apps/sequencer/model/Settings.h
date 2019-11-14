@@ -22,12 +22,6 @@ public:
     void write(VersionedSerializedWriter &writer) const;
     bool read(VersionedSerializedReader &reader);
 
-    fs::Error write(const char *path) const;
-    fs::Error read(const char *path);
-
-    void write(FlashWriter &flashWriter) const;
-    bool read(FlashReader &flashReader);
-
     void writeToFlash() const;
     bool readFromFlash();
 
