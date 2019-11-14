@@ -1,9 +1,6 @@
 #include "Project.h"
 #include "ProjectVersion.h"
 
-#include "core/fs/FileWriter.h"
-#include "core/fs/FileReader.h"
-
 Project::Project() :
     _playState(*this),
     _routing(*this)
