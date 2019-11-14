@@ -17,7 +17,7 @@ void StartupPage::draw(Canvas &canvas) {
         _state = State::Loading;
         _engine.lock();
         FileManager::task([this] () {
-            return FileManager::loadLastProject(_model.project());
+            return FileManager::readLastProject(_model.project());
         }, [this] (fs::Error result) {
             _engine.unlock();
             _state = State::Ready;

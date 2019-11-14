@@ -21,12 +21,12 @@ public:
 
     static fs::Error format();
 
-    static fs::Error saveProject(Project &project, int slot);
-    static fs::Error loadProject(Project &project, int slot);
-    static fs::Error loadLastProject(Project &project);
+    static fs::Error writeProject(Project &project, int slot);
+    static fs::Error readProject(Project &project, int slot);
+    static fs::Error readLastProject(Project &project);
 
-    static fs::Error saveUserScale(const UserScale &userScale, int slot);
-    static fs::Error loadUserScale(UserScale &userScale, int slot);
+    static fs::Error writeUserScale(const UserScale &userScale, int slot);
+    static fs::Error readUserScale(UserScale &userScale, int slot);
 
     static fs::Error writeProject(const Project &project, const char *path);
     static fs::Error readProject(Project &project, const char *path);
@@ -56,11 +56,11 @@ public:
     static void processTask();
 
 private:
-    static fs::Error saveFile(FileType type, int slot, std::function<fs::Error(const char *)> write);
-    static fs::Error loadFile(FileType type, int slot, std::function<fs::Error(const char *)> read);
+    static fs::Error writeFile(FileType type, int slot, std::function<fs::Error(const char *)> write);
+    static fs::Error readFile(FileType type, int slot, std::function<fs::Error(const char *)> read);
 
-    static fs::Error saveLastProject(int slot);
-    static fs::Error loadLastProject(int &slot);
+    static fs::Error writeLastProject(int slot);
+    static fs::Error readLastProject(int &slot);
 
     static bool cachedSlot(FileType type, int slot, SlotInfo &info);
     static void cacheSlot(FileType type, int slot, const SlotInfo &info);

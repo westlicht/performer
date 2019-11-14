@@ -172,7 +172,7 @@ void UserScalePage::saveUserScaleToSlot(int slot) {
     _manager.pages().busy.show("SAVING USER SCALE ...");
 
     FileManager::task([this, slot] () {
-        return FileManager::saveUserScale(*_userScale, slot);
+        return FileManager::writeUserScale(*_userScale, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
             showMessage("USER SCALE SAVED");
@@ -190,7 +190,7 @@ void UserScalePage::loadUserScaleFromSlot(int slot) {
     _manager.pages().busy.show("LOADING USER SCALE ...");
 
     FileManager::task([this, slot] () {
-        return FileManager::loadUserScale(*_userScale, slot);
+        return FileManager::readUserScale(*_userScale, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
             showMessage("USER SCALE LOADED");

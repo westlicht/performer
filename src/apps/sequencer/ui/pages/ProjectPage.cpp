@@ -183,7 +183,7 @@ void ProjectPage::saveProjectToSlot(int slot) {
     _manager.pages().busy.show("SAVING PROJECT ...");
 
     FileManager::task([this, slot] () {
-        return FileManager::saveProject(_project, slot);
+        return FileManager::writeProject(_project, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
             showMessage("PROJECT SAVED");
@@ -202,7 +202,7 @@ void ProjectPage::loadProjectFromSlot(int slot) {
 
     FileManager::task([this, slot] () {
         // TODO this is running in file manager thread but model notification affect ui
-        return FileManager::loadProject(_project, slot);
+        return FileManager::readProject(_project, slot);
     }, [this] (fs::Error result) {
         if (result == fs::OK) {
             showMessage("PROJECT LOADED");
