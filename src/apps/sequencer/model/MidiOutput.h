@@ -13,6 +13,7 @@
 #include <array>
 
 #include <cstdint>
+#include <cstring>
 
 class Project;
 class NoteSequence;
