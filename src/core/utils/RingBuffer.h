@@ -1,8 +1,9 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
-template<typename T, size_t Size>
+template<typename T, int32_t Size>
 class RingBuffer {
 public:
     inline size_t size() const { return Size; }
@@ -11,14 +12,18 @@ public:
 
     inline bool full() const { return writable() == 0; }
 
-    inline size_t entries() const { return (_write - _read) % Size; }
+    inline size_t entries() const {
+        int32_t size = (_write - _read) % Size;
+        if(size < 0) size += Size;
+        return static_cast<size_t>(size);
+    }
 
     inline size_t writable() const {
-        return (_read - _write - 1) % Size;
+        return Size - readable();
     }
 
     inline size_t readable() const {
-        return (_write - _read) % Size;
+        return entries();
     }
 
     inline void write(T value) {
@@ -48,6 +53,6 @@ public:
 
 private:
     T _buffer[Size];
-    volatile size_t _read = 0;
-    volatile size_t _write = 0;
+    volatile int32_t _read = 0;
+    volatile int32_t _write = 0;
 };
