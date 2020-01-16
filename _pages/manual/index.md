@@ -664,6 +664,8 @@ If a track is in _Note_ mode, the following parameters are available:
 | Scale | [Scales](#appendix-scales) | Scale to use for this sequence. If set to _Default_, uses the default scale set on the [Project](#pages-project) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Root note to use for this sequence. If set to _Default_, uses the default root note set on the [Project](#pages-project) page. |
 
+> Note: _First Step_, _Last Step_, _Run Mode_, _Divisor_, _Scale_ and _Root Note_ are routable parameters.
+
 <h4>Curve Track</h4>
 
 ![](images/page-curve-sequence.png)
@@ -678,6 +680,8 @@ If a track is in _Curve_ mode, the following parameters are available:
 | Divisor | [Divisors](#appendix-divisors) | Time divisor for this sequence. |
 | Reset Measure | off, 1 - 128 bars | Number of measures/bars at which to reset the sequence. |
 | Range | 1V - 5V Unipolar, 1V - 5V Bipolar | Voltage range to use for this sequence. |
+
+> Note: _First Step_, _Last Step_, _Run Mode_ and _Divisor_ are routable parameters.
 
 <!-- Steps -->
 
