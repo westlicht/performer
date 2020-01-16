@@ -63,10 +63,10 @@ public:
 
         // Sequence targets
         SequenceFirst,
-        Divisor = SequenceFirst,
-        RunMode,
-        FirstStep,
+        FirstStep = SequenceFirst,
         LastStep,
+        RunMode,
+        Divisor,
         SequenceLast = LastStep,
 
         Last,
@@ -98,10 +98,10 @@ public:
         case Target::NoteProbabilityBias:       return "Note P. Bias";
         case Target::ShapeProbabilityBias:      return "Shape P. Bias";
 
-        case Target::Divisor:                   return "Divisor";
-        case Target::RunMode:                   return "Run Mode";
         case Target::FirstStep:                 return "First Step";
         case Target::LastStep:                  return "Last Step";
+        case Target::RunMode:                   return "Run Mode";
+        case Target::Divisor:                   return "Divisor";
 
         case Target::Last:                      break;
         }
