@@ -66,6 +66,9 @@ enum ProjectVersion {
     // added Route::Target::Scale and Route::Target::RootNote
     Version23 = 23,
 
+    // expanded MidiOutput::outputs to 16 entries
+    Version24 = 24,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

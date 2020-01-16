@@ -54,7 +54,7 @@
 #define CONFIG_TRACK_COUNT              8
 #define CONFIG_STEP_COUNT               64
 #define CONFIG_ROUTE_COUNT              16
-#define CONFIG_MIDI_OUTPUT_COUNT        8
+#define CONFIG_MIDI_OUTPUT_COUNT        16
 #define CONFIG_USER_SCALE_COUNT         4
 #define CONFIG_USER_SCALE_SIZE          32
 

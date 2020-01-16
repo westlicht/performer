@@ -1,4 +1,5 @@
 #include "MidiOutput.h"
+#include "ProjectVersion.h"
 
 //----------------------------------------
 // MidiOutput::Output
@@ -80,5 +81,9 @@ void MidiOutput::write(VersionedSerializedWriter &writer) const {
 }
 
 void MidiOutput::read(VersionedSerializedReader &reader) {
-    readArray(reader, _outputs);
+    if (reader.dataVersion() < ProjectVersion::Version24) {
+        readArray(reader, _outputs, 8);
+    } else {
+        readArray(reader, _outputs);
+    }
 }
