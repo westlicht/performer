@@ -67,7 +67,9 @@ public:
         LastStep,
         RunMode,
         Divisor,
-        SequenceLast = LastStep,
+        Scale,
+        RootNote,
+        SequenceLast = RootNote,
 
         Last,
     };
@@ -102,6 +104,8 @@ public:
         case Target::LastStep:                  return "Last Step";
         case Target::RunMode:                   return "Run Mode";
         case Target::Divisor:                   return "Divisor";
+        case Target::Scale:                     return "Scale";
+        case Target::RootNote:                  return "Root Note";
 
         case Target::Last:                      break;
         }
@@ -136,6 +140,9 @@ public:
         case Target::TapTempo:                  return 21;
 
         case Target::ShapeProbabilityBias:      return 22;
+
+        case Target::Scale:                     return 23;
+        case Target::RootNote:                  return 24;
 
         case Target::Last:                      break;
         }

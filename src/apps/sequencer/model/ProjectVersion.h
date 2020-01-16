@@ -63,6 +63,9 @@ enum ProjectVersion {
     // added CurveTrack::muteMode
     Version22 = 22,
 
+    // added Route::Target::Scale and Route::Target::RootNote
+    Version23 = 23,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

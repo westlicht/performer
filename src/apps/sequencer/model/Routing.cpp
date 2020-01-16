@@ -285,10 +285,12 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::NoteProbabilityBias)]             = { -8,     8,      -8,     8       },
     [int(Routing::Target::ShapeProbabilityBias)]            = { -8,     8,      -8,     8       },
     // Sequence targets
-    [int(Routing::Target::Divisor)]                         = { 1,      768,    6,      24      },
-    [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
     [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
     [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63      },
+    [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
+    [int(Routing::Target::Divisor)]                         = { 1,      768,    6,      24      },
+    [int(Routing::Target::Scale)]                           = { 0,      23,     0,      23      },
+    [int(Routing::Target::RootNote)]                        = { 0,      11,     0,      11      },
 };
 
 float Routing::normalizeTargetValue(Routing::Target target, float value) {
@@ -351,6 +353,12 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::Mute:
     case Target::Fill:
         str(intValue ? "on" : "off");
+        break;
+    case Target::Scale:
+        str("%s", Scale::name(intValue));
+        break;
+    case Target::RootNote:
+        Types::printNote(str, intValue);
         break;
     default:
         str("%d", intValue);

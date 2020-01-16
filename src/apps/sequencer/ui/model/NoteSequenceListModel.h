@@ -71,6 +71,10 @@ public:
             return Routing::Target::LastStep;
         case RunMode:
             return Routing::Target::RunMode;
+        case Scale:
+            return Routing::Target::Scale;
+        case RootNote:
+            return Routing::Target::RootNote;
         default:
             return Routing::Target::None;
         }

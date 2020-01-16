@@ -155,6 +155,12 @@ void NoteSequence::Step::read(VersionedSerializedReader &reader) {
 
 void NoteSequence::writeRouted(Routing::Target target, int intValue, float floatValue) {
     switch (target) {
+    case Routing::Target::Scale:
+        setScale(intValue, true);
+        break;
+    case Routing::Target::RootNote:
+        setRootNote(intValue, true);
+        break;
     case Routing::Target::Divisor:
         setDivisor(intValue, true);
         break;
@@ -228,8 +234,8 @@ void NoteSequence::duplicateSteps() {
 }
 
 void NoteSequence::write(VersionedSerializedWriter &writer) const {
-    writer.write(_scale);
-    writer.write(_rootNote);
+    writer.write(_scale.base);
+    writer.write(_rootNote.base);
     writer.write(_divisor.base);
     writer.write(_resetMeasure);
     writer.write(_runMode.base);
@@ -240,8 +246,8 @@ void NoteSequence::write(VersionedSerializedWriter &writer) const {
 }
 
 void NoteSequence::read(VersionedSerializedReader &reader) {
-    reader.read(_scale);
-    reader.read(_rootNote);
+    reader.read(_scale.base);
+    reader.read(_rootNote.base);
     if (reader.dataVersion() < ProjectVersion::Version10) {
         reader.readAs<uint8_t>(_divisor.base);
     } else {

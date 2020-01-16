@@ -231,21 +231,24 @@ public:
 
     // scale
 
-    int scale() const { return _scale; }
-    void setScale(int scale) {
-        _scale = clamp(scale, -1, Scale::Count - 1);
+    int scale() const { return _scale.get(isRouted(Routing::Target::Scale)); }
+    void setScale(int scale, bool routed = false) {
+        _scale.set(clamp(scale, -1, Scale::Count - 1), routed);
     }
 
-    int indexedScale() const { return _scale + 1; }
+    int indexedScale() const { return scale() + 1; }
     void setIndexedScale(int index) {
         setScale(index - 1);
     }
 
     void editScale(int value, bool shift) {
-        setScale(scale() + value);
+        if (!isRouted(Routing::Target::Scale)) {
+            setScale(scale() + value);
+        }
     }
 
     void printScale(StringBuilder &str) const {
+        printRouted(str, Routing::Target::Scale);
         str(scale() < 0 ? "Default" : Scale::name(scale()));
     }
 
@@ -255,21 +258,24 @@ public:
 
     // rootNote
 
-    int rootNote() const { return _rootNote; }
-    void setRootNote(int rootNote) {
-        _rootNote = clamp(rootNote, -1, 11);
+    int rootNote() const { return _rootNote.get(isRouted(Routing::Target::RootNote)); }
+    void setRootNote(int rootNote, bool routed = false) {
+        _rootNote.set(clamp(rootNote, -1, 11), routed);
     }
 
-    int indexedRootNote() const { return _rootNote + 1; }
+    int indexedRootNote() const { return rootNote() + 1; }
     void setIndexedRootNote(int index) {
         setRootNote(index - 1);
     }
 
     void editRootNote(int value, bool shift) {
-        setRootNote(rootNote() + value);
+        if (!isRouted(Routing::Target::RootNote)) {
+            setRootNote(rootNote() + value);
+        }
     }
 
     void printRootNote(StringBuilder &str) const {
+        printRouted(str, Routing::Target::RootNote);
         if (rootNote() < 0) {
             str("Default");
         } else {
@@ -443,8 +449,8 @@ private:
     }
 
     int8_t _trackIndex = -1;
-    int8_t _scale;
-    int8_t _rootNote;
+    Routable<int8_t> _scale;
+    Routable<int8_t> _rootNote;
     Routable<uint16_t> _divisor;
     uint8_t _resetMeasure;
     Routable<Types::RunMode> _runMode;
