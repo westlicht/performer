@@ -43,6 +43,12 @@ void Engine::init() {
 }
 
 void Engine::update() {
+    // quick locking
+    _quickLocked = _requestQuickLock;
+    if (_quickLocked) {
+        return;
+    }
+
     uint32_t systemTicks = os::ticks();
     float dt = (0.001f * (systemTicks - _lastSystemTicks)) / os::time::ms(1);
     _lastSystemTicks = systemTicks;
@@ -168,6 +174,28 @@ void Engine::unlock() {
 
 bool Engine::isLocked() {
     return _locked == 1;
+}
+
+void Engine::quickLock() {
+    while (!isQuickLocked()) {
+        _requestQuickLock = 1;
+#ifdef PLATFORM_SIM
+        update();
+#endif
+    }
+}
+
+void Engine::quickUnlock() {
+    while (isQuickLocked()) {
+        _requestQuickLock = 0;
+#ifdef PLATFORM_SIM
+        update();
+#endif
+    }
+}
+
+bool Engine::isQuickLocked() {
+    return _quickLocked == 1;
 }
 
 void Engine::togglePlay(bool shift) {

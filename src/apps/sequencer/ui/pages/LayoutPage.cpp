@@ -40,7 +40,10 @@ void LayoutPage::keyPress(KeyPressEvent &event) {
             _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
                 if (result) {
                     setEdit(false);
+                    // we are about to change track engines -> lock the engine to avoid inconsistent state
+                    _engine.quickLock();
                     _trackModeListModel.toProject(_project);
+                    _engine.quickUnlock();
                     showMessage("LAYOUT CHANGED");
                 }
             });

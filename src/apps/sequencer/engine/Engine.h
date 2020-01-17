@@ -65,6 +65,11 @@ public:
     void unlock();
     bool isLocked();
 
+    // quick locking
+    void quickLock();
+    void quickUnlock();
+    bool isQuickLocked();
+
     // clock control
     void togglePlay(bool shift = false);
     void clockStart();
@@ -201,6 +206,10 @@ private:
     volatile uint32_t _requestLock = 0;
     volatile uint32_t _requestUnlock = 0;
     volatile uint32_t _locked = 0;
+
+    // quick locking
+    volatile uint32_t _requestQuickLock = 0;
+    volatile uint32_t _quickLocked = 0;
 
     uint32_t _tick = 0;
 
