@@ -259,7 +259,7 @@ void CurveSequenceEditPage::updateLeds(Leds &leds) {
     for (int i = 0; i < 16; ++i) {
         int stepIndex = stepOffset() + i;
         bool red = (stepIndex == currentStep) || _stepSelection[stepIndex];
-        bool green = (stepIndex != currentStep) && _stepSelection[stepIndex];
+        bool green = (stepIndex != currentStep) && (sequence.step(stepIndex).gate() > 0 || _stepSelection[stepIndex]);
         leds.set(MatrixMap::fromStep(i), red, green);
     }
 
