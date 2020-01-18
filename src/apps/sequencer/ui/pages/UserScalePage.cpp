@@ -168,7 +168,7 @@ void UserScalePage::saveUserScale() {
 }
 
 void UserScalePage::saveUserScaleToSlot(int slot) {
-    _engine.lock();
+    _engine.suspend();
     _manager.pages().busy.show("SAVING USER SCALE ...");
 
     FileManager::task([this, slot] () {
@@ -181,12 +181,12 @@ void UserScalePage::saveUserScaleToSlot(int slot) {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
-        _engine.unlock();
+        _engine.resume();
     });
 }
 
 void UserScalePage::loadUserScaleFromSlot(int slot) {
-    _engine.lock();
+    _engine.suspend();
     _manager.pages().busy.show("LOADING USER SCALE ...");
 
     FileManager::task([this, slot] () {
@@ -201,6 +201,6 @@ void UserScalePage::loadUserScaleFromSlot(int slot) {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
-        _engine.unlock();
+        _engine.resume();
     });
 }

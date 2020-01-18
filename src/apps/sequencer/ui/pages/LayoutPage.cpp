@@ -41,9 +41,9 @@ void LayoutPage::keyPress(KeyPressEvent &event) {
                 if (result) {
                     setEdit(false);
                     // we are about to change track engines -> lock the engine to avoid inconsistent state
-                    _engine.quickLock();
+                    _engine.lock();
                     _trackModeListModel.toProject(_project);
-                    _engine.quickUnlock();
+                    _engine.unlock();
                     showMessage("LAYOUT CHANGED");
                 }
             });

@@ -48,7 +48,7 @@ SystemPage::SystemPage(PageManager &manager, PageContext &context) :
 void SystemPage::enter() {
     setOutputIndex(_project.selectedTrackIndex());
 
-    _engine.lock();
+    _engine.suspend();
     _engine.setGateOutput(0xff);
     _engine.setGateOutputOverride(true);
     _engine.setCvOutputOverride(true);
@@ -61,7 +61,7 @@ void SystemPage::enter() {
 void SystemPage::exit() {
     _engine.setGateOutputOverride(false);
     _engine.setCvOutputOverride(false);
-    _engine.unlock();
+    _engine.resume();
 }
 
 void SystemPage::draw(Canvas &canvas) {
@@ -326,7 +326,7 @@ void SystemPage::restoreSettings() {
 }
 
 void SystemPage::saveSettingsToFlash() {
-    _engine.lock();
+    _engine.suspend();
     _manager.pages().busy.show("SAVING SETTINGS ...");
 
     FileManager::task([this] () {
@@ -336,12 +336,12 @@ void SystemPage::saveSettingsToFlash() {
         showMessage("SETTINGS SAVED");
         // TODO lock ui mutex
         _manager.pages().busy.close();
-        _engine.unlock();
+        _engine.resume();
     });
 }
 
 void SystemPage::backupSettingsToFile() {
-    _engine.lock();
+    _engine.suspend();
     _manager.pages().busy.show("BACKING UP SETTINGS ...");
 
     FileManager::task([this] () {
@@ -354,12 +354,12 @@ void SystemPage::backupSettingsToFile() {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
-        _engine.unlock();
+        _engine.resume();
     });
 }
 
 void SystemPage::restoreSettingsFromFile() {
-    _engine.lock();
+    _engine.suspend();
     _manager.pages().busy.show("RESTORING SETTINGS ...");
 
     FileManager::task([this] () {
@@ -376,7 +376,7 @@ void SystemPage::restoreSettingsFromFile() {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
-        _engine.unlock();
+        _engine.resume();
     });
 }
 

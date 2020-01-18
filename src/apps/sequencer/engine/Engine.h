@@ -60,15 +60,17 @@ public:
     void init();
     void update();
 
-    // locking
+    // locking temporarily puts the engine in a state where completely skips all updates
+    // lock should only be hold for very short amounts of time
     void lock();
     void unlock();
-    bool isLocked();
+    bool isLocked() const { return _locked; }
 
-    // quick locking
-    void quickLock();
-    void quickUnlock();
-    bool isQuickLocked();
+    // suspending temporarily puts the engine in a state where it only processes basic events but skips all updates
+    // suspending can be used during longer periods of time (e.g. file operations)
+    void suspend();
+    void resume();
+    bool isSuspended() const { return _suspended; }
 
     // clock control
     void togglePlay(bool shift = false);
@@ -204,12 +206,11 @@ private:
 
     // locking
     volatile uint32_t _requestLock = 0;
-    volatile uint32_t _requestUnlock = 0;
     volatile uint32_t _locked = 0;
 
-    // quick locking
-    volatile uint32_t _requestQuickLock = 0;
-    volatile uint32_t _quickLocked = 0;
+    // suspending
+    volatile uint32_t _requestSuspend = 0;
+    volatile uint32_t _suspended = 0;
 
     uint32_t _tick = 0;
 

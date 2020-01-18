@@ -129,10 +129,10 @@ bool ProjectPage::contextActionEnabled(int index) const {
 void ProjectPage::initProject() {
     _manager.pages().confirmation.show("ARE YOU SURE?", [this] (bool result) {
         if (result) {
-            _engine.lock();
+            _engine.suspend();
             _project.clear();
             showMessage("PROJECT INITIALIZED");
-            _engine.unlock();
+            _engine.resume();
         }
     });
 }
@@ -179,7 +179,7 @@ void ProjectPage::initRoute() {
 }
 
 void ProjectPage::saveProjectToSlot(int slot) {
-    _engine.lock();
+    _engine.suspend();
     _manager.pages().busy.show("SAVING PROJECT ...");
 
     FileManager::task([this, slot] () {
@@ -192,12 +192,12 @@ void ProjectPage::saveProjectToSlot(int slot) {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
-        _engine.unlock();
+        _engine.resume();
     });
 }
 
 void ProjectPage::loadProjectFromSlot(int slot) {
-    _engine.lock();
+    _engine.suspend();
     _manager.pages().busy.show("LOADING PROJECT ...");
 
     FileManager::task([this, slot] () {
@@ -213,6 +213,6 @@ void ProjectPage::loadProjectFromSlot(int slot) {
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
-        _engine.unlock();
+        _engine.resume();
     });
 }

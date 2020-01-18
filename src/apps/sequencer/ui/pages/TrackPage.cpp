@@ -146,9 +146,9 @@ void TrackPage::copyTrackSetup() {
 
 void TrackPage::pasteTrackSetup() {
     // we are about to change track engines -> lock the engine to avoid inconsistent state
-    _engine.quickLock();
+    _engine.lock();
     _model.clipBoard().pasteTrack(_project.selectedTrack());
-    _engine.quickUnlock();
+    _engine.unlock();
     setTrack(_project.selectedTrack());
     showMessage("TRACK PASTED");
 }

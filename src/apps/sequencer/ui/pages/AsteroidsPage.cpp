@@ -12,12 +12,12 @@ void AsteroidsPage::enter() {
 
     _engine.setGateOutputOverride(true);
     _engine.setGateOutput(0);
-    _engine.lock();
+    _engine.suspend();
 }
 
 void AsteroidsPage::exit() {
     _engine.setGateOutputOverride(false);
-    _engine.unlock();
+    _engine.resume();
 }
 
 void AsteroidsPage::draw(Canvas &canvas) {

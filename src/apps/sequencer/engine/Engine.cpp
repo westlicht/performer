@@ -43,9 +43,9 @@ void Engine::init() {
 }
 
 void Engine::update() {
-    // quick locking
-    _quickLocked = _requestQuickLock;
-    if (_quickLocked) {
+    // locking
+    _locked = _requestLock;
+    if (_locked) {
         return;
     }
 
@@ -53,18 +53,15 @@ void Engine::update() {
     float dt = (0.001f * (systemTicks - _lastSystemTicks)) / os::time::ms(1);
     _lastSystemTicks = systemTicks;
 
-    // locking
-    if (_requestLock) {
-        _clock.masterStop();
-        _requestLock = 0;
-        _locked = 1;
-    }
-    if (_requestUnlock) {
-        _requestUnlock = 0;
-        _locked = 0;
+    // suspending
+    if (_requestSuspend != _suspended) {
+        if (_requestSuspend) {
+            _clock.masterStop();
+        }
+        _suspended = _requestSuspend;
     }
 
-    if (_locked) {
+    if (_suspended) {
         // consume ticks
         uint32_t tick;
         while (_clock.checkTick(&tick)) {}
@@ -160,7 +157,6 @@ void Engine::update() {
 }
 
 void Engine::lock() {
-    // TODO make re-entrant
     while (!isLocked()) {
         _requestLock = 1;
 #ifdef PLATFORM_SIM
@@ -171,37 +167,30 @@ void Engine::lock() {
 
 void Engine::unlock() {
     while (isLocked()) {
-        _requestUnlock = 1;
+        _requestLock = 0;
 #ifdef PLATFORM_SIM
         update();
 #endif
     }
 }
 
-bool Engine::isLocked() {
-    return _locked == 1;
-}
-
-void Engine::quickLock() {
-    while (!isQuickLocked()) {
-        _requestQuickLock = 1;
+void Engine::suspend() {
+    // TODO make re-entrant
+    while (!isSuspended()) {
+        _requestSuspend = 1;
 #ifdef PLATFORM_SIM
         update();
 #endif
     }
 }
 
-void Engine::quickUnlock() {
-    while (isQuickLocked()) {
-        _requestQuickLock = 0;
+void Engine::resume() {
+    while (isSuspended()) {
+        _requestSuspend = 0;
 #ifdef PLATFORM_SIM
         update();
 #endif
     }
-}
-
-bool Engine::isQuickLocked() {
-    return _quickLocked == 1;
 }
 
 void Engine::togglePlay(bool shift) {

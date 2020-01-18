@@ -93,7 +93,7 @@ void Ui::update() {
 
     intervalTicks = os::time::ms(1000 / _controllerManager.fps());
     if (currentTicks - _lastControllerUpdateTicks >= intervalTicks) {
-        if (!_engine.isLocked()) {
+        if (!_engine.isSuspended()) {
             _controllerManager.update();
         }
         _lastControllerUpdateTicks += intervalTicks;

@@ -15,11 +15,11 @@ StartupPage::StartupPage(PageManager &manager, PageContext &context) :
 void StartupPage::draw(Canvas &canvas) {
     if (_state == State::Initial) {
         _state = State::Loading;
-        _engine.lock();
+        _engine.suspend();
         FileManager::task([this] () {
             return FileManager::readLastProject(_model.project());
         }, [this] (fs::Error result) {
-            _engine.unlock();
+            _engine.resume();
             _state = State::Ready;
         });
     }
