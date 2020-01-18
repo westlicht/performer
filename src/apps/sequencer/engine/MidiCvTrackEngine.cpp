@@ -59,35 +59,43 @@ bool MidiCvTrackEngine::receiveMidi(MidiPort port, const MidiMessage &message) {
         }
     }
 
+    bool consumed = false;
+
     if (MidiUtils::matchSource(port, message, _midiCvTrack.source())) {
         if (_arpeggiatorEnabled) {
             if (message.isNoteOn()) {
                 _arpeggiatorEngine.noteOn(message.note());
+                consumed = true;
             } else if (message.isNoteOff()) {
                 _arpeggiatorEngine.noteOff(message.note());
+                consumed = true;
             }
         } else {
             if (message.isNoteOn()) {
                 addVoice(message.note(), message.velocity());
+                consumed = true;
             } else if (message.isNoteOff()) {
                 removeVoice(message.note());
+                consumed = true;
             } else if (message.isKeyPressure()) {
                 auto voice = findVoice(message.note());
                 if (voice) {
                     voice->pressure = message.keyPressure();
                 }
+                consumed = true;
             } else if (message.isChannelPressure()) {
                 _channelPressure = message.channelPressure();
+                consumed = true;
             } else if (message.isPitchBend()) {
                 _pitchBend = message.pitchBend();
+                consumed = true;
             }
 
             updateActivity();
         }
     }
 
-    // do not consume midi events to allow other midi/cv tracks react to the same events
-    return false;
+    return consumed;
 }
 
 bool MidiCvTrackEngine::activity() const {

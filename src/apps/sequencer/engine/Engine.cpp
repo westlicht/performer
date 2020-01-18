@@ -636,10 +636,13 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
     }
 
     // let track engines consume messages (only MIDI/CV tracks)
+    // allow all tracks to receive messages even if one of them consumes it
+    bool consumed = false;
     for (auto trackEngine : _trackEngines) {
-        if (trackEngine->receiveMidi(port, message)) {
-            return;
-        }
+        consumed |= trackEngine->receiveMidi(port, message);
+    }
+    if (consumed) {
+        return;
     }
 
     // midi monitoring (and recording)
