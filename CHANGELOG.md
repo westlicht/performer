@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.1.34 (19 Jan 2020)
+
+#### Fixes
+
+- Fix inactive sequence when switching track mode (#131)
+
+#### Improvements
+
+- Added _Scale_ and _Root Note_ as routing targets (#166)
+- Expanded number of MIDI outputs to 16 (#159)
+- Expanded routable tempo range to 1..1000 (#158)
+- Generate MIDI output from track monitoring (#148)
+- Allow MIDI/CV tracks to consume MIDI events (#155)
+- Default MIDI output note event settings with velocity 100
+- Indicate active gates of a curve sequence on LEDs
+
 ## v0.1.33 (12 Nov 2019)
 
 #### Fixes
