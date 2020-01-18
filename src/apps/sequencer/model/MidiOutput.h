@@ -80,10 +80,21 @@ public:
         // event
 
         Event event() const { return _event; }
-        void setEvent(Event event) {
-            if (event != _event) {
+        void setEvent(Event event, bool force = false) {
+            if (force || event != _event) {
                 _event = ModelUtils::clampedEnum(event);
                 std::memset(&_data, 0, sizeof(_data));
+                switch (event) {
+                case Event::None:
+                    break;
+                case Event::Note:
+                    _data.note.velocitySource = VelocitySource(int(VelocitySource::FirstVelocity) + 100);
+                    break;
+                case Event::ControlChange:
+                    break;
+                case Event::Last:
+                    break;
+                }
             }
         }
 

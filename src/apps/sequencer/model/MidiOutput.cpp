@@ -7,8 +7,7 @@
 
 void MidiOutput::Output::clear() {
     _target.clear();
-    _event = MidiOutput::Output::Event::None;
-    std::memset(&_data, 0, sizeof(_data));
+    setEvent(Event::None, true);
 }
 
 void MidiOutput::Output::write(VersionedSerializedWriter &writer) const {
