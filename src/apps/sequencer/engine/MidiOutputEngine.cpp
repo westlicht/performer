@@ -18,14 +18,19 @@ void MidiOutputEngine::reset() {
     }
 }
 
-void MidiOutputEngine::tick(uint32_t tick) {
+void MidiOutputEngine::update(bool forceSendCC) {
     // determine the rate for sending MIDI CC events:
     // 3250 bytes per second
     // 3 bytes per message
     // 8 outputs
     // gives roughly 135 events per second per track
     // be conservative and make this 50 events per second
-    uint32_t ccSendDivisor = nextPowerOfTwo(uint32_t(std::floor(1.f / (50.f * _engine.clock().tickDuration()))));
+    bool sendCC = forceSendCC;
+    uint32_t ticks = os::ticks();
+    if (ticks >= _lastSendCCTicks + os::time::ms(1000 / 50)) {
+        sendCC = true;
+        _lastSendCCTicks = ticks;
+    }
 
     for (int outputIndex = 0; outputIndex < CONFIG_MIDI_OUTPUT_COUNT; ++outputIndex) {
         const auto &output = _midiOutput.output(outputIndex);
@@ -88,7 +93,7 @@ void MidiOutputEngine::tick(uint32_t tick) {
         }
 
         // send control change requests
-        if (tick % ccSendDivisor == 0 && outputState.hasRequest(OutputState::ControlChange)) {
+        if (sendCC && outputState.hasRequest(OutputState::ControlChange)) {
             sendMidi(port, MidiMessage::makeControlChange(channel, output.controlNumber(), outputState.control));
             outputState.clearRequest(OutputState::ControlChange);
         }

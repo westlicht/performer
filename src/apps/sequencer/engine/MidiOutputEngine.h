@@ -19,7 +19,7 @@ public:
     MidiOutputEngine(Engine &engine, Model &model);
 
     void reset();
-    void tick(uint32_t tick);
+    void update(bool forceSendCC = false);
 
     void sendGate(int trackIndex, bool gate);
     void sendSlide(int trackIndex, bool slide);
@@ -69,4 +69,5 @@ private:
     Engine &_engine;
     const MidiOutput &_midiOutput;
     std::array<OutputState, CONFIG_MIDI_OUTPUT_COUNT> _outputStates;
+    uint32_t _lastSendCCTicks = 0;
 };

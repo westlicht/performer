@@ -195,6 +195,16 @@ void NoteTrackEngine::update(float dt) {
         _currentRecordStep = -1;
     }
 
+    // helper to send gate/cv from monitoring to midi output engine
+    auto sendToMidiOutputEngine = [this] (bool gate, float cv = 0.f) {
+        auto &midiOutputEngine = _engine.midiOutputEngine();
+        midiOutputEngine.sendGate(_track.trackIndex(), gate);
+        if (gate) {
+            midiOutputEngine.sendCv(_track.trackIndex(), cv);
+            midiOutputEngine.sendSlide(_track.trackIndex(), false);
+        }
+    };
+
     // override due to monitoring or recording
     bool isStepRecordMode = _model.project().recordMode() == Types::RecordMode::StepRecord;
     if (!running && (!recording || isStepRecordMode) && _monitorStepIndex >= 0) {
@@ -203,16 +213,22 @@ void NoteTrackEngine::update(float dt) {
         _cvOutputTarget = evalStepNote(step, 0, scale, rootNote, octave, transpose, false);
         _activity = _gateOutput = true;
         _monitorOverrideActive = true;
+        // pass through to midi engine
+        sendToMidiOutputEngine(true, _cvOutputTarget);
     } else if ((!running || !isStepRecordMode) && _recordHistory.isNoteActive()) {
         // midi monitoring (second priority)
         int note = noteFromMidiNote(_recordHistory.activeNote()) + evalTransposition(scale, octave, transpose);
         _cvOutputTarget = scale.noteToVolts(note) + (scale.isChromatic() ? rootNote : 0) * (1.f / 12.f);
         _activity = _gateOutput = true;
         _monitorOverrideActive = true;
+        // pass through to midi engine
+        sendToMidiOutputEngine(true, _cvOutputTarget);
     } else {
         if (_monitorOverrideActive) {
             _activity = _gateOutput = false;
             _monitorOverrideActive = false;
+            // pass through to midi engine
+            sendToMidiOutputEngine(false);
         }
     }
 

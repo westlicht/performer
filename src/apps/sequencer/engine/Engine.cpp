@@ -138,7 +138,13 @@ void Engine::update() {
             trackEngine->tick(tick);
         }
 
-        _midiOutputEngine.tick(tick);
+        // update midi outputs, force sending CC on first tick
+        _midiOutputEngine.update(tick == 0);
+    }
+
+    // update midi output engine when not running to process data from track monitoring
+    if (!_clock.isRunning()) {
+        _midiOutputEngine.update();
     }
 
     for (auto trackEngine : _trackEngines) {
