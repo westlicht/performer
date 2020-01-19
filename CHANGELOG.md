@@ -1,8 +1,16 @@
 # Changelog
 
+## v0.1.35 (20 Jan 2020)
+
+#### Fixes
+
+- Fix loading projects from before version 0.1.34 (#168)
+
 ## v0.1.34 (19 Jan 2020)
 
 #### Fixes
+
+**PLEASE DO NOT USE THIS VERSION, IT FAILS TO READ OLD PROJECT FILES AND WRITES INVALID NEW PROJECT FILES. WILL FIX SOON!**
 
 - Fix inactive sequence when switching track mode (#131)
 
