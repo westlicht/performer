@@ -193,7 +193,7 @@ Module['FS_createPath']('/assets', 'drumkit', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 77172, "filename": "/assets/frontpanel.png"}, {"start": 77172, "audio": 0, "end": 174136, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 174136, "audio": 1, "end": 196232, "filename": "/assets/drumkit/kick.wav"}, {"start": 196232, "audio": 1, "end": 214134, "filename": "/assets/drumkit/tom2.wav"}, {"start": 214134, "audio": 1, "end": 236168, "filename": "/assets/drumkit/clap.wav"}, {"start": 236168, "audio": 1, "end": 242828, "filename": "/assets/drumkit/hh1.wav"}, {"start": 242828, "audio": 1, "end": 244864, "filename": "/assets/drumkit/rim.wav"}, {"start": 244864, "audio": 1, "end": 305688, "filename": "/assets/drumkit/hh2.wav"}, {"start": 305688, "audio": 1, "end": 320044, "filename": "/assets/drumkit/snare.wav"}, {"start": 320044, "audio": 1, "end": 337580, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 337580, "package_uuid": "eb44dad6-7d52-4da9-9eed-912e20d48fdc"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 77172, "filename": "/assets/frontpanel.png"}, {"start": 77172, "audio": 0, "end": 174136, "filename": "/assets/fonts/inconsolata.ttf"}, {"start": 174136, "audio": 1, "end": 196232, "filename": "/assets/drumkit/kick.wav"}, {"start": 196232, "audio": 1, "end": 214134, "filename": "/assets/drumkit/tom2.wav"}, {"start": 214134, "audio": 1, "end": 236168, "filename": "/assets/drumkit/clap.wav"}, {"start": 236168, "audio": 1, "end": 242828, "filename": "/assets/drumkit/hh1.wav"}, {"start": 242828, "audio": 1, "end": 244864, "filename": "/assets/drumkit/rim.wav"}, {"start": 244864, "audio": 1, "end": 305688, "filename": "/assets/drumkit/hh2.wav"}, {"start": 305688, "audio": 1, "end": 320044, "filename": "/assets/drumkit/snare.wav"}, {"start": 320044, "audio": 1, "end": 337580, "filename": "/assets/drumkit/tom1.wav"}], "remote_package_size": 337580, "package_uuid": "278ea065-a73a-46a5-91c9-8186c870a53b"});
 
 })();
 
@@ -1353,11 +1353,11 @@ function updateGlobalBufferAndViews(buf) {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 143872,
+    STACK_BASE = 144032,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5386752,
-    DYNAMIC_BASE = 5386752,
-    DYNAMICTOP_PTR = 143840;
+    STACK_MAX = 5386912,
+    DYNAMIC_BASE = 5386912,
+    DYNAMICTOP_PTR = 144000;
 
 
 
@@ -1812,7 +1812,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 
-// STATICTOP = STATIC_BASE + 142848;
+// STATICTOP = STATIC_BASE + 143008;
 /* global initializers */  __ATINIT__.push({ func: function() { globalCtors() } });
 
 
@@ -1823,7 +1823,7 @@ function _emscripten_asm_const_iiii(code, a0, a1, a2) {
 
 
 /* no memory initializer */
-var tempDoublePtr = 143856
+var tempDoublePtr = 144016
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
   HEAP8[tempDoublePtr] = HEAP8[ptr];
