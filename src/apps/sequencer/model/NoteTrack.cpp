@@ -66,6 +66,8 @@ void NoteTrack::write(VersionedSerializedWriter &writer) const {
 }
 
 void NoteTrack::read(VersionedSerializedReader &reader) {
+    reader.backupHash();
+
     reader.read(_playMode);
     reader.read(_fillMode);
     reader.read(_cvUpdateMode, ProjectVersion::Version4);
@@ -77,5 +79,12 @@ void NoteTrack::read(VersionedSerializedReader &reader) {
     reader.read(_retriggerProbabilityBias.base);
     reader.read(_lengthBias.base);
     reader.read(_noteProbabilityBias.base);
+
+    // There is a bug in previous firmware versions where writing the properties
+    // of a note track did not update the hash value.
+    if (reader.dataVersion() < ProjectVersion::Version23) {
+        reader.restoreHash();
+    }
+
     readArray(reader, _sequences);
 }

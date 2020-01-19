@@ -77,9 +77,18 @@ public:
         return _hash.result() == hash;
     }
 
+    void backupHash() {
+        _savedHash = _hash;
+    }
+
+    void restoreHash() {
+        _hash = _savedHash;
+    }
+
 private:
     Reader _reader;
     uint32_t _readerVersion;
     uint32_t _dataVersion;
     FnvHash _hash;
+    FnvHash _savedHash;
 };
