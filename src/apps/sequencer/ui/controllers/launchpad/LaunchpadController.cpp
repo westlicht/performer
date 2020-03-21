@@ -29,11 +29,13 @@ BUTTON(Layer, LaunchpadDevice::FunctionRow, 1)
 BUTTON(FirstStep, LaunchpadDevice::FunctionRow, 2)
 BUTTON(LastStep, LaunchpadDevice::FunctionRow, 3)
 BUTTON(RunMode, LaunchpadDevice::FunctionRow, 4)
-BUTTON(Fill, LaunchpadDevice::FunctionRow, 6)
 
 // Pattern page buttons
 BUTTON(Latch, LaunchpadDevice::FunctionRow, 1)
 BUTTON(Sync, LaunchpadDevice::FunctionRow, 2)
+
+// Sequence and pattern page buttons
+BUTTON(Fill, LaunchpadDevice::FunctionRow, 6)
 
 struct LayerMapItem {
     uint8_t row;
@@ -552,6 +554,13 @@ void LaunchpadController::patternDraw() {
     mirrorButton<Latch>();
     mirrorButton<Sync>();
 
+
+    if (buttonState<Shift>()) {
+        drawTracksGateAndMute(_engine, _project.playState());
+    } else {
+        drawTracksGateAndSelected(_engine, _project.selectedTrackIndex());
+    }
+
     if (buttonState<Navigate>()) {
         navigationDraw(_pattern.navigation);
     } else {
@@ -585,14 +594,24 @@ void LaunchpadController::patternDraw() {
                 setGridLed(requestedPattern + _pattern.navigation.row * 8, trackIndex, colorGreen(1));
             }
         }
+
+        mirrorButton<Fill>();
     }
 }
 
 void LaunchpadController::patternButtonDown(const Button &button) {
     auto &playState = _project.playState();
 
-    if (buttonState<Navigate>()) {
+    if (buttonState<Shift>()) {
+        if (button.isScene()) {
+            _project.playState().toggleMuteTrack(button.scene());
+        }
+    } else if (buttonState<Navigate>()) {
         navigationButtonDown(_pattern.navigation, button);
+    } else if (buttonState<Fill>()) {
+        if (button.isScene()) {
+            _project.playState().fillTrack(button.scene(), true);
+        }
     } else {
         PlayState::ExecuteType executeType = PlayState::ExecuteType::Immediate;
         if (buttonState<Latch>()) {
@@ -615,7 +634,14 @@ void LaunchpadController::patternButtonDown(const Button &button) {
 }
 
 void LaunchpadController::patternButtonUp(const Button &button) {
-    if (button.is<Latch>()) {
+    if (buttonState<Fill>()) {
+        if (button.isScene()) {
+            _project.playState().fillTrack(button.scene(), false);
+        }
+    }
+    if (button.is<Fill>()) {
+        _project.playState().fillAll(false);
+    } else if (button.is<Latch>()) {
         _project.playState().commitLatchedRequests();
     }
 }
