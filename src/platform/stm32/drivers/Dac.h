@@ -7,9 +7,16 @@
 
 class Dac {
 public:
+    enum class Type {
+        DAC8568C,
+        DAC8568A
+    };
+
     static constexpr int Channels = CONFIG_DAC_CHANNELS;
 
     typedef uint16_t Value;
+
+    Dac(Type type = Type::DAC8568C);
 
     void init();
 
@@ -36,4 +43,5 @@ private:
     void setClearCode(ClearCode code);
 
     Value _values[Channels];
+    uint32_t _dataShift = 0;
 };

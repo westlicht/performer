@@ -5,4 +5,5 @@ const struct HardwareConfigData hwconfig __attribute__((section(".hwconfig"))) =
     .version = HARDWARE_CONFIG_VERSION,
     .reverseEncoder = REVERSE_ENCODER,
     .invertLeds = INVERT_LEDS,
+    .dacType = DAC_TYPE,
 };

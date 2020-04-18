@@ -23,6 +23,14 @@
 #define RESET_POWER_ON                  7
 #define SETUP_INTERNAL_REF              8
 
+Dac::Dac(Type type)
+{
+    switch (type) {
+    case Type::DAC8568C: _dataShift = 0; break;
+    case Type::DAC8568A: _dataShift = 1; break;
+    }
+}
+
 void Dac::init() {
 
     // init spi pins
@@ -71,6 +79,9 @@ void Dac::write() {
 }
 
 void Dac::writeDac(uint8_t command, uint8_t address, uint16_t data, uint8_t function) {
+    // Shift data by one bit for DAC8568A
+    data <<= _dataShift;
+
     uint8_t b1 = command;
     uint8_t b2 = (address << 4) | (data >> 12);
     uint8_t b3 = data >> 4;
