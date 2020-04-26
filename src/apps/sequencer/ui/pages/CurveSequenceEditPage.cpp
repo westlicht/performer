@@ -94,6 +94,8 @@ CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &
 }
 
 void CurveSequenceEditPage::enter() {
+    updateMonitorStep();
+
     _showDetail = false;
 }
 
@@ -280,10 +282,12 @@ void CurveSequenceEditPage::updateLeds(Leds &leds) {
 
 void CurveSequenceEditPage::keyDown(KeyEvent &event) {
     _stepSelection.keyDown(event, stepOffset());
+    updateMonitorStep();
 }
 
 void CurveSequenceEditPage::keyUp(KeyEvent &event) {
     _stepSelection.keyUp(event, stepOffset());
+    updateMonitorStep();
 }
 
 void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
@@ -307,6 +311,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
 
     _stepSelection.keyPress(event, stepOffset());
+    updateMonitorStep();
 
     if (key.isFunction()) {
         switchLayer(key.function(), key.shiftModifier());
@@ -465,6 +470,17 @@ int CurveSequenceEditPage::activeFunctionKey() {
     }
 
     return -1;
+}
+
+void CurveSequenceEditPage::updateMonitorStep() {
+    auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
+
+    if ((layer() == Layer::Min || layer() == Layer::Max) && !_stepSelection.isPersisted() && _stepSelection.any()) {
+        trackEngine.setMonitorStep(_stepSelection.first());
+        trackEngine.setMonitorStepLevel(layer() == Layer::Min ? CurveTrackEngine::MonitorLevel::Min : CurveTrackEngine::MonitorLevel::Max);
+    } else {
+        trackEngine.setMonitorStep(-1);
+    }
 }
 
 void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step &step) {

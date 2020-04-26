@@ -116,12 +116,25 @@ void CurveTrackEngine::tick(uint32_t tick) {
 }
 
 void CurveTrackEngine::update(float dt) {
-    // override due to recording
-    if (isRecording()) {
+    bool running = _engine.state().running();
+    bool recording = _engine.state().recording();
+
+    const auto &sequence = *_sequence;
+    const auto &range = Types::voltageRangeInfo(_sequence->range());
+
+    // override due to monitoring or recording
+    if (!running && !recording && _monitorStepIndex >= 0) {
+        // step monitoring (first priority)
+        const auto &step = sequence.step(_monitorStepIndex);
+        float min = float(step.min()) / CurveSequence::Min::Max;
+        float max = float(step.max()) / CurveSequence::Max::Max;
+        _cvOutput = _cvOutputTarget = range.denormalize(_monitorStepLevel == MonitorLevel::Min ? min : max);
+        // pass through to midi engine
+        auto &midiOutputEngine = _engine.midiOutputEngine();
+        midiOutputEngine.sendCv(_track.trackIndex(), _cvOutput);
+    } else if (recording) {
         updateRecordValue();
-        const auto &range = Types::voltageRangeInfo(_sequence->range());
-        _cvOutputTarget = range.denormalize(_recordValue);
-        _cvOutput = _cvOutputTarget;
+        _cvOutput = _cvOutputTarget = range.denormalize(_recordValue);
     }
 
     if (_curveTrack.slideTime() > 0) {

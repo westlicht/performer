@@ -34,6 +34,8 @@ private:
     void switchLayer(int functionKey, bool shift);
     int activeFunctionKey();
 
+    void updateMonitorStep();
+
     void drawDetail(Canvas &canvas, const CurveSequence::Step &step);
 
     void contextShow();

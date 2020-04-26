@@ -22,8 +22,8 @@ void MidiOutputEngine::update(bool forceSendCC) {
     // determine the rate for sending MIDI CC events:
     // 3250 bytes per second
     // 3 bytes per message
-    // 8 outputs
-    // gives roughly 135 events per second per track
+    // 16 outputs
+    // gives roughly 67 events per second per track
     // be conservative and make this 50 events per second
     bool sendCC = forceSendCC;
     uint32_t ticks = os::ticks();

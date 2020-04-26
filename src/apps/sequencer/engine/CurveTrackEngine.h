@@ -40,6 +40,11 @@ public:
     int currentStep() const { return _currentStep; }
     float currentStepFraction() const { return _currentStepFraction; }
 
+    enum class MonitorLevel { Min, Max };
+
+    void setMonitorStep(int index) { _monitorStepIndex = (index >= 0 && index < CONFIG_STEP_COUNT) ? index : -1; }
+    void setMonitorStepLevel(MonitorLevel level) { _monitorStepLevel = level; }
+
 private:
     void triggerStep(uint32_t tick, uint32_t divisor);
     void updateOutput(uint32_t relativeTick, uint32_t divisor);
@@ -54,6 +59,9 @@ private:
 
     float _recordValue;
     CurveRecorder _recorder;
+
+    int _monitorStepIndex = -1;
+    MonitorLevel _monitorStepLevel = MonitorLevel::Min;
 
     CurveSequence *_sequence;
     CurveSequence *_fillSequence;
