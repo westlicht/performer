@@ -22,6 +22,10 @@ public:
             return (_patterns >> (trackIndex << 2)) & 0xf;
         }
 
+        bool mute(int trackIndex) const {
+            return (_mutes >> trackIndex) & 0x1;
+        }
+
         int repeats() const { return _repeats; }
 
         void clear();
@@ -49,11 +53,21 @@ public:
             _patterns = fillPatterns(pattern);
         }
 
+        void setMute(int trackIndex, bool mute) {
+            uint8_t bit = 0x1 << trackIndex;
+            _mutes = (_mutes & ~bit) | (mute ? bit : 0);
+        }
+
+        void toggleMute(int trackIndex) {
+            setMute(trackIndex, !mute(trackIndex));
+        }
+
         void setRepeats(int repeats) {
             _repeats = clamp(repeats, 1, 128);
         }
 
         uint32_t _patterns;
+        uint8_t _mutes;
         uint8_t _repeats;
 
         friend class Song;
@@ -85,8 +99,12 @@ public:
     void setPattern(int slotIndex, int pattern);
     void setPattern(int slotIndex, int trackIndex, int pattern);
     void editPattern(int slotIndex, int trackIndex, int value);
+    void setMute(int slotIndex, int trackIndex, bool mute);
+    void toggleMute(int slotIndex, int trackIndex);
     void setRepeats(int slotIndex, int repeats);
     void editRepeats(int slotIndex, int value);
+
+    bool trackHasMutes(int trackIndex) const;
 
     void clear();
 

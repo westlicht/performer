@@ -476,6 +476,16 @@ void Engine::updatePlayState(bool ticked) {
 
     // handle song requests
 
+    auto activateSongSlot = [&] (const Song::Slot &slot) {
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            playState.trackState(trackIndex).setPattern(slot.pattern(trackIndex));
+            // only set mutes if track in song contains any mutes at all
+            if (song.trackHasMutes(trackIndex)) {
+                playState.trackState(trackIndex).setMute(slot.mute(trackIndex));
+            }
+        }
+    };
+
     if (hasRequests) {
         int playRequests = PlayState::SongState::ImmediatePlayRequest |
             (handleSyncedRequests ? PlayState::SongState::SyncedPlayRequest : 0) |
@@ -488,11 +498,7 @@ void Engine::updatePlayState(bool ticked) {
         if (songState.hasRequests(playRequests)) {
             int requestedSlot = songState.requestedSlot();
             if (requestedSlot >= 0 && requestedSlot < song.slotCount()) {
-                const auto &slot = song.slot(requestedSlot);
-                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                    playState.trackState(trackIndex).setPattern(slot.pattern(trackIndex));
-                }
-
+                activateSongSlot(song.slot(requestedSlot));
                 songState.setCurrentSlot(requestedSlot);
                 songState.setCurrentRepeat(0);
                 songState.setPlaying(true);
@@ -544,9 +550,8 @@ void Engine::updatePlayState(bool ticked) {
             }
 
             // update patterns
-            const auto &slot = song.slot(songState.currentSlot());
+            activateSongSlot(song.slot(songState.currentSlot()));
             for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                playState.trackState(trackIndex).setPattern(slot.pattern(trackIndex));
                 _trackEngines[trackIndex]->restart();
             }
         }

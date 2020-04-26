@@ -69,6 +69,9 @@ enum ProjectVersion {
     // expanded MidiOutput::outputs to 16 entries
     Version24 = 24,
 
+    // added Song::Slot::mutes
+    Version25 = 25,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

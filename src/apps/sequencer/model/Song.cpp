@@ -6,16 +6,19 @@
 
 void Song::Slot::clear() {
     _patterns = 0;
+    _mutes = 0;
     _repeats = 1;
 }
 
 void Song::Slot::write(VersionedSerializedWriter &writer) const {
     writer.write(_patterns);
+    writer.write(_mutes);
     writer.write(_repeats);
 }
 
 void Song::Slot::read(VersionedSerializedReader &reader) {
     reader.read(_patterns);
+    reader.read(_mutes, ProjectVersion::Version25);
     reader.read(_repeats);
 }
 
@@ -84,6 +87,19 @@ void Song::editPattern(int slotIndex, int trackIndex, int value) {
     }
 }
 
+void Song::setMute(int slotIndex, int trackIndex, bool mute) {
+    if (isActiveSlot(slotIndex)) {
+        slot(slotIndex).setMute(trackIndex, mute);
+    }
+}
+
+void Song::toggleMute(int slotIndex, int trackIndex)
+{
+    if (isActiveSlot(slotIndex)) {
+        slot(slotIndex).toggleMute(trackIndex);
+    }
+}
+
 void Song::setRepeats(int slotIndex, int repeats) {
     if (isActiveSlot(slotIndex)) {
         slot(slotIndex).setRepeats(repeats);
@@ -94,6 +110,13 @@ void Song::editRepeats(int slotIndex, int value) {
     if (isActiveSlot(slotIndex)) {
         slot(slotIndex).setRepeats(slot(slotIndex).repeats() + value);
     }
+}
+
+bool Song::trackHasMutes(int trackIndex) const {
+    for (int i = 0; i < _slotCount; ++i) {
+        if (slot(i).mute(trackIndex)) return true;
+    }
+    return false;
 }
 
 void Song::clear() {

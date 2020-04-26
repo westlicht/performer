@@ -117,7 +117,11 @@ void SongPage::draw(Canvas &canvas) {
             } else {
                 if (slotActive) {
                     int trackIndex = colIndex - 2;
-                    str("P%d", slot.pattern(trackIndex) + 1);
+                    if (slot.mute(trackIndex)) {
+                        str("M");
+                    } else {
+                        str("P%d", slot.pattern(trackIndex) + 1);
+                    }
                 } else {
                     str("-");
                 }
@@ -212,6 +216,7 @@ void SongPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &song = _project.song();
     auto &playState = _project.playState();
+    uint8_t selectedTracks = pressedTrackKeys();
 
     if (key.isContextMenu()) {
         contextShow();
@@ -261,7 +266,15 @@ void SongPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isEncoder()) {
-        playState.playSong(_selectedSlot, (key.shiftModifier() && _engine.clockRunning()) ? PlayState::ExecuteType::Synced : PlayState::ExecuteType::Immediate);
+        if (selectedTracks) {
+            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                if (selectedTracks & (1 << trackIndex)) {
+                    _project.song().toggleMute(_selectedSlot, trackIndex);
+                }
+            }
+        } else {
+            playState.playSong(_selectedSlot, (key.shiftModifier() && _engine.clockRunning()) ? PlayState::ExecuteType::Synced : PlayState::ExecuteType::Immediate);
+        }
 
         event.consume();
     }
