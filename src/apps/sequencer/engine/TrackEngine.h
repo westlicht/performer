@@ -8,6 +8,7 @@
 #include "model/Model.h"
 
 #include "core/midi/MidiMessage.h"
+#include "core/utils/EnumUtils.h"
 
 #include <cstdint>
 
@@ -28,6 +29,13 @@ struct TrackLinkData {
 
 class TrackEngine {
 public:
+    // Set of updates resulting from calling tick().
+    enum TickResult {
+        NoUpdate    = 0,
+        CvUpdate    = (1<<0),
+        GateUpdate  = (1<<1),
+    };
+
     TrackEngine(Engine &engine, const Model &model, Track &track, const TrackEngine *linkedTrackEngine) :
         _engine(engine),
         _model(model),
@@ -61,7 +69,7 @@ public:
 
     virtual void reset() = 0;
     virtual void restart() = 0;
-    virtual void tick(uint32_t tick) = 0;
+    virtual TickResult tick(uint32_t tick) = 0;
     virtual void update(float dt) = 0;
 
     virtual void changePattern() {}
@@ -97,5 +105,7 @@ protected:
     const PlayState::TrackState &_trackState;
     const TrackEngine *_linkedTrackEngine;
 };
+
+ENUM_CLASS_OPERATORS(TrackEngine::TickResult)
 
 #undef SANITIZE_TRACK_MODE

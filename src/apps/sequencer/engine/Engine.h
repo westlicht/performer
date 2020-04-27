@@ -15,6 +15,7 @@
 #include "MidiPort.h"
 #include "MidiLearn.h"
 #include "CvGateToMidiConverter.h"
+#include "UpdateReducer.h"
 
 #include "model/Model.h"
 
@@ -35,6 +36,7 @@ public:
     typedef Container<NoteTrackEngine, CurveTrackEngine, MidiCvTrackEngine> TrackEngineContainer;
     typedef std::array<TrackEngineContainer, CONFIG_TRACK_COUNT> TrackEngineContainerArray;
     typedef std::array<TrackEngine *, CONFIG_TRACK_COUNT> TrackEngineArray;
+    typedef std::array<UpdateReducer<os::time::ms(25)>, CONFIG_TRACK_COUNT> TrackUpdateReducerArray;
 
     typedef std::function<bool(MidiPort port, const MidiMessage &message)> MidiReceiveHandler;
 
@@ -193,6 +195,7 @@ private:
 
     TrackEngineContainerArray _trackEngineContainers;
     TrackEngineArray _trackEngines;
+    TrackUpdateReducerArray _trackUpdateReducers;
 
     MidiOutputEngine _midiOutputEngine;
 

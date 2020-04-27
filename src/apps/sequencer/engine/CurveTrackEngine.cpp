@@ -55,7 +55,7 @@ void CurveTrackEngine::restart() {
     _currentStepFraction = 0.f;
 }
 
-void CurveTrackEngine::tick(uint32_t tick) {
+TrackEngine::TickResult CurveTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
     const auto *linkData = _linkedTrackEngine ? _linkedTrackEngine->linkData() : nullptr;
@@ -106,13 +106,18 @@ void CurveTrackEngine::tick(uint32_t tick) {
         _linkData.sequenceState = &_sequenceState;
     }
 
+    TickResult result = TickResult::NoUpdate;
+
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
+        result |= TickResult::GateUpdate;
         _activity = _gateQueue.front().gate;
         _gateOutput = (!mute() || fill()) && _activity;
         _gateQueue.pop();
 
         _engine.midiOutputEngine().sendGate(_track.trackIndex(), _gateOutput);
     }
+
+    return result;
 }
 
 void CurveTrackEngine::update(float dt) {

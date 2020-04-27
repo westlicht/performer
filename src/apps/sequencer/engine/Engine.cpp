@@ -131,8 +131,17 @@ void Engine::update() {
         // update play state
         updatePlayState(true);
 
-        for (auto trackEngine : _trackEngines) {
-            trackEngine->tick(tick);
+        // tick track engines
+        for (size_t trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            auto &trackEngine = _trackEngines[trackIndex];
+            uint32_t result = trackEngine->tick(tick);
+            // update track outputs and routings if tick results in updating the track's CV output
+            if (result &= TrackEngine::TickResult::CvUpdate && _trackUpdateReducers[trackIndex].update()) {
+                trackEngine->update(0.f);
+                updateTrackOutputs();
+                updateOverrides();
+                _routingEngine.update();
+            }
         }
 
         // update midi outputs, force sending CC on first tick

@@ -236,10 +236,10 @@ namespace os {
     };
 
     namespace time {
-        inline uint32_t us(uint32_t us) {
+        constexpr inline uint32_t us(uint32_t us) {
             return (us * configTICK_RATE_HZ) / 1000000;
         }
-        inline uint32_t ms(uint32_t ms) {
+        constexpr inline uint32_t ms(uint32_t ms) {
             return (ms * configTICK_RATE_HZ) / 1000;
         }
     };

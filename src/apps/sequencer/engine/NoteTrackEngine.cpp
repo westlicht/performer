@@ -102,7 +102,7 @@ void NoteTrackEngine::restart() {
     _currentStep = -1;
 }
 
-void NoteTrackEngine::tick(uint32_t tick) {
+TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
     const auto *linkData = _linkedTrackEngine ? _linkedTrackEngine->linkData() : nullptr;
@@ -156,7 +156,10 @@ void NoteTrackEngine::tick(uint32_t tick) {
 
     auto &midiOutputEngine = _engine.midiOutputEngine();
 
+    TickResult result = TickResult::NoUpdate;
+
     while (!_gateQueue.empty() && tick >= _gateQueue.front().tick) {
+        result |= TickResult::GateUpdate;
         _activity = _gateQueue.front().gate;
         _gateOutput = (!mute() || fill()) && _activity;
         _gateQueue.pop();
@@ -166,6 +169,7 @@ void NoteTrackEngine::tick(uint32_t tick) {
 
     while (!_cvQueue.empty() && tick >= _cvQueue.front().tick) {
         if (!mute() || _noteTrack.cvUpdateMode() == NoteTrack::CvUpdateMode::Always) {
+            result |= TickResult::CvUpdate;
             _cvOutputTarget = _cvQueue.front().cv;
             _slideActive = _cvQueue.front().slide;
 
@@ -174,6 +178,8 @@ void NoteTrackEngine::tick(uint32_t tick) {
         }
         _cvQueue.pop();
     }
+
+    return result;
 }
 
 void NoteTrackEngine::update(float dt) {

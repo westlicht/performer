@@ -20,10 +20,12 @@ void MidiCvTrackEngine::reset() {
 void MidiCvTrackEngine::restart() {
 }
 
-void MidiCvTrackEngine::tick(uint32_t tick) {
+TrackEngine::TickResult MidiCvTrackEngine::tick(uint32_t tick) {
     if (_arpeggiatorEnabled) {
         tickArpeggiator(tick);
     }
+
+    return TickResult::NoUpdate;
 }
 
 void MidiCvTrackEngine::update(float dt) {
