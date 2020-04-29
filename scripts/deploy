@@ -15,10 +15,14 @@ items = [
     {
         'name': 'Hardware Configuration',
         'srcs': [
+            'build/stm32/release/src/apps/hwconfig/hwconfig_dac8568a.hex',
             'build/stm32/release/src/apps/hwconfig/hwconfig_default.hex',
-            'build/stm32/release/src/apps/hwconfig/hwconfig_reverse_encoder.hex',
-            'build/stm32/release/src/apps/hwconfig/hwconfig_invert_leds.hex',
-            'build/stm32/release/src/apps/hwconfig/hwconfig_reverse_encoder_invert_leds.hex'
+            'build/stm32/release/src/apps/hwconfig/hwconfig_invert-leds_dac8568a.hex',
+            'build/stm32/release/src/apps/hwconfig/hwconfig_invert-leds.hex',
+            'build/stm32/release/src/apps/hwconfig/hwconfig_reverse-encoder_dac8568a.hex',
+            'build/stm32/release/src/apps/hwconfig/hwconfig_reverse-encoder_invert-leds_dac8568a.hex',
+            'build/stm32/release/src/apps/hwconfig/hwconfig_reverse-encoder_invert-leds.hex',
+            'build/stm32/release/src/apps/hwconfig/hwconfig_reverse-encoder.hex'
         ],
         'dst': 'hwconfig'
     },
