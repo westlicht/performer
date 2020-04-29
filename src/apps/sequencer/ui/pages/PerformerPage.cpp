@@ -81,9 +81,10 @@ void PerformerPage::draw(Canvas &canvas) {
         SequencePainter::drawSequenceProgress(canvas, x, y + h + 2, w, 2, trackEngine.sequenceProgress());
 
         // draw fill & fill amount amount
-        canvas.setColor(trackState.fill() ? 0x7 : 0x3);
+        bool pressed = pageKeyState()[MatrixMap::fromStep(trackIndex)];
+        canvas.setColor(pressed ? 0x7 : 0x3);
         canvas.fillRect(x, y + h + 6, w, 4);
-        canvas.setColor(trackState.fill() ? 0xf : 0x7);
+        canvas.setColor(pressed ? 0xf : 0x7);
         canvas.fillRect(x, y + h + 6, (trackState.fillAmount() * w) / 100, 4);
     }
 
