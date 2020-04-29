@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.36 (29 April 2020)
+
+#### Fixes
+
+- Update routings right after updating each track to allow its CV output to accurately modulate the following tracks (#167)
+
+#### Improvements
+
+- Added fill and mute functions to pattern mode on Launchpad (#173)
+- Added mutes to song slots (#178)
+- Added step monitoring on curve sequences (#186)
+- Added a `hwconfig` to support DAC8568A (in addition to the default DAC8568C)
+
 ## v0.1.35 (20 Jan 2020)
 
 #### Fixes
