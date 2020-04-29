@@ -825,6 +825,7 @@ To create a pattern chain, hold `F1` and press `S[1-16]` to select the pattern t
 - Hold `SHIFT` and press `S[1-16]` to selected the number of bars/measures (1-16).
 - Press `S[1-16]` to assign a pattern to all tracks of the selected slot.
 - Hold any combination of `T[1-8]` and rotate the `ENCODER` to adjust the patterns of a group of tracks of the selected slot.
+- Hold any combination of `T[1-8]` and press the  `ENCODER` to toggle mutes of a group of tracks of the selected slot.
 - Hold any combination of `T[1-8]` and press `S[1-16]` to assign a pattern to a group of tracks of the selected slot.
 
 <h4>Playback</h4>
@@ -834,6 +835,8 @@ Song playback can be started and stopped independently of the sequencer actually
 Press `F5` to start playback of the song from the currently selected slot. This will also start the sequencer if it is not already running. Playback will be immediate, meaning that the currently playing pattern is switched instantaneously. To start playback on the next _Sync Measure_, use `SHIFT` + `F5`. A progress bar will appear at the top of the page, indicating the time until playback is started. To stop playback, simply press `F5` again. Playback can also be started by selecting a slot and pressing the `ENCODER`. This is also useful quickly switch to a different slot while playback is active. Again, to switch slot on the next _Sync Measure_, hold `SHIFT` and press the `ENCODER`.
 
 During playback, the current slot is indicated with a small arrow and also shown on the left side together with a progress bar, indicating the duration for which the slot is played for. In the top left corner, the current bar and note is also displayed.
+
+The global mute setting of a track is only affected during song playback if any slot of the track contains a mute. This allows to retain full control over mutes even if song playback is enabled, for example when just using the song mode to chain some patterns during a live performance.
 
 ![](images/page-song-playback.png)
 
@@ -1537,6 +1540,13 @@ Because the 8x8 grid of the Launchpad can only represent part of the data to be 
 
 > Note: Navigation is available in both sequence and pattern mode.
 
+Both modes also allow controlling track mutes and fills:
+
+| Buttons | Description |
+| :--- | :--- |
+| `7` + `A` - `H` | Fill track |
+| `8` + `A` - `H` | Mute/unmute track |
+
 <h4>Sequence Mode</h4>
 
 Sequence mode allows for comprehensive editing of the patterns on all tracks. The grid allows for editing individual step values on the active track and layer. The following functions are available:
@@ -1548,8 +1558,6 @@ Sequence mode allows for comprehensive editing of the patterns on all tracks. Th
 | `3` + `GRID` | Select first step |
 | `4` + `GRID` | Select last step |
 | `5` + `GRID` | Select run mode |
-| `7` + `A` - `H` | Fill track |
-| `8` + `A` - `H` | Mute/unmute track |
 
 The visualization on the grid depends on the selected layer. Binary layers (e.g. _Gate_ and _Slide_) can be visualized directly on the 8x8 grid without the need for navigation. This is useful for programming drum sequences for example. Other layers use navigation to various degree in order to allow programming the steps. When editing the _Note_ layer, the base note (first note per octave) is visualized to help orientation.
 
