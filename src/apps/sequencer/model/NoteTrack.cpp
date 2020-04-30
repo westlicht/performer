@@ -35,6 +35,7 @@ void NoteTrack::writeRouted(Routing::Target target, int intValue, float floatVal
 void NoteTrack::clear() {
     setPlayMode(Types::PlayMode::Aligned);
     setFillMode(FillMode::Gates);
+    setFillMuted(true);
     setCvUpdateMode(CvUpdateMode::Gate);
     setSlideTime(50);
     setOctave(0);
@@ -53,6 +54,7 @@ void NoteTrack::clear() {
 void NoteTrack::write(VersionedSerializedWriter &writer) const {
     writer.write(_playMode);
     writer.write(_fillMode);
+    writer.write(_fillMuted);
     writer.write(_cvUpdateMode);
     writer.write(_slideTime.base);
     writer.write(_octave.base);
@@ -70,6 +72,7 @@ void NoteTrack::read(VersionedSerializedReader &reader) {
 
     reader.read(_playMode);
     reader.read(_fillMode);
+    reader.read(_fillMuted, ProjectVersion::Version26);
     reader.read(_cvUpdateMode, ProjectVersion::Version4);
     reader.read(_slideTime.base);
     reader.read(_octave.base);

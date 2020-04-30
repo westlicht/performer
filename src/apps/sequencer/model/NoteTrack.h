@@ -86,6 +86,21 @@ public:
         str(fillModeName(fillMode()));
     }
 
+    // fillMuted
+
+    bool fillMuted() const { return _fillMuted; }
+    void setFillMuted(bool fillMuted) {
+        _fillMuted = fillMuted;
+    }
+
+    void editFillMuted(int value, bool shift) {
+        setFillMuted(value > 0);
+    }
+
+    void printFillMuted(StringBuilder &str) const {
+        ModelUtils::printYesNo(str, fillMuted());
+    }
+
     // cvUpdateMode
 
     CvUpdateMode cvUpdateMode() const { return _cvUpdateMode; }
@@ -283,6 +298,7 @@ private:
     int8_t _trackIndex = -1;
     Types::PlayMode _playMode;
     FillMode _fillMode;
+    bool _fillMuted;
     CvUpdateMode _cvUpdateMode;
     Routable<uint8_t> _slideTime;
     Routable<int8_t> _octave;

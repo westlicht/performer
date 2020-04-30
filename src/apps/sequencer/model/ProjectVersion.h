@@ -72,6 +72,9 @@ enum ProjectVersion {
     // added Song::Slot::mutes
     Version25 = 25,
 
+    // added NoteTrack::fillMuted
+    Version26 = 26,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

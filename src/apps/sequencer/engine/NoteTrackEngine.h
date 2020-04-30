@@ -48,6 +48,10 @@ private:
     void recordStep(uint32_t tick, uint32_t divisor);
     int noteFromMidiNote(uint8_t midiNote) const;
 
+    bool fill() const {
+        return (_noteTrack.fillMuted() || !TrackEngine::mute()) ? TrackEngine::fill() : false;
+    }
+
     NoteTrack &_noteTrack;
 
     TrackLinkData _linkData;
