@@ -17,4 +17,12 @@ public:
     virtual void keyDown(KeyEvent &event) override;
     virtual void keyUp(KeyEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
+
+private:
+    enum class Mode : uint8_t {
+        Tempo,
+        Swing
+    };
+
+    Mode _mode = Mode::Tempo;
 };
