@@ -128,7 +128,15 @@ public:
         Loop6 = Loop5 + 5,
         Loop7 = Loop6 + 6,
         Loop8 = Loop7 + 7,
-        Last = Loop8 + 8
+        NotLoop = Loop8 + 8,
+        NotLoop2 = NotLoop,
+        NotLoop3 = NotLoop2 + 2,
+        NotLoop4 = NotLoop3 + 3,
+        NotLoop5 = NotLoop4 + 4,
+        NotLoop6 = NotLoop5 + 5,
+        NotLoop7 = NotLoop6 + 6,
+        NotLoop8 = NotLoop7 + 7,
+        Last = NotLoop8 + 8
     };
 
     struct ConditionInfo {
@@ -140,6 +148,7 @@ public:
     struct ConditionLoop {
         uint8_t offset;
         uint8_t base;
+        uint8_t invert;
     };
 
     enum class ConditionFormat : uint8_t {
@@ -152,11 +161,14 @@ public:
         static const uint8_t offset[] = { 0, 1,   0, 1, 2,   0, 1, 2, 3,   0, 1, 2, 3, 4,   0, 1, 2, 3, 4, 5,   0, 1, 2, 3, 4, 5, 6,   0, 1, 2, 3, 4, 5, 6, 7 };
         static const uint8_t base[]   = { 2, 2,   3, 3, 3,   4, 4, 4, 4,   5, 5, 5, 5, 5,   6, 6, 6, 6, 6, 6,   7, 7, 7, 7, 7, 7, 7,   8, 8, 8, 8, 8, 8, 8, 8 };
         int index = int(condition);
-        if (index >= int(Condition::Loop) && index < int(Condition::Last)) {
+        if (index >= int(Condition::Loop) && index < int(Condition::NotLoop)) {
             index -= int(Condition::Loop);
-            return { offset[index], base[index] };
+            return { offset[index], base[index], 0 };
+        } else if (index >= int(Condition::NotLoop) && index < int(Condition::Last)) {
+            index -= int(Condition::NotLoop);
+            return { offset[index], base[index], 1 };
         } else {
-            return { 0, 0 };
+            return { 0, 0, 0 };
         }
     }
 
@@ -172,8 +184,8 @@ public:
         } else if (index >= int(Condition::Loop) && index < int(Condition::Last)) {
             auto loop = conditionLoop(condition);
             switch (format) {
-            case ConditionFormat::Long: str("%d:%d", loop.offset + 1, loop.base); break;
-            case ConditionFormat::Short1: str("%d", loop.offset + 1); break;
+            case ConditionFormat::Long: str("%s%d:%d", loop.invert ? "!" : "", loop.offset + 1, loop.base); break;
+            case ConditionFormat::Short1: str("%s%d", loop.invert ? "!" : "", loop.offset + 1); break;
             case ConditionFormat::Short2: str("%d", loop.base); break;
             }
         }

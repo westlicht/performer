@@ -34,6 +34,7 @@ static bool evalStepCondition(const NoteSequence::Step &step, int iteration, boo
         if (index >= int(Types::Condition::Loop) && index < int(Types::Condition::Last)) {
             auto loop = Types::conditionLoop(condition);
             prevCondition = iteration % loop.base == loop.offset;
+            if (loop.invert) prevCondition = !prevCondition;
             return prevCondition;
         }
     }

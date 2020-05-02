@@ -147,6 +147,13 @@ void register_sequencer(py::module &m) {
         .value("Loop6", Types::Condition::Loop6)
         .value("Loop7", Types::Condition::Loop7)
         .value("Loop8", Types::Condition::Loop8)
+        .value("NotLoop2", Types::Condition::NotLoop2)
+        .value("NotLoop3", Types::Condition::NotLoop3)
+        .value("NotLoop4", Types::Condition::NotLoop4)
+        .value("NotLoop5", Types::Condition::NotLoop5)
+        .value("NotLoop6", Types::Condition::NotLoop6)
+        .value("NotLoop7", Types::Condition::NotLoop7)
+        .value("NotLoop8", Types::Condition::NotLoop8)
         .export_values()
     ;
 
