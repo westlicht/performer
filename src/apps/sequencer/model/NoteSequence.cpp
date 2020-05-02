@@ -140,16 +140,21 @@ void NoteSequence::Step::write(VersionedSerializedWriter &writer) const {
 }
 
 void NoteSequence::Step::read(VersionedSerializedReader &reader) {
-    reader.read(_data0.raw);
-    reader.read(_data1.raw);
-    if (reader.dataVersion() < ProjectVersion::Version5) {
-        _data1.raw &= 0x1f;
-    }
-    if (reader.dataVersion() < ProjectVersion::Version7) {
-        setGateOffset(0);
-    }
-    if (reader.dataVersion() < ProjectVersion::Version12) {
-        setCondition(Types::Condition(0));
+    if (reader.dataVersion() < ProjectVersion::Version27) {
+        reader.read(_data0.raw);
+        reader.readAs<uint16_t>(_data1.raw);
+        if (reader.dataVersion() < ProjectVersion::Version5) {
+            _data1.raw &= 0x1f;
+        }
+        if (reader.dataVersion() < ProjectVersion::Version7) {
+            setGateOffset(0);
+        }
+        if (reader.dataVersion() < ProjectVersion::Version12) {
+            setCondition(Types::Condition(0));
+        }
+    } else {
+        reader.read(_data0.raw);
+        reader.read(_data1.raw);
     }
 }
 

@@ -75,6 +75,9 @@ enum ProjectVersion {
     // added NoteTrack::fillMuted
     Version26 = 26,
 
+    // expanded NoteSequence::Step to 64 bits, expanded NoteSequence::Step::Condition to 7 bits
+    Version27 = 27,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

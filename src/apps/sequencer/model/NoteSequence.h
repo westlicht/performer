@@ -31,7 +31,7 @@ public:
     typedef SignedValue<7> Note;
     typedef SignedValue<7> NoteVariationRange;
     typedef UnsignedValue<3> NoteVariationProbability;
-    typedef UnsignedValue<6> Condition;
+    typedef UnsignedValue<7> Condition;
 
     static_assert(int(Types::Condition::Last) <= Condition::Max + 1, "Condition enum does not fit");
 
@@ -210,12 +210,12 @@ public:
             BitField<uint32_t, 29, NoteVariationProbability::Bits> noteVariationProbability;
         } _data0;
         union {
-            uint16_t raw;
-            BitField<uint16_t, 0, Retrigger::Bits> retrigger;
-            BitField<uint16_t, 2, RetriggerProbability::Bits> retriggerProbability;
-            BitField<uint16_t, 5, GateOffset::Bits> gateOffset;
-            BitField<uint16_t, 9, Condition::Bits> condition;
-            // 1 bit left
+            uint32_t raw;
+            BitField<uint32_t, 0, Retrigger::Bits> retrigger;
+            BitField<uint32_t, 2, RetriggerProbability::Bits> retriggerProbability;
+            BitField<uint32_t, 5, GateOffset::Bits> gateOffset;
+            BitField<uint32_t, 9, Condition::Bits> condition;
+            // 16 bits left
         } _data1;
     };
 
