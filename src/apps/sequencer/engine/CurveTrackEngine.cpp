@@ -122,7 +122,7 @@ TrackEngine::TickResult CurveTrackEngine::tick(uint32_t tick) {
 
 void CurveTrackEngine::update(float dt) {
     bool running = _engine.state().running();
-    bool recording = _engine.state().recording();
+    bool recording = isRecording();
 
     const auto &sequence = *_sequence;
     const auto &range = Types::voltageRangeInfo(_sequence->range());
