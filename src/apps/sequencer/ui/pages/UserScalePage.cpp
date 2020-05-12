@@ -79,6 +79,9 @@ void UserScalePage::setSelectedIndex(int index) {
     _selectedIndex = index;
     _userScale = &UserScale::userScales[index];
     _listModel.setUserScale(*_userScale);
+
+    setSelectedRow(0);
+    setEdit(false);
 }
 
 void UserScalePage::contextShow() {
