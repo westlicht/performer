@@ -12,6 +12,7 @@ public:
     }
 
     void reset() {
+        _lastGateOff = os::ticks();
         _gate = 0;
         _note = -1;
     }
@@ -27,6 +28,7 @@ public:
                     _note = -1;
                 }
                 _gate = 0;
+                _lastGateOff = os::ticks();
             } else if (note != _note) {
                 // legato note change
                 callback(MidiMessage::makeNoteOn(channel, note, 127));
@@ -35,15 +37,22 @@ public:
             }
         } else {
             if (gateCv > 3.f) {
-                // gate on
-                callback(MidiMessage::makeNoteOn(channel, note, 127));
-                _gate = 1;
-                _note = note;
+                if (os::ticks() - _lastGateOff >= GateOnDelay) {
+                    // gate on
+                    callback(MidiMessage::makeNoteOn(channel, note, 127));
+                    _gate = 1;
+                    _note = note;
+                }
+            } else {
+                _lastGateOff = os::ticks();
             }
         }
     }
 
 private:
+    static constexpr uint32_t GateOnDelay = os::time::ms(5);
+
+    uint32_t _lastGateOff;
     uint8_t _gate;
     int8_t _note;
 };
