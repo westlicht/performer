@@ -331,7 +331,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
 
     if (key.isLeft()) {
         if (key.shiftModifier()) {
-            sequence.shiftSteps(-1);
+            sequence.shiftSteps(_stepSelection.selected(), -1);
         } else {
             _section = std::max(0, _section - 1);
         }
@@ -339,7 +339,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
     if (key.isRight()) {
         if (key.shiftModifier()) {
-            sequence.shiftSteps(1);
+            sequence.shiftSteps(_stepSelection.selected(), 1);
         } else {
             _section = std::min(3, _section + 1);
         }

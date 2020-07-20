@@ -12,6 +12,7 @@
 #include "core/utils/StringBuilder.h"
 
 #include <array>
+#include <bitset>
 #include <cstdint>
 #include <initializer_list>
 
@@ -325,7 +326,7 @@ public:
 
     void setShapes(std::initializer_list<int> shapes);
 
-    void shiftSteps(int direction);
+    void shiftSteps(const std::bitset<CONFIG_STEP_COUNT> &selected, int direction);
 
     void duplicateSteps();
 

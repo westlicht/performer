@@ -12,6 +12,7 @@
 #include "core/utils/StringBuilder.h"
 
 #include <array>
+#include <bitset>
 #include <cstdint>
 #include <initializer_list>
 
@@ -427,7 +428,7 @@ public:
     void setGates(std::initializer_list<int> gates);
     void setNotes(std::initializer_list<int> notes);
 
-    void shiftSteps(int direction);
+    void shiftSteps(const std::bitset<CONFIG_STEP_COUNT> &selected, int direction);
 
     void duplicateSteps();
 

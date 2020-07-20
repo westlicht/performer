@@ -169,8 +169,12 @@ void CurveSequence::setShapes(std::initializer_list<int> shapes) {
     }
 }
 
-void CurveSequence::shiftSteps(int direction) {
-    ModelUtils::shiftSteps(_steps, direction);
+void CurveSequence::shiftSteps(const std::bitset<CONFIG_STEP_COUNT> &selected, int direction) {
+    if (selected.any()) {
+        ModelUtils::shiftSteps(_steps, selected, direction);
+    } else {
+        ModelUtils::shiftSteps(_steps, firstStep(), lastStep(), direction);
+    }
 }
 
 void CurveSequence::duplicateSteps() {

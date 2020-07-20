@@ -51,6 +51,39 @@ static void shiftSteps(std::array<Step, N> &steps, int direction) {
 }
 
 template<typename Step, size_t N>
+static void shiftSteps(std::array<Step, N> &steps, int first, int last, int direction)
+{
+    if (direction == 1) {
+        for (int i = last - 1; i >= first; --i) {
+            std::swap(steps[i], steps[i + 1]);
+        }
+    } else if (direction == -1) {
+        for (int i = first; i < last; ++i) {
+            std::swap(steps[i], steps[i + 1]);
+        }
+    }
+}
+
+template<typename Step, size_t N>
+static void shiftSteps(std::array<Step, N> &steps, const std::bitset<N> &selected, int direction)
+{
+    uint8_t indices[N];
+    int count = 0;
+    for (size_t i = 0; i < N; ++i) {
+        if (selected[i]) indices[count++] = i;
+    }
+    if (direction == 1) {
+        for (int i = count - 2; i >= 0; --i) {
+            std::swap(steps[indices[i]], steps[indices[i + 1]]);
+        }
+    } else if (direction == -1) {
+        for (int i = 0; i < count - 1; ++i) {
+            std::swap(steps[indices[i]], steps[indices[i + 1]]);
+        }
+    }
+}
+
+template<typename Step, size_t N>
 static void duplicateSteps(std::array<Step, N> &steps, int firstStep, int lastStep) {
     for (int src = firstStep; src <= lastStep; ++src) {
         int dst = src + (lastStep - firstStep + 1);
