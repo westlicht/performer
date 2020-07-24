@@ -16,7 +16,7 @@ namespace sim {
 class Simulator : public TargetInputHandler, public TargetOutputHandler {
 public:
     Simulator(Target target);
-    ~Simulator();
+    virtual ~Simulator();
 
     void wait(int ms);
     void setButton(int index, bool pressed);
