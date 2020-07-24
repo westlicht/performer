@@ -1,9 +1,50 @@
 #include "model/Project.h"
+#include "model/ProjectVersion.h"
 
 #include <pybind11/pybind11.h>
 
+#include <string>
+#include <fstream>
+#include <exception>
+
 namespace py = pybind11;
 using namespace py::literals;
+
+static void loadProject(Project &project, const std::string &filename) {
+    std::ifstream ifs(filename);
+    if (!ifs.good()) {
+        throw std::runtime_error("Cannot open file");
+    }
+
+    FileHeader header;
+    ifs.read(reinterpret_cast<char *>(&header), sizeof(header));
+
+    VersionedSerializedReader reader(
+        [&ifs] (void *data, size_t len) { ifs.read(reinterpret_cast<char *>(data), len); },
+        ProjectVersion::Latest
+    );
+
+    if (!project.read(reader)) {
+        throw std::runtime_error("Failed to load project");
+    }
+}
+
+static void saveProject(const Project &project, const std::string &filename) {
+    std::ofstream ofs(filename);
+    if (!ofs.good()) {
+        throw std::runtime_error("Cannot open file");
+    }
+
+    FileHeader header(FileType::Project, 0, project.name());
+    ofs.write(reinterpret_cast<const char *>(&header), sizeof(header));
+
+    VersionedSerializedWriter writer(
+        [&ofs] (const void *data, size_t len) { ofs.write(reinterpret_cast<const char *>(data), len); },
+        ProjectVersion::Latest
+    );
+
+    project.write(writer);
+}
 
 void register_project(py::module &m) {
     // ------------------------------------------------------------------------
@@ -12,6 +53,7 @@ void register_project(py::module &m) {
 
     py::class_<Project> project(m, "Project");
     project
+        .def(py::init<>())
         .def_property("name", &Project::name, &Project::setName)
         .def_property("slot", &Project::slot, &Project::setSlot)
         .def_property("tempo", &Project::tempo, &Project::setTempo)
@@ -47,6 +89,8 @@ void register_project(py::module &m) {
         .def("clear", &Project::clear)
         .def("clearPattern", &Project::clearPattern, "patternIndex"_a)
         .def("setTrackMode", &Project::setTrackMode, "trackIndex"_a, "trackMode"_a)
+        .def("load", &loadProject, "filename"_a)
+        .def("save", &saveProject, "filename"_a)
     ;
 
     // ------------------------------------------------------------------------
