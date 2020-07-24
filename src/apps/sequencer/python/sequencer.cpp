@@ -4,6 +4,7 @@
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
+using namespace py::literals;
 
 void register_sequencer(py::module &m) {
     // ------------------------------------------------------------------------
@@ -49,10 +50,10 @@ void register_sequencer(py::module &m) {
             }
             return result;
         })
-        .def("cvOutputTrack", &Project::cvOutputTrack)
-        .def("setCvOutputTrack", &Project::setCvOutputTrack)
-        .def("gateOutputTrack", &Project::gateOutputTrack)
-        .def("setGateOutputTrack", &Project::setGateOutputTrack)
+        .def("cvOutputTrack", &Project::cvOutputTrack, "index"_a)
+        .def("setCvOutputTrack", &Project::setCvOutputTrack, "index"_a, "trackIndex"_a)
+        .def("gateOutputTrack", &Project::gateOutputTrack, "index"_a)
+        .def("setGateOutputTrack", &Project::setGateOutputTrack, "index"_a, "trackIndex"_a)
         .def_property_readonly("song", [] (Project &project) { return &project.song(); })
         .def_property_readonly("playState", [] (Project &project) { return &project.playState(); })
         // TODO userScales
@@ -63,8 +64,8 @@ void register_sequencer(py::module &m) {
         .def_property("selectedNoteSequenceLayer", &Project::selectedNoteSequenceLayer, &Project::setSelectedNoteSequenceLayer)
         .def_property("selectedCurveSequenceLayer", &Project::selectedCurveSequenceLayer, &Project::setSelectedCurveSequenceLayer)
         .def("clear", &Project::clear)
-        .def("clearPattern", &Project::clearPattern)
-        .def("setTrackMode", &Project::setTrackMode)
+        .def("clearPattern", &Project::clearPattern, "patternIndex"_a)
+        .def("setTrackMode", &Project::setTrackMode, "trackIndex"_a, "trackMode"_a)
     ;
 
     // ------------------------------------------------------------------------
@@ -217,8 +218,8 @@ void register_sequencer(py::module &m) {
         .def_property_readonly("curveTrack", [] (Track &track) { return &track.curveTrack(); })
         .def_property_readonly("midiCvTrack", [] (Track &track) { return &track.midiCvTrack(); })
         .def("clear", &Track::clear)
-        .def("clearPattern", &Track::clearPattern)
-        .def("copyPattern", &Track::copyPattern)
+        .def("clearPattern", &Track::clearPattern, "patternIndex"_a)
+        .def("copyPattern", &Track::copyPattern, "srcIndex"_a, "dstIndex"_a)
     ;
 
     py::enum_<Track::TrackMode>(track, "TrackMode")
@@ -396,7 +397,7 @@ void register_sequencer(py::module &m) {
         })
         .def("clear", &NoteSequence::clear)
         .def("clearSteps", &NoteSequence::clearSteps)
-        .def("shiftSteps", &NoteSequence::shiftSteps)
+        .def("shiftSteps", &NoteSequence::shiftSteps, "selected"_a, "direction"_a)
         .def("duplicateSteps", &NoteSequence::duplicateSteps)
     ;
 
@@ -456,7 +457,7 @@ void register_sequencer(py::module &m) {
         })
         .def("clear", &CurveSequence::clear)
         .def("clearSteps", &CurveSequence::clearSteps)
-        .def("shiftSteps", &CurveSequence::shiftSteps)
+        .def("shiftSteps", &CurveSequence::shiftSteps, "selected"_a, "direction"_a)
         .def("duplicateSteps", &CurveSequence::duplicateSteps)
     ;
 
@@ -496,18 +497,22 @@ void register_sequencer(py::module &m) {
             }
             return result;
         })
-        .def("chainPattern", &Song::chainPattern)
-        .def("insertSlot", &Song::insertSlot)
-        .def("removeSlot", &Song::removeSlot)
-        .def("swapSlot", &Song::swapSlot)
-        // TODO .def("setPattern", &Song::setPattern)
-        .def("setRepeats", &Song::setRepeats)
+        .def("chainPattern", &Song::chainPattern, "patternIndex"_a)
+        .def("insertSlot", &Song::insertSlot, "slotIndex"_a)
+        .def("removeSlot", &Song::removeSlot, "slotIndex"_a)
+        .def("duplicateSlot", &Song::duplicateSlot, "slotIndex"_a)
+        .def("swapSlot", &Song::swapSlot, "fromIndex"_a, "toIndex"_a)
+        .def("setPattern", (void (Song::*)(int, int)) &Song::setPattern, "slotIndex"_a, "pattern"_a)
+        .def("setPattern", (void (Song::*)(int, int, int)) &Song::setPattern, "slotIndex"_a, "trackIndex"_a, "pattern"_a)
+        .def("setMute", &Song::setMute, "slotIndex"_a, "trackIndex"_a, "mute"_a)
+        .def("setRepeats", &Song::setRepeats, "slotIndex"_a, "repeats"_a)
         .def("clear", &Song::clear)
     ;
 
     py::class_<Song::Slot> slot(song, "Slot");
     slot
-        .def("pattern", &Song::Slot::pattern)
+        .def("pattern", &Song::Slot::pattern, "trackIndex"_a)
+        .def("mute", &Song::Slot::mute, "trackIndex"_a)
         .def_property_readonly("repeats", &Song::Slot::repeats)
         .def("clear", &Song::Slot::clear)
     ;
@@ -519,6 +524,108 @@ void register_sequencer(py::module &m) {
     // ------------------------------------------------------------------------
     // Routing
     // ------------------------------------------------------------------------
+
+    py::class_<Routing> routing(m, "Routing");
+    routing
+        .def_property_readonly("routes", [] (Routing &routing) {
+            py::list result;
+            for (int i = 0; i < CONFIG_ROUTE_COUNT; ++i) {
+                result.append(&routing.route(i));
+            }
+            return result;
+        })
+        .def("clear", &Routing::clear)
+    ;
+
+    py::enum_<Routing::Target> target(routing, "Target");
+    target
+        .value("None", Routing::Target::None)
+        .value("Play", Routing::Target::Play)
+        .value("Record", Routing::Target::Record)
+        .value("TapTempo", Routing::Target::TapTempo)
+        .value("Tempo", Routing::Target::Tempo)
+        .value("Swing", Routing::Target::Swing)
+        .value("Mute", Routing::Target::Mute)
+        .value("Fill", Routing::Target::Fill)
+        .value("FillAmount", Routing::Target::FillAmount)
+        .value("Pattern", Routing::Target::Pattern)
+        .value("SlideTime", Routing::Target::SlideTime)
+        .value("Octave", Routing::Target::Octave)
+        .value("Transpose", Routing::Target::Transpose)
+        .value("Rotate", Routing::Target::Rotate)
+        .value("GateProbabilityBias", Routing::Target::GateProbabilityBias)
+        .value("RetriggerProbabilityBias", Routing::Target::RetriggerProbabilityBias)
+        .value("LengthBias", Routing::Target::LengthBias)
+        .value("NoteProbabilityBias", Routing::Target::NoteProbabilityBias)
+        .value("ShapeProbabilityBias", Routing::Target::ShapeProbabilityBias)
+        .value("FirstStep", Routing::Target::FirstStep)
+        .value("LastStep", Routing::Target::LastStep)
+        .value("RunMode", Routing::Target::RunMode)
+        .value("Divisor", Routing::Target::Divisor)
+        .value("Scale", Routing::Target::Scale)
+        .value("RootNote", Routing::Target::RootNote)
+        .export_values()
+    ;
+
+    py::enum_<Routing::Source> source(routing, "Source");
+    source
+        .value("None", Routing::Source::None)
+        .value("CvIn1", Routing::Source::CvIn1)
+        .value("CvIn2", Routing::Source::CvIn2)
+        .value("CvIn3", Routing::Source::CvIn3)
+        .value("CvIn4", Routing::Source::CvIn4)
+        .value("CvOut1", Routing::Source::CvOut1)
+        .value("CvOut2", Routing::Source::CvOut2)
+        .value("CvOut3", Routing::Source::CvOut3)
+        .value("CvOut4", Routing::Source::CvOut4)
+        .value("CvOut5", Routing::Source::CvOut5)
+        .value("CvOut6", Routing::Source::CvOut6)
+        .value("CvOut7", Routing::Source::CvOut7)
+        .value("CvOut8", Routing::Source::CvOut8)
+        .value("Midi", Routing::Source::Midi)
+        .export_values()
+    ;
+
+    py::class_<Routing::CvSource> cvSource(routing, "CvSource");
+    cvSource
+        .def_property("range", &Routing::CvSource::range, &Routing::CvSource::setRange)
+        .def("clear", &Routing::CvSource::clear)
+    ;
+
+    py::class_<Routing::MidiSource> midiSource(routing, "MidiSource");
+    midiSource
+        .def_property_readonly("source", [] (Routing::MidiSource &midiSource) { return &midiSource.source(); })
+        .def_property("event", &Routing::MidiSource::event, &Routing::MidiSource::setEvent)
+        .def_property("controlNumber", &Routing::MidiSource::controlNumber, &Routing::MidiSource::setControlNumber)
+        .def_property("note", &Routing::MidiSource::note, &Routing::MidiSource::setNote)
+        .def_property("noteRange", &Routing::MidiSource::noteRange, &Routing::MidiSource::setNoteRange)
+        .def("clear", &Routing::MidiSource::clear)
+    ;
+
+    py::enum_<Routing::MidiSource::Event> event(midiSource, "Event");
+    event
+        .value("ControlAbsolute", Routing::MidiSource::Event::ControlAbsolute)
+        .value("ControlRelative", Routing::MidiSource::Event::ControlRelative)
+        .value("PitchBend", Routing::MidiSource::Event::PitchBend)
+        .value("NoteMomentary", Routing::MidiSource::Event::NoteMomentary)
+        .value("NoteToggle", Routing::MidiSource::Event::NoteToggle)
+        .value("NoteVelocity", Routing::MidiSource::Event::NoteVelocity)
+        .value("NoteRange", Routing::MidiSource::Event::NoteRange)
+        .export_values()
+    ;
+
+    py::class_<Routing::Route> route(routing, "Route");
+    route
+        .def_property("target", &Routing::Route::target, &Routing::Route::setTarget)
+        .def_property("tracks", &Routing::Route::tracks, &Routing::Route::setTracks)
+        .def("toggleTrack", &Routing::Route::toggleTrack, "trackIndex"_a)
+        .def_property("min", &Routing::Route::min, &Routing::Route::setMin)
+        .def_property("max", &Routing::Route::max, &Routing::Route::setMax)
+        .def_property("source", &Routing::Route::source, &Routing::Route::setSource)
+        .def_property_readonly("cvSource", [] (Routing::Route &route) { return &route.cvSource(); })
+        .def_property_readonly("midiSource", [] (Routing::Route &route) { return &route.midiSource(); })
+        .def("clear", &Routing::Route::clear)
+    ;
 
     // ------------------------------------------------------------------------
     // MidiOutput
