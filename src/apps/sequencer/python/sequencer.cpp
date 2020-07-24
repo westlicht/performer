@@ -5,6 +5,8 @@
 
 namespace py = pybind11;
 
+void register_project(py::module &m);
+
 void register_sequencer(py::module &m) {
     // ------------------------------------------------------------------------
     // Sequencer
@@ -23,4 +25,6 @@ void register_sequencer(py::module &m) {
     model
         .def_property_readonly("project", [] (Model &model) { return &model.project(); })
     ;
+
+    register_project(m);
 }
