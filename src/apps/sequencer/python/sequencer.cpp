@@ -133,7 +133,8 @@ void register_sequencer(py::module &m) {
         .export_values()
     ;
 
-    py::enum_<Types::Condition>(types, "Condition")
+    py::enum_<Types::Condition> condition(types, "Condition");
+    condition
         .value("Off", Types::Condition::Off)
         .value("Fill", Types::Condition::Fill)
         .value("NotFill", Types::Condition::NotFill)
@@ -141,22 +142,18 @@ void register_sequencer(py::module &m) {
         .value("NotPre", Types::Condition::NotPre)
         .value("First", Types::Condition::First)
         .value("NotFirst", Types::Condition::NotFirst)
-        .value("Loop2", Types::Condition::Loop2)
-        .value("Loop3", Types::Condition::Loop3)
-        .value("Loop4", Types::Condition::Loop4)
-        .value("Loop5", Types::Condition::Loop5)
-        .value("Loop6", Types::Condition::Loop6)
-        .value("Loop7", Types::Condition::Loop7)
-        .value("Loop8", Types::Condition::Loop8)
-        .value("NotLoop2", Types::Condition::NotLoop2)
-        .value("NotLoop3", Types::Condition::NotLoop3)
-        .value("NotLoop4", Types::Condition::NotLoop4)
-        .value("NotLoop5", Types::Condition::NotLoop5)
-        .value("NotLoop6", Types::Condition::NotLoop6)
-        .value("NotLoop7", Types::Condition::NotLoop7)
-        .value("NotLoop8", Types::Condition::NotLoop8)
-        .export_values()
     ;
+    {
+        int index = 0;
+        for (int loop = 2; loop <= 8; ++loop) {
+            for (int step = 1; step <= loop; ++step) {
+                condition.value(("Loop" + std::to_string(step) + std::to_string(loop)).c_str(), Types::Condition(int(Types::Condition::Loop2) + index));
+                condition.value(("NotLoop" + std::to_string(step) + std::to_string(loop)).c_str(), Types::Condition(int(Types::Condition::NotLoop2) + index));
+                ++index;
+            }
+        }
+    }
+    condition.export_values();
 
     // ------------------------------------------------------------------------
     // ClockSetup
