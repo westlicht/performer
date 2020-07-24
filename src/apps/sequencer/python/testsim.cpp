@@ -8,6 +8,7 @@ namespace py = pybind11;
 void register_core(py::module &m);
 void register_simulator(py::module &m);
 void register_sequencer(py::module &m);
+void register_project(py::module &m);
 
 struct Environment {
     Environment() {
@@ -38,6 +39,7 @@ PYBIND11_MODULE(testsim, m) {
     register_core(m_core);
     register_simulator(m_simulator);
     register_sequencer(m_sequencer);
+    register_project(m_sequencer);
 
     // ------------------------------------------------------------------------
     // Environment
