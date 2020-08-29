@@ -59,6 +59,9 @@ public:
             if (_first >= 0 && !_selected[_first]) {
                 _first = firstSetIndex();
             }
+            if (none()) {
+                _altered = false;
+            }
 
             event.consume();
         }
@@ -120,6 +123,16 @@ public:
 
     void setStepCompare(std::function<bool(int, int)> stepCompare) {
         _stepCompare = stepCompare;
+    }
+
+    bool altered() const {
+        return _altered;
+    }
+
+    void alter() {
+        if (_mode == Mode::Immediate && any()) {
+            _altered = true;
+        }
     }
 
     bool isPersisted() const {
@@ -188,4 +201,5 @@ private:
     int _first = -1;
     int8_t _lastPressedIndex;
     std::function<bool(int, int)> _stepCompare;
+    bool _altered;
 };
