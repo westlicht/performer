@@ -468,8 +468,11 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
         case Layer::GateOffset:
             setLayer(Layer::Slide);
             break;
-        default:
+        case Layer::Slide:
             setLayer(Layer::GateProbability);
+            break;
+        default:
+            setLayer(Layer::GateOffset);
             break;
         }
         break;
