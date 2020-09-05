@@ -136,7 +136,7 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 recordStep(tick, divisor);
                 triggerStep(tick, divisor);
                 
-                _sequenceState.calculateNextStep(
+                _sequenceState.calculateNextStepAligned(
                         (relativeTick + divisor) / divisor, 
                         sequence.runMode(),
                         sequence.firstStep(),

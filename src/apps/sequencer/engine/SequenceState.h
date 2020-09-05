@@ -17,9 +17,11 @@ public:
 
     void reset();
 
-    void calculateNextStep(int absoluteStep, Types::RunMode runMode, int firstStep, int lastStep, Random &rng);
-    void advanceFree(Types::RunMode runMode, int firstStep, int lastStep, Random &rng);
     void advanceAligned(int absoluteStep, Types::RunMode runMode, int firstStep, int lastStep, Random &rng);
+    void calculateNextStepAligned(int absoluteStep, Types::RunMode runMode, int firstStep, int lastStep, Random &rng);
+
+    void advanceFree(Types::RunMode runMode, int firstStep, int lastStep, Random &rng);
+    void calculateNextStepFree(Types::RunMode runMode, int firstStep, int lastStep, Random &rng);
 
 private:
     void advanceRandomWalk(int firstStep, int lastStep, Random &rng);
@@ -29,4 +31,5 @@ private:
     int8_t _nextStep = -1;
     int8_t _direction;
     uint32_t _iteration;
+    uint32_t _nextIteration;
 };
