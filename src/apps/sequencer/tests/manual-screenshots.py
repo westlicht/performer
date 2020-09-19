@@ -83,6 +83,7 @@ c.selectPage("steps").screenshot("page-note-steps")
 c.selectPage("steps").down("page").down("step9").screenshot("page-note-steps-quick-access").up("step9").up("page")
 
 # page-curve-track
+c.selectPage("layout")
 project.setTrackMode(0, tf.sequencer.Track.TrackMode.Curve)
 c.selectPage("track").screenshot("page-curve-track")
 
@@ -95,6 +96,7 @@ for i in range(16):
 c.selectPage("steps").screenshot("page-curve-steps")
 
 # page-midi-cv-track
+c.selectPage("layout")
 project.setTrackMode(0, tf.sequencer.Track.TrackMode.MidiCv)
 c.selectPage("track").screenshot("page-midi-cv-track")
 
