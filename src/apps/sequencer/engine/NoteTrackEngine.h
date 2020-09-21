@@ -5,6 +5,7 @@
 #include "SortedQueue.h"
 #include "Groove.h"
 #include "RecordHistory.h"
+#include "StepRecorder.h"
 
 class NoteTrackEngine : public TrackEngine {
 public:
@@ -39,7 +40,7 @@ public:
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
 
     int currentStep() const { return _currentStep; }
-    int currentRecordStep() const { return _currentRecordStep; }
+    int currentRecordStep() const { return _stepRecorder.stepIndex(); }
 
     void setMonitorStep(int index);
 
@@ -68,7 +69,7 @@ private:
 
     RecordHistory _recordHistory;
     bool _monitorOverrideActive = false;
-    int _currentRecordStep = -1;
+    StepRecorder _stepRecorder;
 
     bool _activity;
     bool _gateOutput;

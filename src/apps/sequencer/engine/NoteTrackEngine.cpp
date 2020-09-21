@@ -195,11 +195,13 @@ void NoteTrackEngine::update(float dt) {
 
     // enable/disable step recording mode
     if (_engine.recording() && _model.project().recordMode() == Types::RecordMode::StepRecord) {
-        if (_currentRecordStep == -1) {
-            _currentRecordStep = _sequence->firstStep();
+        if (!_stepRecorder.enabled()) {
+            _stepRecorder.start(sequence);
         }
     } else {
-        _currentRecordStep = -1;
+        if (_stepRecorder.enabled()) {
+            _stepRecorder.stop();
+        }
     }
 
     // helper to send gate/cv from monitoring to midi output engine
@@ -255,18 +257,7 @@ void NoteTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
     _recordHistory.write(tick, message);
 
     if (_engine.recording() && _model.project().recordMode() == Types::RecordMode::StepRecord) {
-        if (message.isNoteOn()) {
-            // record to step
-            auto &step = _sequence->step(_currentRecordStep);
-            step.setGate(true);
-            step.setNote(noteFromMidiNote(message.note()));
-
-            // move to next step
-            ++_currentRecordStep;
-            if (_currentRecordStep > _sequence->lastStep()) {
-                _currentRecordStep = _sequence->firstStep();
-            }
-        }
+        _stepRecorder.process(message, *_sequence, [this] (int midiNote) { return noteFromMidiNote(midiNote); });
     }
 }
 
@@ -276,7 +267,7 @@ void NoteTrackEngine::setMonitorStep(int index) {
     // in step record mode, select step to start recording recording from
     if (_engine.recording() && _model.project().recordMode() == Types::RecordMode::StepRecord &&
         index >= _sequence->firstStep() && index <= _sequence->lastStep()) {
-        _currentRecordStep = index;
+        _stepRecorder.setStepIndex(index);
     }
 }
 
