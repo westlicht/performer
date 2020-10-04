@@ -345,7 +345,7 @@ Engine::Stats Engine::stats() const {
 void Engine::onClockOutput(const Clock::OutputState &state) {
     _dio.clockOutput.set(state.clock);
     switch (_project.clockSetup().clockOutputMode()) {
-    case ClockSetup::ClockOutputMode::Reset:
+    case ClockSetup::ClockOutputMode::Reset: case ClockSetup::ClockOutputMode::ResetOnStart:
         _dio.resetOutput.set(state.reset);
         break;
     case ClockSetup::ClockOutputMode::Run:
@@ -825,6 +825,9 @@ void Engine::updateClockSetup() {
 
     // Update clock outputs
     onClockOutput(_clock.outputState());
+
+    // Set clock reset output behaviour
+    _clock.outputResetOnStart(clockSetup.clockOutputMode() == ClockSetup::ClockOutputMode::ResetOnStart);
 
     clockSetup.clearDirty();
 }

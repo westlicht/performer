@@ -275,6 +275,12 @@ void Clock::outputConfigureSwing(int swing) {
     _output.swing = swing;
 }
 
+void Clock::outputResetOnStart(bool resetOnStart) {
+    os::InterruptLock lock;
+    _resetOnStart = resetOnStart;
+    outputReset(!resetOnStart);
+}
+
 #define CHECK(_event_)                  \
     if (_requestedEvents & _event_) {   \
         _requestedEvents &= ~_event_;   \
@@ -358,7 +364,9 @@ void Clock::requestStop() {
     requestEvent(Stop);
     outputMidiMessage(MidiMessage::Stop);
     outputRun(false);
-    outputReset(false);
+    if (!_resetOnStart) {
+        outputReset(false);
+    }
 }
 
 void Clock::requestContinue() {
@@ -372,7 +380,9 @@ void Clock::requestReset() {
     requestEvent(Reset);
     outputMidiMessage(MidiMessage::Stop);
     outputRun(false);
-    outputReset(true);
+    if (!_resetOnStart) {
+        outputReset(true);
+    }
     outputClock(false);
 }
 

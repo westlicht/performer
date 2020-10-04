@@ -79,6 +79,9 @@ public:
     void outputConfigureSwing(int swing);
     const OutputState &outputState() const { return _outputState; }
 
+    // Reset output
+    void outputResetOnStart(bool resetOnStart);
+
     // Sequencer interface
     Event checkEvent();
     bool checkTick(uint32_t *tick);
@@ -142,6 +145,8 @@ private:
     };
     Output _output;
     OutputState _outputState;
+
+    bool _resetOnStart = false;
 
     uint32_t _requestedEvents = Reset;
     State _state = State::Idle;

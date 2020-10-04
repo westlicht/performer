@@ -223,6 +223,7 @@ void register_project(py::module &m) {
 
     py::enum_<ClockSetup::ClockOutputMode>(clockSetup, "ClockOutputMode")
         .value("Reset", ClockSetup::ClockOutputMode::Reset)
+        .value("ResetOnStart", ClockSetup::ClockOutputMode::ResetOnStart)
         .value("Run", ClockSetup::ClockOutputMode::Run)
         .export_values()
     ;

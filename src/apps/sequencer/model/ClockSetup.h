@@ -55,25 +55,27 @@ public:
 
     static const char *clockInputModeName(ClockInputMode mode) {
         switch (mode) {
-        case ClockInputMode::Reset:     return "Reset";
-        case ClockInputMode::Run:       return "Run";
-        case ClockInputMode::StartStop: return "Start/Stop";
-        case ClockInputMode::Last:      break;
+        case ClockInputMode::Reset:         return "Reset";
+        case ClockInputMode::Run:           return "Run";
+        case ClockInputMode::StartStop:     return "Start/Stop";
+        case ClockInputMode::Last:          break;
         }
         return nullptr;
     }
 
     enum class ClockOutputMode : uint8_t {
         Reset = 0,
+        ResetOnStart,
         Run,
         Last
     };
 
     static const char *clockOutputModeName(ClockOutputMode mode) {
         switch (mode) {
-        case ClockOutputMode::Reset:    return "Reset";
-        case ClockOutputMode::Run:      return "Run";
-        case ClockOutputMode::Last:     break;
+        case ClockOutputMode::Reset:        return "Reset";
+        case ClockOutputMode::ResetOnStart: return "Reset on start";
+        case ClockOutputMode::Run:          return "Run";
+        case ClockOutputMode::Last:         break;
         }
         return nullptr;
     }
