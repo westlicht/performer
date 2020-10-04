@@ -278,7 +278,9 @@ void Clock::outputConfigureSwing(int swing) {
 void Clock::outputResetOnStart(bool resetOnStart) {
     os::InterruptLock lock;
     _resetOnStart = resetOnStart;
-    outputReset(!resetOnStart);
+    if (!isRunning()) {
+        outputReset(!resetOnStart);
+    }
 }
 
 #define CHECK(_event_)                  \
