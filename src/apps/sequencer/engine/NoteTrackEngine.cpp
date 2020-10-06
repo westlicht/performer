@@ -122,7 +122,6 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
         uint32_t resetDivisor = sequence.resetMeasure() * _engine.measureDivisor();
         uint32_t relativeTick = resetDivisor == 0 ? tick : tick % resetDivisor;
 
-        // std::cout << divisor << "\n";
         // handle reset measure
         if (relativeTick == 0) {
             reset();
@@ -332,7 +331,6 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
             uint32_t retriggerLength = divisor / stepRetrigger;
             uint32_t retriggerOffset = 0;
             while (stepRetrigger-- > 0 && retriggerOffset <= stepLength) {
-                // std::cout << "a" << "\n";
                 _gateQueue.pushReplace({ Groove::applySwing(stepTick + retriggerOffset, swing()), true });
                 _gateQueue.pushReplace({ Groove::applySwing(stepTick + retriggerOffset + retriggerLength / 2, swing()), false });
                 retriggerOffset += retriggerLength;

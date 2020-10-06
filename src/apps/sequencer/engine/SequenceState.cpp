@@ -2,7 +2,6 @@
 
 #include "core/Debug.h"
 #include "core/math/Math.h"
-#include <iostream>
 
 static int randomStep(int firstStep, int lastStep, Random &rng) {
     return rng.nextRange(lastStep - firstStep + 1) + firstStep;
