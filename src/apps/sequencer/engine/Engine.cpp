@@ -690,6 +690,8 @@ void Engine::monitorMidi(const MidiMessage &message) {
         sendMidi(currentTrack, MidiMessage::makeNoteOff(0, message.note()));
         _midiMonitoring.lastNote = -1;
         _midiMonitoring.lastTrack = currentTrack;
+    } else {
+        sendMidi(currentTrack, message);
     }
 }
 
