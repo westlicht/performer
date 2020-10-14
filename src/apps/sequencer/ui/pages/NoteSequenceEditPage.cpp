@@ -758,8 +758,10 @@ void NoteSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
         if (success) {
             auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
-            auto generator = Generator::create(mode, *builder);
-            _manager.pages().generator.show(generator);
+            auto generator = Generator::execute(mode, *builder);
+            if (generator) {
+                _manager.pages().generator.show(generator);
+            }
         }
     });
 }

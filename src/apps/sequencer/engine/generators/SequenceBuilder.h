@@ -22,6 +22,8 @@ public:
 
     virtual void clearSteps() = 0;
     virtual void copyStep(int fromIndex, int toIndex) = 0;
+
+    virtual void clearLayer() = 0;
 };
 
 template<typename T>
@@ -31,7 +33,8 @@ public:
         _edit(sequence),
         _original(sequence),
         _layer(layer),
-        _range(T::layerRange(layer))
+        _range(T::layerRange(layer)),
+        _default(T::layerDefaultValue(layer))
     {}
 
     void revert() override {
@@ -74,11 +77,18 @@ public:
         _edit.step(_edit.firstStep() + toIndex) = _original.step(_original.firstStep() + fromIndex);
     }
 
+    void clearLayer() override {
+        for (auto &step : _edit.steps()) {
+            step.setLayerValue(_layer, _default);
+        }
+    }
+
 private:
     T &_edit;
     T _original;
     typename T::Layer _layer;
     Types::LayerRange _range;
+    int _default;;
 };
 
 typedef SequenceBuilderImpl<NoteSequence> NoteSequenceBuilder;

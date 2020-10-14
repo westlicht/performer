@@ -64,6 +64,9 @@ void GeneratorPage::draw(Canvas &canvas) {
     }
 
     switch (_generator->mode()) {
+    case Generator::Mode::InitLayer:
+        // no page
+        break;
     case Generator::Mode::Euclidean:
         drawEuclideanGenerator(canvas, *static_cast<const EuclideanGenerator *>(_generator));
         break;

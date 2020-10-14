@@ -35,6 +35,44 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
     return { 0, 0 };
 }
 
+int NoteSequence::layerDefaultValue(Layer layer)
+{
+    NoteSequence::Step step;
+
+    switch (layer) {
+    case Layer::Gate:
+        return step.gate();
+    case Layer::GateProbability:
+        return step.gateProbability();
+    case Layer::GateOffset:
+        return step.gateOffset();
+    case Layer::Slide:
+        return step.slide();
+    case Layer::Retrigger:
+        return step.retrigger();
+    case Layer::RetriggerProbability:
+        return step.retriggerProbability();
+    case Layer::Length:
+        return step.length();
+    case Layer::LengthVariationRange:
+        return step.lengthVariationRange();
+    case Layer::LengthVariationProbability:
+        return step.lengthVariationProbability();
+    case Layer::Note:
+        return step.note();
+    case Layer::NoteVariationRange:
+        return step.noteVariationRange();
+    case Layer::NoteVariationProbability:
+        return step.noteVariationProbability();
+    case Layer::Condition:
+        return int(step.condition());
+    case Layer::Last:
+        break;
+    }
+
+    return 0;
+}
+
 int NoteSequence::Step::layerValue(Layer layer) const {
     switch (layer) {
     case Layer::Gate:
