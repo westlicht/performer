@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.1.37 (15 October 2020)
+
+#### Fixes
+
+- Output curve track CV when recording (#189, #218)
+- Fix duplicate function on note/curve sequence page (#238)
+- Jump to first row when switching between user scales
+- Fixed printing of route min/max values for certain targets
+
+#### Improvements
+
+- Added _Fill Muted_ option to note tracks (#161)
+- Added _Offset_ parameter to curve tracks (#221)
+- Allow setting swing on tempo page when holding `PERF` button
+- Added inverted loop conditions (#162)
+- Improved step shifting to only apply in first/last step range (#196)
+- Added 5ms delay to CV/Gate conversion to avoid capturing previous note (#194)
+- Allow programming slides/ties using pitch/modulation control when step recording (#228)
+- Added _Init Layer_ generator that resets the current layer to its default value (#230)
+- Allow holding `SHIFT` for fast editing of route min/max values
+
 ## v0.1.36 (29 April 2020)
 
 #### Fixes
