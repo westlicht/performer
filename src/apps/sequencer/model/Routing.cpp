@@ -341,6 +341,7 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::RetriggerProbabilityBias:
     case Target::LengthBias:
     case Target::NoteProbabilityBias:
+    case Target::ShapeProbabilityBias:
         str("%+.1f%%", value * 12.5f);
         break;
     case Target::Divisor:
@@ -354,6 +355,9 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::Pattern:
         str("%d", intValue + 1);
         break;
+    case Target::Play:
+    case Target::Record:
+    case Target::TapTempo:
     case Target::Mute:
     case Target::Fill:
         str(intValue ? "on" : "off");
