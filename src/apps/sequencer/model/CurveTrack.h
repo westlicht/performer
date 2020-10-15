@@ -121,6 +121,25 @@ public:
         str("%d%%", slideTime());
     }
 
+    // offset
+
+    int offset() const { return _offset.get(isRouted(Routing::Target::Offset)); }
+    float offsetVolts() const { return offset() * 0.01f; }
+    void setOffset(int offset, bool routed = false) {
+        _offset.set(clamp(offset, -500, 500), routed);
+    }
+
+    void editOffset(int value, bool shift) {
+        if (!isRouted(Routing::Target::Offset)) {
+            setOffset(offset() + value * (shift ? 100 : 1));
+        }
+    }
+
+    void printOffset(StringBuilder &str) const {
+        printRouted(str, Routing::Target::Offset);
+        str("%+.2fV", offsetVolts());
+    }
+
     // rotate
 
     int rotate() const { return _rotate.get(isRouted(Routing::Target::Rotate)); }
@@ -215,6 +234,7 @@ private:
     FillMode _fillMode;
     MuteMode _muteMode;
     Routable<uint8_t> _slideTime;
+    Routable<int16_t> _offset;
     Routable<int8_t> _rotate;
     Routable<int8_t> _shapeProbabilityBias;
     Routable<int8_t> _gateProbabilityBias;

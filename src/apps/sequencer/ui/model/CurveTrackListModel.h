@@ -38,6 +38,8 @@ public:
         switch (Item(row)) {
         case SlideTime:
             return Routing::Target::SlideTime;
+        case Offset:
+            return Routing::Target::Offset;
         case Rotate:
             return Routing::Target::Rotate;
         case ShapeProbabilityBias:
@@ -55,6 +57,7 @@ private:
         FillMode,
         MuteMode,
         SlideTime,
+        Offset,
         Rotate,
         ShapeProbabilityBias,
         GateProbabilityBias,
@@ -67,6 +70,7 @@ private:
         case FillMode:              return "Fill Mode";
         case MuteMode:              return "Mute Mode";
         case SlideTime:             return "Slide Time";
+        case Offset:                return "Offset";
         case Rotate:                return "Rotate";
         case ShapeProbabilityBias:  return "Shape P. Bias";
         case GateProbabilityBias:   return "Gate P. Bias";
@@ -92,6 +96,9 @@ private:
             break;
         case SlideTime:
             _track->printSlideTime(str);
+            break;
+        case Offset:
+            _track->printOffset(str);
             break;
         case Rotate:
             _track->printRotate(str);
@@ -120,6 +127,9 @@ private:
             break;
         case SlideTime:
             _track->editSlideTime(value, shift);
+            break;
+        case Offset:
+            _track->editOffset(value, shift);
             break;
         case Rotate:
             _track->editRotate(value, shift);

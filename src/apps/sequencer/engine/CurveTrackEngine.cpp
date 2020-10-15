@@ -142,12 +142,14 @@ void CurveTrackEngine::update(float dt) {
         _cvOutput = _cvOutputTarget = range.denormalize(_recordValue);
     }
 
+    float offset = mute() ? 0.f : _curveTrack.offsetVolts();
+
     if (_curveTrack.slideTime() > 0) {
         float factor = 1.f - 0.01f * _curveTrack.slideTime();
         factor = 500.f * factor * factor;
-        _cvOutput += (_cvOutputTarget - _cvOutput) * std::min(1.f, dt * factor);
+        _cvOutput += (_cvOutputTarget + offset - _cvOutput) * std::min(1.f, dt * factor);
     } else {
-        _cvOutput = _cvOutputTarget;
+        _cvOutput = _cvOutputTarget + offset;
     }
 }
 

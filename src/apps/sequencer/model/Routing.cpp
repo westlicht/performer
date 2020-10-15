@@ -278,6 +278,7 @@ const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::SlideTime)]                       = { 0,      100,    0,      100,    },
     [int(Routing::Target::Octave)]                          = { -10,    10,     -1,     1       },
     [int(Routing::Target::Transpose)]                       = { -60,    60,     -12,    12      },
+    [int(Routing::Target::Offset)]                          = { -500,   500,    -100,   100     },
     [int(Routing::Target::Rotate)]                          = { -64,    64,     0,      64      },
     [int(Routing::Target::GateProbabilityBias)]             = { -8,     8,      -8,     8       },
     [int(Routing::Target::RetriggerProbabilityBias)]        = { -8,     8,      -8,     8       },
@@ -332,6 +333,9 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::Transpose:
     case Target::Rotate:
         str("%+d", intValue);
+        break;
+    case Target::Offset:
+        str("%+.2fV", value * 0.01f);
         break;
     case Target::GateProbabilityBias:
     case Target::RetriggerProbabilityBias:
