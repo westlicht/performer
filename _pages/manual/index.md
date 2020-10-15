@@ -589,11 +589,12 @@ If a track is in _Curve_, the following parameters are available:
 | Fill Mode | None, Variation, Next Pattern, Invert | Mode used when fill is activated for the track. _None_ does nothing. _Variation_ plays the curve shapes defined in the _Shape Variation_ layer independent of their probability. _Next Pattern_ uses the step data of the next pattern on the same track. _Invert_ plays the curve shapes inverted. |
 | Mute Mode | Last Value, 0V, Min, Max | Voltage that is output when track is muted. _Last Value_ keeps the last value before mute is engaged. _0V_ outputs zero volts. _Min_ and _Max_ sets the voltage to the minimum or maximum value of the selected voltage range. |
 | Slide Time | 0% - 100% | Global slide time (slew limiter) applied to curve. |
+| Offset | -5.00V - 5.00V | Voltage to offset the CV output by. |
 | Rotate | [Rotation](#appendix-rotation) | Amount of rotation applied to the sequence. |
 | Shape P. Bias | -100% - +100% | Shape probability bias that is added to the sequence. |
 | Gate P. Bias | -100% - +100% | Gate probability bias that is added to the sequence. |
 
-> Note: _Slide Time_, _Rotate_, _Shape P. Bias_ and _Gate P. Bias_ are routable parameters.
+> Note: _Slide Time_, _Offset_, _Rotate_, _Shape P. Bias_ and _Gate P. Bias_ are routable parameters.
 
 <h4>MIDI/CV Track</h4>
 
@@ -745,7 +746,7 @@ There are two additional functions for selecting groups of steps. To select a se
 
 <h4>Shifting Steps</h4>
 
-Press `SHIFT` + `PREV` or `SHIFT` + `NEXT` to shift all steps in the sequence to the left or right. This has the same effect as [Rotation](#appendix-rotation), but instead of changing the playback position, shifting actually moves the steps in the sequence itself.
+Press `SHIFT` + `PREV` or `SHIFT` + `NEXT` to shift all steps in the sequence between the current first and last step to the left or right. Steps will _wrap around_ on both sides. This has a similar effect as [Rotation](#appendix-rotation), but instead of changing the playback position, shifting actually moves the steps in the sequence itself.
 
 <h4>Context Menu</h4>
 
@@ -863,6 +864,10 @@ To sync the master clock by ear to some other source, for example a turntable, t
 ![](images/page-tempo-nudge.png)
 
 > Note: The tempo is incrementally increased/decreased up to 10%, so one needs to hold both `TEMP` and `NEXT` or `PREV` for a small amount of time to get an effect.
+
+<h4>Swing</h4>
+
+While on the _Tempo_ page, hold `PERF` to edit swing by rotating the `ENCODER`.
 
 <!-- Pattern -->
 
@@ -1010,7 +1015,7 @@ The following parameters are available for configuration:
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
 | Target | MIDI, USB | MIDI port and channel used for sending MIDI data. |
-| Event | None, Note, CC | MIDI event to generate. _None_ generates no events, _Note_ generates MIDI note on/off events, _CC_ generates MIDI control change events. |
+| Event | None, Note, Control Change | MIDI event to generate. _None_ generates no events, _Note_ generates MIDI note on/off events and _Control Change_ generates MIDI control change events. |
 
 When configured to _Note_ event, the following additional parameters are available for configuration:
 
@@ -1022,7 +1027,7 @@ When configured to _Note_ event, the following additional parameters are availab
 
 The _Gate Source_ controls the generation of MIDI note on/off events. Notes span multiple steps (legato) if step length is set to maximum. The _Note Source_ controls the MIDI note and is derived from a V/Oct CV signal with 0V being a C4. The _Vel. Source_ controls the note velocity and is derived from a unipolar 5V signal which is mapped to 0-127. If the _Gate Source_ contains a slide layer, slides are output as MIDI CC 65 events (portamento on/off). When the sequencer is reset, a MIDI CC 120 event (all notes off) is sent.
 
-When configured to _CC_ event, the following additional parameters are available for configuration:
+When configured to _Control Change_ event, the following additional parameters are available for configuration:
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
@@ -1203,7 +1208,7 @@ The first two record modes, _Overdub_ and _Overwrite_ enable live recording. Whi
 
 <h4>Step Recording</h4>
 
-The _Step Record_ mode is used to enter notes one step at a time. When recording is armed, playing notes on a keyboard simply sets one step after the other in the active note sequence. Recording starts at the first step and wraps around at the last step. Again, the length of the sequence has to be set in advance. While on the [Steps](#pages-steps) page and the _Note_ layer, `S[1-16]` can be used to select the current step to record from. The next step to be recorded into is marked with a circle.
+The _Step Record_ mode is used to enter notes one step at a time. When recording is armed, playing notes on a keyboard simply sets one step after the other in the active note sequence. Slides can be recorded by moving the pitch bend control while holding a note. Ties can be recorded by moving the modulation control while holding a note. Recording starts at the first step and wraps around at the last step. Again, the length of the sequence has to be set in advance. While on the [Steps](#pages-steps) page and the _Note_ layer, `S[1-16]` can be used to select the current step to record from. The next step to be recorded into is marked with a circle.
 
 <!-- Divisors -->
 
@@ -1344,6 +1349,7 @@ Step conditions allow individual steps to only be played if a certain condition 
 | First | Step is only played on the very first iteration of the playback. |
 | !First | Step is played on every but the very first iteration of the playback. |
 | N:M | Step is played on the Nth iteration every M iterations. So for example, 2:4 plays the step on iteration 2, 6, 10 etc. |
+| !N:M | Step is not played on the Nth iteration every M iterations. So for example, !2:4 plays the step on iteration 1, 3, 4, 5, 7, 8, 9, 11 etc. |
 
 > Note: Step conditions are only evaluated if the step is actually triggered. That means that if a step is not triggered due to _Gate Probability_ the assigned step condition will not be evaluated and has no effect.
 
