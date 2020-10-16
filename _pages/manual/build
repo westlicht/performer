@@ -7,8 +7,12 @@ import re
 import json
 
 MARKDOWN_FILE = "index.md"
+
 PDF_MARKDOWN_FILE = "manual.pdf.md"
-PDF_FILE = "manual.pdf"
+PDF_OUTPUT_FILE = "manual.pdf"
+PDF_COVER_FILE = "config/cover.html"
+PDF_STYLE_FILE = "config/pdf.css"
+PDF_DEBUG = False
 
 TOC_MIN_LEVEL = 2
 TOC_MAX_LEVEL = 3
@@ -186,15 +190,20 @@ def process_pdf():
 
         markdown = generate_toc(markdown)
 
+    # add cover page
+    cover = open(PDF_COVER_FILE, "r").read()
+    markdown = cover + markdown
+
+    # write pdf markdown
     open(PDF_MARKDOWN_FILE, "w").write(markdown)
 
     # convert to pdf
-    remarkable_options = json.dumps({
-        "html": True
-    })
+    pdf_args = ["mdpdf", PDF_MARKDOWN_FILE, PDF_OUTPUT_FILE, "--noEmoji", "--noHighlight", "--ghStyle", "--style=" + PDF_STYLE_FILE]
+    if PDF_DEBUG:
+        pdf_args.append("--debug")
+    call(pdf_args)
 
-    call(["markdown-pdf", "-s", "config/pdf.css", "-z", "config/highlight.css", "-m", remarkable_options, "-o", PDF_FILE, PDF_MARKDOWN_FILE])
-
+    # remove pdf markdown
     os.remove(PDF_MARKDOWN_FILE)
 
 

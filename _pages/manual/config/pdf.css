@@ -1,3 +1,5 @@
+/* Customizations */
+
 body {
     font-size: 0.5em;
 }
@@ -8,8 +10,8 @@ a {
 }
 
 table {
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
+    /* border-top: 1px solid black;
+    border-bottom: 1px solid black; */
     margin: 2em 0;
 }
 
@@ -18,34 +20,35 @@ th, td  {
     border-bottom: 1px solid #eee;
 }
 
-blockquote {
+.markdown-body blockquote {
+    color: #333;
     background-color: #eee;
     border: none;
     padding: 1em;
     margin: 1em 10%;
 }
 
-blockquote > p {
+.markdown-body blockquote > p {
     margin: 0;
     padding: 0;
 }
 
-:not(pre) > code {
+.markdown-body :not(pre) > code {
     color: white;
     background-color: #444;
     border: none;
     border-radius: 0.2em;
-    padding: 0 0.2em;
+    padding: 0.2em 0.2em;
     margin: 0 0.1em;
 }
 
-pre {
+.markdown-body pre {
     border: none;
     background-color: #eee;
     padding: 1em;
 }
 
-img {
+.markdown-body img {
     object-fit: contain;
     margin: 2em 10%;
     width: 80%;

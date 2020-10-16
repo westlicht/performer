@@ -5,13 +5,17 @@ layout: manual
 nav: 20
 ---
 
+<!-- pdf-exclude-begin -->
 <h1>User Manual</h1>
 
-<!-- pdf-exclude-begin -->
 > The user manual is also available as a PDF [here](./manual.pdf).
 <!-- pdf-exclude-end -->
 
+> This document is written for firmware version 0.1.37
+
 <!-- TOC -->
+
+<!-- page-break -->
 
 <h4>Table Of Contents</h4>
 
@@ -1359,9 +1363,13 @@ Step conditions allow individual steps to only be played if a certain condition 
 
 <h4>Semitones</h4>
 
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
-| :--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Volts | 0.000 | 0.083 | 0.167 | 0.250 | 0.333 | 0.417 | 0.500 | 0.583 | 0.667 | 0.750 | 0.833 | 0.917 |
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.000 | 0.083 | 0.167 | 0.250 | 0.333 | 0.417 | 0.500 | 0.583 |
+
+| Index | 9 | 10 | 11 | 12 |
+| :--- | --- | --- | --- | --- |
+| Volts | 0.667 | 0.750 | 0.833 | 0.917 |
 
 <h4>Major</h4>
 
@@ -1455,35 +1463,71 @@ Step conditions allow individual steps to only be played if a certain condition 
 
 <h4>19-tet</h4>
 
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 |
-| :--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Volts | 0.000 | 0.053 | 0.105 | 0.158 | 0.210 | 0.263 | 0.316 | 0.368 | 0.421 | 0.474 | 0.526 | 0.579 | 0.632 | 0.684 | 0.737 | 0.790 | 0.842 | 0.895 | 0.947 |
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.000 | 0.053 | 0.105 | 0.158 | 0.210 | 0.263 | 0.316 | 0.368 |
+
+| Index | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.421 | 0.474 | 0.526 | 0.579 | 0.632 | 0.684 | 0.737 | 0.790 |
+
+| Index | 17 | 18 | 19 |
+| :--- | --- | --- | --- |
+| Volts | 0.842 | 0.895 | 0.947 |
 
 <h4>22-tet</h4>
 
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 |
-| :--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Volts | 0.000 | 0.046 | 0.091 | 0.136 | 0.182 | 0.227 | 0.273 | 0.318 | 0.364 | 0.409 | 0.454 | 0.500 | 0.546 | 0.591 | 0.636 | 0.682 | 0.727 | 0.773 | 0.818 | 0.864 | 0.909 | 0.954 |
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.000 | 0.046 | 0.091 | 0.136 | 0.182 | 0.227 | 0.273 | 0.318 |
+
+| Index | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.364 | 0.409 | 0.454 | 0.500 | 0.546 | 0.591 | 0.636 | 0.682 |
+
+| Index | 17 | 18 | 19 | 20 | 21 | 22 |
+| :--- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.727 | 0.773 | 0.818 | 0.864 | 0.909 | 0.954 |
 
 <h4>24-tet</h4>
 
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 |
-| :--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Volts | 0.000 | 0.042 | 0.083 | 0.125 | 0.167 | 0.208 | 0.250 | 0.292 | 0.333 | 0.375 | 0.417 | 0.458 | 0.500 | 0.542 | 0.583 | 0.625 | 0.667 | 0.708 | 0.750 | 0.792 | 0.833 | 0.875 | 0.917 | 0.958 |
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.000 | 0.042 | 0.083 | 0.125 | 0.167 | 0.208 | 0.250 | 0.292 |
+
+| Index | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.333 | 0.375 | 0.417 | 0.458 | 0.500 | 0.542 | 0.583 | 0.625 |
+
+| Index | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.667 | 0.708 | 0.750 | 0.792 | 0.833 | 0.875 | 0.917 | 0.958 |
 
 <h4>Voltage</h4>
 
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-| :--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Volts | 0.000 | 0.100 | 0.200 | 0.300 | 0.400 | 0.500 | 0.600 | 0.700 | 0.800 | 0.900 |
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Volts | 0.000 | 0.100 | 0.200 | 0.300 | 0.400 | 0.500 | 0.600 | 0.700 |
+
+| Index | 9 | 10 |
+| :--- | --- | --- |
+| Volts | 0.800 | 0.900 |
 
 <!-- Shapes -->
 
 <h3 id="appendix-shapes">Shapes</h3>
 
-| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Shapes | <img width="32" height="64" style="max-width: none" src="images/shape-001.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-002.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-003.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-004.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-005.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-006.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-007.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-008.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-009.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-010.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-011.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-012.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-013.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-014.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-015.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-016.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-017.png"/> |
+| Index | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Shapes | <img width="32" height="64" style="max-width: none" src="images/shape-001.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-002.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-003.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-004.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-005.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-006.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-007.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-008.png"/> |
+
+| Index | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Shapes | <img width="32" height="64" style="max-width: none" src="images/shape-009.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-010.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-011.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-012.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-013.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-014.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-015.png"/> | <img width="32" height="64" style="max-width: none" src="images/shape-016.png"/> |
+
+| Index |  17 |
+| :--- | :---: |
+| Shapes | <img width="32" height="64" style="max-width: none" src="images/shape-017.png"/> |
 
 <!-- Arpeggiator Modes -->
 
