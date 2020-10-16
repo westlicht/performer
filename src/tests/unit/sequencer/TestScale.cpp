@@ -65,25 +65,33 @@ UNIT_TEST("Scale") {
 #ifdef PLATFORM_SIM
 
     CASE("markdown") {
+        const int ColsPerRow = 8;
+
         DBG("----------------------------------------");
         for (int i = 0; i < Scale::Count - 4; ++i) {
             const auto &scale = Scale::get(i);
             int notesPerOctave = scale.notesPerOctave();
 
             DBG("<h4>%s</h4>", Scale::name(i));
-            FixedStringBuilder<4096> indices("| Index |");
-            FixedStringBuilder<4096> separators("| :--- |");
-            FixedStringBuilder<4096> volts("| Volts |");
-            for (int note = 0; note < notesPerOctave; ++note) {
-                indices(" %d |", note + 1);
-                separators(" --- |");
-                volts(" %.3f |", scale.noteToVolts(note));
+            DBG("");
+
+            for (int page = 0; page < (notesPerOctave + ColsPerRow - 1) / ColsPerRow; ++page) {
+                FixedStringBuilder<4096> indices("| Index |");
+                FixedStringBuilder<4096> separators("| :--- |");
+                FixedStringBuilder<4096> volts("| Volts |");
+                int begin = page * ColsPerRow;
+                int end = (page + 1) * ColsPerRow;
+                if (notesPerOctave < end) end = notesPerOctave;
+                for (int note = begin; note < end; ++note) {
+                    indices(" %d |", note + 1);
+                    separators(" --- |");
+                    volts(" %.3f |", scale.noteToVolts(note));
+                }
+                DBG("%s", (const char *)(indices));
+                DBG("%s", (const char *)(separators));
+                DBG("%s", (const char *)(volts));
+                DBG("");
             }
-            DBG("");
-            DBG("%s", (const char *)(indices));
-            DBG("%s", (const char *)(separators));
-            DBG("%s", (const char *)(volts));
-            DBG("");
         }
         DBG("----------------------------------------");
     }
