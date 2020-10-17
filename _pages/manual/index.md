@@ -1625,21 +1625,24 @@ The following is a list of USB MIDI devices known to be compatible with the **PE
 
 | Manufacturer | Device |
 | :--- | :--- |
+| AKAI | [APC Mini](https://www.akaipro.de/apc-mini) |
+| Arturia | [MiniBrute](https://www.arturia.com/products/hardware-synths/minibrute), [MiniLab MK2](https://www.arturia.com/products/hybrid-synths/minilab-mkii/overview) |
 | CME | [XKEY37](https://www.cme-pro.com/xkey37) |
+| Keith McMillen | [QuNexus](https://www.keithmcmillen.com/products/qunexus/) |
+| Korg | [microKey 2](https://www.korg.com/us/products/computergear/microkey2/), [R3](https://www.korg.com/de/products/synthesizers/r3/) |
 | Moog | [Minitaur](https://www.moogmusic.com/products/minitaur) |
-| Novation | Launchpad Mini MK1 |
-| Novation | [Launchpad Mini MK2](https://novationmusic.com/launch/launchpad-mini) |
-| Novation | Launchpad S |
-| Novation | [Launchpad Mk2](https://novationmusic.com/launch/launchpad) |
-| Novation | [Launchpad Pro](https://novationmusic.com/launch/launchpad-pro) |
-| Novation | Launchkey Mini |
+| Novation | [Launchkey Mini](https://novationmusic.com/de/keys/launchkey-mini) |
+| Novation | Launchpad Mini MK1, [Launchpad Mini MK2](https://novationmusic.com/launch/launchpad-mini), Launchpad S, [Launchpad Mk2](https://novationmusic.com/launch/launchpad), [Launchpad Pro](https://novationmusic.com/launch/launchpad-pro) |
+| Yamaha | Modx7 |
 
 The following is a list of USB MIDI devices known **not** to be compatible:
 
 | Manufacturer | Device |
 | :--- | :--- |
 | AKAI | [MPK Mini](https://www.akaipro.com/mpk-mini) |
+| Arturia | [Keystep](https://www.arturia.com/keystep/overview) |
 | Novation | Launchpad |
+| Synthstrom | [Deluge](https://synthstrom.com/product/deluge/) |
 
 <h3 id="appendix-calibration-procedure">Calibration Procedure</h3>
 
