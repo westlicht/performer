@@ -63,6 +63,8 @@ void register_project(py::module &m) {
         .def_property("scale", &Project::scale, &Project::setScale)
         .def_property("rootNote", &Project::rootNote, &Project::setRootNote)
         .def_property("recordMode", &Project::recordMode, &Project::setRecordMode)
+        .def_property("midiInputMode", &Project::midiInputMode, &Project::setMidiInputMode)
+        .def_property_readonly("midiInputSource", [] (Project &project) { return &project.midiInputSource(); })
         .def_property("cvGateInput", &Project::cvGateInput, &Project::setCvGateInput)
         .def_property("curveCvInput", &Project::curveCvInput, &Project::setCurveCvInput)
         .def_property_readonly("clockSetup", [] (Project &project) { return &project.clockSetup(); })
@@ -103,6 +105,13 @@ void register_project(py::module &m) {
         .value("Overdub", Types::RecordMode::Overdub)
         .value("Overwrite", Types::RecordMode::Overwrite)
         .value("StepRecord", Types::RecordMode::StepRecord)
+        .export_values()
+    ;
+
+    py::enum_<Types::MidiInputMode>(types, "MidiInputMode")
+        .value("Off", Types::MidiInputMode::Off)
+        .value("All", Types::MidiInputMode::All)
+        .value("Source", Types::MidiInputMode::Source)
         .export_values()
     ;
 

@@ -81,6 +81,9 @@ enum ProjectVersion {
     // added CurveTrack::offset
     Version28 = 28,
 
+    // added Project::midiInput
+    Version29 = 29,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

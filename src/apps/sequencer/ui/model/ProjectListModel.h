@@ -55,6 +55,7 @@ private:
         Scale,
         RootNote,
         RecordMode,
+        MidiInput,
         CvGateInput,
         CurveCvInput,
         Last
@@ -70,6 +71,7 @@ private:
         case Scale:             return "Scale";
         case RootNote:          return "Root Note";
         case RecordMode:        return "Record Mode";
+        case MidiInput:         return "MIDI Input";
         case CvGateInput:       return "CV/Gate Input";
         case CurveCvInput:      return "Curve CV Input";
         case Last:              break;
@@ -107,6 +109,9 @@ private:
         case RecordMode:
             _project.printRecordMode(str);
             break;
+        case MidiInput:
+            _project.printMidiInput(str);
+            break;
         case CvGateInput:
             _project.printCvGateInput(str);
             break;
@@ -142,6 +147,9 @@ private:
             break;
         case RecordMode:
             _project.editRecordMode(value, shift);
+            break;
+        case MidiInput:
+            _project.editMidiInput(value, shift);
             break;
         case CvGateInput:
             _project.editCvGateInput(value, shift);

@@ -168,6 +168,37 @@ public:
         str(Types::recordModeName(_recordMode));
     }
 
+    // midiInput
+
+    void editMidiInput(int value, bool shift) {
+        if (_midiInputMode == Types::MidiInputMode::Source) {
+            if (value < 0 && _midiInputSource.isFirst()) {
+                _midiInputMode = ModelUtils::adjustedEnum(_midiInputMode, value);
+            } else {
+                _midiInputSource.edit(value, shift);
+            }
+        } else {
+            _midiInputMode = ModelUtils::adjustedEnum(_midiInputMode, value);
+        }
+    }
+
+    void printMidiInput(StringBuilder &str) const {
+        switch (_midiInputMode) {
+        case Types::MidiInputMode::Off:     str("Off"); break;
+        case Types::MidiInputMode::All:     str("All"); break;
+        case Types::MidiInputMode::Source:  _midiInputSource.print(str); break;
+        case Types::MidiInputMode::Last:    break;
+        }
+    }
+
+    Types::MidiInputMode midiInputMode() const { return _midiInputMode; }
+    void setMidiInputMode(Types::MidiInputMode midiInputMode) {
+        _midiInputMode = ModelUtils::clampedEnum(midiInputMode);
+    }
+
+    const MidiSourceConfig &midiInputSource() const { return _midiInputSource; }
+          MidiSourceConfig &midiInputSource()       { return _midiInputSource; }
+
     // cvGateInput
 
     Types::CvGateInput cvGateInput() const { return _cvGateInput; }
@@ -379,6 +410,8 @@ private:
     uint8_t _scale;
     uint8_t _rootNote;
     Types::RecordMode _recordMode;
+    Types::MidiInputMode _midiInputMode;
+    MidiSourceConfig _midiInputSource;
     Types::CvGateInput _cvGateInput;
     Types::CurveCvInput _curveCvInput;
 

@@ -28,6 +28,15 @@ public:
         return nullptr;
     }
 
+    // MidiInputMode
+
+    enum class MidiInputMode : uint8_t {
+        Off,
+        All,
+        Source,
+        Last
+    };
+
     // CvGateInput
 
     enum class CvGateInput : uint8_t {

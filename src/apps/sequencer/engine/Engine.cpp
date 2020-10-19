@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include "Config.h"
+#include "MidiUtils.h"
 
 #include "core/Debug.h"
 #include "core/midi/MidiMessage.h"
@@ -660,6 +661,14 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
     }
 
     // midi monitoring (and recording)
+    if (port != MidiPort::CvGate) {
+        if (_project.midiInputMode() == Types::MidiInputMode::Off) {
+            return;
+        }
+        if (_project.midiInputMode() == Types::MidiInputMode::Source && !MidiUtils::matchSource(port, message, _project.midiInputSource())) {
+            return;
+        }
+    }
     monitorMidi(message);
 }
 
