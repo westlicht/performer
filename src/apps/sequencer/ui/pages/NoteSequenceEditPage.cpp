@@ -67,6 +67,7 @@ void NoteSequenceEditPage::enter() {
 }
 
 void NoteSequenceEditPage::exit() {
+    _engine.selectedTrackEngine().as<NoteTrackEngine>().setMonitorStep(-1);
 }
 
 void NoteSequenceEditPage::draw(Canvas &canvas) {
