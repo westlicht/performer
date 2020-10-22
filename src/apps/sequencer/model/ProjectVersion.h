@@ -84,6 +84,9 @@ enum ProjectVersion {
     // added Project::midiInput
     Version29 = 29,
 
+    // added Project::monitorMode
+    Version30 = 30,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

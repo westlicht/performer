@@ -9,6 +9,25 @@
 
 class Types {
 public:
+    // MonitorMode
+
+    enum class MonitorMode : uint8_t {
+        Always,
+        Stopped,
+        Off,
+        Last,
+    };
+
+    static const char *monitorModeName(MonitorMode monitorMode) {
+        switch (monitorMode) {
+        case MonitorMode::Always:   return "Always";
+        case MonitorMode::Stopped:  return "Stopped";
+        case MonitorMode::Off:      return "Off";
+        case MonitorMode::Last:     break;
+        }
+        return nullptr;
+    }
+
     // RecordMode
 
     enum class RecordMode : uint8_t {

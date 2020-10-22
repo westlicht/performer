@@ -153,6 +153,21 @@ public:
         Types::printNote(str, _rootNote);
     }
 
+    // monitorMode
+
+    Types::MonitorMode monitorMode() const { return _monitorMode; }
+    void setMonitorMode(Types::MonitorMode monitorMode) {
+        _monitorMode = ModelUtils::clampedEnum(monitorMode);
+    }
+
+    void editMonitorMode(int value, bool shift) {
+        _monitorMode = ModelUtils::adjustedEnum(_monitorMode, value);
+    }
+
+    void printMonitorMode(StringBuilder &str) const {
+        str(Types::monitorModeName(_monitorMode));
+    }
+
     // recordMode
 
     Types::RecordMode recordMode() const { return _recordMode; }
@@ -410,6 +425,7 @@ private:
     uint8_t _scale;
     uint8_t _rootNote;
     Types::RecordMode _recordMode;
+    Types::MonitorMode _monitorMode;
     Types::MidiInputMode _midiInputMode;
     MidiSourceConfig _midiInputSource;
     Types::CvGateInput _cvGateInput;
