@@ -26,6 +26,8 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &di
 
     _usbMidi.setConnectHandler([this] (uint16_t vendorId, uint16_t productId) { usbMidiConnect(vendorId, productId); });
     _usbMidi.setDisconnectHandler([this] () { usbMidiDisconnect(); });
+
+    _midiMonitoring.inputChanged(_project);
 }
 
 void Engine::init() {
@@ -597,6 +599,14 @@ void Engine::usbMidiDisconnect() {
 }
 
 void Engine::receiveMidi() {
+    // reset MIDI monitoring if monitoring config has changed
+    if (_midiMonitoring.inputChanged(_project)) {
+        for (auto trackEngine : _trackEngines) {
+            trackEngine->clearMidiMonitoring();
+        }
+    }
+
+    // receive MIDI messages from ports
     MidiMessage message;
     while (_midi.recv(&message)) {
         message.fixFakeNoteOff();

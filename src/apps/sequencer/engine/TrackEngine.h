@@ -76,6 +76,7 @@ public:
 
     virtual bool receiveMidi(MidiPort port, const MidiMessage &message) { return false; }
     virtual void monitorMidi(uint32_t tick, const MidiMessage &message) {}
+    virtual void clearMidiMonitoring() {}
 
     virtual const TrackLinkData *linkData() const { return nullptr; }
 

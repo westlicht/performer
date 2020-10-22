@@ -221,6 +221,23 @@ private:
 
     // midi monitoring
     struct {
+        Types::MidiInputMode lastMidiInputMode;
+        MidiSourceConfig lastMidiInputSource;
+        Types::CvGateInput lastCvGateInput;
+
+        bool inputChanged(const Project &project) {
+            bool changed =
+                project.midiInputMode() != lastMidiInputMode ||
+                project.midiInputSource() != lastMidiInputSource ||
+                project.cvGateInput() != lastCvGateInput;
+            if (changed) {
+                lastMidiInputMode = project.midiInputMode();
+                lastMidiInputSource = project.midiInputSource();
+                lastCvGateInput = project.cvGateInput();
+            }
+            return changed;
+        }
+
         int8_t lastNote = -1;
         int8_t lastTrack = -1;
     } _midiMonitoring;

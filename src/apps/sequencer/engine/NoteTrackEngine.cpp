@@ -261,6 +261,10 @@ void NoteTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
     }
 }
 
+void NoteTrackEngine::clearMidiMonitoring() {
+    _recordHistory.clear();
+}
+
 void NoteTrackEngine::setMonitorStep(int index) {
     _monitorStepIndex = (index >= 0 && index < CONFIG_STEP_COUNT) ? index : -1;
 

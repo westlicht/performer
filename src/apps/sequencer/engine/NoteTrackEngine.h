@@ -26,6 +26,7 @@ public:
     virtual void changePattern() override;
 
     virtual void monitorMidi(uint32_t tick, const MidiMessage &message) override;
+    virtual void clearMidiMonitoring() override;
 
     virtual const TrackLinkData *linkData() const override { return &_linkData; }
 
