@@ -62,6 +62,7 @@ void register_project(py::module &m) {
         .def_property("syncMeasure", &Project::syncMeasure, &Project::setSyncMeasure)
         .def_property("scale", &Project::scale, &Project::setScale)
         .def_property("rootNote", &Project::rootNote, &Project::setRootNote)
+        .def_property("monitorMode", &Project::monitorMode, &Project::setMonitorMode)
         .def_property("recordMode", &Project::recordMode, &Project::setRecordMode)
         .def_property("midiInputMode", &Project::midiInputMode, &Project::setMidiInputMode)
         .def_property_readonly("midiInputSource", [] (Project &project) { return &project.midiInputSource(); })
@@ -100,6 +101,13 @@ void register_project(py::module &m) {
     // ------------------------------------------------------------------------
 
     py::class_<Types> types(m, "Types");
+
+    py::enum_<Types::MonitorMode>(types, "MonitorMode")
+        .value("Always", Types::MonitorMode::Always)
+        .value("Stopped", Types::MonitorMode::Stopped)
+        .value("Off", Types::MonitorMode::Off)
+        .export_values()
+    ;
 
     py::enum_<Types::RecordMode>(types, "RecordMode")
         .value("Overdub", Types::RecordMode::Overdub)
