@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.38 (23 October 2020)
+
+#### Fixes
+
+- Fixed MIDI output from monitoring during playback (#216)
+- Fixed hanging step monitoring when leaving note sequence edit page
+
+#### Improvements
+
+- Added _MIDI Input_ option to select MIDI input for monitoring/recording (#197)
+- Added _Monitor Mode_ option to set MIDI monitoring behavior
+- Added double tap to toggle gates on Launchpad controller (#232)
+
 ## v0.1.37 (15 October 2020)
 
 #### Fixes
