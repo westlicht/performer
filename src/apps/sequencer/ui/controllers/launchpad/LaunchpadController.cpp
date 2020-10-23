@@ -1,6 +1,7 @@
 #include "LaunchpadController.h"
 
 #include "core/Debug.h"
+#include "os/os.h"
 
 #define CALL_MODE_FUNCTION(_mode_, _function_, ...)                         \
     switch (_mode_) {                                                       \
@@ -864,7 +865,6 @@ void LaunchpadController::setSceneLed(int col, Color color) {
 //----------------------------------------
 
 void LaunchpadController::dispatchButtonEvent(const Button& button, ButtonAction action) {
-
     if (globalButton(button, action)) {
         return;
     }
@@ -873,7 +873,24 @@ void LaunchpadController::dispatchButtonEvent(const Button& button, ButtonAction
 }
 
 void LaunchpadController::buttonDown(int row, int col) {
-    dispatchButtonEvent(Button(row, col), ButtonAction::Down);
+    Button button(row, col);
+
+    dispatchButtonEvent(button, ButtonAction::Down);
+
+    uint32_t currentTicks = os::ticks();
+    uint32_t deltaTicks = currentTicks - _buttonTracker.lastTicks;
+
+    if (button != _buttonTracker.lastButton || deltaTicks > os::time::ms(300)) {
+        _buttonTracker.count = 1;
+    } else {
+        ++_buttonTracker.count;
+    }
+
+    _buttonTracker.lastButton = button;
+    _buttonTracker.lastTicks = currentTicks;
+
+    if (_buttonTracker.count == 1) dispatchButtonEvent(button, ButtonAction::Press);
+    if (_buttonTracker.count == 2) dispatchButtonEvent(button, ButtonAction::DoublePress);
 }
 
 void LaunchpadController::buttonUp(int row, int col) {

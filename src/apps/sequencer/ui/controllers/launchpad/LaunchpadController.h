@@ -30,10 +30,19 @@ private:
     inline Color colorYellow(int brightness = 3) const { return Color(brightness, brightness); }
 
     struct Button {
-        int row;
-        int col;
+        int row = -1;
+        int col = -1;
 
+        Button() = default;
         Button(int row, int col) : row(row), col(col) {}
+
+        bool operator==(const Button &other) const {
+            return row == other.row && col == other.col;
+        }
+
+        bool operator!=(const Button &other) const {
+            return !(*this == other);
+        }
 
         template<typename T>
         bool is() const {
@@ -51,7 +60,9 @@ private:
 
     enum class ButtonAction {
         Down,
-        Up
+        Up,
+        Press,
+        DoublePress
     };
 
     struct Navigation {
@@ -157,6 +168,12 @@ private:
     bool buttonState() const {
         return buttonState(T::row, T::col);
     }
+
+    struct {
+        Button lastButton;
+        uint32_t lastTicks = 0;
+        uint8_t count = 1;
+    } _buttonTracker;
 
     Project &_project;
     Container<LaunchpadDevice, LaunchpadMk2Device, LaunchpadProDevice> _deviceContainer;
