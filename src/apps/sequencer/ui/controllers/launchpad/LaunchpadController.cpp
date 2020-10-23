@@ -161,29 +161,27 @@ void LaunchpadController::globalDraw() {
     }
 }
 
-bool LaunchpadController::globalButtonDown(const Button &button) {
-    if (buttonState<Shift>() && button.isFunction()) {
-        switch (button.function()) {
-        case 0:
-            setMode(Mode::Sequence);
-            break;
-        case 1:
-            setMode(Mode::Pattern);
-            break;
-        case 2:
-            // TODO implement performer mode
-            // setMode(Mode::Performer);
-            break;
-        case 6:
-            _engine.togglePlay();
-            break;
+bool LaunchpadController::globalButton(const Button &button, ButtonAction action) {
+    if (action == ButtonAction::Down) {
+        if (buttonState<Shift>() && button.isFunction()) {
+            switch (button.function()) {
+            case 0:
+                setMode(Mode::Sequence);
+                break;
+            case 1:
+                setMode(Mode::Pattern);
+                break;
+            case 2:
+                // TODO implement performer mode
+                // setMode(Mode::Performer);
+                break;
+            case 6:
+                _engine.togglePlay();
+                break;
+            }
+            return true;
         }
-        return true;
     }
-    return false;
-}
-
-bool LaunchpadController::globalButtonUp(const Button &button) {
     return false;
 }
 
@@ -231,50 +229,50 @@ void LaunchpadController::sequenceDraw() {
     }
 }
 
-void LaunchpadController::sequenceButtonDown(const Button &button) {
-    if (buttonState<Shift>()) {
-        if (button.isScene()) {
-            _project.playState().toggleMuteTrack(button.scene());
+void LaunchpadController::sequenceButton(const Button &button, ButtonAction action) {
+    if (action == ButtonAction::Down) {
+        if (buttonState<Shift>()) {
+            if (button.isScene()) {
+                _project.playState().toggleMuteTrack(button.scene());
+            }
+        } else if (buttonState<Navigate>()) {
+            navigationButtonDown(_sequence.navigation, button);
+        } else if (buttonState<Layer>()) {
+            if (button.isGrid()) {
+                sequenceSetLayer(button.row, button.col);
+            }
+        } else if (buttonState<FirstStep>()) {
+            if (button.isGrid()) {
+                sequenceSetFirstStep(button.gridIndex());
+            }
+        } else if (buttonState<LastStep>()) {
+            if (button.isGrid()) {
+                sequenceSetLastStep(button.gridIndex());
+            }
+        } else if (buttonState<RunMode>()) {
+            if (button.isGrid()) {
+                sequenceSetRunMode(button.gridIndex());
+            }
+        } else if (buttonState<Fill>()) {
+            if (button.isScene()) {
+                _project.playState().fillTrack(button.scene(), true);
+            }
+        } else {
+            if (button.isGrid()) {
+                sequenceEditStep(button.row, button.col);
+            } else if (button.isScene()) {
+                _project.setSelectedTrackIndex(button.scene());
+            }
         }
-    } else if (buttonState<Navigate>()) {
-        navigationButtonDown(_sequence.navigation, button);
-    } else if (buttonState<Layer>()) {
-        if (button.isGrid()) {
-            sequenceSetLayer(button.row, button.col);
+    } else if (action == ButtonAction::Up) {
+        if (buttonState<Fill>()) {
+            if (button.isScene()) {
+                _project.playState().fillTrack(button.scene(), false);
+            }
         }
-    } else if (buttonState<FirstStep>()) {
-        if (button.isGrid()) {
-            sequenceSetFirstStep(button.gridIndex());
+        if (button.is<Fill>()) {
+            _project.playState().fillAll(false);
         }
-    } else if (buttonState<LastStep>()) {
-        if (button.isGrid()) {
-            sequenceSetLastStep(button.gridIndex());
-        }
-    } else if (buttonState<RunMode>()) {
-        if (button.isGrid()) {
-            sequenceSetRunMode(button.gridIndex());
-        }
-    } else if (buttonState<Fill>()) {
-        if (button.isScene()) {
-            _project.playState().fillTrack(button.scene(), true);
-        }
-    } else {
-        if (button.isGrid()) {
-            sequenceEditStep(button.row, button.col);
-        } else if (button.isScene()) {
-            _project.setSelectedTrackIndex(button.scene());
-        }
-    }
-}
-
-void LaunchpadController::sequenceButtonUp(const Button &button) {
-    if (buttonState<Fill>()) {
-        if (button.isScene()) {
-            _project.playState().fillTrack(button.scene(), false);
-        }
-    }
-    if (button.is<Fill>()) {
-        _project.playState().fillAll(false);
     }
 }
 
@@ -599,51 +597,52 @@ void LaunchpadController::patternDraw() {
     }
 }
 
-void LaunchpadController::patternButtonDown(const Button &button) {
+void LaunchpadController::patternButton(const Button &button, ButtonAction action) {
     auto &playState = _project.playState();
 
-    if (buttonState<Shift>()) {
-        if (button.isScene()) {
-            _project.playState().toggleMuteTrack(button.scene());
-        }
-    } else if (buttonState<Navigate>()) {
-        navigationButtonDown(_pattern.navigation, button);
-    } else if (buttonState<Fill>()) {
-        if (button.isScene()) {
-            _project.playState().fillTrack(button.scene(), true);
-        }
-    } else {
-        PlayState::ExecuteType executeType = PlayState::ExecuteType::Immediate;
-        if (buttonState<Latch>()) {
-            executeType = PlayState::ExecuteType::Latched;
-        } else if (buttonState<Sync>()) {
-            executeType = PlayState::ExecuteType::Synced;
-        }
+    if (action == ButtonAction::Down) {
+        if (buttonState<Shift>()) {
+            if (button.isScene()) {
+                _project.playState().toggleMuteTrack(button.scene());
+            }
+        } else if (buttonState<Navigate>()) {
+            navigationButtonDown(_pattern.navigation, button);
+        } else if (buttonState<Fill>()) {
+            if (button.isScene()) {
+                _project.playState().fillTrack(button.scene(), true);
+            }
+        } else {
+            PlayState::ExecuteType executeType = PlayState::ExecuteType::Immediate;
+            if (buttonState<Latch>()) {
+                executeType = PlayState::ExecuteType::Latched;
+            } else if (buttonState<Sync>()) {
+                executeType = PlayState::ExecuteType::Synced;
+            }
 
-        if (button.isScene()) {
-            int pattern = button.scene() - _pattern.navigation.row * 8;
-            playState.selectPattern(pattern, executeType);
-        }
+            if (button.isScene()) {
+                int pattern = button.scene() - _pattern.navigation.row * 8;
+                playState.selectPattern(pattern, executeType);
+            }
 
-        if (button.isGrid()) {
-            int pattern = button.row - _pattern.navigation.row * 8;
-            int trackIndex = button.col;
-            playState.selectTrackPattern(trackIndex, pattern, executeType);
+            if (button.isGrid()) {
+                int pattern = button.row - _pattern.navigation.row * 8;
+                int trackIndex = button.col;
+                playState.selectTrackPattern(trackIndex, pattern, executeType);
+            }
+        }
+    } else if (action == ButtonAction::Up) {
+        if (buttonState<Fill>()) {
+            if (button.isScene()) {
+                playState.fillTrack(button.scene(), false);
+            }
+        }
+        if (button.is<Fill>()) {
+            playState.fillAll(false);
+        } else if (button.is<Latch>()) {
+            playState.commitLatchedRequests();
         }
     }
-}
 
-void LaunchpadController::patternButtonUp(const Button &button) {
-    if (buttonState<Fill>()) {
-        if (button.isScene()) {
-            _project.playState().fillTrack(button.scene(), false);
-        }
-    }
-    if (button.is<Fill>()) {
-        _project.playState().fillAll(false);
-    } else if (button.is<Latch>()) {
-        _project.playState().commitLatchedRequests();
-    }
 }
 
 //----------------------------------------
@@ -659,10 +658,7 @@ void LaunchpadController::performerExit() {
 void LaunchpadController::performerDraw() {
 }
 
-void LaunchpadController::performerButtonDown(const Button &button) {
-}
-
-void LaunchpadController::performerButtonUp(const Button &button) {
+void LaunchpadController::performerButton(const Button &button, ButtonAction action) {
 }
 
 //----------------------------------------
@@ -867,24 +863,21 @@ void LaunchpadController::setSceneLed(int col, Color color) {
 // Button handling
 //----------------------------------------
 
-void LaunchpadController::buttonDown(int row, int col) {
-    Button button(row, col);
+void LaunchpadController::dispatchButtonEvent(const Button& button, ButtonAction action) {
 
-    if (globalButtonDown(button)) {
+    if (globalButton(button, action)) {
         return;
     }
 
-    CALL_MODE_FUNCTION(_mode, ButtonDown, button);
+    CALL_MODE_FUNCTION(_mode, Button, button, action);
+}
+
+void LaunchpadController::buttonDown(int row, int col) {
+    dispatchButtonEvent(Button(row, col), ButtonAction::Down);
 }
 
 void LaunchpadController::buttonUp(int row, int col) {
-    Button button(row, col);
-
-    if (globalButtonUp(button)) {
-        return;
-    }
-
-    CALL_MODE_FUNCTION(_mode, ButtonUp, button);
+    dispatchButtonEvent(Button(row, col), ButtonAction::Up);
 }
 
 bool LaunchpadController::buttonState(int row, int col) const {

@@ -49,6 +49,11 @@ private:
         int scene() const { return isScene() ? col : -1; }
     };
 
+    enum class ButtonAction {
+        Down,
+        Up
+    };
+
     struct Navigation {
         int8_t col;
         int8_t row;
@@ -68,15 +73,13 @@ private:
 
     // Global handlers
     void globalDraw();
-    bool globalButtonDown(const Button &button);
-    bool globalButtonUp(const Button &button);
+    bool globalButton(const Button &button, ButtonAction action);
 
     // Sequence mode
     void sequenceEnter();
     void sequenceExit();
     void sequenceDraw();
-    void sequenceButtonDown(const Button &button);
-    void sequenceButtonUp(const Button &button);
+    void sequenceButton(const Button &button, ButtonAction action);
 
     void sequenceUpdateNavigation();
 
@@ -99,15 +102,13 @@ private:
     void patternEnter();
     void patternExit();
     void patternDraw();
-    void patternButtonDown(const Button &button);
-    void patternButtonUp(const Button &button);
+    void patternButton(const Button &button, ButtonAction action);
 
     // Performer mode
     void performerEnter();
     void performerExit();
     void performerDraw();
-    void performerButtonDown(const Button &button);
-    void performerButtonUp(const Button &button);
+    void performerButton(const Button &button, ButtonAction action);
 
     // Navigation
     void navigationDraw(const Navigation &navigation);
@@ -147,6 +148,7 @@ private:
     }
 
     // Button handling
+    void dispatchButtonEvent(const Button& button, ButtonAction action);
     void buttonDown(int row, int col);
     void buttonUp(int row, int col);
     bool buttonState(int row, int col) const;
