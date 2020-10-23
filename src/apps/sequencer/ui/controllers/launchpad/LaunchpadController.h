@@ -98,6 +98,8 @@ private:
     void sequenceSetFirstStep(int step);
     void sequenceSetLastStep(int step);
     void sequenceSetRunMode(int mode);
+    void sequenceToggleStep(int row, int col);
+    void sequenceToggleNoteStep(int row, int col);
     void sequenceEditStep(int row, int col);
     void sequenceEditNoteStep(int row, int col);
     void sequenceEditCurveStep(int row, int col);

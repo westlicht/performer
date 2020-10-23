@@ -274,6 +274,18 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
         if (button.is<Fill>()) {
             _project.playState().fillAll(false);
         }
+    } else if (action == ButtonAction::DoublePress) {
+        if (!buttonState<Shift>() &&
+            !buttonState<Navigate>() &&
+            !buttonState<Layer>() &&
+            !buttonState<FirstStep>() &&
+            !buttonState<LastStep>() &&
+            !buttonState<RunMode>() &&
+            !buttonState<Fill>() &&
+            button.isGrid()) {
+            // toggle gate
+            sequenceToggleStep(button.row, button.col);
+        }
     }
 }
 
@@ -371,6 +383,32 @@ void LaunchpadController::sequenceSetRunMode(int mode) {
         _project.selectedCurveSequence().setRunMode(Types::RunMode(mode));
         break;
     default:
+        break;
+    }
+}
+
+void LaunchpadController::sequenceToggleStep(int row, int col) {
+    switch (_project.selectedTrack().trackMode()) {
+    case Track::TrackMode::Note:
+        sequenceToggleNoteStep(row, col);
+        break;
+    default:
+        break;
+    }
+}
+
+void LaunchpadController::sequenceToggleNoteStep(int row, int col) {
+    auto &sequence = _project.selectedNoteSequence();
+    auto layer = _project.selectedNoteSequenceLayer();
+
+    int linearIndex = col + _sequence.navigation.col * 8;
+
+    switch (layer) {
+    case NoteSequence::Layer::Gate:
+    case NoteSequence::Layer::Slide:
+        break;
+    default:
+        sequence.step(linearIndex).toggleGate();
         break;
     }
 }
