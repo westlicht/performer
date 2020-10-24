@@ -11,7 +11,7 @@ nav: 20
 > The user manual is also available as a PDF [here](./manual.pdf).
 <!-- pdf-exclude-end -->
 
-> This document is written for firmware version 0.1.37
+> This document is written for firmware version 0.1.38
 
 <!-- TOC -->
 
@@ -478,8 +478,10 @@ The following parameters are available:
  page). |
 | Scale | [Scales](#appendix-scales) | Default scale. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
 | Root Note | C, C#, D, D#, E, F, F#, G, G#, A, B | Default root note. Can be overwritten per sequence on the [Sequence](#pages-sequence) page. |
+| Monitor Mode | Always, Stopped, Off | Live monitoring mode. _Always_ enables monitoring always, _Stopped_ only if clock is stopped and _Off_ disables it. |
 | Record Mode | Overdub, Overwrite, Step Record | Recording mode (see [Recording](#appendix-recording)). |
-| CV/Gate Input | Off, CV1/CV2, CV3/CV4 | Enable CV/Gate input on CV inputs for monitoring and recording (equivalent to a MIDI keyboard). |
+| MIDI Input | Off, All, MIDI, USB | Select MIDI input for monitoring and recording. |
+| CV/Gate Input | Off, CV1/CV2, CV3/CV4 | Enable CV/Gate input on CV inputs for monitoring and recording (emulating a MIDI keyboard). |
 | Curve CV Input | Off, CV1, CV2, CV3, CV4 | Select CV input for curve recording. |
 
 > Note: _Tempo_ and _Swing_ are routable parameters.
@@ -1609,7 +1611,7 @@ Sequence mode allows for comprehensive editing of the patterns on all tracks. Th
 | `4` + `GRID` | Select last step |
 | `5` + `GRID` | Select run mode |
 
-The visualization on the grid depends on the selected layer. Binary layers (e.g. _Gate_ and _Slide_) can be visualized directly on the 8x8 grid without the need for navigation. This is useful for programming drum sequences for example. Other layers use navigation to various degree in order to allow programming the steps. When editing the _Note_ layer, the base note (first note per octave) is visualized to help orientation.
+The visualization on the grid depends on the selected layer. Binary layers (e.g. _Gate_ and _Slide_) can be visualized directly on the 8x8 grid without the need for navigation. This is useful for programming drum sequences for example. Other layers use navigation to various degree in order to allow programming the steps. When editing the _Note_ layer, the base note (first note per octave) is visualized to help orientation. When editing a note sequence, double pressing a button can be used to toggle the step gate no matter what layer is edited (other than _Gate_ or _Slide_ layer).
 
 <h4>Pattern Mode</h4>
 
