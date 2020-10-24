@@ -28,16 +28,17 @@ public:
 #ifdef PLATFORM_STM32
         usbh.process();
 #endif
+        uint8_t cable;
         MidiMessage msg;
-        while (usbMidi.recv(&msg)) {
+        while (usbMidi.recv(&cable, &msg)) {
             MidiMessage::dump(msg);
         }
 
         if (sendInterval++ % 200 == 0) {
             const uint8_t pattern[] = { 0, 12, 0, 12, 3, 9, 12, 3 };
-            usbMidi.send(MidiMessage::makeNoteOff(0, 36 + pattern[sendPosition]));
+            usbMidi.send(0, MidiMessage::makeNoteOff(0, 36 + pattern[sendPosition]));
             sendPosition = (sendPosition + 1) % sizeof(pattern);
-            usbMidi.send(MidiMessage::makeNoteOn(0, 36 + pattern[sendPosition]));
+            usbMidi.send(0, MidiMessage::makeNoteOn(0, 36 + pattern[sendPosition]));
         }
 
         os::delay(1);

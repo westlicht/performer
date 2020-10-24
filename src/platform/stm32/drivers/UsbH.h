@@ -31,17 +31,17 @@ private:
         return _midiDevices & (1 << device);
     }
 
-    void midiEnqueueMessage(uint8_t device, MidiMessage &message) {
-        _usbMidi.enqueueMessage(message);
+    void midiEnqueueMessage(uint8_t device, uint8_t cable, const MidiMessage &message) {
+        _usbMidi.enqueueMessage(cable, message);
     }
 
-    void midiEnqueueData(uint8_t device, uint8_t data) {
-        _usbMidi.enqueueData(data);
+    void midiEnqueueData(uint8_t device, uint8_t cable, uint8_t data) {
+        _usbMidi.enqueueData(cable, data);
     }
 
-    bool midiDequeueMessage(uint8_t *device, MidiMessage *message) {
+    bool midiDequeueMessage(uint8_t *device, uint8_t *cable, MidiMessage *message) {
         *device = 0;
-        return _usbMidi.dequeueMessage(message);
+        return _usbMidi.dequeueMessage(cable, message);
     }
 
     UsbMidi &_usbMidi;

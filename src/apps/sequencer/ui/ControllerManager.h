@@ -24,10 +24,10 @@ public:
 
     int fps() const { return 50; }
 
-    bool recvMidi(MidiPort port, const MidiMessage &message);
+    bool recvMidi(MidiPort port, uint8_t cable, const MidiMessage &message);
 
 private:
-    bool sendMidi(const MidiMessage &message);
+    bool sendMidi(uint8_t cable, const MidiMessage &message);
 
     Model &_model;
     Engine &_engine;

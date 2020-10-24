@@ -9,7 +9,7 @@ class LaunchpadMk3Device : public LaunchpadDevice {
 public:
     LaunchpadMk3Device();
 
-    void recvMidi(const MidiMessage &message) override;
+    void recvMidi(uint8_t cable, const MidiMessage &message) override;
 
     void setLed(int row, int col, Color color) override {
         _ledState[row * Cols + col] = mapColor(color.red, color.green);
@@ -22,6 +22,8 @@ public:
     void syncLeds() override;
 
 private:
+    static constexpr uint8_t Cable = 1;
+
     inline uint8_t mapColor(int red, int green) const {
         static const uint8_t map[] = {
         //  g0 g1 g2 g3

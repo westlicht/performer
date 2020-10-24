@@ -51,15 +51,15 @@ void ControllerManager::update() {
     }
 }
 
-bool ControllerManager::recvMidi(MidiPort port, const MidiMessage &message) {
+bool ControllerManager::recvMidi(MidiPort port, uint8_t cable, const MidiMessage &message) {
     if (_controller && port == _port) {
-        _controller->recvMidi(message);
+        _controller->recvMidi(cable, message);
         return true;
     }
 
     return false;
 }
 
-bool ControllerManager::sendMidi(const MidiMessage &message) {
-    return _engine.sendMidi(_port, message);
+bool ControllerManager::sendMidi(uint8_t cable, const MidiMessage &message) {
+    return _engine.sendMidi(_port, cable, message);
 }

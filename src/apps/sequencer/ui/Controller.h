@@ -25,10 +25,10 @@ public:
 
     virtual void update() = 0;
 
-    virtual void recvMidi(const MidiMessage &message) = 0;
+    virtual void recvMidi(uint8_t cable, const MidiMessage &message) = 0;
 
 protected:
-    bool sendMidi(const MidiMessage &message);
+    bool sendMidi(uint8_t cable, const MidiMessage &message);
 
     ControllerManager &_manager;
     Model &_model;

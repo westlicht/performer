@@ -132,14 +132,17 @@ private:
     }
 
     void processMidi() {
+        uint8_t cable;
         MidiMessage message;
 
         while (midi.recv(&message)) {
             midiReceive(MidiPort::Midi, message);
         }
 
-        while (usbMidi.recv(&message)) {
-            midiReceive(MidiPort::UsbMidi, message);
+        while (usbMidi.recv(&cable, &message)) {
+            if (cable == 0) {
+                midiReceive(MidiPort::UsbMidi, message);
+            }
         }
     }
 
@@ -261,7 +264,7 @@ private:
 
     void midiSend(const MidiMessage &message) {
         midi.send(message);
-        usbMidi.send(message);
+        usbMidi.send(0, message);
     }
 
     void setMode(Mode mode) {

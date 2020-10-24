@@ -24,13 +24,14 @@ public:
 
     void init() {}
 
-    bool send(const MidiMessage &message) {
+    bool send(uint8_t cable, const MidiMessage &message) {
         _simulator.writeMidiOutput(sim::MidiEvent::makeMessage(1, message));
         return true;
     }
 
-    bool recv(MidiMessage *message) {
+    bool recv(uint8_t *cable, MidiMessage *message) {
         if (!_recvQueue.empty()) {
+            *cable = 0;
             *message = _recvQueue.front();
             _recvQueue.pop_front();
             return true;

@@ -16,7 +16,7 @@ public:
 
     virtual void update() override;
 
-    virtual void recvMidi(const MidiMessage &message) override;
+    virtual void recvMidi(uint8_t cable, const MidiMessage &message) override;
 
 private:
     using Color = LaunchpadDevice::Color;

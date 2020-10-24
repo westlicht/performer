@@ -27,7 +27,7 @@ LaunchpadMk3Device::LaunchpadMk3Device() :
 {
 }
 
-void LaunchpadMk3Device::recvMidi(const MidiMessage &message) {
+void LaunchpadMk3Device::recvMidi(uint8_t cable, const MidiMessage &message) {
     if (message.isNoteOn() || message.isNoteOff()) {
         int index = message.note();
         int row = 7 - (index - 11) / 10;
@@ -53,7 +53,7 @@ void LaunchpadMk3Device::syncLeds() {
         for (int col = 0; col < Cols; ++col) {
             int index = row * Cols + col;
             if (_deviceLedState[index] != _ledState[index]) {
-                if (sendMidi(MidiMessage::makeNoteOn(0, 11 + 10 * (7 - row) + col, _ledState[index]))) {
+                if (sendMidi(Cable, MidiMessage::makeNoteOn(0, 11 + 10 * (7 - row) + col, _ledState[index]))) {
                     _deviceLedState[index] = _ledState[index];
                 }
             }
@@ -64,7 +64,7 @@ void LaunchpadMk3Device::syncLeds() {
     for (int col = 0; col < Cols; ++col) {
         int index = SceneRow * Cols + col;
         if (_deviceLedState[index] != _ledState[index]) {
-            if (sendMidi(MidiMessage::makeControlChange(0, 19 + 10 * (7 - col), _ledState[index]))) {
+            if (sendMidi(Cable, MidiMessage::makeControlChange(0, 19 + 10 * (7 - col), _ledState[index]))) {
                 _deviceLedState[index] = _ledState[index];
             }
         }
@@ -74,7 +74,7 @@ void LaunchpadMk3Device::syncLeds() {
     for (int col = 0; col < Cols; ++col) {
         int index = FunctionRow * Cols + col;
         if (_deviceLedState[index] != _ledState[index]) {
-            if (sendMidi(MidiMessage::makeControlChange(0, 91 + col, _ledState[index]))) {
+            if (sendMidi(Cable, MidiMessage::makeControlChange(0, 91 + col, _ledState[index]))) {
                 _deviceLedState[index] = _ledState[index];
             }
         }

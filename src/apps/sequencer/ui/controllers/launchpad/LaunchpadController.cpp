@@ -113,8 +113,8 @@ LaunchpadController::LaunchpadController(ControllerManager &manager, Model &mode
         _device = _deviceContainer.create<LaunchpadDevice>();
     }
 
-    _device->setSendMidiHandler([this] (const MidiMessage &message) {
-        return sendMidi(message);
+    _device->setSendMidiHandler([this] (uint8_t cable, const MidiMessage &message) {
+        return sendMidi(cable, message);
     });
 
     _device->setButtonHandler([this] (int row, int col, bool state) {
@@ -143,8 +143,8 @@ void LaunchpadController::update() {
     _device->syncLeds();
 }
 
-void LaunchpadController::recvMidi(const MidiMessage &message) {
-    _device->recvMidi(message);
+void LaunchpadController::recvMidi(uint8_t cable, const MidiMessage &message) {
+    _device->recvMidi(cable, message);
 }
 
 void LaunchpadController::setMode(Mode mode) {

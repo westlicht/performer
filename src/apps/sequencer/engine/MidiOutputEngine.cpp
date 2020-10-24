@@ -170,5 +170,6 @@ void MidiOutputEngine::resetOutput(int outputIndex) {
 
 void MidiOutputEngine::sendMidi(MidiPort port, const MidiMessage &message) {
     // MidiMessage::dump(message);
-    _engine.sendMidi(port, message);
+    // always use cable 0
+    _engine.sendMidi(port, 0, message);
 }
