@@ -31,7 +31,7 @@ BEGIN_DECLS
 
 struct _midi_config {
 	void (*read_callback)(int device_id, uint8_t *data);
-	void (*notify_connected)(int device_id, uint16_t vendor_id, uint16_t product_id);
+	void (*notify_connected)(int device_id, uint16_t vendor_id, uint16_t product_id, uint32_t max_packet_size);
 	void (*notify_disconnected)(int device_id);
 };
 typedef struct _midi_config midi_config_t;

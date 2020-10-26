@@ -267,7 +267,7 @@ static void poll(void *drvdata, uint32_t t_us)
 
 			// Notify user
 			if (midi_config->notify_connected) {
-				midi_config->notify_connected(midi->device_id, midi->vendor_id, midi->product_id);
+				midi_config->notify_connected(midi->device_id, midi->vendor_id, midi->product_id, midi->endpoint_out_maxpacketsize);
 			}
 		}
 		break;
