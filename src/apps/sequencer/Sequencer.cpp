@@ -74,6 +74,8 @@ static SdCard sdCard;
 
 static fs::Volume volume(sdCard);
 
+static CCMRAM_BSS uint8_t midiMessagePayloadPool[16];
+
 static CCMRAM_BSS Profiler profiler;
 
 static Model model;
@@ -151,6 +153,8 @@ int main(void) {
     System::startWatchdog(1000);
     Console::init();
     HighResolutionTimer::init();
+
+    MidiMessage::setPayloadPool(midiMessagePayloadPool, sizeof(midiMessagePayloadPool));
 
     dbg_set_assert_handler(&assert_handler);
 

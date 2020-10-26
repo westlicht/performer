@@ -15,13 +15,11 @@ struct MidiEvent {
 
     int kind;
     int port;
-    union {
-        MidiMessage message;
-        struct {
-            uint16_t vendorId;
-            uint16_t productId;
-        } connect;
-    };
+    MidiMessage message;
+    struct {
+        uint16_t vendorId;
+        uint16_t productId;
+    } connect;
 
     MidiEvent() : message() {}
     MidiEvent(Kind kind, int port) : kind(kind), port(port) {}

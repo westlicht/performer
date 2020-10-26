@@ -78,7 +78,7 @@ private:
         if (_txQueue.empty()) {
             return false;
         }
-        auto messageAndCable = _txQueue.read();
+        auto messageAndCable = _txQueue.readAndReplace();
         *cable = messageAndCable.cable;
         *message = messageAndCable.message;
         return true;

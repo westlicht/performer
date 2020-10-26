@@ -40,6 +40,14 @@ public:
         return value;
     }
 
+    inline T readAndReplace(const T &replacement = T()) {
+        size_t read = _read;
+        T value = _buffer[read];
+        _buffer[read] = replacement;
+        _read = (read + 1) % Size;
+        return value;
+    }
+
     inline void read(T *data, size_t length) {
         while (length--) {
             read(*data++);

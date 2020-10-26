@@ -42,6 +42,8 @@ struct SequencerApp {
     // filesystem
     fs::Volume volume;
 
+    uint8_t midiMessagePayloadPool[16];
+
     // application
     Model model;
     Engine engine;
@@ -52,6 +54,8 @@ struct SequencerApp {
         engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
         ui(model, engine, lcd, blm, encoder)
     {
+        MidiMessage::setPayloadPool(midiMessagePayloadPool, sizeof(midiMessagePayloadPool));
+
         FileManager::init();
 
         model.init();
