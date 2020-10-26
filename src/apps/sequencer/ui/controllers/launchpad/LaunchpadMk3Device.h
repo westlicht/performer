@@ -9,6 +9,8 @@ class LaunchpadMk3Device : public LaunchpadDevice {
 public:
     LaunchpadMk3Device();
 
+    void initialize() override;
+
     void recvMidi(uint8_t cable, const MidiMessage &message) override;
 
     void setLed(int row, int col, Color color) override {

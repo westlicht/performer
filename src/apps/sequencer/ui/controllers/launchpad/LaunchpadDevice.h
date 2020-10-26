@@ -43,6 +43,10 @@ public:
 
     virtual void recvMidi(uint8_t cable, const MidiMessage &message);
 
+    // initialization
+
+    virtual void initialize() {}
+
     // button handling
 
     void setButtonHandler(ButtonHandler buttonHandler) {
