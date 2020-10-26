@@ -11,7 +11,7 @@ nav: 20
 > The user manual is also available as a PDF [here](./manual.pdf).
 <!-- pdf-exclude-end -->
 
-> This document is written for firmware version 0.1.38
+> This document is written for firmware version 0.1.39
 
 <!-- TOC -->
 
@@ -1558,11 +1558,11 @@ The Novation Launchpad can be used as an advanced control surface for the sequen
 
 The following Lauchpad controllers have been tested and are working:
 
-- Launchpad Mini MK1
-- Launchpad Mini MK2
+- Launchpad Mini MK1/MK2/MK3
 - Launchpad S
 - Launchpad Mk2
 - Launchpad Pro
+- Launchpad X
 
 > Note: Support for the very first version of Launchpad will never happen, as it is not a USB MIDI class compliant device.
 
@@ -1634,7 +1634,7 @@ The following is a list of USB MIDI devices known to be compatible with the **PE
 | Korg | [microKey 2](https://www.korg.com/us/products/computergear/microkey2/), [R3](https://www.korg.com/de/products/synthesizers/r3/) |
 | Moog | [Minitaur](https://www.moogmusic.com/products/minitaur) |
 | Novation | [Launchkey Mini](https://novationmusic.com/de/keys/launchkey-mini) |
-| Novation | Launchpad Mini MK1, [Launchpad Mini MK2](https://novationmusic.com/launch/launchpad-mini), Launchpad S, [Launchpad Mk2](https://novationmusic.com/launch/launchpad), [Launchpad Pro](https://novationmusic.com/launch/launchpad-pro) |
+| Novation | [Launchpad Mini MK1/MK2/MK3, Launchpad S, Launchpad Pro, Launchpad X](https://novationmusic.com/en/launch) |
 | Yamaha | Modx7 |
 
 The following is a list of USB MIDI devices known **not** to be compatible:
