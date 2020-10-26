@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.39 (26 October 2020)
+
+#### Improvements
+
+- Added support for Launchpad Mini MK3 and Launchpad X (#145)
+- Improved performance of sending MIDI over USB
+
 ## v0.1.38 (23 October 2020)
 
 #### Fixes
