@@ -5,6 +5,7 @@
 #include "MatrixMap.h"
 
 #include <bitset>
+#include <cstddef>
 
 typedef std::bitset<CONFIG_BLM_ROWS * CONFIG_BLM_COLS_BUTTON + 1> KeyState;
 
@@ -70,6 +71,14 @@ public:
 
     bool shiftModifier() const { return _state[Shift]; }
     bool pageModifier() const { return _state[Page]; }
+    bool stepsOnly() const {
+        for (size_t i = 0; i < _state.size(); i++) {
+            if (!MatrixMap::isStep(i) && _state[i])  {
+                return false;
+            }
+        }
+        return isStep();
+    }
 
     bool is(int code) const { return _code == code; }
 
