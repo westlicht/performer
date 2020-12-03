@@ -9,6 +9,7 @@
 #include "core/math/Math.h"
 
 #include "model/Scale.h"
+#include <iostream>
 
 static Random rng;
 
@@ -103,6 +104,7 @@ void NoteTrackEngine::restart() {
     _currentStep = -1;
 }
 
+unsigned int _currentStageRepeat = 1;
 TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
@@ -124,7 +126,10 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
         // handle reset measure
         if (relativeTick == 0) {
             reset();
+            _currentStageRepeat = 1;
         }
+        const auto &sequence = *_sequence;
+        const auto &step = sequence.step(_sequenceState.step());
 
         // advance sequence
         switch (_noteTrack.playMode()) {
@@ -141,7 +146,16 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 _freeRelativeTick = 0;
             }
             if (relativeTick == 0) {
-                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+
+                if (_currentStageRepeat >= step.stageRepeats()) {
+                    _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                    _currentStageRepeat = 1;
+
+                } else {
+                    _currentStageRepeat++;
+                    triggerStep(tick + divisor, divisor, _sequenceState.step());
+                }
+
                 recordStep(tick, divisor);
                 triggerStep(tick, divisor);
             }
@@ -355,6 +369,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         step.setNoteVariationRange(0);
         step.setNoteVariationProbability(NoteSequence::NoteVariationProbability::Max);
         step.setCondition(Types::Condition::Off);
+        step.setStageRepeats(1);
 
         stepWritten = true;
     };

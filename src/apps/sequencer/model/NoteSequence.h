@@ -33,6 +33,7 @@ public:
     typedef SignedValue<7> NoteVariationRange;
     typedef UnsignedValue<3> NoteVariationProbability;
     typedef UnsignedValue<7> Condition;
+    typedef UnsignedValue<3> StageRepeats;
 
     static_assert(int(Types::Condition::Last) <= Condition::Max + 1, "Condition enum does not fit");
 
@@ -50,6 +51,7 @@ public:
         NoteVariationRange,
         NoteVariationProbability,
         Condition,
+        StageRepeats,
         Last
     };
 
@@ -68,6 +70,7 @@ public:
         case Layer::NoteVariationRange:         return "NOTE RANGE";
         case Layer::NoteVariationProbability:   return "NOTE PROB";
         case Layer::Condition:                  return "CONDITION";
+        case Layer::StageRepeats:               return "REPEAT";
         case Layer::Last:                       break;
         }
         return nullptr;
@@ -81,6 +84,12 @@ public:
         //----------------------------------------
         // Properties
         //----------------------------------------
+
+        // stage
+        void setStageRepeats(int repeats) {
+            _data1.stageRepeats = StageRepeats::clamp(repeats - 1);
+        }
+        unsigned int stageRepeats() const { return _data1.stageRepeats + 1; }
 
         // gate
 
@@ -217,7 +226,8 @@ public:
             BitField<uint32_t, 2, RetriggerProbability::Bits> retriggerProbability;
             BitField<uint32_t, 5, GateOffset::Bits> gateOffset;
             BitField<uint32_t, 9, Condition::Bits> condition;
-            // 16 bits left
+            BitField<uint32_t, 16, StageRepeats::Bits> stageRepeats;
+            // 13 bits left
         } _data1;
     };
 
