@@ -54,7 +54,9 @@ private:
         SyncMeasure,
         Scale,
         RootNote,
+        MonitorMode,
         RecordMode,
+        MidiInput,
         CvGateInput,
         CurveCvInput,
         Last
@@ -69,7 +71,9 @@ private:
         case SyncMeasure:       return "Sync Measure";
         case Scale:             return "Scale";
         case RootNote:          return "Root Note";
+        case MonitorMode:       return "Monitor Mode";
         case RecordMode:        return "Record Mode";
+        case MidiInput:         return "MIDI Input";
         case CvGateInput:       return "CV/Gate Input";
         case CurveCvInput:      return "Curve CV Input";
         case Last:              break;
@@ -104,8 +108,14 @@ private:
         case RootNote:
             _project.printRootNote(str);
             break;
+        case MonitorMode:
+            _project.printMonitorMode(str);
+            break;
         case RecordMode:
             _project.printRecordMode(str);
+            break;
+        case MidiInput:
+            _project.printMidiInput(str);
             break;
         case CvGateInput:
             _project.printCvGateInput(str);
@@ -140,8 +150,14 @@ private:
         case RootNote:
             _project.editRootNote(value, shift);
             break;
+        case MonitorMode:
+            _project.editMonitorMode(value, shift);
+            break;
         case RecordMode:
             _project.editRecordMode(value, shift);
+            break;
+        case MidiInput:
+            _project.editMidiInput(value, shift);
             break;
         case CvGateInput:
             _project.editCvGateInput(value, shift);

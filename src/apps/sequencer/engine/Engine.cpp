@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include "Config.h"
+#include "MidiUtils.h"
 
 #include "core/Debug.h"
 #include "core/midi/MidiMessage.h"
@@ -25,6 +26,8 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &di
 
     _usbMidi.setConnectHandler([this] (uint16_t vendorId, uint16_t productId) { usbMidiConnect(vendorId, productId); });
     _usbMidi.setDisconnectHandler([this] () { usbMidiDisconnect(); });
+
+    _midiMonitoring.inputChanged(_project);
 }
 
 void Engine::init() {
@@ -67,9 +70,10 @@ void Engine::update() {
         while (_clock.checkTick(&tick)) {}
 
         // consume midi events
+        uint8_t cable;
         MidiMessage message;
         while (_midi.recv(&message)) {}
-        while (_usbMidi.recv(&message)) {}
+        while (_usbMidi.recv(&cable, &message)) {}
 
         _cvInput.update();
         updateOverrides();
@@ -145,17 +149,16 @@ void Engine::update() {
         }
 
         // update midi outputs, force sending CC on first tick
-        _midiOutputEngine.update(tick == 0);
-    }
-
-    // update midi output engine when not running to process data from track monitoring
-    if (!_clock.isRunning()) {
-        _midiOutputEngine.update();
+        if (tick == 0) {
+            _midiOutputEngine.update(true);
+        }
     }
 
     for (auto trackEngine : _trackEngines) {
         trackEngine->update(dt);
     }
+
+    _midiOutputEngine.update();
 
     updateTrackOutputs();
     updateOverrides();
@@ -311,12 +314,12 @@ bool Engine::trackEnginesConsistent() const {
     return true;
 }
 
-bool Engine::sendMidi(MidiPort port, const MidiMessage &message) {
+bool Engine::sendMidi(MidiPort port, uint8_t cable, const MidiMessage &message) {
     switch (port) {
     case MidiPort::Midi:
         return _midi.send(message);
     case MidiPort::UsbMidi:
-        return _usbMidi.send(message);
+        return _usbMidi.send(cable, message);
     case MidiPort::CvGate:
         // input only
         break;
@@ -363,7 +366,8 @@ void Engine::onClockMidi(uint8_t data) {
         _midi.send(MidiMessage(data));
     }
     if (clockSetup.usbTx()) {
-        _usbMidi.send(MidiMessage(data));
+        // always send clock on cable 0
+        _usbMidi.send(0, MidiMessage(data));
     }
 }
 
@@ -596,14 +600,23 @@ void Engine::usbMidiDisconnect() {
 }
 
 void Engine::receiveMidi() {
+    // reset MIDI monitoring if monitoring config has changed
+    if (_midiMonitoring.inputChanged(_project)) {
+        for (auto trackEngine : _trackEngines) {
+            trackEngine->clearMidiMonitoring();
+        }
+    }
+
+    // receive MIDI messages from ports
     MidiMessage message;
     while (_midi.recv(&message)) {
         message.fixFakeNoteOff();
-        receiveMidi(MidiPort::Midi, message);
+        receiveMidi(MidiPort::Midi, 0, message);
     }
-    while (_usbMidi.recv(&message)) {
+    uint8_t cable;
+    while (_usbMidi.recv(&cable, &message)) {
         message.fixFakeNoteOff();
-        receiveMidi(MidiPort::UsbMidi, message);
+        receiveMidi(MidiPort::UsbMidi, cable, message);
     }
 
     // derive MIDI messages from CV/Gate input
@@ -613,12 +626,12 @@ void Engine::receiveMidi() {
         break;
     case Types::CvGateInput::Cv1Cv2:
         _cvGateToMidiConverter.convert(_cvInput.channel(0), _cvInput.channel(1), 0, [this] (const MidiMessage &message) {
-            receiveMidi(MidiPort::CvGate, message);
+            receiveMidi(MidiPort::CvGate, 0, message);
         });
         break;
     case Types::CvGateInput::Cv3Cv4:
         _cvGateToMidiConverter.convert(_cvInput.channel(2), _cvInput.channel(3), 1, [this] (const MidiMessage &message) {
-            receiveMidi(MidiPort::CvGate, message);
+            receiveMidi(MidiPort::CvGate, 0, message);
         });
         break;
     case Types::CvGateInput::Last:
@@ -626,7 +639,7 @@ void Engine::receiveMidi() {
     }
 }
 
-void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
+void Engine::receiveMidi(MidiPort port, uint8_t cable, const MidiMessage &message) {
     // filter out real-time and system messages
     if (message.isRealTimeMessage() || message.isSystemMessage()) {
         return;
@@ -634,9 +647,14 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
 
     // let receive handler consume messages (controllers in UI task)
     if (_midiReceiveHandler) {
-        if (_midiReceiveHandler(port, message)) {
+        if (_midiReceiveHandler(port, cable, message)) {
             return;
         }
+    }
+
+    // discard all messages not from cable 0
+    if (cable != 0) {
+        return;
     }
 
     // let midi learn inspect messages (except from virtual CV/Gate messages)
@@ -660,6 +678,14 @@ void Engine::receiveMidi(MidiPort port, const MidiMessage &message) {
     }
 
     // midi monitoring (and recording)
+    if (port != MidiPort::CvGate) {
+        if (_project.midiInputMode() == Types::MidiInputMode::Off) {
+            return;
+        }
+        if (_project.midiInputMode() == Types::MidiInputMode::Source && !MidiUtils::matchSource(port, message, _project.midiInputSource())) {
+            return;
+        }
+    }
     monitorMidi(message);
 }
 
@@ -690,6 +716,8 @@ void Engine::monitorMidi(const MidiMessage &message) {
         sendMidi(currentTrack, MidiMessage::makeNoteOff(0, message.note()));
         _midiMonitoring.lastNote = -1;
         _midiMonitoring.lastTrack = currentTrack;
+    } else {
+        sendMidi(currentTrack, message);
     }
 }
 

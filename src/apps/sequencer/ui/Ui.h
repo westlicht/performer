@@ -46,7 +46,13 @@ private:
     Lcd &_lcd;
     ButtonLedMatrix &_blm;
     Encoder &_encoder;
-    RingBuffer<std::pair<MidiPort, MidiMessage>, 16> _midiMessages;
+
+    struct ReceiveMidiEvent {
+        MidiPort port;
+        uint8_t cable;
+        MidiMessage message;
+    };
+    RingBuffer<ReceiveMidiEvent, 16> _receiveMidiEvents;
 
     uint8_t _frameBufferData[CONFIG_LCD_WIDTH * CONFIG_LCD_HEIGHT];
     FrameBuffer8bit _frameBuffer;

@@ -55,6 +55,7 @@ public:
     }
 
     static Types::LayerRange layerRange(Layer layer);
+    static int layerDefaultValue(Layer layer);
 
     class Step {
     public:

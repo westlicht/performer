@@ -4,10 +4,12 @@
 
 #include "core/midi/MidiMessage.h"
 
-// Compatible with Launchpad Mk2
-class LaunchpadMk2Device : public LaunchpadDevice {
+// Compatible with Launchpad Mini Mk3 and Launchpad X
+class LaunchpadMk3Device : public LaunchpadDevice {
 public:
-    LaunchpadMk2Device();
+    LaunchpadMk3Device();
+
+    void initialize() override;
 
     void recvMidi(uint8_t cable, const MidiMessage &message) override;
 
@@ -22,7 +24,7 @@ public:
     void syncLeds() override;
 
 private:
-    static constexpr uint8_t Cable = 0;
+    static constexpr uint8_t Cable = 1;
 
     inline uint8_t mapColor(int red, int green) const {
         static const uint8_t map[] = {

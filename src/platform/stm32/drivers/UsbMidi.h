@@ -15,19 +15,21 @@ public:
 
     void init() {}
 
-    bool send(const MidiMessage &message) {
+    bool send(uint8_t cable, const MidiMessage &message) {
         if (_txQueue.full()) {
             return false;
         }
-        _txQueue.write(message);
+        _txQueue.write({ cable, message });
         return true;
     }
 
-    bool recv(MidiMessage *message) {
+    bool recv(uint8_t *cable, MidiMessage *message) {
         if (_rxQueue.empty()) {
             return false;
         }
-        *message = _rxQueue.read();
+        auto cableAndMessage = _rxQueue.read();
+        *cable = cableAndMessage.cable;
+        *message = cableAndMessage.message;
         return true;
     }
 
@@ -58,25 +60,27 @@ private:
         }
     }
 
-    void enqueueMessage(MidiMessage &message) {
+    void enqueueMessage(uint8_t cable, const MidiMessage &message) {
         if (_rxQueue.full()) {
             // overflow
             ++_rxOverflow;
         }
-        _rxQueue.write(message);
+        _rxQueue.write({ cable, message });
     }
 
-    void enqueueData(uint8_t data) {
+    void enqueueData(uint8_t cable, uint8_t data) {
         if (_recvFilter && !_recvFilter(data)) {
             // _recvFilter(data);
         }
     }
 
-    bool dequeueMessage(MidiMessage *message) {
+    bool dequeueMessage(uint8_t *cable, MidiMessage *message) {
         if (_txQueue.empty()) {
             return false;
         }
-        *message = _txQueue.read();
+        auto messageAndCable = _txQueue.readAndReplace();
+        *cable = messageAndCable.cable;
+        *message = messageAndCable.message;
         return true;
     }
 
@@ -84,8 +88,13 @@ private:
     DisconnectHandler _disconnectHandler;
     RecvFilter _recvFilter;
 
-    RingBuffer<MidiMessage, 128> _txQueue;
-    RingBuffer<MidiMessage, 16> _rxQueue;
+    struct CableAndMessage {
+        uint8_t cable;
+        MidiMessage message;
+    };
+
+    RingBuffer<CableAndMessage, 128> _txQueue;
+    RingBuffer<CableAndMessage, 16> _rxQueue;
     volatile uint32_t _rxOverflow = 0;
 
     friend class UsbH;

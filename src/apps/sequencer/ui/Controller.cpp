@@ -11,6 +11,6 @@ Controller::Controller(ControllerManager &manager, Model &model, Engine &engine)
 Controller::~Controller() {
 }
 
-bool Controller::sendMidi(const MidiMessage &message) {
-    return _manager.sendMidi(message);
+bool Controller::sendMidi(uint8_t cable, const MidiMessage &message) {
+    return _manager.sendMidi(cable, message);
 }

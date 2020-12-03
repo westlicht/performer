@@ -78,6 +78,15 @@ enum ProjectVersion {
     // expanded NoteSequence::Step to 64 bits, expanded NoteSequence::Step::Condition to 7 bits
     Version27 = 27,
 
+    // added CurveTrack::offset
+    Version28 = 28,
+
+    // added Project::midiInput
+    Version29 = 29,
+
+    // added Project::monitorMode
+    Version30 = 30,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

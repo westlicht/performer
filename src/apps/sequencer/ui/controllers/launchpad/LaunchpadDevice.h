@@ -17,7 +17,7 @@ public:
     static constexpr int SceneRow = 8;
     static constexpr int FunctionRow = 9;
 
-    typedef std::function<bool(const MidiMessage &)> SendMidiHandler;
+    typedef std::function<bool(uint8_t cable, const MidiMessage &)> SendMidiHandler;
     typedef std::function<void(int, int, bool)> ButtonHandler;
 
     struct Color {
@@ -41,7 +41,11 @@ public:
         _sendMidiHandler = sendMidiHandler;
     }
 
-    virtual void recvMidi(const MidiMessage &message);
+    virtual void recvMidi(uint8_t cable, const MidiMessage &message);
+
+    // initialization
+
+    virtual void initialize() {}
 
     // button handling
 
@@ -71,9 +75,11 @@ public:
     virtual void syncLeds();
 
 protected:
-    bool sendMidi(const MidiMessage &message) {
+    static constexpr uint8_t Cable = 0;
+
+    bool sendMidi(uint8_t cable, const MidiMessage &message) {
         if (_sendMidiHandler) {
-            return _sendMidiHandler(message);
+            return _sendMidiHandler(cable, message);
         }
         return false;
     }

@@ -2,6 +2,7 @@
 
 #include "LaunchpadDevice.h"
 #include "LaunchpadMk2Device.h"
+#include "LaunchpadMk3Device.h"
 #include "LaunchpadProDevice.h"
 
 #include "ui/Controller.h"
@@ -15,7 +16,7 @@ public:
 
     virtual void update() override;
 
-    virtual void recvMidi(const MidiMessage &message) override;
+    virtual void recvMidi(uint8_t cable, const MidiMessage &message) override;
 
 private:
     using Color = LaunchpadDevice::Color;
@@ -30,10 +31,19 @@ private:
     inline Color colorYellow(int brightness = 3) const { return Color(brightness, brightness); }
 
     struct Button {
-        int row;
-        int col;
+        int row = -1;
+        int col = -1;
 
+        Button() = default;
         Button(int row, int col) : row(row), col(col) {}
+
+        bool operator==(const Button &other) const {
+            return row == other.row && col == other.col;
+        }
+
+        bool operator!=(const Button &other) const {
+            return !(*this == other);
+        }
 
         template<typename T>
         bool is() const {
@@ -47,6 +57,13 @@ private:
         int gridIndex() const { return row * 8 + col; }
         int function() const { return isFunction() ? col : -1; }
         int scene() const { return isScene() ? col : -1; }
+    };
+
+    enum class ButtonAction {
+        Down,
+        Up,
+        Press,
+        DoublePress
     };
 
     struct Navigation {
@@ -68,15 +85,13 @@ private:
 
     // Global handlers
     void globalDraw();
-    bool globalButtonDown(const Button &button);
-    bool globalButtonUp(const Button &button);
+    bool globalButton(const Button &button, ButtonAction action);
 
     // Sequence mode
     void sequenceEnter();
     void sequenceExit();
     void sequenceDraw();
-    void sequenceButtonDown(const Button &button);
-    void sequenceButtonUp(const Button &button);
+    void sequenceButton(const Button &button, ButtonAction action);
 
     void sequenceUpdateNavigation();
 
@@ -84,6 +99,8 @@ private:
     void sequenceSetFirstStep(int step);
     void sequenceSetLastStep(int step);
     void sequenceSetRunMode(int mode);
+    void sequenceToggleStep(int row, int col);
+    void sequenceToggleNoteStep(int row, int col);
     void sequenceEditStep(int row, int col);
     void sequenceEditNoteStep(int row, int col);
     void sequenceEditCurveStep(int row, int col);
@@ -99,15 +116,13 @@ private:
     void patternEnter();
     void patternExit();
     void patternDraw();
-    void patternButtonDown(const Button &button);
-    void patternButtonUp(const Button &button);
+    void patternButton(const Button &button, ButtonAction action);
 
     // Performer mode
     void performerEnter();
     void performerExit();
     void performerDraw();
-    void performerButtonDown(const Button &button);
-    void performerButtonUp(const Button &button);
+    void performerButton(const Button &button, ButtonAction action);
 
     // Navigation
     void navigationDraw(const Navigation &navigation);
@@ -147,6 +162,7 @@ private:
     }
 
     // Button handling
+    void dispatchButtonEvent(const Button& button, ButtonAction action);
     void buttonDown(int row, int col);
     void buttonUp(int row, int col);
     bool buttonState(int row, int col) const;
@@ -156,8 +172,14 @@ private:
         return buttonState(T::row, T::col);
     }
 
+    struct {
+        Button lastButton;
+        uint32_t lastTicks = 0;
+        uint8_t count = 1;
+    } _buttonTracker;
+
     Project &_project;
-    Container<LaunchpadDevice, LaunchpadMk2Device, LaunchpadProDevice> _deviceContainer;
+    Container<LaunchpadDevice, LaunchpadMk2Device, LaunchpadMk3Device, LaunchpadProDevice> _deviceContainer;
     LaunchpadDevice *_device;
     Mode _mode = Mode::Sequence;
 

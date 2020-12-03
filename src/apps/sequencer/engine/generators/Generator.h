@@ -13,6 +13,7 @@ typedef std::array<uint8_t, CONFIG_STEP_COUNT> GeneratorPattern;
 class Generator {
 public:
     enum class Mode {
+        InitLayer,
         Euclidean,
         Random,
         Last
@@ -20,6 +21,7 @@ public:
 
     static const char *modeName(Mode mode) {
         switch (mode) {
+        case Mode::InitLayer:   return "Init Layer";
         case Mode::Euclidean:   return "Euclidean";
         case Mode::Random:      return "Random";
         case Mode::Last:        break;
@@ -48,7 +50,7 @@ public:
 
     virtual void update() = 0;
 
-    static Generator *create(Generator::Mode mode, SequenceBuilder &builder);
+    static Generator *execute(Generator::Mode mode, SequenceBuilder &builder);
 
 protected:
     SequenceBuilder &_builder;

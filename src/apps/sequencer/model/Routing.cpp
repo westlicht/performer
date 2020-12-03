@@ -258,39 +258,41 @@ struct TargetInfo {
     int16_t max;
     int16_t minDef;
     int16_t maxDef;
+    int8_t shiftStep;
 };
 
 const TargetInfo targetInfos[int(Routing::Target::Last)] = {
-    [int(Routing::Target::None)]                            = { 0,      0,      0,      0       },
+    [int(Routing::Target::None)]                            = { 0,      0,      0,      0,      0       },
     // Engine targets
-    [int(Routing::Target::Play)]                            = { 0,      1,      0,      1       },
-    [int(Routing::Target::Record)]                          = { 0,      1,      0,      1       },
-    [int(Routing::Target::TapTempo)]                        = { 0,      1,      0,      1       },
+    [int(Routing::Target::Play)]                            = { 0,      1,      0,      1,      1       },
+    [int(Routing::Target::Record)]                          = { 0,      1,      0,      1,      1       },
+    [int(Routing::Target::TapTempo)]                        = { 0,      1,      0,      1,      1       },
     // Project targets
-    [int(Routing::Target::Tempo)]                           = { 1,      1000,   100,    200     },
-    [int(Routing::Target::Swing)]                           = { 50,     75,     50,     75      },
+    [int(Routing::Target::Tempo)]                           = { 1,      1000,   100,    200,    10      },
+    [int(Routing::Target::Swing)]                           = { 50,     75,     50,     75,     5       },
     // PlayState targets
-    [int(Routing::Target::Mute)]                            = { 0,      1,      0,      1       },
-    [int(Routing::Target::Fill)]                            = { 0,      1,      0,      1       },
-    [int(Routing::Target::FillAmount)]                      = { 0,      100,    0,      100     },
-    [int(Routing::Target::Pattern)]                         = { 0,      15,     0,      15      },
+    [int(Routing::Target::Mute)]                            = { 0,      1,      0,      1,      1       },
+    [int(Routing::Target::Fill)]                            = { 0,      1,      0,      1,      1       },
+    [int(Routing::Target::FillAmount)]                      = { 0,      100,    0,      100,    10      },
+    [int(Routing::Target::Pattern)]                         = { 0,      15,     0,      15,     1       },
     // Track targets
-    [int(Routing::Target::SlideTime)]                       = { 0,      100,    0,      100,    },
-    [int(Routing::Target::Octave)]                          = { -10,    10,     -1,     1       },
-    [int(Routing::Target::Transpose)]                       = { -60,    60,     -12,    12      },
-    [int(Routing::Target::Rotate)]                          = { -64,    64,     0,      64      },
-    [int(Routing::Target::GateProbabilityBias)]             = { -8,     8,      -8,     8       },
-    [int(Routing::Target::RetriggerProbabilityBias)]        = { -8,     8,      -8,     8       },
-    [int(Routing::Target::LengthBias)]                      = { -8,     8,      -8,     8       },
-    [int(Routing::Target::NoteProbabilityBias)]             = { -8,     8,      -8,     8       },
-    [int(Routing::Target::ShapeProbabilityBias)]            = { -8,     8,      -8,     8       },
+    [int(Routing::Target::SlideTime)]                       = { 0,      100,    0,      100,    10      },
+    [int(Routing::Target::Octave)]                          = { -10,    10,     -1,     1,      1       },
+    [int(Routing::Target::Transpose)]                       = { -60,    60,     -12,    12,     12      },
+    [int(Routing::Target::Offset)]                          = { -500,   500,    -100,   100,    100     },
+    [int(Routing::Target::Rotate)]                          = { -64,    64,     0,      64,     16      },
+    [int(Routing::Target::GateProbabilityBias)]             = { -8,     8,      -8,     8,      8       },
+    [int(Routing::Target::RetriggerProbabilityBias)]        = { -8,     8,      -8,     8,      8       },
+    [int(Routing::Target::LengthBias)]                      = { -8,     8,      -8,     8,      8       },
+    [int(Routing::Target::NoteProbabilityBias)]             = { -8,     8,      -8,     8,      8       },
+    [int(Routing::Target::ShapeProbabilityBias)]            = { -8,     8,      -8,     8,      8       },
     // Sequence targets
-    [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63      },
-    [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63      },
-    [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5       },
-    [int(Routing::Target::Divisor)]                         = { 1,      768,    6,      24      },
-    [int(Routing::Target::Scale)]                           = { 0,      23,     0,      23      },
-    [int(Routing::Target::RootNote)]                        = { 0,      11,     0,      11      },
+    [int(Routing::Target::FirstStep)]                       = { 0,      63,     0,      63,     16      },
+    [int(Routing::Target::LastStep)]                        = { 0,      63,     0,      63,     16      },
+    [int(Routing::Target::RunMode)]                         = { 0,      5,      0,      5,      1       },
+    [int(Routing::Target::Divisor)]                         = { 1,      768,    6,      24,     1       },
+    [int(Routing::Target::Scale)]                           = { 0,      23,     0,      23,     1       },
+    [int(Routing::Target::RootNote)]                        = { 0,      11,     0,      11,     1       },
 };
 
 float Routing::normalizeTargetValue(Routing::Target target, float value) {
@@ -308,9 +310,9 @@ std::pair<float, float> Routing::normalizedDefaultRange(Target target) {
     return { normalizeTargetValue(target, info.minDef), normalizeTargetValue(target, info.maxDef) };
 }
 
-float Routing::targetValueStep(Routing::Target target) {
+float Routing::targetValueStep(Routing::Target target, bool shift) {
     const auto &info = targetInfos[int(target)];
-    return 1.f / (info.max - info.min);
+    return 1.f / (info.max - info.min) * (shift ? info.shiftStep : 1);
 }
 
 void Routing::printTargetValue(Routing::Target target, float normalized, StringBuilder &str) {
@@ -333,10 +335,14 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::Rotate:
         str("%+d", intValue);
         break;
+    case Target::Offset:
+        str("%+.2fV", value * 0.01f);
+        break;
     case Target::GateProbabilityBias:
     case Target::RetriggerProbabilityBias:
     case Target::LengthBias:
     case Target::NoteProbabilityBias:
+    case Target::ShapeProbabilityBias:
         str("%+.1f%%", value * 12.5f);
         break;
     case Target::Divisor:
@@ -350,6 +356,9 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
     case Target::Pattern:
         str("%d", intValue + 1);
         break;
+    case Target::Play:
+    case Target::Record:
+    case Target::TapTempo:
     case Target::Mute:
     case Target::Fill:
         str(intValue ? "on" : "off");

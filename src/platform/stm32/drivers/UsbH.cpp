@@ -42,11 +42,18 @@ static const usbh_low_level_driver_t * const lld_drivers[] = {
 	nullptr
 };
 
+static constexpr size_t WriteBufferSize = 64;
+static uint8_t writeBuffer[2][WriteBufferSize];
+static size_t writeBufferSize;
+static size_t writeBufferIndex;
+static size_t writeBufferPos;
+
 struct MidiDriverHandler {
 
-    static void connectHandler(int device, uint16_t vendorId, uint16_t productId) {
-        DBG("MIDI device connected (id=%d, vendorId=%04x, productId=%04x)", device, vendorId, productId);
+    static void connectHandler(int device, uint16_t vendorId, uint16_t productId, uint32_t maxPacketSize) {
+        DBG("MIDI device connected (id=%d, vendorId=%04x, productId=%04x, maxPacketSize=%ld)", device, vendorId, productId, maxPacketSize);
         g_usbh->midiConnectDevice(device, vendorId, productId);
+        writeBufferSize = std::min(WriteBufferSize, size_t(maxPacketSize));
     }
 
     static void disconnectHandler(int device) {
@@ -55,7 +62,7 @@ struct MidiDriverHandler {
     }
 
     static void recvHandler(int device, uint8_t *data) {
-        // uint8_t cable = data[0] >> 4;
+        uint8_t cable = data[0] >> 4;
         uint8_t code = data[0] & 0xf;
         MidiMessage message;
 
@@ -69,13 +76,13 @@ struct MidiDriverHandler {
             return;
         case 0x5: // (1 bytes) Single-byte System Common Message or SysEx ends with following single byte.
             message = MidiMessage(data[1]);
-            g_usbh->midiEnqueueMessage(device, message);
+            g_usbh->midiEnqueueMessage(device, cable, message);
             break;
         case 0x2: // (2 bytes) Two-byte System Common messages like MTC, SongSelect, etc.
         case 0xC: // (2 bytes) Program Change
         case 0xD: // (2 bytes) Channel Pressure
             message = MidiMessage(data[1], data[2]);
-            g_usbh->midiEnqueueMessage(device, message);
+            g_usbh->midiEnqueueMessage(device, cable, message);
             break;
         case 0x3: // (3 bytes) Three-byte System Common messages like SPP, etc.
         case 0x8: // (3 bytes) Note-off
@@ -84,23 +91,91 @@ struct MidiDriverHandler {
         case 0xB: // (3 bytes) Control Change
         case 0xE: // (3 bytes) PitchBend Change
             message = MidiMessage(data[1], data[2], data[3]);
-            g_usbh->midiEnqueueMessage(device, message);
+            g_usbh->midiEnqueueMessage(device, cable, message);
             break;
         case 0xF: // (1 bytes) Single Byte
-            g_usbh->midiEnqueueData(device, data[1]);
+            g_usbh->midiEnqueueData(device, cable, data[1]);
             return;
         }
     }
 
-    static void write(uint8_t device, MidiMessage &message) {
-        uint8_t data[4];
+    static bool write(uint8_t device, uint8_t cable, const MidiMessage &message) {
+        bool flushed = true;
 
-        data[0] = message.status() >> 4;
-        data[1] = message.status();
-        data[2] = message.data0();
-        data[3] = message.data1();
+        if (message.isSystemExclusive()) {
+            const uint8_t *payloadData = message.payloadData();
+            size_t payloadLength = message.payloadLength();
+            if (payloadData && payloadLength > 0) {
+                size_t messageLength = payloadLength + 2;
+                size_t writeSize = ((messageLength + 3) / 4) * 4;
+                if (writeBufferPos + writeSize >= writeBufferSize) {
+                    flush(device);
+                    flushed = true;
+                }
 
-        usbh_midi_write(device, data, 4, &writeCallback);
+                size_t messageIndex = 0;
+                while (messageIndex < messageLength) {
+                    uint8_t *p = &writeBuffer[writeBufferIndex][writeBufferPos];
+                    size_t chunkSize;
+                    switch (messageLength - messageIndex) {
+                    case 1:
+                        p[0] = 0x5;
+                        chunkSize = 1;
+                        break;
+                    case 2:
+                        p[0] = 0x6;
+                        chunkSize = 2;
+                        break;
+                    case 3:
+                        p[0] = 0x7;
+                        chunkSize = 3;
+                        break;
+                    default:
+                        p[0] = 0x4;
+                        chunkSize = 3;
+                        break;
+                    }
+                    p[0] |= cable << 4;
+                    for (size_t i = 0; i < chunkSize; ++i) {
+                        uint8_t byte;
+                        if (messageIndex == 0) {
+                            byte = 0xf0;
+                        } else if (messageIndex == messageLength - 1) {
+                            byte = 0xf7;
+                        } else {
+                            byte = payloadData[messageIndex - 1];
+                        }
+                        p[1 + i] = byte;
+                        ++messageIndex;
+                    }
+                    for (size_t i = chunkSize; i < 3; ++i) {
+                        p[1 + i] = 0;
+                    }
+                    writeBufferPos += 4;
+                }
+            }
+        } else {
+            if (writeBufferPos + 4 >= writeBufferSize) {
+                flush(device);
+                flushed = true;
+            }
+            uint8_t *p = &writeBuffer[writeBufferIndex][writeBufferPos];
+            p[0] = message.status() >> 4 | (cable << 4);
+            p[1] = message.status();
+            p[2] = message.data0();
+            p[3] = message.data1();
+            writeBufferPos += 4;
+        }
+
+        return flushed;
+    }
+
+    static void flush(uint8_t device) {
+        if (writeBufferPos > 0) {
+            usbh_midi_write(device, writeBuffer[writeBufferIndex], writeBufferPos, &writeCallback);
+            writeBufferIndex = (writeBufferIndex + 1) % 2;
+            writeBufferPos = 0;
+        }
     }
 
     static void writeCallback(uint8_t bytes_written) {
@@ -152,11 +227,19 @@ void UsbH::process() {
 
     // Start sending MIDI messages
     uint8_t device;
+    uint8_t cable;
     MidiMessage message;
-    if (midiDequeueMessage(&device, &message)) {
+    bool flushed = false;
+    while (midiDequeueMessage(&device, &cable, &message)) {
         if (midiDeviceConnected(device)) {
-            MidiDriverHandler::write(device, message);
+            flushed = MidiDriverHandler::write(device, cable, message);
+            if (flushed) {
+                break;
+            }
         }
+    }
+    if (!flushed) {
+        MidiDriverHandler::flush(device);
     }
 }
 

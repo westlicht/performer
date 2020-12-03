@@ -120,6 +120,7 @@ public:
     void clear();
     void clearPattern(int patternIndex);
     void copyPattern(int src, int dst);
+    bool duplicatePattern(int patternIndex);
 
     void gateOutputName(int index, StringBuilder &str) const;
     void cvOutputName(int index, StringBuilder &str) const;

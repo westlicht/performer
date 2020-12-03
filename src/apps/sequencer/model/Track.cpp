@@ -38,6 +38,14 @@ void Track::copyPattern(int src, int dst) {
     }
 }
 
+bool Track::duplicatePattern(int patternIndex) {
+    if (patternIndex < CONFIG_PATTERN_COUNT - 1) {
+        copyPattern(patternIndex, patternIndex + 1);
+        return true;
+    }
+    return false;
+}
+
 void Track::gateOutputName(int index, StringBuilder &str) const {
     switch (_trackMode) {
     case TrackMode::Note:

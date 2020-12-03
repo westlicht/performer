@@ -62,7 +62,10 @@ void register_project(py::module &m) {
         .def_property("syncMeasure", &Project::syncMeasure, &Project::setSyncMeasure)
         .def_property("scale", &Project::scale, &Project::setScale)
         .def_property("rootNote", &Project::rootNote, &Project::setRootNote)
+        .def_property("monitorMode", &Project::monitorMode, &Project::setMonitorMode)
         .def_property("recordMode", &Project::recordMode, &Project::setRecordMode)
+        .def_property("midiInputMode", &Project::midiInputMode, &Project::setMidiInputMode)
+        .def_property_readonly("midiInputSource", [] (Project &project) { return &project.midiInputSource(); })
         .def_property("cvGateInput", &Project::cvGateInput, &Project::setCvGateInput)
         .def_property("curveCvInput", &Project::curveCvInput, &Project::setCurveCvInput)
         .def_property_readonly("clockSetup", [] (Project &project) { return &project.clockSetup(); })
@@ -99,10 +102,24 @@ void register_project(py::module &m) {
 
     py::class_<Types> types(m, "Types");
 
+    py::enum_<Types::MonitorMode>(types, "MonitorMode")
+        .value("Always", Types::MonitorMode::Always)
+        .value("Stopped", Types::MonitorMode::Stopped)
+        .value("Off", Types::MonitorMode::Off)
+        .export_values()
+    ;
+
     py::enum_<Types::RecordMode>(types, "RecordMode")
         .value("Overdub", Types::RecordMode::Overdub)
         .value("Overwrite", Types::RecordMode::Overwrite)
         .value("StepRecord", Types::RecordMode::StepRecord)
+        .export_values()
+    ;
+
+    py::enum_<Types::MidiInputMode>(types, "MidiInputMode")
+        .value("Off", Types::MidiInputMode::Off)
+        .value("All", Types::MidiInputMode::All)
+        .value("Source", Types::MidiInputMode::Source)
         .export_values()
     ;
 
@@ -302,6 +319,7 @@ void register_project(py::module &m) {
         .def_property("fillMode", &CurveTrack::fillMode, &CurveTrack::setFillMode)
         .def_property("muteMode", &CurveTrack::muteMode, &CurveTrack::setMuteMode)
         .def_property("slideTime", &CurveTrack::slideTime, &CurveTrack::setSlideTime)
+        .def_property("offset", &CurveTrack::offset, &CurveTrack::setOffset)
         .def_property("rotate", &CurveTrack::rotate, &CurveTrack::setRotate)
         .def_property("shapeProbabilityBias", &CurveTrack::shapeProbabilityBias, &CurveTrack::setShapeProbabilityBias)
         .def_property("gateProbabilityBias", &CurveTrack::gateProbabilityBias, &CurveTrack::setGateProbabilityBias)
@@ -574,6 +592,7 @@ void register_project(py::module &m) {
         .value("SlideTime", Routing::Target::SlideTime)
         .value("Octave", Routing::Target::Octave)
         .value("Transpose", Routing::Target::Transpose)
+        .value("Offset", Routing::Target::Offset)
         .value("Rotate", Routing::Target::Rotate)
         .value("GateProbabilityBias", Routing::Target::GateProbabilityBias)
         .value("RetriggerProbabilityBias", Routing::Target::RetriggerProbabilityBias)

@@ -38,7 +38,7 @@ public:
     typedef std::array<TrackEngine *, CONFIG_TRACK_COUNT> TrackEngineArray;
     typedef std::array<UpdateReducer<os::time::ms(25)>, CONFIG_TRACK_COUNT> TrackUpdateReducerArray;
 
-    typedef std::function<bool(MidiPort port, const MidiMessage &message)> MidiReceiveHandler;
+    typedef std::function<bool(MidiPort port, uint8_t cable, const MidiMessage &message)> MidiReceiveHandler;
 
     typedef std::function<void(uint16_t vendorId, uint16_t productId)> UsbMidiConnectHandler;
     typedef std::function<void()> UsbMidiDisconnectHandler;
@@ -145,7 +145,7 @@ public:
 
     bool trackEnginesConsistent() const;
 
-    bool sendMidi(MidiPort port, const MidiMessage &message);
+    bool sendMidi(MidiPort port, uint8_t cable, const MidiMessage &message);
     void setMidiReceiveHandler(MidiReceiveHandler handler) { _midiReceiveHandler = handler; }
     void setUsbMidiConnectHandler(UsbMidiConnectHandler handler) { _usbMidiConnectHandler = handler; }
     void setUsbMidiDisconnectHandler(UsbMidiDisconnectHandler handler) { _usbMidiDisconnectHandler = handler; }
@@ -171,7 +171,7 @@ private:
     void usbMidiDisconnect();
 
     void receiveMidi();
-    void receiveMidi(MidiPort port, const MidiMessage &message);
+    void receiveMidi(MidiPort port, uint8_t cable, const MidiMessage &message);
     void monitorMidi(const MidiMessage &message);
 
     void initClock();
@@ -221,6 +221,23 @@ private:
 
     // midi monitoring
     struct {
+        Types::MidiInputMode lastMidiInputMode;
+        MidiSourceConfig lastMidiInputSource;
+        Types::CvGateInput lastCvGateInput;
+
+        bool inputChanged(const Project &project) {
+            bool changed =
+                project.midiInputMode() != lastMidiInputMode ||
+                project.midiInputSource() != lastMidiInputSource ||
+                project.cvGateInput() != lastCvGateInput;
+            if (changed) {
+                lastMidiInputMode = project.midiInputMode();
+                lastMidiInputSource = project.midiInputSource();
+                lastCvGateInput = project.cvGateInput();
+            }
+            return changed;
+        }
+
         int8_t lastNote = -1;
         int8_t lastTrack = -1;
     } _midiMonitoring;

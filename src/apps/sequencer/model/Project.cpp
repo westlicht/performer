@@ -34,7 +34,9 @@ void Project::clear() {
     setSyncMeasure(1);
     setScale(0);
     setRootNote(0);
+    setMonitorMode(Types::MonitorMode::Always);
     setRecordMode(Types::RecordMode::Overdub);
+    setMidiInputMode(Types::MidiInputMode::All);
     setCvGateInput(Types::CvGateInput::Off);
     setCurveCvInput(Types::CurveCvInput::Off);
 
@@ -104,7 +106,10 @@ void Project::write(VersionedSerializedWriter &writer) const {
     writer.write(_syncMeasure);
     writer.write(_scale);
     writer.write(_rootNote);
+    writer.write(_monitorMode);
     writer.write(_recordMode);
+    writer.write(_midiInputMode);
+    _midiInputSource.write(writer);
     writer.write(_cvGateInput);
     writer.write(_curveCvInput);
 
@@ -139,7 +144,12 @@ bool Project::read(VersionedSerializedReader &reader) {
     reader.read(_syncMeasure);
     reader.read(_scale);
     reader.read(_rootNote);
+    reader.read(_monitorMode, ProjectVersion::Version30);
     reader.read(_recordMode);
+    if (reader.dataVersion() >= ProjectVersion::Version29) {
+        reader.read(_midiInputMode);
+        _midiInputSource.read(reader);
+    }
     reader.read(_cvGateInput, ProjectVersion::Version6);
     reader.read(_curveCvInput, ProjectVersion::Version11);
 

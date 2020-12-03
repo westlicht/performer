@@ -126,9 +126,9 @@ void NoteSequencePage::pasteSequence() {
 }
 
 void NoteSequencePage::duplicateSequence() {
-    // TODO
-    // _project.selectedNoteSequence().duplicate();
-    showMessage("SEQUENCE DUPLICATED");
+    if (_project.selectedTrack().duplicatePattern(_project.selectedPatternIndex())) {
+        showMessage("SEQUENCE DUPLICATED");
+    }
 }
 
 void NoteSequencePage::initRoute() {

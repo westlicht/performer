@@ -53,6 +53,7 @@ public:
         SlideTime = TrackFirst,
         Octave,
         Transpose,
+        Offset,
         Rotate,
         GateProbabilityBias,
         RetriggerProbabilityBias,
@@ -93,6 +94,7 @@ public:
         case Target::SlideTime:                 return "Slide Time";
         case Target::Octave:                    return "Octave";
         case Target::Transpose:                 return "Transpose";
+        case Target::Offset:                    return "Offset";
         case Target::Rotate:                    return "Rotate";
         case Target::GateProbabilityBias:       return "Gate P. Bias";
         case Target::RetriggerProbabilityBias:  return "Retrig P. Bias";
@@ -143,6 +145,8 @@ public:
 
         case Target::Scale:                     return 23;
         case Target::RootNote:                  return 24;
+
+        case Target::Offset:                    return 25;
 
         case Target::Last:                      break;
         }
@@ -423,7 +427,7 @@ public:
         }
 
         void editMin(int value, bool shift) {
-            setMin(min() + value * targetValueStep(_target));
+            setMin(min() + value * targetValueStep(_target, shift));
         }
 
         void printMin(StringBuilder &str) const {
@@ -441,7 +445,7 @@ public:
         }
 
         void editMax(int value, bool shift) {
-            setMax(max() + value * targetValueStep(_target));
+            setMax(max() + value * targetValueStep(_target, shift));
         }
 
         void printMax(StringBuilder &str) const {
@@ -542,7 +546,7 @@ private:
     static float normalizeTargetValue(Target target, float value);
     static float denormalizeTargetValue(Target target, float normalized);
     static std::pair<float, float> normalizedDefaultRange(Target target);
-    static float targetValueStep(Target target);
+    static float targetValueStep(Target target, bool shift);
     static void printTargetValue(Target target, float normalized, StringBuilder &str);
 
     Project &_project;

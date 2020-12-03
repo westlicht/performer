@@ -7,8 +7,15 @@
 
 static Container<EuclideanGenerator, RandomGenerator> generatorContainer;
 
-Generator *Generator::create(Generator::Mode mode, SequenceBuilder &builder) {
+static void initLayer(SequenceBuilder &builder) {
+    builder.clearLayer();
+}
+
+Generator *Generator::execute(Generator::Mode mode, SequenceBuilder &builder) {
     switch (mode) {
+    case Mode::InitLayer:
+        initLayer(builder);
+        return nullptr;
     case Mode::Euclidean:
         return generatorContainer.create<EuclideanGenerator>(builder);
     case Mode::Random:

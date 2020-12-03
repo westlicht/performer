@@ -39,12 +39,12 @@ void Ui::init() {
 #endif
     _pageManager.push(&_pages.startup);
 
-    _engine.setMidiReceiveHandler([this] (MidiPort port, const MidiMessage &message) {
-        if (!_midiMessages.writable()) {
+    _engine.setMidiReceiveHandler([this] (MidiPort port, uint8_t cable, const MidiMessage &message) {
+        if (!_receiveMidiEvents.writable()) {
             DBG("ui midi buffer overflow");
-            _midiMessages.read();
+            _receiveMidiEvents.read();
         }
-        _midiMessages.write({ port, message });
+        _receiveMidiEvents.write({ port, cable, message });
         return port == MidiPort::UsbMidi && _controllerManager.isConnected();
     });
 
@@ -166,11 +166,14 @@ void Ui::handleEncoder() {
 }
 
 void Ui::handleMidi() {
-    while (_midiMessages.readable()) {
-        auto item = _midiMessages.read();
-        if (!_controllerManager.recvMidi(item.first, item.second)) {
-            MidiEvent midiEvent(item.first, item.second);
-            _pageManager.dispatchEvent(midiEvent);
+    while (_receiveMidiEvents.readable()) {
+        auto receiveEvent = _receiveMidiEvents.read();
+        if (!_controllerManager.recvMidi(receiveEvent.port, receiveEvent.cable, receiveEvent.message)) {
+            // only process events from cable 0
+            if (receiveEvent.cable == 0) {
+                MidiEvent midiEvent(receiveEvent.port, receiveEvent.message);
+                _pageManager.dispatchEvent(midiEvent);
+            }
         }
     }
 }

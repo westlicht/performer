@@ -475,7 +475,19 @@ void Frontend::writeMidiOutput(MidiEvent event) {
             _midiPort->send(message.raw(), message.length());
             break;
         case 1:
-            _usbMidiPort->send(message.raw(), message.length());
+            if (message.isSystemExclusive()) {
+                const uint8_t *payloadData = message.payloadData();
+                size_t payloadLength = message.payloadLength();
+                if (payloadData && payloadLength > 0) {
+                    std::vector<uint8_t> data;
+                    data.push_back(0xf0);
+                    data.insert(data.end(), payloadData, payloadData + payloadLength);
+                    data.push_back(0xf7);
+                    _usbMidiPort->send(data.data(), data.size());
+                }
+            } else {
+                _usbMidiPort->send(message.raw(), message.length());
+            }
             break;
         }
     }

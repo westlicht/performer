@@ -25,6 +25,32 @@ Types::LayerRange CurveSequence::layerRange(Layer layer) {
     return { 0, 0 };
 }
 
+int CurveSequence::layerDefaultValue(Layer layer)
+{
+    CurveSequence::Step step;
+
+    switch (layer) {
+    case Layer::Shape:
+        return step.shape();
+    case Layer::ShapeVariation:
+        return step.shapeVariation();
+    case Layer::ShapeVariationProbability:
+        return step.shapeVariationProbability();
+    case Layer::Min:
+        return step.min();
+    case Layer::Max:
+        return step.max();
+    case Layer::Gate:
+        return step.gate();
+    case Layer::GateProbability:
+        return step.gateProbability();
+    case Layer::Last:
+        break;
+    }
+
+    return 0;
+}
+
 int CurveSequence::Step::layerValue(Layer layer) const {
     switch (layer) {
     case Layer::Shape:

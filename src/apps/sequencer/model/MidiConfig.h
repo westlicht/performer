@@ -64,6 +64,9 @@ public:
         return _channel == -1;
     }
 
+    bool isFirst() const {
+        return _port == Types::MidiPort(0) && _channel == (IsSource ? -1 : 0);
+    }
 
     MidiConfig() {
         clear();

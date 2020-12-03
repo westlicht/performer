@@ -2,6 +2,8 @@
 
 #include "core/Debug.h"
 
+MidiMessage::PayloadPool MidiMessage::_payloadPool;
+
 void MidiMessage::dump(const MidiMessage &msg) {
     if (msg.isChannelMessage()) {
         switch (msg.channelMessage()) {
@@ -34,4 +36,65 @@ void MidiMessage::dump(const MidiMessage &msg) {
         }
     }
     DBG("Unknown(status: %02x, data0: %02x, data1: %02x)", msg.status(), msg.data0(), msg.data1());
+}
+
+void MidiMessage::setPayloadPool(uint8_t *data, size_t length) {
+    _payloadPool.data = data;
+    _payloadPool.length = length;
+}
+
+MidiMessage::PayloadID MidiMessage::allocatePayload(size_t length) {
+    if (!_payloadPool.valid()) {
+        return InvalidPayload;
+    }
+
+    if (_payloadPool.payloadID != InvalidPayload) {
+        return InvalidPayload;
+    }
+
+    _payloadPool.payloadID = 1;
+    _payloadPool.payloadRefCount = 1;
+    _payloadPool.payloadLength = length;
+    // DBG("allocate payload: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
+    return _payloadPool.payloadID;
+}
+
+void MidiMessage::incPayloadRefCount(PayloadID id) {
+    if (id != InvalidPayload) {
+        if (id == _payloadPool.payloadID) {
+            _payloadPool.payloadRefCount++;
+            // DBG("inc refcount: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
+        }
+    }
+}
+
+void MidiMessage::decPayloadRefCount(PayloadID id) {
+    if (id != InvalidPayload) {
+        if (id == _payloadPool.payloadID) {
+            _payloadPool.payloadRefCount--;
+            // DBG("dec refcount: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
+            if (_payloadPool.payloadRefCount == 0) {
+                // DBG("free payload: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
+                _payloadPool.payloadID = InvalidPayload;
+            }
+        }
+    }
+}
+
+uint8_t *MidiMessage::payloadData(PayloadID id) {
+    if (id != InvalidPayload) {
+        if (id == _payloadPool.payloadID) {
+            return _payloadPool.data;
+        }
+    }
+    return nullptr;
+}
+
+size_t MidiMessage::payloadLength(PayloadID id) {
+    if (id != InvalidPayload) {
+        if (id == _payloadPool.payloadID) {
+            return _payloadPool.payloadLength;
+        }
+    }
+    return 0;
 }

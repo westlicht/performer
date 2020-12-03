@@ -6,6 +6,8 @@ static const ControllerInfo controllerInfos[] = {
     { 0x1235, 0x0037, ControllerInfo::Type::Launchpad },    // Novation Launchpad Mini Mk2
     { 0x1235, 0x0069, ControllerInfo::Type::Launchpad },    // Novation Launchpad Mk2
     { 0x1235, 0x0051, ControllerInfo::Type::Launchpad },    // Novation Launchpad Pro
+    { 0x1235, 0x0113, ControllerInfo::Type::Launchpad },    // Novation Launchpad Mini Mk3
+    { 0x1235, 0x0104, ControllerInfo::Type::Launchpad },    // Novation Launchpad X
 };
 
 static const ControllerInfo *findController(uint16_t vendorId, uint16_t productId) {
@@ -50,15 +52,15 @@ void ControllerManager::update() {
     }
 }
 
-bool ControllerManager::recvMidi(MidiPort port, const MidiMessage &message) {
+bool ControllerManager::recvMidi(MidiPort port, uint8_t cable, const MidiMessage &message) {
     if (_controller && port == _port) {
-        _controller->recvMidi(message);
+        _controller->recvMidi(cable, message);
         return true;
     }
 
     return false;
 }
 
-bool ControllerManager::sendMidi(const MidiMessage &message) {
-    return _engine.sendMidi(_port, message);
+bool ControllerManager::sendMidi(uint8_t cable, const MidiMessage &message) {
+    return _engine.sendMidi(_port, cable, message);
 }

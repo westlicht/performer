@@ -125,8 +125,9 @@ void CurveSequencePage::pasteSequence() {
 }
 
 void CurveSequencePage::duplicateSequence() {
-    // _project.selectedCurveSequence().duplicate();
-    showMessage("SEQUENCE DUPLICATED");
+    if (_project.selectedTrack().duplicatePattern(_project.selectedPatternIndex())) {
+        showMessage("SEQUENCE DUPLICATED");
+    }
 }
 
 void CurveSequencePage::initRoute() {
