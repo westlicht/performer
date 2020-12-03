@@ -58,7 +58,7 @@ void SequenceState::calculateNextStepFree(Types::RunMode runMode, int firstStep,
         case Types::RunMode::Forward:
             if (_step >= lastStep) {
                 _nextStep = firstStep;
-                ++_nextIteration;
+                _nextIteration = _iteration + 1 ;
             } else {
                 _nextStep = _step + 1;
             }
@@ -66,7 +66,7 @@ void SequenceState::calculateNextStepFree(Types::RunMode runMode, int firstStep,
         case Types::RunMode::Backward:
             if (_step <= firstStep) {
                 _nextStep = lastStep;
-                ++_nextIteration;
+                _nextIteration = _iteration + 1 ;
             } else {
                 _nextStep = _step - 1;
             }
@@ -77,7 +77,7 @@ void SequenceState::calculateNextStepFree(Types::RunMode runMode, int firstStep,
                 _direction = -1;
             } else if (_direction < 0 && _step <= firstStep) {
                 _direction = 1;
-                ++_nextIteration;
+                _nextIteration = _iteration + 1 ;
             } else {
                 if (runMode == Types::RunMode::Pendulum) {
                     _nextStep = _step + _direction;

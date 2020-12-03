@@ -10,6 +10,7 @@
 
 #include "model/NoteSequence.h"
 #include "model/Scale.h"
+#include <iostream>
 
 static Random rng;
 
@@ -104,6 +105,7 @@ void NoteTrackEngine::restart() {
     _currentStep = -1;
 }
 
+unsigned int _currentStageRepeat = 1;
 TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
@@ -125,7 +127,10 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
         // handle reset measure
         if (relativeTick == 0) {
             reset();
+            _currentStageRepeat = 1;
         }
+        const auto &sequence = *_sequence;
+        const auto &step = sequence.step(_sequenceState.step());
 
         // advance sequence
         switch (_noteTrack.playMode()) {
@@ -133,16 +138,16 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
             if (relativeTick % divisor == 0) {
                 _sequenceState.advanceAligned(relativeTick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 recordStep(tick, divisor);
-                triggerStep(tick, divisor);
+                triggerStep(tick, divisor, _sequenceState.step());
                 
                 _sequenceState.calculateNextStepAligned(
-                        (relativeTick + divisor) / divisor, 
+                        relativeTick / divisor + 1, 
                         sequence.runMode(),
                         sequence.firstStep(),
                         sequence.lastStep(),
                         rng
                     );
-                triggerStep(tick + divisor, divisor, true);
+                triggerStep(tick + divisor, divisor, _sequenceState.nextStep());
             }
             break;
         case Types::PlayMode::Free:
@@ -151,11 +156,21 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 _freeRelativeTick = 0;
             }
             if (relativeTick == 0) {
-                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+
+                if (_currentStageRepeat >= step.stageRepeats()) {
+                    _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                    _currentStageRepeat = 1;
+                    _sequenceState.calculateNextStepFree(
+                        sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                    triggerStep(tick + divisor, divisor, _sequenceState.nextStep());
+
+                } else {
+                    _currentStageRepeat++;
+                    triggerStep(tick + divisor, divisor, _sequenceState.step());
+                }
+
                 recordStep(tick, divisor);
-                triggerStep(tick, divisor);
-                _sequenceState.calculateNextStepFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-                triggerStep(tick + divisor, divisor, true);
+                triggerStep(tick, divisor, _sequenceState.step());
             }
             break;
         case Types::PlayMode::Last:
@@ -299,7 +314,7 @@ void NoteTrackEngine::setMonitorStep(int index) {
         _stepRecorder.setStepIndex(index);
     }
 }
-void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextStep) {
+void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, uint8_t stepIndex) {
     int octave = _noteTrack.octave();
     int transpose = _noteTrack.transpose();
     int rotate = _noteTrack.rotate();
@@ -313,14 +328,6 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
 
     // TODO do we need to encounter rotate?
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
-    
-    int stepIndex;
-
-    if (forNextStep) {
-        stepIndex = _sequenceState.nextStep();
-    } else {
-        stepIndex = _currentStep;
-    }
 
     if (stepIndex < 0) return;
 
@@ -359,9 +366,8 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
 }
 
 void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
-    triggerStep(tick, divisor, false);
+    triggerStep(tick, divisor, _sequenceState.step());
 }
-
 void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
     if (!_engine.state().recording() || _model.project().recordMode() == Types::RecordMode::StepRecord || _sequenceState.prevStep() < 0) {
         return;
@@ -384,6 +390,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         step.setNoteVariationRange(0);
         step.setNoteVariationProbability(NoteSequence::NoteVariationProbability::Max);
         step.setCondition(Types::Condition::Off);
+        step.setStageRepeats(1);
 
         stepWritten = true;
     };

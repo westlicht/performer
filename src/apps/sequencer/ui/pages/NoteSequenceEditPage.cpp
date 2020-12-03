@@ -220,6 +220,12 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
             break;
         }
+        case Layer::StageRepeats: {
+            canvas.setColor(0xf);
+            FixedStringBuilder<8> str("x%d", step.stageRepeats());
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
+            break;
+        }
         case Layer::Last:
             break;
         }
@@ -398,6 +404,8 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Condition:
                 step.setCondition(ModelUtils::adjustedEnum(step.condition(), event.value()));
                 break;
+            case Layer::StageRepeats:
+                step.setStageRepeats(step.stageRepeats() + event.value());
             case Layer::Last:
                 break;
             }
@@ -464,7 +472,10 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
             setLayer(Layer::Slide);
             break;
         case Layer::Slide:
-            setLayer(Layer::GateOffset);
+            setLayer(Layer::StageRepeats);
+            break;
+        case Layer::StageRepeats:
+            setLayer(Layer::Gate);
             break;
         default:
             setLayer(Layer::GateOffset);
@@ -519,6 +530,7 @@ int NoteSequenceEditPage::activeFunctionKey() {
     case Layer::Gate:
     case Layer::GateOffset:
     case Layer::Slide:
+    case Layer::StageRepeats:
         return 0;
     case Layer::Retrigger:
     case Layer::RetriggerProbability:
@@ -682,6 +694,12 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         Types::printCondition(str, step.condition(), Types::ConditionFormat::Long);
         canvas.setFont(Font::Small);
         canvas.drawTextCentered(64 + 32, 16, 96, 32, str);
+        break;
+    case Layer::StageRepeats:
+        str.reset();
+        str("x%d", step.stageRepeats());
+        canvas.setFont(Font::Small);
+        canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
         break;
     case Layer::Last:
         break;

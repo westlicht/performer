@@ -11,6 +11,7 @@ public:
     int step() const { return _step; }
     int prevStep() const { return _prevStep; }
     int nextStep() const { return _nextStep; }
+    bool hasNextStep() const { return _nextStep != -1; }
     int direction() const { return _direction; }
     uint32_t iteration() const { return _iteration; }
 
