@@ -2,6 +2,7 @@
 
 #include "core/Debug.h"
 #include "core/math/Math.h"
+#include <iostream>
 
 static int randomStep(int firstStep, int lastStep, Random &rng) {
     return rng.nextRange(lastStep - firstStep + 1) + firstStep;
@@ -31,7 +32,7 @@ void SequenceState::advanceFree(Types::RunMode runMode, int firstStep, int lastS
 
 void SequenceState::calculateNextStepFree(Types::RunMode runMode, int firstStep, int lastStep, Random &rng) {
 
-    if (_nextStep == -1) {
+    if (_step == -1) {
         // first step
         switch (runMode) {
         case Types::RunMode::Forward:
@@ -59,7 +60,7 @@ void SequenceState::calculateNextStepFree(Types::RunMode runMode, int firstStep,
                 _nextStep = firstStep;
                 ++_nextIteration;
             } else {
-                ++_nextStep;
+                _nextStep = _step + 1;
             }
             break;
         case Types::RunMode::Backward:
@@ -67,7 +68,7 @@ void SequenceState::calculateNextStepFree(Types::RunMode runMode, int firstStep,
                 _nextStep = lastStep;
                 ++_nextIteration;
             } else {
-                --_nextStep;
+                _nextStep = _step - 1;
             }
             break;
         case Types::RunMode::Pendulum:
@@ -79,11 +80,11 @@ void SequenceState::calculateNextStepFree(Types::RunMode runMode, int firstStep,
                 ++_nextIteration;
             } else {
                 if (runMode == Types::RunMode::Pendulum) {
-                    _nextStep += _direction;
+                    _nextStep = _step + _direction;
                 }
             }
             if (runMode == Types::RunMode::PingPong) {
-                _nextStep += _direction;
+                _nextStep = _step + _direction;
             }
             break;
         case Types::RunMode::Random:

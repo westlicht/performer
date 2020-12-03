@@ -154,6 +154,8 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 recordStep(tick, divisor);
                 triggerStep(tick, divisor);
+                _sequenceState.calculateNextStepFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                triggerStep(tick + divisor, divisor, true);
             }
             break;
         case Types::PlayMode::Last:
