@@ -135,13 +135,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 
         switch (layer()) {
         case Layer::Gate:
-            break;
         case Layer::GateProbability:
-            SequencePainter::drawProbability(
-                canvas,
-                x + 2, y + 18, stepWidth - 4, 2,
-                step.gateProbability() + 1, NoteSequence::GateProbability::Range
-            );
             break;
         case Layer::GateOffset:
             SequencePainter::drawOffset(
@@ -470,7 +464,7 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
             setLayer(Layer::Slide);
             break;
         case Layer::Slide:
-            setLayer(Layer::GateProbability);
+            setLayer(Layer::GateOffset);
             break;
         default:
             setLayer(Layer::GateOffset);
