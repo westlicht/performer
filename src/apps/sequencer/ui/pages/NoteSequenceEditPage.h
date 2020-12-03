@@ -59,7 +59,6 @@ private:
     int _section = 0;
     bool _showDetail;
     uint32_t _showDetailTicks;
-    bool _edited;
 
     NoteSequenceListModel _listModel;
 

@@ -278,15 +278,6 @@ void NoteSequenceEditPage::keyDown(KeyEvent &event) {
 }
 
 void NoteSequenceEditPage::keyUp(KeyEvent &event) {
-    const auto &key = event.key();
-    auto &sequence = _project.selectedNoteSequence();
-
-    if (!_stepSelection.altered() && key.stepsOnly()) {
-        int stepIndex = stepOffset() + key.step();
-        sequence.step(stepIndex).toggleGate();
-        event.consume();
-    }
-
     _stepSelection.keyUp(event, stepOffset());
     updateMonitorStep();
 }
@@ -314,6 +305,18 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     _stepSelection.keyPress(event, stepOffset());
     updateMonitorStep();
 
+    if (!key.shiftModifier() && key.isStep()) {
+        int stepIndex = stepOffset() + key.step();
+        switch (layer()) {
+        case Layer::Gate:
+            sequence.step(stepIndex).toggleGate();
+            event.consume();
+            break;
+        default:
+            break;
+        }
+    }
+
     if (key.isFunction()) {
         switchLayer(key.function(), key.shiftModifier());
         event.consume();
@@ -325,7 +328,6 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         } else {
             setSelectedStepsGate(true);
         }
-        _stepSelection.alter();
     }
 
     if (key.isLeft()) {
@@ -352,7 +354,6 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
 
     if (_stepSelection.any()) {
         _showDetail = true;
-        _stepSelection.alter();
         _showDetailTicks = os::ticks();
     } else {
         return;
@@ -442,7 +443,7 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
     if (shift) {
         switch (Function(functionKey)) {
         case Function::Gate:
-            setLayer(Layer::GateProbability);
+            setLayer(Layer::Gate);
             break;
         case Function::Retrigger:
             setLayer(Layer::Retrigger);
@@ -463,6 +464,9 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
     switch (Function(functionKey)) {
     case Function::Gate:
         switch (layer()) {
+        case Layer::Gate:
+            setLayer(Layer::GateProbability);
+            break;
         case Layer::GateProbability:
             setLayer(Layer::GateOffset);
             break;
@@ -521,8 +525,8 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
 
 int NoteSequenceEditPage::activeFunctionKey() {
     switch (layer()) {
-    case Layer::GateProbability:
     case Layer::Gate:
+    case Layer::GateProbability:
     case Layer::GateOffset:
     case Layer::Slide:
         return 0;
