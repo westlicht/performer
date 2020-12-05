@@ -730,6 +730,20 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         canvas.setFont(Font::Small);
         canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
         break;
+     case Layer::StageRepeatsMode:
+        str.reset();
+        switch (step.stageRepeatMode()) {
+            case NoteSequence::Each:
+                str("EACH", step.stageRepeatMode());
+                break;
+            case NoteSequence::First:
+                str("FIRST", step.stageRepeatMode());
+                break;
+        }
+        canvas.setFont(Font::Small);
+        canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
+        break;
+    
     case Layer::Last:
         break;
     }

@@ -12,7 +12,6 @@ public:
     int prevStep() const { return _prevStep; }
     int direction() const { return _direction; }
     uint32_t iteration() const { return _iteration; }
-    uint32_t nextStepIteration() const { return _nextIteration; }
 
     void reset();
 
