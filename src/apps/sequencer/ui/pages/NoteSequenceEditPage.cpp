@@ -422,12 +422,14 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
                 break;
             case Layer::StageRepeats:
                 step.setStageRepeats(step.stageRepeats() + event.value());
+                break;
             case Layer::StageRepeatsMode:
                 step.setStageRepeatsMode(
                     static_cast<NoteSequence::StageRepeatMode>(
                         static_cast<int>(step.stageRepeatMode()) - event.value()
                     )
                 );
+                break;
             case Layer::Last:
                 break;
             }
@@ -734,10 +736,10 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         str.reset();
         switch (step.stageRepeatMode()) {
             case NoteSequence::Each:
-                str("EACH", step.stageRepeatMode());
+                str("EACH");
                 break;
             case NoteSequence::First:
-                str("FIRST", step.stageRepeatMode());
+                str("FIRST");
                 break;
         }
         canvas.setFont(Font::Small);

@@ -34,7 +34,6 @@ public:
     typedef UnsignedValue<3> NoteVariationProbability;
     typedef UnsignedValue<7> Condition;
     typedef UnsignedValue<3> StageRepeats;
-    typedef UnsignedValue<1> StageGateMode;
 
     static_assert(int(Types::Condition::Last) <= Condition::Max + 1, "Condition enum does not fit");
 
@@ -101,7 +100,7 @@ public:
         unsigned int stageRepeats() const { return _data1.stageRepeats + 1; }
 
         void setStageRepeatsMode(StageRepeatMode mode) {
-            _data1.stageRepeatMode = StageGateMode::clamp(mode);
+            _data1.stageRepeatMode = mode;
         }
 
         StageRepeatMode stageRepeatMode() const { 

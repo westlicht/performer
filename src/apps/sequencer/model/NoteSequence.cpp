@@ -186,6 +186,7 @@ void NoteSequence::Step::clear() {
     setNoteVariationProbability(NoteVariationProbability::Max);
     setCondition(Types::Condition::Off);
     setStageRepeats(1);
+    setStageRepeatsMode(StageRepeatMode::Each);
 }
 
 void NoteSequence::Step::write(VersionedSerializedWriter &writer) const {
