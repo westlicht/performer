@@ -2,6 +2,7 @@
 
 #include "Pages.h"
 
+#include "model/NoteSequence.h"
 #include "ui/LedPainter.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
@@ -226,6 +227,14 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
             break;
         }
+        case Layer::StageRepeatsMode: {
+            SequencePainter::drawStageRepeatMode(
+                canvas, 
+                x + 2, y + 18, stepWidth - 4, 6,
+                step.stageRepeatMode()
+            );
+            break;
+        }
         case Layer::Last:
             break;
         }
@@ -406,6 +415,12 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
                 break;
             case Layer::StageRepeats:
                 step.setStageRepeats(step.stageRepeats() + event.value());
+            case Layer::StageRepeatsMode:
+                step.setStageRepeatsMode(
+                    static_cast<NoteSequence::StageRepeatMode>(
+                        static_cast<int>(step.stageRepeatMode()) - event.value()
+                    )
+                );
             case Layer::Last:
                 break;
             }
@@ -475,6 +490,9 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
             setLayer(Layer::StageRepeats);
             break;
         case Layer::StageRepeats:
+            setLayer(Layer::StageRepeatsMode);
+            break;
+        case Layer::StageRepeatsMode:
             setLayer(Layer::Gate);
             break;
         default:
@@ -531,6 +549,7 @@ int NoteSequenceEditPage::activeFunctionKey() {
     case Layer::GateOffset:
     case Layer::Slide:
     case Layer::StageRepeats:
+    case Layer::StageRepeatsMode:
         return 0;
     case Layer::Retrigger:
     case Layer::RetriggerProbability:

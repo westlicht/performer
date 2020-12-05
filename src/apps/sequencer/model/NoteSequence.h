@@ -34,6 +34,7 @@ public:
     typedef UnsignedValue<3> NoteVariationProbability;
     typedef UnsignedValue<7> Condition;
     typedef UnsignedValue<3> StageRepeats;
+    typedef UnsignedValue<1> StageGateMode;
 
     static_assert(int(Types::Condition::Last) <= Condition::Max + 1, "Condition enum does not fit");
 
@@ -52,6 +53,7 @@ public:
         NoteVariationProbability,
         Condition,
         StageRepeats,
+        StageRepeatsMode,
         Last
     };
 
@@ -71,6 +73,7 @@ public:
         case Layer::NoteVariationProbability:   return "NOTE PROB";
         case Layer::Condition:                  return "CONDITION";
         case Layer::StageRepeats:               return "REPEAT";
+        case Layer::StageRepeatsMode:           return "REPEAT MODE";
         case Layer::Last:                       break;
         }
         return nullptr;
@@ -79,17 +82,32 @@ public:
     static Types::LayerRange layerRange(Layer layer);
     static int layerDefaultValue(Layer layer);
 
+    enum StageRepeatMode {
+        Each,
+        First,
+    };
+
     class Step {
+
     public:
         //----------------------------------------
         // Properties
         //----------------------------------------
-
+        
         // stage
         void setStageRepeats(int repeats) {
             _data1.stageRepeats = StageRepeats::clamp(repeats - 1);
         }
         unsigned int stageRepeats() const { return _data1.stageRepeats + 1; }
+
+        void setStageRepeatsMode(StageRepeatMode mode) {
+            _data1.stageRepeatMode = StageGateMode::clamp(mode);
+        }
+
+        StageRepeatMode stageRepeatMode() const { 
+            int value = _data1.stageRepeatMode ? 1 : 0;
+            return static_cast<StageRepeatMode>(value); 
+        }
 
         // gate
 
@@ -226,7 +244,8 @@ public:
             BitField<uint32_t, 5, GateOffset::Bits> gateOffset;
             BitField<uint32_t, 9, Condition::Bits> condition;
             BitField<uint32_t, 16, StageRepeats::Bits> stageRepeats;
-            // 13 bits left
+            BitField<uint32_t, 19, 1> stageRepeatMode;
+            // 12 bits left
         } _data1;
     };
 

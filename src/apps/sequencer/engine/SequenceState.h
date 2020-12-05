@@ -14,6 +14,7 @@ public:
     bool hasNextStep() const { return _nextStep != -1; }
     int direction() const { return _direction; }
     uint32_t iteration() const { return _iteration; }
+    uint32_t nextStepIteration() const { return _nextIteration; }
 
 
     void reset();

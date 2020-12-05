@@ -47,7 +47,7 @@ public:
     void setMonitorStep(int index);
 
 private:
-    void triggerStep(uint32_t tick, uint32_t divisor, uint8_t stepIndex);
+    void triggerStep(uint32_t tick, uint32_t divisor, bool forNext);
     void triggerStep(uint32_t tick, uint32_t divisor);
     void recordStep(uint32_t tick, uint32_t divisor);
     int noteFromMidiNote(uint8_t midiNote) const;
@@ -79,6 +79,7 @@ private:
     float _cvOutput;
     float _cvOutputTarget;
     bool _slideActive;
+    unsigned int _currentStageRepeat;
 
     struct Gate {
         uint32_t tick;

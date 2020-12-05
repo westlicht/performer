@@ -10,6 +10,8 @@
 
 #include "model/NoteSequence.h"
 #include "model/Scale.h"
+#include "ui/MatrixMap.h"
+#include <climits>
 #include <iostream>
 
 static Random rng;
@@ -105,7 +107,6 @@ void NoteTrackEngine::restart() {
     _currentStep = -1;
 }
 
-unsigned int _currentStageRepeat = 1;
 TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
@@ -130,7 +131,6 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
             _currentStageRepeat = 1;
         }
         const auto &sequence = *_sequence;
-        const auto &step = sequence.step(_sequenceState.step());
 
         // advance sequence
         switch (_noteTrack.playMode()) {
@@ -138,7 +138,7 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
             if (relativeTick % divisor == 0) {
                 _sequenceState.advanceAligned(relativeTick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 recordStep(tick, divisor);
-                triggerStep(tick, divisor, _sequenceState.step());
+                triggerStep(tick, divisor);
                 
                 _sequenceState.calculateNextStepAligned(
                         relativeTick / divisor + 1, 
@@ -147,7 +147,7 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                         sequence.lastStep(),
                         rng
                     );
-                triggerStep(tick + divisor, divisor, _sequenceState.nextStep());
+                triggerStep(tick + divisor, divisor, true);
             }
             break;
         case Types::PlayMode::Free:
@@ -156,21 +156,36 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 _freeRelativeTick = 0;
             }
             if (relativeTick == 0) {
-
-                if (_currentStageRepeat >= step.stageRepeats()) {
-                    _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-                    _currentStageRepeat = 1;
-                    _sequenceState.calculateNextStepFree(
+                if (_currentStageRepeat == 1) {
+                     _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                     _sequenceState.calculateNextStepFree(
                         sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-                    triggerStep(tick + divisor, divisor, _sequenceState.nextStep());
-
-                } else {
-                    _currentStageRepeat++;
-                    triggerStep(tick + divisor, divisor, _sequenceState.step());
                 }
 
                 recordStep(tick, divisor);
-                triggerStep(tick, divisor, _sequenceState.step());
+                const auto &step = sequence.step(_sequenceState.step());
+                bool isLastStageStep = ((int) step.stageRepeats() - (int) _currentStageRepeat) <= 0;
+            
+                if ((step.stageRepeatMode() == NoteSequence::Each || _currentStageRepeat == 1) 
+                        && step.gateOffset() >= 0) {
+                    triggerStep(tick, divisor);
+                }
+
+                if (step.stageRepeatMode() != NoteSequence::First && !isLastStageStep
+                        && step.gateOffset() < 0) {
+                    triggerStep(tick + divisor, divisor, false);
+                }
+
+                if (isLastStageStep 
+                        && sequence.step(_sequenceState.nextStep()).gateOffset() < 0) {
+                    triggerStep(tick + divisor, divisor, true);
+                }
+                
+                if (isLastStageStep) {
+                   _currentStageRepeat = 1; 
+                } else {
+                    _currentStageRepeat++;
+                }
             }
             break;
         case Types::PlayMode::Last:
@@ -314,7 +329,7 @@ void NoteTrackEngine::setMonitorStep(int index) {
         _stepRecorder.setStepIndex(index);
     }
 }
-void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, uint8_t stepIndex) {
+void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNext) {
     int octave = _noteTrack.octave();
     int transpose = _noteTrack.transpose();
     int rotate = _noteTrack.rotate();
@@ -326,8 +341,13 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, uint8_t stepI
     const auto &sequence = *_sequence;
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
 
+    int stepIndex = forNext ? _sequenceState.nextStep() : _sequenceState.step();
+    int iteration = forNext ? _sequenceState.nextStepIteration() : _sequenceState.iteration();
+
     // TODO do we need to encounter rotate?
-    _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
+    if (!forNext) {
+        _currentStep = SequenceUtils::rotateStep(stepIndex, sequence.firstStep(), sequence.lastStep(), rotate);
+    }
 
     if (stepIndex < 0) return;
 
@@ -338,7 +358,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, uint8_t stepI
 
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
     if (stepGate) {
-        stepGate = evalStepCondition(step, _sequenceState.iteration(), useFillCondition, _prevCondition);
+        stepGate = evalStepCondition(step, iteration, useFillCondition, _prevCondition);
     }
 
     if (stepGate) {
@@ -366,7 +386,7 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, uint8_t stepI
 }
 
 void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
-    triggerStep(tick, divisor, _sequenceState.step());
+    triggerStep(tick, divisor, false);
 }
 void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
     if (!_engine.state().recording() || _model.project().recordMode() == Types::RecordMode::StepRecord || _sequenceState.prevStep() < 0) {
