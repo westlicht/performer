@@ -1,4 +1,6 @@
 #include "SequencePainter.h"
+#include "core/gfx/Canvas.h"
+#include "model/NoteSequence.h"
 
 void SequencePainter::drawLoopStart(Canvas &canvas, int x, int y, int w) {
     canvas.vline(x, y - 1, 3);
@@ -93,6 +95,32 @@ void SequencePainter::drawSlide(Canvas &canvas, int x, int y, int w, int h, bool
         canvas.line(x, y + h, x + w, y);
     } else {
         canvas.hline(x, y + h, w);
+    }
+}
+
+void SequencePainter::drawStageRepeatMode(Canvas &canvas, int x, int y, int w, int h, NoteSequence::StageRepeatMode mode) {
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setColor(0xf);
+    int gw = w / 6;
+    int bottom = y + h - 1;
+    int iterations;
+
+    switch (mode) {
+        case NoteSequence::StageRepeatMode::Each:
+        iterations = 3;
+        break;
+
+        case NoteSequence::StageRepeatMode::First:
+        iterations = 1;
+        canvas.hline(x + 2 * gw, bottom, w - 2 * gw);
+        break;
+    }
+
+    for (int i = 0; i < iterations; i++) {
+        canvas.vline(x + 2 * i * gw, y, h);
+        canvas.hline(x + 2 * i * gw, y, gw);
+        canvas.vline(x + (2 * i + 1) * gw, y, h);
+        canvas.hline(x + (2 * i + 1) * gw, bottom, gw);
     }
 }
 

@@ -9,6 +9,8 @@
 #include "core/math/Math.h"
 
 #include "model/Scale.h"
+#include "ui/MatrixMap.h"
+#include <climits>
 #include <iostream>
 
 static Random rng;
@@ -104,7 +106,6 @@ void NoteTrackEngine::restart() {
     _currentStep = -1;
 }
 
-unsigned int _currentStageRepeat = 1;
 TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
     const auto &sequence = *_sequence;
@@ -129,7 +130,6 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
             _currentStageRepeat = 1;
         }
         const auto &sequence = *_sequence;
-        const auto &step = sequence.step(_sequenceState.step());
 
         // advance sequence
         switch (_noteTrack.playMode()) {
@@ -147,17 +147,24 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
             }
             if (relativeTick == 0) {
 
-                if (_currentStageRepeat >= step.stageRepeats()) {
-                    _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
-                    _currentStageRepeat = 1;
-
-                } else {
-                    _currentStageRepeat++;
-                    triggerStep(tick + divisor, divisor, _sequenceState.step());
+                if (_currentStageRepeat == 1) {
+                     _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 }
 
                 recordStep(tick, divisor);
-                triggerStep(tick, divisor);
+                const auto &step = sequence.step(_sequenceState.step());
+                bool isLastStageStep = ((int) step.stageRepeats() - (int) _currentStageRepeat) <= 0;
+            
+                if ((step.stageRepeatMode() == NoteSequence::Each || _currentStageRepeat == 1)) {
+                    triggerStep(tick, divisor);
+                }
+               
+                if (isLastStageStep) {
+                   _currentStageRepeat = 1; 
+                } else {
+                    _currentStageRepeat++;
+                }
+
             }
             break;
         case Types::PlayMode::Last:
@@ -315,7 +322,6 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
     const auto &step = evalSequence.step(_currentStep);
-
     uint32_t gateOffset = (divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
 
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
