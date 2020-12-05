@@ -162,7 +162,7 @@ void NoteSequence::Step::setLayerValue(Layer layer, int value) {
         break;
     case Layer::StageRepeats:
         setStageRepeats(value);
-        breakl
+        break;
     case Layer::StageRepeatsMode:
         setStageRepeatsMode(static_cast<NoteSequence::StageRepeatMode>(value));
         break;
