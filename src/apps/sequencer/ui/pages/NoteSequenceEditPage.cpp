@@ -423,10 +423,10 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::StageRepeats:
                 step.setStageRepeats(step.stageRepeats() + event.value());
                 break;
-            case Layer::StageRepeatsMode:
+            case Layer::StageRepeatsMode:                 
                 step.setStageRepeatsMode(
                     static_cast<NoteSequence::StageRepeatMode>(
-                        static_cast<int>(step.stageRepeatMode()) - event.value()
+                        event.value() > 0 ? 1 : 0
                     )
                 );
                 break;

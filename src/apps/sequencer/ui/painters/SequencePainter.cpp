@@ -109,11 +109,10 @@ void SequencePainter::drawStageRepeatMode(Canvas &canvas, int x, int y, int w, i
         case NoteSequence::StageRepeatMode::Each:
             iterations = 3;
             break;
-
         case NoteSequence::StageRepeatMode::First:
             iterations = 1;
             canvas.hline(x + 2 * gw, bottom, w - 2 * gw);
-        break;
+            break;
     }
 
     for (int i = 0; i < iterations; i++) {
