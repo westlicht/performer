@@ -34,6 +34,7 @@ public:
     typedef UnsignedValue<3> NoteVariationProbability;
     typedef UnsignedValue<7> Condition;
     typedef UnsignedValue<3> StageRepeats;
+    typedef UnsignedValue<2> StageRepeatsMode;
 
     static_assert(int(Types::Condition::Last) <= Condition::Max + 1, "Condition enum does not fit");
 
@@ -84,6 +85,8 @@ public:
     enum StageRepeatMode {
         Each,
         First,
+        Odd,
+        Triplets
     };
 
     class Step {
@@ -104,7 +107,7 @@ public:
         }
 
         StageRepeatMode stageRepeatMode() const { 
-            int value = _data1.stageRepeatMode ? 1 : 0;
+            int value = _data1.stageRepeatMode;
             return static_cast<StageRepeatMode>(value); 
         }
 
@@ -244,7 +247,7 @@ public:
             BitField<uint32_t, 5, GateOffset::Bits> gateOffset;
             BitField<uint32_t, 9, Condition::Bits> condition;
             BitField<uint32_t, 16, StageRepeats::Bits> stageRepeats;
-            BitField<uint32_t, 19, 1> stageRepeatMode;
+            BitField<uint32_t, 19, StageRepeatsMode::Bits> stageRepeatMode;
             // 12 bits left
         } _data1;
     };

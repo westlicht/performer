@@ -155,10 +155,8 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 const auto &step = sequence.step(_sequenceState.step());
                 bool isLastStageStep = ((int) step.stageRepeats() - (int) _currentStageRepeat) <= 0;
             
-                if ((step.stageRepeatMode() == NoteSequence::Each || _currentStageRepeat == 1)) {
-                    triggerStep(tick, divisor);
-                }
-               
+                triggerStep(tick, divisor);
+                               
                 if (isLastStageStep) {
                    _currentStageRepeat = 1; 
                 } else {
@@ -327,6 +325,18 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
     if (stepGate) {
         stepGate = evalStepCondition(step, _sequenceState.iteration(), useFillCondition, _prevCondition);
+    }
+    switch (step.stageRepeatMode()) {
+        case NoteSequence::StageRepeatMode::Each:
+            break;
+        case NoteSequence::StageRepeatMode::First:
+            stepGate = stepGate && _currentStageRepeat == 1;
+            break;
+        case NoteSequence::StageRepeatMode::Odd:
+            stepGate = stepGate && _currentStageRepeat % 2 != 0;
+            break;
+        case NoteSequence::StageRepeatMode::Triplets:
+            stepGate = stepGate && (_currentStageRepeat - 1) % 3 == 0;
     }
 
     if (stepGate) {

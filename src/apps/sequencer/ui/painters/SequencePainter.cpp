@@ -1,6 +1,7 @@
 #include "SequencePainter.h"
 #include "core/gfx/Canvas.h"
 #include "model/NoteSequence.h"
+#include <bitset>
 
 void SequencePainter::drawLoopStart(Canvas &canvas, int x, int y, int w) {
     canvas.vline(x, y - 1, 3);
@@ -98,28 +99,35 @@ void SequencePainter::drawSlide(Canvas &canvas, int x, int y, int w, int h, bool
     }
 }
 
+const std::bitset<4> mask = 0x1;
 void SequencePainter::drawStageRepeatMode(Canvas &canvas, int x, int y, int w, int h, NoteSequence::StageRepeatMode mode) {
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(0xf);
-    int gw = w / 6;
     int bottom = y + h - 1;
-    int iterations;
+    std::bitset<4> enabled;
+    x += (w - 8) / 2;
 
     switch (mode) {
         case NoteSequence::StageRepeatMode::Each:
-            iterations = 3;
+           enabled = 0xf;
             break;
         case NoteSequence::StageRepeatMode::First:
-            iterations = 1;
-            canvas.hline(x + 2 * gw, bottom, w - 2 * gw);
+            enabled = 0x1;
+            break;
+        case NoteSequence::StageRepeatMode::Odd:
+            enabled = 0x5;
+            break;
+        case NoteSequence::StageRepeatMode::Triplets:
+            enabled = 0x9;
             break;
     }
 
-    for (int i = 0; i < iterations; i++) {
-        canvas.vline(x + 2 * i * gw, y, h);
-        canvas.hline(x + 2 * i * gw, y, gw);
-        canvas.vline(x + (2 * i + 1) * gw, y, h);
-        canvas.hline(x + (2 * i + 1) * gw, bottom, gw);
+    for (int i = 0; i < 4; i++) {
+        if (((enabled >> i) & mask) == 1) {
+            canvas.vline(x + 2 * i, y, h);
+        } else {
+            canvas.hline(x + 2 * i, bottom, 1);
+        }
     }
 }
 

@@ -13,8 +13,6 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
         return { 0, 1 };
     case Layer::Slide:
         return { 0, 1 };
-    case Layer::StageRepeatsMode:
-        return { 0, 1 };
     case Layer::GateOffset:
         // TODO: allow negative gate delay in the future
         return { 0, GateOffset::Max };
@@ -29,6 +27,7 @@ Types::LayerRange NoteSequence::layerRange(Layer layer) {
     CASE(NoteVariationProbability)
     CASE(Condition)
     CASE(StageRepeats)
+    CASE(StageRepeatsMode)
     case Layer::Last:
         break;
     }

@@ -426,7 +426,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::StageRepeatsMode:                 
                 step.setStageRepeatsMode(
                     static_cast<NoteSequence::StageRepeatMode>(
-                        event.value() > 0 ? 1 : 0
+                        step.stageRepeatMode() + event.value()
                     )
                 );
                 break;
@@ -468,13 +468,13 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
     if (shift) {
         switch (Function(functionKey)) {
         case Function::Gate:
-            setLayer(Layer::Gate);
+            setLayer(Layer::StageRepeatsMode);
             break;
         case Function::Retrigger:
-            setLayer(Layer::Retrigger);
+            setLayer(Layer::StageRepeats);
             break;
         case Function::Length:
-            setLayer(Layer::Length);
+            setLayer(Layer::StageRepeatsMode);
             break;
         case Function::Note:
             setLayer(Layer::Note);
@@ -509,6 +509,7 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
             break;
         default:
             setLayer(Layer::Gate);
+
             break;
         }
         break;
@@ -741,11 +742,16 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
             case NoteSequence::First:
                 str("FIRST");
                 break;
+            case NoteSequence::Odd:
+                str("ODD");
+                break;
+            case NoteSequence::Triplets:
+                str("TRIPLET");
+                break;
         }
         canvas.setFont(Font::Small);
         canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
         break;
-    
     case Layer::Last:
         break;
     }
