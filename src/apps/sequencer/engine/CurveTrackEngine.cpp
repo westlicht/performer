@@ -192,6 +192,8 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     const auto &sequence = *_sequence;
     const auto &range = Types::voltageRangeInfo(sequence.range());
 
+    _currentStepFraction = float(relativeTick % divisor) / divisor;
+
     if (mute()) {
         switch (_curveTrack.muteMode()) {
         case CurveTrack::MuteMode::LastValue:
@@ -216,8 +218,6 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
 
         const auto &evalSequence = fillNextPattern ? *_fillSequence : *_sequence;
         const auto &step = evalSequence.step(_currentStep);
-
-        _currentStepFraction = float(relativeTick % divisor) / divisor;
 
         float value = evalStepShape(step, _shapeVariation || fillVariation, fillInvert, _currentStepFraction);
         value = range.denormalize(value);
