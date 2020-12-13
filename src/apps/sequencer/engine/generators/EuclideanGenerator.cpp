@@ -1,7 +1,8 @@
 #include "EuclideanGenerator.h"
 
-EuclideanGenerator::EuclideanGenerator(SequenceBuilder &builder) :
-    Generator(builder)
+EuclideanGenerator::EuclideanGenerator(SequenceBuilder &builder, Params& params) :
+    Generator(builder),
+    _params(params)
 {
     update();
 }
@@ -35,9 +36,9 @@ void EuclideanGenerator::printParam(int index, StringBuilder &str) const {
 }
 
 void EuclideanGenerator::update()  {
-    _pattern = Rhythm::euclidean(_beats, _steps).shifted(_offset);
+    _pattern = Rhythm::euclidean(_params.beats, _params.steps).shifted(_params.offset);
 
-    _builder.setLength(_steps);
+    _builder.setLength(_params.steps);
 
     for (size_t i = 0; i < CONFIG_STEP_COUNT; ++i) {
         _builder.setValue(i, _pattern[i % _pattern.size()] ? 1.f : 0.f);
