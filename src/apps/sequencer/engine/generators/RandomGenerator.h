@@ -32,6 +32,7 @@ public:
     void editParam(int index, int value, bool shift) override;
     void printParam(int index, StringBuilder &str) const override;
 
+    void init() override;
     void update() override;
 
     // seed

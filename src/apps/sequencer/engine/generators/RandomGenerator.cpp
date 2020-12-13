@@ -40,7 +40,12 @@ void RandomGenerator::printParam(int index, StringBuilder &str) const {
     }
 }
 
-void RandomGenerator::update()  {
+void RandomGenerator::init() {
+    _params = Params();
+    update();
+}
+
+void RandomGenerator::update() {
     Random rng(_params.seed);
 
     int size = _pattern.size();

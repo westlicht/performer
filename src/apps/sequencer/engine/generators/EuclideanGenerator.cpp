@@ -35,6 +35,12 @@ void EuclideanGenerator::printParam(int index, StringBuilder &str) const {
     }
 }
 
+void EuclideanGenerator::init()
+{
+    _params = Params();
+    update();
+}
+
 void EuclideanGenerator::update()  {
     _pattern = Rhythm::euclidean(_params.beats, _params.steps).shifted(_params.offset);
 

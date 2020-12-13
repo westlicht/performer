@@ -7,14 +7,20 @@
 #include "engine/generators/RandomGenerator.h"
 
 enum class ContextAction {
-    Commit,
+    Init,
+    Reserved1,
+    Reserved2,
     Revert,
+    Commit,
     Last
 };
 
 static const ContextMenuModel::Item contextMenuItems[] = {
-    { "COMMIT" },
+    { "INIT" },
+    { nullptr },
+    { nullptr },
     { "REVERT" },
+    { "COMMIT" },
 };
 
 GeneratorPage::GeneratorPage(PageManager &manager, PageContext &context) :
@@ -221,11 +227,17 @@ void GeneratorPage::contextShow() {
 
 void GeneratorPage::contextAction(int index) {
     switch (ContextAction(index)) {
-    case ContextAction::Commit:
-        commit();
+    case ContextAction::Init:
+        init();
+        break;
+    case ContextAction::Reserved1:
+    case ContextAction::Reserved2:
         break;
     case ContextAction::Revert:
         revert();
+        break;
+    case ContextAction::Commit:
+        commit();
         break;
     case ContextAction::Last:
         break;
@@ -236,11 +248,15 @@ bool GeneratorPage::contextActionEnabled(int index) const {
     return true;
 }
 
-void GeneratorPage::commit() {
-    close();
+void GeneratorPage::init() {
+    _generator->init();
 }
 
 void GeneratorPage::revert() {
     _generator->revert();
+    close();
+}
+
+void GeneratorPage::commit() {
     close();
 }
