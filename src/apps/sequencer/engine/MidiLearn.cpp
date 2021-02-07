@@ -48,7 +48,7 @@ void MidiLearn::receiveMidi(MidiPort port, const MidiMessage &message) {
         return;
     }
 
-    if (_eventCounters[int(Event::Note)] >= 4) {
+    if (_eventCounters[int(Event::Note)] >= 2) {
         emitResult(Result({_port, uint8_t(_channel), Event::Note, { uint8_t(_note) }}));
     } else if (_eventCounters[int(Event::PitchBend)] >= 8) {
         emitResult(Result({_port, uint8_t(_channel), Event::PitchBend, { 0 }}));
