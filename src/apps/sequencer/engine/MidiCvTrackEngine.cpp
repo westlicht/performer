@@ -1,5 +1,6 @@
 #include "MidiCvTrackEngine.h"
 #include "Engine.h"
+#include "Slide.h"
 #include "MidiUtils.h"
 
 #include "os/os.h"
@@ -46,7 +47,7 @@ void MidiCvTrackEngine::update(float dt) {
     if (_midiCvTrack.voices() == 1) {
         _pitchCvOutputTarget = noteToCv(_voices.front().note + _midiCvTrack.transpose()) + pitchBendToCv(_pitchBend);
         if (_slideActive && _midiCvTrack.slideTime() > 0) {
-            _pitchCvOutput += (_pitchCvOutputTarget - _pitchCvOutput) * std::min(1.f, dt * (200 - 2 * _midiCvTrack.slideTime()));
+            _pitchCvOutput = Slide::applySlide(_pitchCvOutput, _pitchCvOutputTarget, _midiCvTrack.slideTime(), dt);
         } else {
             _pitchCvOutput = _pitchCvOutputTarget;
         }

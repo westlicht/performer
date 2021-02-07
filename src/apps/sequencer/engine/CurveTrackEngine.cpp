@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "Groove.h"
+#include "Slide.h"
 #include "SequenceUtils.h"
 
 #include "core/Debug.h"
@@ -145,9 +146,7 @@ void CurveTrackEngine::update(float dt) {
     float offset = mute() ? 0.f : _curveTrack.offsetVolts();
 
     if (_curveTrack.slideTime() > 0) {
-        float factor = 1.f - 0.01f * _curveTrack.slideTime();
-        factor = 500.f * factor * factor;
-        _cvOutput += (_cvOutputTarget + offset - _cvOutput) * std::min(1.f, dt * factor);
+        _cvOutput = Slide::applySlide(_cvOutput, _cvOutputTarget + offset, _curveTrack.slideTime(), dt);
     } else {
         _cvOutput = _cvOutputTarget + offset;
     }
