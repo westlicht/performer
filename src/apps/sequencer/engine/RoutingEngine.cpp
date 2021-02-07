@@ -136,6 +136,13 @@ void RoutingEngine::updateSinks() {
         if (routeChanged) {
             // disable previous routing
             Routing::setRouted(routeState.target, routeState.tracks, false);
+            // reset last state for play/record toggle
+            if (routeState.target == Routing::Target::PlayToggle) {
+                _lastPlayToggleActive = false;
+            }
+            if (routeState.target == Routing::Target::RecordToggle) {
+                _lastRecordToggleActive = false;
+            }
         }
 
         if (route.active()) {
@@ -167,9 +174,25 @@ void RoutingEngine::writeEngineTarget(Routing::Target target, float normalized) 
             _engine.togglePlay();
         }
         break;
+    case Routing::Target::PlayToggle:
+        if (active != _lastPlayToggleActive) {
+            if (active) {
+                _engine.togglePlay();
+            }
+            _lastPlayToggleActive = active;
+        }
+        break;
     case Routing::Target::Record:
         if (active != _engine.recording()) {
             _engine.toggleRecording();
+        }
+        break;
+    case Routing::Target::RecordToggle:
+        if (active != _lastRecordToggleActive) {
+            if (active) {
+                _engine.toggleRecording();
+            }
+            _lastRecordToggleActive = active;
         }
         break;
     case Routing::Target::TapTempo:

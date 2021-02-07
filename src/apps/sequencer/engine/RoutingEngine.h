@@ -39,4 +39,7 @@ private:
     };
 
     std::array<RouteState, CONFIG_ROUTE_COUNT> _routeStates;
+
+    uint8_t _lastPlayToggleActive = false;
+    uint8_t _lastRecordToggleActive = false;
 };
