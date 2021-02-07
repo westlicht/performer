@@ -40,6 +40,7 @@ matrix:
       - (cd build/sim/release && make test)
     - name: Simulator Platform (macOS)
       os: osx
+      osx_image: xcode11.3
       script:
       - brew install sdl2
       - make setup_sim && (cd build/sim/release && make)
