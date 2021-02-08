@@ -22,7 +22,7 @@ nav: 20
 <!-- toc-begin -->
 
 - [Introduction](#introduction)
-  - [Features](#introduction-features)
+  - [Overview](#introduction-overview)
 - [Concepts](#concepts)
   - [Project](#concepts-project)
   - [Track](#concepts-track)
@@ -84,15 +84,19 @@ nav: 20
 
 <h2 id="introduction">Introduction</h2>
 
+![](images/performer.jpg)
+
 **PER\|FORMER** is an open source and open hardware eurorack sequencer module. It packs a lot of functionality into a small form factor and was designed both as a versatile sequencer in the studio as well as for live performance. To fully take advantage of all the features available in this module, it is highly recommended to study this document carefully.
 
-The [Concepts](#concepts) chapter introduces the overall architecture and functionality of the sequencer. The [User Interface](#ui) chapter gives an overview of the user interface and introduces key concepts of how to use the sequencer. The [Pages](#pages) chapter goes into more detail in terms of functionality and user interface of the various modes and contexts in the sequencer and introduces common workflows.
+The [Concepts](#concepts) chapter introduces the overall architecture and functionality of the sequencer. The [User Interface](#ui) chapter gives an overview of the user interface and introduces key concepts of how to use the sequencer. The [Pages](#pages) chapter goes into more detail in terms of functionality and user interface of the various modes and contexts in the sequencer and introduces common workflows. Finally, the [Appendix][#appendix] contains reference tables for some of the parameters commonly used in the sequencer as well as additional information on how to use the Novation Launchpad, calibrate the CV outputs and update the firmware.
 
-<!-- Features -->
+<!-- Overview -->
 
-<h3 id="introduction-features">Features</h3>
+<h3 id="introduction-overview">Overview</h3>
 
-The following list describes the key features of the **PER\|FORMER** sequencer:
+Here is a brief summary of what you get with the **PER\|FORMER** sequencer.
+
+<h4>Features</h4>
 
 - 8 track sequencer
 - 16 sequences per track
@@ -102,18 +106,34 @@ The following list describes the key features of the **PER\|FORMER** sequencer:
 - Arpeggiator
 - Snapshot system
 - Sequence generators
-- Advanced clock system
-- 8 CV Outputs (-5V to 5V)
-- 8 Gate Outputs (5V)
-- 4 CV Inputs (-5V to 5V)
-- Clock input/output
-- MIDI input/output
-- USB host port with support for USB MIDI controllers
-- 256x64 pixel OLED display
+- Routing system for CV inputs and external MIDI controllers
+- Novation Launchpad support
+- Generate MIDI output from multiple sequences
+- Flexible clock system
+
+<h4>User Interface</h4>
+
+- Large and bright 256x64 pixel OLED display
 - Encoder with push button
 - 32 buttons with bi-color LEDs
 - 5 function buttons with labels on display
-- Micro SD card slot
+
+<h4>Inputs and Outputs</h4>
+
+- 8 CV outputs (-5V to 5V)
+- 8 gate outputs (5V)
+- 4 CV inputs (-5V to 5V)
+- Clock and reset/run input
+- Clock and reset/run output
+- MIDI input and output (MIDI TRS 3.5mm jacks)
+- USB Host for MIDI over USB
+- microSD Card Slot
+
+<h4>Specifications</h4>
+
+- Width: 34 HP
+- Depth: 25mm
+- Power: 100mA @ +12V, 15mA @ -12V (not including USB host power)
 
 <!-- Concepts -->
 
