@@ -71,6 +71,7 @@ nav: 20
   - [Scales](#appendix-scales)
   - [Shapes](#appendix-shapes)
   - [Arpeggiator Modes](#appendix-arpeggiator-modes)
+  - [Routing Targets](#appendix-routing-targets)
   - [Launchpad](#appendix-launchpad)
   - [USB MIDI Devices](#appendix-usb-midi-devices)
   - [Calibration Procedure](#appendix-calibration-procedure)
@@ -1003,7 +1004,7 @@ Once the routing target is selected, the following parameters are available for 
 
 | Parameter | Range | Description |
 | :--- | :--- | :--- |
-| Target | Routable Parameters | Target parameter to affect by this route. |
+| Target | [Routing Target](#appendix-routing-targets) | Target parameter to affect by this route. |
 | Min | - | Value to set the target parameter to when source is at the minimum value. |
 | Max | - | Value to set the target parameter to when source is at the maximum value. |
 | Tracks | - | Target tracks to affect by this route. Only available if selected target parameter is a track parameter. Press `ENCODER` to edit the value and press `T[1-8]` to select which tracks are affected. |
@@ -1569,6 +1570,42 @@ The following arpeggiator modes are available. The example note order is based o
 | Converge | `1 5 2 4 3 | 1 5 2 4 3 | ...` |
 | Diverge | `3 2 4 1 5 | 3 2 4 1 5 | ...` |
 | Random | Played back in random order. |
+
+<!-- Routing Targets -->
+
+<h3 id="appendix-routing-targets">Routing Targets</h3>
+
+The following routing targets are available.
+
+| Target | Scope | Notes |
+| :-- | :-- | :-- |
+| Play | Global | |
+| Play Toggle | Global | Toggle playing. Allows simultaneous use of the `PLAY` button. |
+| Record | Global | |
+| Record Toggle | Global | Toggle recording. Allows simultaneous use of the `SHIFT` + `PLAY` button combination. |
+| Tap Tempo | Global | |
+| Tempo | Global | |
+| Swing | Global | |
+| Mute | Track | |
+| Fill | Track | |
+| Fill Amount | Track | |
+| Pattern | Track | |
+| Slide Time | Track | |
+| Octave | Track | |
+| Transpose | Track | |
+| Offset | Track | |
+| Rotate | Track | |
+| Gate P. Bias | Track | |
+| Retrig P. Bias | Track | |
+| Length Bias | Track | |
+| Note P. Bias | Track | |
+| Shape P. Bias | Track | |
+| First Step | Sequence | |
+| Last Step | Sequence | |
+| Run Mode | Sequence | |
+| Divisor | Sequence | |
+| Scale | Sequence | |
+| Root Note | Sequence | |
 
 <!-- Launchpad -->
 
