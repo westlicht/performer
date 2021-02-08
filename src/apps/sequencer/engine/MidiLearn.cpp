@@ -33,16 +33,22 @@ void MidiLearn::receiveMidi(MidiPort port, const MidiMessage &message) {
     } else if (message.isPitchBend()) {
         ++_eventCounters[int(Event::PitchBend)];
     } else if (message.isControlChange()) {
-        if (message.controlNumber() != _controlNumber) {
-            _eventCounters[int(Event::ControlAbsolute)] = 0;
-            _eventCounters[int(Event::ControlRelative)] = 0;
-            _controlNumber = message.controlNumber();
-        }
-        int value = message.controlValue();
-        if ((value > 0 && value < 8) || (value > 64 && value < (64 + 8))) {
-            ++_eventCounters[int(Event::ControlRelative)];
-        } else {
-            ++_eventCounters[int(Event::ControlAbsolute)];
+        // filter NRPN messages (cc number 0-31 followed by 32-63)
+        auto controlNumber = message.controlNumber();
+        bool isNRPN = _lastControlNumber >= 0 && _lastControlNumber < 32 && controlNumber >= 32 && controlNumber < 64;
+        _lastControlNumber = controlNumber;
+        if (!isNRPN) {
+            if (controlNumber != _controlNumber) {
+                _eventCounters[int(Event::ControlAbsolute)] = 0;
+                _eventCounters[int(Event::ControlRelative)] = 0;
+                _controlNumber = controlNumber;
+            }
+            int value = message.controlValue();
+            if ((value > 0 && value < 8) || (value > 64 && value < (64 + 8))) {
+                ++_eventCounters[int(Event::ControlRelative)];
+            } else {
+                ++_eventCounters[int(Event::ControlAbsolute)];
+            }
         }
     } else {
         return;
@@ -63,6 +69,7 @@ void MidiLearn::reset() {
     _port = MidiPort(-1);
     _channel = -1;
     _controlNumber = -1;
+    _lastControlNumber = -1;
     _note = -1;
     _eventCounters.fill(0);
     _lastResult.event = Event::Last;
