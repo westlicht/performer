@@ -294,8 +294,8 @@ static void control_state_machine(usbh_device_t *dev, usbh_packet_callback_data_
 
 	case USBH_CONTROL_STATE_DATA:
 		if (dev->control.setup_data.bmRequestType & USB_REQ_TYPE_IN) {
-			dev->control.state = USBH_CONTROL_STATE_NONE;
-			dev->control.callback(dev, cb_data);
+			dev->control.state = USBH_CONTROL_STATE_STATUS;
+			device_xfer_control_write_data(NULL, 0, control_state_machine, dev);
 		} else {
 			if (cb_data.status != USBH_PACKET_CALLBACK_STATUS_OK) {
 				dev->control.state = USBH_CONTROL_STATE_NONE;
