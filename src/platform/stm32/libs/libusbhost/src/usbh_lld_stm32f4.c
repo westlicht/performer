@@ -594,6 +594,21 @@ static enum USBH_POLL_STATUS poll_run(usbh_lld_stm32f4_driver_data_t *dev)
 				}
 			} else { // Read
 
+				if (hcint & OTG_HCINT_DTERR) {
+					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_DTERR;
+					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_NAK;
+					LOG_PRINTF("DTERR");
+					free_channel(dev, channel);
+
+					usbh_packet_callback_data_t cb_data;
+					cb_data.status = USBH_PACKET_CALLBACK_STATUS_EFATAL;
+					cb_data.transferred_length = 0;
+
+					channels[channel].packet.callback(
+						channels[channel].packet.callback_arg,
+						cb_data);
+				}
+
 				if (hcint & OTG_HCINT_NAK) {
 					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_NAK;
 					if (eptyp == USBH_ENDPOINT_TYPE_CONTROL) {
@@ -604,10 +619,6 @@ static enum USBH_POLL_STATUS poll_run(usbh_lld_stm32f4_driver_data_t *dev)
 
 				}
 
-				if (hcint & OTG_HCINT_DTERR) {
-					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_DTERR;
-					LOG_PRINTF("DTERR");
-				}
 
 				if (hcint & OTG_HCINT_ACK) {
 					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_ACK;
