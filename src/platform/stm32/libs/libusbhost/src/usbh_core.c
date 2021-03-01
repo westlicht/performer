@@ -405,13 +405,58 @@ static void device_enumerate(usbh_device_t *dev, usbh_packet_callback_data_t cb_
 				dev->address = usbh_data.address_temporary;
 				LOG_PRINTF("Assigned address: %d\n", dev->address);
 			}
-			CONTINUE_WITH(USBH_ENUM_STATE_DEVICE_DT_READ_SETUP);
+			CONTINUE_WITH(USBH_ENUM_STATE_DEVICE_DT_READ_SHORT_SETUP);
 			break;
 
 		default:
 			device_enumeration_terminate(dev);
 			ERROR(cb_data.status);
 			break;
+		}
+		break;
+
+	case USBH_ENUM_STATE_DEVICE_DT_READ_SHORT_SETUP:
+		{
+			struct usb_setup_data setup_data;
+
+			setup_data.bmRequestType = USB_REQ_TYPE_IN | USB_REQ_TYPE_DEVICE;
+			setup_data.bRequest = USB_REQ_GET_DESCRIPTOR;
+			setup_data.wValue = USB_DT_DEVICE << 8;
+			setup_data.wIndex = 0;
+			setup_data.wLength = 8;
+			dev->state = USBH_ENUM_STATE_DEVICE_DT_READ_SHORT_COMPLETE;
+			device_control(dev, device_enumerate, &setup_data, &usbh_buffer[0]);
+		}
+		break;
+
+	case USBH_ENUM_STATE_DEVICE_DT_READ_SHORT_COMPLETE:
+		{
+			switch (cb_data.status) {
+			case USBH_PACKET_CALLBACK_STATUS_OK:
+				{
+					struct usb_device_descriptor *ddt =
+							(struct usb_device_descriptor *)&usbh_buffer[0];
+					dev->packet_size_max0 = ddt->bMaxPacketSize0;
+					CONTINUE_WITH(USBH_ENUM_STATE_DEVICE_DT_READ_SETUP);
+				}
+				break;
+			case USBH_PACKET_CALLBACK_STATUS_ERRSIZ:
+				if (cb_data.transferred_length >= 8) {
+					struct usb_device_descriptor *ddt =
+						(struct usb_device_descriptor *)&usbh_buffer[0];
+					dev->packet_size_max0 = ddt->bMaxPacketSize0;
+					CONTINUE_WITH(USBH_ENUM_STATE_DEVICE_DT_READ_SETUP);
+				} else {
+					device_enumeration_terminate(dev);
+					ERROR(cb_data.status);
+				}
+				break;
+
+			default:
+				device_enumeration_terminate(dev);
+				ERROR(cb_data.status);
+				break;
+			}
 		}
 		break;
 
@@ -437,19 +482,15 @@ static void device_enumerate(usbh_device_t *dev, usbh_packet_callback_data_t cb_
 				{
 					struct usb_device_descriptor *ddt =
 							(struct usb_device_descriptor *)&usbh_buffer[0];
-					dev->packet_size_max0 = ddt->bMaxPacketSize0;
 					LOG_PRINTF("Found device with vid=0x%04x pid=0x%04x\n", ddt->idVendor, ddt->idProduct);
 					LOG_PRINTF("class=0x%02x subclass=0x%02x protocol=0x%02x\n", ddt->bDeviceClass, ddt->bDeviceSubClass, ddt->bDeviceProtocol);
-					CONTINUE_WITH(USBH_ENUM_STATE_CONFIGURATION_DT_HEADER_READ_SETUP)
+					CONTINUE_WITH(USBH_ENUM_STATE_CONFIGURATION_DT_HEADER_READ_SETUP);
 				}
 				break;
 
 			case USBH_PACKET_CALLBACK_STATUS_ERRSIZ:
-				if (cb_data.transferred_length >= 8) {
-					struct usb_device_descriptor *ddt =
-						(struct usb_device_descriptor *)&usbh_buffer[0];
-					dev->packet_size_max0 = ddt->bMaxPacketSize0;
-					CONTINUE_WITH(USBH_ENUM_STATE_DEVICE_DT_READ_SETUP);
+				if (cb_data.transferred_length >= USB_DT_DEVICE_SIZE) {
+					CONTINUE_WITH(USBH_ENUM_STATE_CONFIGURATION_DT_HEADER_READ_SETUP);
 				} else {
 					device_enumeration_terminate(dev);
 					ERROR(cb_data.status);
