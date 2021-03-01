@@ -134,18 +134,19 @@ static void device_register(void *descriptors, uint16_t descriptors_len, usbh_de
 		switch (desc_type) {
 		case USB_DT_INTERFACE:
 		{
-			LOG_PRINTF("INTERFACE_DESCRIPTOR\n");
 			struct usb_interface_descriptor *iface = (void*)&buf[i];
 			device_info.ifaceClass = iface->bInterfaceClass;
 			device_info.ifaceSubClass = iface->bInterfaceSubClass;
 			device_info.ifaceProtocol = iface->bInterfaceProtocol;
+			LOG_PRINTF("INTERFACE_DESCRIPTOR  Cls %02X  Sub %02X  Prot %02X \n", iface->bInterfaceClass, iface->bInterfaceSubClass, iface->bInterfaceProtocol);
 			if (find_driver(dev, &device_info)) {
+				uint8_t *ibuf = (uint8_t *)iface;
 				int k = 0;
-				while (k < descriptors_len) {
-					desc_len = buf[k];
+				while (k < descriptors_len - i) {
+					desc_len = ibuf[k];
+					LOG_PRINTF("[%2d][%02X] ", desc_len, ibuf[k + 1]);
 					void *drvdata = dev->drvdata;
-					LOG_PRINTF("[%d]", buf[k+1]);
-					if (dev->drv->analyze_descriptor(drvdata, &buf[k])) {
+					if (dev->drv->analyze_descriptor(drvdata, &ibuf[k])) {
 						LOG_PRINTF("Device Initialized\n");
 						return;
 					}
