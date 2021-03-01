@@ -253,6 +253,10 @@ static void write(void *drvdata, const usbh_packet_t *packet)
 	uint32_t dpid;
 	if (packet->endpoint_type == USBH_ENDPOINT_TYPE_CONTROL) {
 		if (packet->control_type == USBH_CONTROL_TYPE_DATA) {
+			// For Status OUT stage, Length==0, Status Out PID = 1 */
+			if(!packet->datalen) {
+				packet->toggle[0] = 1;
+			}
 			dpid = packet->toggle[0] ? OTG_HCTSIZ_DPID_DATA1 : OTG_HCTSIZ_DPID_DATA0;
 		} else {
 			dpid = OTG_HCTSIZ_DPID_MDATA;
