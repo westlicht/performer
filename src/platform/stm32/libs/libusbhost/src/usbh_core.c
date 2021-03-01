@@ -472,28 +472,10 @@ static void device_enumerate(usbh_device_t *dev, usbh_packet_callback_data_t cb_
 			setup_data.bRequest = USB_REQ_GET_DESCRIPTOR;
 			setup_data.wValue = USB_DT_CONFIGURATION << 8;
 			setup_data.wIndex = 0;
-			setup_data.wLength = dev->packet_size_max0;
+			setup_data.wLength = USB_DT_CONFIGURATION_SIZE;
 
-			dev->state = USBH_ENUM_STATE_CONFIGURATION_DT_HEADER_READ;
-			device_xfer_control_write_setup(&setup_data, sizeof(setup_data),
-				device_enumerate, dev);
-		}
-		break;
-
-	case USBH_ENUM_STATE_CONFIGURATION_DT_HEADER_READ:
-		{
-			switch (cb_data.status) {
-			case USBH_PACKET_CALLBACK_STATUS_OK:
-				dev->state = USBH_ENUM_STATE_CONFIGURATION_DT_HEADER_READ_COMPLETE;
-				device_xfer_control_read(&usbh_buffer[USB_DT_DEVICE_SIZE],
-					dev->packet_size_max0, device_enumerate, dev);
-				break;
-
-			default:
-				device_enumeration_terminate(dev);
-				ERROR(cb_data.status);
-				break;
-			}
+			dev->state = USBH_ENUM_STATE_CONFIGURATION_DT_HEADER_READ_COMPLETE;
+			device_control(dev, device_enumerate, &setup_data, &usbh_buffer[USB_DT_DEVICE_SIZE]);
 		}
 		break;
 
@@ -535,30 +517,8 @@ static void device_enumerate(usbh_device_t *dev, usbh_packet_callback_data_t cb_
 			setup_data.wIndex = 0;
 			setup_data.wLength = cdt->wTotalLength;
 
-			dev->state = USBH_ENUM_STATE_CONFIGURATION_DT_READ;
-			device_xfer_control_write_setup(&setup_data, sizeof(setup_data),
-				device_enumerate, dev);
-		}
-		break;
-
-	case USBH_ENUM_STATE_CONFIGURATION_DT_READ:
-		{
-			switch (cb_data.status) {
-			case USBH_PACKET_CALLBACK_STATUS_OK:
-				{
-					struct usb_config_descriptor *cdt =
-						(struct usb_config_descriptor *)&usbh_buffer[USB_DT_DEVICE_SIZE];
 					dev->state = USBH_ENUM_STATE_CONFIGURATION_DT_READ_COMPLETE;
-					device_xfer_control_read(&usbh_buffer[USB_DT_DEVICE_SIZE],
-						cdt->wTotalLength, device_enumerate, dev);
-				}
-				break;
-
-			default:
-				device_enumeration_terminate(dev);
-				ERROR(cb_data.status);
-				break;
-			}
+			device_control(dev, device_enumerate, &setup_data, &usbh_buffer[USB_DT_DEVICE_SIZE]);
 		}
 		break;
 
