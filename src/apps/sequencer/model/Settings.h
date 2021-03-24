@@ -2,6 +2,7 @@
 
 #include "Calibration.h"
 #include "Serialize.h"
+#include "UserSettings.h"
 
 class Settings {
 public:
@@ -14,6 +15,9 @@ public:
     const Calibration &calibration() const { return _calibration; }
           Calibration &calibration()       { return _calibration; }
 
+    const UserSettings &userSettings() const { return _userSettings; }
+          UserSettings &userSettings()       { return _userSettings; }
+
     void clear();
 
     void write(VersionedSerializedWriter &writer) const;
@@ -24,4 +28,5 @@ public:
 
 private:
     Calibration _calibration;
+    UserSettings _userSettings;
 };

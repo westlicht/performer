@@ -4,6 +4,7 @@
 
 #include "ui/model/CalibrationCvOutputListModel.h"
 #include "ui/model/UtilitiesListModel.h"
+#include "ui/model/SettingsListModel.h"
 
 #include "model/Settings.h"
 
@@ -25,8 +26,9 @@ public:
 private:
     enum class Mode : uint8_t {
         Calibration = 0,
-        Utilities   = 3,
-        Update      = 4,
+        Utilities   = 2,
+        Update      = 3,
+        Settings    = 4,
     };
 
     void setMode(Mode mode);
@@ -55,6 +57,7 @@ private:
     int _outputIndex;
     CalibrationCvOutputListModel _cvOutputListModel;
     UtilitiesListModel _utilitiesListModel;
+    SettingsListModel _settingsListModel;
 
     uint32_t _encoderDownTicks;
 };
