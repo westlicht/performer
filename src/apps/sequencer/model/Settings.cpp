@@ -1,3 +1,4 @@
+#include <iostream> // TODO remove
 #include "Settings.h"
 #include "FlashWriter.h"
 #include "FlashReader.h"
@@ -9,19 +10,25 @@ Settings::Settings() {
 }
 
 void Settings::clear() {
+    std::cout << "Clearing settings!" << std::endl;
     _calibration.clear();
+    _userSettings.clear();
 }
 
 void Settings::write(VersionedSerializedWriter &writer) const {
+    std::cout << "Writing settings!" << std::endl;
     _calibration.write(writer);
+    _userSettings.write(writer);
 
     writer.writeHash();
 }
 
 bool Settings::read(VersionedSerializedReader &reader) {
+    std::cout << "Reading settings!" << std::endl;
     clear();
 
     _calibration.read(reader);
+    _userSettings.read(reader);
 
     bool success = reader.checkHash();
     if (!success) {
