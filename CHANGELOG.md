@@ -2,9 +2,9 @@
 
 ## v0.1.40 (9 February 2021)
 
-#### Improvements
-
 Note: This release changes the behavior of how note slides are generated. You may need to adjust the _Slide Time_ on existing projects to get a similar feel.
+
+#### Improvements
 
 - Improved behavior of slide voltage output (#243)
 - Added _Play Toggle_ and _Record Toggle_ routing targets (#273)
