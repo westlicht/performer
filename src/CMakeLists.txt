@@ -53,7 +53,7 @@ set(core_sources
     core/midi/MidiMessage.cpp
     core/midi/MidiParser.cpp
     core/profiler/Profiler.cpp
-)
+        core/gfx/Brightness.h)
 
 include_directories(.)
 include_directories(libs)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FrameBuffer.h"
+#include "Brightness.h"
 
 #include <algorithm>
 
@@ -33,15 +34,18 @@ enum class VerticalAlign {
 
 class Canvas {
 public:
-    Canvas(FrameBuffer8bit &frameBuffer) :
+    Canvas(FrameBuffer8bit &frameBuffer, int &brightness) : //Settings &settings) :
         _frameBuffer(frameBuffer),
         _right(frameBuffer.width() - 1),
-        _bottom(frameBuffer.height() - 1)
+        _bottom(frameBuffer.height() - 1),
+//        _settings(settings)
+        _brightness(brightness)
     {
     }
 
     uint8_t color() const { return _color; }
-    void setColor(uint8_t color) { _color = color; }
+//    void setColor(uint8_t color) { _color = color * _settings.userSettings().getBrightness() / MaxBrightness + MinBrightness; }
+    void setColor(uint8_t color) { _color = color * _brightness / MaxBrightness + MinBrightness; }
 
     BlendMode blendMode() const { return _blendMode; }
     void setBlendMode(BlendMode blendMode) { _blendMode = blendMode; }
@@ -263,4 +267,6 @@ private:
     uint8_t _color = 0xf;
     BlendMode _blendMode = BlendMode::Set;
     Font _font = Font::Default;
+//    Settings &_settings;
+    int &_brightness;
 };
