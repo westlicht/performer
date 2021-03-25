@@ -28,7 +28,7 @@ class Key;
 
 class Ui {
 public:
-    Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder);
+    Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder, Settings &settings);
 
     void init();
     void update();

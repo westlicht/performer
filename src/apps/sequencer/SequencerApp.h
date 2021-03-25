@@ -52,7 +52,7 @@ struct SequencerApp {
     SequencerApp() :
         volume(sdCard),
         engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi),
-        ui(model, engine, lcd, blm, encoder)
+        ui(model, engine, lcd, blm, encoder, model.settings())
     {
         MidiMessage::setPayloadPool(midiMessagePayloadPool, sizeof(midiMessagePayloadPool));
 

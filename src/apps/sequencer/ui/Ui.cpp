@@ -9,14 +9,14 @@
 
 #include "model/Model.h"
 
-Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder) :
+Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder, Settings &settings) :
     _model(model),
     _engine(engine),
     _lcd(lcd),
     _blm(blm),
     _encoder(encoder),
     _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
-    _canvas(_frameBuffer),
+    _canvas(_frameBuffer, settings.userSettings()._brightness),
     _pageManager(_pages),
     _pageContext({ _messageManager, _pageKeyState, _globalKeyState, _model, _engine }),
     _pages(_pageManager, _pageContext),

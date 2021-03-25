@@ -2,10 +2,7 @@
 
 #include <core/io/VersionedSerializedWriter.h>
 #include <core/io/VersionedSerializedReader.h>
-
-const int MinBrightness = 1;
-const int MaxBrightness = 10;
-const int DefaultBrightness = MaxBrightness;
+#include <core/gfx/Brightness.h>
 
 class UserSettings {
 public:
@@ -21,6 +18,8 @@ public:
     void shiftBrightness(int shift);
     int getBrightness();
 
+    int _brightness;
+
     //----------------------------------------
     // Methods
     //----------------------------------------
@@ -30,5 +29,4 @@ public:
     void read(VersionedSerializedReader &reader);
 
 private:
-    int _brightness;
 };

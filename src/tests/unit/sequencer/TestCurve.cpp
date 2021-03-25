@@ -4,6 +4,7 @@
 
 #include "apps/sequencer/model/Curve.cpp"
 #include "core/gfx/Canvas.cpp"
+#include "core/gfx/Brightness.h"
 
 #ifdef PLATFORM_SIM
 #include "libs/stb/stb_image_write.h"
@@ -14,6 +15,7 @@
 const int Width = 32;
 const int Height = 64;
 const int Padding = 4;
+int brightness = MaxBrightness;
 
 UNIT_TEST("Curve") {
 
@@ -24,7 +26,7 @@ UNIT_TEST("Curve") {
         auto drawCurve = [] (int index, const char *filename) {
             uint8_t data[Width * Height];
             FrameBuffer8bit framebuffer(Width, Height, data);
-            Canvas canvas(framebuffer);
+            Canvas canvas(framebuffer, brightness);
 
             canvas.setBlendMode(BlendMode::Set);
             canvas.setColor(0);
