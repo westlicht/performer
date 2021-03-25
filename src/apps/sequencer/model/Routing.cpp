@@ -273,7 +273,7 @@ struct TargetInfo {
     int8_t shiftStep;
 };
 
-const TargetInfo targetInfos[int(Routing::Target::Last)] = {
+static const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::None)]                            = { 0,      0,      0,      0,      0       },
     // Engine targets
     [int(Routing::Target::Play)]                            = { 0,      1,      0,      1,      1       },

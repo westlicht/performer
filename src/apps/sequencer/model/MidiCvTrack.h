@@ -16,8 +16,11 @@ public:
     // Types
     //----------------------------------------
 
-    enum class VoiceConfig {
+    enum class VoiceSignal : uint8_t { Pitch, Velocity, Pressure };
+
+    enum class VoiceConfig : uint8_t {
         Pitch,
+        Velocity,
         PitchVelocity,
         PitchVelocityPressure,
         Last,
@@ -25,10 +28,11 @@ public:
 
     static const char *voiceConfigName(VoiceConfig voiceConfig) {
         switch (voiceConfig) {
-        case VoiceConfig::Pitch:                return "Pitch";
-        case VoiceConfig::PitchVelocity:        return "Pitch+Vel";
-        case VoiceConfig::PitchVelocityPressure:return "Pitch+Vel+Press";
-        case VoiceConfig::Last:                 break;
+        case VoiceConfig::Pitch:                    return "Pitch";
+        case VoiceConfig::Velocity:                 return "Velocity";
+        case VoiceConfig::PitchVelocity:            return "Pitch+Vel";
+        case VoiceConfig::PitchVelocityPressure:    return "Pitch+Vel+Press";
+        case VoiceConfig::Last:                     break;
         }
         return nullptr;
     }
@@ -241,6 +245,9 @@ public:
     MidiCvTrack() { clear(); }
 
     void clear();
+
+    int voiceSignalCount() const;
+    VoiceSignal voiceSignalByIndex(int index) const;
 
     void gateOutputName(int index, StringBuilder &str) const;
     void cvOutputName(int index, StringBuilder &str) const;

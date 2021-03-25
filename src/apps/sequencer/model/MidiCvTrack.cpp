@@ -2,6 +2,18 @@
 
 #include "ProjectVersion.h"
 
+struct VoiceConfigInfo {
+    uint8_t signalCount;
+    MidiCvTrack::VoiceSignal signals[3];
+};
+
+static const struct VoiceConfigInfo voiceConfigInfos[int(MidiCvTrack::VoiceConfig::Last)] = {
+    [int(MidiCvTrack::VoiceConfig::Pitch)]                  = { 1, { MidiCvTrack::VoiceSignal::Pitch } },
+    [int(MidiCvTrack::VoiceConfig::Velocity)]               = { 1, { MidiCvTrack::VoiceSignal::Velocity } },
+    [int(MidiCvTrack::VoiceConfig::PitchVelocity)]          = { 2, { MidiCvTrack::VoiceSignal::Pitch, MidiCvTrack::VoiceSignal::Velocity } },
+    [int(MidiCvTrack::VoiceConfig::PitchVelocityPressure)]  = { 3, { MidiCvTrack::VoiceSignal::Pitch, MidiCvTrack::VoiceSignal::Velocity, MidiCvTrack::VoiceSignal::Pressure } },
+};
+
 void MidiCvTrack::writeRouted(Routing::Target target, int intValue, float floatValue) {
     switch (target) {
     case Routing::Target::SlideTime:
@@ -30,20 +42,36 @@ void MidiCvTrack::clear() {
     _arpeggiator.clear();
 }
 
+int MidiCvTrack::voiceSignalCount() const {
+    const auto &info = voiceConfigInfos[int(_voiceConfig)];
+    return info.signalCount;
+}
+
+MidiCvTrack::VoiceSignal MidiCvTrack::voiceSignalByIndex(int index) const {
+    const auto &info = voiceConfigInfos[int(_voiceConfig)];
+    return info.signals[index % info.signalCount];
+}
+
 void MidiCvTrack::gateOutputName(int index, StringBuilder &str) const {
     str("Gate%d", (index % _voices) + 1);
 }
 
 void MidiCvTrack::cvOutputName(int index, StringBuilder &str) const {
-    int signals = int(_voiceConfig) + 1;
-    int totalOutputs = _voices * signals;
+    int signalCount = voiceSignalCount();
+    int totalOutputs = _voices * signalCount;
     index %= totalOutputs;
     int voiceIndex = index % _voices;
     int signalIndex = index / _voices;
-    switch (signalIndex) {
-    case 0: str("V/Oct%d", voiceIndex + 1); break;
-    case 1: str("Vel%d", voiceIndex + 1); break;
-    case 2: str("Press%d", voiceIndex + 1); break;
+    switch (voiceSignalByIndex(signalIndex)) {
+    case VoiceSignal::Pitch:
+        str("V/Oct%d", voiceIndex + 1);
+        break;
+    case VoiceSignal::Velocity:
+        str("Vel%d", voiceIndex + 1);
+        break;
+    case VoiceSignal::Pressure:
+        str("Press%d", voiceIndex + 1);
+        break;
     }
 }
 
@@ -65,7 +93,18 @@ void MidiCvTrack::write(VersionedSerializedWriter &writer) const {
 void MidiCvTrack::read(VersionedSerializedReader &reader) {
     _source.read(reader);
     reader.read(_voices);
-    reader.read(_voiceConfig);
+    if (reader.dataVersion() < ProjectVersion::Version31) {
+        uint32_t voiceConfig;
+        reader.read(voiceConfig);
+        switch (voiceConfig) {
+        case 0: _voiceConfig = VoiceConfig::Pitch; break;
+        case 1: _voiceConfig = VoiceConfig::PitchVelocity; break;
+        case 2: _voiceConfig = VoiceConfig::PitchVelocityPressure; break;
+        default: _voiceConfig = VoiceConfig::Pitch; break;
+        }
+    } else {
+        reader.read(_voiceConfig);
+    }
     reader.read(_notePriority, ProjectVersion::Version16);
     reader.read(_lowNote, ProjectVersion::Version15);
     reader.read(_highNote, ProjectVersion::Version15);
