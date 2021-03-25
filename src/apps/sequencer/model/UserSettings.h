@@ -16,9 +16,7 @@ public:
 
     void setBrightness(int brightness);
     void shiftBrightness(int shift);
-    int getBrightness();
-
-    int _brightness;
+    int &getBrightness();
 
     //----------------------------------------
     // Methods
@@ -29,4 +27,5 @@ public:
     void read(VersionedSerializedReader &reader);
 
 private:
+    int _brightness;
 };
