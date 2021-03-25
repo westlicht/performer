@@ -12,7 +12,7 @@ void UserSettings::shiftBrightness(int shift) {
     setBrightness(getBrightness() + shift);
 }
 
-int UserSettings::getBrightness() {
+int &UserSettings::getBrightness() {
     return _brightness;
 }
 
