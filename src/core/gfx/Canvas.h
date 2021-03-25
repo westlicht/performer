@@ -54,6 +54,7 @@ public:
     void setFont(Font font) { _font = font; }
 
     void fill();
+    void screensaver();
 
     void point(int x, int y);
 
