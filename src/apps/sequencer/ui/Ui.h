@@ -72,4 +72,6 @@ private:
 
     ControllerManager _controllerManager;
     uint32_t _lastControllerUpdateTicks;
+
+    uint32_t _ticksSinceScreenOn;
 };

@@ -36,6 +36,10 @@ void Canvas::fill() {
     _frameBuffer.fill(_color);
 }
 
+void Canvas::screensaver() {
+    _frameBuffer.fill(0x0);
+}
+
 void Canvas::point(int x, int y) {
     switch (_blendMode) {
     case BlendMode::Set: point<blit::set>(x, y); break;

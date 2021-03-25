@@ -84,9 +84,16 @@ void Ui::update() {
     uint32_t currentTicks = os::ticks();
     uint32_t intervalTicks = os::time::ms(1000 / _pageManager.fps());
     if (currentTicks - _lastFrameBufferUpdateTicks >= intervalTicks) {
-        _pageManager.draw(_canvas);
-        _messageManager.update();
-        _messageManager.draw(_canvas);
+//        std::cout << "tick: " << currentTicks << ", " << intervalTicks << std::endl;
+        std::cout << _ticksSinceScreenOn << std::endl;
+        if (_ticksSinceScreenOn <= 5000) {
+            _pageManager.draw(_canvas);
+            _messageManager.update();
+            _messageManager.draw(_canvas);
+            _ticksSinceScreenOn += intervalTicks;
+        } else {
+            _canvas.screensaver();
+        }
         _lcd.draw(_frameBuffer.data());
         _lastFrameBufferUpdateTicks += intervalTicks;
     }
@@ -124,6 +131,8 @@ void Ui::showAssert(const char *filename, int line, const char *msg) {
 void Ui::handleKeys() {
     ButtonLedMatrix::Event event;
     while (_blm.nextEvent(event)) {
+        std::cout<<"handleKeys" <<std::endl;
+        _ticksSinceScreenOn = 0;
         bool isDown = event.action() == ButtonLedMatrix::Event::KeyDown;
         _pageKeyState[event.value()] = isDown;
         _globalKeyState[event.value()] = isDown;
@@ -140,6 +149,7 @@ void Ui::handleKeys() {
 void Ui::handleEncoder() {
     Encoder::Event event;
     while (_encoder.nextEvent(event)) {
+        _ticksSinceScreenOn = 0; // TODO consume event
         switch (event) {
         case Encoder::Left:
         case Encoder::Right: {
