@@ -44,7 +44,6 @@ public:
     }
 
     uint8_t color() const { return _color; }
-//    void setColor(uint8_t color) { _color = color * _settings.userSettings().getBrightness() / MaxBrightness + MinBrightness; }
     void setColor(uint8_t color) { _color = color * _brightness / MaxBrightness + MinBrightness; }
 
     BlendMode blendMode() const { return _blendMode; }

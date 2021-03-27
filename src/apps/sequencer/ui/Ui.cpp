@@ -16,7 +16,7 @@ Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &en
     _blm(blm),
     _encoder(encoder),
     _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
-    _canvas(_frameBuffer, settings.userSettings().getBrightness()),
+    _canvas(_frameBuffer, settings.userSettings().get(SettingBrightness)->getValue()),
     _pageManager(_pages),
     _pageContext({ _messageManager, _pageKeyState, _globalKeyState, _model, _engine }),
     _pages(_pageManager, _pageContext),
@@ -85,7 +85,7 @@ void Ui::update() {
     uint32_t intervalTicks = os::time::ms(1000 / _pageManager.fps());
     if (currentTicks - _lastFrameBufferUpdateTicks >= intervalTicks) {
 //        std::cout << "tick: " << currentTicks << ", " << intervalTicks << std::endl;
-        std::cout << _ticksSinceScreenOn << std::endl;
+//        std::cout << _ticksSinceScreenOn << std::endl;
         if (_ticksSinceScreenOn <= 5000) {
             _pageManager.draw(_canvas);
             _messageManager.update();

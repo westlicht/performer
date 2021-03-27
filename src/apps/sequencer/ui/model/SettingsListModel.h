@@ -13,7 +13,7 @@ public:
     {}
 
     virtual int rows() const override {
-        return 1;
+        return _userSettings.all().size();
     }
 
     virtual int columns() const override {
@@ -21,21 +21,17 @@ public:
     }
 
     virtual void cell(int row, int column, StringBuilder &str) const override {
-        if (row == 0) { // TODO proper map of settings
-            if (column == 0) {
-                str("Brightness");
-            } else if (column == 1) {
-                str("%i", _userSettings.getBrightness());
-            }
+        if (column == 0) {
+            str("%s", _userSettings.get(row)->getMenuItem().c_str());
+        } else if (column == 1) {
+            str("%s", _userSettings.get(row)->getMenuItemKey().c_str());
         }
     }
 
     virtual void edit(int row, int column, int value, bool shift) override {
         if (column == 1) {
-            if (row == 0) { // TODO proper map of settings
-                std::cout << "edit Column 1" << value << " " << shift << std::endl;
-                _userSettings.shiftBrightness(value);
-            }
+            std::cout << "edit Column 1" << value << " " << shift << std::endl;
+            _userSettings.shift(row, value);
         }
     }
 
