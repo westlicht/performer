@@ -48,7 +48,9 @@ void Screensaver::consumeKey(Event &event, Key key) {
         _buttonPressed = false;
     }
 
-    off();
+    if (event.type() == Event::Type::KeyPress) {
+        off();
+    }
 }
 
 void Screensaver::consumeEncoder(EncoderEvent &event) {
