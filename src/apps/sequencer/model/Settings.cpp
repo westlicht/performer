@@ -10,13 +10,11 @@ Settings::Settings() {
 }
 
 void Settings::clear() {
-    std::cout << "Clearing settings!" << std::endl;
     _calibration.clear();
     _userSettings.clear();
 }
 
 void Settings::write(VersionedSerializedWriter &writer) const {
-    std::cout << "Writing settings!" << std::endl;
     _calibration.write(writer);
     _userSettings.write(writer);
 
@@ -24,7 +22,6 @@ void Settings::write(VersionedSerializedWriter &writer) const {
 }
 
 bool Settings::read(VersionedSerializedReader &reader) {
-    std::cout << "Reading settings!" << std::endl;
     clear();
 
     _calibration.read(reader);
