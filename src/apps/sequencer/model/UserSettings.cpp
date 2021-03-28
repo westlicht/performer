@@ -8,7 +8,7 @@ void UserSettings::shift(int key, int shift) {
     _settings[key]->shiftValue(shift);
 }
 
-BaseSetting *UserSettings::_get(const char *key) {
+BaseSetting *UserSettings::_get(const std::string& key) {
     for (auto &setting : _settings) {
         if (setting->getKey() == key) {
             return setting;
@@ -26,8 +26,8 @@ std::vector<BaseSetting *> UserSettings::all() {
 }
 
 void UserSettings::clear() {
-    for (auto &_setting : _settings) {
-        _setting->reset();
+    for (auto &setting : _settings) {
+        setting->reset();
     }
 }
 

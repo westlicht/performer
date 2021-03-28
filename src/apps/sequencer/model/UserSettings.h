@@ -147,7 +147,7 @@ public:
     void shift(int key, int shift);
     BaseSetting *get(int key);
     template<typename S>
-    S *get(const char *key) { return dynamic_cast<S *>(_get(key)); }
+    S *get(std::string key) { return dynamic_cast<S *>(_get(key)); }
     std::vector<BaseSetting *> all();
 
     void clear();
@@ -161,5 +161,5 @@ private:
     void addSetting(Setting<T> *setting) {
         _settings.push_back(setting);
     }
-    BaseSetting *_get(const char *key);
+    BaseSetting *_get(const std::string &key);
 };
