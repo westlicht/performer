@@ -14,7 +14,7 @@ class BaseSetting {
 public:
     virtual std::string getKey() = 0;
     virtual void shiftValue(int shift) = 0;
-    virtual void setValue(unsigned int value) = 0;
+    virtual void setValue(int value) = 0;
     virtual std::string getMenuItem() = 0;
     virtual std::string getMenuItemKey() = 0;
     virtual void read(VersionedSerializedReader &writer) = 0;
@@ -52,10 +52,10 @@ public:
         return _menuItemKeys[getCurrentIndex()];
     }
 
-    void setValue(unsigned int index) override {
-        if (index < 0) index = 0;
-        if (index > _menuItemValues.size() - 1) index = _menuItemValues.size() - 1;
-        _value = _menuItemValues[index];
+    void setValue(int index) override {
+        unsigned int validIndex = (index >= 0) ? index : 0;
+        if (validIndex > _menuItemValues.size() - 1) validIndex = _menuItemValues.size() - 1;
+        _value = _menuItemValues[validIndex];
     };
 
     void shiftValue(int shift) override {
