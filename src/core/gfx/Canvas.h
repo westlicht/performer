@@ -265,6 +265,5 @@ private:
     uint8_t _color = 0xf;
     BlendMode _blendMode = BlendMode::Set;
     Font _font = Font::Default;
-//    Settings &_settings;
     float &_brightness;
 };
