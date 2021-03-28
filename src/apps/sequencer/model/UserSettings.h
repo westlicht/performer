@@ -5,24 +5,21 @@
 #include <unordered_map>
 #include <vector>
 
-//const char *SettingBrightness   = "brightness";
-//const char *SettingScreensaver  = "screensaver";
+#include <iostream>
+
 #define SettingBrightness "brightness"
 #define SettingScreensaver "screensaver"
-
-#include <iostream>
 
 class BaseSetting {
 public:
     virtual std::string getKey() = 0;
     virtual void shiftValue(int shift) = 0;
     virtual void setValue(int value) = 0;
-//    template<typename T>
-//    virtual T getValue() = 0;
     virtual std::string getMenuItem() = 0;
     virtual std::string getMenuItemKey() = 0;
     virtual void read(VersionedSerializedReader &writer) = 0;
     virtual void write(VersionedSerializedWriter &writer) = 0;
+    virtual void reset() = 0;
 };
 
 template<typename T>
@@ -56,9 +53,9 @@ public:
     }
 
     void setValue(int index) override {
-        std::cout << "Set index: " << index << std::endl;
         if (index < 0) index = 0;
         if (index > _menuItemValues.size() - 1) index = _menuItemValues.size() - 1;
+        std::cout << "Set index: " << index << ": " << _menuItemValues[index] << std::endl;
         _value = _menuItemValues[index];
     };
 
@@ -67,14 +64,16 @@ public:
     };
 
     T &getValue() {
+        std::cout<<_value<<std::endl;
         return _value;
     };
 
     const T &getValue() const {
+        std::cout<<_value<<std::endl;
         return _value;
     }
 
-    void reset() {
+    void reset() override {
         _value = _defaultValue;
     };
 
@@ -97,18 +96,18 @@ private:
     std::string _key;
     std::string _menuItem;
     std::vector<std::string> _menuItemKeys;
-    std::vector<int> _menuItemValues;
+    std::vector<T> _menuItemValues;
     T _defaultValue;
 };
 
-class BrightnessSetting : public Setting<int> {
+class BrightnessSetting : public Setting<float> {
 public:
     BrightnessSetting() : Setting(
             SettingBrightness,
             "Brightness",
             {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
-            {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-            10
+            {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+            1.0
     ) {}
 };
 
@@ -136,23 +135,21 @@ public:
 
     void set(int key, int value);
     void shift(int key, int shift);
-    std::shared_ptr<BaseSetting> get(int key);
-//    template<typename T>
-//    T *get(int key);
-    std::shared_ptr<BaseSetting> get(const char *key);
-    template<typename T>
-    T *get2(const char *key) { std::dynamic_pointer_cast<T>(*get(key)); }
-    std::vector<std::shared_ptr<BaseSetting>> all();
+    BaseSetting *get(int key);
+    template<typename S>
+    S *get(const char *key) { return dynamic_cast<S *>(_get(key)); }
+    std::vector<BaseSetting *> all();
 
     void clear();
     void write(VersionedSerializedWriter &writer) const;
     void read(VersionedSerializedReader &reader);
 
 private:
-    std::vector<std::shared_ptr<BaseSetting>> _settings;
+    std::vector<BaseSetting *> _settings;
 
     template<typename T>
     void addSetting(Setting<T> *setting) {
-        _settings.push_back(std::shared_ptr<BaseSetting>(setting));
+        _settings.push_back(setting);
     }
+    BaseSetting *_get(const char *key);
 };
