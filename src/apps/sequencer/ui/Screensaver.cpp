@@ -11,19 +11,32 @@ void Screensaver::off() {
 }
 
 bool Screensaver::shouldBeOn() {
-    // TODO get time, not ticks
-    return _screenOffAfter > 0 && !_buttonPressed && _screenOnTicks > _screenOffAfter * 1000;
+    // TODO Is tick comparison correct? Seems roughly correct...
+    return _screenOffAfter > 0 && !_buttonPressed && _screenOnTicks > _screenOffAfter;
 }
 
 bool Screensaver::consumeKey(Key key, bool isDown) {
     _buttonPressed = isDown;
-    bool consume = _screenSaved;
+//    bool consume = _screenSaved;
     off();
-    if (consume) {
-        return key.code() != Key::Code::Play; // Allow play function when in screensaver
-    } else {
-        return false;
-    }
+//    if (consume) {
+//        switch(key.code()) {
+//            case Key::Code::Play:
+//            case Key::Code::Tempo:
+//            case Key::Code::Pattern:
+//            case Key::Code::Performer:
+//            case Key::Code::Shift:
+//            case Key::Code::Page:
+//            case Key::Code::Track0 ... Key::Code::Track7:
+//                return false;
+//            default:
+//                return true;
+//        }
+//    } else {
+//        return false;
+//    }
+    // Probably don't want to consume anything
+    return false;
 }
 
 bool Screensaver::consumeEncoder(bool isDown) {
