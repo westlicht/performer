@@ -48,6 +48,7 @@ set(sources
     model/Track.cpp
     model/Types.cpp
     model/UserScale.cpp
+    model/UserSettings.cpp
     # ui
     ui/Controller.cpp
     ui/ControllerManager.cpp
@@ -56,6 +57,7 @@ set(sources
     ui/Page.cpp
     ui/PageManager.cpp
     ui/Ui.cpp
+    ui/Screensaver.cpp
     # ui/controllers/launchpad
     ui/controllers/launchpad/LaunchpadController.cpp
     ui/controllers/launchpad/LaunchpadDevice.cpp
@@ -100,7 +102,7 @@ set(sources
     ui/painters/SequencePainter.cpp
     ui/painters/SongPainter.cpp
     ui/painters/WindowPainter.cpp
-        model/UserSettings.cpp ui/Screensaver.cpp ui/Screensaver.h)
+)
 
 include_directories(.)
 

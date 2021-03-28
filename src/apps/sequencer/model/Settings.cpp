@@ -1,4 +1,3 @@
-#include <iostream> // TODO remove
 #include "Settings.h"
 #include "FlashWriter.h"
 #include "FlashReader.h"

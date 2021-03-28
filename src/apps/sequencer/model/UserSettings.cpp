@@ -1,4 +1,3 @@
-#include <iostream> // TODO remove
 #include "UserSettings.h"
 
 void UserSettings::set(int key, int value) {
