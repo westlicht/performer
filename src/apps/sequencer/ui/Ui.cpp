@@ -16,7 +16,7 @@ Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &en
     _blm(blm),
     _encoder(encoder),
     _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
-    _canvas(_frameBuffer, settings.userSettings().get2<BrightnessSetting>(SettingBrightness)->getValue()),
+    _canvas(_frameBuffer, settings.userSettings().get<BrightnessSetting>(SettingBrightness)->getValue()),
     _pageManager(_pages),
     _pageContext({ _messageManager, _pageKeyState, _globalKeyState, _model, _engine }),
     _pages(_pageManager, _pageContext),

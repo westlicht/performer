@@ -6,19 +6,11 @@ void UserSettings::set(int key, int value) {
     _settings[key]->setValue(value);
 }
 
-//void UserSettings::set(int key, int value) {
-//    int i = 0;
-//    for (auto it = _settings.begin(); it != _settings.end(); it++)
-//        _setting.second.reset();
-//    }
-//}
-
 void UserSettings::shift(int key, int shift) {
     _settings[key]->shiftValue(shift);
 }
 
-std::shared_ptr<BaseSetting> UserSettings::get(const char *key) {
-//    return _settings[key].getValue();
+BaseSetting *UserSettings::_get(const char *key) {
     for (auto &setting : _settings) {
         if (setting->getKey() == key) {
             return setting;
@@ -27,18 +19,18 @@ std::shared_ptr<BaseSetting> UserSettings::get(const char *key) {
     return nullptr;
 }
 
-std::shared_ptr<BaseSetting> UserSettings::get(int key) {
+BaseSetting *UserSettings::get(int key) {
     return _settings[key];
 }
 
-std::vector<std::shared_ptr<BaseSetting>> UserSettings::all() {
+std::vector<BaseSetting *> UserSettings::all() {
     return _settings;
 }
 
 void UserSettings::clear() {
     std::cout<<"clearing brightness"<<std::endl;
     for (auto &_setting : _settings) {
-        _setting.reset();
+        _setting->reset();
     }
 }
 

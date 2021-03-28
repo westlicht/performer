@@ -50,7 +50,7 @@ private:
     Timer timer;
     MovingAverage<uint32_t, 10> frameInterval;
     int lastFrame = -1;
-    int brightness = 10;
+    float brightness = 1.0;
 };
 
 INTEGRATION_TEST(TestLcd, "Lcd", true)

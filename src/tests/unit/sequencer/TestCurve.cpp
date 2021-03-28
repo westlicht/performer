@@ -14,7 +14,7 @@
 const int Width = 32;
 const int Height = 64;
 const int Padding = 4;
-int brightness = 10;
+float brightness = 1.0;
 
 UNIT_TEST("Curve") {
 

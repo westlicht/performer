@@ -22,9 +22,9 @@ public:
 
     void cell(int row, int column, StringBuilder &str) const override {
         if (column == 0) {
-            str("%s", _userSettings.get(row)->get()->getMenuItem().c_str());
+            str("%s", _userSettings.get(row)->getMenuItem().c_str());
         } else if (column == 1) {
-            str("%s", _userSettings.get(row)->get()->getMenuItemKey().c_str());
+            str("%s", _userSettings.get(row)->getMenuItemKey().c_str());
         }
     }
 
