@@ -2,7 +2,8 @@
 
 #include <cstdint>
 #include <core/gfx/Canvas.h>
-#include <platform/sim/drivers/ButtonLedMatrix.h>
+#include "drivers/ButtonLedMatrix.h"
+#include "drivers/Encoder.h"
 #include "Key.h"
 
 class Screensaver {

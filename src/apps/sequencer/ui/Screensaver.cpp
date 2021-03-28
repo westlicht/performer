@@ -1,4 +1,3 @@
-#include <platform/sim/drivers/Encoder.h>
 #include "Screensaver.h"
 
 void Screensaver::on() {
