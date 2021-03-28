@@ -5,7 +5,6 @@
 #include "core/gfx/FrameBuffer.h"
 #include "core/gfx/Canvas.h"
 #include "core/utils/MovingAverage.h"
-#include "core/gfx/Brightness.h"
 
 #include "os/os.h"
 
@@ -51,7 +50,7 @@ private:
     Timer timer;
     MovingAverage<uint32_t, 10> frameInterval;
     int lastFrame = -1;
-    int brightness = MaxBrightness;
+    int brightness = 10;
 };
 
 INTEGRATION_TEST(TestLcd, "Lcd", true)

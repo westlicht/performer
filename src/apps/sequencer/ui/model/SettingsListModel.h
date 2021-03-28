@@ -12,23 +12,23 @@ public:
         _userSettings(userSettings)
     {}
 
-    virtual int rows() const override {
+    int rows() const override {
         return _userSettings.all().size();
     }
 
-    virtual int columns() const override {
+    int columns() const override {
         return 2;
     }
 
-    virtual void cell(int row, int column, StringBuilder &str) const override {
+    void cell(int row, int column, StringBuilder &str) const override {
         if (column == 0) {
-            str("%s", _userSettings.get(row)->getMenuItem().c_str());
+            str("%s", _userSettings.get(row)->get()->getMenuItem().c_str());
         } else if (column == 1) {
-            str("%s", _userSettings.get(row)->getMenuItemKey().c_str());
+            str("%s", _userSettings.get(row)->get()->getMenuItemKey().c_str());
         }
     }
 
-    virtual void edit(int row, int column, int value, bool shift) override {
+    void edit(int row, int column, int value, bool shift) override {
         if (column == 1) {
             std::cout << "edit Column 1" << value << " " << shift << std::endl;
             _userSettings.shift(row, value);

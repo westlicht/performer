@@ -4,7 +4,6 @@
 
 #include "apps/sequencer/model/Curve.cpp"
 #include "core/gfx/Canvas.cpp"
-#include "core/gfx/Brightness.h"
 
 #ifdef PLATFORM_SIM
 #include "libs/stb/stb_image_write.h"
@@ -15,7 +14,7 @@
 const int Width = 32;
 const int Height = 64;
 const int Padding = 4;
-int brightness = MaxBrightness;
+int brightness = 10;
 
 UNIT_TEST("Curve") {
 

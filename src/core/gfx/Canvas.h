@@ -1,7 +1,6 @@
 #pragma once
 
 #include "FrameBuffer.h"
-#include "Brightness.h"
 
 #include <algorithm>
 
@@ -44,7 +43,7 @@ public:
     }
 
     uint8_t color() const { return _color; }
-    void setColor(uint8_t color) { _color = color * _brightness / MaxBrightness + MinBrightness; }
+    void setColor(uint8_t color) { _color = color * _brightness; }
 
     BlendMode blendMode() const { return _blendMode; }
     void setBlendMode(BlendMode blendMode) { _blendMode = blendMode; }

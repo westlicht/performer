@@ -2,7 +2,6 @@
 
 #include <core/io/VersionedSerializedWriter.h>
 #include <core/io/VersionedSerializedReader.h>
-#include <core/gfx/Brightness.h>
 #include <unordered_map>
 #include <vector>
 
@@ -13,14 +12,28 @@
 
 #include <iostream>
 
-class Setting {
+class BaseSetting {
+public:
+    virtual std::string getKey() = 0;
+    virtual void shiftValue(int shift) = 0;
+    virtual void setValue(int value) = 0;
+//    template<typename T>
+//    virtual T getValue() = 0;
+    virtual std::string getMenuItem() = 0;
+    virtual std::string getMenuItemKey() = 0;
+    virtual void read(VersionedSerializedReader &writer) = 0;
+    virtual void write(VersionedSerializedWriter &writer) = 0;
+};
+
+template<typename T>
+class Setting : public BaseSetting {
 public:
     Setting(
         std::string key,
         std::string menuItem,
         std::vector<std::string> menuItemKeys,
-        std::vector<int> menuItemValues,
-        int defaultValue
+        std::vector<T> menuItemValues,
+        T defaultValue
     ) :
         _value(defaultValue),
         _key(std::move(key)),
@@ -30,39 +43,47 @@ public:
         _defaultValue(defaultValue)
     {}
 
-    std::string getKey() {
+    std::string getKey() override {
         return _key;
     }
 
-    std::string getMenuItem() {
+    std::string getMenuItem() override {
         return _menuItem;
     }
 
-    std::string getMenuItemKey() {
+    std::string getMenuItemKey() override {
         return _menuItemKeys[getCurrentIndex()];
     }
 
-    void setValue(int index) {
+    void setValue(int index) override {
         std::cout << "Set index: " << index << std::endl;
         if (index < 0) index = 0;
         if (index > _menuItemValues.size() - 1) index = _menuItemValues.size() - 1;
         _value = _menuItemValues[index];
     };
 
-    void shiftValue(int shift) {
+    void shiftValue(int shift) override {
         setValue(getCurrentIndex() + shift);
     };
 
-    int &getValue() {
+    T &getValue() {
         return _value;
     };
 
-    const int &getValue() const {
+    const T &getValue() const {
         return _value;
     }
 
     void reset() {
         _value = _defaultValue;
+    };
+
+    void read(VersionedSerializedReader &reader) override {
+        reader.read(getValue());
+    };
+
+    void write(VersionedSerializedWriter &writer) override {
+        writer.write(getValue());
     };
 
 private:
@@ -71,16 +92,16 @@ private:
         return std::distance(_menuItemValues.begin(), it);
     }
 
-    int _value;
+    T _value;
 
     std::string _key;
     std::string _menuItem;
     std::vector<std::string> _menuItemKeys;
     std::vector<int> _menuItemValues;
-    int _defaultValue;
+    T _defaultValue;
 };
 
-class BrightnessSetting : public Setting {
+class BrightnessSetting : public Setting<int> {
 public:
     BrightnessSetting() : Setting(
             SettingBrightness,
@@ -91,7 +112,7 @@ public:
     ) {}
 };
 
-class ScreensaverSetting : public Setting {
+class ScreensaverSetting : public Setting<int> {
 public:
     ScreensaverSetting() : Setting(
             SettingScreensaver,
@@ -105,8 +126,8 @@ public:
 class UserSettings {
 public:
     UserSettings() {
-        addSetting(BrightnessSetting());
-        addSetting(ScreensaverSetting());
+        addSetting(new BrightnessSetting());
+        addSetting(new ScreensaverSetting());
     }
 
     //----------------------------------------
@@ -115,18 +136,23 @@ public:
 
     void set(int key, int value);
     void shift(int key, int shift);
-    Setting *get(int key);
-    Setting *get(const char *key);
-    std::vector<Setting> all();
+    std::shared_ptr<BaseSetting> get(int key);
+//    template<typename T>
+//    T *get(int key);
+    std::shared_ptr<BaseSetting> get(const char *key);
+    template<typename T>
+    T *get2(const char *key) { std::dynamic_pointer_cast<T>(*get(key)); }
+    std::vector<std::shared_ptr<BaseSetting>> all();
 
     void clear();
     void write(VersionedSerializedWriter &writer) const;
     void read(VersionedSerializedReader &reader);
 
 private:
-    std::vector<Setting> _settings;
+    std::vector<std::shared_ptr<BaseSetting>> _settings;
 
-    void addSetting(const Setting& setting) {
-        _settings.push_back(setting);
+    template<typename T>
+    void addSetting(Setting<T> *setting) {
+        _settings.push_back(std::shared_ptr<BaseSetting>(setting));
     }
 };
