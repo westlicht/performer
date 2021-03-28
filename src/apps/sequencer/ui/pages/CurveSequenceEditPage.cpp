@@ -78,7 +78,7 @@ static void drawGatePattern(Canvas &canvas, int x, int y, int w, int h, int gate
     int gs = w / 4;
     int gw = w / 8;
     for (int i = 0; i < 4; ++i) {
-        canvas.setColor((gate & (1 << i)) ? Canvas::Color::Bright : Canvas::Color::Medium);
+        canvas.setColor((gate & (1 << i)) ? Color::Bright : Color::Medium);
         canvas.fillRect(x + i * gs, y, gw, h);
     }
 }
@@ -126,13 +126,13 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
     // draw loop points
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(Canvas::Color::Bright);
+    canvas.setColor(Color::Bright);
     SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
     SequencePainter::drawLoopEnd(canvas, (sequence.lastStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
 
     // draw grid
     if (!drawShapeVariation) {
-        canvas.setColor(Canvas::Color::Low);
+        canvas.setColor(Color::Low);
         for (int stepIndex = 1; stepIndex < StepCount; ++stepIndex) {
             int x = stepIndex * stepWidth;
             for (int y = 0; y <= curveHeight; y += 2) {
@@ -142,7 +142,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     }
 
     // draw curve
-    canvas.setColor(Canvas::Color::Bright);
+    canvas.setColor(Color::Bright);
     float lastY = -1.f;
     float lastYVariation = -1.f;
     for (int i = 0; i < StepCount; ++i) {
@@ -158,13 +158,13 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
         // loop
         if (stepIndex > sequence.firstStep() && stepIndex <= sequence.lastStep()) {
-            canvas.setColor(Canvas::Color::Bright);
+            canvas.setColor(Color::Bright);
             canvas.point(x, loopY);
         }
 
         // step index
         {
-            canvas.setColor(_stepSelection[stepIndex] ? Canvas::Color::Bright : Canvas::Color::Medium);
+            canvas.setColor(_stepSelection[stepIndex] ? Color::Bright : Color::Medium);
             FixedStringBuilder<8> str("%d", stepIndex + 1);
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y - 2, str);
         }
@@ -173,7 +173,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
         {
             const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
 
-            canvas.setColor(drawShapeVariation ? Canvas::Color::MediumLow : Canvas::Color::Bright);
+            canvas.setColor(drawShapeVariation ? Color::MediumLow : Color::Bright);
             canvas.setBlendMode(BlendMode::Add);
 
             drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastY, function, min, max);
@@ -182,7 +182,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
         if (drawShapeVariation) {
             const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shapeVariation())));
 
-            canvas.setColor(Canvas::Color::Bright);
+            canvas.setColor(Color::Bright);
             canvas.setBlendMode(BlendMode::Add);
 
             drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastYVariation, function, min, max);
@@ -203,7 +203,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
         case Layer::Min:
         case Layer::Max: {
             bool functionPressed = globalKeyState()[MatrixMap::fromFunction(activeFunctionKey())];
-            canvas.setColor(Canvas::Color::MediumLow);
+            canvas.setColor(Color::MediumLow);
             canvas.setBlendMode(BlendMode::Add);
             if (layer() == Layer::Min || functionPressed) {
                 drawMinMax(canvas, x, curveY, stepWidth, curveHeight, min);
@@ -214,7 +214,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
             break;
         }
         case Layer::Gate:
-            canvas.setColor(Canvas::Color::Bright);
+            canvas.setColor(Color::Bright);
             canvas.setBlendMode(BlendMode::Set);
             drawGatePattern(canvas, x, bottomY, stepWidth, 2, step.gate());
             break;
@@ -232,7 +232,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
     // draw cursor
     if (isActiveSequence) {
-        canvas.setColor(Canvas::Color::Bright);
+        canvas.setColor(Color::Bright);
         int x = ((trackEngine.currentStep() - stepOffset) + trackEngine.currentStepFraction()) * stepWidth;
         canvas.vline(x, curveY, curveHeight);
     }
@@ -490,7 +490,7 @@ void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step
     WindowPainter::drawFrame(canvas, 64, 16, 128, 32);
 
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(Canvas::Color::Bright);
+    canvas.setColor(Color::Bright);
     canvas.vline(64 + 32, 16, 32);
 
     canvas.setFont(Font::Small);
@@ -514,7 +514,7 @@ void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step
         );
         str.reset();
         str("%.1f%%", 100.f * step.shapeVariationProbability() / 8.f);
-        canvas.setColor(Canvas::Color::Bright);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::Min:
@@ -528,7 +528,7 @@ void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step
         );
         str.reset();
         str("%.1f%%", 100.f * (step.gateProbability() + 1.f) / CurveSequence::GateProbability::Range);
-        canvas.setColor(Canvas::Color::Bright);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::Last:

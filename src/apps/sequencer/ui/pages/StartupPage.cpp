@@ -28,10 +28,10 @@ void StartupPage::draw(Canvas &canvas) {
         close();
     }
 
-    canvas.setColor(Canvas::Color::None);
+    canvas.setColor(Color::None);
     canvas.fill();
 
-    canvas.setColor(Canvas::Color::Bright);
+    canvas.setColor(Color::Bright);
 
     canvas.setFont(Font::Small);
     canvas.drawTextCentered(0, 0, Width, 32, "PERFORMER");

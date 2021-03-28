@@ -27,7 +27,7 @@ void QuickEditPage::draw(Canvas &canvas) {
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setFont(Font::Small);
-    canvas.setColor(Canvas::Color::Bright);
+    canvas.setColor(Color::Bright);
 
     FixedStringBuilder<16> str;
     _listModel->cell(_row, 0, str);
