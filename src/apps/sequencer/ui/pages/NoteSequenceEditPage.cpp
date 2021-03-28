@@ -117,7 +117,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
-            canvas.setColor(Color::Bright);
+            canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
             canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
         }
 
