@@ -17,8 +17,9 @@ bool Screensaver::shouldBeOn() {
 
 bool Screensaver::consumeKey(Key key, bool isDown) {
     _buttonPressed = isDown;
+    bool consume = _screenSaved;
     off();
-    if (_screenSaved) {
+    if (consume) {
         return key.code() != Key::Code::Play; // Allow play function when in screensaver
     } else {
         return false;
@@ -27,8 +28,9 @@ bool Screensaver::consumeKey(Key key, bool isDown) {
 
 bool Screensaver::consumeEncoder(bool isDown) {
     _buttonPressed = isDown;
+    bool consume = _screenSaved;
     off();
-    return _screenSaved;
+    return consume;
 }
 
 void Screensaver::setScreenOnTicks(uint32_t ticks) {
