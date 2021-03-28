@@ -23,7 +23,7 @@ void TempoPage::draw(Canvas &canvas) {
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setFont(Font::Small);
-    canvas.setColor(Canvas::Color::Bright);
+    canvas.setColor(Color::Bright);
 
     switch (_mode) {
     case Mode::Tempo: {

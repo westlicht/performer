@@ -13,6 +13,15 @@ enum class BlendMode {
     Sub,
 };
 
+enum Color {
+    None = 0,
+    Low = 0x3,
+    MediumLow = 0x5,
+    Medium = 0x7,
+    MediumBright = 0xa,
+    Bright = 0xf
+};
+
 enum class Font {
     Tiny,
     Small,
@@ -40,15 +49,6 @@ public:
         _brightness(brightness)
     {
     }
-
-    enum Color {
-        None = 0,
-        Low = 0x3,
-        MediumLow = 0x5,
-        Medium = 0x7,
-        MediumBright = 0xa,
-        Bright = 0xf
-    };
 
     uint8_t color() const { return _color; }
     void setColorValue(uint8_t color) { _color = color * _brightness; }

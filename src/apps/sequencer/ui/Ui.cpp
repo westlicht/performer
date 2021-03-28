@@ -108,10 +108,10 @@ void Ui::update() {
 }
 
 void Ui::showAssert(const char *filename, int line, const char *msg) {
-    _canvas.setColor(Canvas::Color::None);
+    _canvas.setColor(Color::None);
     _canvas.fill();
 
-    _canvas.setColor(Canvas::Color::Bright);
+    _canvas.setColor(Color::Bright);
     _canvas.setFont(Font::Small);
     _canvas.drawText(4, 10, "FATAL ERROR");
 

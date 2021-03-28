@@ -35,6 +35,6 @@ void MessageManager::draw(Canvas &canvas) {
     WindowPainter::drawFrame(canvas, 16, 16, 224, 32);
 
     canvas.setFont(Font::Tiny);
-    canvas.setColor(Canvas::Color::Bright);
+    canvas.setColor(Color::Bright);
     canvas.drawTextCentered(16, 16, 224, 32, _text);
 }

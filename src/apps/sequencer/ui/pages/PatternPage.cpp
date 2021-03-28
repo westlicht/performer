@@ -80,32 +80,32 @@ void PatternPage::draw(Canvas &canvas) {
 
         x += 2;
 
-        canvas.setColor(trackSelected ? Canvas::Color::Bright : Canvas::Color::Medium);
+        canvas.setColor(trackSelected ? Color::Bright : Color::Medium);
         canvas.drawTextCentered(x, y - 2, w, 8, FixedStringBuilder<8>("T%d", trackIndex + 1));
 
         y += 11;
 
-        canvas.setColor(trackEngine.activity() ? Canvas::Color::Bright : Canvas::Color::Medium);
+        canvas.setColor(trackEngine.activity() ? Color::Bright : Color::Medium);
         canvas.drawRect(x, y, w, h);
 
         for (int p = 0; p < 16; ++p) {
             int px = x + (p % 8) * 3 + 2;
             int py = y + (p / 8) * 3 + 2;
             if (p == trackState.pattern()) {
-                canvas.setColor(Canvas::Color::Bright);
+                canvas.setColor(Color::Bright);
                 canvas.fillRect(px, py, 3, 3);
             } else if (trackState.hasPatternRequest() && p == trackState.requestedPattern()) {
-                canvas.setColor(Canvas::Color::Medium);
+                canvas.setColor(Color::Medium);
                 canvas.fillRect(px, py, 3, 3);
             } else {
-                canvas.setColor(Canvas::Color::Low);
+                canvas.setColor(Color::Low);
                 canvas.point(px + 1, py + 1);
             }
         }
 
         y += 5;
 
-        canvas.setColor(trackSelected ? Canvas::Color::Bright : Canvas::Color::Medium);
+        canvas.setColor(trackSelected ? Color::Bright : Color::Medium);
         canvas.drawTextCentered(x, y + 10, w, 8, snapshotActive ? "S" : FixedStringBuilder<8>("P%d", trackState.pattern() + 1));
 
         if (trackState.hasPatternRequest() && trackState.pattern() != trackState.requestedPattern()) {
@@ -114,7 +114,7 @@ void PatternPage::draw(Canvas &canvas) {
     }
 
     if (playState.hasSyncedRequests() && hasRequested) {
-        canvas.setColor(Canvas::Color::Bright);
+        canvas.setColor(Color::Bright);
         canvas.hline(0, 10, _engine.syncFraction() * Width);
     }
 }
