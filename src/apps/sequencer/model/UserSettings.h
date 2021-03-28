@@ -4,6 +4,7 @@
 #include <core/io/VersionedSerializedReader.h>
 #include <unordered_map>
 #include <vector>
+#include <string>
 
 #define SettingBrightness "brightness"
 #define SettingScreensaver "screensaver"
