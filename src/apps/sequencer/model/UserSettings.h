@@ -112,8 +112,8 @@ public:
     ScreensaverSetting() : Setting(
             SettingScreensaver,
             "Screensaver",
-            {"off", "3s", "30s", "1m", "10m", "30m"},
-            {0, 3, 30, 60, 600, 1800},
+            {"off", "3s", "5s", "10s", "30s", "1m", "10m", "30m"},
+            {0, 3000,  5000,  10000, 30000, 60000, 600000, 1800000},
             0
     ) {}
 };
