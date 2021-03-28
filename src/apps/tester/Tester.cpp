@@ -369,24 +369,24 @@ private:
 
     void drawClear(Canvas &canvas) {
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0);
+        canvas.setColor(Canvas::Color::None);
         canvas.fill();
     }
 
     void drawTitle(Canvas &canvas, const char *title) {
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0xf);
+        canvas.setColor(Canvas::Color::Bright);
         canvas.fillRect(0, 0, 256, 10);
         canvas.setBlendMode(BlendMode::Sub);
         canvas.setFont(Font::Tiny);
-        canvas.setColor(0xf);
+        canvas.setColor(Canvas::Color::Bright);
         canvas.drawText(2, 7, title);
     }
 
     void drawLog(Canvas &canvas) {
         canvas.setBlendMode(BlendMode::Set);
         canvas.setFont(Font::Tiny);
-        canvas.setColor(0xf);
+        canvas.setColor(Canvas::Color::Bright);
 
         int x = 2;
         int y = 18;
