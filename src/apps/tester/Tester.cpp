@@ -88,7 +88,7 @@ public:
 
     TesterTask() :
         _frameBuffer(256, 64, _frameBufferData),
-        _canvas(_frameBuffer)
+        _canvas(_frameBuffer, _brightness)
     {
         _cvOutputs.fill(0);
         _gateOutputs.fill(false);
@@ -471,6 +471,7 @@ private:
     uint8_t _frameBufferData[256 * 64];
     FrameBuffer8bit _frameBuffer;
     Canvas _canvas;
+    float _brightness = 1.0;
 };
 
 static TesterTask tester;
