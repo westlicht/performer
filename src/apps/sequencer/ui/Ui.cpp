@@ -140,14 +140,12 @@ void Ui::handleKeys() {
         _globalKeyState[event.value()] = isDown;
         Key key(event.value(), _globalKeyState);
 
-        if (_screensaver.consumeKey(event, key)) {
-            continue;
-        }
-
         KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
+        _screensaver.consumeKey(keyEvent);
         _pageManager.dispatchEvent(keyEvent);
         if (isDown) {
             KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
+            _screensaver.consumeKey(keyPressEvent);
             _pageManager.dispatchEvent(keyPressEvent);
         }
     }
@@ -156,14 +154,11 @@ void Ui::handleKeys() {
 void Ui::handleEncoder() {
     Encoder::Event event;
     while (_encoder.nextEvent(event)) {
-        if (_screensaver.consumeEncoder(event)) {
-            continue;
-        }
-
         switch (event) {
             case Encoder::Left:
             case Encoder::Right: {
                 EncoderEvent encoderEvent(event == Encoder::Left ? -1 : 1, _pageKeyState[Key::Encoder]);
+                _screensaver.consumeEncoder(encoderEvent);
                 _pageManager.dispatchEvent(encoderEvent);
                 break;
             }
@@ -174,9 +169,11 @@ void Ui::handleEncoder() {
                 _globalKeyState[Key::Encoder] = isDown ? 1 : 0;
                 Key key(Key::Encoder, _globalKeyState);
                 KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
+                _screensaver.consumeKey(keyEvent);
                 _pageManager.dispatchEvent(keyEvent);
                 if (isDown) {
                     KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
+                    _screensaver.consumeKey(keyPressEvent);
                     _pageManager.dispatchEvent(keyPressEvent);
                 }
                 break;

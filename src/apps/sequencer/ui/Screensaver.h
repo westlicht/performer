@@ -2,9 +2,8 @@
 
 #include <cstdint>
 #include <core/gfx/Canvas.h>
-#include "drivers/ButtonLedMatrix.h"
-#include "drivers/Encoder.h"
 #include "Key.h"
+#include "Event.h"
 
 class Screensaver {
 public:
@@ -21,10 +20,13 @@ public:
     void setScreenOnTicks(uint32_t ticks);
     void incScreenOnTicks(uint32_t ticks);
 
-    bool consumeKey(ButtonLedMatrix::Event event, Key key);
-    bool consumeEncoder(Encoder::Event event);
+    void consumeKey(KeyEvent &event);
+    void consumeKey(KeyPressEvent &event);
+    void consumeEncoder(EncoderEvent &event);
 
 private:
+    void consumeKey(Event &event, Key key);
+
     Canvas &_canvas;
     bool _screenSaved;
     bool _buttonPressed;
