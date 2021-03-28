@@ -3,7 +3,7 @@
 
 void UserSettings::set(int key, int value) {
     std::cout << "Setting " << key << ": " << value << std::endl;
-    _settings[key].setValue(value);
+    _settings[key]->setValue(value);
 }
 
 //void UserSettings::set(int key, int value) {
@@ -14,24 +14,24 @@ void UserSettings::set(int key, int value) {
 //}
 
 void UserSettings::shift(int key, int shift) {
-    _settings[key].shiftValue(shift);
+    _settings[key]->shiftValue(shift);
 }
 
-Setting *UserSettings::get(const char *key) {
+std::shared_ptr<BaseSetting> UserSettings::get(const char *key) {
 //    return _settings[key].getValue();
     for (auto &setting : _settings) {
-        if (setting.getKey() == key) {
-            return &setting;
+        if (setting->getKey() == key) {
+            return setting;
         }
     }
     return nullptr;
 }
 
-Setting *UserSettings::get(int key) {
-    return &_settings[key];
+std::shared_ptr<BaseSetting> UserSettings::get(int key) {
+    return _settings[key];
 }
 
-std::vector<Setting> UserSettings::all() {
+std::vector<std::shared_ptr<BaseSetting>> UserSettings::all() {
     return _settings;
 }
 
@@ -44,12 +44,12 @@ void UserSettings::clear() {
 
 void UserSettings::write(VersionedSerializedWriter &writer) const {
     for (auto &setting : _settings) {
-        writer.write(setting.getValue());
+        setting->write(writer);
     }
 }
 
 void UserSettings::read(VersionedSerializedReader &reader) {
     for (auto &setting : _settings) {
-        reader.read(setting.getValue());
+        setting->read(reader);
     }
 }
