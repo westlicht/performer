@@ -9,6 +9,7 @@
 
 #define SettingBrightness "brightness"
 #define SettingScreensaver "screensaver"
+#define SettingWakeMode "wakemode"
 
 class BaseSetting {
 public:
@@ -119,11 +120,23 @@ public:
     ) {}
 };
 
+class WakeModeSetting : public Setting<int> {
+public:
+    WakeModeSetting() : Setting(
+            SettingWakeMode,
+            "Wake Mode",
+            {"always", "required"},
+            {0, 1},
+            0
+    ) {}
+};
+
 class UserSettings {
 public:
     UserSettings() {
         addSetting(new BrightnessSetting());
         addSetting(new ScreensaverSetting());
+        addSetting(new WakeModeSetting());
     }
 
     //----------------------------------------

@@ -22,7 +22,11 @@ Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &en
         _pages(_pageManager, _pageContext),
         _controllerManager(model, engine),
         // TODO pass as arg
-        _screensaver(Screensaver(_canvas, settings.userSettings().get<ScreensaverSetting>(SettingScreensaver)->getValue()))
+        _screensaver(Screensaver(
+                _canvas,
+                settings.userSettings().get<ScreensaverSetting>(SettingScreensaver)->getValue(),
+                settings.userSettings().get<WakeModeSetting>(SettingWakeMode)->getValue()
+        ))
 {
 }
 
@@ -136,7 +140,7 @@ void Ui::handleKeys() {
         _globalKeyState[event.value()] = isDown;
         Key key(event.value(), _globalKeyState);
 
-        if (_screensaver.consumeKey(key, isDown)) {
+        if (_screensaver.consumeKey(event, key)) {
             continue;
         }
 
@@ -152,31 +156,31 @@ void Ui::handleKeys() {
 void Ui::handleEncoder() {
     Encoder::Event event;
     while (_encoder.nextEvent(event)) {
-        if (_screensaver.consumeEncoder(event == Encoder::Down)) {
+        if (_screensaver.consumeEncoder(event)) {
             continue;
         }
 
         switch (event) {
-        case Encoder::Left:
-        case Encoder::Right: {
-            EncoderEvent encoderEvent(event == Encoder::Left ? -1 : 1, _pageKeyState[Key::Encoder]);
-            _pageManager.dispatchEvent(encoderEvent);
-            break;
-        }
-        case Encoder::Down:
-        case Encoder::Up: {
-            bool isDown = event == Encoder::Down;
-            _pageKeyState[Key::Encoder] = isDown ? 1 : 0;
-            _globalKeyState[Key::Encoder] = isDown ? 1 : 0;
-            Key key(Key::Encoder, _globalKeyState);
-            KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
-            _pageManager.dispatchEvent(keyEvent);
-            if (isDown) {
-                KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
-                _pageManager.dispatchEvent(keyPressEvent);
+            case Encoder::Left:
+            case Encoder::Right: {
+                EncoderEvent encoderEvent(event == Encoder::Left ? -1 : 1, _pageKeyState[Key::Encoder]);
+                _pageManager.dispatchEvent(encoderEvent);
+                break;
             }
-            break;
-        }
+            case Encoder::Down:
+            case Encoder::Up: {
+                bool isDown = event == Encoder::Down;
+                _pageKeyState[Key::Encoder] = isDown ? 1 : 0;
+                _globalKeyState[Key::Encoder] = isDown ? 1 : 0;
+                Key key(Key::Encoder, _globalKeyState);
+                KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
+                _pageManager.dispatchEvent(keyEvent);
+                if (isDown) {
+                    KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
+                    _pageManager.dispatchEvent(keyPressEvent);
+                }
+                break;
+            }
         }
     }
 }
