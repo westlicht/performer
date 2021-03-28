@@ -228,6 +228,7 @@ void SystemPage::encoder(EncoderEvent &event) {
     case Mode::Update:
         break;
     case Mode::Settings:
+        ListPage::encoder(event);
         break;
     }
 }
