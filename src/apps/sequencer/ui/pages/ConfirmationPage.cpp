@@ -32,7 +32,7 @@ void ConfirmationPage::draw(Canvas &canvas) {
 
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Canvas::Color::Bright);
 
     canvas.drawTextCentered(0, 32 - 4, Width, 8, _text);
 }

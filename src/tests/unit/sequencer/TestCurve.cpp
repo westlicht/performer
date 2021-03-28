@@ -28,11 +28,11 @@ UNIT_TEST("Curve") {
             Canvas canvas(framebuffer, brightness);
 
             canvas.setBlendMode(BlendMode::Set);
-            canvas.setColor(0);
+            canvas.setColor(Canvas::Color::None);
             canvas.fill();
 
             canvas.setBlendMode(BlendMode::Add);
-            canvas.setColor(0xf);
+            canvas.setColor(Canvas::Color::Bright);
 
             const int Steps = Width * 2;
 
