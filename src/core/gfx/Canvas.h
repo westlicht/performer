@@ -7,8 +7,6 @@
 #include <cmath>
 #include <cstdint>
 
-#include <iostream>
-
 enum class BlendMode {
     Set,
     Add,
@@ -35,18 +33,16 @@ enum class VerticalAlign {
 
 class Canvas {
 public:
-    Canvas(FrameBuffer8bit &frameBuffer, float &brightness) : //Settings &settings) :
+    Canvas(FrameBuffer8bit &frameBuffer, float &brightness) :
         _frameBuffer(frameBuffer),
         _right(frameBuffer.width() - 1),
         _bottom(frameBuffer.height() - 1),
-//        _settings(settings)
         _brightness(brightness)
     {
     }
 
     uint8_t color() const { return _color; }
     void setColor(uint8_t color) { _color = color * _brightness; }
-//    void setColor(uint8_t color) { std::cout<<_brightness<<std::endl; _color = color * _brightness; }
 
     BlendMode blendMode() const { return _blendMode; }
     void setBlendMode(BlendMode blendMode) { _blendMode = blendMode; }

@@ -5,8 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <iostream>
-
 #define SettingBrightness "brightness"
 #define SettingScreensaver "screensaver"
 
@@ -55,7 +53,6 @@ public:
     void setValue(int index) override {
         if (index < 0) index = 0;
         if (index > _menuItemValues.size() - 1) index = _menuItemValues.size() - 1;
-        std::cout << "Set index: " << index << ": " << _menuItemValues[index] << std::endl;
         _value = _menuItemValues[index];
     };
 
@@ -64,12 +61,10 @@ public:
     };
 
     T &getValue() {
-        std::cout<<_value<<std::endl;
         return _value;
     };
 
     const T &getValue() const {
-        std::cout<<_value<<std::endl;
         return _value;
     }
 
@@ -111,14 +106,14 @@ public:
     ) {}
 };
 
-class ScreensaverSetting : public Setting<int> {
+class ScreensaverSetting : public Setting<uint32_t> {
 public:
     ScreensaverSetting() : Setting(
             SettingScreensaver,
             "Screensaver",
-            {"off", "30s", "1m", "10m", "30m"},
-            {-1, 30, 60, 600, 1800},
-            -1
+            {"off", "3s", "30s", "1m", "10m", "30m"},
+            {0, 3, 30, 60, 600, 1800},
+            0
     ) {}
 };
 

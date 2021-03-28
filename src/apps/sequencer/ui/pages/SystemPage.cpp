@@ -175,19 +175,15 @@ void SystemPage::keyPress(KeyPressEvent &event) {
         } else {
             switch (Function(key.function())) {
             case Function::Calibration:
-                std::cout << "Calibration!" << std::endl;
                 setMode(Mode::Calibration);
                 break;
             case Function::Utilities:
-                std::cout << "Utilities!" << std::endl;
                 setMode(Mode::Utilities);
                 break;
             case Function::Update:
-                std::cout << "Update!" << std::endl;
                 setMode(Mode::Update);
                 break;
             case Function::Settings:
-                std::cout << "SETTINGS!" << std::endl;
                 setMode(Mode::Settings);
                 break;
             }

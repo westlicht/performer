@@ -100,7 +100,7 @@ set(sources
     ui/painters/SequencePainter.cpp
     ui/painters/SongPainter.cpp
     ui/painters/WindowPainter.cpp
-        model/UserSettings.cpp)
+        model/UserSettings.cpp ui/Screensaver.cpp ui/Screensaver.h)
 
 include_directories(.)
 

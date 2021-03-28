@@ -2,7 +2,6 @@
 #include "UserSettings.h"
 
 void UserSettings::set(int key, int value) {
-    std::cout << "Setting " << key << ": " << value << std::endl;
     _settings[key]->setValue(value);
 }
 
@@ -28,7 +27,6 @@ std::vector<BaseSetting *> UserSettings::all() {
 }
 
 void UserSettings::clear() {
-    std::cout<<"clearing brightness"<<std::endl;
     for (auto &_setting : _settings) {
         _setting->reset();
     }

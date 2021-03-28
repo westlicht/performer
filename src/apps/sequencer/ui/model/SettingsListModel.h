@@ -30,7 +30,6 @@ public:
 
     void edit(int row, int column, int value, bool shift) override {
         if (column == 1) {
-            std::cout << "edit Column 1" << value << " " << shift << std::endl;
             _userSettings.shift(row, value);
         }
     }
