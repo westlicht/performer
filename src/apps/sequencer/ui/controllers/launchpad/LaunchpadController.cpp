@@ -109,6 +109,9 @@ LaunchpadController::LaunchpadController(ControllerManager &manager, Model &mode
     } else if (info.productId == 0x0113 || info.productId == 0x0104) {
         // Launchpad Mini Mk3 | Launchpad X
         _device = _deviceContainer.create<LaunchpadMk3Device>();
+    } else if (info.productId == 0x0123) {
+        // Launchpad Mk3 Pro
+        _device = _deviceContainer.create<LaunchpadProMk3Device>();
     } else {
         _device = _deviceContainer.create<LaunchpadDevice>();
     }
