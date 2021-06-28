@@ -42,8 +42,10 @@ void ContextMenuPage::draw(Canvas &canvas) {
             // int iconSize = 16;
             // canvas.drawRect(x + (w - iconSize) / 2, 32 + 4, iconSize, iconSize);
 
-            canvas.setColor(enabled ? 0xf : 0x7);
-            canvas.drawText(x + (w - canvas.textWidth(item.title) + 1) / 2, Height - 4, item.title);
+            if (item.title) {
+                canvas.setColor(enabled ? 0xf : 0x7);
+                canvas.drawText(x + (w - canvas.textWidth(item.title) + 1) / 2, Height - 4, item.title);
+            }
         }
     }
 }

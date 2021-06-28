@@ -253,6 +253,10 @@ static void write(void *drvdata, const usbh_packet_t *packet)
 	uint32_t dpid;
 	if (packet->endpoint_type == USBH_ENDPOINT_TYPE_CONTROL) {
 		if (packet->control_type == USBH_CONTROL_TYPE_DATA) {
+			// For Status OUT stage, Length==0, Status Out PID = 1 */
+			if(!packet->datalen) {
+				packet->toggle[0] = 1;
+			}
 			dpid = packet->toggle[0] ? OTG_HCTSIZ_DPID_DATA1 : OTG_HCTSIZ_DPID_DATA0;
 		} else {
 			dpid = OTG_HCTSIZ_DPID_MDATA;
@@ -590,6 +594,21 @@ static enum USBH_POLL_STATUS poll_run(usbh_lld_stm32f4_driver_data_t *dev)
 				}
 			} else { // Read
 
+				if (hcint & OTG_HCINT_DTERR) {
+					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_DTERR;
+					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_NAK;
+					LOG_PRINTF("DTERR");
+					free_channel(dev, channel);
+
+					usbh_packet_callback_data_t cb_data;
+					cb_data.status = USBH_PACKET_CALLBACK_STATUS_EFATAL;
+					cb_data.transferred_length = 0;
+
+					channels[channel].packet.callback(
+						channels[channel].packet.callback_arg,
+						cb_data);
+				}
+
 				if (hcint & OTG_HCINT_NAK) {
 					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_NAK;
 					if (eptyp == USBH_ENDPOINT_TYPE_CONTROL) {
@@ -600,10 +619,6 @@ static enum USBH_POLL_STATUS poll_run(usbh_lld_stm32f4_driver_data_t *dev)
 
 				}
 
-				if (hcint & OTG_HCINT_DTERR) {
-					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_DTERR;
-					LOG_PRINTF("DTERR");
-				}
 
 				if (hcint & OTG_HCINT_ACK) {
 					REBASE_CH(OTG_HCINT, channel) = OTG_HCINT_ACK;

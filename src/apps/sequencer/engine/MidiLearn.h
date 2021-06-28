@@ -55,6 +55,7 @@ private:
     MidiPort _port;
     int8_t _channel;
     int8_t _controlNumber;
+    int8_t _lastControlNumber;
     int8_t _note;
 
     Result _lastResult;

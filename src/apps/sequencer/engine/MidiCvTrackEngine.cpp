@@ -1,5 +1,6 @@
 #include "MidiCvTrackEngine.h"
 #include "Engine.h"
+#include "Slide.h"
 #include "MidiUtils.h"
 
 #include "os/os.h"
@@ -46,7 +47,7 @@ void MidiCvTrackEngine::update(float dt) {
     if (_midiCvTrack.voices() == 1) {
         _pitchCvOutputTarget = noteToCv(_voices.front().note + _midiCvTrack.transpose()) + pitchBendToCv(_pitchBend);
         if (_slideActive && _midiCvTrack.slideTime() > 0) {
-            _pitchCvOutput += (_pitchCvOutputTarget - _pitchCvOutput) * std::min(1.f, dt * (200 - 2 * _midiCvTrack.slideTime()));
+            _pitchCvOutput = Slide::applySlide(_pitchCvOutput, _pitchCvOutputTarget, _midiCvTrack.slideTime(), dt);
         } else {
             _pitchCvOutput = _pitchCvOutputTarget;
         }
@@ -117,8 +118,8 @@ bool MidiCvTrackEngine::gateOutput(int index) const {
 float MidiCvTrackEngine::cvOutput(int index) const {
     int transpose = _midiCvTrack.transpose();
     int voices = _midiCvTrack.voices();
-    int signals = int(_midiCvTrack.voiceConfig()) + 1;
-    int totalOutputs = voices * signals;
+    int signalCount = _midiCvTrack.voiceSignalCount();
+    int totalOutputs = voices * signalCount;
     index %= totalOutputs;
     int voiceIndex = index % voices;
     int signalIndex = index / voices;
@@ -126,10 +127,13 @@ float MidiCvTrackEngine::cvOutput(int index) const {
     voiceIndex = _voiceByOutput[index % _midiCvTrack.voices()];
     if (voiceIndex != -1) {
         const auto &voice = _voices[voiceIndex];
-        switch (signalIndex) {
-        case 0: return voices == 1 ? _pitchCvOutput : noteToCv(voice.note + transpose) + pitchBendToCv(_pitchBend);
-        case 1: return valueToCv(voice.velocity);
-        case 2: return valueToCv(voice.pressure) + valueToCv(_channelPressure);
+        switch (_midiCvTrack.voiceSignalByIndex(signalIndex)) {
+        case MidiCvTrack::VoiceSignal::Pitch:
+            return voices == 1 ? _pitchCvOutput : noteToCv(voice.note + transpose) + pitchBendToCv(_pitchBend);
+        case MidiCvTrack::VoiceSignal::Velocity:
+            return valueToCv(voice.velocity);
+        case MidiCvTrack::VoiceSignal::Pressure:
+            return valueToCv(voice.pressure) + valueToCv(_channelPressure);
         }
     }
     return 0.f;

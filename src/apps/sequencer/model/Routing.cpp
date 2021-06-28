@@ -153,7 +153,19 @@ int Routing::findRoute(Target target, int trackIndex) const {
 int Routing::checkRouteConflict(const Route &editedRoute, const Route &existingRoute) const {
     for (size_t i = 0; i < _routes.size(); ++i) {
         const auto &route = _routes[i];
-        if (&route != &existingRoute && route.active() && route.target() == editedRoute.target()) {
+        // skip inactive routes and the one we're currently editing
+        if (!route.active() || &route == &existingRoute) {
+            continue;
+        }
+        // reject routes with mutually exclusive targets
+        if ((route.target() == Target::Play && editedRoute.target() == Target::PlayToggle) ||
+            (route.target() == Target::PlayToggle && editedRoute.target() == Target::Play) ||
+            (route.target() == Target::Record && editedRoute.target() == Target::RecordToggle) ||
+            (route.target() == Target::RecordToggle && editedRoute.target() == Target::Record)) {
+            return i;
+        }
+        // reject routes with same target
+        if (route.target() == editedRoute.target()) {
             if (isPerTrackTarget(route.target())) {
                 if ((route.tracks() & editedRoute.tracks()) != 0) {
                     return i;
@@ -261,11 +273,13 @@ struct TargetInfo {
     int8_t shiftStep;
 };
 
-const TargetInfo targetInfos[int(Routing::Target::Last)] = {
+static const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::None)]                            = { 0,      0,      0,      0,      0       },
     // Engine targets
     [int(Routing::Target::Play)]                            = { 0,      1,      0,      1,      1       },
+    [int(Routing::Target::PlayToggle)]                      = { 0,      1,      0,      1,      1       },
     [int(Routing::Target::Record)]                          = { 0,      1,      0,      1,      1       },
+    [int(Routing::Target::RecordToggle)]                    = { 0,      1,      0,      1,      1       },
     [int(Routing::Target::TapTempo)]                        = { 0,      1,      0,      1,      1       },
     // Project targets
     [int(Routing::Target::Tempo)]                           = { 1,      1000,   100,    200,    10      },
@@ -357,7 +371,9 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
         str("%d", intValue + 1);
         break;
     case Target::Play:
+    case Target::PlayToggle:
     case Target::Record:
+    case Target::RecordToggle:
     case Target::TapTempo:
     case Target::Mute:
     case Target::Fill:

@@ -16,7 +16,14 @@ public:
         Last
     };
 
-    RandomGenerator(SequenceBuilder &builder);
+    struct Params {
+        uint16_t seed = 0;
+        uint8_t smooth = 0;
+        int8_t bias = 0;
+        uint8_t scale = 10;
+    };
+
+    RandomGenerator(SequenceBuilder &builder, Params &params);
 
     Mode mode() const override { return Mode::Random; }
 
@@ -25,37 +32,34 @@ public:
     void editParam(int index, int value, bool shift) override;
     void printParam(int index, StringBuilder &str) const override;
 
+    void init() override;
     void update() override;
 
     // seed
 
-    int seed() const { return _seed; }
-    void setSeed(int seed) { _seed = clamp(seed, 0, 1000); }
+    int seed() const { return _params.seed; }
+    void setSeed(int seed) { _params.seed = clamp(seed, 0, 1000); }
 
     // smooth
 
-    int smooth() const { return _smooth; }
-    void setSmooth(int smooth) { _smooth = clamp(smooth, 0, 10); }
+    int smooth() const { return _params.smooth; }
+    void setSmooth(int smooth) { _params.smooth = clamp(smooth, 0, 10); }
 
     // bias
 
-    int bias() const { return _bias; }
-    void setBias(int bias) { _bias = clamp(bias, -10, 10); }
+    int bias() const { return _params.bias; }
+    void setBias(int bias) { _params.bias = clamp(bias, -10, 10); }
 
     // scale
 
-    int scale() const { return _scale; }
-    void setScale(int scale) { _scale = clamp(scale, 0, 100); }
+    int scale() const { return _params.scale; }
+    void setScale(int scale) { _params.scale = clamp(scale, 0, 100); }
 
     // pattern
 
     const GeneratorPattern &pattern() const { return _pattern; }
 
 private:
-    uint16_t _seed = 0;
-    uint8_t _smooth = 0;
-    int8_t _bias = 0;
-    uint8_t _scale = 10;
-
+    Params &_params;
     GeneratorPattern _pattern;
 };

@@ -87,7 +87,7 @@ fs::Error FileManager::readLastProject(Project &project) {
 
     if (result == fs::OK && slot >= 0) {
         result = readProject(project, slot);
-        project.setSlot(-1);
+        project.setAutoLoaded(true);
     }
 
     return result;

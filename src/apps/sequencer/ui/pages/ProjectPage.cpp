@@ -150,7 +150,7 @@ void ProjectPage::loadProject() {
 }
 
 void ProjectPage::saveProject() {
-    if (!_project.slotAssigned()) {
+    if (!_project.slotAssigned() || _project.autoLoaded()) {
         saveAsProject();
         return;
     }
@@ -159,7 +159,7 @@ void ProjectPage::saveProject() {
 }
 
 void ProjectPage::saveAsProject() {
-    _manager.pages().fileSelect.show("SAVE PROJECT", FileType::Project, 0, true, [this] (bool result, int slot) {
+    _manager.pages().fileSelect.show("SAVE PROJECT", FileType::Project, _project.slotAssigned() ? _project.slot() : 0, true, [this] (bool result, int slot) {
         if (result) {
             if (FileManager::slotUsed(FileType::Project, slot)) {
                 _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool result) {

@@ -43,6 +43,7 @@ public:
     virtual void editParam(int index, int value, bool shift) = 0;
     virtual void printParam(int index, StringBuilder &str) const = 0;
 
+    virtual void init() {}
 
     virtual void revert() {
         _builder.revert();

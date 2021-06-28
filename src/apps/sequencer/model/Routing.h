@@ -30,7 +30,9 @@ public:
         // Engine targets
         EngineFirst,
         Play = EngineFirst,
+        PlayToggle,
         Record,
+        RecordToggle,
         TapTempo,
         EngineLast = TapTempo,
 
@@ -80,7 +82,9 @@ public:
         case Target::None:                      return "None";
 
         case Target::Play:                      return "Play";
+        case Target::PlayToggle:                return "Play Toggle";
         case Target::Record:                    return "Record";
+        case Target::RecordToggle:              return "Record Toggle";
         case Target::TapTempo:                  return "Tap Tempo";
 
         case Target::Tempo:                     return "Tempo";
@@ -147,6 +151,9 @@ public:
         case Target::RootNote:                  return 24;
 
         case Target::Offset:                    return 25;
+
+        case Target::PlayToggle:                return 26;
+        case Target::RecordToggle:              return 27;
 
         case Target::Last:                      break;
         }

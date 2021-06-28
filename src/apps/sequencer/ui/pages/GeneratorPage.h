@@ -29,8 +29,9 @@ public:
     void contextShow();
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
-    void commit();
+    void init();
     void revert();
+    void commit();
 
 private:
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;

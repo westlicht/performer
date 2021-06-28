@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "Groove.h"
+#include "Slide.h"
 #include "SequenceUtils.h"
 
 #include "core/Debug.h"
@@ -274,7 +275,7 @@ void NoteTrackEngine::update(float dt) {
     }
 
     if (_slideActive && _noteTrack.slideTime() > 0) {
-        _cvOutput += (_cvOutputTarget - _cvOutput) * std::min(1.f, dt * (200 - 2 * _noteTrack.slideTime()));
+        _cvOutput = Slide::applySlide(_cvOutput, _cvOutputTarget, _noteTrack.slideTime(), dt);
     } else {
         _cvOutput = _cvOutputTarget;
     }

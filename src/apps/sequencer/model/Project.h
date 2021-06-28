@@ -53,6 +53,11 @@ public:
         StringUtils::copy(_name, name, sizeof(_name));
     }
 
+    // autoLoaded
+
+    bool autoLoaded() const { return _autoLoaded != 0; }
+    void setAutoLoaded(bool autoLoaded) { _autoLoaded = autoLoaded ? 1 : 0; }
+
     // tempo
 
     float tempo() const { return _tempo.get(isRouted(Routing::Target::Tempo)); }
@@ -418,6 +423,7 @@ public:
 private:
     uint8_t _slot = uint8_t(-1);
     char _name[NameLength + 1];
+    mutable uint8_t _autoLoaded = 0;
     Routable<float> _tempo;
     Routable<uint8_t> _swing;
     TimeSignature _timeSignature;

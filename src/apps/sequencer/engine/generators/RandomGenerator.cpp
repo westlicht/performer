@@ -2,8 +2,9 @@
 
 #include "core/utils/Random.h"
 
-RandomGenerator::RandomGenerator(SequenceBuilder &builder) :
-    Generator(builder)
+RandomGenerator::RandomGenerator(SequenceBuilder &builder, Params &params) :
+    Generator(builder),
+    _params(params)
 {
     update();
 }
@@ -39,8 +40,13 @@ void RandomGenerator::printParam(int index, StringBuilder &str) const {
     }
 }
 
-void RandomGenerator::update()  {
-    Random rng(_seed);
+void RandomGenerator::init() {
+    _params = Params();
+    update();
+}
+
+void RandomGenerator::update() {
+    Random rng(_params.seed);
 
     int size = _pattern.size();
 
@@ -48,14 +54,14 @@ void RandomGenerator::update()  {
         _pattern[i] = rng.nextRange(255);
     }
 
-    for (int iteration = 0; iteration < _smooth; ++iteration) {
+    for (int iteration = 0; iteration < _params.smooth; ++iteration) {
         for (int i = 0; i < size; ++i) {
             _pattern[i] = (4 * _pattern[i] + _pattern[(i - 1 + size) % size] + _pattern[(i + 1) % size] + 3) / 6;
         }
     }
 
-    int bias = (_bias * 255) / 10;
-    int scale = _scale;
+    int bias = (_params.bias * 255) / 10;
+    int scale = _params.scale;
 
     for (int i = 0; i < size; ++i) {
         int value = _pattern[i];

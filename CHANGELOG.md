@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.1.40 (9 February 2021)
+
+Note: This release changes the behavior of how note slides are generated. You may need to adjust the _Slide Time_ on existing projects to get a similar feel.
+
+#### Improvements
+
+- Improved behavior of slide voltage output (#243)
+- Added _Play Toggle_ and _Record Toggle_ routing targets (#273)
+- Retain generator parameters between invocations (#255)
+- Allow generator parameters to be initialized to defaults
+- Select correct slot when saving an autoloaded project (#266)
+- React faster to note events when using MIDI learn
+- Filter NPRN messages when using MIDI learn
+
+#### Fixes
+
+- Fixed curve playback cursor when track is muted (#261)
+- Fix null pointer dereference in simulator (#284)
+
 ## v0.1.39 (26 October 2020)
 
 #### Improvements
