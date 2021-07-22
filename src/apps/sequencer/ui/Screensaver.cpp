@@ -55,7 +55,11 @@ void Screensaver::consumeKey(Event &event, Key key) {
 
 void Screensaver::consumeEncoder(EncoderEvent &event) {
     if (_screenSaved) {
-        event.consume();
+        // Don't really want this since it disables
+        // setting on all steps with the encoder when the screen is saved
+        // Downside is that we could modify menu items for example
+        // when the screen is off/first comes on
+//        event.consume();
 
         if (_wakeMode == 1) { // required
             return;
