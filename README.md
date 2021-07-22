@@ -33,7 +33,7 @@ cd performer
 Make sure you have a recent version of CMake installed. If you are on Linux, you might also want to install a few other packages. For Debian based systems, use:
 
 ```
-sudo apt-get install libtool autoconf cmake libusb-1.0.0-dev libftdi-dev pkg-config
+sudo apt-get install libtool autoconf cmake libusb-1.0.0-dev libftdi-dev pkg-config libsdl2-dev python3-dev
 ```
 
 To compile for the hardware and allow flashing firmware you have to install the ARM toolchain and build OpenOCD:
