@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/westlicht/performer.svg?branch=master)](https://travis-ci.org/westlicht/performer)
+[![Build Status](https://app.travis-ci.com/westlicht/performer.svg?branch=master)](https://app.travis-ci.com/westlicht/performer)
 
 # PER|FORMER
 

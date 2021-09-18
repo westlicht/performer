@@ -11,7 +11,7 @@ cp ${BUILD_DIR}/sequencer.* gh-pages/${TESTDRIVE_DIR}
 
 # commit simulator files
 cd gh-pages
-git config --global user.email "travis@travis-ci.org"
+git config --global user.email "travis@travis-ci.com"
 git config --global user.name "Travis CI"
 git add ${TESTDRIVE_DIR}/sequencer.*
 git commit --message "Travis simulator build: $TRAVIS_BUILD_NUMBER"
