@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.1.41 (18 September 2021)
+
+#### Improvements
+
+- Add support for Launchpad Pro Mk3 (thanks to @jmsole)
+- Allow MIDI/CV track to only output velocity (#299)
+
+#### Fixes
+
+- Fix quick edit (#296)
+- Fix USB MIDI (thanks to @av500)
+
 ## v0.1.40 (9 February 2021)
 
 Note: This release changes the behavior of how note slides are generated. You may need to adjust the _Slide Time_ on existing projects to get a similar feel.
