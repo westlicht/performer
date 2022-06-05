@@ -74,7 +74,7 @@ static SdCard sdCard;
 
 static fs::Volume volume(sdCard);
 
-static CCMRAM_BSS uint8_t midiMessagePayloadPool[16];
+static CCMRAM_BSS uint8_t midiMessagePayloadPool[32];
 
 static CCMRAM_BSS Profiler profiler;
 

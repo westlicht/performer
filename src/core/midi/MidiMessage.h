@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 
 #include <cstdint>
 #include <cstring>
@@ -395,11 +396,25 @@ private:
         uint8_t *data = nullptr;
         size_t length = 0;
 
-        PayloadID payloadID = InvalidPayload;
-        uint32_t payloadRefCount = 0;
-        size_t payloadLength = 0;
+        struct Slot {
+            uint8_t *data = nullptr;
+            uint8_t length = 0;
+            uint8_t refCount = 0;
+        };
+
+        static constexpr size_t SlotCount = 4;
+        std::array<Slot, SlotCount> slots;
 
         bool valid() const { return data != nullptr; }
+        Slot *getSlot(PayloadID id) {
+            if (valid() && id != InvalidPayload) {
+                size_t slotIndex = id - 1;
+                if (slotIndex < SlotCount) {
+                    return &slots[slotIndex];
+                }
+            }
+            return nullptr;
+        }
     };
 
     static PayloadPool _payloadPool;
