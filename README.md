@@ -1,4 +1,4 @@
-[![Build Status](https://app.travis-ci.com/westlicht/performer.svg?branch=master)](https://app.travis-ci.com/westlicht/performer)
+![Build Status](https://github.com/westlicht/performer/actions/workflows/ci.yml/badge.svg)
 
 # PER|FORMER
 
