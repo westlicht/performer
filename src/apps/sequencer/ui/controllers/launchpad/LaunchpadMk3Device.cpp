@@ -28,9 +28,12 @@ LaunchpadMk3Device::LaunchpadMk3Device() :
 }
 
 void LaunchpadMk3Device::initialize() {
-    // send sysex message to enter programmer mode
-    std::array<uint8_t, 7> payload { 0x00, 0x20, 0x29, 0x02, 0x0d, 0x0e, 0x01 };
-    sendMidi(Cable, MidiMessage::makeSystemExclusive(payload.data(), payload.size()));
+   // send sysex message to enter daw mode (to cancel midi messages on the daw port)
+   std::array<uint8_t, 7> payloadDM { 0x00, 0x20, 0x29, 0x02, 0x0d, 0x10, 0x01 };
+   sendMidi(Cable, MidiMessage::makeSystemExclusive(payloadDM.data(), payloadDM.size()));
+   // send sysex message to enter programmer mode
+   std::array<uint8_t, 7> payloadPM { 0x00, 0x20, 0x29, 0x02, 0x0d, 0x0e, 0x01 };
+   sendMidi(Cable, MidiMessage::makeSystemExclusive(payloadPM.data(), payloadPM.size()));
 }
 
 void LaunchpadMk3Device::recvMidi(uint8_t cable, const MidiMessage &message) {

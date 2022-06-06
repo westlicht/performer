@@ -1,4 +1,4 @@
-![Build Status](https://github.com/westlicht/performer/actions/workflows/ci.yml/badge.svg)
+![Build Status](https://github.com/westlicht/performer/actions/workflows/ci.yml/badge.svg?branch=master)
 
 # PER|FORMER
 

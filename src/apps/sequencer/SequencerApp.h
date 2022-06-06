@@ -42,7 +42,7 @@ struct SequencerApp {
     // filesystem
     fs::Volume volume;
 
-    uint8_t midiMessagePayloadPool[16];
+    uint8_t midiMessagePayloadPool[32];
 
     // application
     Model model;

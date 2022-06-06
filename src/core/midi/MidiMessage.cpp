@@ -48,53 +48,51 @@ MidiMessage::PayloadID MidiMessage::allocatePayload(size_t length) {
         return InvalidPayload;
     }
 
-    if (_payloadPool.payloadID != InvalidPayload) {
+    const size_t slotLength = _payloadPool.length / PayloadPool::SlotCount;
+    ASSERT(length <= slotLength, "Requested length does not fit.");
+    if (length > slotLength) {
         return InvalidPayload;
     }
 
-    _payloadPool.payloadID = 1;
-    _payloadPool.payloadRefCount = 1;
-    _payloadPool.payloadLength = length;
-    // DBG("allocate payload: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
-    return _payloadPool.payloadID;
+    for (size_t slotIndex = 0; slotIndex < _payloadPool.slots.size(); ++slotIndex) {
+        auto &slot = _payloadPool.slots[slotIndex];
+        if (!slot.data) {
+            slot.data = _payloadPool.data + slotIndex * slotLength;
+            slot.length = length;
+            slot.refCount = 1;
+            // DBG("allocate payload: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
+            return PayloadID(slotIndex + 1);
+        }
+    }
+    return InvalidPayload;
 }
 
 void MidiMessage::incPayloadRefCount(PayloadID id) {
-    if (id != InvalidPayload) {
-        if (id == _payloadPool.payloadID) {
-            _payloadPool.payloadRefCount++;
-            // DBG("inc refcount: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
-        }
+    auto slot = _payloadPool.getSlot(id);
+    if (slot) {
+        slot->refCount++;
+        // DBG("inc refcount: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
     }
 }
 
 void MidiMessage::decPayloadRefCount(PayloadID id) {
-    if (id != InvalidPayload) {
-        if (id == _payloadPool.payloadID) {
-            _payloadPool.payloadRefCount--;
-            // DBG("dec refcount: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
-            if (_payloadPool.payloadRefCount == 0) {
-                // DBG("free payload: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
-                _payloadPool.payloadID = InvalidPayload;
-            }
+    auto slot = _payloadPool.getSlot(id);
+    if (slot) {
+        slot->refCount--;
+        // DBG("dec refcount: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
+        if (slot->refCount == 0) {
+            slot->data = nullptr;
+            // DBG("free payload: id=%d, refCount=%d, length=%zd", _payloadPool.payloadID, _payloadPool.payloadRefCount, _payloadPool.payloadLength);
         }
     }
 }
 
 uint8_t *MidiMessage::payloadData(PayloadID id) {
-    if (id != InvalidPayload) {
-        if (id == _payloadPool.payloadID) {
-            return _payloadPool.data;
-        }
-    }
-    return nullptr;
+    auto slot = _payloadPool.getSlot(id);
+    return slot ? slot->data : nullptr;
 }
 
 size_t MidiMessage::payloadLength(PayloadID id) {
-    if (id != InvalidPayload) {
-        if (id == _payloadPool.payloadID) {
-            return _payloadPool.payloadLength;
-        }
-    }
-    return 0;
+    auto slot = _payloadPool.getSlot(id);
+    return slot ? slot->length : 0;
 }
