@@ -135,6 +135,9 @@ To control the sequencer, the following mapping is used:
     monitorRunDependencies: function(left) {
       this.totalDependencies = Math.max(this.totalDependencies, left);
       Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+    },
+    locateFile: function(s) {
+      return 'sequencer/' + s;
     }
   };
   Module.setStatus('Downloading...');
@@ -147,4 +150,4 @@ To control the sequencer, the following mapping is used:
     };
   };
 </script>
-<script async type="text/javascript" src="sequencer.js"></script>
+<script async type="text/javascript" src="sequencer/sequencer.js"></script>
