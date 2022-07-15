@@ -48,7 +48,6 @@ public:
 private:
     void triggerStep(uint32_t tick, uint32_t divisor);
     void updateOutput(uint32_t relativeTick, uint32_t divisor);
-    float smoothShape(uint32_t relativeTick, uint32_t divisor, float value);
 
     bool isRecording() const;
     void updateRecordValue();
@@ -76,14 +75,6 @@ private:
     bool _gateOutput;
     float _cvOutput = 0.f;
     float _cvOutputTarget = 0.f;
-
-    const int SMOOTHING_WINDOW_SIZE = 3;
-    const float SMOOTHING_THRESHOLD = 0.1f;
-    bool _smoothCurrentTicks = false;
-    int _startSmoothingTick = -1;
-    int _endSmoothingTick = -1;
-    float _startSmoothingValue = 0.f;
-    float _endSmoothingValue = 0.f;
 
     struct Gate {
         uint32_t tick;
