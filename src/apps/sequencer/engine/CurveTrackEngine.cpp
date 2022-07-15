@@ -228,7 +228,7 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
         const auto &step = evalSequence.step(_currentStep);
 
         float value = evalStepShape(step, _shapeVariation || fillVariation, fillInvert, _currentStepFraction);
-        float smoothedValue = smoothShape(relativeTick, divisor, value, 3, 0.1); // TODO Make constants
+        float smoothedValue = smoothShape(relativeTick, divisor, value);
 
         value = range.denormalize(smoothedValue);
         _cvOutputTarget = value;
@@ -237,10 +237,8 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutputTarget);
 }
 
-float CurveTrackEngine::smoothShape(uint32_t relativeTick, uint32_t divisor, float value, int windowSize, float threshold) {
+float CurveTrackEngine::smoothShape(uint32_t relativeTick, uint32_t divisor, float value) {
     // TODO Curve smoothing could be enabled/disabled in settings?
-
-    // TODO Do we need special handling of first step if we immediately jump from 0 to high?
 
     // TODO Don't duplicate these values from CurveTrackEngine::updateOutput
     const auto &sequence = *_sequence;
@@ -252,14 +250,15 @@ float CurveTrackEngine::smoothShape(uint32_t relativeTick, uint32_t divisor, flo
     const auto &evalSequence = fillNextPattern ? *_fillSequence : *_sequence;
     // TODO End
 
-    float endWindowStepFraction = calculateStepFraction(relativeTick + windowSize, divisor);
+    float endWindowStepFraction = calculateStepFraction(relativeTick + SMOOTHING_WINDOW_SIZE, divisor);
     int endWindowStep = calculateStep(relativeTick + 3, divisor, _currentStep, sequence.firstStep(), sequence.lastStep(), _curveTrack.rotate());
     float endWindowValue = evalStepShape(evalSequence.step(endWindowStep), _shapeVariation || fillVariation, fillInvert, endWindowStepFraction);
 
-    if (std::abs(value - endWindowValue) > threshold && !_smoothCurrentTicks) {
+    if (((relativeTick == 0 && value > SMOOTHING_THRESHOLD) // Handle case where value on step 0 is a sudden jump to high
+            || std::abs(value - endWindowValue) > SMOOTHING_THRESHOLD) && !_smoothCurrentTicks) {
         _startSmoothingTick = relativeTick;
-        _endSmoothingTick = _startSmoothingTick + windowSize;
-        _startSmoothingValue = value;
+        _endSmoothingTick = _startSmoothingTick + SMOOTHING_WINDOW_SIZE;
+        _startSmoothingValue = relativeTick == 0 ? 0.0f : value; // Fake 0 value if we need to fade in the first step
         _endSmoothingValue = endWindowValue;
         _smoothCurrentTicks = true;
         fprintf(stderr, "creating smoothing; startTick: %d, endTick: %d, startValue: %f, endValue: %f\n", _startSmoothingTick, _endSmoothingTick, _startSmoothingValue, _endSmoothingValue);
