@@ -368,7 +368,7 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                         // If shift is pressed, reverse ascension
                         int m = !shift ? multiStepsProcessed : _stepSelection.count() - multiStepsProcessed - 1;
 
-                        if (firstStepShape == 0) {
+                        if (firstStepShape == 0) { // If default shape selected, reset min and max
                             min = CurveSequence::Min::Min;
                             max = CurveSequence::Max::Max;
                         } else {
