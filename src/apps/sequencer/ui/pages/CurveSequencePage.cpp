@@ -50,6 +50,7 @@ void CurveSequencePage::updateLeds(Leds &leds) {
 }
 
 void CurveSequencePage::keyPress(KeyPressEvent &event) {
+    fprintf(stderr, "CurveSequencePage::keyPress\n");
     const auto &key = event.key();
 
     if (key.isContextMenu()) {

@@ -7,6 +7,10 @@
 static const float Pi = 3.1415926536f;
 static const float TwoPi = 2.f * Pi;
 
+// TODO Re-order shapes
+// TODO Add half & quarter sized exp up/down & log up/down, smooth & triangle (maybe more?)
+// TODO Add small envelope if previous/next step is 0
+
 static float low(float x) {
     return 0.f;
 }
