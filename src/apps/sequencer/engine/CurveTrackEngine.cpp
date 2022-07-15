@@ -19,6 +19,7 @@ static float calculateStepFraction(uint32_t relativeTick, uint32_t divisor) {
 }
 
 static int calculateStep(uint32_t relativeTick, uint32_t divisor, int currentStep, int firstStep, int lastStep, int rotate) {
+    // TODO This could probably be done in a better way
     return calculateStepFraction(relativeTick, divisor) > 0.f ? currentStep : SequenceUtils::rotateStep(currentStep + 1, firstStep, lastStep, rotate);
 }
 
