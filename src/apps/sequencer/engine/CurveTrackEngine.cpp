@@ -14,6 +14,14 @@
 
 static Random rng;
 
+static float calculateStepFraction(uint32_t relativeTick, uint32_t divisor) {
+    return float(relativeTick % divisor) / divisor;
+}
+
+static int calculateStep(uint32_t relativeTick, uint32_t divisor, int currentStep, int firstStep, int lastStep, int rotate) {
+    return calculateStepFraction(relativeTick, divisor) > 0.000001 ? currentStep : SequenceUtils::rotateStep(currentStep + 1, firstStep, lastStep, rotate);
+}
+
 static float evalStepShape(const CurveSequence::Step &step, bool variation, bool invert, float fraction) {
     auto function = Curve::function(Curve::Type(variation ? step.shapeVariation() : step.shape()));
     float value = function(fraction);
@@ -191,7 +199,7 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
     const auto &sequence = *_sequence;
     const auto &range = Types::voltageRangeInfo(sequence.range());
 
-    _currentStepFraction = float(relativeTick % divisor) / divisor;
+    _currentStepFraction = calculateStepFraction(relativeTick, divisor);
 
     if (mute()) {
         switch (_curveTrack.muteMode()) {
@@ -219,11 +227,55 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
         const auto &step = evalSequence.step(_currentStep);
 
         float value = evalStepShape(step, _shapeVariation || fillVariation, fillInvert, _currentStepFraction);
-        value = range.denormalize(value);
+        float smoothedValue = smoothShape(relativeTick, divisor, value, 3, 0.1); // TODO Make constants
+
+        value = range.denormalize(smoothedValue);
         _cvOutputTarget = value;
     }
 
     _engine.midiOutputEngine().sendCv(_track.trackIndex(), _cvOutputTarget);
+}
+
+float CurveTrackEngine::smoothShape(uint32_t relativeTick, uint32_t divisor, float value, int windowSize, float threshold) {
+    // TODO Curve smoothing could be enabled/disabled in settings?
+
+    // TODO Don't duplicate these values from CurveTrackEngine::updateOutput
+    const auto &sequence = *_sequence;
+
+    bool fillVariation = _fillMode == CurveTrack::FillMode::Variation;
+    bool fillNextPattern = _fillMode == CurveTrack::FillMode::NextPattern;
+    bool fillInvert = _fillMode == CurveTrack::FillMode::Invert;
+
+    const auto &evalSequence = fillNextPattern ? *_fillSequence : *_sequence;
+    // TODO End
+
+    float endWindowStepFraction = calculateStepFraction(relativeTick + windowSize, divisor);
+    int endWindowStep = calculateStep(relativeTick + 3, divisor, _currentStep, sequence.firstStep(), sequence.lastStep(), _curveTrack.rotate());
+    float endWindowValue = evalStepShape(evalSequence.step(endWindowStep), _shapeVariation || fillVariation, fillInvert, endWindowStepFraction);
+
+    if (std::abs(value - endWindowValue) > threshold && !_smoothCurrentTicks) {
+        _startSmoothingTick = relativeTick;
+        _endSmoothingTick = _startSmoothingTick + windowSize;
+        _startSmoothingValue = value;
+        _endSmoothingValue = endWindowValue;
+        _smoothCurrentTicks = true;
+        fprintf(stderr, "creating smoothing; startTick: %d, endTick: %d, startValue: %f, endValue: %f\n", _startSmoothingTick, _endSmoothingTick, _startSmoothingValue, _endSmoothingValue);
+    }
+
+    if (relativeTick >= _startSmoothingTick && relativeTick < _endSmoothingTick) {
+        float smoothingDiff = _endSmoothingValue - _startSmoothingValue;
+        uint32_t relativeSmoothingTick = relativeTick - _startSmoothingTick;
+
+        float m = smoothingDiff > 0.0f ? relativeSmoothingTick + 1.0f : 3.0f - relativeSmoothingTick;
+        float smoothedValue = std::abs(smoothingDiff) / 3.0f * m;
+
+        fprintf(stderr, "tick: %d, value: %f, smoothedValue: %f\n", relativeTick, value, smoothedValue);
+        value = smoothedValue;
+    } else {
+        _smoothCurrentTicks = false;
+        fprintf(stderr, "tick: %d, value: %f, nosmoothing\n", relativeTick, value);
+    }
+    return value;
 }
 
 bool CurveTrackEngine::isRecording() const {
