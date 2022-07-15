@@ -372,6 +372,7 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                     int m = !shift ? processed : _stepSelection.count() - processed - 1;
 
                     // TODO If shape = 0, reset min and max
+                    // TODO If page key pressed, apply log to min and max
 
                     // TODO ceil
                     int min = m * CurveSequence::Min::Max / _stepSelection.count();
