@@ -291,6 +291,7 @@ void CurveSequenceEditPage::keyUp(KeyEvent &event) {
 }
 
 void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
+    fprintf(stderr, "CurveSequenceEditPage::keyPress\n");
     const auto &key = event.key();
     auto &sequence = _project.selectedCurveSequence();
 
@@ -337,6 +338,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
 }
 
 void CurveSequenceEditPage::encoder(EncoderEvent &event) {
+    fprintf(stderr, "CurveSequenceEditPage::encoder\n");
     auto &sequence = _project.selectedCurveSequence();
 
     if (_stepSelection.any()) {
@@ -346,13 +348,41 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         return;
     }
 
+    int processed = 0;
+
     for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool shift = globalKeyState()[Key::Shift];
             switch (layer()) {
             case Layer::Shape:
-                step.setShape(step.shape() + event.value());
+                fprintf(stderr, "Layer::Shape\n");
+                fprintf(stderr, "Set step %zu = %d + %d\n", stepIndex, step.shape(), event.value());
+
+                fprintf(stderr, "_stepSelection.count() = %zu\n", _stepSelection.count());
+                if (_stepSelection.count() > 1) {
+                    fprintf(stderr, "_stepSelection.count() > 1\n");
+
+                    auto &firstStep = sequence.step(_stepSelection.first());
+                    int firstStepShape = processed == 0 ? firstStep.shape() : firstStep.shape() - event.value();
+                    fprintf(stderr, "firstStep = %d, firstStep shape = %d\n", _stepSelection.first(), firstStepShape);
+                    step.setShape(firstStepShape + event.value());
+
+                    fprintf(stderr, "shiftpressed: %i\n", shift);
+                    int m = !shift ? processed : _stepSelection.count() - processed - 1;
+
+                    // TODO If shape = 0, reset min and max
+
+                    // TODO ceil
+                    int min = m * CurveSequence::Min::Max / _stepSelection.count();
+                    fprintf(stderr, "min = %d * %d / %zu (%d)\n", m, CurveSequence::Min::Max, _stepSelection.count(), min);
+                    int max = (m + 1) * CurveSequence::Max::Max / _stepSelection.count();
+                    fprintf(stderr, "max = %d * %d / %zu (%d)\n", m + 1, CurveSequence::Max::Max, _stepSelection.count(), max);
+                    step.setMin(min);
+                    step.setMax(max);
+                } else {
+                    step.setShape(step.shape() + event.value());
+                }
                 break;
             case Layer::ShapeVariation:
                 step.setShapeVariation(step.shapeVariation() + event.value());
@@ -372,8 +402,12 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                 } else {
                     // adjust min or max
                     if (layer() == Layer::Min) {
+                        fprintf(stderr, "Setting min = %d\n", step.min() + offset);
+                        fprintf(stderr, "Min bits = %d\n", CurveSequence::Min::Max);
                         step.setMin(step.min() + offset);
                     } else {
+                        fprintf(stderr, "Setting max = %d\n", step.max() + offset);
+                        fprintf(stderr, "Max bits = %d\n", CurveSequence::Max::Max);
                         step.setMax(step.max() + offset);
                     }
                 }
@@ -388,6 +422,8 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Last:
                 break;
             }
+
+            processed++;
         }
     }
 

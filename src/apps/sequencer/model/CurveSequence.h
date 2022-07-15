@@ -67,6 +67,7 @@ public:
 
         int shape() const { return _data0.shape; }
         void setShape(int shape) {
+            fprintf(stderr, "setShape\n");
             _data0.shape = clamp(shape, 0, int(Curve::Last) - 1);
         }
 
