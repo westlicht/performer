@@ -261,7 +261,6 @@ float CurveTrackEngine::smoothShape(uint32_t relativeTick, uint32_t divisor, flo
         _startSmoothingValue = relativeTick == 0 ? 0.0f : value; // Fake 0 value if we need to fade in the first step
         _endSmoothingValue = endWindowValue;
         _smoothCurrentTicks = true;
-        fprintf(stderr, "creating smoothing; startTick: %d, endTick: %d, startValue: %f, endValue: %f\n", _startSmoothingTick, _endSmoothingTick, _startSmoothingValue, _endSmoothingValue);
     }
 
     if (relativeTick >= _startSmoothingTick && relativeTick < _endSmoothingTick) {
@@ -271,11 +270,9 @@ float CurveTrackEngine::smoothShape(uint32_t relativeTick, uint32_t divisor, flo
         float m = smoothingDiff > 0.0f ? relativeSmoothingTick + 1.0f : 3.0f - relativeSmoothingTick;
         float smoothedValue = std::abs(smoothingDiff) / 3.0f * m;
 
-        fprintf(stderr, "tick: %d, value: %f, smoothedValue: %f\n", relativeTick, value, smoothedValue);
         value = smoothedValue;
     } else {
         _smoothCurrentTicks = false;
-        fprintf(stderr, "tick: %d, value: %f, nosmoothing\n", relativeTick, value);
     }
     return value;
 }
