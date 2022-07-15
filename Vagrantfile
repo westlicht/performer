@@ -5,12 +5,12 @@ $provision_script = <<-SCRIPT
 
 echo "Installing dependencies ..."
 sudo apt-get update
-sudo apt-get install -y git python libtool autoconf cmake libusb-1.0.0-dev libftdi-dev pkg-config
+sudo apt-get install -y git libtool autoconf cmake libusb-1.0.0-dev libftdi-dev pkg-config libsdl2-dev python3-dev gcc-arm-none-eabi
 
 echo "Installing toolchain ..."
 cd /vagrant
 export TOOLS_DIR=/home/vagrant/tools
-make tools_install
+make tools_install setup_stm32 setup_sim
 
 echo "Setting up build ..."
 make setup_stm32

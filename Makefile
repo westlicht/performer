@@ -92,7 +92,7 @@ OPENOCD_FILE := $(notdir $(OPENOCD_URL))
 OPENOCD_DIR := $(TOOLS_DIR)/openocd
 OPENOCD_BUILD_DIR := $(TOOLS_DIR)/openocd-build
 OPENOCD_INSTALL_MARKER := $(OPENOCD_DIR)/bin/openocd
-OPENOCD_OPTIONS := --enable-maintainer-mode --prefix="$(OPENOCD_DIR)" --enable-buspirate --enable-stlink --enable-ftdi
+OPENOCD_OPTIONS := --enable-maintainer-mode --prefix="$(OPENOCD_DIR)" --enable-buspirate --enable-stlink --enable-ftdi --disable-werror
 
 openocd_install: | $(TOOLS_DIR)
 openocd_install: openocd_download $(OPENOCD_INSTALL_MARKER)
