@@ -130,6 +130,15 @@ public:
         return _first;
     }
 
+    int firstSetIndex() const {
+        for (size_t i = 0; i < _selected.size(); ++i) {
+            if (_selected[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     bool none() const {
         return _selected.none();
     }
@@ -167,15 +176,6 @@ private:
             }
         }
         return other;
-    }
-
-    int firstSetIndex() const {
-        for (size_t i = 0; i < _selected.size(); ++i) {
-            if (_selected[i]) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     enum class Mode : uint8_t {

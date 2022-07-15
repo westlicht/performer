@@ -291,7 +291,6 @@ void CurveSequenceEditPage::keyUp(KeyEvent &event) {
 }
 
 void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
-    fprintf(stderr, "CurveSequenceEditPage::keyPress\n");
     const auto &key = event.key();
     auto &sequence = _project.selectedCurveSequence();
 
@@ -338,7 +337,6 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
 }
 
 void CurveSequenceEditPage::encoder(EncoderEvent &event) {
-    fprintf(stderr, "CurveSequenceEditPage::encoder\n");
     auto &sequence = _project.selectedCurveSequence();
 
     if (_stepSelection.any()) {
@@ -348,37 +346,37 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         return;
     }
 
-    int processed = 0;
-
-    for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+    for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool shift = globalKeyState()[Key::Shift];
             switch (layer()) {
             case Layer::Shape:
-                fprintf(stderr, "Layer::Shape\n");
-                fprintf(stderr, "Set step %zu = %d + %d\n", stepIndex, step.shape(), event.value());
+                if (_stepSelection.count() > 1) { // If multiple steps selected, create a continuous shape
+                    bool pagePressed = globalKeyState()[Key::Page];
+                    int min, max;
+                    if (pagePressed) { // If page pressed, apply logarithmic/exponential adjustment to min and max
+                        double exp = event.value() > 0 ? -0.1 : 0.1;
 
-                fprintf(stderr, "_stepSelection.count() = %zu\n", _stepSelection.count());
-                if (_stepSelection.count() > 1) {
-                    fprintf(stderr, "_stepSelection.count() > 1\n");
+                        min = step.min() == 0 ? 0 : static_cast<int>(std::ceil(std::pow(step.min(), exp) / std::pow(CurveSequence::Min::Max, exp) * step.min()));
+                        max = step.max() == 0 ? 0 : static_cast<int>(std::ceil(std::pow(step.max(), exp) / std::pow(CurveSequence::Max::Max, exp) * step.max()));
+                    } else { // Normal operation - set min and max to be continuous between steps
+                        auto &firstStep = sequence.step(_stepSelection.firstSetIndex());
+                        int firstStepShape = multiStepsProcessed == 0 ? firstStep.shape() + event.value() : firstStep.shape();
+                        step.setShape(firstStepShape);
 
-                    auto &firstStep = sequence.step(_stepSelection.first());
-                    int firstStepShape = processed == 0 ? firstStep.shape() : firstStep.shape() - event.value();
-                    fprintf(stderr, "firstStep = %d, firstStep shape = %d\n", _stepSelection.first(), firstStepShape);
-                    step.setShape(firstStepShape + event.value());
+                        // If shift is pressed, reverse ascension
+                        int m = !shift ? multiStepsProcessed : _stepSelection.count() - multiStepsProcessed - 1;
 
-                    fprintf(stderr, "shiftpressed: %i\n", shift);
-                    int m = !shift ? processed : _stepSelection.count() - processed - 1;
+                        if (firstStepShape == 0) {
+                            min = CurveSequence::Min::Min;
+                            max = CurveSequence::Max::Max;
+                        } else {
+                            min = std::ceil(1.0 * m * CurveSequence::Min::Max / _stepSelection.count());
+                            max = std::ceil(1.0 * (m + 1) * CurveSequence::Max::Max / _stepSelection.count());
+                        }
+                    }
 
-                    // TODO If shape = 0, reset min and max
-                    // TODO If page key pressed, apply log to min and max
-
-                    // TODO ceil
-                    int min = m * CurveSequence::Min::Max / _stepSelection.count();
-                    fprintf(stderr, "min = %d * %d / %zu (%d)\n", m, CurveSequence::Min::Max, _stepSelection.count(), min);
-                    int max = (m + 1) * CurveSequence::Max::Max / _stepSelection.count();
-                    fprintf(stderr, "max = %d * %d / %zu (%d)\n", m + 1, CurveSequence::Max::Max, _stepSelection.count(), max);
                     step.setMin(min);
                     step.setMax(max);
                 } else {
@@ -403,12 +401,8 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                 } else {
                     // adjust min or max
                     if (layer() == Layer::Min) {
-                        fprintf(stderr, "Setting min = %d\n", step.min() + offset);
-                        fprintf(stderr, "Min bits = %d\n", CurveSequence::Min::Max);
                         step.setMin(step.min() + offset);
                     } else {
-                        fprintf(stderr, "Setting max = %d\n", step.max() + offset);
-                        fprintf(stderr, "Max bits = %d\n", CurveSequence::Max::Max);
                         step.setMax(step.max() + offset);
                     }
                 }
@@ -424,7 +418,7 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                 break;
             }
 
-            processed++;
+            multiStepsProcessed++;
         }
     }
 
