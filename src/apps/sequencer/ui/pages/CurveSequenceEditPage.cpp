@@ -346,13 +346,42 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         return;
     }
 
-    for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+    for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool shift = globalKeyState()[Key::Shift];
             switch (layer()) {
             case Layer::Shape:
-                step.setShape(step.shape() + event.value());
+                if (_stepSelection.count() > 1) { // If multiple steps selected, create a continuous shape
+                    bool pagePressed = globalKeyState()[Key::Page];
+                    int min, max;
+                    if (pagePressed) { // If page pressed, apply logarithmic/exponential adjustment to min and max
+                        double exp = event.value() > 0 ? -0.1 : 0.1;
+
+                        min = step.min() == 0 ? 0 : int(std::ceil(std::pow(step.min(), exp) / std::pow(CurveSequence::Min::Max, exp) * step.min()));
+                        max = step.max() == 0 ? 0 : int(std::ceil(std::pow(step.max(), exp) / std::pow(CurveSequence::Max::Max, exp) * step.max()));
+                    } else { // Normal operation - set min and max to be continuous between steps
+                        auto &firstStep = sequence.step(_stepSelection.firstSetIndex());
+                        int firstStepShape = multiStepsProcessed == 0 ? firstStep.shape() + event.value() : firstStep.shape();
+                        step.setShape(firstStepShape);
+
+                        // If shift is pressed, reverse ascension
+                        int m = !shift ? multiStepsProcessed : _stepSelection.count() - multiStepsProcessed - 1;
+
+                        if (firstStepShape == 0) { // If default shape selected, reset min and max
+                            min = CurveSequence::Min::Min;
+                            max = CurveSequence::Max::Max;
+                        } else {
+                            min = std::ceil(1.0 * m * CurveSequence::Min::Max / _stepSelection.count());
+                            max = std::ceil(1.0 * (m + 1) * CurveSequence::Max::Max / _stepSelection.count());
+                        }
+                    }
+
+                    step.setMin(min);
+                    step.setMax(max);
+                } else {
+                    step.setShape(step.shape() + event.value());
+                }
                 break;
             case Layer::ShapeVariation:
                 step.setShapeVariation(step.shapeVariation() + event.value());
@@ -388,6 +417,8 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Last:
                 break;
             }
+
+            multiStepsProcessed++;
         }
     }
 
