@@ -19,6 +19,7 @@ static float calculateStepFraction(uint32_t relativeTick, uint32_t divisor) {
 }
 
 static int calculateStep(uint32_t relativeTick, uint32_t divisor, int currentStep, int firstStep, int lastStep, int rotate) {
+    // TODO Would > 0.0f work?
     return calculateStepFraction(relativeTick, divisor) > 0.000001 ? currentStep : SequenceUtils::rotateStep(currentStep + 1, firstStep, lastStep, rotate);
 }
 
@@ -238,6 +239,8 @@ void CurveTrackEngine::updateOutput(uint32_t relativeTick, uint32_t divisor) {
 
 float CurveTrackEngine::smoothShape(uint32_t relativeTick, uint32_t divisor, float value, int windowSize, float threshold) {
     // TODO Curve smoothing could be enabled/disabled in settings?
+
+    // TODO Do we need special handling of first step if we immediately jump from 0 to high?
 
     // TODO Don't duplicate these values from CurveTrackEngine::updateOutput
     const auto &sequence = *_sequence;
