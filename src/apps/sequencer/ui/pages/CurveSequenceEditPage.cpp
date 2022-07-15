@@ -358,8 +358,8 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                     if (pagePressed) { // If page pressed, apply logarithmic/exponential adjustment to min and max
                         double exp = event.value() > 0 ? -0.1 : 0.1;
 
-                        min = step.min() == 0 ? 0 : static_cast<int>(std::ceil(std::pow(step.min(), exp) / std::pow(CurveSequence::Min::Max, exp) * step.min()));
-                        max = step.max() == 0 ? 0 : static_cast<int>(std::ceil(std::pow(step.max(), exp) / std::pow(CurveSequence::Max::Max, exp) * step.max()));
+                        min = step.min() == 0 ? 0 : int(std::ceil(std::pow(step.min(), exp) / std::pow(CurveSequence::Min::Max, exp) * step.min()));
+                        max = step.max() == 0 ? 0 : int(std::ceil(std::pow(step.max(), exp) / std::pow(CurveSequence::Max::Max, exp) * step.max()));
                     } else { // Normal operation - set min and max to be continuous between steps
                         auto &firstStep = sequence.step(_stepSelection.firstSetIndex());
                         int firstStepShape = multiStepsProcessed == 0 ? firstStep.shape() + event.value() : firstStep.shape();

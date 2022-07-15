@@ -19,8 +19,7 @@ static float calculateStepFraction(uint32_t relativeTick, uint32_t divisor) {
 }
 
 static int calculateStep(uint32_t relativeTick, uint32_t divisor, int currentStep, int firstStep, int lastStep, int rotate) {
-    // TODO Would > 0.0f work?
-    return calculateStepFraction(relativeTick, divisor) > 0.000001 ? currentStep : SequenceUtils::rotateStep(currentStep + 1, firstStep, lastStep, rotate);
+    return calculateStepFraction(relativeTick, divisor) > 0.f ? currentStep : SequenceUtils::rotateStep(currentStep + 1, firstStep, lastStep, rotate);
 }
 
 static float evalStepShape(const CurveSequence::Step &step, bool variation, bool invert, float fraction) {
@@ -267,8 +266,8 @@ float CurveTrackEngine::smoothShape(uint32_t relativeTick, uint32_t divisor, flo
         float smoothingDiff = _endSmoothingValue - _startSmoothingValue;
         uint32_t relativeSmoothingTick = relativeTick - _startSmoothingTick;
 
-        float m = smoothingDiff > 0.0f ? relativeSmoothingTick + 1.0f : 3.0f - relativeSmoothingTick;
-        float smoothedValue = std::abs(smoothingDiff) / 3.0f * m;
+        uint32_t m = smoothingDiff > 0.0f ? relativeSmoothingTick + 1 : SMOOTHING_WINDOW_SIZE - relativeSmoothingTick;
+        float smoothedValue = std::abs(smoothingDiff) / float(SMOOTHING_WINDOW_SIZE) * m;
 
         value = smoothedValue;
     } else {
