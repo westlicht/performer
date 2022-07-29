@@ -115,7 +115,6 @@ void CurveSequence::Step::clear() {
 }
 
 void CurveSequence::Step::write(VersionedSerializedWriter &writer) const {
-    fprintf(stderr, "CurveSequence::Step::write\n");
     writer.write(_data0);
     writer.write(_data1);
 }
