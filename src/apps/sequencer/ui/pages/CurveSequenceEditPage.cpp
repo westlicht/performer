@@ -310,7 +310,6 @@ void CurveSequenceEditPage::keyUp(KeyEvent &event) {
 }
 
 void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
-    fprintf(stderr, "CurveSequenceEditPage::keyPress\n");
     const auto &key = event.key();
     auto &sequence = _project.selectedCurveSequence();
 
@@ -377,7 +376,6 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
 }
 
 void CurveSequenceEditPage::encoder(EncoderEvent &event) {
-    fprintf(stderr, "CurveSequenceEditPage::encoder\n");
     auto &sequence = _project.selectedCurveSequence();
 
     if (_stepSelection.any()) {
@@ -425,12 +423,8 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                 } else {
                     // adjust min or max
                     if (layer() == Layer::Min) {
-                        fprintf(stderr, "Setting min = %d\n", step.min() + offset);
-                        fprintf(stderr, "Min bits = %d\n", CurveSequence::Min::Max);
                         step.setMin(step.min() + offset);
                     } else {
-                        fprintf(stderr, "Setting max = %d\n", step.max() + offset);
-                        fprintf(stderr, "Max bits = %d\n", CurveSequence::Max::Max);
                         step.setMax(step.max() + offset);
                     }
                 }
