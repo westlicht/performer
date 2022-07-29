@@ -83,6 +83,25 @@ static void drawGatePattern(Canvas &canvas, int x, int y, int w, int h, int gate
     }
 }
 
+static std::pair<int, int> calculateMultiStepShapeMinMax(size_t stepsSelected,
+                                                         size_t multiStepsProcessed,
+                                                         int shape,
+                                                         bool reverse) {
+    // If shift is pressed, reverse ascension
+    int m = !reverse ? multiStepsProcessed : stepsSelected - multiStepsProcessed - 1;
+
+    int min, max;
+    if (shape == 0) {
+        min = CurveSequence::Min::Min;
+        max = CurveSequence::Max::Max;
+    } else {
+        min = std::ceil(float(m) * CurveSequence::Min::Max / stepsSelected);
+        max = std::ceil(float(m + 1) * CurveSequence::Max::Max / stepsSelected);
+    }
+
+    return std::make_pair(min, max);
+}
+
 CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {
@@ -311,6 +330,26 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.isEncoder() && layer() == Layer::Shape && globalKeyState()[Key::Shift] && _stepSelection.count() > 1) {
+        auto firstStep = sequence.step(_stepSelection.firstSetIndex());
+        auto lastStep = sequence.step(_stepSelection.lastSetIndex());
+        bool isReversed = firstStep.max() > lastStep.max();
+
+        for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+            if (_stepSelection[stepIndex]) {
+                auto &step = sequence.step(stepIndex);
+
+                float min, max;
+                std::tie(min, max) = calculateMultiStepShapeMinMax(_stepSelection.count(), multiStepsProcessed, sequence.step(_stepSelection.firstSetIndex()).shape(), !isReversed);
+
+                step.setMin(int(min));
+                step.setMax(int(max));
+
+                multiStepsProcessed++;
+            }
+        }
+    }
+
     _stepSelection.keyPress(event, stepOffset());
     updateMonitorStep();
 
@@ -348,36 +387,20 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         return;
     }
 
-    int processed = 0;
-
-    for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+    for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool shift = globalKeyState()[Key::Shift];
             switch (layer()) {
             case Layer::Shape:
-                fprintf(stderr, "Layer::Shape\n");
-                fprintf(stderr, "Set step %zu = %d + %d\n", stepIndex, step.shape(), event.value());
+                if (_stepSelection.count() > 1 && shift) { // Create a multi-step shape
+                    auto &firstStep = sequence.step(_stepSelection.firstSetIndex());
+                    int firstStepShape = multiStepsProcessed == 0 ? firstStep.shape() + event.value() : firstStep.shape();
+                    step.setShape(firstStepShape);
 
-                fprintf(stderr, "_stepSelection.count() = %zu\n", _stepSelection.count());
-                if (_stepSelection.count() > 1) {
-                    fprintf(stderr, "_stepSelection.count() > 1\n");
+                    int min, max;
+                    std::tie(min, max) = calculateMultiStepShapeMinMax(_stepSelection.count(), multiStepsProcessed, firstStepShape, false);
 
-                    auto &firstStep = sequence.step(_stepSelection.first());
-                    int firstStepShape = processed == 0 ? firstStep.shape() : firstStep.shape() - event.value();
-                    fprintf(stderr, "firstStep = %d, firstStep shape = %d\n", _stepSelection.first(), firstStepShape);
-                    step.setShape(firstStepShape + event.value());
-
-                    fprintf(stderr, "shiftpressed: %i\n", shift);
-                    int m = !shift ? processed : _stepSelection.count() - processed - 1;
-
-                    // TODO If shape = 0, reset min and max
-
-                    // TODO ceil
-                    int min = m * CurveSequence::Min::Max / _stepSelection.count();
-                    fprintf(stderr, "min = %d * %d / %zu (%d)\n", m, CurveSequence::Min::Max, _stepSelection.count(), min);
-                    int max = (m + 1) * CurveSequence::Max::Max / _stepSelection.count();
-                    fprintf(stderr, "max = %d * %d / %zu (%d)\n", m + 1, CurveSequence::Max::Max, _stepSelection.count(), max);
                     step.setMin(min);
                     step.setMax(max);
                 } else {
@@ -423,7 +446,7 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                 break;
             }
 
-            processed++;
+            multiStepsProcessed++;
         }
     }
 
