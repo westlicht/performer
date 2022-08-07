@@ -469,12 +469,26 @@ void Engine::updatePlayState(bool ticked) {
 
             // handle pattern requests
             if (trackState.hasRequests(patternRequests)) {
+                fprintf(stderr, "HAS PATTERN REQUEST\n");
                 trackState.setPattern(trackState.requestedPattern());
                 changedPatterns = true;
             }
 
             // clear requests
             trackState.clearRequests(muteRequests | patternRequests);
+        }
+
+        if (changedPatterns && _project.midiPgmChangeEnabled()) {
+            bool allPatternsEqual = true;
+            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                if (playState.trackState(trackIndex).pattern() != playState.trackState(0).pattern()) {
+                    allPatternsEqual = false;
+                }
+            }
+
+            if (allPatternsEqual) {
+                _midiOutputEngine.sendProgramChange(1, playState.trackState(0).pattern());
+            }
         }
     }
 
@@ -569,6 +583,7 @@ void Engine::updatePlayState(bool ticked) {
     }
 
     if (hasRequests | handleSongAdvance) {
+//        fprintf(stderr, "CHANGING PATTERN\n");
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             _trackEngines[trackIndex]->changePattern();
         }
