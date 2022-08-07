@@ -469,7 +469,6 @@ void Engine::updatePlayState(bool ticked) {
 
             // handle pattern requests
             if (trackState.hasRequests(patternRequests)) {
-                fprintf(stderr, "HAS PATTERN REQUEST\n");
                 trackState.setPattern(trackState.requestedPattern());
                 changedPatterns = true;
             }
@@ -583,7 +582,6 @@ void Engine::updatePlayState(bool ticked) {
     }
 
     if (hasRequests | handleSongAdvance) {
-//        fprintf(stderr, "CHANGING PATTERN\n");
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             _trackEngines[trackIndex]->changePattern();
         }
