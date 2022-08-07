@@ -57,6 +57,7 @@ private:
         MonitorMode,
         RecordMode,
         MidiInput,
+        MidiPgmChange,
         CvGateInput,
         CurveCvInput,
         Last
@@ -74,6 +75,7 @@ private:
         case MonitorMode:       return "Monitor Mode";
         case RecordMode:        return "Record Mode";
         case MidiInput:         return "MIDI Input";
+        case MidiPgmChange:     return "MIDI Pgm Chng";
         case CvGateInput:       return "CV/Gate Input";
         case CurveCvInput:      return "Curve CV Input";
         case Last:              break;
@@ -117,6 +119,9 @@ private:
         case MidiInput:
             _project.printMidiInput(str);
             break;
+        case MidiPgmChange:
+            _project.printMidiPgmChange(str);
+            break;
         case CvGateInput:
             _project.printCvGateInput(str);
             break;
@@ -158,6 +163,9 @@ private:
             break;
         case MidiInput:
             _project.editMidiInput(value, shift);
+            break;
+        case MidiPgmChange:
+            _project.editMidiPgmChange(value, shift);
             break;
         case CvGateInput:
             _project.editCvGateInput(value, shift);
