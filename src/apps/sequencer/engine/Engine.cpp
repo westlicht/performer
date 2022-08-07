@@ -500,9 +500,9 @@ void Engine::updatePlayState(bool ticked) {
             trackState.clearRequests(muteRequests | patternRequests);
         }
 
-        bool shouldSendPgmChange = !preSendMidiPgmChange && changedPatterns;
-        bool shouldPreSendPgmChange = preSendMidiPgmChange && ((changedPatterns && !playState.hasSyncedRequests())
-                || (preHandleSyncedRequests && playState.hasSyncedRequests()));
+        bool shouldSendPgmChange = !_preSendMidiPgmChange && changedPatterns;
+        bool shouldPreSendPgmChange = _preSendMidiPgmChange && ((changedPatterns && !playState.hasSyncedRequests())
+                                                                || (preHandleSyncedRequests && playState.hasSyncedRequests()));
 
         if (_project.midiPgmChangeEnabled() && (shouldSendPgmChange || shouldPreSendPgmChange) && allPatternsEqual(playState)) {
             _midiOutputEngine.sendProgramChange(0, playState.trackState(0).requestedPattern());

@@ -243,7 +243,7 @@ private:
     } _midiMonitoring;
 
     // TODO Could be a setting if needed
-    static const bool preSendMidiPgmChange = true;
+    static const bool _preSendMidiPgmChange = true;
     bool _midiHasSentInitialPgmChange = false;
 
     // gate output overrides
