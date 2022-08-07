@@ -83,6 +83,25 @@ static void drawGatePattern(Canvas &canvas, int x, int y, int w, int h, int gate
     }
 }
 
+static std::pair<int, int> calculateMultiStepShapeMinMax(size_t stepsSelected,
+                                                         size_t multiStepsProcessed,
+                                                         int shape,
+                                                         bool reverse) {
+    // If shift is pressed, reverse ascension
+    int m = !reverse ? multiStepsProcessed : stepsSelected - multiStepsProcessed - 1;
+
+    int min, max;
+    if (shape == 0) {
+        min = CurveSequence::Min::Min;
+        max = CurveSequence::Max::Max;
+    } else {
+        min = std::ceil(float(m) * CurveSequence::Min::Max / stepsSelected);
+        max = std::ceil(float(m + 1) * CurveSequence::Max::Max / stepsSelected);
+    }
+
+    return std::make_pair(min, max);
+}
+
 CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {
@@ -310,6 +329,26 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.isEncoder() && layer() == Layer::Shape && globalKeyState()[Key::Shift] && _stepSelection.count() > 1) {
+        auto firstStep = sequence.step(_stepSelection.firstSetIndex());
+        auto lastStep = sequence.step(_stepSelection.lastSetIndex());
+        bool isReversed = firstStep.max() > lastStep.max();
+
+        for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+            if (_stepSelection[stepIndex]) {
+                auto &step = sequence.step(stepIndex);
+
+                float min, max;
+                std::tie(min, max) = calculateMultiStepShapeMinMax(_stepSelection.count(), multiStepsProcessed, sequence.step(_stepSelection.firstSetIndex()).shape(), !isReversed);
+
+                step.setMin(int(min));
+                step.setMax(int(max));
+
+                multiStepsProcessed++;
+            }
+        }
+    }
+
     _stepSelection.keyPress(event, stepOffset());
     updateMonitorStep();
 
@@ -346,13 +385,25 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         return;
     }
 
-    for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+    for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool shift = globalKeyState()[Key::Shift];
             switch (layer()) {
             case Layer::Shape:
-                step.setShape(step.shape() + event.value());
+                if (_stepSelection.count() > 1 && shift) { // Create a multi-step shape
+                    auto &firstStep = sequence.step(_stepSelection.firstSetIndex());
+                    int firstStepShape = multiStepsProcessed == 0 ? firstStep.shape() + event.value() : firstStep.shape();
+                    step.setShape(firstStepShape);
+
+                    int min, max;
+                    std::tie(min, max) = calculateMultiStepShapeMinMax(_stepSelection.count(), multiStepsProcessed, firstStepShape, false);
+
+                    step.setMin(min);
+                    step.setMax(max);
+                } else {
+                    step.setShape(step.shape() + event.value());
+                }
                 break;
             case Layer::ShapeVariation:
                 step.setShapeVariation(step.shapeVariation() + event.value());
@@ -388,6 +439,8 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Last:
                 break;
             }
+
+            multiStepsProcessed++;
         }
     }
 
