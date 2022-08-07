@@ -242,6 +242,10 @@ private:
         int8_t lastTrack = -1;
     } _midiMonitoring;
 
+    // TODO Could be a setting if needed
+    static const bool _preSendMidiPgmChange = true;
+    bool _midiHasSentInitialPgmChange = false;
+
     // gate output overrides
     bool _gateOutputOverride = false;
     uint8_t _gateOutputOverrideValue = 0;

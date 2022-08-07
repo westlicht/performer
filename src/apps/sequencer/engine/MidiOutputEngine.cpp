@@ -148,6 +148,13 @@ void MidiOutputEngine::sendCv(int trackIndex, float cv) {
     }
 }
 
+void MidiOutputEngine::sendProgramChange(int channel, int programNumber) {
+    auto pgmChangeMessage = MidiMessage::makeProgramChange(channel, programNumber);
+
+    sendMidi(MidiPort::Midi, pgmChangeMessage);
+    sendMidi(MidiPort::UsbMidi, pgmChangeMessage);
+}
+
 void MidiOutputEngine::resetOutput(int outputIndex) {
     auto &outputState = _outputStates[outputIndex];
 
