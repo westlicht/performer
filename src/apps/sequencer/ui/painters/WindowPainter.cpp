@@ -44,9 +44,9 @@ void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], const 
     }
 
     canvas.setFont(Font::Tiny);
-    canvas.setColor(Color::Bright);
 
     for (int i = 0; i < FunctionKeyCount; ++i) {
+        canvas.setColor(Color::Medium);
         if (names[i]) {
             bool pressed = keyState[Key::F0 + i];
 
@@ -58,11 +58,8 @@ void WindowPainter::drawFunctionKeys(Canvas &canvas, const char *names[], const 
             int x1 = (PageWidth * (i + 1)) / FunctionKeyCount;
             int w = x1 - x0 + 1;
 
-            canvas.setBlendMode(BlendMode::Set);
-
             if (pressed) {
-                canvas.fillRect(x0, PageHeight - FooterHeight, w, FooterHeight);
-                canvas.setBlendMode(BlendMode::Sub);
+                canvas.setColor(Color::Bright);
             }
 
             canvas.drawText(x0 + (w - canvas.textWidth(names[i])) / 2, PageHeight - 3, names[i]);
