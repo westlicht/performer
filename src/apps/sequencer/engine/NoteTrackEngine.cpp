@@ -263,7 +263,6 @@ void NoteTrackEngine::update(float dt) {
 }
 
 void NoteTrackEngine::changePattern() {
-//    fprintf(stderr, "TRACKSTATE PATTERN: %d\n", _trackState.pattern());
     _sequence = &_noteTrack.sequence(pattern());
     _fillSequence = &_noteTrack.sequence(std::min(pattern() + 1, CONFIG_PATTERN_COUNT - 1));
 }
