@@ -476,6 +476,19 @@ void Engine::updatePlayState(bool ticked) {
             // clear requests
             trackState.clearRequests(muteRequests | patternRequests);
         }
+
+        if (changedPatterns && _project.midiPgmChangeEnabled()) {
+            bool allPatternsEqual = true;
+            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                if (playState.trackState(trackIndex).pattern() != playState.trackState(0).pattern()) {
+                    allPatternsEqual = false;
+                }
+            }
+
+            if (allPatternsEqual) {
+                _midiOutputEngine.sendProgramChange(1, playState.trackState(0).pattern());
+            }
+        }
     }
 
     // handle song requests

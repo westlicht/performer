@@ -90,6 +90,9 @@ enum ProjectVersion {
     // changed MidiCvTrack::VoiceConfig to 8-bit value
     Version31 = 31,
 
+    // added Project::midiPgmChange
+    Version32 = 32,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

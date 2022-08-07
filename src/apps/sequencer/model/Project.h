@@ -219,6 +219,23 @@ public:
     const MidiSourceConfig &midiInputSource() const { return _midiInputSource; }
           MidiSourceConfig &midiInputSource()       { return _midiInputSource; }
 
+    // midiPgmChange
+
+    void editMidiPgmChange(int value, bool shift) {
+        _midiPgmChange = value == 1;
+    }
+
+    void printMidiPgmChange(StringBuilder &str) const {
+        if (_midiPgmChange) str("On");
+        else str("Off");
+    }
+
+    void setMidiPgmChangeEnabled(bool enabled) {
+        _midiPgmChange = enabled;
+    }
+
+    bool midiPgmChangeEnabled() const { return _midiPgmChange; }
+
     // cvGateInput
 
     Types::CvGateInput cvGateInput() const { return _cvGateInput; }
@@ -434,6 +451,7 @@ private:
     Types::MonitorMode _monitorMode;
     Types::MidiInputMode _midiInputMode;
     MidiSourceConfig _midiInputSource;
+    bool _midiPgmChange;
     Types::CvGateInput _cvGateInput;
     Types::CurveCvInput _curveCvInput;
 
