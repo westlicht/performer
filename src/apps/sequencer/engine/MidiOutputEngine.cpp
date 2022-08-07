@@ -150,7 +150,7 @@ void MidiOutputEngine::sendCv(int trackIndex, float cv) {
 
 void MidiOutputEngine::sendProgramChange(int channel, int programNumber) {
     auto pgmChangeMessage = MidiMessage::makeProgramChange(channel, programNumber);
-
+    fprintf(stderr, "SENDING PROGRAM CHANGE\n");
     sendMidi(MidiPort::Midi, pgmChangeMessage);
     sendMidi(MidiPort::UsbMidi, pgmChangeMessage);
 }
