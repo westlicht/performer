@@ -486,7 +486,7 @@ void Engine::updatePlayState(bool ticked) {
             }
 
             if (allPatternsEqual) {
-                _midiOutputEngine.sendProgramChange(1, playState.trackState(0).pattern());
+                _midiOutputEngine.sendProgramChange(0, playState.trackState(0).pattern());
             }
         }
     }
