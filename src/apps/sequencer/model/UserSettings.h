@@ -9,6 +9,7 @@
 
 #define SettingBrightness "brightness"
 #define SettingScreensaver "screensaver"
+#define SettingWakeMode "wakemode"
 #define SettingDimSequence "dimsequence"
 
 class BaseSetting {
@@ -120,6 +121,17 @@ public:
     ) {}
 };
 
+class WakeModeSetting : public Setting<int> {
+public:
+    WakeModeSetting() : Setting(
+            SettingWakeMode,
+            "Wake Mode",
+            {"always", "required"},
+            {0, 1},
+            0
+    ) {}
+};
+
 class DimSequenceSetting : public Setting<bool> {
 public:
     DimSequenceSetting() : Setting(
@@ -136,6 +148,7 @@ public:
     UserSettings() {
         addSetting(new BrightnessSetting());
         addSetting(new ScreensaverSetting());
+        addSetting(new WakeModeSetting());
         addSetting(new DimSequenceSetting());
     }
 
