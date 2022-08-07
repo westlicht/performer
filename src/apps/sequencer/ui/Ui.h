@@ -23,12 +23,13 @@
 #include "engine/Engine.h"
 
 #include "model/Model.h"
+#include "Screensaver.h"
 
 class Key;
 
 class Ui {
 public:
-    Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder);
+    Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder, Settings &settings);
 
     void init();
     void update();
@@ -72,4 +73,6 @@ private:
 
     ControllerManager _controllerManager;
     uint32_t _lastControllerUpdateTicks;
+
+    Screensaver _screensaver;
 };
