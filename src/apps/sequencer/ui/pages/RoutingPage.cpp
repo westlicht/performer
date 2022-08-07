@@ -126,7 +126,7 @@ void RoutingPage::drawCell(Canvas &canvas, int row, int column, int x, int y, in
     ) {
         canvas.setFont(Font::Tiny);
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(edit() && row == selectedRow() ? 0xf : 0x7);
+        canvas.setColor(edit() && row == selectedRow() ? Color::Bright : Color::Medium);
 
         uint8_t tracks = _editRoute.tracks();
         for (int i = 0; i < CONFIG_TRACK_COUNT; ++i) {

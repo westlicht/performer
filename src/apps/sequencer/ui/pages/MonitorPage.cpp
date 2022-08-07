@@ -92,7 +92,7 @@ void MonitorPage::draw(Canvas &canvas) {
 
     canvas.setBlendMode(BlendMode::Set);
     canvas.setFont(Font::Tiny);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     switch (_mode) {
     case Mode::CvIn:

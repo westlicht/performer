@@ -32,10 +32,10 @@ public:
 
         timer.reset();
 
-        canvas.setColor(0);
+        canvas.setColor(Color::None);
         canvas.fill();
 
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.vline(frame % 256, 0, 64);
         canvas.hline(0, frame % 64, 256);
 

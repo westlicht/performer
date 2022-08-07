@@ -4,7 +4,7 @@
 
 static void drawProgressBar(Canvas &canvas, int x, int y, int w, int h, int stripeLength, int stripeOffset) {
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     int sx = (stripeOffset % stripeLength) - stripeLength;
     while (sx < w + stripeLength) {
@@ -35,7 +35,7 @@ void BusyPage::draw(Canvas &canvas) {
 
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     canvas.drawTextCentered(0, 32 - 16, Width, 8, _text);
 

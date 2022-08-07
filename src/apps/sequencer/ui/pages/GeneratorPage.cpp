@@ -54,7 +54,7 @@ void GeneratorPage::draw(Canvas &canvas) {
 
     canvas.setFont(Font::Small);
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     auto drawValue = [&] (int index, const char *str) {
         int w = Width / 5;
@@ -185,10 +185,10 @@ void GeneratorPage::drawEuclideanGenerator(Canvas &canvas, const EuclideanGenera
     int y = Height / 2 - stepHeight / 2;
 
     for (int i = 0; i < steps; ++i) {
-        canvas.setColor(0x7);
+        canvas.setColor(Color::Medium);
         canvas.drawRect(x + 1, y + 1, stepWidth - 2, stepHeight - 2);
         if (pattern[i]) {
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             canvas.fillRect(x + 1, y + 1, stepWidth - 2, stepHeight - 2);
         }
         x += stepWidth;
@@ -207,9 +207,9 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
     for (int i = 0; i < steps; ++i) {
         int h = stepHeight - 2;
         int h2 = (h * pattern[i]) / 255;
-        canvas.setColor(0x3);
+        canvas.setColor(Color::Low);
         canvas.drawRect(x + 1, y + 1, stepWidth - 2, h);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.hline(x + 1, y + 1 + h - h2, stepWidth - 2);
         // canvas.fillRect(x + 1, y + 1 + h - h2 , stepWidth - 2, h2);
         x += stepWidth;

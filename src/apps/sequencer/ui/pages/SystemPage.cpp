@@ -92,7 +92,7 @@ void SystemPage::draw(Canvas &canvas) {
         WindowPainter::drawActiveFunction(canvas, "UPDATE");
         WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawText(4, 24, "CURRENT VERSION:");
         FixedStringBuilder<16> str("%d.%d.%d", CONFIG_VERSION_MAJOR, CONFIG_VERSION_MINOR, CONFIG_VERSION_REVISION);
         canvas.drawText(100, 24, str);
