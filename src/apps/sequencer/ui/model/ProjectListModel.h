@@ -52,6 +52,7 @@ private:
         Swing,
         TimeSignature,
         SyncMeasure,
+        AlwaysSync,
         Scale,
         RootNote,
         MonitorMode,
@@ -70,6 +71,7 @@ private:
         case Swing:             return "Swing";
         case TimeSignature:     return "Time Signature";
         case SyncMeasure:       return "Sync Measure";
+        case AlwaysSync:        return "Always Sync";
         case Scale:             return "Scale";
         case RootNote:          return "Root Note";
         case MonitorMode:       return "Monitor Mode";
@@ -103,6 +105,9 @@ private:
             break;
         case SyncMeasure:
             _project.printSyncMeasure(str);
+            break;
+        case AlwaysSync:
+            _project.printAlwaysSync(str);
             break;
         case Scale:
             _project.printScale(str);
@@ -148,6 +153,9 @@ private:
             break;
         case SyncMeasure:
             _project.editSyncMeasure(value, shift);
+            break;
+        case AlwaysSync:
+            _project.editAlwaysSync(value, shift);
             break;
         case Scale:
             _project.editScale(value, shift);

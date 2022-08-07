@@ -124,6 +124,22 @@ public:
         str("%d %s", syncMeasure(), syncMeasure() > 1 ? "bars" : "bar");
     }
 
+    // always sync
+
+    bool alwaysSync() const { return _alwaysSync; }
+    void setAlwaysSync(bool alwaysSync) {
+        _alwaysSync = alwaysSync;
+    }
+
+    void editAlwaysSync(int value, bool shift) {
+        _alwaysSync = value == 1;
+    }
+
+    void printAlwaysSync(StringBuilder &str) const {
+        if (_alwaysSync) str("On");
+        else str("Off");
+    }
+
     // scale
 
     int scale() const { return _scale; }
@@ -445,6 +461,7 @@ private:
     Routable<uint8_t> _swing;
     TimeSignature _timeSignature;
     uint8_t _syncMeasure;
+    bool _alwaysSync;
     uint8_t _scale;
     uint8_t _rootNote;
     Types::RecordMode _recordMode;

@@ -265,8 +265,11 @@ void PatternPage::keyPress(KeyPressEvent &event) {
 
             // use immediate by default
             // use latched when LATCH is pressed
-            // use synced when SYNC is pressed
-            PlayState::ExecuteType executeType = _latching ? PlayState::Latched : (_syncing ? PlayState::Synced : PlayState::Immediate);
+            // use synced when SYNC is pressed or project set to always sync
+            PlayState::ExecuteType executeType;
+            if (_latching) executeType = PlayState::Latched;
+            else if (_syncing || _project.alwaysSync()) executeType = PlayState::Synced;
+            else executeType = PlayState::Immediate;
 
             bool globalChange = true;
             for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
