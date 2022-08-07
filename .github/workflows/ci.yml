@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  stm32:
+    name: Hardware Platform (STM32)
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Setup
+      run: make setup_stm32
+    - name: Build
+      run: (cd build/stm32/release && make -j)
+    - name: Deploy
+      run: make deploy
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        draft: true
+        files: build/deploy/**/*
+  sim_linux:
+    name: Simulator Platform (Linux)
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Install Dependencies
+      run: sudo apt install -y libsdl2-dev libasound2-dev mesa-common-dev python3.7 python3.7-dev
+    - name: Setup
+      run: make setup_sim
+    - name: Build
+      run: (cd build/sim/release && make -j)
+    - name: Test
+      run: (cd build/sim/release && make test)
+  sim_macos:
+    name: Simulator Platform (macos)
+    runs-on: macos-11
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Install Dependencies
+      run: brew install sdl2
+    - name: Setup
+      run: make setup_sim
+    - name: Build
+      run: (cd build/sim/release && make -j)
+    - name: Test
+      run: (cd build/sim/release && make test)
+  sim_wasm:
+    name: Simulation Platform (WebAssembly)
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Setup emsdk
+      run: |
+        git clone https://github.com/emscripten-core/emsdk.git
+        ./emsdk/emsdk install latest
+        ./emsdk/emsdk activate latest
+    - name: Setup
+      run: |
+        source ./emsdk/emsdk_env.sh
+        make setup_www
+    - name: Build
+      run: (cd build/sim/www && make -j)
+    - name: Deploy
+      run: make deploy-simulator
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: JamesIves/github-pages-deploy-action@v4.3.3
+      with:
+        branch: gh-pages
+        folder: build/deploy-simulator
+        target-folder: _pages/testdrive/sequencer

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.42 (6 June 2022)
+
+#### Fixes
+
+- Support Launchpad Mk3 with latest firmware update (thanks to Novation support)
+
 ## v0.1.41 (18 September 2021)
 
 #### Improvements

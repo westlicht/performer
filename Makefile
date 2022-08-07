@@ -138,7 +138,7 @@ setup_sim:
 
 .PHONY: setup_www
 setup_www:
-	(mkdir -p build/sim/www && cd build/sim/www && cmake -DCMAKE_TOOLCHAIN_FILE="${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake" -DCMAKE_BUILD_TYPE=Release -DPLATFORM=sim ../../..)
+	(mkdir -p build/sim/www && cd build/sim/www && cmake -DCMAKE_TOOLCHAIN_FILE="${EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" -DCMAKE_BUILD_TYPE=Release -DPLATFORM=sim ../../..)
 
 # Deployment
 
