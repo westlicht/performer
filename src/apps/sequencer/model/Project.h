@@ -136,8 +136,8 @@ public:
     }
 
     void printAlwaysSync(StringBuilder &str) const {
-        if (_alwaysSync) str("On");
-        else str("Off");
+        if (_alwaysSync) str("Always");
+        else str("Default");
     }
 
     // scale

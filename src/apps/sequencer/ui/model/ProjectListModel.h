@@ -71,7 +71,7 @@ private:
         case Swing:             return "Swing";
         case TimeSignature:     return "Time Signature";
         case SyncMeasure:       return "Sync Measure";
-        case AlwaysSync:        return "Always Sync";
+        case AlwaysSync:        return "Sync Patterns";
         case Scale:             return "Scale";
         case RootNote:          return "Root Note";
         case MonitorMode:       return "Monitor Mode";

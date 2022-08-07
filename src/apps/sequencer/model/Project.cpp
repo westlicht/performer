@@ -33,6 +33,7 @@ void Project::clear() {
     setSwing(50);
     setTimeSignature(TimeSignature());
     setSyncMeasure(1);
+    setAlwaysSync(false);
     setScale(0);
     setRootNote(0);
     setMonitorMode(Types::MonitorMode::Always);
