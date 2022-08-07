@@ -126,17 +126,17 @@ public:
 
     // always sync
 
-    bool alwaysSync() const { return _alwaysSync; }
-    void setAlwaysSync(bool alwaysSync) {
-        _alwaysSync = alwaysSync;
+    bool alwaysSyncPatterns() const { return _alwaysSyncPatterns; }
+    void setAlwaysSyncPatterns(bool alwaysSync) {
+        _alwaysSyncPatterns = alwaysSync;
     }
 
-    void editAlwaysSync(int value, bool shift) {
-        _alwaysSync = value == 1;
+    void editAlwaysSyncPatterns(int value, bool shift) {
+        _alwaysSyncPatterns = value == 1;
     }
 
-    void printAlwaysSync(StringBuilder &str) const {
-        if (_alwaysSync) str("Always");
+    void printAlwaysSyncPatterns(StringBuilder &str) const {
+        if (_alwaysSyncPatterns) str("Always");
         else str("Default");
     }
 
@@ -461,7 +461,7 @@ private:
     Routable<uint8_t> _swing;
     TimeSignature _timeSignature;
     uint8_t _syncMeasure;
-    bool _alwaysSync;
+    bool _alwaysSyncPatterns;
     uint8_t _scale;
     uint8_t _rootNote;
     Types::RecordMode _recordMode;

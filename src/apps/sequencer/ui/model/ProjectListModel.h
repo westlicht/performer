@@ -107,7 +107,7 @@ private:
             _project.printSyncMeasure(str);
             break;
         case AlwaysSync:
-            _project.printAlwaysSync(str);
+            _project.printAlwaysSyncPatterns(str);
             break;
         case Scale:
             _project.printScale(str);
@@ -155,7 +155,7 @@ private:
             _project.editSyncMeasure(value, shift);
             break;
         case AlwaysSync:
-            _project.editAlwaysSync(value, shift);
+            _project.editAlwaysSyncPatterns(value, shift);
             break;
         case Scale:
             _project.editScale(value, shift);
