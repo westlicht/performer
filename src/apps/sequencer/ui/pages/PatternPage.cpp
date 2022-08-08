@@ -268,7 +268,7 @@ void PatternPage::keyPress(KeyPressEvent &event) {
             // use synced when SYNC is pressed or project set to always sync
             PlayState::ExecuteType executeType;
             if (_latching) executeType = PlayState::Latched;
-            else if ((_syncing || _project.alwaysSyncPatterns()) && _engine.state().running()) executeType = PlayState::Synced;
+            else if (_syncing || (_project.alwaysSyncPatterns() && _engine.state().running())) executeType = PlayState::Synced;
             else executeType = PlayState::Immediate;
 
             bool globalChange = true;
