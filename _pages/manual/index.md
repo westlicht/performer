@@ -1686,6 +1686,7 @@ The following is a list of USB MIDI devices known to be compatible with the **PE
 | :--- | :--- |
 | AKAI | [APC Mini](https://www.akaipro.de/apc-mini) |
 | Arturia | [MiniBrute](https://www.arturia.com/products/hardware-synths/minibrute), [MiniLab MK2](https://www.arturia.com/products/hybrid-synths/minilab-mkii/overview) |
+| Arturia | [Keystep](https://www.arturia.com/keystep/overview) |
 | CME | [XKEY37](https://www.cme-pro.com/xkey37) |
 | Keith McMillen | [QuNexus](https://www.keithmcmillen.com/products/qunexus/) |
 | Korg | [microKey 2](https://www.korg.com/us/products/computergear/microkey2/), [R3](https://www.korg.com/de/products/synthesizers/r3/) |
@@ -1699,7 +1700,6 @@ The following is a list of USB MIDI devices known **not** to be compatible:
 | Manufacturer | Device |
 | :--- | :--- |
 | AKAI | [MPK Mini](https://www.akaipro.com/mpk-mini) |
-| Arturia | [Keystep](https://www.arturia.com/keystep/overview) |
 | Novation | Launchpad |
 | Synthstrom | [Deluge](https://synthstrom.com/product/deluge/) |
 
