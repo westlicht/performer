@@ -1,4 +1,19 @@
-![Build Status](https://github.com/westlicht/performer/actions/workflows/ci.yml/badge.svg?branch=master)
+Build Status: ![Build Status](https://github.com/jackpf/performer/actions/workflows/ci.yml/badge.svg?branch=master)
+Upstream Build Status: ![Upstream Build Status](https://github.com/westlicht/performer/actions/workflows/ci.yml/badge.svg?branch=master)
+
+# Improvements
+
+This is a fork of the [original repository](https://github.com/westlicht/performer), with some improvements that I personally find essential.
+
+To find out more about improvements changes, check the table below.
+
+| Change             	| Documentation                                    	|
+|--------------------	|--------------------------------------------------	|
+| Noise reduction    	| [docs](./doc/improvements/noise-reduction.md)    	|
+| Shape improvements 	| [docs](./doc/improvements/shape-improvements.md) 	|
+| MIDI improvements 	| [docs](./doc/improvements/midi-improvements.md) 	|
+
+--- original documentation below ---
 
 # PER|FORMER
 
