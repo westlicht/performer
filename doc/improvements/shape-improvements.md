@@ -9,7 +9,7 @@ Adds the ability to make a curve span over multiple steps.
 ### Guide
 
 1. Open a curve track
-2. Select multiple steps (**SHIFT** + **Sx***)
+2. Select multiple steps (**SHIFT** + **Sx**)
 3. Hold **SHIFT** and turn the encoder to select a shape
 
 The shape will be spread across the selected steps.
