@@ -82,7 +82,7 @@ void PerformerPage::draw(Canvas &canvas) {
 
         // draw fill & fill amount amount
         bool pressed = pageKeyState()[MatrixMap::fromStep(trackIndex)];
-        canvas.setColor(pressed ? Color::Bright : Color::Low);
+        canvas.setColor(pressed ? Color::Medium : Color::Low);
         canvas.fillRect(x, y + h + 6, w, 4);
         canvas.setColor(pressed ? Color::Bright : Color::Medium);
         canvas.fillRect(x, y + h + 6, (trackState.fillAmount() * w) / 100, 4);
