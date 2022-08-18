@@ -144,11 +144,15 @@ public:
           MidiLearn &midiLearn()       { return _midiLearn; }
 
     bool trackEnginesConsistent() const;
+    bool trackPatternsConsistent() const;
 
     bool sendMidi(MidiPort port, uint8_t cable, const MidiMessage &message);
     void setMidiReceiveHandler(MidiReceiveHandler handler) { _midiReceiveHandler = handler; }
     void setUsbMidiConnectHandler(UsbMidiConnectHandler handler) { _usbMidiConnectHandler = handler; }
     void setUsbMidiDisconnectHandler(UsbMidiDisconnectHandler handler) { _usbMidiDisconnectHandler = handler; }
+    bool midiProgramChangesEnabled();
+    void sendMidiProgramChange(int programNumber);
+    void sendMidiProgramSave(int programNumber);
 
     // message handling
     void showMessage(const char *text, uint32_t duration = 1000);
@@ -245,6 +249,7 @@ private:
     // TODO Could be a setting if needed
     static const bool _preSendMidiPgmChange = true;
     bool _midiHasSentInitialPgmChange = false;
+    int _midiLastInitialProgramOffset = -1;
 
     // gate output overrides
     bool _gateOutputOverride = false;

@@ -155,6 +155,19 @@ void MidiOutputEngine::sendProgramChange(int channel, int programNumber) {
     sendMidi(MidiPort::UsbMidi, pgmChangeMessage);
 }
 
+void MidiOutputEngine::sendMalekkoSelectHandshake(int channel) {
+    sendMidi(MidiPort::Midi, MidiMessage::makeControlChange(channel, 20, 127));
+    sendMidi(MidiPort::Midi, MidiMessage::makeControlChange(channel, 16, 64));
+}
+
+void MidiOutputEngine::sendMalekkoSelectReleaseHandshake(int channel) {
+    sendMidi(MidiPort::Midi, MidiMessage::makeControlChange(channel, 20, 0));
+}
+
+void MidiOutputEngine::sendMalekkoSaveHandshake(int channel) {
+    sendMidi(MidiPort::Midi, MidiMessage::makeControlChange(channel, 16, 127));
+}
+
 void MidiOutputEngine::resetOutput(int outputIndex) {
     auto &outputState = _outputStates[outputIndex];
 

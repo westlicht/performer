@@ -22,6 +22,7 @@ enum class ContextAction {
     Copy,
     Paste,
     Duplicate,
+    Save,
     Last
 };
 
@@ -30,6 +31,7 @@ static const ContextMenuModel::Item contextMenuItems[] = {
     { "COPY" },
     { "PASTE" },
     { "DUP"},
+    { "SAVE PR."},
 };
 
 
@@ -323,6 +325,9 @@ void PatternPage::contextAction(int index) {
     case ContextAction::Duplicate:
         duplicatePattern();
         break;
+    case ContextAction::Save:
+        sendMidiProgramSave();
+        break;
     case ContextAction::Last:
         break;
     }
@@ -332,6 +337,8 @@ bool PatternPage::contextActionEnabled(int index) const {
     switch (ContextAction(index)) {
     case ContextAction::Paste:
         return _model.clipBoard().canPastePattern();
+    case ContextAction::Save:
+        return _engine.midiProgramChangesEnabled() && _project.midiIntegrationMalekkoEnabled();
     default:
         return true;
     }
@@ -359,5 +366,12 @@ void PatternPage::duplicatePattern() {
         _model.clipBoard().pastePattern(_project.selectedPatternIndex());
         _model.clipBoard().clear();
         showMessage("PATTERN DUPLICATED");
+    }
+}
+
+void PatternPage::sendMidiProgramSave() {
+    if (_engine.midiProgramChangesEnabled()) {
+        _engine.sendMidiProgramSave(_project.playState().trackState(0).pattern());
+        showMessage("SENT MIDI PROGRAM SAVE");
     }
 }

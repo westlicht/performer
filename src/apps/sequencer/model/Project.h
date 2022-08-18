@@ -235,22 +235,46 @@ public:
     const MidiSourceConfig &midiInputSource() const { return _midiInputSource; }
           MidiSourceConfig &midiInputSource()       { return _midiInputSource; }
 
-    // midiPgmChange
+    // midiIntegrationMode
 
-    void editMidiPgmChange(int value, bool shift) {
-        _midiPgmChange = value == 1;
+    void editMidiIntegrationMode(int value, bool shift) {
+        _midiIntegrationMode = ModelUtils::adjustedEnum(_midiIntegrationMode, value);
     }
 
-    void printMidiPgmChange(StringBuilder &str) const {
-        if (_midiPgmChange) str("On");
-        else str("Off");
+    void printMidiIntegrationMode(StringBuilder &str) const {
+        str(Types::midiIntegrationModeName(_midiIntegrationMode));
     }
 
-    void setMidiPgmChangeEnabled(bool enabled) {
-        _midiPgmChange = enabled;
+    void setMidiIntegrationMode(Types::MidiIntegrationMode midiIntegrationMode) {
+        _midiIntegrationMode = midiIntegrationMode;
     }
 
-    bool midiPgmChangeEnabled() const { return _midiPgmChange; }
+    bool midiIntegrationProgramChangesEnabled() const {
+        return _midiIntegrationMode == Types::MidiIntegrationMode::ProgramChanges
+               || _midiIntegrationMode == Types::MidiIntegrationMode::Malekko;
+    }
+
+    bool midiIntegrationMalekkoEnabled() const {
+        return _midiIntegrationMode == Types::MidiIntegrationMode::Malekko;
+    }
+
+    // midiProgramOffset
+
+    void editMidiProgramOffset(int value, bool shift) {
+        _midiProgramOffset += value;
+    }
+
+    void printMidiProgramOffset(StringBuilder &str) const {
+        str("%d", _midiProgramOffset);
+    }
+
+    void setMidiProgramOffset(int midiProgramOffset) {
+        _midiProgramOffset = midiProgramOffset;
+    }
+
+    int midiProgramOffset() {
+        return _midiProgramOffset;
+    }
 
     // cvGateInput
 
@@ -468,7 +492,8 @@ private:
     Types::MonitorMode _monitorMode;
     Types::MidiInputMode _midiInputMode;
     MidiSourceConfig _midiInputSource;
-    bool _midiPgmChange;
+    Types::MidiIntegrationMode _midiIntegrationMode;
+    uint8_t _midiProgramOffset;
     Types::CvGateInput _cvGateInput;
     Types::CurveCvInput _curveCvInput;
 
