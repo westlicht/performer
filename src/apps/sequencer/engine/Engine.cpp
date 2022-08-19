@@ -596,28 +596,49 @@ void Engine::updatePlayState(bool ticked) {
     }
 
     // handle song slot change
-
-    if (songState.playing() && handleSongAdvance) {
+    if (songState.playing()) {
         const auto &slot = song.slot(songState.currentSlot());
         int currentSlot = songState.currentSlot();
         int currentRepeat = songState.currentRepeat();
 
-        if (currentRepeat + 1 < slot.repeats()) {
-            // next repeat
-            songState.setCurrentRepeat(currentRepeat + 1);
-        } else {
-            // next slot
-            songState.setCurrentRepeat(0);
-            if (currentSlot + 1 < song.slotCount()) {
-                songState.setCurrentSlot(currentSlot + 1);
-            } else {
-                songState.setCurrentSlot(0);
-            }
+        // send program changes when advancing pattern in song mode
+        if (ticked && ((_preSendMidiPgmChange && preHandleSyncedRequests) || (!_preSendMidiPgmChange && handleSongAdvance))) {
+            if (currentRepeat + 1 >= slot.repeats()) {
+                auto nextSlot = song.slot(currentSlot + 1 < song.slotCount() ? currentSlot + 1 : 0);
+                bool nextSlotPatternsEqual = true;
+                int firstPattern = nextSlot.pattern(0);
 
-            // update patterns
-            activateSongSlot(song.slot(songState.currentSlot()));
-            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                _trackEngines[trackIndex]->restart();
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    if (nextSlot.pattern(trackIndex) != firstPattern) {
+                        nextSlotPatternsEqual = false;
+                        break;
+                    }
+                }
+
+                if (midiProgramChangesEnabled() && nextSlotPatternsEqual) {
+                    sendMidiProgramChange(firstPattern);
+                }
+            }
+        }
+
+        if (handleSongAdvance) {
+            if (currentRepeat + 1 < slot.repeats()) {
+                // next repeat
+                songState.setCurrentRepeat(currentRepeat + 1);
+            } else {
+                // next slot
+                songState.setCurrentRepeat(0);
+                if (currentSlot + 1 < song.slotCount()) {
+                    songState.setCurrentSlot(currentSlot + 1);
+                } else {
+                    songState.setCurrentSlot(0);
+                }
+
+                // update patterns
+                activateSongSlot(song.slot(songState.currentSlot()));
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    _trackEngines[trackIndex]->restart();
+                }
             }
         }
     }
