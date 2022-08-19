@@ -486,8 +486,13 @@ void Engine::updatePlayState(bool ticked) {
     bool hasRequests = hasImmediateRequests || hasSyncedRequests || handleLatchedRequests;
 
     bool handleSyncedRequests = _tick % syncDivisor() == 0;
-    bool preHandleSyncedRequests = (_tick + 192) % syncDivisor() == 0;
     bool handleSongAdvance = ticked && _tick > 0 && _tick % measureDivisor() == 0;
+    bool withinPreHandleRange = (_tick + 192) % syncDivisor() < 192;
+    if (withinPreHandleRange && _pendingPreHandle == PreHandleNone) {
+        _pendingPreHandle = PreHandlePending;
+    } else if (!withinPreHandleRange && _pendingPreHandle != PreHandleNone) {
+        _pendingPreHandle = PreHandleNone;
+    }
 
     // send initial program change if we haven't sent it already
     // means that when the sequencer initially starts, it will sync connected devices to the same pattern
@@ -532,10 +537,11 @@ void Engine::updatePlayState(bool ticked) {
 
         bool shouldSendPgmChange = !_preSendMidiPgmChange && changedPatterns;
         bool shouldPreSendPgmChange = _preSendMidiPgmChange && ((changedPatterns && !playState.hasSyncedRequests())
-                                                                || (preHandleSyncedRequests && playState.hasSyncedRequests()));
+                                                                || (_pendingPreHandle == PreHandlePending && playState.hasSyncedRequests()));
 
         if (midiProgramChangesEnabled() && (shouldSendPgmChange || shouldPreSendPgmChange)) {
             sendMidiProgramChange(playState.trackState(0).requestedPattern());
+            _pendingPreHandle = PreHandleComplete;
         }
     }
 
@@ -602,7 +608,7 @@ void Engine::updatePlayState(bool ticked) {
         int currentRepeat = songState.currentRepeat();
 
         // send program changes when advancing pattern in song mode
-        if (ticked && ((_preSendMidiPgmChange && preHandleSyncedRequests) || (!_preSendMidiPgmChange && handleSongAdvance))) {
+        if (ticked && ((_preSendMidiPgmChange && _pendingPreHandle == PreHandlePending) || (!_preSendMidiPgmChange && handleSongAdvance))) {
             if (currentRepeat + 1 >= slot.repeats()) {
                 auto nextSlot = song.slot(currentSlot + 1 < song.slotCount() ? currentSlot + 1 : 0);
                 bool nextSlotPatternsEqual = true;
@@ -619,6 +625,7 @@ void Engine::updatePlayState(bool ticked) {
                     sendMidiProgramChange(firstPattern);
                 }
             }
+            _pendingPreHandle = PreHandleComplete;
         }
 
         if (handleSongAdvance) {
