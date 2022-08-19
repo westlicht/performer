@@ -560,6 +560,7 @@ void Engine::updatePlayState(bool ticked) {
             (handleSyncedRequests ? PlayState::SongState::SyncedStopRequest : 0) |
             (handleLatchedRequests ? PlayState::SongState::LatchedStopRequest : 0);
 
+        DBG("tick %d, song hasRequests: %d", _tick, songState.hasRequests(playRequests));
         if (songState.hasRequests(playRequests)) {
             int requestedSlot = songState.requestedSlot();
             if (requestedSlot >= 0 && requestedSlot < song.slotCount()) {
@@ -596,28 +597,53 @@ void Engine::updatePlayState(bool ticked) {
     }
 
     // handle song slot change
-
-    if (songState.playing() && handleSongAdvance) {
+    if (songState.playing()) {
         const auto &slot = song.slot(songState.currentSlot());
         int currentSlot = songState.currentSlot();
         int currentRepeat = songState.currentRepeat();
 
-        if (currentRepeat + 1 < slot.repeats()) {
-            // next repeat
-            songState.setCurrentRepeat(currentRepeat + 1);
-        } else {
-            // next slot
-            songState.setCurrentRepeat(0);
-            if (currentSlot + 1 < song.slotCount()) {
-                songState.setCurrentSlot(currentSlot + 1);
-            } else {
-                songState.setCurrentSlot(0);
-            }
+        if (ticked && ((_preSendMidiPgmChange && preHandleSyncedRequests) || (!_preSendMidiPgmChange && handleSongAdvance))) {
+            if (currentRepeat + 1 >= slot.repeats()) {
+                auto nextSlot = song.slot(currentSlot + 1 < song.slotCount() ? currentSlot + 1 : 0);
+                bool nextSlotPatternsEqual = true;
 
-            // update patterns
-            activateSongSlot(song.slot(songState.currentSlot()));
-            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                _trackEngines[trackIndex]->restart();
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    if (nextSlot.pattern(trackIndex) != nextSlot.pattern(0)) {
+                        nextSlotPatternsEqual = false;
+                        break;
+                    }
+                }
+
+//                if (midiProgramChangesEnabled() && nextSlotPatternsEqual) {
+                if (nextSlotPatternsEqual) {
+                    DBG("tick %d, ticked: %d, sending program change %d", _tick,ticked, nextSlot.pattern(0));
+                    sendMidiProgramChange(nextSlot.pattern(0));
+                } else {
+                    DBG("patterns not equal");
+                }
+            }
+        }
+
+        if (handleSongAdvance) {
+            DBG("tick %d, handle song slot change", _tick);
+
+            if (currentRepeat + 1 < slot.repeats()) {
+                // next repeat
+                songState.setCurrentRepeat(currentRepeat + 1);
+            } else {
+                // next slot
+                songState.setCurrentRepeat(0);
+                if (currentSlot + 1 < song.slotCount()) {
+                    songState.setCurrentSlot(currentSlot + 1);
+                } else {
+                    songState.setCurrentSlot(0);
+                }
+
+                // update patterns
+                activateSongSlot(song.slot(songState.currentSlot()));
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    _trackEngines[trackIndex]->restart();
+                }
             }
         }
     }
@@ -630,6 +656,7 @@ void Engine::updatePlayState(bool ticked) {
     }
 
     if (hasRequests | handleSongAdvance) {
+        DBG("tick %d, song change pattern", _tick);
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             _trackEngines[trackIndex]->changePattern();
         }
