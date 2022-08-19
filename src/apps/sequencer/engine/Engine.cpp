@@ -625,6 +625,11 @@ void Engine::updatePlayState(bool ticked) {
                     sendMidiProgramChange(firstPattern);
                 }
             }
+
+            // TODO There is a possible race condition with synced patterns here
+            // If song mode is active, we pre-send the program change,
+            // and a user syncs a pattern change after it was pre-sent
+            // we will not send the program change for the synced pattern change
             _pendingPreHandle = PreHandleComplete;
         }
 
