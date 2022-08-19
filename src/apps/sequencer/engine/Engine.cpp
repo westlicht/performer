@@ -560,7 +560,6 @@ void Engine::updatePlayState(bool ticked) {
             (handleSyncedRequests ? PlayState::SongState::SyncedStopRequest : 0) |
             (handleLatchedRequests ? PlayState::SongState::LatchedStopRequest : 0);
 
-        DBG("tick %d, song hasRequests: %d", _tick, songState.hasRequests(playRequests));
         if (songState.hasRequests(playRequests)) {
             int requestedSlot = songState.requestedSlot();
             if (requestedSlot >= 0 && requestedSlot < song.slotCount()) {
@@ -602,31 +601,27 @@ void Engine::updatePlayState(bool ticked) {
         int currentSlot = songState.currentSlot();
         int currentRepeat = songState.currentRepeat();
 
+        // send program changes when advancing pattern in song mode
         if (ticked && ((_preSendMidiPgmChange && preHandleSyncedRequests) || (!_preSendMidiPgmChange && handleSongAdvance))) {
             if (currentRepeat + 1 >= slot.repeats()) {
                 auto nextSlot = song.slot(currentSlot + 1 < song.slotCount() ? currentSlot + 1 : 0);
                 bool nextSlotPatternsEqual = true;
+                int firstPattern = nextSlot.pattern(0);
 
                 for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                    if (nextSlot.pattern(trackIndex) != nextSlot.pattern(0)) {
+                    if (nextSlot.pattern(trackIndex) != firstPattern) {
                         nextSlotPatternsEqual = false;
                         break;
                     }
                 }
 
-//                if (midiProgramChangesEnabled() && nextSlotPatternsEqual) {
-                if (nextSlotPatternsEqual) {
-                    DBG("tick %d, ticked: %d, sending program change %d", _tick,ticked, nextSlot.pattern(0));
-                    sendMidiProgramChange(nextSlot.pattern(0));
-                } else {
-                    DBG("patterns not equal");
+                if (midiProgramChangesEnabled() && nextSlotPatternsEqual) {
+                    sendMidiProgramChange(firstPattern);
                 }
             }
         }
 
         if (handleSongAdvance) {
-            DBG("tick %d, handle song slot change", _tick);
-
             if (currentRepeat + 1 < slot.repeats()) {
                 // next repeat
                 songState.setCurrentRepeat(currentRepeat + 1);
@@ -656,7 +651,6 @@ void Engine::updatePlayState(bool ticked) {
     }
 
     if (hasRequests | handleSongAdvance) {
-        DBG("tick %d, song change pattern", _tick);
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             _trackEngines[trackIndex]->changePattern();
         }
