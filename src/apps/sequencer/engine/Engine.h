@@ -250,6 +250,15 @@ private:
     static const bool _preSendMidiPgmChange = true;
     bool _midiHasSentInitialPgmChange = false;
     int _midiLastInitialProgramOffset = -1;
+    // State machine for when to pre-handle (midi) events
+    // Allows us to handle pre-handle events even if they are submitted after the pre-handle tick
+    // (then we process them immediately)
+    enum PreHandle {
+        PreHandleNone,
+        PreHandlePending,
+        PreHandleComplete,
+    };
+    PreHandle _pendingPreHandle = PreHandleNone;
 
     // gate output overrides
     bool _gateOutputOverride = false;
