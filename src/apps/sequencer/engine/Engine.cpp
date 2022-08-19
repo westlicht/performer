@@ -718,6 +718,21 @@ void Engine::receiveMidi(MidiPort port, uint8_t cable, const MidiMessage &messag
         return;
     }
 
+    // handle program changes
+    if (message.isProgramChange() && _project.midiIntegrationProgramChangesEnabled()) {
+        auto &playState = _project.playState();
+        // if requested pattern > 16, we wrap around and start from the beginning
+        // this allows other gear that may send fixed program changes based on the pattern
+        // to still select some sequence on the performer on patterns > 16
+        int requestedPattern = message.programNumber() % (CONFIG_PATTERN_COUNT - 1);
+
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            auto &trackState = playState.trackState(trackIndex);
+
+            trackState.setPattern(requestedPattern);
+        }
+    }
+
     // let midi learn inspect messages (except from virtual CV/Gate messages)
     if (port != MidiPort::CvGate) {
         _midiLearn.receiveMidi(port, message);
