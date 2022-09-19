@@ -393,7 +393,7 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Shape:
                 if (_stepSelection.count() > 1 && shift) { // Create a multi-step shape
                     auto &firstStep = sequence.step(_stepSelection.firstSetIndex());
-                    int firstStepShape = multiStepsProcessed == 0 ? firstStep.shape() + event.value() : firstStep.shape();
+                    int firstStepShape = multiStepsProcessed == 0 ? std::max(firstStep.shape() + event.value(), 0) : firstStep.shape();
                     step.setShape(firstStepShape);
 
                     int min, max;
