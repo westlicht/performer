@@ -757,7 +757,7 @@ void Engine::receiveMidi(MidiPort port, uint8_t cable, const MidiMessage &messag
         // if requested pattern > 16, we wrap around and start from the beginning
         // this allows other gear that may send fixed program changes based on the pattern
         // to still select some sequence on the performer on patterns > 16
-        int requestedPattern = message.programNumber() % (CONFIG_PATTERN_COUNT - 1);
+        int requestedPattern = message.programNumber() % CONFIG_PATTERN_COUNT;
 
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             auto &trackState = playState.trackState(trackIndex);
