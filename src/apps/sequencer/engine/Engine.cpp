@@ -762,6 +762,9 @@ void Engine::receiveMidi(MidiPort port, uint8_t cable, const MidiMessage &messag
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
             playState.selectTrackPattern(trackIndex, requestedPattern, PlayState::ExecuteType::Immediate);
         }
+
+        // Forward program changes to output
+        _midiOutputEngine.sendProgramChange(0, requestedPattern);
     }
 
     // let midi learn inspect messages (except from virtual CV/Gate messages)
