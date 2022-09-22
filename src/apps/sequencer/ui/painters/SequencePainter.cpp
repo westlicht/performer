@@ -18,13 +18,13 @@ void SequencePainter::drawOffset(Canvas &canvas, int x, int y, int w, int h, int
 
     canvas.setBlendMode(BlendMode::Set);
 
-    canvas.setColor(0x7);
+    canvas.setColor(Color::Medium);
     canvas.fillRect(x, y, w, h);
 
-    canvas.setColor(0);
+    canvas.setColor(Color::None);
     canvas.vline(x + remap(0), y, h);
 
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.vline(x + remap(offset), y, h);
 }
 
@@ -34,7 +34,7 @@ void SequencePainter::drawRetrigger(Canvas &canvas, int x, int y, int w, int h, 
     int bw = w / maxRetrigger;
     x += (w - bw * retrigger) / 2;
 
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     for (int i = 0; i < retrigger; ++i) {
         canvas.fillRect(x, y, bw / 2, h);
@@ -47,10 +47,10 @@ void SequencePainter::drawProbability(Canvas &canvas, int x, int y, int w, int h
 
     int pw = (w * probability) / maxProbability;
 
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.fillRect(x, y, pw, h);
 
-    canvas.setColor(0x7);
+    canvas.setColor(Color::Medium);
     canvas.fillRect(x + pw, y, w - pw, h);
 }
 
@@ -59,7 +59,7 @@ void SequencePainter::drawLength(Canvas &canvas, int x, int y, int w, int h, int
 
     int gw = ((w - 1) * length) / maxLength;
 
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     canvas.vline(x, y, h);
     canvas.hline(x, y, gw);
@@ -73,21 +73,21 @@ void SequencePainter::drawLengthRange(Canvas &canvas, int x, int y, int w, int h
     int gw = ((w - 1) * length) / maxLength;
     int rw = ((w - 1) * std::max(0, std::min(maxLength, length + range))) / maxLength;
 
-    canvas.setColor(0x7);
+    canvas.setColor(Color::Medium);
 
     canvas.vline(x, y, h);
     canvas.hline(x, y, gw);
     canvas.vline(x + gw, y, h);
     canvas.hline(x + gw, y + h - 1, w - gw);
 
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     canvas.fillRect(x + std::min(gw, rw), y + 2, std::max(gw, rw) - std::min(gw, rw) + 1, h - 4);
 }
 
 void SequencePainter::drawSlide(Canvas &canvas, int x, int y, int w, int h, bool active) {
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     if (active) {
         canvas.line(x, y + h, x + w, y);
@@ -102,8 +102,8 @@ void SequencePainter::drawSequenceProgress(Canvas &canvas, int x, int y, int w, 
     }
 
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0x7);
+    canvas.setColor(Color::Medium);
     canvas.fillRect(x, y, w, h);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.vline(x + int(std::floor(progress * w)), y, h);
 }

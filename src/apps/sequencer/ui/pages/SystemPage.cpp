@@ -11,11 +11,12 @@
 
 enum Function {
     Calibration = 0,
-    Utilities   = 3,
-    Update      = 4,
+    Utilities   = 2,
+    Update      = 3,
+    Settings    = 4,
 };
 
-static const char *functionNames[] = { "CAL", nullptr, nullptr, "UTILS", "UPDATE" };
+static const char *functionNames[] = { "CAL", nullptr, "UTILS", "UPDATE", "SETTINGS" };
 
 enum CalibrationEditFunction {
     Auto        = 0,
@@ -40,7 +41,8 @@ static const ContextMenuModel::Item contextMenuItems[] = {
 
 SystemPage::SystemPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _cvOutputListModel),
-    _settings(context.model.settings())
+    _settings(context.model.settings()),
+    _settingsListModel(_settings.userSettings())
 {
     setOutputIndex(0);
 }
@@ -90,7 +92,7 @@ void SystemPage::draw(Canvas &canvas) {
         WindowPainter::drawActiveFunction(canvas, "UPDATE");
         WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawText(4, 24, "CURRENT VERSION:");
         FixedStringBuilder<16> str("%d.%d.%d", CONFIG_VERSION_MAJOR, CONFIG_VERSION_MINOR, CONFIG_VERSION_REVISION);
         canvas.drawText(100, 24, str);
@@ -101,6 +103,12 @@ void SystemPage::draw(Canvas &canvas) {
             System::reset();
         }
 #endif
+        break;
+    }
+    case Mode::Settings: {
+        WindowPainter::drawActiveFunction(canvas, "SETTINGS");
+        WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
+        ListPage::draw(canvas);
         break;
     }
     }
@@ -151,7 +159,7 @@ void SystemPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isContextMenu()) {
-        if (_mode == Mode::Calibration) {
+        if (_mode == Mode::Calibration || _mode == Mode::Settings) {
             contextShow();
             event.consume();
             return;
@@ -174,6 +182,9 @@ void SystemPage::keyPress(KeyPressEvent &event) {
                 break;
             case Function::Update:
                 setMode(Mode::Update);
+                break;
+            case Function::Settings:
+                setMode(Mode::Settings);
                 break;
             }
         }
@@ -199,6 +210,9 @@ void SystemPage::keyPress(KeyPressEvent &event) {
         break;
     case Mode::Update:
         break;
+    case Mode::Settings:
+        ListPage::keyPress(event);
+        break;
     }
 }
 
@@ -213,6 +227,9 @@ void SystemPage::encoder(EncoderEvent &event) {
         break;
     case Mode::Update:
         break;
+    case Mode::Settings:
+        ListPage::encoder(event);
+        break;
     }
 }
 
@@ -224,6 +241,9 @@ void SystemPage::setMode(Mode mode) {
         break;
     case Mode::Utilities:
         setListModel(_utilitiesListModel);
+        break;
+    case Mode::Settings:
+        setListModel(_settingsListModel);
         break;
     default:
         break;

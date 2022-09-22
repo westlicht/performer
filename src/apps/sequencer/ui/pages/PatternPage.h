@@ -30,6 +30,7 @@ private:
     void copyPattern();
     void pastePattern();
     void duplicatePattern();
+    void sendMidiProgramSave();
 
     bool _modal = false;
     bool _latching = false;

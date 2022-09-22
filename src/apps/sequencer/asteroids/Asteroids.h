@@ -285,7 +285,7 @@ public:
 private:
     void drawTexts(Canvas &canvas, const char *title, const char *msg);
     void drawHUD(Canvas &canvas);
-    void drawShadowText(Canvas &canvas, int x, int y, uint8_t color, const char *str);
+    void drawShadowText(Canvas &canvas, int x, int y, Color color, const char *str);
 
     static void initAsteroidShapes();
 

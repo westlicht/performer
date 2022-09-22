@@ -314,6 +314,21 @@ bool Engine::trackEnginesConsistent() const {
     return true;
 }
 
+bool Engine::trackPatternsConsistent() const {
+    auto playState = _project.playState();
+    auto firstTrackState = playState.trackState(0);
+
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        auto trackState = playState.trackState(trackIndex);
+
+        if (trackState.pattern() != firstTrackState.pattern()
+            || trackState.requestedPattern() != firstTrackState.requestedPattern()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool Engine::sendMidi(MidiPort port, uint8_t cable, const MidiMessage &message) {
     switch (port) {
     case MidiPort::Midi:
@@ -325,6 +340,33 @@ bool Engine::sendMidi(MidiPort port, uint8_t cable, const MidiMessage &message) 
         break;
     }
     return false;
+}
+
+bool Engine::midiProgramChangesEnabled() {
+    return _project.midiIntegrationProgramChangesEnabled()
+        && trackPatternsConsistent()
+        && !_project.playState().snapshotActive();
+}
+
+void Engine::sendMidiProgramChange(int programNumber) {
+    if (_project.midiIntegrationMalekkoEnabled()) {
+        _midiOutputEngine.sendMalekkoSelectHandshake(0);
+    }
+    if (_project.midiIntegrationProgramChangesEnabled()) {
+        _midiOutputEngine.sendProgramChange(0, _project.midiProgramOffset() + programNumber);
+    }
+    if (_project.midiIntegrationMalekkoEnabled()) {
+        _midiOutputEngine.sendMalekkoSelectReleaseHandshake(0);
+    }
+}
+
+void Engine::sendMidiProgramSave(int programNumber) {
+    if (_project.midiIntegrationMalekkoEnabled()) {
+        _midiOutputEngine.sendMalekkoSaveHandshake(0);
+    }
+    if (_project.midiIntegrationProgramChangesEnabled()) {
+        _midiOutputEngine.sendProgramChange(0, _project.midiProgramOffset() + programNumber);
+    }
 }
 
 void Engine::showMessage(const char *text, uint32_t duration) {
@@ -445,6 +487,22 @@ void Engine::updatePlayState(bool ticked) {
 
     bool handleSyncedRequests = _tick % syncDivisor() == 0;
     bool handleSongAdvance = ticked && _tick > 0 && _tick % measureDivisor() == 0;
+    bool withinPreHandleRange = (_tick + 192) % syncDivisor() < 192;
+    if (withinPreHandleRange && _pendingPreHandle == PreHandleNone) {
+        _pendingPreHandle = PreHandlePending;
+    } else if (!withinPreHandleRange && _pendingPreHandle != PreHandleNone) {
+        _pendingPreHandle = PreHandleNone;
+    }
+
+    // send initial program change if we haven't sent it already
+    // means that when the sequencer initially starts, it will sync connected devices to the same pattern
+    // only works when all patterns are equal
+    // we also send a program change if the midi program offset setting is updated
+    if (midiProgramChangesEnabled() && (!_midiHasSentInitialPgmChange || _project.midiProgramOffset() != _midiLastInitialProgramOffset)) {
+        sendMidiProgramChange(playState.trackState(0).pattern());
+        _midiHasSentInitialPgmChange = true;
+        _midiLastInitialProgramOffset = _project.midiProgramOffset();
+    }
 
     // handle mute & pattern requests
 
@@ -475,6 +533,15 @@ void Engine::updatePlayState(bool ticked) {
 
             // clear requests
             trackState.clearRequests(muteRequests | patternRequests);
+        }
+
+        bool shouldSendPgmChange = !_preSendMidiPgmChange && changedPatterns;
+        bool shouldPreSendPgmChange = _preSendMidiPgmChange && ((changedPatterns && !playState.hasSyncedRequests())
+                                                                || (_pendingPreHandle == PreHandlePending && playState.hasSyncedRequests()));
+
+        if (midiProgramChangesEnabled() && (shouldSendPgmChange || shouldPreSendPgmChange)) {
+            sendMidiProgramChange(playState.trackState(0).requestedPattern());
+            _pendingPreHandle = PreHandleComplete;
         }
     }
 
@@ -535,28 +602,55 @@ void Engine::updatePlayState(bool ticked) {
     }
 
     // handle song slot change
-
-    if (songState.playing() && handleSongAdvance) {
+    if (songState.playing()) {
         const auto &slot = song.slot(songState.currentSlot());
         int currentSlot = songState.currentSlot();
         int currentRepeat = songState.currentRepeat();
 
-        if (currentRepeat + 1 < slot.repeats()) {
-            // next repeat
-            songState.setCurrentRepeat(currentRepeat + 1);
-        } else {
-            // next slot
-            songState.setCurrentRepeat(0);
-            if (currentSlot + 1 < song.slotCount()) {
-                songState.setCurrentSlot(currentSlot + 1);
-            } else {
-                songState.setCurrentSlot(0);
+        // send program changes when advancing pattern in song mode
+        if (ticked && ((_preSendMidiPgmChange && _pendingPreHandle == PreHandlePending) || (!_preSendMidiPgmChange && handleSongAdvance))) {
+            if (currentRepeat + 1 >= slot.repeats()) {
+                auto nextSlot = song.slot(currentSlot + 1 < song.slotCount() ? currentSlot + 1 : 0);
+                bool nextSlotPatternsEqual = true;
+                int firstPattern = nextSlot.pattern(0);
+
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    if (nextSlot.pattern(trackIndex) != firstPattern) {
+                        nextSlotPatternsEqual = false;
+                        break;
+                    }
+                }
+
+                if (midiProgramChangesEnabled() && nextSlotPatternsEqual) {
+                    sendMidiProgramChange(firstPattern);
+                }
             }
 
-            // update patterns
-            activateSongSlot(song.slot(songState.currentSlot()));
-            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-                _trackEngines[trackIndex]->restart();
+            // TODO There is a possible race condition with synced patterns here
+            // If song mode is active, we pre-send the program change,
+            // and a user syncs a pattern change after it was pre-sent
+            // we will not send the program change for the synced pattern change
+            _pendingPreHandle = PreHandleComplete;
+        }
+
+        if (handleSongAdvance) {
+            if (currentRepeat + 1 < slot.repeats()) {
+                // next repeat
+                songState.setCurrentRepeat(currentRepeat + 1);
+            } else {
+                // next slot
+                songState.setCurrentRepeat(0);
+                if (currentSlot + 1 < song.slotCount()) {
+                    songState.setCurrentSlot(currentSlot + 1);
+                } else {
+                    songState.setCurrentSlot(0);
+                }
+
+                // update patterns
+                activateSongSlot(song.slot(songState.currentSlot()));
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    _trackEngines[trackIndex]->restart();
+                }
             }
         }
     }
@@ -655,6 +749,22 @@ void Engine::receiveMidi(MidiPort port, uint8_t cable, const MidiMessage &messag
     // discard all messages not from cable 0
     if (cable != 0) {
         return;
+    }
+
+    // handle program changes
+    if (message.isProgramChange() && _project.midiIntegrationProgramChangesEnabled()) {
+        auto &playState = _project.playState();
+        // if requested pattern > 16, we wrap around and start from the beginning
+        // this allows other gear that may send fixed program changes based on the pattern
+        // to still select some sequence on the performer on patterns > 16
+        int requestedPattern = message.programNumber() % CONFIG_PATTERN_COUNT;
+
+        for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+            playState.selectTrackPattern(trackIndex, requestedPattern, PlayState::ExecuteType::Immediate);
+        }
+
+        // Forward program changes to output
+        _midiOutputEngine.sendProgramChange(0, requestedPattern);
     }
 
     // let midi learn inspect messages (except from virtual CV/Gate messages)

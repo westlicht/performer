@@ -13,6 +13,15 @@ enum class BlendMode {
     Sub,
 };
 
+enum Color {
+    None = 0,
+    Low = 0x3,
+    MediumLow = 0x5,
+    Medium = 0x7,
+    MediumBright = 0xa,
+    Bright = 0xf
+};
+
 enum class Font {
     Tiny,
     Small,
@@ -33,15 +42,17 @@ enum class VerticalAlign {
 
 class Canvas {
 public:
-    Canvas(FrameBuffer8bit &frameBuffer) :
+    Canvas(FrameBuffer8bit &frameBuffer, float &brightness) :
         _frameBuffer(frameBuffer),
         _right(frameBuffer.width() - 1),
-        _bottom(frameBuffer.height() - 1)
+        _bottom(frameBuffer.height() - 1),
+        _brightness(brightness)
     {
     }
 
     uint8_t color() const { return _color; }
-    void setColor(uint8_t color) { _color = color; }
+    void setColorValue(uint8_t color) { _color = color * _brightness; }
+    void setColor(Color color) { setColorValue(color); }
 
     BlendMode blendMode() const { return _blendMode; }
     void setBlendMode(BlendMode blendMode) { _blendMode = blendMode; }
@@ -50,6 +61,7 @@ public:
     void setFont(Font font) { _font = font; }
 
     void fill();
+    void screensaver();
 
     void point(int x, int y);
 
@@ -263,4 +275,5 @@ private:
     uint8_t _color = 0xf;
     BlendMode _blendMode = BlendMode::Set;
     Font _font = Font::Default;
+    float &_brightness;
 };

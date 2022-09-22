@@ -59,17 +59,17 @@ void PerformerPage::draw(Canvas &canvas) {
         x += 8;
 
         // draw track number (highlight when fill is active)
-        canvas.setColor(trackState.fill() ? 0xf : 0x7);
+        canvas.setColor(trackState.fill() ? Color::Bright : Color::Medium);
         canvas.drawTextCentered(x, y - 2, w, 8, FixedStringBuilder<8>("T%d", trackIndex + 1));
 
         y += 8;
 
         // draw outer rectangle (track activity)
-        canvas.setColor(trackEngine.activity() ? 0xf : 0x7);
+        canvas.setColor(trackEngine.activity() ? Color::Bright : Color::Medium);
         canvas.drawRect(x, y, w, h);
 
         // draw mutes and mute requests
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         if (trackState.hasMuteRequest() && trackState.mute() != trackState.requestedMute()) {
             hasRequested = true;
             canvas.fillRect(x + BorderRequested, y + BorderRequested, w - 2 * BorderRequested, h - 2 * BorderRequested);
@@ -82,14 +82,14 @@ void PerformerPage::draw(Canvas &canvas) {
 
         // draw fill & fill amount amount
         bool pressed = pageKeyState()[MatrixMap::fromStep(trackIndex)];
-        canvas.setColor(pressed ? 0x7 : 0x3);
+        canvas.setColor(pressed ? Color::Medium : Color::Low);
         canvas.fillRect(x, y + h + 6, w, 4);
-        canvas.setColor(pressed ? 0xf : 0x7);
+        canvas.setColor(pressed ? Color::Bright : Color::Medium);
         canvas.fillRect(x, y + h + 6, (trackState.fillAmount() * w) / 100, 4);
     }
 
     if (playState.hasSyncedRequests() && hasRequested) {
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.hline(0, 10, _engine.syncFraction() * Width);
     }
 }

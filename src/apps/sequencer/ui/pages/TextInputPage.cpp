@@ -53,7 +53,7 @@ void TextInputPage::draw(Canvas &canvas) {
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.setFont(Font::Small);
 
     const int titleX = 28;
@@ -78,7 +78,7 @@ void TextInputPage::draw(Canvas &canvas) {
     }
 
     if (os::ticks() % os::time::ms(300) < os::time::ms(150)) {
-        canvas.setColor(0x7);
+        canvas.setColor(Color::Medium);
         canvas.fillRect(titleX + titleWidth + offset, titleY - 8, width - 1, 12);
         const char str[2] = { _text[_cursorIndex], '\0' };
         canvas.setBlendMode(BlendMode::Sub);
@@ -87,16 +87,16 @@ void TextInputPage::draw(Canvas &canvas) {
     }
 
     canvas.setFont(Font::Tiny);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     int ix = 0;
     int iy = 0;
     for (int i = 0; i < int(sizeof(characterSet)); ++i) {
         canvas.drawTextCentered(charsX + ix * 10, charsY + iy * 10, 10, 10, FixedStringBuilder<2>("%c", characterSet[i]));
         if (_selectedIndex == i) {
-            canvas.setColor(pageKeyState()[Key::Encoder] ? 0xf : 0x7);
+            canvas.setColor(pageKeyState()[Key::Encoder] ? Color::Bright : Color::Medium);
             canvas.drawRect(charsX + ix * 10, charsY + iy * 10 + 1, 9, 9);
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
         }
         ++ix;
         if (ix % 20 == 0) {

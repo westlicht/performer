@@ -35,7 +35,7 @@ jobs:
       with:
         submodules: recursive
     - name: Install Dependencies
-      run: sudo apt install -y libsdl2-dev libasound2-dev mesa-common-dev python3.7 python3.7-dev
+      run: sudo apt update && sudo apt install -y libsdl2-dev libasound2-dev mesa-common-dev python3.7 python3.7-dev
     - name: Setup
       run: make setup_sim
     - name: Build

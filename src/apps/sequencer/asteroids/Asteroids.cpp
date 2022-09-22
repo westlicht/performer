@@ -214,7 +214,7 @@ void Player::draw(Canvas &canvas) {
     if (_killed) {
         return;
     }
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     Mat3 transform = Mat3::transform2D(_position, _angle, 1.f);
     drawShape(canvas, transform, playerShape);
 }
@@ -237,7 +237,7 @@ void Asteroid::update(float dt) {
 }
 
 void Asteroid::draw(Canvas &canvas) {
-    canvas.setColor(0x7);
+    canvas.setColor(Color::Medium);
     Mat3 transform = Mat3::transform2D(_position, _angle, _scale);
     drawShape(canvas, transform, asteroidShapes[_shape]);
 }
@@ -263,7 +263,7 @@ void Projectile::update(float dt) {
 void Projectile::draw(Canvas &canvas) {
     const Vec2 &a = _position;
     Vec2 b = a + _direction * 3.f;
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.line(a.x, a.y, b.x, b.y);
 }
 
@@ -293,7 +293,7 @@ void Particle::draw(Canvas &canvas) {
     const Vec2 &a = _position;
     Vec2 b = a + _direction * 3.f;
     uint8_t color = static_cast<uint8_t>((1.f - _time / _params->lifeTime) * 0xf);
-    canvas.setColor(color);
+    canvas.setColorValue(color);
     canvas.line(a.x, a.y, b.x, b.y);
 }
 
@@ -456,7 +456,7 @@ void Game::update(float dt, Inputs &inputs, Outputs &outputs) {
 
 void Game::draw(Canvas &canvas) {
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0);
+    canvas.setColor(Color::None);
     canvas.fill();
 
     canvas.setBlendMode(BlendMode::Add);
@@ -551,25 +551,25 @@ void Game::divideAsteroid(Asteroid &asteroid) {
 
 void Game::drawTexts(Canvas &canvas, const char *title, const char *msg) {
     canvas.setFont(Font::Small);
-    drawShadowText(canvas, (ScreenWidth - canvas.textWidth(title)) / 2, 30, 0xf, title);
+    drawShadowText(canvas, (ScreenWidth - canvas.textWidth(title)) / 2, 30, Color::Bright, title);
 
     canvas.setFont(Font::Tiny);
-    drawShadowText(canvas, (ScreenWidth - canvas.textWidth(msg)) / 2, 44, 0x7, msg);
+    drawShadowText(canvas, (ScreenWidth - canvas.textWidth(msg)) / 2, 44, Color::Medium, msg);
 }
 
 void Game::drawHUD(Canvas &canvas) {
     canvas.setFont(Font::Tiny);
 
     FixedStringBuilder<16> level("Level %d", _level);
-    drawShadowText(canvas, 2, 7, 0xf, level);
+    drawShadowText(canvas, 2, 7, Color::Bright, level);
 
     FixedStringBuilder<16> score("Score %d", _player.score());
-    drawShadowText(canvas, ScreenWidth - 2 - canvas.textWidth(score), 7, 0xf, score);
+    drawShadowText(canvas, ScreenWidth - 2 - canvas.textWidth(score), 7, Color::Bright, score);
 }
 
-void Game::drawShadowText(Canvas &canvas, int x, int y, uint8_t color, const char *str) {
+void Game::drawShadowText(Canvas &canvas, int x, int y, Color color, const char *str) {
     canvas.setBlendMode(BlendMode::Sub);
-    canvas.setColor(0x7);
+    canvas.setColor(Color::Medium);
 
     for (int dx = -1; dx <= 1; dx += 1) {
         for (int dy = -1; dy <= 1; dy += 1) {

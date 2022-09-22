@@ -56,6 +56,24 @@ public:
         Last
     };
 
+    // MidiIntegrationMode
+    enum class MidiIntegrationMode : uint8_t {
+        None,
+        ProgramChanges,
+        Malekko,
+        Last
+    };
+
+    static const char *midiIntegrationModeName(MidiIntegrationMode midiIntegrationMode) {
+        switch (midiIntegrationMode) {
+            case MidiIntegrationMode::None:             return "None";
+            case MidiIntegrationMode::ProgramChanges:   return "Program Changes";
+            case MidiIntegrationMode::Malekko:          return "Malekko";
+            case MidiIntegrationMode::Last:             break;
+        }
+        return nullptr;
+    }
+
     // CvGateInput
 
     enum class CvGateInput : uint8_t {

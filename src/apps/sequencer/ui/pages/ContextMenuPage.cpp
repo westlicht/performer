@@ -20,10 +20,10 @@ void ContextMenuPage::draw(Canvas &canvas) {
 
     const int BarHeight = 12;
 
-    canvas.setColor(0x0);
+    canvas.setColor(Color::None);
     canvas.fillRect(0, Height - BarHeight - 1, Width, BarHeight + 1);
 
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.hline(0, Height - BarHeight, Width);
     for (int i = 1; i < 5; ++i) {
         canvas.vline((Width * i) / 5, Height - BarHeight, BarHeight);
@@ -43,7 +43,7 @@ void ContextMenuPage::draw(Canvas &canvas) {
             // canvas.drawRect(x + (w - iconSize) / 2, 32 + 4, iconSize, iconSize);
 
             if (item.title) {
-                canvas.setColor(enabled ? 0xf : 0x7);
+                canvas.setColor(enabled ? Color::Bright : Color::Medium);
                 canvas.drawText(x + (w - canvas.textWidth(item.title) + 1) / 2, Height - 4, item.title);
             }
         }

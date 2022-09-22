@@ -24,8 +24,8 @@ void SongPainter::drawArrowRight(Canvas &canvas, int x, int y, int w, int h) {
 
 void SongPainter::drawProgress(Canvas &canvas, int x, int y, int w, int h, float progress) {
     int pw = w * progress;
-    canvas.setColor(0x7);
+    canvas.setColor(Color::Medium);
     canvas.fillRect(x + pw, y, w - pw, h);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.fillRect(x, y, pw, h);
 }

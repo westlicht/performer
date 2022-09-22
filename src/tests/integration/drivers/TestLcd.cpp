@@ -12,7 +12,7 @@ class TestLcd : public IntegrationTest {
 public:
     TestLcd() :
         frameBuffer(256, 64, frameBufferData),
-        canvas(frameBuffer)
+        canvas(frameBuffer, brightness)
     {}
 
     void init() override {
@@ -32,10 +32,10 @@ public:
 
         timer.reset();
 
-        canvas.setColor(0);
+        canvas.setColor(Color::None);
         canvas.fill();
 
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.vline(frame % 256, 0, 64);
         canvas.hline(0, frame % 64, 256);
 
@@ -50,6 +50,7 @@ private:
     Timer timer;
     MovingAverage<uint32_t, 10> frameInterval;
     int lastFrame = -1;
+    float brightness = 1.0;
 };
 
 INTEGRATION_TEST(TestLcd, "Lcd", true)

@@ -89,7 +89,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 
     // draw loop points
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
     SequencePainter::drawLoopEnd(canvas, (sequence.lastStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
 
@@ -102,31 +102,31 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 
         // loop
         if (stepIndex > sequence.firstStep() && stepIndex <= sequence.lastStep()) {
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             canvas.point(x, loopY);
         }
 
         // step index
         {
-            canvas.setColor(_stepSelection[stepIndex] ? 0xf : 0x7);
+            canvas.setColor(_stepSelection[stepIndex] ? Color::Bright : Color::Medium);
             FixedStringBuilder<8> str("%d", stepIndex + 1);
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y - 2, str);
         }
 
         // step gate
-        canvas.setColor(stepIndex == currentStep ? 0xf : 0x7);
+        canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
-            canvas.setColor(0xf);
+            canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
             canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
         }
 
         // record step
         if (stepIndex == currentRecordStep) {
             // draw circle
-            canvas.setColor(step.gate() ? 0x0 : 0xf);
+            canvas.setColor(step.gate() ? Color::None : Color::Bright);
             canvas.fillRect(x + 6, y + 6, stepWidth - 12, stepWidth - 12);
-            canvas.setColor(0x7);
+            canvas.setColor(Color::Medium);
             canvas.hline(x + 7, y + 5, 2);
             canvas.hline(x + 7, y + 10, 2);
             canvas.vline(x + 5, y + 7, 2);
@@ -187,7 +187,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             break;
         case Layer::Note: {
             int rootNote = sequence.selectedRootNote(_model.project().rootNote());
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             FixedStringBuilder<8> str;
             scale.noteName(str, step.note(), rootNote, Scale::Short1);
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
@@ -197,7 +197,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             break;
         }
         case Layer::NoteVariationRange: {
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             FixedStringBuilder<8> str("%d", step.noteVariationRange());
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
             break;
@@ -217,7 +217,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             );
             break;
         case Layer::Condition: {
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             FixedStringBuilder<8> str;
             Types::printCondition(str, step.condition(), Types::ConditionFormat::Short1);
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
@@ -568,7 +568,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
     WindowPainter::drawFrame(canvas, 64, 16, 128, 32);
 
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.vline(64 + 32, 16, 32);
 
     canvas.setFont(Font::Small);
@@ -592,7 +592,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%.1f%%", 100.f * (step.gateProbability() + 1.f) / NoteSequence::GateProbability::Range);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::GateOffset:
@@ -603,7 +603,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%.1f%%", 100.f * step.gateOffset() / float(NoteSequence::GateOffset::Max + 1));
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::Retrigger:
@@ -614,7 +614,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%d", step.retrigger() + 1);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::RetriggerProbability:
@@ -625,7 +625,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%.1f%%", 100.f * (step.retriggerProbability() + 1.f) / NoteSequence::RetriggerProbability::Range);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::Length:
@@ -636,7 +636,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%.1f%%", 100.f * (step.length() + 1.f) / NoteSequence::Length::Range);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::LengthVariationRange:
@@ -647,7 +647,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%.1f%%", 100.f * (step.lengthVariationRange()) / NoteSequence::Length::Range);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::LengthVariationProbability:
@@ -658,7 +658,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%.1f%%", 100.f * (step.lengthVariationProbability() + 1.f) / NoteSequence::LengthVariationProbability::Range);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::Note:
@@ -681,7 +681,7 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         );
         str.reset();
         str("%.1f%%", 100.f * (step.noteVariationProbability() + 1.f) / NoteSequence::NoteVariationProbability::Range);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::Condition:

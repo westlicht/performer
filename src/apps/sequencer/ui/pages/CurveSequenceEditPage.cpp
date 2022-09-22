@@ -78,9 +78,28 @@ static void drawGatePattern(Canvas &canvas, int x, int y, int w, int h, int gate
     int gs = w / 4;
     int gw = w / 8;
     for (int i = 0; i < 4; ++i) {
-        canvas.setColor((gate & (1 << i)) ? 0xf : 0x7);
+        canvas.setColor((gate & (1 << i)) ? Color::Bright : Color::Medium);
         canvas.fillRect(x + i * gs, y, gw, h);
     }
+}
+
+static std::pair<int, int> calculateMultiStepShapeMinMax(size_t stepsSelected,
+                                                         size_t multiStepsProcessed,
+                                                         int shape,
+                                                         bool reverse) {
+    // If shift is pressed, reverse ascension
+    int m = !reverse ? multiStepsProcessed : stepsSelected - multiStepsProcessed - 1;
+
+    int min, max;
+    if (shape == 0) {
+        min = CurveSequence::Min::Min;
+        max = CurveSequence::Max::Max;
+    } else {
+        min = std::ceil(float(m) * CurveSequence::Min::Max / stepsSelected);
+        max = std::ceil(float(m + 1) * CurveSequence::Max::Max / stepsSelected);
+    }
+
+    return std::make_pair(min, max);
 }
 
 CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &context) :
@@ -126,13 +145,13 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
     // draw loop points
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     SequencePainter::drawLoopStart(canvas, (sequence.firstStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
     SequencePainter::drawLoopEnd(canvas, (sequence.lastStep() - stepOffset) * stepWidth + 1, loopY, stepWidth - 2);
 
     // draw grid
     if (!drawShapeVariation) {
-        canvas.setColor(0x3);
+        canvas.setColor(Color::Low);
         for (int stepIndex = 1; stepIndex < StepCount; ++stepIndex) {
             int x = stepIndex * stepWidth;
             for (int y = 0; y <= curveHeight; y += 2) {
@@ -142,7 +161,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     }
 
     // draw curve
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     float lastY = -1.f;
     float lastYVariation = -1.f;
     for (int i = 0; i < StepCount; ++i) {
@@ -158,13 +177,13 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
         // loop
         if (stepIndex > sequence.firstStep() && stepIndex <= sequence.lastStep()) {
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             canvas.point(x, loopY);
         }
 
         // step index
         {
-            canvas.setColor(_stepSelection[stepIndex] ? 0xf : 0x7);
+            canvas.setColor(_stepSelection[stepIndex] ? Color::Bright : Color::Medium);
             FixedStringBuilder<8> str("%d", stepIndex + 1);
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y - 2, str);
         }
@@ -173,7 +192,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
         {
             const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shape())));
 
-            canvas.setColor(drawShapeVariation ? 0x5 : 0xf);
+            canvas.setColor(drawShapeVariation ? Color::MediumLow : Color::Bright);
             canvas.setBlendMode(BlendMode::Add);
 
             drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastY, function, min, max);
@@ -182,7 +201,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
         if (drawShapeVariation) {
             const auto function = Curve::function(Curve::Type(std::min(Curve::Last - 1, step.shapeVariation())));
 
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             canvas.setBlendMode(BlendMode::Add);
 
             drawCurve(canvas, x, curveY, stepWidth, curveHeight, lastYVariation, function, min, max);
@@ -203,7 +222,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
         case Layer::Min:
         case Layer::Max: {
             bool functionPressed = globalKeyState()[MatrixMap::fromFunction(activeFunctionKey())];
-            canvas.setColor(0x5);
+            canvas.setColor(Color::MediumLow);
             canvas.setBlendMode(BlendMode::Add);
             if (layer() == Layer::Min || functionPressed) {
                 drawMinMax(canvas, x, curveY, stepWidth, curveHeight, min);
@@ -214,7 +233,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
             break;
         }
         case Layer::Gate:
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             canvas.setBlendMode(BlendMode::Set);
             drawGatePattern(canvas, x, bottomY, stepWidth, 2, step.gate());
             break;
@@ -232,7 +251,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
 
     // draw cursor
     if (isActiveSequence) {
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         int x = ((trackEngine.currentStep() - stepOffset) + trackEngine.currentStepFraction()) * stepWidth;
         canvas.vline(x, curveY, curveHeight);
     }
@@ -310,6 +329,26 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.isEncoder() && layer() == Layer::Shape && globalKeyState()[Key::Shift] && _stepSelection.count() > 1) {
+        auto firstStep = sequence.step(_stepSelection.firstSetIndex());
+        auto lastStep = sequence.step(_stepSelection.lastSetIndex());
+        bool isReversed = firstStep.max() > lastStep.max();
+
+        for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+            if (_stepSelection[stepIndex]) {
+                auto &step = sequence.step(stepIndex);
+
+                float min, max;
+                std::tie(min, max) = calculateMultiStepShapeMinMax(_stepSelection.count(), multiStepsProcessed, sequence.step(_stepSelection.firstSetIndex()).shape(), !isReversed);
+
+                step.setMin(int(min));
+                step.setMax(int(max));
+
+                multiStepsProcessed++;
+            }
+        }
+    }
+
     _stepSelection.keyPress(event, stepOffset());
     updateMonitorStep();
 
@@ -346,13 +385,25 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         return;
     }
 
-    for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
+    for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
             bool shift = globalKeyState()[Key::Shift];
             switch (layer()) {
             case Layer::Shape:
-                step.setShape(step.shape() + event.value());
+                if (_stepSelection.count() > 1 && shift) { // Create a multi-step shape
+                    auto &firstStep = sequence.step(_stepSelection.firstSetIndex());
+                    int firstStepShape = multiStepsProcessed == 0 ? std::max(firstStep.shape() + event.value(), 0) : firstStep.shape();
+                    step.setShape(firstStepShape);
+
+                    int min, max;
+                    std::tie(min, max) = calculateMultiStepShapeMinMax(_stepSelection.count(), multiStepsProcessed, firstStepShape, false);
+
+                    step.setMin(min);
+                    step.setMax(max);
+                } else {
+                    step.setShape(step.shape() + event.value());
+                }
                 break;
             case Layer::ShapeVariation:
                 step.setShapeVariation(step.shapeVariation() + event.value());
@@ -388,6 +439,8 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Last:
                 break;
             }
+
+            multiStepsProcessed++;
         }
     }
 
@@ -490,7 +543,7 @@ void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step
     WindowPainter::drawFrame(canvas, 64, 16, 128, 32);
 
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
     canvas.vline(64 + 32, 16, 32);
 
     canvas.setFont(Font::Small);
@@ -514,7 +567,7 @@ void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step
         );
         str.reset();
         str("%.1f%%", 100.f * step.shapeVariationProbability() / 8.f);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::Min:
@@ -528,7 +581,7 @@ void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step
         );
         str.reset();
         str("%.1f%%", 100.f * (step.gateProbability() + 1.f) / CurveSequence::GateProbability::Range);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
     case Layer::Last:

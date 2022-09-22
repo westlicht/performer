@@ -10,10 +10,12 @@ Settings::Settings() {
 
 void Settings::clear() {
     _calibration.clear();
+    _userSettings.clear();
 }
 
 void Settings::write(VersionedSerializedWriter &writer) const {
     _calibration.write(writer);
+    _userSettings.write(writer);
 
     writer.writeHash();
 }
@@ -22,6 +24,7 @@ bool Settings::read(VersionedSerializedReader &reader) {
     clear();
 
     _calibration.read(reader);
+    _userSettings.read(reader);
 
     bool success = reader.checkHash();
     if (!success) {

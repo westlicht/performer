@@ -124,6 +124,22 @@ public:
         str("%d %s", syncMeasure(), syncMeasure() > 1 ? "bars" : "bar");
     }
 
+    // always sync
+
+    bool alwaysSyncPatterns() const { return _alwaysSyncPatterns; }
+    void setAlwaysSyncPatterns(bool alwaysSync) {
+        _alwaysSyncPatterns = alwaysSync;
+    }
+
+    void editAlwaysSyncPatterns(int value, bool shift) {
+        _alwaysSyncPatterns = value == 1;
+    }
+
+    void printAlwaysSyncPatterns(StringBuilder &str) const {
+        if (_alwaysSyncPatterns) str("Always");
+        else str("Default");
+    }
+
     // scale
 
     int scale() const { return _scale; }
@@ -218,6 +234,47 @@ public:
 
     const MidiSourceConfig &midiInputSource() const { return _midiInputSource; }
           MidiSourceConfig &midiInputSource()       { return _midiInputSource; }
+
+    // midiIntegrationMode
+
+    void editMidiIntegrationMode(int value, bool shift) {
+        _midiIntegrationMode = ModelUtils::adjustedEnum(_midiIntegrationMode, value);
+    }
+
+    void printMidiIntegrationMode(StringBuilder &str) const {
+        str(Types::midiIntegrationModeName(_midiIntegrationMode));
+    }
+
+    void setMidiIntegrationMode(Types::MidiIntegrationMode midiIntegrationMode) {
+        _midiIntegrationMode = midiIntegrationMode;
+    }
+
+    bool midiIntegrationProgramChangesEnabled() const {
+        return _midiIntegrationMode == Types::MidiIntegrationMode::ProgramChanges
+               || _midiIntegrationMode == Types::MidiIntegrationMode::Malekko;
+    }
+
+    bool midiIntegrationMalekkoEnabled() const {
+        return _midiIntegrationMode == Types::MidiIntegrationMode::Malekko;
+    }
+
+    // midiProgramOffset
+
+    void editMidiProgramOffset(int value, bool shift) {
+        _midiProgramOffset += value;
+    }
+
+    void printMidiProgramOffset(StringBuilder &str) const {
+        str("%d", _midiProgramOffset);
+    }
+
+    void setMidiProgramOffset(int midiProgramOffset) {
+        _midiProgramOffset = midiProgramOffset;
+    }
+
+    int midiProgramOffset() {
+        return _midiProgramOffset;
+    }
 
     // cvGateInput
 
@@ -428,12 +485,15 @@ private:
     Routable<uint8_t> _swing;
     TimeSignature _timeSignature;
     uint8_t _syncMeasure;
+    bool _alwaysSyncPatterns;
     uint8_t _scale;
     uint8_t _rootNote;
     Types::RecordMode _recordMode;
     Types::MonitorMode _monitorMode;
     Types::MidiInputMode _midiInputMode;
     MidiSourceConfig _midiInputSource;
+    Types::MidiIntegrationMode _midiIntegrationMode;
+    uint8_t _midiProgramOffset;
     Types::CvGateInput _cvGateInput;
     Types::CurveCvInput _curveCvInput;
 

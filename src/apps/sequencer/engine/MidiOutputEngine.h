@@ -24,6 +24,12 @@ public:
     void sendGate(int trackIndex, bool gate);
     void sendSlide(int trackIndex, bool slide);
     void sendCv(int trackIndex, float cv);
+    void sendProgramChange(int channel, int programNumber);
+
+    // Malekko integration
+    void sendMalekkoSelectHandshake(int channel);
+    void sendMalekkoSelectReleaseHandshake(int channel);
+    void sendMalekkoSaveHandshake(int channel);
 
 private:
     struct OutputState {
