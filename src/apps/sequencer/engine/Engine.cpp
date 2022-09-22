@@ -760,9 +760,7 @@ void Engine::receiveMidi(MidiPort port, uint8_t cable, const MidiMessage &messag
         int requestedPattern = message.programNumber() % CONFIG_PATTERN_COUNT;
 
         for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
-            auto &trackState = playState.trackState(trackIndex);
-
-            trackState.setPattern(requestedPattern);
+            playState.selectTrackPattern(trackIndex, requestedPattern, PlayState::ExecuteType::Immediate);
         }
     }
 
