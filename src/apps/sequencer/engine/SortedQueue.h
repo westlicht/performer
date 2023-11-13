@@ -3,6 +3,7 @@
 #include <array>
 #include <utility>
 #include <functional>
+#include <cstddef>
 
 template<typename T, size_t Capacity, typename Compare = std::less<T>>
 class SortedQueue {
