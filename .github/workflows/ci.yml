@@ -8,7 +8,7 @@ on:
 jobs:
   stm32:
     name: Hardware Platform (STM32)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -28,7 +28,7 @@ jobs:
         files: build/deploy/**/*
   sim_linux:
     name: Simulator Platform (Linux)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v3
