@@ -22,6 +22,7 @@ set(platform_linker_flags "" PARENT_SCOPE)
 
 set(platform_sources
     # soloud
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/audiosource/wav/dr_impl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/audiosource/wav/soloud_wav.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/audiosource/wav/stb_vorbis.c
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.cpp

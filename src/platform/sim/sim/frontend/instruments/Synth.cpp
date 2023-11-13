@@ -280,14 +280,15 @@ SynthInstance::SynthInstance(Synth &synth) :
 SynthInstance::~SynthInstance() {
 }
 
-void SynthInstance::getAudio(float *aBuffer, unsigned int aSamples) {
-    for (size_t i = 0; i < aSamples; ++i) {
+unsigned int SynthInstance::getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) {
+    for (size_t i = 0; i < aSamplesToRead; ++i) {
         if (i % 128 == 0) {
             _voice->setGate(_synth._gate);
             _voice->setCv(_synth._cv);
         }
         aBuffer[i] = _voice->process();
     }
+    return aSamplesToRead;
 }
 
 bool SynthInstance::hasEnded() {

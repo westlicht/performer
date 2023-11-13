@@ -15,7 +15,7 @@ public:
     SynthInstance(Synth &synth);
     virtual ~SynthInstance();
 
-    virtual void getAudio(float *aBuffer, unsigned int aSamples) override;
+    virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
     virtual bool hasEnded() override;
 
 private:
