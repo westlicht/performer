@@ -77,6 +77,7 @@ private:
     float _cvOutput;
     float _cvOutputTarget;
     bool _slideActive;
+    unsigned int _currentStageRepeat;
 
     struct Gate {
         uint32_t tick;

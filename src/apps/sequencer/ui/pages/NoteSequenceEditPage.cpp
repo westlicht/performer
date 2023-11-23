@@ -2,6 +2,7 @@
 
 #include "Pages.h"
 
+#include "model/NoteSequence.h"
 #include "ui/LedPainter.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
@@ -226,6 +227,20 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
             break;
         }
+        case Layer::StageRepeats: {
+            canvas.setColor(0xf);
+            FixedStringBuilder<8> str("x%d", step.stageRepeats());
+            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
+            break;
+        }
+        case Layer::StageRepeatsMode: {
+            SequencePainter::drawStageRepeatMode(
+                canvas, 
+                x + 2, y + 18, stepWidth - 4, 6,
+                step.stageRepeatMode()
+            );
+            break;
+        }
         case Layer::Last:
             break;
         }
@@ -405,6 +420,16 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::Condition:
                 step.setCondition(ModelUtils::adjustedEnum(step.condition(), event.value()));
                 break;
+            case Layer::StageRepeats:
+                step.setStageRepeats(step.stageRepeats() + event.value());
+                break;
+            case Layer::StageRepeatsMode:                 
+                step.setStageRepeatsMode(
+                    static_cast<NoteSequence::StageRepeatMode>(
+                        step.stageRepeatMode() + event.value()
+                    )
+                );
+                break;
             case Layer::Last:
                 break;
             }
@@ -443,13 +468,13 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
     if (shift) {
         switch (Function(functionKey)) {
         case Function::Gate:
-            setLayer(Layer::Gate);
+            setLayer(Layer::StageRepeatsMode);
             break;
         case Function::Retrigger:
-            setLayer(Layer::Retrigger);
+            setLayer(Layer::StageRepeats);
             break;
         case Function::Length:
-            setLayer(Layer::Length);
+            setLayer(Layer::StageRepeatsMode);
             break;
         case Function::Note:
             setLayer(Layer::Note);
@@ -473,8 +498,18 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
         case Layer::GateOffset:
             setLayer(Layer::Slide);
             break;
+        case Layer::Slide:
+            setLayer(Layer::StageRepeats);
+            break;
+        case Layer::StageRepeats:
+            setLayer(Layer::StageRepeatsMode);
+            break;
+        case Layer::StageRepeatsMode:
+            setLayer(Layer::Gate);
+            break;
         default:
             setLayer(Layer::Gate);
+
             break;
         }
         break;
@@ -526,6 +561,8 @@ int NoteSequenceEditPage::activeFunctionKey() {
     case Layer::GateProbability:
     case Layer::GateOffset:
     case Layer::Slide:
+    case Layer::StageRepeats:
+    case Layer::StageRepeatsMode:
         return 0;
     case Layer::Retrigger:
     case Layer::RetriggerProbability:
@@ -689,6 +726,31 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
         Types::printCondition(str, step.condition(), Types::ConditionFormat::Long);
         canvas.setFont(Font::Small);
         canvas.drawTextCentered(64 + 32, 16, 96, 32, str);
+        break;
+    case Layer::StageRepeats:
+        str.reset();
+        str("x%d", step.stageRepeats());
+        canvas.setFont(Font::Small);
+        canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
+        break;
+     case Layer::StageRepeatsMode:
+        str.reset();
+        switch (step.stageRepeatMode()) {
+            case NoteSequence::Each:
+                str("EACH");
+                break;
+            case NoteSequence::First:
+                str("FIRST");
+                break;
+            case NoteSequence::Odd:
+                str("ODD");
+                break;
+            case NoteSequence::Triplets:
+                str("TRIPLET");
+                break;
+        }
+        canvas.setFont(Font::Small);
+        canvas.drawTextCentered(64 + 32, 16, 64, 32, str);
         break;
     case Layer::Last:
         break;
