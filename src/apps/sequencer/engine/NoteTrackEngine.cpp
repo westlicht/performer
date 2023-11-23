@@ -9,6 +9,7 @@
 #include "core/utils/Random.h"
 #include "core/math/Math.h"
 
+#include "model/NoteSequence.h"
 #include "model/Scale.h"
 
 static Random rng;
@@ -134,6 +135,15 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 _sequenceState.advanceAligned(relativeTick / divisor, sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
                 recordStep(tick, divisor);
                 triggerStep(tick, divisor);
+                
+                _sequenceState.calculateNextStepAligned(
+                        (relativeTick + divisor) / divisor, 
+                        sequence.runMode(),
+                        sequence.firstStep(),
+                        sequence.lastStep(),
+                        rng
+                    );
+                triggerStep(tick + divisor, divisor, true);
             }
             break;
         case Types::PlayMode::Free:
@@ -288,8 +298,7 @@ void NoteTrackEngine::setMonitorStep(int index) {
         _stepRecorder.setStepIndex(index);
     }
 }
-
-void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
+void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextStep) {
     int octave = _noteTrack.octave();
     int transpose = _noteTrack.transpose();
     int rotate = _noteTrack.rotate();
@@ -300,10 +309,24 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
 
     const auto &sequence = *_sequence;
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
-    _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
-    const auto &step = evalSequence.step(_currentStep);
 
-    uint32_t gateOffset = (divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
+    // TODO do we need to encounter rotate?
+    _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
+    
+    int stepIndex;
+
+    if (forNextStep) {
+        stepIndex = _sequenceState.nextStep();
+    } else {
+        stepIndex = _currentStep;
+    }
+
+    if (stepIndex < 0) return;
+
+    const auto &step = evalSequence.step(stepIndex);
+
+    int gateOffset = ((int) divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
+    uint32_t stepTick = (int) tick + gateOffset;
 
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
     if (stepGate) {
@@ -317,21 +340,25 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
             uint32_t retriggerLength = divisor / stepRetrigger;
             uint32_t retriggerOffset = 0;
             while (stepRetrigger-- > 0 && retriggerOffset <= stepLength) {
-                _gateQueue.pushReplace({ Groove::applySwing(tick + gateOffset + retriggerOffset, swing()), true });
-                _gateQueue.pushReplace({ Groove::applySwing(tick + gateOffset + retriggerOffset + retriggerLength / 2, swing()), false });
+                _gateQueue.pushReplace({ Groove::applySwing(stepTick + retriggerOffset, swing()), true });
+                _gateQueue.pushReplace({ Groove::applySwing(stepTick + retriggerOffset + retriggerLength / 2, swing()), false });
                 retriggerOffset += retriggerLength;
             }
         } else {
-            _gateQueue.pushReplace({ Groove::applySwing(tick + gateOffset, swing()), true });
-            _gateQueue.pushReplace({ Groove::applySwing(tick + gateOffset + stepLength, swing()), false });
+            _gateQueue.pushReplace({ Groove::applySwing(stepTick, swing()), true });
+            _gateQueue.pushReplace({ Groove::applySwing(stepTick + stepLength, swing()), false });
         }
     }
 
     if (stepGate || _noteTrack.cvUpdateMode() == NoteTrack::CvUpdateMode::Always) {
         const auto &scale = evalSequence.selectedScale(_model.project().scale());
         int rootNote = evalSequence.selectedRootNote(_model.project().rootNote());
-        _cvQueue.push({ Groove::applySwing(tick + gateOffset, swing()), evalStepNote(step, _noteTrack.noteProbabilityBias(), scale, rootNote, octave, transpose), step.slide() });
+        _cvQueue.push({ Groove::applySwing(stepTick, swing()), evalStepNote(step, _noteTrack.noteProbabilityBias(), scale, rootNote, octave, transpose), step.slide() });
     }
+}
+
+void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
+    triggerStep(tick, divisor, false);
 }
 
 void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
