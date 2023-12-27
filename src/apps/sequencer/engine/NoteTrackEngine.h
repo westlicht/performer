@@ -5,6 +5,7 @@
 #include "SortedQueue.h"
 #include "Groove.h"
 #include "RecordHistory.h"
+#include "model/NoteSequence.h"
 #include "StepRecorder.h"
 
 class NoteTrackEngine : public TrackEngine {
@@ -46,6 +47,7 @@ public:
     void setMonitorStep(int index);
 
 private:
+    void triggerStep(uint32_t tick, uint32_t divisor, bool nextStep);
     void triggerStep(uint32_t tick, uint32_t divisor);
     void recordStep(uint32_t tick, uint32_t divisor);
     int noteFromMidiNote(uint8_t midiNote) const;
