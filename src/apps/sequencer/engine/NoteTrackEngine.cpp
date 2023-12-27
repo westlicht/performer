@@ -328,11 +328,6 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
 
     const auto &sequence = *_sequence;
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
-<<<<<<< HEAD
-    _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
-    const auto &step = evalSequence.step(_currentStep);
-    uint32_t gateOffset = (divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
-=======
 
     // TODO do we need to encounter rotate?
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
@@ -351,7 +346,6 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
 
     int gateOffset = ((int) divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
     uint32_t stepTick = (int) tick + gateOffset;
->>>>>>> vafu/vafu/negative-offset
 
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
     if (stepGate) {
