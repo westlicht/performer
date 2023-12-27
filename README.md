@@ -12,6 +12,7 @@ To find out more about improvements changes, check the table below.
 | import Metro like seq PR | [link](https://github.com/westlicht/performer/pull/259) | done |
 | import trigger negative offset PR | [link](https://github.com/westlicht/performer/pull/234) | done |
 | extend probability steps | turning the encoder results in more steps (min is 1.6%) | done |
+| add various curves | add curve half and double curves| done|
 
 --- original documentation below ---
 
