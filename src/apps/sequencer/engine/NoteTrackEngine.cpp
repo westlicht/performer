@@ -10,6 +10,9 @@
 #include "core/math/Math.h"
 
 #include "model/Scale.h"
+#include "ui/MatrixMap.h"
+#include <climits>
+#include <iostream>
 
 static Random rng;
 
@@ -125,7 +128,9 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
         // handle reset measure
         if (relativeTick == 0) {
             reset();
+            _currentStageRepeat = 1;
         }
+        const auto &sequence = *_sequence;
 
         // advance sequence
         switch (_noteTrack.playMode()) {
@@ -142,9 +147,23 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 _freeRelativeTick = 0;
             }
             if (relativeTick == 0) {
-                _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+
+                if (_currentStageRepeat == 1) {
+                     _sequenceState.advanceFree(sequence.runMode(), sequence.firstStep(), sequence.lastStep(), rng);
+                }
+
                 recordStep(tick, divisor);
+                const auto &step = sequence.step(_sequenceState.step());
+                bool isLastStageStep = ((int) step.stageRepeats() - (int) _currentStageRepeat) <= 0;
+            
                 triggerStep(tick, divisor);
+                               
+                if (isLastStageStep) {
+                   _currentStageRepeat = 1; 
+                } else {
+                    _currentStageRepeat++;
+                }
+
             }
             break;
         case Types::PlayMode::Last:
@@ -302,12 +321,23 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
     const auto &step = evalSequence.step(_currentStep);
-
     uint32_t gateOffset = (divisor * step.gateOffset()) / (NoteSequence::GateOffset::Max + 1);
 
     bool stepGate = evalStepGate(step, _noteTrack.gateProbabilityBias()) || useFillGates;
     if (stepGate) {
         stepGate = evalStepCondition(step, _sequenceState.iteration(), useFillCondition, _prevCondition);
+    }
+    switch (step.stageRepeatMode()) {
+        case NoteSequence::StageRepeatMode::Each:
+            break;
+        case NoteSequence::StageRepeatMode::First:
+            stepGate = stepGate && _currentStageRepeat == 1;
+            break;
+        case NoteSequence::StageRepeatMode::Odd:
+            stepGate = stepGate && _currentStageRepeat % 2 != 0;
+            break;
+        case NoteSequence::StageRepeatMode::Triplets:
+            stepGate = stepGate && (_currentStageRepeat - 1) % 3 == 0;
     }
 
     if (stepGate) {
@@ -356,6 +386,7 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
         step.setNoteVariationRange(0);
         step.setNoteVariationProbability(NoteSequence::NoteVariationProbability::Max);
         step.setCondition(Types::Condition::Off);
+        step.setStageRepeats(1);
 
         stepWritten = true;
     };
