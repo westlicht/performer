@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.43 (27 December 2023)
+
+#### Improvements
+
+- Extend retrigger value. max 8 retriggers per step
+- Extend probability steps. min value now is 1.6%
+- add negative gate offset feature [thanks to vafu](https://github.com/vafu/performer/tree/vafu/negative-offset)
+
 ## v0.1.42 (6 June 2022)
 
 #### Fixes

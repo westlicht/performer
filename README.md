@@ -9,10 +9,9 @@ To find out more about improvements changes, check the table below.
 | Change             	| Documentation                                    	| Status |
 |--------------------	|--------------------------------------------------	| ------ |
 | Increase Retrigger    | Increase rettrigger value to 8 per step       	| done   |
-| import jackpf fork    | [link](https://github.com/jackpf/performer/)      | todo   |
-| import Metro like seq PR | [link](https://github.com/westlicht/performer/pull/259) | todo |
-| imnport trigger negative offset PR | [link](https://github.com/westlicht/performer/pull/234) | todo |
-| externd probability steps | turning the encoder results in more steps (min is 1.6%) | done |
+| import Metro like seq PR | [link](https://github.com/westlicht/performer/pull/259) | done |
+| import trigger negative offset PR | [link](https://github.com/westlicht/performer/pull/234) | done |
+| extend probability steps | turning the encoder results in more steps (min is 1.6%) | done |
 
 --- original documentation below ---
 
