@@ -75,6 +75,70 @@ static float expDown4x(float x) {
     return x < 1.f ? expDown(std::fmod(x * 4.f, 1.f)) : 0.f;
 }
 
+static float rampUpHalf(float x) {
+    return x < 0.5f ? rampUp(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float doubleRampUpHalf(float x) {
+    return x < 0.5f ? rampUp(std::fmod(x * 2.f, 1.f)) : rampUp(std::fmod(x * 2.f, 1.f));
+}
+
+static float rampDownHalf(float x) {
+    return x < 0.5f ? rampDown(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float doubleRampDownHalf(float x) {
+    return x < 0.5f ? rampDown(std::fmod(x * 2.f, 1.f)) : x < 1.f ? rampDown(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float expUpHalf(float x) {
+    return x < 0.5f ? expUp(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float doubleExpUpHalf(float x) {
+    return x < 0.5f ? expUp(std::fmod(x * 2.f, 1.f)) : expUp(std::fmod(x * 2.f, 1.f));
+}
+
+static float expDownHalf(float x) {
+    return x < 0.5f ? expDown(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float doubleExpDownHalf(float x) {
+    return x < 0.5f ? expDown(std::fmod(x * 2.f, 1.f)) : x < 1.f ?  expDown(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float logUpHalf(float x) {
+    return x < 0.5f ? logUp(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float doubleLogUpHalf(float x) {
+    return x < 0.5f ? logUp(std::fmod(x * 2.f, 1.f)) : logUp(std::fmod(x * 2.f, 1.f));
+}
+
+static float logDownHalf(float x) {
+    return x < 0.5f ? logDown(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float doubleLogDownHalf(float x) {
+    return x < 0.5f ? logDown(std::fmod(x * 2.f, 1.f)) : x < 1.f ? logDown(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float smoothUpHalf(float x) {
+    return x < 0.5f ? smoothUp(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float doubleSmoothUpHalf(float x) {
+    return x < 0.5f ? smoothUp(std::fmod(x * 2.f, 1.f)) : smoothUp(std::fmod(x * 2.f, 1.f));
+}
+
+static float smoothDownHalf(float x) {
+    return x < 0.5f ? smoothDown(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float doubleSmoothDownHalf(float x) {
+    return x < 0.5f ? smoothDown(std::fmod(x * 2.f, 1.f)) : x < 1.f ? smoothDown(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
 static Curve::Function functions[] = {
     &low,
     &high,
@@ -82,17 +146,34 @@ static Curve::Function functions[] = {
     &stepDown,
     &rampUp,
     &rampDown,
+    &rampUpHalf,
+    &rampDownHalf,
+    &doubleRampUpHalf,
+    &doubleRampDownHalf,
     &expUp,
     &expDown,
+    &expUpHalf,
+    &expDownHalf,
+    &doubleExpUpHalf,
+    &doubleExpDownHalf,
     &logUp,
     &logDown,
+    &logUpHalf,
+    &logDownHalf,
+    &doubleLogUpHalf,
+    &doubleLogDownHalf,
     &smoothUp,
     &smoothDown,
+    &smoothUpHalf,
+    &smoothDownHalf,
+    &doubleSmoothUpHalf,
+    &doubleSmoothDownHalf,
     &triangle,
     &bell,
     &expDown2x,
     &expDown3x,
     &expDown4x,
+
 };
 
 Curve::Function Curve::function(Type type) {
