@@ -24,7 +24,7 @@ public:
 
     typedef UnsignedValue<3> GateProbability;
     typedef SignedValue<4> GateOffset;
-    typedef UnsignedValue<2> Retrigger;
+    typedef UnsignedValue<3> Retrigger;
     typedef UnsignedValue<3> RetriggerProbability;
     typedef UnsignedValue<3> Length;
     typedef SignedValue<4> LengthVariationRange;
@@ -213,7 +213,7 @@ public:
         } _data0;
         union {
             uint32_t raw;
-            BitField<uint32_t, 0, Retrigger::Bits> retrigger;
+            BitField<uint32_t, 5, Retrigger::Bits> retrigger;
             BitField<uint32_t, 2, RetriggerProbability::Bits> retriggerProbability;
             BitField<uint32_t, 5, GateOffset::Bits> gateOffset;
             BitField<uint32_t, 9, Condition::Bits> condition;
