@@ -1,5 +1,21 @@
 ![Build Status](https://github.com/westlicht/performer/actions/workflows/ci.yml/badge.svg?branch=master)
 
+# Improvements
+
+This is a fork of the [original repository](https://github.com/westlicht/performer), with some improvements that I personally find essential.
+
+To find out more about improvements changes, check the table below.
+
+| Change             	| Documentation                                    	| Status |
+|--------------------	|--------------------------------------------------	| ------ |
+| Increase Retrigger    | Increase rettrigger value to 8 per step       	| done   |
+| import jackpf fork    | [link](https://github.com/jackpf/performer/)      | todo   |
+| import Metro like seq PR | [link](https://github.com/westlicht/performer/pull/259) | todo |
+| imnport trigger negative offset PR | [link](https://github.com/westlicht/performer/pull/234) | todo |
+
+
+--- original documentation below ---
+
 # PER|FORMER
 
 <a href="doc/sequencer.jpg"><img src="doc/sequencer.jpg"/></a>
