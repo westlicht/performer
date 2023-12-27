@@ -238,12 +238,12 @@ public:
             BitField<uint32_t, 21, LengthVariationProbability::Bits> lengthVariationProbability;
             BitField<uint32_t, 15, Note::Bits> note;
             BitField<uint32_t, 22, NoteVariationRange::Bits> noteVariationRange;
-            BitField<uint32_t, 29, NoteVariationProbability::Bits> noteVariationProbability;
+            BitField<uint32_t, 26, NoteVariationProbability::Bits> noteVariationProbability;
         } _data0;
         union {
             uint32_t raw;
             BitField<uint32_t, 5, Retrigger::Bits> retrigger;
-            BitField<uint32_t, 16, RetriggerProbability::Bits> retriggerProbability;
+            BitField<uint32_t, 20, RetriggerProbability::Bits> retriggerProbability;
             BitField<uint32_t, 5, GateOffset::Bits> gateOffset;
             BitField<uint32_t, 9, Condition::Bits> condition;
             BitField<uint32_t, 16, StageRepeats::Bits> stageRepeats;
