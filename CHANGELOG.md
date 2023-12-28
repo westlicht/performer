@@ -11,6 +11,7 @@
 - double click to toggle gates when editing layers other than gate
 - do not reset cv outputs when clock is stopped
 - add various curves
+- use random seed each access to random gen layer
 
 ## v0.1.42 (6 June 2022)
 

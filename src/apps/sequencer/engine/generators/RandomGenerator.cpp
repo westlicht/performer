@@ -1,12 +1,17 @@
 #include "RandomGenerator.h"
 
 #include "core/utils/Random.h"
+#include <cstdint>
+#include <cstdlib>
+#include <ctime>
+#include <random>
+
 
 RandomGenerator::RandomGenerator(SequenceBuilder &builder, Params &params) :
     Generator(builder),
     _params(params)
 {
-    update();
+    init();
 }
 
 const char *RandomGenerator::paramName(int index) const {
@@ -42,7 +47,16 @@ void RandomGenerator::printParam(int index, StringBuilder &str) const {
 
 void RandomGenerator::init() {
     _params = Params();
+    randomizeSeed();
     update();
+}
+
+void RandomGenerator::randomizeSeed() {
+
+    std::random_device seed;
+    std::mt19937 gen{seed()}; // seed the generator
+    std::uniform_int_distribution<> dist{0, 65535}; // set min and max
+    _params.seed = dist(gen); 
 }
 
 void RandomGenerator::update() {
