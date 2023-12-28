@@ -92,8 +92,8 @@ void NoteTrackEngine::reset() {
     _prevCondition = false;
     _activity = false;
     _gateOutput = false;
-    _cvOutput = 0.f;
-    _cvOutputTarget = 0.f;
+    //_cvOutput = 0.f;
+    //_cvOutputTarget = 0.f;
     _slideActive = false;
     _gateQueue.clear();
     _cvQueue.clear();
