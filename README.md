@@ -12,7 +12,9 @@ To find out more about improvements changes, check the table below.
 | import Metro like seq PR | [link](https://github.com/westlicht/performer/pull/259) | done |
 | import trigger negative offset PR | [link](https://github.com/westlicht/performer/pull/234) | done |
 | extend probability steps | turning the encoder results in more steps (min is 1.6%) | done |
-| add various curves | add curve half and double curves| done|
+| add various curves | add curve half and double curves| done |
+| double click to toggle gates| double click on step to toggle a gate when editing layer other than gate| done |
+| cv outs on stop clock| cv outs remain to the last value when clock is stopped | done | 
 
 --- original documentation below ---
 
