@@ -6,6 +6,7 @@
 #include "ui/model/NoteSequenceListModel.h"
 
 #include "engine/generators/SequenceBuilder.h"
+#include "ui/KeyPressEventTracker.h"
 
 #include "core/utils/Container.h"
 
@@ -59,6 +60,9 @@ private:
     int _section = 0;
     bool _showDetail;
     uint32_t _showDetailTicks;
+
+    KeyPressEventTracker _keyPressEventTracker;
+
 
     NoteSequenceListModel _listModel;
 

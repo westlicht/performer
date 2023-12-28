@@ -332,6 +332,16 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         }
     }
 
+    KeyPressEvent keyPressEvent =_keyPressEventTracker.process(key);
+
+    if (!key.shiftModifier() && key.isStep() && keyPressEvent.count() == 2) {
+        int stepIndex = stepOffset() + key.step();
+        if (layer() != Layer::Gate) {
+            sequence.step(stepIndex).toggleGate();
+            event.consume();
+        }
+    }
+
     if (key.isFunction()) {
         switchLayer(key.function(), key.shiftModifier());
         event.consume();
