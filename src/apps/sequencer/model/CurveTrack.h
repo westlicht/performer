@@ -5,12 +5,16 @@
 #include "CurveSequence.h"
 #include "Serialize.h"
 #include "Routing.h"
+#include "FileDefs.h"
+#include "core/utils/StringUtils.h"
 
 class CurveTrack {
 public:
     //----------------------------------------
     // Types
     //----------------------------------------
+
+    static constexpr size_t NameLength = FileHeader::NameLength; 
 
     typedef std::array<CurveSequence, CONFIG_PATTERN_COUNT + CONFIG_SNAPSHOT_COUNT> CurveSequenceArray;
 
@@ -57,6 +61,13 @@ public:
     //----------------------------------------
     // Properties
     //----------------------------------------
+
+    // name
+        // name
+    const char *name() const { return _name; }
+    void setName(const char *name) {
+        StringUtils::copy(_name, name, sizeof(_name));
+    }
 
     // playMode
 
@@ -230,6 +241,7 @@ private:
     }
 
     int8_t _trackIndex = -1;
+    char _name[NameLength + 1];
     Types::PlayMode _playMode;
     FillMode _fillMode;
     MuteMode _muteMode;

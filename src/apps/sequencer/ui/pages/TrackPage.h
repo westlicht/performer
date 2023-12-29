@@ -34,4 +34,8 @@ private:
     NoteTrackListModel _noteTrackListModel;
     CurveTrackListModel _curveTrackListModel;
     MidiCvTrackListModel _midiCvTrackListModel;
+
+    NoteTrack *_noteTrack;
+    CurveTrack *_curveTrack;
+    MidiCvTrack *_midiCvTrack;
 };

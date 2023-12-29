@@ -1,5 +1,8 @@
 #include "NoteTrack.h"
 #include "ProjectVersion.h"
+#include <string>
+#include "core/utils/StringBuilder.h"
+
 
 void NoteTrack::writeRouted(Routing::Target target, int intValue, float floatValue) {
     switch (target) {
@@ -52,6 +55,7 @@ void NoteTrack::clear() {
 }
 
 void NoteTrack::write(VersionedSerializedWriter &writer) const {
+    writer.write(_name, NameLength + 1);
     writer.write(_playMode);
     writer.write(_fillMode);
     writer.write(_fillMuted);
@@ -70,6 +74,7 @@ void NoteTrack::write(VersionedSerializedWriter &writer) const {
 void NoteTrack::read(VersionedSerializedReader &reader) {
     reader.backupHash();
 
+    reader.read(_name, NameLength + 1, ProjectVersion::Version33);
     reader.read(_playMode);
     reader.read(_fillMode);
     reader.read(_fillMuted, ProjectVersion::Version26);

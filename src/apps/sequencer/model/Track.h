@@ -29,6 +29,7 @@ public:
     //----------------------------------------
     // Types
     //----------------------------------------
+    static constexpr size_t NameLength = FileHeader::NameLength; 
 
     enum class TrackMode : uint8_t {
         Note,
@@ -66,6 +67,12 @@ public:
     // trackIndex
 
     int trackIndex() const { return _trackIndex; }
+
+    // trackName
+    const char *name() const { return _name; }
+    void setName(const char *name) {
+        StringUtils::copy(_name, name, sizeof(_name));
+    }
 
     // trackMode
 
@@ -152,6 +159,7 @@ private:
     void initContainer();
 
     uint8_t _trackIndex = -1;
+    char _name[NameLength + 1];
     TrackMode _trackMode;
     int8_t _linkTrack;
 

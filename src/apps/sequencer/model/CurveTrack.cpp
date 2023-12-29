@@ -39,6 +39,7 @@ void CurveTrack::clear() {
 }
 
 void CurveTrack::write(VersionedSerializedWriter &writer) const {
+    writer.write(_name, NameLength + 1);
     writer.write(_playMode);
     writer.write(_fillMode);
     writer.write(_muteMode);
@@ -51,6 +52,7 @@ void CurveTrack::write(VersionedSerializedWriter &writer) const {
 }
 
 void CurveTrack::read(VersionedSerializedReader &reader) {
+    reader.read(_name, NameLength + 1, ProjectVersion::Version33);
     reader.read(_playMode);
     reader.read(_fillMode);
     reader.read(_muteMode, ProjectVersion::Version22);

@@ -39,6 +39,29 @@ void TrackPage::draw(Canvas &canvas) {
     WindowPainter::drawActiveFunction(canvas, Track::trackModeName(_project.selectedTrack().trackMode()));
     WindowPainter::drawFooter(canvas);
 
+    FixedStringBuilder<16> str("TRACK %d", _project.selectedTrackIndex()+1);
+
+    switch (_project.selectedTrack().trackMode()) {
+        case Track::TrackMode::Note:
+            if (strlen(_noteTrack->name())==0) {
+                _noteTrack->setName(str);
+            }
+            break;
+        case Track::TrackMode::Curve:
+            if (strlen(_curveTrack->name())==0) {
+                _curveTrack->setName(str);
+            }
+            break;
+        case Track::TrackMode::MidiCv:
+            if (strlen(_midiCvTrack->name())==0) {
+                _midiCvTrack->setName(str);
+            }
+            break;
+        case Track::TrackMode::Last:
+            break;
+    }
+
+
     ListPage::draw(canvas);
 }
 
@@ -59,10 +82,36 @@ void TrackPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-    if (key.isTrackSelect()) {
-        _project.setSelectedTrackIndex(key.trackSelect());
-        setTrack(_project.selectedTrack());
-    }
+    if (key.is(Key::Encoder) && selectedRow() == 0) {
+        switch (_project.selectedTrack().trackMode()) {
+            case Track::TrackMode::Note:
+                _manager.pages().textInput.show("NAME:", _noteTrack->name(), NoteTrack::NameLength, [this] (bool result, const char *text) {
+                    if (result) {
+                        _noteTrack->setName(text);
+                    }
+                });
+                break;
+            case Track::TrackMode::Curve:
+                _manager.pages().textInput.show("NAME:", _curveTrack->name(), CurveTrack::NameLength, [this] (bool result, const char *text) {
+                    if (result) {
+                        _curveTrack->setName(text);
+                    }
+                });
+                break;  
+            case Track::TrackMode::MidiCv:
+                _manager.pages().textInput.show("NAME:", _midiCvTrack->name(), MidiCvTrack::NameLength, [this] (bool result, const char *text) {
+                    if (result) {
+                        _midiCvTrack->setName(text);
+                    }
+                });
+                break;      
+            case Track::TrackMode::Last:
+                break;     
+        }
+
+    return;
+}
+
 
     ListPage::keyPress(event);
 }
@@ -74,14 +123,17 @@ void TrackPage::setTrack(Track &track) {
     case Track::TrackMode::Note:
         _noteTrackListModel.setTrack(track.noteTrack());
         newListModel = &_noteTrackListModel;
+        _noteTrack = &track.noteTrack();
         break;
     case Track::TrackMode::Curve:
         _curveTrackListModel.setTrack(track.curveTrack());
         newListModel = &_curveTrackListModel;
+        _curveTrack = &track.curveTrack();
         break;
     case Track::TrackMode::MidiCv:
         _midiCvTrackListModel.setTrack(track.midiCvTrack());
         newListModel = &_midiCvTrackListModel;
+        _midiCvTrack = &track.midiCvTrack();
         break;
     case Track::TrackMode::Last:
         ASSERT(false, "invalid track mode");

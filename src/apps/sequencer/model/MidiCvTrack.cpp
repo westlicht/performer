@@ -77,6 +77,7 @@ void MidiCvTrack::cvOutputName(int index, StringBuilder &str) const {
 
 void MidiCvTrack::write(VersionedSerializedWriter &writer) const {
     _source.write(writer);
+    writer.write(_name, NameLength + 1);
     writer.write(_voices);
     writer.write(_voiceConfig);
     writer.write(_notePriority);
@@ -92,6 +93,7 @@ void MidiCvTrack::write(VersionedSerializedWriter &writer) const {
 
 void MidiCvTrack::read(VersionedSerializedReader &reader) {
     _source.read(reader);
+    reader.read(_name, NameLength + 1, ProjectVersion::Version33);
     reader.read(_voices);
     if (reader.dataVersion() < ProjectVersion::Version31) {
         uint32_t voiceConfig;

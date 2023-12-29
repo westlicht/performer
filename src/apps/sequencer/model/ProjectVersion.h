@@ -93,6 +93,9 @@ enum ProjectVersion {
     // added Project::midiPgmChange and Project::alwaysSync
     Version32 = 32,
 
+    // added Track::name and expand noteRetrigger to 3 bits and nprobability to 6bits
+    Version33 = 33,
+
     // automatically derive latest version
     Last,
     Latest = Last - 1,

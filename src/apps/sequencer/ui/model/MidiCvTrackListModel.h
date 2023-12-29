@@ -47,6 +47,7 @@ public:
 
 private:
     enum Item {
+        TrackName,
         Source,
         Voices,
         VoiceConfig,
@@ -69,6 +70,7 @@ private:
 
     static const char *itemName(Item item) {
         switch (item) {
+        case TrackName:             return "Name";
         case Source:                return "Source";
         case Voices:                return "Voices";
         case VoiceConfig:           return "Voice Config";
@@ -99,6 +101,9 @@ private:
         const auto &arpeggiator = _track->arpeggiator();
 
         switch (item) {
+        case TrackName:
+            str(_track->name());
+            break;
         case Source:
             _track->source().print(str);
             break;
@@ -159,6 +164,8 @@ private:
         auto &arpeggiator = _track->arpeggiator();
 
         switch (item) {
+        case TrackName:
+            break;
         case Source:
             _track->source().edit(value, shift);
             break;
