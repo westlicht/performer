@@ -102,7 +102,7 @@ void SequencePainter::drawSlide(Canvas &canvas, int x, int y, int w, int h, bool
 const std::bitset<4> mask = 0x1;
 void SequencePainter::drawStageRepeatMode(Canvas &canvas, int x, int y, int w, int h, NoteSequence::StageRepeatMode mode) {
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Bright);
     int bottom = y + h - 1;
     std::bitset<4> enabled;
     x += (w - 8) / 2;

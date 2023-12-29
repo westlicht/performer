@@ -228,7 +228,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             break;
         }
         case Layer::StageRepeats: {
-            canvas.setColor(0xf);
+            canvas.setColor(Bright);
             FixedStringBuilder<8> str("x%d", step.stageRepeats());
             canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 20, str);
             break;
