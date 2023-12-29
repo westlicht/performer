@@ -7,8 +7,6 @@ public:
     enum Type {
         Low,
         High,
-        StepUp,
-        StepDown,
         RampUp,
         RampDown,
         rampUpHalf,
@@ -35,6 +33,8 @@ public:
         doubleSmoothDownHalf,
         Triangle,
         Bell,
+        StepUp,
+        StepDown,
         ExpDown2x,
         ExpDown3x,
         ExpDown4x,
@@ -45,4 +45,3 @@ public:
 
     static float eval(Type type, float x);
 };
-
