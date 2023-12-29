@@ -22,16 +22,16 @@ public:
     // Types
     //----------------------------------------
 
-    typedef UnsignedValue<6> GateProbability;
+    typedef UnsignedValue<4> GateProbability;
     typedef SignedValue<4> GateOffset;
     typedef UnsignedValue<3> Retrigger;
-    typedef UnsignedValue<6> RetriggerProbability;
+    typedef UnsignedValue<4> RetriggerProbability;
     typedef UnsignedValue<3> Length;
     typedef SignedValue<4> LengthVariationRange;
-    typedef UnsignedValue<6> LengthVariationProbability;
+    typedef UnsignedValue<4> LengthVariationProbability;
     typedef SignedValue<7> Note;
     typedef SignedValue<7> NoteVariationRange;
-    typedef UnsignedValue<6> NoteVariationProbability;
+    typedef UnsignedValue<4> NoteVariationProbability;
     typedef UnsignedValue<7> Condition;
     typedef UnsignedValue<3> StageRepeats;
     typedef UnsignedValue<2> StageRepeatsMode;
@@ -119,9 +119,9 @@ public:
 
         // gateProbability
 
-        int gateProbability() const { return _data0.gateProbability; }
+        int gateProbability() const { return _data1.gateProbability; }
         void setGateProbability(int gateProbability) {
-            _data0.gateProbability = GateProbability::clamp(gateProbability);
+            _data1.gateProbability = GateProbability::clamp(gateProbability);
         }
 
         // gateOffset
@@ -231,22 +231,24 @@ public:
             uint32_t raw;
             BitField<uint32_t, 0, 1> gate;
             BitField<uint32_t, 1, 1> slide;
-            BitField<uint32_t, 11, GateProbability::Bits> gateProbability;
-            BitField<uint32_t, 5, Length::Bits> length;
-            BitField<uint32_t, 8, LengthVariationRange::Bits> lengthVariationRange;
-            BitField<uint32_t, 21, LengthVariationProbability::Bits> lengthVariationProbability;
-            BitField<uint32_t, 15, Note::Bits> note;
-            BitField<uint32_t, 22, NoteVariationRange::Bits> noteVariationRange;
-            BitField<uint32_t, 26, NoteVariationProbability::Bits> noteVariationProbability;
+            BitField<uint32_t, 2, Length::Bits> length;
+            BitField<uint32_t, 5, LengthVariationRange::Bits> lengthVariationRange;
+            BitField<uint32_t, 9, LengthVariationProbability::Bits> lengthVariationProbability;
+            BitField<uint32_t, 13, Note::Bits> note;
+            BitField<uint32_t, 20, NoteVariationRange::Bits> noteVariationRange;
+            BitField<uint32_t, 27, NoteVariationProbability::Bits> noteVariationProbability;
+
+            
         } _data0;
         union {
             uint32_t raw;
-            BitField<uint32_t, 5, Retrigger::Bits> retrigger;
-            BitField<uint32_t, 20, RetriggerProbability::Bits> retriggerProbability;
-            BitField<uint32_t, 5, GateOffset::Bits> gateOffset;
-            BitField<uint32_t, 9, Condition::Bits> condition;
-            BitField<uint32_t, 16, StageRepeats::Bits> stageRepeats;
-            BitField<uint32_t, 19, StageRepeatsMode::Bits> stageRepeatMode;
+            BitField<uint32_t, 0, Retrigger::Bits> retrigger;
+            BitField<uint32_t, 4, GateProbability::Bits> gateProbability;
+            BitField<uint32_t, 8, RetriggerProbability::Bits> retriggerProbability;
+            BitField<uint32_t, 12, GateOffset::Bits> gateOffset;
+            BitField<uint32_t, 19, Condition::Bits> condition;
+            BitField<uint32_t, 22, StageRepeats::Bits> stageRepeats;
+            BitField<uint32_t, 25, StageRepeatsMode::Bits> stageRepeatMode;
             // 12 bits left
         } _data1;
     };
