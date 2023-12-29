@@ -17,6 +17,9 @@
 #include "core/math/Math.h"
 #include "core/utils/StringBuilder.h"
 #include "core/utils/StringUtils.h"
+#include <algorithm>
+#include <string>
+#include <iostream>
 
 class Project {
 public:
@@ -358,10 +361,13 @@ public:
             _selectedTrackIndex = index;
             _observable.notify(SelectedTrackIndexChanged);
 
+            StringUtils::copy(_selectedTrackName, selectedTrack().noteTrack().name(), sizeof(_selectedTrackName));
             // switch selected pattern
             setSelectedPatternIndex(_playState.trackState(index).pattern());
         }
     }
+
+    const char *selectedTrackName() const { return _selectedTrackName;}
 
     bool isSelectedTrack(int index) const { return _selectedTrackIndex == index; }
 
@@ -483,6 +489,8 @@ private:
 
     int _selectedTrackIndex = 0;
     int _selectedPatternIndex = 0;
+
+    char _selectedTrackName[FileHeader::NameLength+1] = "";
     NoteSequence::Layer _selectedNoteSequenceLayer = NoteSequence::Layer(0);
     CurveSequence::Layer _selectedCurveSequenceLayer = CurveSequence::Layer(0);
 

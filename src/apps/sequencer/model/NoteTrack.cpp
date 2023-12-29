@@ -75,6 +75,7 @@ void NoteTrack::read(VersionedSerializedReader &reader) {
     reader.backupHash();
 
     reader.read(_name, NameLength + 1, ProjectVersion::Version33);
+
     reader.read(_playMode);
     reader.read(_fillMode);
     reader.read(_fillMuted, ProjectVersion::Version26);

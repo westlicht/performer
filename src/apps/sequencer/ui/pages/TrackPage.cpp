@@ -39,29 +39,6 @@ void TrackPage::draw(Canvas &canvas) {
     WindowPainter::drawActiveFunction(canvas, Track::trackModeName(_project.selectedTrack().trackMode()));
     WindowPainter::drawFooter(canvas);
 
-    FixedStringBuilder<16> str("TRACK %d", _project.selectedTrackIndex()+1);
-
-    switch (_project.selectedTrack().trackMode()) {
-        case Track::TrackMode::Note:
-            if (strlen(_noteTrack->name())==0) {
-                _noteTrack->setName(str);
-            }
-            break;
-        case Track::TrackMode::Curve:
-            if (strlen(_curveTrack->name())==0) {
-                _curveTrack->setName(str);
-            }
-            break;
-        case Track::TrackMode::MidiCv:
-            if (strlen(_midiCvTrack->name())==0) {
-                _midiCvTrack->setName(str);
-            }
-            break;
-        case Track::TrackMode::Last:
-            break;
-    }
-
-
     ListPage::draw(canvas);
 }
 
@@ -83,25 +60,29 @@ void TrackPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.is(Key::Encoder) && selectedRow() == 0) {
+        int index = _project.selectedTrackIndex();
         switch (_project.selectedTrack().trackMode()) {
             case Track::TrackMode::Note:
-                _manager.pages().textInput.show("NAME:", _noteTrack->name(), NoteTrack::NameLength, [this] (bool result, const char *text) {
+                _manager.pages().textInput.show("NAME:", _noteTrack->name(), NoteTrack::NameLength, [this, index] (bool result, const char *text) {
                     if (result) {
-                        _noteTrack->setName(text);
+                        _project.selectedTrack().noteTrack().setName(text);
+                        
+                        _project.setSelectedTrackIndex(2);
+                        _project.setSelectedTrackIndex(index);
                     }
                 });
                 break;
             case Track::TrackMode::Curve:
                 _manager.pages().textInput.show("NAME:", _curveTrack->name(), CurveTrack::NameLength, [this] (bool result, const char *text) {
                     if (result) {
-                        _curveTrack->setName(text);
+                        _project.selectedTrack().curveTrack().setName(text);
                     }
                 });
                 break;  
             case Track::TrackMode::MidiCv:
                 _manager.pages().textInput.show("NAME:", _midiCvTrack->name(), MidiCvTrack::NameLength, [this] (bool result, const char *text) {
                     if (result) {
-                        _midiCvTrack->setName(text);
+                        _project.selectedTrack().midiCvTrack().setName(text);
                     }
                 });
                 break;      

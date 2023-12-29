@@ -41,6 +41,10 @@ void Engine::init() {
     // setup track engines
     updateTrackSetups();
     reset();
+    
+    int index = _project.selectedTrackIndex();
+    _project.setSelectedTrackIndex(2);
+    _project.setSelectedTrackIndex(index);
 
     _lastSystemTicks = os::ticks();
 }
@@ -376,7 +380,8 @@ void Engine::updateTrackSetups() {
         auto &track = _project.track(trackIndex);
         int linkTrack = track.linkTrack();
         const TrackEngine *linkedTrackEngine = linkTrack >= 0 ? &trackEngine(linkTrack) : nullptr;
-
+        FixedStringBuilder<16> str("TRACK %d", trackIndex+1);
+       
         if (!_trackEngines[trackIndex] || _trackEngines[trackIndex]->trackMode() != track.trackMode()) {
             auto &trackEngine = _trackEngines[trackIndex];
             auto &trackContainer = _trackEngineContainers[trackIndex];
@@ -384,6 +389,9 @@ void Engine::updateTrackSetups() {
             switch (track.trackMode()) {
             case Track::TrackMode::Note:
                 trackEngine = trackContainer.create<NoteTrackEngine>(*this, _model, track, linkedTrackEngine);
+                if (sizeof(track.noteTrack().name()==0)) {
+                    track.noteTrack().setName(str);
+                }
                 break;
             case Track::TrackMode::Curve:
                 trackEngine = trackContainer.create<CurveTrackEngine>(*this, _model, track, linkedTrackEngine);

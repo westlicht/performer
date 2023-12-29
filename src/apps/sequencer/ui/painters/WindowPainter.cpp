@@ -3,6 +3,7 @@
 #include "Config.h"
 
 #include "core/utils/StringBuilder.h"
+#include <string>
 
 static void drawInvertedText(Canvas &canvas, int x, int y, const char *text, bool inverted = true) {
     canvas.setFont(Font::Tiny);
@@ -78,22 +79,22 @@ void WindowPainter::drawClock(Canvas &canvas, const Engine &engine) {
     canvas.drawText(10, 8 - 2, FixedStringBuilder<8>("%.1f", engine.tempo()));
 }
 
-void WindowPainter::drawActiveState(Canvas &canvas, int track, int playPattern, int editPattern, bool snapshotActive, bool songActive) {
+void WindowPainter::drawActiveState(Canvas &canvas, int track, const char *trackName, int playPattern, int editPattern, bool snapshotActive, bool songActive) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(Color::Bright);
 
     // draw selected track
-    canvas.drawText(40, 8 - 2, FixedStringBuilder<8>("T%d", track + 1));
+    canvas.drawText(40, 8 - 2, FixedStringBuilder<8>(trackName));
 
     if (snapshotActive) {
-        drawInvertedText(canvas, 56, 8 - 2, "SNAP", true);
+        drawInvertedText(canvas, 84, 8 - 2, "SNAP", true);
     } else {
         // draw active pattern
-        drawInvertedText(canvas, 56, 8 - 2, FixedStringBuilder<8>("P%d", playPattern + 1), songActive);
+        drawInvertedText(canvas, 84, 8 - 2, FixedStringBuilder<8>("P%d", playPattern + 1), songActive);
 
         // draw edit pattern
-        drawInvertedText(canvas, 75, 8 - 2, FixedStringBuilder<8>("E%d", editPattern + 1), playPattern == editPattern);
+        drawInvertedText(canvas, 103, 8 - 2, FixedStringBuilder<8>("E%d", editPattern + 1), playPattern == editPattern);
     }
 }
 
@@ -101,26 +102,27 @@ void WindowPainter::drawActiveMode(Canvas &canvas, const char *mode) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(Color::Bright);
-    canvas.drawText(PageWidth - canvas.textWidth(mode) - 2, 8 - 2, mode);
+    canvas.drawText(PageWidth - canvas.textWidth(mode) - 2 + 15, 8 - 2, mode);
 }
 
 void WindowPainter::drawActiveFunction(Canvas &canvas, const char *function) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(Color::Bright);
-    canvas.drawText(100, 8 - 2, function);
+    canvas.drawText(130, 8 - 2, function);
 }
 
 void WindowPainter::drawHeader(Canvas &canvas, const Model &model, const Engine &engine, const char *mode) {
     const auto &project = model.project();
     int track = project.selectedTrackIndex();
+    const char *trackName = project.selectedTrackName();
     int playPattern = project.playState().trackState(track).pattern();
     int editPattern = project.selectedPatternIndex();
     bool snapshotActive = project.playState().snapshotActive();
     bool songActive = project.playState().songState().playing();
 
     drawClock(canvas, engine);
-    drawActiveState(canvas, track, playPattern, editPattern, snapshotActive, songActive);
+    drawActiveState(canvas, track, trackName, playPattern, editPattern, snapshotActive, songActive);
     drawActiveMode(canvas, mode);
 
     canvas.setBlendMode(BlendMode::Set);
