@@ -16,6 +16,7 @@ To find out more about improvements changes, check the table below.
 | double click to toggle gates| double click on step to toggle a gate when editing layer other than gate| done |
 | cv outs on stop clock| cv outs remain to the last value when clock is stopped | done | 
 | random seed | each time we enter the random generator page a random seed is picked | done |
+| import curve improvements | merge jackpf shape improvements [link](https://github.com/jackpf/performer/blob/master/doc/improvements/shape-improvements.md) | done |
 
 --- original documentation below ---
 

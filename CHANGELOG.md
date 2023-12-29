@@ -1,5 +1,12 @@
 # Changelog
 
+
+## v0.1.44 (29 December 2023)
+
+#### Improvements
+
+- add curve improvements [thanks to jackpf](https://github.com/jackpf/performer/blob/master/doc/improvements/shape-improvements.md)
+
 ## v0.1.43 (27 December 2023)
 
 #### Improvements
