@@ -1,10 +1,6 @@
 #include "RandomGenerator.h"
 
 #include "core/utils/Random.h"
-#include <cstdint>
-#include <cstdlib>
-#include <ctime>
-#include <random>
 
 
 RandomGenerator::RandomGenerator(SequenceBuilder &builder, Params &params) :
@@ -53,10 +49,7 @@ void RandomGenerator::init() {
 
 void RandomGenerator::randomizeSeed() {
 
-    std::random_device seed;
-    std::mt19937 gen{seed()}; // seed the generator
-    std::uniform_int_distribution<> dist{0, 65535}; // set min and max
-    _params.seed = dist(gen); 
+    _params.seed = 0 + ( std::rand() % ( 999 - 0 + 1 ) );
 }
 
 void RandomGenerator::update() {
