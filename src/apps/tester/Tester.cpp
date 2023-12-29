@@ -73,7 +73,7 @@ public:
         Last
     };
 
-    enum class Color : uint8_t {
+    enum class LEDColor : uint8_t {
         Off,
         Red,
         Green,
@@ -88,7 +88,7 @@ public:
 
     TesterTask() :
         _frameBuffer(256, 64, _frameBufferData),
-        _canvas(_frameBuffer)
+        _canvas(_frameBuffer, _brightness)
     {
         _cvOutputs.fill(0);
         _gateOutputs.fill(false);
@@ -186,15 +186,15 @@ private:
         case Mode::Leds:
             if (keyDown) {
                 if (index < 32) {
-                    _leds[index] = Color((int(_leds[index]) + 1) % int(Color::Last));
+                    _leds[index] = LEDColor((int(_leds[index]) + 1) % int(LEDColor::Last));
                 } else if (index == 32) {
-                    fillLeds(Color::Off);
+                    fillLeds(LEDColor::Off);
                 } else if (index == 33) {
-                    fillLeds(Color::Red);
+                    fillLeds(LEDColor::Red);
                 } else if (index == 34) {
-                    fillLeds(Color::Green);
+                    fillLeds(LEDColor::Green);
                 } else if (index == 35) {
-                    fillLeds(Color::Orange);
+                    fillLeds(LEDColor::Orange);
                 }
             }
             break;
@@ -369,24 +369,24 @@ private:
 
     void drawClear(Canvas &canvas) {
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0);
+        canvas.setColor(Color::None);
         canvas.fill();
     }
 
     void drawTitle(Canvas &canvas, const char *title) {
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.fillRect(0, 0, 256, 10);
         canvas.setBlendMode(BlendMode::Sub);
         canvas.setFont(Font::Tiny);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawText(2, 7, title);
     }
 
     void drawLog(Canvas &canvas) {
         canvas.setBlendMode(BlendMode::Set);
         canvas.setFont(Font::Tiny);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
 
         int x = 2;
         int y = 18;
@@ -415,19 +415,19 @@ private:
         _logBuffer.print(text);
     }
 
-    void fillLeds(Color color = Color::Off) {
+    void fillLeds(LEDColor color = LEDColor::Off) {
         _leds.fill(color);
     }
 
-    void setLed(int index, Color color) {
+    void setLed(int index, LEDColor color) {
         _leds[index] = color;
     }
 
     void updateLeds() {
         for (size_t i = 0; i < _leds.size(); ++i) {
-            Color c = _leds[i];
-            uint8_t red = (c == Color::Red || c == Color::Orange) ? 0xff : 0;
-            uint8_t green = (c == Color::Green || c == Color::Orange) ? 0xff : 0;
+            LEDColor c = _leds[i];
+            uint8_t red = (c == LEDColor::Red || c == LEDColor::Orange) ? 0xff : 0;
+            uint8_t green = (c == LEDColor::Green || c == LEDColor::Orange) ? 0xff : 0;
             blm.setLed(i, red, green);
         }
     }
@@ -461,7 +461,7 @@ private:
 
     LogBuffer<5, 64> _logBuffer;
 
-    std::array<Color, 32> _leds;
+    std::array<LEDColor, 32> _leds;
 
     bool _clockOutput = false;
     bool _resetOutput = false;
@@ -471,6 +471,7 @@ private:
     uint8_t _frameBufferData[256 * 64];
     FrameBuffer8bit _frameBuffer;
     Canvas _canvas;
+    float _brightness = 1.0;
 };
 
 static TesterTask tester;

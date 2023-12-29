@@ -80,7 +80,7 @@ static CCMRAM_BSS Profiler profiler;
 
 static Model model;
 static CCMRAM_BSS Engine engine(model, clockTimer, adc, dac, dio, gateOutput, midi, usbMidi);
-static CCMRAM_BSS Ui ui(model, engine, lcd, blm, encoder);
+static CCMRAM_BSS Ui ui(model, engine, lcd, blm, encoder, model.settings());
 
 
 static constexpr uint32_t TaskAliveCount = 4;

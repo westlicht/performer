@@ -52,11 +52,13 @@ private:
         Swing,
         TimeSignature,
         SyncMeasure,
+        AlwaysSync,
         Scale,
         RootNote,
         MonitorMode,
         RecordMode,
         MidiInput,
+        MidiPgmChange,
         CvGateInput,
         CurveCvInput,
         Last
@@ -69,11 +71,13 @@ private:
         case Swing:             return "Swing";
         case TimeSignature:     return "Time Signature";
         case SyncMeasure:       return "Sync Measure";
+        case AlwaysSync:        return "Sync Patterns";
         case Scale:             return "Scale";
         case RootNote:          return "Root Note";
         case MonitorMode:       return "Monitor Mode";
         case RecordMode:        return "Record Mode";
         case MidiInput:         return "MIDI Input";
+        case MidiPgmChange:     return "MIDI Pgm Chng";
         case CvGateInput:       return "CV/Gate Input";
         case CurveCvInput:      return "Curve CV Input";
         case Last:              break;
@@ -102,6 +106,9 @@ private:
         case SyncMeasure:
             _project.printSyncMeasure(str);
             break;
+        case AlwaysSync:
+            _project.printAlwaysSyncPatterns(str);
+            break;
         case Scale:
             _project.printScale(str);
             break;
@@ -116,6 +123,9 @@ private:
             break;
         case MidiInput:
             _project.printMidiInput(str);
+            break;
+        case MidiPgmChange:
+            _project.printMidiPgmChange(str);
             break;
         case CvGateInput:
             _project.printCvGateInput(str);
@@ -144,6 +154,9 @@ private:
         case SyncMeasure:
             _project.editSyncMeasure(value, shift);
             break;
+        case AlwaysSync:
+            _project.editAlwaysSyncPatterns(value, shift);
+            break;
         case Scale:
             _project.editScale(value, shift);
             break;
@@ -158,6 +171,9 @@ private:
             break;
         case MidiInput:
             _project.editMidiInput(value, shift);
+            break;
+        case MidiPgmChange:
+            _project.editMidiPgmChange(value, shift);
             break;
         case CvGateInput:
             _project.editCvGateInput(value, shift);

@@ -17,15 +17,15 @@ static void drawNoteTrack(Canvas &canvas, int trackIndex, const NoteTrackEngine 
         int x = 64 + i * 8;
 
         if (trackEngine.currentStep() == stepIndex) {
-            canvas.setColor(step.gate() ? 0xf : 0xa);
+            canvas.setColor(step.gate() ? Color::Bright : Color::MediumBright);
             canvas.fillRect(x + 1, y + 1, 6, 6);
         } else {
-            canvas.setColor(step.gate() ? 0x7 : 0x3);
+            canvas.setColor(step.gate() ? Color::Medium : Color::Low);
             canvas.fillRect(x + 1, y + 1, 6, 6);
         }
 
         // if (trackEngine.currentStep() == stepIndex) {
-        //     canvas.setColor(0xf);
+        //     canvas.setColor(Color::Bright);
         //     canvas.drawRect(x + 1, y + 1, 6, 6);
         // }
     }
@@ -55,7 +55,7 @@ static void drawCurve(Canvas &canvas, int x, int y, int w, int h, float &lastY, 
 
 static void drawCurveTrack(Canvas &canvas, int trackIndex, const CurveTrackEngine &trackEngine, const CurveSequence &sequence) {
     canvas.setBlendMode(BlendMode::Add);
-    canvas.setColor(0xa);
+    canvas.setColor(Color::MediumBright);
 
     int stepOffset = (std::max(0, trackEngine.currentStep()) / 16) * 16;
     int y = trackIndex * 8;
@@ -77,7 +77,7 @@ static void drawCurveTrack(Canvas &canvas, int trackIndex, const CurveTrackEngin
     if (trackEngine.currentStep() >= 0) {
         int x = 64 + ((trackEngine.currentStep() - stepOffset) + trackEngine.currentStepFraction()) * 8;
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.vline(x, y + 1, 7);
     }
 }
@@ -98,7 +98,7 @@ void OverviewPage::draw(Canvas &canvas) {
 
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0x7);
+    canvas.setColor(Color::Medium);
 
     canvas.vline(64 - 3, 0, 64);
     canvas.vline(64 - 2, 0, 64);
@@ -111,22 +111,22 @@ void OverviewPage::draw(Canvas &canvas) {
         const auto &trackEngine = _engine.trackEngine(trackIndex);
 
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0x7);
+        canvas.setColor(Color::Medium);
 
         int y = 5 + trackIndex * 8;
 
         // track number / pattern number
-        canvas.setColor(trackState.mute() ? 0x7 : 0xf);
+        canvas.setColor(trackState.mute() ? Color::Medium : Color::Bright);
         canvas.drawText(2, y, FixedStringBuilder<8>("T%d", trackIndex + 1));
         canvas.drawText(18, y, FixedStringBuilder<8>("P%d", trackState.pattern() + 1));
 
         // gate output
         bool gate = _engine.gateOutput() & (1 << trackIndex);
-        canvas.setColor(gate ? 0xf : 0x7);
+        canvas.setColor(gate ? Color::Bright : Color::Medium);
         canvas.fillRect(256 - 48 + 1, trackIndex * 8 + 1, 6, 6);
 
         // cv output
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.drawText(256 - 32, y, FixedStringBuilder<8>("%.2fV", _engine.cvOutput().channel(trackIndex)));
 
         switch (track.trackMode()) {

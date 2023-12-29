@@ -67,7 +67,7 @@ void SongPage::draw(Canvas &canvas) {
     int y = tableOriginY;
 
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     auto isHighlighted = [isShift, selectedTracks] (int colIndex) {
         return
@@ -81,7 +81,7 @@ void SongPage::draw(Canvas &canvas) {
     {
         int x = tableOriginX;
         for (int colIndex = 0; colIndex < 10; ++colIndex) {
-            canvas.setColor(isHighlighted(colIndex) ? 0xf : 0x7);
+            canvas.setColor(isHighlighted(colIndex) ? Color::Bright : Color::Medium);
             canvas.drawTextCentered(x, y, colWidth[colIndex], rowHeight, colHeader[colIndex]);
             x += colWidth[colIndex];
         }
@@ -98,13 +98,13 @@ void SongPage::draw(Canvas &canvas) {
 
         // draw play cursor
         if (songState.playing() && slotIndex == songState.currentSlot()) {
-            canvas.setColor(0xf);
+            canvas.setColor(Color::Bright);
             SongPainter::drawArrowRight(canvas, x - 4, y, 4, rowHeight);
         }
 
         // draw table cells
         for (int colIndex = 0; colIndex < 10; ++colIndex) {
-            canvas.setColor(slotIndex == _selectedSlot && isHighlighted(colIndex) ? 0xf : 0x7);
+            canvas.setColor(slotIndex == _selectedSlot && isHighlighted(colIndex) ? Color::Bright : Color::Medium);
             FixedStringBuilder<8> str;
             if (colIndex == 0) {
                 str("%d", slotIndex + 1);
@@ -145,7 +145,7 @@ void SongPage::draw(Canvas &canvas) {
         uint32_t beat = _engine.tick() / _engine.noteDivisor();
 
         canvas.setBlendMode(BlendMode::Set);
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
 
         canvas.setFont(Font::Tiny);
         canvas.drawTextCentered(8, 10, 32, 10, FixedStringBuilder<16>("%d.%d", beat / beatsPerMeasure + 1, beat % beatsPerMeasure + 1));
@@ -158,7 +158,7 @@ void SongPage::draw(Canvas &canvas) {
     }
 
     if (playState.hasSyncedRequests() && songState.hasPlayRequests()) {
-        canvas.setColor(0xf);
+        canvas.setColor(Color::Bright);
         canvas.hline(0, 10, _engine.syncFraction() * Width);
     }
 }

@@ -51,9 +51,9 @@ void Intro::update(float dt) {
 
 void Intro::draw(Canvas &canvas) {
     canvas.setBlendMode(BlendMode::Set);
-    canvas.setColor(0);
+    canvas.setColor(Color::None);
     canvas.fill();
-    canvas.setColor(0xf);
+    canvas.setColor(Color::Bright);
 
     Vec3 eye(0.f, 0.f, -15.f);
     Vec3 target(0.f);
@@ -65,7 +65,7 @@ void Intro::draw(Canvas &canvas) {
     Vec2 positions[8];
 
     canvas.setBlendMode(BlendMode::Add);
-    canvas.setColor(0xa);
+    canvas.setColor(Color::MediumBright);
 
     for (int instance = -2; instance <= 2; ++instance) {
         Mat4 modelMatrix = Mat4::translate(Vec3(instance * 6.f, 0.f, 0.f)) * Mat4::rotXYZ(Vec3((_time + instance) * 0.3, (_time + instance) * 0.7, (_time + instance) * 1.3));

@@ -9,18 +9,24 @@
 
 #include "model/Model.h"
 
-Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder) :
-    _model(model),
-    _engine(engine),
-    _lcd(lcd),
-    _blm(blm),
-    _encoder(encoder),
-    _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
-    _canvas(_frameBuffer),
-    _pageManager(_pages),
-    _pageContext({ _messageManager, _pageKeyState, _globalKeyState, _model, _engine }),
-    _pages(_pageManager, _pageContext),
-    _controllerManager(model, engine)
+Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder, Settings &settings) :
+        _model(model),
+        _engine(engine),
+        _lcd(lcd),
+        _blm(blm),
+        _encoder(encoder),
+        _frameBuffer(CONFIG_LCD_WIDTH, CONFIG_LCD_HEIGHT, _frameBufferData),
+        _canvas(_frameBuffer, settings.userSettings().get<BrightnessSetting>(SettingBrightness)->getValue()),
+        _pageManager(_pages),
+        _pageContext({ _messageManager, _pageKeyState, _globalKeyState, _model, _engine }),
+        _pages(_pageManager, _pageContext),
+        _controllerManager(model, engine),
+        // TODO pass as arg
+        _screensaver(Screensaver(
+                _canvas,
+                settings.userSettings().get<ScreensaverSetting>(SettingScreensaver)->getValue(),
+                settings.userSettings().get<WakeModeSetting>(SettingWakeMode)->getValue()
+        ))
 {
 }
 
@@ -84,9 +90,14 @@ void Ui::update() {
     uint32_t currentTicks = os::ticks();
     uint32_t intervalTicks = os::time::ms(1000 / _pageManager.fps());
     if (currentTicks - _lastFrameBufferUpdateTicks >= intervalTicks) {
-        _pageManager.draw(_canvas);
-        _messageManager.update();
-        _messageManager.draw(_canvas);
+        if (!_screensaver.shouldBeOn()) {
+            _pageManager.draw(_canvas);
+            _messageManager.update();
+            _messageManager.draw(_canvas);
+            _screensaver.incScreenOnTicks(intervalTicks);
+        } else {
+            _screensaver.on();
+        }
         _lcd.draw(_frameBuffer.data());
         _lastFrameBufferUpdateTicks += intervalTicks;
     }
@@ -101,10 +112,10 @@ void Ui::update() {
 }
 
 void Ui::showAssert(const char *filename, int line, const char *msg) {
-    _canvas.setColor(0);
+    _canvas.setColor(Color::None);
     _canvas.fill();
 
-    _canvas.setColor(0xf);
+    _canvas.setColor(Color::Bright);
     _canvas.setFont(Font::Small);
     _canvas.drawText(4, 10, "FATAL ERROR");
 
@@ -128,10 +139,13 @@ void Ui::handleKeys() {
         _pageKeyState[event.value()] = isDown;
         _globalKeyState[event.value()] = isDown;
         Key key(event.value(), _globalKeyState);
+
         KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
+        _screensaver.consumeKey(keyEvent);
         _pageManager.dispatchEvent(keyEvent);
         if (isDown) {
             KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
+            _screensaver.consumeKey(keyPressEvent);
             _pageManager.dispatchEvent(keyPressEvent);
         }
     }
@@ -141,26 +155,29 @@ void Ui::handleEncoder() {
     Encoder::Event event;
     while (_encoder.nextEvent(event)) {
         switch (event) {
-        case Encoder::Left:
-        case Encoder::Right: {
-            EncoderEvent encoderEvent(event == Encoder::Left ? -1 : 1, _pageKeyState[Key::Encoder]);
-            _pageManager.dispatchEvent(encoderEvent);
-            break;
-        }
-        case Encoder::Down:
-        case Encoder::Up: {
-            bool isDown = event == Encoder::Down;
-            _pageKeyState[Key::Encoder] = isDown ? 1 : 0;
-            _globalKeyState[Key::Encoder] = isDown ? 1 : 0;
-            Key key(Key::Encoder, _globalKeyState);
-            KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
-            _pageManager.dispatchEvent(keyEvent);
-            if (isDown) {
-                KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
-                _pageManager.dispatchEvent(keyPressEvent);
+            case Encoder::Left:
+            case Encoder::Right: {
+                EncoderEvent encoderEvent(event == Encoder::Left ? -1 : 1, _pageKeyState[Key::Encoder]);
+                _screensaver.consumeEncoder(encoderEvent);
+                _pageManager.dispatchEvent(encoderEvent);
+                break;
             }
-            break;
-        }
+            case Encoder::Down:
+            case Encoder::Up: {
+                bool isDown = event == Encoder::Down;
+                _pageKeyState[Key::Encoder] = isDown ? 1 : 0;
+                _globalKeyState[Key::Encoder] = isDown ? 1 : 0;
+                Key key(Key::Encoder, _globalKeyState);
+                KeyEvent keyEvent(isDown ? Event::KeyDown : Event::KeyUp, key);
+                _screensaver.consumeKey(keyEvent);
+                _pageManager.dispatchEvent(keyEvent);
+                if (isDown) {
+                    KeyPressEvent keyPressEvent = _keyPressEventTracker.process(key);
+                    _screensaver.consumeKey(keyPressEvent);
+                    _pageManager.dispatchEvent(keyPressEvent);
+                }
+                break;
+            }
         }
     }
 }
