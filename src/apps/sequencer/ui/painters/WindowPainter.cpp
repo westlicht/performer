@@ -102,7 +102,7 @@ void WindowPainter::drawActiveMode(Canvas &canvas, const char *mode) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(Color::Bright);
-    canvas.drawText(PageWidth - canvas.textWidth(mode) - 2 + 15, 8 - 2, mode);
+    canvas.drawText(PageWidth - canvas.textWidth(mode) - 2, 8 - 2, mode);
 }
 
 void WindowPainter::drawActiveFunction(Canvas &canvas, const char *function) {
