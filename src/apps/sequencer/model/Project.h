@@ -361,7 +361,19 @@ public:
             _selectedTrackIndex = index;
             _observable.notify(SelectedTrackIndexChanged);
 
-            StringUtils::copy(_selectedTrackName, selectedTrack().noteTrack().name(), sizeof(_selectedTrackName));
+            switch (selectedTrack()._trackMode) {
+                case Track::TrackMode::Note:
+                    StringUtils::copy(_selectedTrackName, selectedTrack().noteTrack().name(), sizeof(_selectedTrackName));
+                    break;
+                case Track::TrackMode::Curve: 
+                    StringUtils::copy(_selectedTrackName, selectedTrack().curveTrack().name(), sizeof(_selectedTrackName));
+                    break;
+                case Track::TrackMode::MidiCv:
+                    StringUtils::copy(_selectedTrackName, selectedTrack().midiCvTrack().name(), sizeof(_selectedTrackName));
+                    break;
+                case Track::TrackMode::Last:
+                    break;
+            }
             // switch selected pattern
             setSelectedPatternIndex(_playState.trackState(index).pattern());
         }
