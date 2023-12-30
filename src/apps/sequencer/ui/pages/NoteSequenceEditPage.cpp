@@ -283,6 +283,10 @@ void NoteSequenceEditPage::updateLeds(Leds &leds) {
             leds.set(index, false, quickEditItems[i] != NoteSequenceListModel::Item::Last);
             leds.mask(index);
         }
+        int index = MatrixMap::fromStep(15);
+        leds.unmask(index);
+        leds.set(index, false, true);
+        leds.mask(index);
     }
 }
 
@@ -839,7 +843,7 @@ void NoteSequenceEditPage::tieNotes() {
     if (_stepSelection.any()) {
         int first=-1;
         int last=-1;
-        for (int i = 0; i < _stepSelection.size(); i++) {
+        for (int i = 0; (unsigned)i < sizeof(_stepSelection); i++) {
             if (_stepSelection[i] == 1) {
                 if (first == -1 ) {
                     first = i;
