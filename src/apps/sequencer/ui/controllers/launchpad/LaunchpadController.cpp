@@ -57,6 +57,9 @@ static const LayerMapItem noteSequenceLayerMap[] = {
     [int(NoteSequence::Layer::NoteVariationRange)]          =  { 1, 3 },
     [int(NoteSequence::Layer::NoteVariationProbability)]    =  { 2, 3 },
     [int(NoteSequence::Layer::Condition)]                   =  { 0, 4 },
+    [int(NoteSequence::Layer::StageRepeats)]                =  { 4, 0 },
+    [int(NoteSequence::Layer::StageRepeatsMode)]            =  { 5, 0 },
+
 };
 
 static constexpr int noteSequenceLayerMapSize = sizeof(noteSequenceLayerMap) / sizeof(noteSequenceLayerMap[0]);
