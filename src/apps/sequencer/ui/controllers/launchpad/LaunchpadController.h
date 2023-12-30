@@ -100,6 +100,7 @@ private:
     void sequenceSetFirstStep(int step);
     void sequenceSetLastStep(int step);
     void sequenceSetRunMode(int mode);
+    void sequenceSetFollowMode(int col);
     void sequenceToggleStep(int row, int col);
     void sequenceToggleNoteStep(int row, int col);
     void sequenceEditStep(int row, int col);
@@ -109,6 +110,7 @@ private:
     void sequenceDrawLayer();
     void sequenceDrawStepRange(int highlight);
     void sequenceDrawRunMode();
+    void sequenceDrawFollowMode();
     void sequenceDrawSequence();
     void sequenceDrawNoteSequence();
     void sequenceDrawCurveSequence();
@@ -144,6 +146,7 @@ private:
     void drawNoteSequenceNotes(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep);
     void drawCurveSequenceBars(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep);
     void drawCurveSequenceDots(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep);
+    void followModeAction(int currentStep, int);
     void drawBar(int row, int value, bool active, bool current);
 
     // Led handling

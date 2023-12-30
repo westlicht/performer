@@ -1,7 +1,9 @@
 #include "LaunchpadController.h"
 
+#include "LaunchpadDevice.h"
 #include "core/Debug.h"
 #include "os/os.h"
+#include <map>
 
 #define CALL_MODE_FUNCTION(_mode_, _function_, ...)                         \
     switch (_mode_) {                                                       \
@@ -30,6 +32,7 @@ BUTTON(Layer, LaunchpadDevice::FunctionRow, 1)
 BUTTON(FirstStep, LaunchpadDevice::FunctionRow, 2)
 BUTTON(LastStep, LaunchpadDevice::FunctionRow, 3)
 BUTTON(RunMode, LaunchpadDevice::FunctionRow, 4)
+BUTTON(FollowMode, LaunchpadDevice::FunctionRow, 5);
 
 // Pattern page buttons
 BUTTON(Latch, LaunchpadDevice::FunctionRow, 1)
@@ -99,6 +102,9 @@ static const RangeMap *curveSequenceLayerRangeMap[] = {
     [int(CurveSequence::Layer::GateProbability)]            = nullptr,
 };
 
+bool _followMode[7];
+std::map<int8_t, int> dict;
+
 LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info) :
     Controller(manager, model, engine),
     _project(model.project())
@@ -135,6 +141,14 @@ LaunchpadController::LaunchpadController(ControllerManager &manager, Model &mode
     _device->initialize();
 
     setMode(Mode::Sequence);
+    dict['\x03'] = 0;
+    dict['\x02'] = 1;
+    dict['\x01'] = 2;
+    dict['\x00'] = 3;
+    dict['\xff'] = 4;
+    dict['\xfe'] = 5;
+    dict['\xfd'] = 6;
+    dict['\xfe'] = 7;
 }
 
 LaunchpadController::~LaunchpadController() {
@@ -237,6 +251,9 @@ void LaunchpadController::sequenceDraw() {
     } else if (buttonState<RunMode>()) {
         mirrorButton<RunMode>();
         sequenceDrawRunMode();
+    } else if (buttonState<FollowMode>()) {
+        mirrorButton<FollowMode>();
+        sequenceDrawFollowMode();
     } else {
         mirrorButton<Fill>();
         sequenceDrawSequence();
@@ -266,6 +283,10 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
         } else if (buttonState<RunMode>()) {
             if (button.isGrid()) {
                 sequenceSetRunMode(button.gridIndex());
+            }
+        } else if (buttonState<FollowMode>()) {
+            if (button.isGrid()) {
+                sequenceSetFollowMode(button.col);
             }
         } else if (buttonState<Fill>()) {
             if (button.isScene()) {
@@ -400,6 +421,14 @@ void LaunchpadController::sequenceSetRunMode(int mode) {
     }
 }
 
+void LaunchpadController::sequenceSetFollowMode(int col) {
+    if (_followMode[col]) {
+        _followMode[col] = false;
+    } else {
+        _followMode[col] = true;
+    }
+}
+
 void LaunchpadController::sequenceToggleStep(int row, int col) {
     switch (_project.selectedTrack().trackMode()) {
     case Track::TrackMode::Note:
@@ -525,6 +554,13 @@ void LaunchpadController::sequenceDrawRunMode() {
     default:
         break;
     }
+}
+
+void LaunchpadController::sequenceDrawFollowMode() {
+    for (int i= 0; i < 8; ++i) {
+        setGridLed(0, i, _followMode[i] ? colorGreen() : colorRed());
+    }
+    
 }
 
 void LaunchpadController::sequenceDrawSequence() {
@@ -811,6 +847,8 @@ void LaunchpadController::drawNoteSequenceBits(const NoteSequence &sequence, Not
 void LaunchpadController::drawNoteSequenceBars(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
     for (int col = 0; col < 8; ++col) {
         int stepIndex = col + _sequence.navigation.col * 8;
+        int lastStep = sequence.lastStep();
+        followModeAction(currentStep, lastStep);
         const auto &step = sequence.step(stepIndex);
         drawBar(col, step.layerValue(layer), step.gate(), stepIndex == currentStep);
     }
@@ -820,6 +858,8 @@ void LaunchpadController::drawNoteSequenceDots(const NoteSequence &sequence, Not
     int ofs = _sequence.navigation.row * 8;
     for (int col = 0; col < 8; ++col) {
         int stepIndex = col + _sequence.navigation.col * 8;
+        int lastStep = sequence.lastStep();
+        followModeAction(currentStep, lastStep);
         const auto &step = sequence.step(stepIndex);
         int value = step.layerValue(layer);
         setGridLed((7 - value) + ofs, col, stepColor(true, stepIndex == currentStep));
@@ -827,13 +867,14 @@ void LaunchpadController::drawNoteSequenceDots(const NoteSequence &sequence, Not
 }
 
 void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
+
     int ofs = _sequence.navigation.row * 8;
 
     // draw octave lines
     int octave = sequence.selectedScale(_project.scale()).notesPerOctave();
     for (int row = 0; row < 8; ++row) {
         if (modulo(row + ofs, octave) == 0) {
-            for (int col = 0; col < 8; ++col) {
+            for (int col = 0; col < 2; ++col) {
             setGridLed(7 - row, col, colorYellow(1));
             }
         }
@@ -842,6 +883,8 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
     // draw notes
     for (int col = 0; col < 8; ++col) {
         int stepIndex = col + _sequence.navigation.col * 8;
+        int lastStep = sequence.lastStep();
+        followModeAction(currentStep, lastStep);        
         const auto &step = sequence.step(stepIndex);
         setGridLed((7 - step.layerValue(layer)) + ofs, col, stepColor(step.gate(), stepIndex == currentStep));
     }
@@ -850,6 +893,8 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
 void LaunchpadController::drawCurveSequenceBars(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep) {
     for (int col = 0; col < 8; ++col) {
         int stepIndex = col + _sequence.navigation.col * 8;
+        int lastStep = sequence.lastStep();
+        followModeAction(currentStep, lastStep);
         const auto &step = sequence.step(stepIndex);
         drawBar(col, step.layerValue(layer), true, stepIndex == currentStep);
     }
@@ -860,12 +905,28 @@ void LaunchpadController::drawCurveSequenceDots(const CurveSequence &sequence, C
     int ofs = _sequence.navigation.row * 8;
     for (int col = 0; col < 8; ++col) {
         int stepIndex = col + _sequence.navigation.col * 8;
+        int lastStep = sequence.lastStep();
+        followModeAction(currentStep, lastStep);
         const auto &step = sequence.step(stepIndex);
         int value = step.layerValue(layer);
         if (rangeMap) {
             value = rangeMap->map(value);
         }
         setGridLed((7 - value) + ofs, col, stepColor(true, stepIndex == currentStep));
+    }
+}
+
+void LaunchpadController::followModeAction(int currentStep, int lastStep) {
+
+    int trackIndex = _project.selectedTrack().trackIndex();
+    if (_followMode[trackIndex]) {
+            int g = currentStep / 8;
+            int row = dict.at(_sequence.navigation.row);
+            Button button = Button(row,g);
+            if (currentStep == lastStep) {
+                button = Button(row,0);
+            }
+            navigationButtonDown(_sequence.navigation, button);    
     }
 }
 
