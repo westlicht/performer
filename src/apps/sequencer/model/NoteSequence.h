@@ -243,10 +243,10 @@ public:
         union {
             uint32_t raw;
             BitField<uint32_t, 0, Retrigger::Bits> retrigger;
-            BitField<uint32_t, 4, GateProbability::Bits> gateProbability;
-            BitField<uint32_t, 8, RetriggerProbability::Bits> retriggerProbability;
-            BitField<uint32_t, 12, GateOffset::Bits> gateOffset;
-            BitField<uint32_t, 19, Condition::Bits> condition;
+            BitField<uint32_t, 3, GateProbability::Bits> gateProbability;
+            BitField<uint32_t, 7, RetriggerProbability::Bits> retriggerProbability;
+            BitField<uint32_t, 11, GateOffset::Bits> gateOffset;
+            BitField<uint32_t, 15, Condition::Bits> condition;
             BitField<uint32_t, 22, StageRepeats::Bits> stageRepeats;
             BitField<uint32_t, 25, StageRepeatsMode::Bits> stageRepeatMode;
             // 12 bits left
