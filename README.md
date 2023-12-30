@@ -18,7 +18,7 @@ To find out more about improvements changes, check the table below.
 | random seed | each time we enter the random generator page a random seed is picked | done |
 | import curve improvements | merge jackpf shape improvements [link](https://github.com/jackpf/performer/blob/master/doc/improvements/shape-improvements.md) | done |
 | import MIDI improvements | merge jackpf MIDI improvements [link](https://github.com/jackpf/performer/blob/master/doc/improvements/midi-improvements.md) | done | 
-| import Noise Redection Improvements | merge jackpf Noise Reduction improvements [link](https://github.com/jackpf/performer/blob/master/doc/improvements/noise-reduction.md)
+| import Noise Redection Improvements | merge jackpf Noise Reduction improvements [link](https://github.com/jackpf/performer/blob/master/doc/improvements/noise-reduction.md) | done |
 | track names | edit track name for each track (note, curve, midi) | done |
 | quick tie notes | select a step range, then click page+16 to tie notes. set gate lenght to max (except last selected step) and set note as first note selected | done |
 
