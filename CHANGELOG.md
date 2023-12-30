@@ -9,6 +9,7 @@
 - add midi improvements [thanks to jackpf](https://github.com/jackpf/performer/blob/master/doc/improvements/midi-improvements.md)
 - add noise reduction [thanks to jackpf](https://github.com/jackpf/performer/blob/master/doc/improvements/noise-reduction.md)
 - add track names
+- add quick tie notes feature
 
 ## v0.1.43 (27 December 2023)
 
