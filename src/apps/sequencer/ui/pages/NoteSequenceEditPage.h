@@ -47,6 +47,7 @@ private:
     void copySequence();
     void pasteSequence();
     void duplicateSequence();
+    void tieNotes();
     void generateSequence();
 
     void quickEdit(int index);

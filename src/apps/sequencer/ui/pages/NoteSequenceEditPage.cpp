@@ -17,8 +17,7 @@ enum class ContextAction {
     Init,
     Copy,
     Paste,
-    Duplicate,
-    Generate,
+    Duplicate,    Generate,
     Last
 };
 
@@ -300,6 +299,12 @@ void NoteSequenceEditPage::keyUp(KeyEvent &event) {
 void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
     auto &sequence = _project.selectedNoteSequence();
+
+    if (key.isQuickEdit()) {
+        if (key.is(Key::Step15)) {
+            tieNotes();
+        }
+    }
 
     if (key.isContextMenu()) {
         contextShow();
@@ -825,6 +830,33 @@ void NoteSequenceEditPage::pasteSequence() {
 void NoteSequenceEditPage::duplicateSequence() {
     _project.selectedNoteSequence().duplicateSteps();
     showMessage("STEPS DUPLICATED");
+}
+
+void NoteSequenceEditPage::tieNotes() {
+
+    auto &sequence = _project.selectedNoteSequence();
+
+    if (_stepSelection.any()) {
+        int first=-1;
+        int last=-1;
+        for (int i = 0; i < _stepSelection.size(); i++) {
+            if (_stepSelection[i] == 1) {
+                if (first == -1 ) {
+                    first = i;
+                }
+                last = i;
+            }
+        }
+
+        for (int i = first; i <= last; i++) {
+            sequence.step(i).setGate(true);
+            if (i != last) {
+                sequence.step(i).setLength(NoteSequence::Length::Max);
+            }
+            sequence.step(i).setNote(sequence.step(first).note());
+            std::cerr << _stepSelection[i];
+        }  
+    }
 }
 
 void NoteSequenceEditPage::generateSequence() {
