@@ -843,8 +843,9 @@ void NoteSequenceEditPage::tieNotes() {
     if (_stepSelection.any()) {
         int first=-1;
         int last=-1;
-        for (int i = 0; (unsigned)i < sizeof(_stepSelection); i++) {
-            if (_stepSelection[i] == 1) {
+
+        for (size_t i = 0; i < sequence.steps().size(); ++i) {
+            if (_stepSelection[i]) {
                 if (first == -1 ) {
                     first = i;
                 }
@@ -856,6 +857,7 @@ void NoteSequenceEditPage::tieNotes() {
             sequence.step(i).setGate(true);
             if (i != last) {
                 sequence.step(i).setLength(NoteSequence::Length::Max);
+                showMessage("NOTES TIED");
             }
             sequence.step(i).setNote(sequence.step(first).note());
             std::cerr << _stepSelection[i];
