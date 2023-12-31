@@ -24,6 +24,7 @@ To find out more about improvements changes, check the table below.
 | launchpad follow mode| pressing button 6 access to follow mode per track | done |
 | launchpad slide | in slide mode now we can see the active gates | done |
 | improve solo perform | toggle solo feature and launchpad integration: pessing button 6 + A-H will toggle solo | done |
+| launchopad color theme | in user settings there is an option to chose between classic and blue launchapd color schema | done |
 
 --- original documentation below ---
 

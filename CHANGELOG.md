@@ -8,6 +8,7 @@
 - improve solo perform
 - launchpad follow mode
 - launchpad improve slide visulazation
+- launchpad color theme
 
 ## v0.1.44 (29 December 2023)
 
