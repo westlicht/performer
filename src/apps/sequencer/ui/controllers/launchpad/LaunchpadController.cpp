@@ -839,7 +839,19 @@ void LaunchpadController::drawNoteSequenceBits(const NoteSequence &sequence, Not
         for (int col = 0; col < 8; ++col) {
             int stepIndex = row * 8 + col;
             const auto &step = sequence.step(stepIndex);
-            setGridLed(row, col, color(stepIndex == currentStep, step.layerValue(layer) != 0));
+
+            Color color = colorOff();
+            if (step.gate()) {
+                color = colorYellow();
+            }
+            if (stepIndex == currentStep) {
+                color = colorRed();
+            }
+            if (step.layerValue(layer) != 0) {
+                color = colorGreen();
+            }
+            
+            setGridLed(row, col, color);
         }
     }
 }
