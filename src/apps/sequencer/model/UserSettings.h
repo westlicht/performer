@@ -11,6 +11,7 @@
 #define SettingScreensaver "screensaver"
 #define SettingWakeMode "wakemode"
 #define SettingDimSequence "dimsequence"
+#define SettingLaunchpadStyle "lpstyle"
 
 class BaseSetting {
 public:
@@ -143,6 +144,17 @@ public:
     ) {}
 };
 
+class LaunchpadStyleSetting : public Setting<int> {
+    public:
+    LaunchpadStyleSetting() : Setting(
+        SettingLaunchpadStyle,
+        "LP Style",
+        {"classic", "blue"},
+        {0, 1},
+        0
+    ) {}
+};
+
 class UserSettings {
 public:
     UserSettings() {
@@ -150,6 +162,7 @@ public:
         addSetting(new ScreensaverSetting());
         addSetting(new WakeModeSetting());
         addSetting(new DimSequenceSetting());
+        addSetting(new LaunchpadStyleSetting());
     }
 
     //----------------------------------------

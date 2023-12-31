@@ -63,11 +63,11 @@ public:
         std::fill(_ledState.begin(), _ledState.end(), 0);
     }
 
-    virtual void setLed(int row, int col, Color color) {
+    virtual void setLed(int row, int col, Color color, int style = 0) {
         _ledState[row * Cols + col] = color.data;
     }
 
-    virtual void setLed(int row, int col, int red, int green) {
+    virtual void setLed(int row, int col, int red, int green, int style = 0) {
         uint8_t state = (red & 0x3) | ((green & 0x3) << 4);
         _ledState[row * Cols + col] = state;
     }

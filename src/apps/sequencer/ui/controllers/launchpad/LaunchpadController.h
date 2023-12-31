@@ -156,13 +156,13 @@ private:
     void setSceneLed(int col, Color color);
 
     template<typename T>
-    void setButtonLed(Color color) {
-        _device->setLed(T::row, T::col, color);
+    void setButtonLed(Color color, int style) {
+        _device->setLed(T::row, T::col, color, style);
     }
 
     template<typename T>
-    void mirrorButton() {
-        setButtonLed<T>(buttonState(T::row, T::col) ? color(true, true) : color(false, false));
+    void mirrorButton(int style) {
+        setButtonLed<T>(buttonState(T::row, T::col) ? color(true, true) : color(false, false), style);
     }
 
     // Button handling
@@ -183,6 +183,7 @@ private:
     } _buttonTracker;
 
     Project &_project;
+    
     Container<LaunchpadDevice, LaunchpadMk2Device, LaunchpadMk3Device, LaunchpadProDevice, LaunchpadProMk3Device> _deviceContainer;
     LaunchpadDevice *_device;
     Mode _mode = Mode::Sequence;

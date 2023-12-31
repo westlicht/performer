@@ -105,6 +105,9 @@ static const RangeMap *curveSequenceLayerRangeMap[] = {
 bool _followMode[8];
 std::map<int8_t, int> dict;
 
+UserSettings _userSettings;
+int style = 0;
+
 LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info) :
     Controller(manager, model, engine),
     _project(model.project())
@@ -149,6 +152,8 @@ LaunchpadController::LaunchpadController(ControllerManager &manager, Model &mode
     dict['\xfe'] = 5;
     dict['\xfd'] = 6;
     dict['\xfe'] = 7;
+
+    _userSettings = model.settings().userSettings();
 }
 
 LaunchpadController::~LaunchpadController() {
@@ -156,6 +161,8 @@ LaunchpadController::~LaunchpadController() {
 }
 
 void LaunchpadController::update() {
+     style = _userSettings.get<LaunchpadStyleSetting>(SettingLaunchpadStyle)->getValue();
+
     _device->clearLeds();
 
     CALL_MODE_FUNCTION(_mode, Draw)
@@ -185,7 +192,8 @@ void LaunchpadController::globalDraw() {
             bool selected = col == int(_mode) || col == 7;
             setFunctionLed(col, selected ? colorYellow() : colorOff());
         }
-        mirrorButton<Play>();
+        auto style = _userSettings.get<LaunchpadStyleSetting>(SettingLaunchpadStyle)->getValue();
+        mirrorButton<Play>(style);
     }
 }
 
@@ -226,7 +234,7 @@ void LaunchpadController::sequenceExit() {
 void LaunchpadController::sequenceDraw() {
     sequenceUpdateNavigation();
 
-    mirrorButton<Navigate>();
+    mirrorButton<Navigate>(style);
 
     // selected track
     if (buttonState<Shift>()) {
@@ -240,22 +248,22 @@ void LaunchpadController::sequenceDraw() {
     if (buttonState<Navigate>()) {
         navigationDraw(_sequence.navigation);
     } else if (buttonState<Layer>()) {
-        mirrorButton<Layer>();
+        mirrorButton<Layer>(style);
         sequenceDrawLayer();
     } else if (buttonState<FirstStep>()) {
-        mirrorButton<FirstStep>();
+        mirrorButton<FirstStep>(style);
         sequenceDrawStepRange(0);
     } else if (buttonState<LastStep>()) {
-        mirrorButton<LastStep>();
+        mirrorButton<LastStep>(style);
         sequenceDrawStepRange(1);
     } else if (buttonState<RunMode>()) {
-        mirrorButton<RunMode>();
+        mirrorButton<RunMode>(style);
         sequenceDrawRunMode();
     } else if (buttonState<FollowMode>()) {
-        mirrorButton<FollowMode>();
+        mirrorButton<FollowMode>(style);
         sequenceDrawFollowMode();
     } else {
-        mirrorButton<Fill>();
+        mirrorButton<Fill>(style);
         sequenceDrawSequence();
     }
 }
@@ -275,6 +283,7 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
         } else if (buttonState<FirstStep>()) {
             if (button.isGrid()) {
                 sequenceSetFirstStep(button.gridIndex());
+                
             }
         } else if (buttonState<LastStep>()) {
             if (button.isGrid()) {
@@ -638,9 +647,9 @@ void LaunchpadController::patternExit() {
 void LaunchpadController::patternDraw() {
     const auto &playState = _project.playState();
 
-    mirrorButton<Navigate>();
-    mirrorButton<Latch>();
-    mirrorButton<Sync>();
+    mirrorButton<Navigate>(style);
+    mirrorButton<Latch>(style);
+    mirrorButton<Sync>(style);
 
 
     if (buttonState<Shift>()) {
@@ -683,7 +692,7 @@ void LaunchpadController::patternDraw() {
             }
         }
 
-        mirrorButton<Fill>();
+        mirrorButton<Fill>(style);
     }
 }
 
@@ -756,10 +765,10 @@ void LaunchpadController::performerButton(const Button &button, ButtonAction act
 //----------------------------------------
 
 void LaunchpadController::navigationDraw(const Navigation &navigation) {
-    mirrorButton<Left>();
-    mirrorButton<Right>();
-    mirrorButton<Up>();
-    mirrorButton<Down>();
+    mirrorButton<Left>(style);
+    mirrorButton<Right>(style);
+    mirrorButton<Up>(style);
+    mirrorButton<Down>(style);
 
     for (int row = navigation.bottom; row <= navigation.top; ++row) {
         for (int col = navigation.left; col <= navigation.right; ++col) {
@@ -889,7 +898,7 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
     for (int row = 0; row < 8; ++row) {
         if (modulo(row + ofs, octave) == 0) {
             for (int col = 0; col < 2; ++col) {
-            setGridLed(7 - row, col, colorYellow(1));
+                setGridLed(7 - row, col, colorYellow(1));
             }
         }
     }
@@ -964,25 +973,22 @@ void LaunchpadController::drawBar(int col, int value, bool active, bool current)
 
 void LaunchpadController::setGridLed(int row, int col, Color color) {
     if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-        _device->setLed(row, col, color);
+        _device->setLed(row, col, color, style);
     }
 }
 
-void LaunchpadController::setGridLed(int index, Color color) {
-    if (index >= 0 && index < 64) {
-        _device->setLed(index / 8, index % 8, color);
+void LaunchpadController::setGridLed(int index, Color color) {    if (index >= 0 && index < 64) {
+        _device->setLed(index / 8, index % 8, color, style);
     }
 }
 
-void LaunchpadController::setFunctionLed(int col, Color color) {
-    if (col >= 0 && col < 8) {
-        _device->setLed(LaunchpadDevice::FunctionRow, col, color);
+void LaunchpadController::setFunctionLed(int col, Color color) {    if (col >= 0 && col < 8) {
+        _device->setLed(LaunchpadDevice::FunctionRow, col, color, style);
     }
 }
 
-void LaunchpadController::setSceneLed(int col, Color color) {
-    if (col >= 0 && col < 8) {
-        _device->setLed(LaunchpadDevice::SceneRow, col, color);
+void LaunchpadController::setSceneLed(int col, Color color) {    if (col >= 0 && col < 8) {
+        _device->setLed(LaunchpadDevice::SceneRow, col, color, style);
     }
 }
 
