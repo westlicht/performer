@@ -106,6 +106,50 @@ void PlayState::soloTrack(int track, ExecuteType executeType) {
     }
 }
 
+void PlayState::toggleSoloTrack(int track, ExecuteType executeType) {
+    auto &trackState = _trackStates[track];
+    switch (executeType) {
+    case Immediate:
+        if (isSolo(track)) {
+            unmuteAll(Immediate);
+        } else {
+            soloTrack(track, Immediate);
+        }
+        break;
+    case Synced:
+    case Latched:
+        if (trackState.requestedMute() == trackState.mute()) {
+            if (isSolo(track)) {
+                unmuteAll(executeType);
+            } else {
+                soloTrack(track, executeType);
+            }
+        } else {
+            if (isSolo(track)) {
+                muteAll(executeType);
+            } else {
+                soloTrack(track, executeType);
+            }
+        }
+        break;
+    }
+}
+
+bool PlayState::isSolo(int track) {
+    auto &trackState = _trackStates[track];
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        if (trackIndex!= track) {
+            auto &state = _trackStates[trackIndex];
+            if (!trackState.mute() && state.mute()) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 void PlayState::fillTrack(int track, bool fill, bool hold) {
     _trackStates[track].setFill(fill, hold);
     notify(Immediate);

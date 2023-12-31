@@ -287,6 +287,8 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
         } else if (buttonState<FollowMode>()) {
             if (button.isGrid()) {
                 sequenceSetFollowMode(button.col);
+            } else if (button.isScene()) {
+                _project.playState().toggleSoloTrack(button.scene());
             }
         } else if (buttonState<Fill>()) {
             if (button.isScene()) {

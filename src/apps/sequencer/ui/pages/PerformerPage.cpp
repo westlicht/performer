@@ -216,7 +216,7 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
 
     if (key.isTrackSelect()) {
         if (key.shiftModifier()) {
-            playState.soloTrack(key.track(), executeType);
+            playState.toggleSoloTrack(key.track(), executeType);
         } else {
             playState.toggleMuteTrack(key.track(), executeType);
         }

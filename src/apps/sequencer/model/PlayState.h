@@ -272,6 +272,8 @@ public:
     // solos
 
     void soloTrack(int track, ExecuteType executeType = Immediate);
+    void toggleSoloTrack(int track, ExecuteType executeType = Immediate);
+    bool isSolo(int track);
 
     // fills
 
