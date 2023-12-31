@@ -21,6 +21,9 @@ To find out more about improvements changes, check the table below.
 | import Noise Redection Improvements | merge jackpf Noise Reduction improvements [link](https://github.com/jackpf/performer/blob/master/doc/improvements/noise-reduction.md) | done |
 | track names | edit track name for each track (note, curve, midi) | done |
 | quick tie notes | select a step range, then click page+16 to tie notes. set gate lenght to max (except last selected step) and set note as first note selected | done |
+| launchpad follow mode| pressing button 6 access to follow mode per track | done |
+| launchpad slide | in slide mode now we can see the active gates | done |
+| improve solo perform | toggle solo feature and launchpad integration: pessing button 6 + A-H will toggle solo | done |
 
 --- original documentation below ---
 

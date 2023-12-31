@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.45 (31 December 2023)
+
+#### Improvements
+
+- various bugfixes
+- improve solo perform
+- launchpad follow mode
+- launchpad improve slide visulazation
 
 ## v0.1.44 (29 December 2023)
 
