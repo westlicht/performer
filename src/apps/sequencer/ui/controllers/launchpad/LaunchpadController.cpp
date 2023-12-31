@@ -106,7 +106,8 @@ bool _followMode[8];
 std::map<int8_t, int> dict;
 
 UserSettings _userSettings;
-int style = 0;
+int _style = 0;
+int _patternChangeDefault = 0;
 
 LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info) :
     Controller(manager, model, engine),
@@ -161,7 +162,8 @@ LaunchpadController::~LaunchpadController() {
 }
 
 void LaunchpadController::update() {
-     style = _userSettings.get<LaunchpadStyleSetting>(SettingLaunchpadStyle)->getValue();
+     _style = _userSettings.get<LaunchpadStyleSetting>(SettingLaunchpadStyle)->getValue();
+     _patternChangeDefault = _userSettings.get<LaunchpadPatternChange>(SettingLaunchpadPatternChange)->getValue();
 
     _device->clearLeds();
 
@@ -192,8 +194,7 @@ void LaunchpadController::globalDraw() {
             bool selected = col == int(_mode) || col == 7;
             setFunctionLed(col, selected ? colorYellow() : colorOff());
         }
-        auto style = _userSettings.get<LaunchpadStyleSetting>(SettingLaunchpadStyle)->getValue();
-        mirrorButton<Play>(style);
+        mirrorButton<Play>(_style);
     }
 }
 
@@ -234,7 +235,7 @@ void LaunchpadController::sequenceExit() {
 void LaunchpadController::sequenceDraw() {
     sequenceUpdateNavigation();
 
-    mirrorButton<Navigate>(style);
+    mirrorButton<Navigate>(_style);
 
     // selected track
     if (buttonState<Shift>()) {
@@ -248,22 +249,22 @@ void LaunchpadController::sequenceDraw() {
     if (buttonState<Navigate>()) {
         navigationDraw(_sequence.navigation);
     } else if (buttonState<Layer>()) {
-        mirrorButton<Layer>(style);
+        mirrorButton<Layer>(_style);
         sequenceDrawLayer();
     } else if (buttonState<FirstStep>()) {
-        mirrorButton<FirstStep>(style);
+        mirrorButton<FirstStep>(_style);
         sequenceDrawStepRange(0);
     } else if (buttonState<LastStep>()) {
-        mirrorButton<LastStep>(style);
+        mirrorButton<LastStep>(_style);
         sequenceDrawStepRange(1);
     } else if (buttonState<RunMode>()) {
-        mirrorButton<RunMode>(style);
+        mirrorButton<RunMode>(_style);
         sequenceDrawRunMode();
     } else if (buttonState<FollowMode>()) {
-        mirrorButton<FollowMode>(style);
+        mirrorButton<FollowMode>(_style);
         sequenceDrawFollowMode();
     } else {
-        mirrorButton<Fill>(style);
+        mirrorButton<Fill>(_style);
         sequenceDrawSequence();
     }
 }
@@ -647,9 +648,9 @@ void LaunchpadController::patternExit() {
 void LaunchpadController::patternDraw() {
     const auto &playState = _project.playState();
 
-    mirrorButton<Navigate>(style);
-    mirrorButton<Latch>(style);
-    mirrorButton<Sync>(style);
+    mirrorButton<Navigate>(_style);
+    mirrorButton<Latch>(_style);
+    mirrorButton<Sync>(_style);
 
 
     if (buttonState<Shift>()) {
@@ -692,7 +693,7 @@ void LaunchpadController::patternDraw() {
             }
         }
 
-        mirrorButton<Fill>(style);
+        mirrorButton<Fill>(_style);
     }
 }
 
@@ -712,10 +713,17 @@ void LaunchpadController::patternButton(const Button &button, ButtonAction actio
             }
         } else {
             PlayState::ExecuteType executeType = PlayState::ExecuteType::Immediate;
+            if (_patternChangeDefault==1) {
+                executeType = PlayState::ExecuteType::Synced;
+            }
+            
             if (buttonState<Latch>()) {
                 executeType = PlayState::ExecuteType::Latched;
             } else if (buttonState<Sync>()) {
                 executeType = PlayState::ExecuteType::Synced;
+                if (_patternChangeDefault==1) {
+                    executeType = PlayState::ExecuteType::Immediate;
+                }
             }
 
             if (button.isScene()) {
@@ -765,10 +773,10 @@ void LaunchpadController::performerButton(const Button &button, ButtonAction act
 //----------------------------------------
 
 void LaunchpadController::navigationDraw(const Navigation &navigation) {
-    mirrorButton<Left>(style);
-    mirrorButton<Right>(style);
-    mirrorButton<Up>(style);
-    mirrorButton<Down>(style);
+    mirrorButton<Left>(_style);
+    mirrorButton<Right>(_style);
+    mirrorButton<Up>(_style);
+    mirrorButton<Down>(_style);
 
     for (int row = navigation.bottom; row <= navigation.top; ++row) {
         for (int col = navigation.left; col <= navigation.right; ++col) {
@@ -973,22 +981,22 @@ void LaunchpadController::drawBar(int col, int value, bool active, bool current)
 
 void LaunchpadController::setGridLed(int row, int col, Color color) {
     if (row >= 0 && row < 8 && col >= 0 && col < 8) {
-        _device->setLed(row, col, color, style);
+        _device->setLed(row, col, color, _style);
     }
 }
 
 void LaunchpadController::setGridLed(int index, Color color) {    if (index >= 0 && index < 64) {
-        _device->setLed(index / 8, index % 8, color, style);
+        _device->setLed(index / 8, index % 8, color, _style);
     }
 }
 
 void LaunchpadController::setFunctionLed(int col, Color color) {    if (col >= 0 && col < 8) {
-        _device->setLed(LaunchpadDevice::FunctionRow, col, color, style);
+        _device->setLed(LaunchpadDevice::FunctionRow, col, color, _style);
     }
 }
 
 void LaunchpadController::setSceneLed(int col, Color color) {    if (col >= 0 && col < 8) {
-        _device->setLed(LaunchpadDevice::SceneRow, col, color, style);
+        _device->setLed(LaunchpadDevice::SceneRow, col, color, _style);
     }
 }
 

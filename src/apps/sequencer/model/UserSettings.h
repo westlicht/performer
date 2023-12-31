@@ -12,6 +12,7 @@
 #define SettingWakeMode "wakemode"
 #define SettingDimSequence "dimsequence"
 #define SettingLaunchpadStyle "lpstyle"
+#define SettingLaunchpadPatternChange "lppattern"
 
 class BaseSetting {
 public:
@@ -155,6 +156,17 @@ class LaunchpadStyleSetting : public Setting<int> {
     ) {}
 };
 
+class LaunchpadPatternChange : public Setting<int> {
+    public:
+    LaunchpadPatternChange() : Setting(
+        SettingLaunchpadPatternChange,
+        "Pattern Change",
+        {"immediate", "sync"},
+        {0, 1},
+        0
+    ) {}
+};
+
 class UserSettings {
 public:
     UserSettings() {
@@ -163,6 +175,7 @@ public:
         addSetting(new WakeModeSetting());
         addSetting(new DimSequenceSetting());
         addSetting(new LaunchpadStyleSetting());
+        addSetting(new LaunchpadPatternChange());
     }
 
     //----------------------------------------
