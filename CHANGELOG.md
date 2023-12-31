@@ -24,7 +24,7 @@
 #### Improvements
 
 - Extend retrigger value. max 8 retriggers per step
-- Extend probability steps. min value now is 1.6%
+- Extend probability steps. min value now is 6.3%
 - add negative gate offset feature [thanks to vafu](https://github.com/vafu/performer/tree/vafu/negative-offset)
 - add metropolis style sequencer option [thanks to vafu](https://github.com/vafu/performer/tree/vafu/metro-pr)
 - double click to toggle gates when editing layers other than gate
