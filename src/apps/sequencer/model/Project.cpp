@@ -33,7 +33,6 @@ void Project::clear() {
     setSwing(50);
     setTimeSignature(TimeSignature());
     setSyncMeasure(1);
-    setAlwaysSyncPatterns(false);
     setScale(0);
     setRootNote(0);
     setMonitorMode(Types::MonitorMode::Always);
@@ -107,7 +106,6 @@ void Project::write(VersionedSerializedWriter &writer) const {
     writer.write(_swing.base);
     _timeSignature.write(writer);
     writer.write(_syncMeasure);
-    writer.write(_alwaysSyncPatterns);
     writer.write(_scale);
     writer.write(_rootNote);
     writer.write(_monitorMode);
@@ -149,9 +147,6 @@ bool Project::read(VersionedSerializedReader &reader) {
         _timeSignature.read(reader);
     }
     reader.read(_syncMeasure);
-    if (reader.dataVersion() >= ProjectVersion::Version32) {
-        reader.read(_alwaysSyncPatterns);
-    }
     reader.read(_scale);
     reader.read(_rootNote);
     reader.read(_monitorMode, ProjectVersion::Version30);

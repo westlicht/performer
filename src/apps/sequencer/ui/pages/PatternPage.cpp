@@ -261,15 +261,18 @@ void PatternPage::keyPress(KeyPressEvent &event) {
             // select edit pattern
             _project.setSelectedPatternIndex(pattern);
         } else {
+            UserSettings userSettings = _model.settings().userSettings();
+
+            int _patternChangeDefault = userSettings.get<LaunchpadPatternChange>(SettingLaunchpadPatternChange)->getValue();
+
             // select playing pattern
 
-            // use immediate by default
-            // use latched when LATCH is pressed
-            // use synced when SYNC is pressed or project set to always sync
             PlayState::ExecuteType executeType;
             if (_latching) executeType = PlayState::Latched;
-            else if (_syncing || _project.alwaysSyncPatterns()) executeType = PlayState::Synced;
-            else executeType = PlayState::Immediate;
+            else if (_syncing && _patternChangeDefault==1) executeType = PlayState::Immediate;
+            else if (_syncing && _patternChangeDefault==0) executeType = PlayState::Synced;
+            else if (_patternChangeDefault==0) executeType = PlayState::Immediate;
+            else if (_patternChangeDefault==1) executeType = PlayState::Synced;
 
             bool globalChange = true;
             for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
