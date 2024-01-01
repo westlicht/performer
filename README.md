@@ -26,6 +26,8 @@ To find out more about improvements changes, check the table below.
 | improve solo perform | toggle solo feature and launchpad integration: pessing button 6 + A-H will toggle solo | done |
 | launchopad color theme | in user settings there is an option to chose between classic and blue launchapd color schema | done |
 
+[WIKI page ](https://github.com/mebitek/performer/wiki)
+
 --- original documentation below ---
 
 # PER|FORMER
