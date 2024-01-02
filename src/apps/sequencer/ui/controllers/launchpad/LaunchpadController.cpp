@@ -109,10 +109,12 @@ UserSettings _userSettings;
 int _style = 0;
 int _patternChangeDefault = 0;
 
-int noteGridValues[] = { 0,1,1,0,1,1,1,0, 1, 1, 1, 1, 1, 1, 1 };
+int noteGridValues[] = { 0,1,1,0,1,1,1,0, 1, 1, 1, 1, 1, 1, 1, 1};
 std::map<int, int> semitones = {{1, 1}, {2, 3}, {4, 6}, {5,8}, {6, 10 }};
 std::map<int, int> tones = {{0,0}, {1,2}, {2, 4}, {3, 5}, {4, 7}, {5, 9}, {6, 11}, {7, 12}};
-
+int selectedNote = 0;
+int selectedOctave = 0;
+std::map<int, int> octaveMap = { {0, -4}, {1, -3}, {2, -2}, {3, -1}, {4, 0}, {5, 1}, {6, 2}, {7, 3}};
 
 LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info) :
     Controller(manager, model, engine),
@@ -274,8 +276,6 @@ void LaunchpadController::sequenceDraw() {
     }
 }
 
-int selectedNote = 0;
-
 void LaunchpadController::sequenceButton(const Button &button, ButtonAction action) {
     if (action == ButtonAction::Down) {
         if (buttonState<Shift>()) {
@@ -323,9 +323,9 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                     case NoteSequence::Layer::Note:
                         if (button.row >=3 && button.row <= 4) {
                             if (button.row == 3) {
-                                selectedNote = semitones[button.col];
+                                selectedNote = semitones[button.col] + (12*selectedOctave);
                             } else if (button.row == 4) {
-                                selectedNote = tones[button.col];
+                                selectedNote = tones[button.col] + (12*selectedOctave);
                             }
                             break;
                         } else if (button.row >= 0 && button.row <= 2) {
@@ -336,6 +336,36 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                             sequence.step(linearIndex).setLayerValue(layer, selectedNote);
                             sequence.step(linearIndex).toggleGate();
                             break;
+                        } else if (button.row == 6) {
+                            switch (button.col) {
+                                case 0:
+                                    selectedOctave = -4;
+                                    break;
+                                case 1:
+                                    selectedOctave = -3;
+                                    break;
+                                case 2:
+                                    selectedOctave = -2;
+                                    break;
+                                case 3:
+                                    selectedOctave = -1;
+                                    break;
+                                case 4:
+                                    selectedOctave = 0;
+                                    break;
+                                case 5:
+                                    selectedOctave = 1;
+                                    break;
+                                case 6:
+                                    selectedOctave = 2;
+                                    break;
+                                case 7:
+                                    selectedOctave = 3;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            setGridLed(button.row, button.col, colorYellow());
                         }
                     default:
                         sequenceEditStep(button.row, button.col);
@@ -943,6 +973,7 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
 
     int ofs = _sequence.navigation.col * 16;
 
+    // draw steps
     for (int row = 0; row < 2; ++row) {
         for (int col = 0; col < 8; ++col) {
             int stepIndex = col + ofs + (row*8);
@@ -958,20 +989,70 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
             }         
             setGridLed(row, col, color);
         }
-    }
+    }       
 
-    for (int col = 0; col < 16; col++) {
-        if (noteGridValues[col]==1) {
-            if (col <= 7) {
-                setGridLed(3, col, colorGreen());
-            } else {
-                setGridLed(4, col, colorGreen());
+    
+
+    // draw keyboard
+    for (int row = 3; row<=4; ++row) {
+        for (int col = 0; col < 8; col++) {
+            int index = (col+((row-3)*8));
+           
+            if (noteGridValues[index]==1) {
+                int n = semitones[index];
+                if (row == 4) {
+                    n = tones[col];
+                }
+                Color color = (selectedNote - (12*selectedOctave))== n ? colorYellow() : colorGreen(1);
+                setGridLed(row, col, color);
+            }
+            if (_engine.state().running()) {
+                const auto &step = sequence.step(currentStep);
+                int noteOctave = step.note() / 12;
+                int s = step.note() - (12*noteOctave);
+
+                for (auto const & [k, v] : semitones)
+                {
+                    if (step.gate() && s == v) {
+                        setGridLed(3, k, step.gate() && s == v ? colorRed() : colorGreen());
+                        break;
+                    }
+                
+                }
+                for (auto const & [k, v] : tones)
+                {
+                    if (step.gate() && s == v) {
+                        setGridLed(4, k, step.gate() && s == v ? colorRed() : colorGreen());
+                        break;
+                    }
+                
+                }
+
             }
         }
     }
 
-    for (int col = 0; col < 8; col++) {
-        setGridLed(4, col, colorGreen());
+    // draw octave
+    for (int col = 0; col < 8; ++col) {
+        int o = octaveMap.at(col);
+        setGridLed(6, col, o==selectedOctave ? colorYellow(): colorYellow(1));
+
+        if (_engine.state().running()) {
+            const auto &step = sequence.step(currentStep);
+            int s = step.note();
+
+            int octave = s / 12;
+            for (auto const & [k, v] : octaveMap)
+                {
+                    if (step.gate() && octave == v) {
+                        setGridLed(6, k, step.gate() && octave == v ? colorRed() : colorYellow(1));
+                        break;
+                    }
+                   
+                   
+                
+                }
+        }
     }
 
 
