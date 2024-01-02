@@ -13,6 +13,7 @@
 #define SettingDimSequence "dimsequence"
 #define SettingLaunchpadStyle "lpstyle"
 #define SettingLaunchpadPatternChange "lppattern"
+#define SettingLaunchpadNoteStyle "lpnote"
 
 class BaseSetting {
 public:
@@ -167,6 +168,17 @@ class LaunchpadPatternChange : public Setting<int> {
     ) {}
 };
 
+class LaunchpadNoteStyle : public Setting<int> {
+    public:
+    LaunchpadNoteStyle() : Setting(
+        SettingLaunchpadNoteStyle,
+        "LP note style",
+        {"classic", "circuit"},
+        {0, 1},
+        0
+    ) {}
+};
+
 class UserSettings {
 public:
     UserSettings() {
@@ -176,6 +188,7 @@ public:
         addSetting(new DimSequenceSetting());
         addSetting(new LaunchpadStyleSetting());
         addSetting(new LaunchpadPatternChange());
+        addSetting(new LaunchpadNoteStyle());
     }
 
     //----------------------------------------
