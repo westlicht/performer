@@ -207,9 +207,6 @@ void NoteSequence::Step::read(VersionedSerializedReader &reader) {
             setCondition(Types::Condition(0));
         }
     } else {
-        if (reader.dataVersion() == ProjectVersion::Version33) {
-            setRetrigger(0);
-        }
         reader.read(_data0.raw);
         reader.read(_data1.raw);
     }

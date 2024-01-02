@@ -267,7 +267,7 @@ void PatternPage::keyPress(KeyPressEvent &event) {
 
             // select playing pattern
 
-            PlayState::ExecuteType executeType;
+            PlayState::ExecuteType executeType = PlayState::Immediate;
             if (_latching) executeType = PlayState::Latched;
             else if (_syncing && _patternChangeDefault==1) executeType = PlayState::Immediate;
             else if (_syncing && _patternChangeDefault==0) executeType = PlayState::Synced;

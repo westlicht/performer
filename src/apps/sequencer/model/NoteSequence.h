@@ -237,8 +237,7 @@ public:
             BitField<uint32_t, 13, Note::Bits> note;
             BitField<uint32_t, 20, NoteVariationRange::Bits> noteVariationRange;
             BitField<uint32_t, 27, NoteVariationProbability::Bits> noteVariationProbability;
-
-            
+            // 1 bits left
         } _data0;
         union {
             uint32_t raw;
@@ -249,7 +248,7 @@ public:
             BitField<uint32_t, 15, Condition::Bits> condition;
             BitField<uint32_t, 22, StageRepeats::Bits> stageRepeats;
             BitField<uint32_t, 25, StageRepeatsMode::Bits> stageRepeatMode;
-            // 12 bits left
+            // 5 bits left
         } _data1;
     };
 
