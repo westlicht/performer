@@ -3,6 +3,7 @@
 #include "LaunchpadDevice.h"
 #include "core/Debug.h"
 #include "os/os.h"
+#include <iostream>
 #include <map>
 
 #define CALL_MODE_FUNCTION(_mode_, _function_, ...)                         \
@@ -280,6 +281,7 @@ void LaunchpadController::sequenceDraw() {
 }
 
 void LaunchpadController::sequenceButton(const Button &button, ButtonAction action) {
+
     if (action == ButtonAction::Down) {
         if (buttonState<Shift>()) {
             if (button.isScene()) {
@@ -316,11 +318,6 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                 _project.playState().fillTrack(button.scene(), true);
             }
         } else {
-             if (button.isGrid()) {
-                sequenceEditStep(button.row, button.col);
-            } else if (button.isScene()) {
-                _project.setSelectedTrackIndex(button.scene());
-            }
             if (button.isGrid()) {
 
 
@@ -341,7 +338,9 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                                 auto layer = _project.selectedNoteSequenceLayer();
                                 int ofs = _sequence.navigation.col * 16;
                                 int linearIndex = button.col + ofs + (button.row*8);
-                                sequence.step(linearIndex).setLayerValue(layer, selectedNote);
+                                if (isNoteKeyboardPressed()) { 
+                                    sequence.step(linearIndex).setLayerValue(layer, selectedNote);
+                                }
                                 sequence.step(linearIndex).toggleGate();
                                 break;
                             } else if (button.row == 6) {
@@ -373,7 +372,6 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                                     default:
                                         break;
                                 }
-                                setGridLed(button.row, button.col, colorYellow());
                             }
                         default:
                             sequenceEditStep(button.row, button.col);
@@ -409,6 +407,19 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
             }
         }
     }
+}
+
+bool LaunchpadController::isNoteKeyboardPressed() {
+    for (int col = 0; col <= 7; ++col) {
+        if (buttonState(3, col)) {
+            return true;
+        }
+        if (buttonState(4, col)) {
+            return true;
+        }
+   
+    }
+    return false;
 }
 
 void LaunchpadController::sequenceUpdateNavigation() {
