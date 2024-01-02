@@ -177,18 +177,19 @@ void SequenceState::calculateNextStepAligned(int absoluteStep, Types::RunMode ru
     switch (runMode) {
     case Types::RunMode::Forward:
          _nextStep = firstStep + absoluteStep % stepCount;
+        _iteration = absoluteStep / stepCount;
         break;
     case Types::RunMode::Backward:
         _nextStep = lastStep - absoluteStep % stepCount;
-        _nextIteration = absoluteStep / stepCount;
+        _iteration = absoluteStep / stepCount;
         break;
     case Types::RunMode::Pendulum:
-        _nextIteration = absoluteStep / (2 * stepCount);
+        _iteration = absoluteStep / (2 * stepCount);
         absoluteStep %= (2 * stepCount);
         _nextStep = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount));
         break;
     case Types::RunMode::PingPong:
-        _nextIteration = absoluteStep / (2 * stepCount - 2);
+        _iteration = absoluteStep / (2 * stepCount - 2);
         absoluteStep %= (2 * stepCount - 2);
         _nextStep = (absoluteStep < stepCount) ? (firstStep + absoluteStep) : (lastStep - (absoluteStep - stepCount) - 1);
         break;
