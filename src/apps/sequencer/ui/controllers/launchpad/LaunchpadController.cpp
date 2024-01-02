@@ -331,8 +331,11 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                         } else if (button.row >= 0 && button.row <= 2) {
                             auto &sequence = _project.selectedNoteSequence();
                             auto layer = _project.selectedNoteSequenceLayer();
-                            int linearIndex = button.col + button.row * 8;
+                            int ofs = _sequence.navigation.col * 16;
+                            int linearIndex = button.col + ofs + (button.row*8);
                             sequence.step(linearIndex).setLayerValue(layer, selectedNote);
+                            sequence.step(linearIndex).toggleGate();
+                            break;
                         }
                     default:
                         sequenceEditStep(button.row, button.col);
@@ -362,7 +365,9 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
             !buttonState<Fill>() &&
             button.isGrid()) {
             // toggle gate
-            sequenceToggleStep(button.row, button.col);
+            if (_project.selectedNoteSequenceLayer()!= NoteSequence::Layer::Note) {
+                sequenceToggleStep(button.row, button.col);
+            }
         }
     }
 }
@@ -936,11 +941,11 @@ void LaunchpadController::drawNoteSequenceDots(const NoteSequence &sequence, Not
 
 void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
 
-    int ofs = _sequence.navigation.row * 8;
+    int ofs = _sequence.navigation.col * 16;
 
     for (int row = 0; row < 2; ++row) {
         for (int col = 0; col < 8; ++col) {
-            int stepIndex = row * 8 + col;
+            int stepIndex = col + ofs + (row*8);
             int lastStep = sequence.lastStep();
             followModeAction(currentStep, lastStep);
             const auto &step = sequence.step(stepIndex);   
@@ -965,9 +970,11 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
         }
     }
 
-        for (int col = 0; col < 8; col++) {
-            setGridLed(4, col, colorGreen());
+    for (int col = 0; col < 8; col++) {
+        setGridLed(4, col, colorGreen());
     }
+
+
 
 
     // draw octave lines
@@ -1019,8 +1026,13 @@ void LaunchpadController::drawCurveSequenceDots(const CurveSequence &sequence, C
 void LaunchpadController::followModeAction(int currentStep, int lastStep) {
 
     int trackIndex = _project.selectedTrack().trackIndex();
-    if (_followMode[trackIndex]) {
-            int g = currentStep / 16;
+    if (_followMode[trackIndex] && _engine.state().running()) {
+
+            int g = currentStep / 8;
+            if (_project.selectedNoteSequenceLayer()==NoteSequence::Layer::Note) {
+                g = currentStep / 16;
+            }
+            
             int row = dict.at(_sequence.navigation.row);
             Button button = Button(row,g);
             if (currentStep == lastStep) {
