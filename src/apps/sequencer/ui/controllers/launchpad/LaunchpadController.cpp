@@ -109,6 +109,11 @@ UserSettings _userSettings;
 int _style = 0;
 int _patternChangeDefault = 0;
 
+int noteGridValues[] = { 0,1,1,0,1,1,1,0, 1, 1, 1, 1, 1, 1, 1 };
+std::map<int, int> semitones = {{1, 1}, {2, 3}, {4, 6}, {5,8}, {6, 10 }};
+std::map<int, int> tones = {{0,0}, {1,2}, {2, 4}, {3, 5}, {4, 7}, {5, 9}, {6, 11}, {7, 12}};
+
+
 LaunchpadController::LaunchpadController(ControllerManager &manager, Model &model, Engine &engine, const ControllerInfo &info) :
     Controller(manager, model, engine),
     _project(model.project())
@@ -269,6 +274,8 @@ void LaunchpadController::sequenceDraw() {
     }
 }
 
+int selectedNote = 0;
+
 void LaunchpadController::sequenceButton(const Button &button, ButtonAction action) {
     if (action == ButtonAction::Down) {
         if (buttonState<Shift>()) {
@@ -278,8 +285,13 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
         } else if (buttonState<Navigate>()) {
             navigationButtonDown(_sequence.navigation, button);
         } else if (buttonState<Layer>()) {
+            
             if (button.isGrid()) {
-                sequenceSetLayer(button.row, button.col);
+                if (button.row == 0  && button.col == 7) {
+                    std::cerr << "NOTE CIRCUIT MODE";
+                } else {
+                    sequenceSetLayer(button.row, button.col);
+                }
             }
         } else if (buttonState<FirstStep>()) {
             if (button.isGrid()) {
@@ -306,7 +318,27 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
             }
         } else {
             if (button.isGrid()) {
-                sequenceEditStep(button.row, button.col);
+
+                switch ( _project.selectedNoteSequenceLayer()) {
+                    case NoteSequence::Layer::Note:
+                        if (button.row >=3 && button.row <= 4) {
+                            if (button.row == 3) {
+                                selectedNote = semitones[button.col];
+                            } else if (button.row == 4) {
+                                selectedNote = tones[button.col];
+                            }
+                            break;
+                        } else if (button.row >= 0 && button.row <= 2) {
+                            auto &sequence = _project.selectedNoteSequence();
+                            auto layer = _project.selectedNoteSequenceLayer();
+                            int linearIndex = button.col + button.row * 8;
+                            sequence.step(linearIndex).setLayerValue(layer, selectedNote);
+                        }
+                    default:
+                        sequenceEditStep(button.row, button.col);
+                        break;
+                }
+                
             } else if (button.isScene()) {
                 _project.setSelectedTrackIndex(button.scene());
             }
@@ -495,6 +527,9 @@ void LaunchpadController::sequenceEditNoteStep(int row, int col) {
     case NoteSequence::Layer::Slide:
         sequence.step(gridIndex).toggleSlide();
         break;
+    case NoteSequence::Layer::Note:
+         sequence.step(gridIndex).toggleGate();
+        break;
     default:
         sequence.step(linearIndex).setLayerValue(layer, value);
         break;
@@ -523,6 +558,8 @@ void LaunchpadController::sequenceDrawLayer() {
             bool selected = i == int(_project.selectedNoteSequenceLayer());
             setGridLed(item.row, item.col, selected ? colorYellow() : colorGreen());
         }
+
+        setGridLed(0, 7, colorGreen());
         break;
     case Track::TrackMode::Curve:
         for (int i = 0; i < curveSequenceLayerMapSize; ++i) {
@@ -863,11 +900,11 @@ void LaunchpadController::drawNoteSequenceBits(const NoteSequence &sequence, Not
             if (step.gate()) {
                 color = colorYellow();
             }
-            if (stepIndex == currentStep) {
-                color = colorRed();
-            }
             if (step.layerValue(layer) != 0) {
                 color = colorGreen();
+            }
+            if (stepIndex == currentStep) {
+                color = colorRed();
             }
             
             setGridLed(row, col, color);
@@ -901,8 +938,40 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
 
     int ofs = _sequence.navigation.row * 8;
 
+    for (int row = 0; row < 2; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            int stepIndex = row * 8 + col;
+            int lastStep = sequence.lastStep();
+            followModeAction(currentStep, lastStep);
+            const auto &step = sequence.step(stepIndex);   
+            Color color = colorOff();
+            if (step.gate()) {
+                color = colorGreen();
+            }
+            if (stepIndex == currentStep) {
+                color = colorRed();
+            }         
+            setGridLed(row, col, color);
+        }
+    }
+
+    for (int col = 0; col < 16; col++) {
+        if (noteGridValues[col]==1) {
+            if (col <= 7) {
+                setGridLed(3, col, colorGreen());
+            } else {
+                setGridLed(4, col, colorGreen());
+            }
+        }
+    }
+
+        for (int col = 0; col < 8; col++) {
+            setGridLed(4, col, colorGreen());
+    }
+
+
     // draw octave lines
-    int octave = sequence.selectedScale(_project.scale()).notesPerOctave();
+    /*int octave = sequence.selectedScale(_project.scale()).notesPerOctave();
     for (int row = 0; row < 8; ++row) {
         if (modulo(row + ofs, octave) == 0) {
             for (int col = 0; col < 2; ++col) {
@@ -918,7 +987,7 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
         followModeAction(currentStep, lastStep);        
         const auto &step = sequence.step(stepIndex);
         setGridLed((7 - step.layerValue(layer)) + ofs, col, stepColor(step.gate(), stepIndex == currentStep));
-    }
+    }*/
 }
 
 void LaunchpadController::drawCurveSequenceBars(const CurveSequence &sequence, CurveSequence::Layer layer, int currentStep) {
@@ -951,7 +1020,7 @@ void LaunchpadController::followModeAction(int currentStep, int lastStep) {
 
     int trackIndex = _project.selectedTrack().trackIndex();
     if (_followMode[trackIndex]) {
-            int g = currentStep / 8;
+            int g = currentStep / 16;
             int row = dict.at(_sequence.navigation.row);
             Button button = Button(row,g);
             if (currentStep == lastStep) {
