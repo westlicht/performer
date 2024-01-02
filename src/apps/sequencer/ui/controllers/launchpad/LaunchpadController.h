@@ -94,6 +94,8 @@ private:
     void sequenceDraw();
     void sequenceButton(const Button &button, ButtonAction action);
 
+    bool isNoteKeyboardPressed();
+
     void sequenceUpdateNavigation();
 
     void sequenceSetLayer(int row, int col);
