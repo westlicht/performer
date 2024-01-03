@@ -166,7 +166,7 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
                 const auto &step = sequence.step(_sequenceState.step());
                 bool isLastStageStep = ((int) step.stageRepeats() - (int) _currentStageRepeat) <= 0;
             
-                triggerStep(tick, divisor);
+                triggerStep(tick+divisor, divisor);
                                
                 if (isLastStageStep) {
                    _currentStageRepeat = 1; 
