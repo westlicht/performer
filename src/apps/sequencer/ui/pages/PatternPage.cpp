@@ -50,6 +50,10 @@ void PatternPage::draw(Canvas &canvas) {
     const auto &playState = _project.playState();
     bool hasCancel = playState.hasSyncedRequests() || playState.hasLatchedRequests();
     bool snapshotActive = playState.snapshotActive();
+
+
+    int patternChange = _model.settings().userSettings().get<LaunchpadPatternChange>(SettingLaunchpadPatternChange)->getValue();
+
     const char *functionNames[] = {
         "LATCH",
         "SYNC",
@@ -57,6 +61,9 @@ void PatternPage::draw(Canvas &canvas) {
         snapshotActive ? "COMMIT" : nullptr,
         hasCancel ? "CANCEL" : nullptr
     };
+    if (patternChange==1) {
+        functionNames[1] = "IMMEDIATE";   
+    }
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "PATTERN");
