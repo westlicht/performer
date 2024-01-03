@@ -1032,17 +1032,17 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
                     int noteOctave = step.note() / 12;
                     int s = step.note() - (12*noteOctave);
 
-                    for (auto const & [k, v] : semitones)
+                    for (auto const& x : semitones)
                     {
-                        if (step.gate() && s == v) {
-                            setGridLed(3, k, step.gate() && s == v ? colorRed() : colorGreen());
+                        if (step.gate() && s == x.second) {
+                            setGridLed(3, x.first, step.gate() && s == x.second ? colorRed() : colorGreen());
                             break;
                         }
                     }
-                    for (auto const & [k, v] : tones)
+                    for (auto const& x : tones)
                     {
-                        if (step.gate() && s == v) {
-                            setGridLed(4, k, step.gate() && s == v ? colorRed() : colorGreen());
+                        if (step.gate() && s == x.second) {
+                            setGridLed(4, x.first, step.gate() && s == x.second ? colorRed() : colorGreen());
                             break;
                         }
                     }
@@ -1060,10 +1060,10 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
                 int s = step.note();
 
                 int octave = s / 12;
-                for (auto const & [k, v] : octaveMap)
+                for (auto const& x : octaveMap)
                     {
-                        if (step.gate() && octave == v) {
-                            setGridLed(6, k, step.gate() && octave == v ? colorRed() : colorYellow(1));
+                        if (step.gate() && octave == x.second) {
+                            setGridLed(6, x.first, step.gate() && octave == x.second ? colorRed() : colorYellow(1));
                             break;
                         }
                     
