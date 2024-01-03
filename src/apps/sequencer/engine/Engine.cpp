@@ -844,7 +844,7 @@ void Engine::initClock() {
             } else {
                 _clock.slaveStop(ClockSourceExternal);
                 _clock.slaveReset(ClockSourceExternal);
-                stopSong()
+                stopSong();
             }
             break;
         case ClockSetup::ClockInputMode::Last:
