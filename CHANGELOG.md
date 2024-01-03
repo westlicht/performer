@@ -9,6 +9,7 @@
 - launchpad follow mode
 - launchpad improve slide visulazation
 - launchpad color theme
+- launchpad circuit dstyle note editor
 
 ## v0.1.44 (29 December 2023)
 
