@@ -240,11 +240,16 @@ void Engine::togglePlay(bool shift) {
 void Engine::clockStart() {
     _clock.masterStart();
 
-    int slotCount = _project.song().slotCount();
 
-    if (slotCount>0 && !_project.playState().songState().playing()) {
-        int _selectedSlot = slotCount > 0 ? clamp(1, 0, slotCount - 1) : -1;
-        _project.playState().playSong(_selectedSlot, PlayState::ExecuteType::Immediate);
+    int syncSong = _model.settings().userSettings().get<SyncSong>(SettingSyncSong)->getValue();
+
+    if (syncSong==1) {
+        int slotCount = _project.song().slotCount();
+
+        if (slotCount>0 && !_project.playState().songState().playing()) {
+            int _selectedSlot = slotCount > 0 ? clamp(1, 0, slotCount - 1) : -1;
+            _project.playState().playSong(_selectedSlot, PlayState::ExecuteType::Immediate);
+        }
     }
 
 }
@@ -259,10 +264,13 @@ void Engine::clockContinue() {
 
 void Engine::clockReset() {
     _clock.masterReset();
+    int syncSong = _model.settings().userSettings().get<SyncSong>(SettingSyncSong)->getValue();
 
-    if (_project.playState().songState().playing()) {
-        _project.playState().stopSong();
-    } 
+    if (syncSong==1) {
+        if (_project.playState().songState().playing()) {
+            _project.playState().stopSong();
+        } 
+    }
 }
 
 bool Engine::clockRunning() const {

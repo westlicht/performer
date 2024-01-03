@@ -14,6 +14,7 @@
 #define SettingLaunchpadStyle "lpstyle"
 #define SettingPatternChange "patternchg"
 #define SettingLaunchpadNoteStyle "lpnote"
+#define SettingSyncSong "syncsong"
 
 class BaseSetting {
 public:
@@ -179,6 +180,17 @@ class LaunchpadNoteStyle : public Setting<int> {
     ) {}
 };
 
+class SyncSong : public Setting<int> {
+    public:
+    SyncSong() : Setting(
+        SettingSyncSong,
+        "Sync song",
+        {"yes", "no"},
+        {1, 0},
+        0
+    ) {}
+};
+
 class UserSettings {
 public:
     UserSettings() {
@@ -189,6 +201,7 @@ public:
         addSetting(new LaunchpadStyleSetting());
         addSetting(new PatternChange());
         addSetting(new LaunchpadNoteStyle());
+        addSetting(new SyncSong());
     }
 
     //----------------------------------------
