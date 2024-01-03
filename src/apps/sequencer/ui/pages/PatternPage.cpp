@@ -52,7 +52,7 @@ void PatternPage::draw(Canvas &canvas) {
     bool snapshotActive = playState.snapshotActive();
 
 
-    int patternChange = _model.settings().userSettings().get<LaunchpadPatternChange>(SettingLaunchpadPatternChange)->getValue();
+    int patternChange = _model.settings().userSettings().get<PatternChange>(SettingPatternChange)->getValue();
 
     const char *functionNames[] = {
         "LATCH",
@@ -270,7 +270,7 @@ void PatternPage::keyPress(KeyPressEvent &event) {
         } else {
             UserSettings userSettings = _model.settings().userSettings();
 
-            int _patternChangeDefault = userSettings.get<LaunchpadPatternChange>(SettingLaunchpadPatternChange)->getValue();
+            int _patternChangeDefault = userSettings.get<PatternChange>(SettingPatternChange)->getValue();
 
             // select playing pattern
 

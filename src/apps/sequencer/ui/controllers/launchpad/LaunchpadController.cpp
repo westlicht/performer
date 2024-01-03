@@ -172,7 +172,7 @@ LaunchpadController::~LaunchpadController() {
 
 void LaunchpadController::update() {
      _style = _userSettings.get<LaunchpadStyleSetting>(SettingLaunchpadStyle)->getValue();
-     _patternChangeDefault = _userSettings.get<LaunchpadPatternChange>(SettingLaunchpadPatternChange)->getValue();
+     _patternChangeDefault = _userSettings.get<PatternChange>(SettingPatternChange)->getValue();
 
      _noteStyle = _userSettings.get<LaunchpadNoteStyle>(SettingLaunchpadNoteStyle)->getValue();
 
