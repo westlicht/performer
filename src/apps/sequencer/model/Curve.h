@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 class Curve {
 public:
     typedef float (*Function)(float x);
@@ -32,16 +33,29 @@ public:
         doubleSmoothUpHalf,
         doubleSmoothDownHalf,
         Triangle,
+        RevTriangle,
         Bell,
+        RevBell,
         StepUp,
         StepDown,
         ExpDown2x,
+        ExpUp2x,
         ExpDown3x,
+        ExpUp3x,
         ExpDown4x,
+        ExpUp4x,
         Last,
     };
+
+ 
 
     static Function function(Type type);
 
     static float eval(Type type, float x);
+
+ 
+
+
 };
+
+ 

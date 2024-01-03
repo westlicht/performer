@@ -83,8 +83,16 @@ static float triangle(float x) {
     return (x < 0.5f ? x : 1.f - x) * 2.f;
 }
 
+static float revTriangle(float x) {
+    return 1.f+(-triangle(x));
+}
+
 static float bell(float x) {
     return 0.5f - 0.5f * std::cos(x * TwoPi);
+}
+
+static float revBell(float x) {
+    return 1.f+-bell(x);
 }
 
 static float stepUp(float x) {
@@ -105,6 +113,18 @@ static float expDown3x(float x) {
 
 static float expDown4x(float x) {
     return x < 1.f ? expDown(std::fmod(x * 4.f, 1.f)) : 0.f;
+}
+
+static float expUp2x(float x) {
+    return x < 1.f ? expUp(std::fmod(x * 2.f, 1.f)) : 0.f;
+}
+
+static float expUp3x(float x) {
+    return x < 1.f ? expUp(std::fmod(x * 3.f, 1.f)) : 0.f;
+}
+
+static float expUp4x(float x) {
+    return x < 1.f ? expUp(std::fmod(x * 4.f, 1.f)) : 0.f;
 }
 
 static float doubleRampUpHalf(float x) {
@@ -169,10 +189,15 @@ static Curve::Function functions[] = {
     &doubleSmoothUpHalf,
     &doubleSmoothDownHalf,
     &triangle,
+    &revTriangle,
     &bell,
+    &revBell,
     &expDown2x,
+    &expUp2x,
     &expDown3x,
+    &expUp3x,
     &expDown4x,
+    &expUp4x
 };
 
 Curve::Function Curve::function(Type type) {

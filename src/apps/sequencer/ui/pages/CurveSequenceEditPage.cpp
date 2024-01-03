@@ -9,6 +9,8 @@
 #include "model/Curve.h"
 
 #include "core/utils/StringBuilder.h"
+#include <iostream>
+#include <map>
 
 enum class ContextAction {
     Init,
@@ -33,6 +35,46 @@ enum class Function {
     Max     = 2,
     Gate    = 3,
 };
+
+static const std::map<int, Curve::Type> _shapeMap = {
+        {0, Curve::High},
+        {1, Curve::Low},
+        {2, Curve::RampDown},
+        {3, Curve::RampUp},
+        {4, Curve::rampDownHalf},
+        {5, Curve::rampUpHalf},
+        {6, Curve::doubleRampDownHalf},
+        {7, Curve::doubleRampUpHalf},
+        {8, Curve::ExpDown},
+        {9, Curve::ExpUp},
+        {10, Curve::expDownHalf},
+        {11, Curve:: expUpHalf},
+        {12, Curve::doubleExpDownHalf},
+        {13, Curve::doubleExpUpHalf},
+        {14, Curve::LogDown},
+        {15, Curve::LogUp},
+        {16, Curve::logDownHalf},
+        {17, Curve::logUpHalf},
+        {18, Curve::doubleLogDownHalf},
+        {19, Curve::doubleLogUpHalf},
+        {20, Curve::SmoothDown},
+        {21, Curve::SmoothUp},
+        {22, Curve::smoothDownHalf},
+        {23, Curve::smoothUpHalf},
+        {24, Curve::doubleSmoothDownHalf},
+        {25, Curve::doubleSmoothUpHalf},
+        {26, Curve::RevTriangle},
+        {27, Curve::Triangle},
+        {28, Curve::RevBell},
+        {29, Curve::Bell},
+        {30, Curve::StepDown},
+        {31, Curve::StepUp},
+        {32, Curve::ExpUp2x},
+        {33, Curve::ExpDown2x},
+        {34, Curve::ExpUp3x},
+        {35, Curve::ExpUp4x},
+        {36, Curve::ExpDown4x}
+    };
 
 static const char *functionNames[] = { "SHAPE", "MIN", "MAX", "GATE", nullptr };
 
@@ -330,23 +372,16 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isEncoder() && layer() == Layer::Shape && globalKeyState()[Key::Shift] && _stepSelection.count() > 1) {
-        auto firstStep = sequence.step(_stepSelection.firstSetIndex());
-        auto lastStep = sequence.step(_stepSelection.lastSetIndex());
-        bool isReversed = firstStep.max() > lastStep.max();
+        for (size_t stepIndex = 0; stepIndex < _stepSelection.size(); ++stepIndex) {
+        if (_stepSelection[stepIndex]) {
+            auto &step = sequence.step(stepIndex);
+            std::cerr << step.shape() << "\n";
+            auto reverseShape = _shapeMap.at(step.shape());
+            std:std::cerr << reverseShape << "\n";
 
-        for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
-            if (_stepSelection[stepIndex]) {
-                auto &step = sequence.step(stepIndex);
-
-                float min, max;
-                std::tie(min, max) = calculateMultiStepShapeMinMax(_stepSelection.count(), multiStepsProcessed, sequence.step(_stepSelection.firstSetIndex()).shape(), !isReversed);
-
-                step.setMin(int(min));
-                step.setMax(int(max));
-
-                multiStepsProcessed++;
-            }
+            step.setShape(reverseShape);
         }
+    }
     }
 
     _stepSelection.keyPress(event, stepOffset());
