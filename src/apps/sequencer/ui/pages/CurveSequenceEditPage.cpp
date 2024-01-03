@@ -375,7 +375,6 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         for (size_t stepIndex = 0; stepIndex < _stepSelection.size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
-            std::cerr << step.shape() << "\n";
             auto reverseShape = _shapeMap.at(step.shape());
             std:std::cerr << reverseShape << "\n";
 
