@@ -234,7 +234,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         }
         case Layer::StageRepeatsMode: {
             SequencePainter::drawStageRepeatMode(
-                canvas, 
+                canvas,
                 x + 2, y + 18, stepWidth - 4, 6,
                 step.stageRepeatMode()
             );
@@ -386,11 +386,61 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
     auto &sequence = _project.selectedNoteSequence();
     const auto &scale = sequence.selectedScale(_project.scale());
 
-    if (_stepSelection.any()) {
+    if (!_stepSelection.any())
+    {
+        switch (layer())
+        {
+        case Layer::Gate:
+            setLayer(event.value() > 0 ? Layer::GateOffset : Layer::GateProbability);
+            break;
+        case Layer::GateOffset:
+            setLayer(event.value() > 0 ? Layer::GateProbability : Layer::Gate);
+            break;
+        case Layer::GateProbability:
+            setLayer(event.value() > 0 ? Layer::Gate : Layer::GateOffset);
+            break;
+        case Layer::Retrigger:
+            setLayer(event.value() > 0 ? Layer::RetriggerProbability : Layer::StageRepeatsMode);
+            break;
+        case Layer::RetriggerProbability:
+            setLayer(event.value() > 0 ? Layer::StageRepeats : Layer::Retrigger);
+            break;
+        case Layer::StageRepeats:
+            setLayer(event.value() > 0 ? Layer::StageRepeatsMode : Layer::RetriggerProbability);
+            break;
+        case Layer::StageRepeatsMode:
+            setLayer(event.value() > 0 ? Layer::Retrigger : Layer::StageRepeats);
+            break;
+        case Layer::Length:
+            setLayer(event.value() > 0 ? Layer::LengthVariationRange : Layer::LengthVariationProbability);
+            break;
+        case Layer::LengthVariationRange:
+            setLayer(event.value() > 0 ? Layer::LengthVariationProbability : Layer::Length);
+            break;
+        case Layer::LengthVariationProbability:
+            setLayer(event.value() > 0 ? Layer::Length : Layer::LengthVariationRange);
+            break;
+        case Layer::Note:
+            setLayer(event.value() > 0 ? Layer::NoteVariationRange : Layer::Slide);
+            break;
+        case Layer::NoteVariationRange:
+            setLayer(event.value() > 0 ? Layer::NoteVariationProbability : Layer::Note);
+            break;
+        case Layer::NoteVariationProbability:
+            setLayer(event.value() > 0 ? Layer::Slide : Layer::NoteVariationRange);
+            break;
+        case Layer::Slide:
+            setLayer(event.value() > 0 ? Layer::Note : Layer::NoteVariationProbability);
+            break;
+        default:
+            break;
+        }
+        return;
+    }
+    else
+    {
         _showDetail = true;
         _showDetailTicks = os::ticks();
-    } else {
-        return;
     }
 
     for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
@@ -442,7 +492,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
             case Layer::StageRepeats:
                 step.setStageRepeats(step.stageRepeats() + event.value());
                 break;
-            case Layer::StageRepeatsMode:                 
+            case Layer::StageRepeatsMode:
                 step.setStageRepeatsMode(
                     static_cast<NoteSequence::StageRepeatMode>(
                         step.stageRepeatMode() + event.value()
@@ -487,7 +537,7 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
     if (shift) {
         switch (Function(functionKey)) {
         case Function::Gate:
-            setLayer(Layer::StageRepeatsMode);
+            setLayer(Layer::Gate);
             break;
         case Function::Retrigger:
             setLayer(Layer::StageRepeats);
@@ -496,7 +546,7 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
             setLayer(Layer::StageRepeatsMode);
             break;
         case Function::Note:
-            setLayer(Layer::Note);
+            setLayer(Layer::Slide);
             break;
         case Function::Condition:
             setLayer(Layer::Condition);
@@ -509,26 +559,13 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
     case Function::Gate:
         switch (layer()) {
         case Layer::Gate:
-            setLayer(Layer::GateProbability);
-            break;
-        case Layer::GateProbability:
             setLayer(Layer::GateOffset);
             break;
         case Layer::GateOffset:
-            setLayer(Layer::Slide);
-            break;
-        case Layer::Slide:
-            setLayer(Layer::StageRepeats);
-            break;
-        case Layer::StageRepeats:
-            setLayer(Layer::StageRepeatsMode);
-            break;
-        case Layer::StageRepeatsMode:
-            setLayer(Layer::Gate);
+            setLayer(Layer::GateProbability);
             break;
         default:
             setLayer(Layer::Gate);
-
             break;
         }
         break;
@@ -536,6 +573,12 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
         switch (layer()) {
         case Layer::Retrigger:
             setLayer(Layer::RetriggerProbability);
+            break;
+        case Layer::RetriggerProbability:
+            setLayer(Layer::StageRepeats);
+            break;
+        case Layer::StageRepeats:
+            setLayer(Layer::StageRepeatsMode);
             break;
         default:
             setLayer(Layer::Retrigger);
@@ -563,6 +606,9 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
         case Layer::NoteVariationRange:
             setLayer(Layer::NoteVariationProbability);
             break;
+        case Layer::NoteVariationProbability:
+            setLayer(Layer::Slide);
+            break;
         default:
             setLayer(Layer::Note);
             break;
@@ -579,12 +625,11 @@ int NoteSequenceEditPage::activeFunctionKey() {
     case Layer::Gate:
     case Layer::GateProbability:
     case Layer::GateOffset:
-    case Layer::Slide:
-    case Layer::StageRepeats:
-    case Layer::StageRepeatsMode:
         return 0;
     case Layer::Retrigger:
     case Layer::RetriggerProbability:
+    case Layer::StageRepeats:
+    case Layer::StageRepeatsMode:
         return 1;
     case Layer::Length:
     case Layer::LengthVariationRange:
@@ -593,6 +638,7 @@ int NoteSequenceEditPage::activeFunctionKey() {
     case Layer::Note:
     case Layer::NoteVariationRange:
     case Layer::NoteVariationProbability:
+    case Layer::Slide:
         return 3;
     case Layer::Condition:
         return 4;
@@ -861,7 +907,7 @@ void NoteSequenceEditPage::tieNotes() {
             }
             sequence.step(i).setNote(sequence.step(first).note());
             std::cerr << _stepSelection[i];
-        }  
+        }
     }
 }
 
