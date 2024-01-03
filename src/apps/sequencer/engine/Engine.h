@@ -82,6 +82,10 @@ public:
     void clockReset();
     bool clockRunning() const;
 
+    // song control
+    void startSong();
+    void stopSong();
+
     // recording
     void toggleRecording();
     void setRecording(bool recording);

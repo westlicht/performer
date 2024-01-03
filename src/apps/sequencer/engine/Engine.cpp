@@ -240,17 +240,7 @@ void Engine::togglePlay(bool shift) {
 void Engine::clockStart() {
     _clock.masterStart();
 
-
-    int syncSong = _model.settings().userSettings().get<SyncSong>(SettingSyncSong)->getValue();
-
-    if (syncSong==1) {
-        int slotCount = _project.song().slotCount();
-
-        if (slotCount>0 && !_project.playState().songState().playing()) {
-            int _selectedSlot = slotCount > 0 ? clamp(1, 0, slotCount - 1) : -1;
-            _project.playState().playSong(_selectedSlot, PlayState::ExecuteType::Immediate);
-        }
-    }
+    startSong();
 
 }
 
@@ -264,6 +254,28 @@ void Engine::clockContinue() {
 
 void Engine::clockReset() {
     _clock.masterReset();
+    stopSong();
+}
+
+bool Engine::clockRunning() const {
+    return _state.running();
+}
+
+
+void Engine::startSong() {
+    int syncSong = _model.settings().userSettings().get<SyncSong>(SettingSyncSong)->getValue();
+
+    if (syncSong==1) {
+        int slotCount = _project.song().slotCount();
+
+        if (slotCount>0 && !_project.playState().songState().playing()) {
+            int _selectedSlot = slotCount > 0 ? clamp(1, 0, slotCount - 1) : -1;
+            _project.playState().playSong(_selectedSlot, PlayState::ExecuteType::Immediate);
+        }
+    }
+}
+
+void Engine::stopSong() {
     int syncSong = _model.settings().userSettings().get<SyncSong>(SettingSyncSong)->getValue();
 
     if (syncSong==1) {
@@ -271,10 +283,6 @@ void Engine::clockReset() {
             _project.playState().stopSong();
         } 
     }
-}
-
-bool Engine::clockRunning() const {
-    return _state.running();
 }
 
 void Engine::toggleRecording() {
@@ -800,6 +808,7 @@ void Engine::initClock() {
         // start clock on first clock pulse if reset is not hold and clock is not running
         if (clockSetup.clockInputMode() == ClockSetup::ClockInputMode::Reset && !_clock.isRunning() && !_dio.resetInput.get()) {
             _clock.slaveStart(ClockSourceExternal);
+            startSong();
         }
         if (value) {
             _clock.slaveTick(ClockSourceExternal);
@@ -813,23 +822,29 @@ void Engine::initClock() {
         case ClockSetup::ClockInputMode::Reset:
             if (value) {
                 _clock.slaveReset(ClockSourceExternal);
+                stopSong();
             } else {
                 _clock.slaveStart(ClockSourceExternal);
+                startSong();
             }
             break;
         case ClockSetup::ClockInputMode::Run:
             if (value) {
                 _clock.slaveContinue(ClockSourceExternal);
+                startSong();
             } else {
                 _clock.slaveStop(ClockSourceExternal);
+                stopSong();
             }
             break;
         case ClockSetup::ClockInputMode::StartStop:
             if (value) {
                 _clock.slaveStart(ClockSourceExternal);
+                startSong();
             } else {
                 _clock.slaveStop(ClockSourceExternal);
                 _clock.slaveReset(ClockSourceExternal);
+                stopSong()
             }
             break;
         case ClockSetup::ClockInputMode::Last:
