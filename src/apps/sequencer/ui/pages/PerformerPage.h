@@ -23,6 +23,7 @@ public:
 
 private:
     void updateFills();
+    bool isKeySelected();
 
     bool _modal = false;
     bool _latching = false;

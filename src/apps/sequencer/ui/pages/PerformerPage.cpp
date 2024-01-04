@@ -7,6 +7,7 @@
 #include "ui/painters/SequencePainter.h"
 
 #include "core/utils/StringBuilder.h"
+#include <iostream>
 
 enum class Function {
     Latch   = 0,
@@ -16,9 +17,13 @@ enum class Function {
     Cancel  = 4
 };
 
+float _projectTempo;
+
 PerformerPage::PerformerPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
-{}
+{
+    _projectTempo = _project.tempo();
+}
 
 void PerformerPage::enter() {
     _latching = false;
@@ -111,6 +116,10 @@ void PerformerPage::updateLeds(Leds &leds) {
 
 void PerformerPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
+
+    if (key.isEncoder() && !isKeySelected()) {
+        _project.setTempo(_projectTempo);
+    }
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
@@ -225,9 +234,14 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
 }
 
 void PerformerPage::encoder(EncoderEvent &event) {
-    for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
-        if (pageKeyState()[MatrixMap::fromStep(trackIndex)]) {
-            _project.playState().trackState(trackIndex).editFillAmount(event.value(), false);
+
+    if (!isKeySelected()) {
+        _project.setTempo(_project.tempo()+event.value());
+    } else {    
+        for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+            if (pageKeyState()[MatrixMap::fromStep(trackIndex)]) {
+                _project.playState().trackState(trackIndex).editFillAmount(event.value(), false);
+            }
         }
     }
 }
@@ -241,4 +255,13 @@ void PerformerPage::updateFills() {
         bool trackFill = pageKeyState()[MatrixMap::fromStep(8 + trackIndex)];
         playState.fillTrack(trackIndex, trackFill || fillPressed, holdPressed);
     }
+}
+
+bool PerformerPage::isKeySelected() {
+    for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+        if (pageKeyState()[MatrixMap::fromStep(trackIndex)]) {
+            return true;
+        }
+    }
+    return false;
 }
