@@ -51,18 +51,19 @@ static const LayerMapItem noteSequenceLayerMap[] = {
     [int(NoteSequence::Layer::Gate)]                        =  { 0, 0 },
     [int(NoteSequence::Layer::GateProbability)]             =  { 1, 0 },
     [int(NoteSequence::Layer::GateOffset)]                  =  { 2, 0 },
-    [int(NoteSequence::Layer::Slide)]                       =  { 3, 0 },
     [int(NoteSequence::Layer::Retrigger)]                   =  { 0, 1 },
     [int(NoteSequence::Layer::RetriggerProbability)]        =  { 1, 1 },
+    [int(NoteSequence::Layer::StageRepeats)]                =  { 2, 1 },
+    [int(NoteSequence::Layer::StageRepeatsMode)]            =  { 3, 1 },
     [int(NoteSequence::Layer::Length)]                      =  { 0, 2 },
     [int(NoteSequence::Layer::LengthVariationRange)]        =  { 1, 2 },
     [int(NoteSequence::Layer::LengthVariationProbability)]  =  { 2, 2 },
     [int(NoteSequence::Layer::Note)]                        =  { 0, 3 },
     [int(NoteSequence::Layer::NoteVariationRange)]          =  { 1, 3 },
     [int(NoteSequence::Layer::NoteVariationProbability)]    =  { 2, 3 },
+    [int(NoteSequence::Layer::Slide)]                       =  { 3, 3 },
     [int(NoteSequence::Layer::Condition)]                   =  { 0, 4 },
-    [int(NoteSequence::Layer::StageRepeats)]                =  { 4, 0 },
-    [int(NoteSequence::Layer::StageRepeatsMode)]            =  { 5, 0 },
+
 
 };
 
@@ -615,8 +616,6 @@ void LaunchpadController::sequenceDrawLayer() {
             bool selected = i == int(_project.selectedNoteSequenceLayer());
             setGridLed(item.row, item.col, selected ? colorYellow() : colorGreen());
         }
-
-        setGridLed(0, 7, colorGreen());
         break;
     case Track::TrackMode::Curve:
         for (int i = 0; i < curveSequenceLayerMapSize; ++i) {

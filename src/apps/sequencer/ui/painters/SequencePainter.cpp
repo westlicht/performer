@@ -114,19 +114,35 @@ void SequencePainter::drawStageRepeatMode(Canvas &canvas, int x, int y, int w, i
         case NoteSequence::StageRepeatMode::First:
             enabled = 0x1;
             break;
+        case NoteSequence::StageRepeatMode::Middle:
+            enabled = 0x1 << 2;
+            break;
+        case NoteSequence::StageRepeatMode::Last:
+            enabled = 0x8;
+            break;
         case NoteSequence::StageRepeatMode::Odd:
             enabled = 0x5;
+            break;
+        case NoteSequence::StageRepeatMode::Even:
+            enabled = 0x5 << 1;
             break;
         case NoteSequence::StageRepeatMode::Triplets:
             enabled = 0x9;
             break;
+        case NoteSequence::StageRepeatMode::Random:
+            enabled = 0xf;
+            break;
     }
 
     for (int i = 0; i < 4; i++) {
-        if (((enabled >> i) & mask) == 1) {
-            canvas.vline(x + 2 * i, y, h);
+        if (mode == NoteSequence::StageRepeatMode::Random) {
+            canvas.drawTextCentered(x,y, x+6, h, "????");
         } else {
-            canvas.hline(x + 2 * i, bottom, 1);
+            if (((enabled >> i) & mask) == 1) {
+                canvas.vline(x + 2 * i, y, h);
+            } else {
+                canvas.hline(x + 2 * i, bottom, 1);
+            }
         }
     }
 }
