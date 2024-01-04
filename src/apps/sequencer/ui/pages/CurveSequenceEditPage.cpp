@@ -410,11 +410,30 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
 void CurveSequenceEditPage::encoder(EncoderEvent &event) {
     auto &sequence = _project.selectedCurveSequence();
 
-    if (_stepSelection.any()) {
+    if (!_stepSelection.any()) {
+        switch (layer()) {
+        case Layer::Shape:
+            setLayer(event.value() > 0 ? Layer::ShapeVariation : Layer::ShapeVariationProbability);
+            break;
+        case Layer::ShapeVariation:
+            setLayer(event.value() > 0 ? Layer::ShapeVariationProbability : Layer::Shape);
+            break;
+        case Layer::ShapeVariationProbability:
+            setLayer(event.value() > 0 ? Layer::Shape : Layer::ShapeVariation);
+            break;
+        case Layer::Gate:
+            setLayer(Layer::GateProbability);
+            break;
+        case Layer::GateProbability:
+            setLayer(Layer::Gate);
+            break;
+        default:
+            break;
+        }
+        return;
+    } else {
         _showDetail = true;
         _showDetailTicks = os::ticks();
-    } else {
-        return;
     }
 
     for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
