@@ -26,6 +26,7 @@ To find out more about improvements changes, check the table below.
 | improve solo perform | toggle solo feature and launchpad integration: pessing button 6 + A-H will toggle solo | done |
 | launchpad color theme | in user settings there is an option to chose between classic and blue launchapd color schema | done |
 | launchpad circuit note editor | novation circuit style note editor. on user setting you can choose it or leave the classic one | done |
+| step edit ui enhancements | on track and curve step edit pages, turning the encoder cycles through available layers of the selected tab | done |
 
 [WIKI page ](https://github.com/mebitek/performer/wiki)
 
