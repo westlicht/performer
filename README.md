@@ -12,7 +12,7 @@ To find out more about improvements changes, check the table below.
 | import Metro like seq PR | [link](https://github.com/westlicht/performer/pull/259) | done |
 | import trigger negative offset PR | [link](https://github.com/westlicht/performer/pull/234) | done |
 | extend probability steps | turning the encoder results in more steps (min is 6.3%) | done |
-| add various curves | add curve half and double curves| done |
+| add various curves | add curve half and double curves and missing reverse curves| done |
 | double click to toggle gates| double click on step to toggle a gate when editing layer other than gate| done |
 | cv outs on stop clock| cv outs remain to the last value when clock is stopped | done | 
 | random seed | each time we enter the random generator page a random seed is picked | done |
@@ -27,6 +27,10 @@ To find out more about improvements changes, check the table below.
 | launchpad color theme | in user settings there is an option to chose between classic and blue launchapd color schema | done |
 | launchpad circuit note editor | novation circuit style note editor. on user setting you can choose it or leave the classic one | done |
 | step edit ui enhancements | on track and curve step edit pages, turning the encoder cycles through available layers of the selected tab | done |
+| Improve Note edit page layout | thanks to @aclangor: use the encoder to switch between layouts. layouts rearrangment | done |
+| Sync Song | sync song play with starting clock | done |
+| Perform Page | encoder to change tempo on Performer page | done
+| Metro like seq | add new repeat modes | done |
 
 [WIKI page ](https://github.com/mebitek/performer/wiki)
 

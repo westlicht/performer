@@ -1,5 +1,14 @@
 # Changelog
 
+## v 0.1.46 (4 January 2024)
+
+- UI note edit page reaggment
+- song sync with clock
+- fix reverse shape feature
+- add new shapes
+- add new repeat modes
+- encoder to change tempo on Performer page
+
 ## v0.1.45 (31 December 2023)
 
 #### Improvements
@@ -7,9 +16,9 @@
 - various bugfixes
 - improve solo perform
 - launchpad follow mode
-- launchpad improve slide visulazation
+- launchpad improve slide visualization
 - launchpad color theme
-- launchpad circuit dstyle note editor
+- launchpad circuit dtyle note editor
 
 ## v0.1.44 (29 December 2023)
 
