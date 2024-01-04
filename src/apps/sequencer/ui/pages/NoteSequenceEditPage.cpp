@@ -807,11 +807,26 @@ void NoteSequenceEditPage::drawDetail(Canvas &canvas, const NoteSequence::Step &
             case NoteSequence::First:
                 str("FIRST");
                 break;
+            case NoteSequence::Middle:
+                str("MIDDLE");
+                break;
+            case NoteSequence::Last:
+                str("LAST");
+                break;
             case NoteSequence::Odd:
                 str("ODD");
                 break;
+            case NoteSequence::Even:
+                str("EVEN");
+                break;
             case NoteSequence::Triplets:
                 str("TRIPLET");
+                break;
+            case NoteSequence::Random:
+                str("RANDOM");
+                break;
+
+            default:
                 break;
         }
         canvas.setFont(Font::Small);

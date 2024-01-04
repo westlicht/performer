@@ -357,11 +357,48 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
         case NoteSequence::StageRepeatMode::First:
             stepGate = stepGate && _currentStageRepeat == 1;
             break;
+        case NoteSequence::StageRepeatMode::Last:
+            stepGate = stepGate && _currentStageRepeat == step.stageRepeats()-1;
+            break;
+        case NoteSequence::StageRepeatMode::Middle:
+            stepGate = stepGate && _currentStageRepeat % (step.stageRepeats()/2) == 0;
+            break;
         case NoteSequence::StageRepeatMode::Odd:
             stepGate = stepGate && _currentStageRepeat % 2 != 0;
             break;
+        case NoteSequence::StageRepeatMode::Even:
+            stepGate = stepGate && _currentStageRepeat % 2 == 0;
+            break;
         case NoteSequence::StageRepeatMode::Triplets:
             stepGate = stepGate && (_currentStageRepeat - 1) % 3 == 0;
+            break;
+        case NoteSequence::StageRepeatMode::Random:
+                srand((unsigned int)time(NULL));
+                int rndMode = 0 + ( std::rand() % ( 6 - 0 + 1 ) );
+                switch (rndMode) {
+                    case 0:
+                        break;
+                    case 1:
+                        stepGate = stepGate && _currentStageRepeat == 1;
+                        break;
+                    case 2:
+                        stepGate = stepGate && _currentStageRepeat == step.stageRepeats()-1;
+                        break;
+                    case 3:
+                        stepGate = stepGate && _currentStageRepeat % (step.stageRepeats()/2) == 0;
+                        break;
+                    case 4:
+                        stepGate = stepGate && _currentStageRepeat % 2 != 0;
+                        break;
+                    case 5:
+                        stepGate = stepGate && _currentStageRepeat % 2 == 0;
+                        break;
+                    case 6:
+                        stepGate = stepGate && (_currentStageRepeat - 1) % 3 == 0;
+                        break;
+                
+                }
+                break;
     }
 
     if (stepGate) {

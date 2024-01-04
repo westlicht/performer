@@ -15,6 +15,7 @@
 #include <bitset>
 #include <cstdint>
 #include <initializer_list>
+#include <iostream>
 
 class NoteSequence {
 public:
@@ -34,7 +35,7 @@ public:
     typedef UnsignedValue<4> NoteVariationProbability;
     typedef UnsignedValue<7> Condition;
     typedef UnsignedValue<3> StageRepeats;
-    typedef UnsignedValue<2> StageRepeatsMode;
+    typedef UnsignedValue<3> StageRepeatsMode;
 
     static_assert(int(Types::Condition::Last) <= Condition::Max + 1, "Condition enum does not fit");
 
@@ -42,18 +43,18 @@ public:
         Gate,
         GateProbability,
         GateOffset,
-        Slide,
         Retrigger,
         RetriggerProbability,
+        StageRepeats,
+        StageRepeatsMode,
         Length,
         LengthVariationRange,
         LengthVariationProbability,
         Note,
         NoteVariationRange,
         NoteVariationProbability,
+        Slide,
         Condition,
-        StageRepeats,
-        StageRepeatsMode,
         Last
     };
 
@@ -85,8 +86,13 @@ public:
     enum StageRepeatMode {
         Each,
         First,
+        Middle,
+        Last,
         Odd,
-        Triplets
+        Even,
+        Triplets,
+        Random,
+
     };
 
     class Step {
