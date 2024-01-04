@@ -104,9 +104,9 @@ public:
         
         // stage
         void setStageRepeats(int repeats) {
-            _data1.stageRepeats = StageRepeats::clamp(repeats - 1);
+            _data1.stageRepeats = StageRepeats::clamp(repeats);
         }
-        unsigned int stageRepeats() const { return _data1.stageRepeats + 1; }
+        unsigned int stageRepeats() const { return _data1.stageRepeats; }
 
         void setStageRepeatsMode(StageRepeatMode mode) {
             _data1.stageRepeatMode = mode;

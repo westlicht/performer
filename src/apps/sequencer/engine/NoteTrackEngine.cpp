@@ -165,7 +165,7 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
 
                 recordStep(tick, divisor);
                 const auto &step = sequence.step(_sequenceState.step());
-                bool isLastStageStep = ((int) step.stageRepeats() - (int) _currentStageRepeat) <= 0;
+                bool isLastStageStep = ((int) (step.stageRepeats()+1) - (int) _currentStageRepeat) <= 0;
             
                 triggerStep(tick+divisor, divisor);
                                
@@ -359,10 +359,10 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
             stepGate = stepGate && _currentStageRepeat == 1;
             break;
         case NoteSequence::StageRepeatMode::Last:
-            stepGate = stepGate && _currentStageRepeat == step.stageRepeats();
+            stepGate = stepGate && _currentStageRepeat == step.stageRepeats()+1;
             break;
         case NoteSequence::StageRepeatMode::Middle:
-            stepGate = stepGate && _currentStageRepeat % (step.stageRepeats()/2) == 0;
+            stepGate = stepGate && _currentStageRepeat == (step.stageRepeats()+1)/2;
             break;
         case NoteSequence::StageRepeatMode::Odd:
             stepGate = stepGate && _currentStageRepeat % 2 != 0;
@@ -383,10 +383,10 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
                         stepGate = stepGate && _currentStageRepeat == 1;
                         break;
                     case 2:
-                        stepGate = stepGate && _currentStageRepeat == step.stageRepeats()-1;
+                        stepGate = stepGate && _currentStageRepeat == step.stageRepeats()+1;
                         break;
                     case 3:
-                        stepGate = stepGate && _currentStageRepeat % (step.stageRepeats()/2) == 0;
+                        stepGate = stepGate && _currentStageRepeat % ((step.stageRepeats()+1)/2)+1 == 0;
                         break;
                     case 4:
                         stepGate = stepGate && _currentStageRepeat % 2 != 0;

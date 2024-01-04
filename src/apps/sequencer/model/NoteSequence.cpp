@@ -184,7 +184,7 @@ void NoteSequence::Step::clear() {
     setNoteVariationRange(0);
     setNoteVariationProbability(NoteVariationProbability::Max);
     setCondition(Types::Condition::Off);
-    setStageRepeats(1);
+    setStageRepeats(0);
     setStageRepeatsMode(StageRepeatMode::Each);
 }
 
