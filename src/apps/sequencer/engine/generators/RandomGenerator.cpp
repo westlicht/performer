@@ -1,6 +1,7 @@
 #include "RandomGenerator.h"
 
 #include "core/utils/Random.h"
+#include <ctime>
 
 
 RandomGenerator::RandomGenerator(SequenceBuilder &builder, Params &params) :
@@ -48,7 +49,7 @@ void RandomGenerator::init() {
 }
 
 void RandomGenerator::randomizeSeed() {
-
+    srand((unsigned int)time(NULL));
     _params.seed = 0 + ( std::rand() % ( 999 - 0 + 1 ) );
 }
 
