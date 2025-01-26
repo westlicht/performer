@@ -86,7 +86,7 @@ void Lcd::init() {
 
     // init spi
     rcc_periph_clock_enable(RCC_SPI2);
-    spi_reset(LCD_SPI);
+    rcc_periph_reset_pulse(RST_SPI2);
     spi_init_master(LCD_SPI,
                     SPI_CR1_BAUDRATE_FPCLK_DIV_2,       // max LCD clock is 10MHz
                     SPI_CR1_CPOL_CLK_TO_1_WHEN_IDLE,

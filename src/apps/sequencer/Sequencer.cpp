@@ -124,7 +124,7 @@ static os::PeriodicTask<CONFIG_FILE_TASK_STACK_SIZE> fsTask("file", CONFIG_FILE_
 });
 
 #if CONFIG_ENABLE_PROFILER || CONFIG_ENABLE_TASK_PROFILER
-static CCMRAM_BSS os::PeriodicTask<CONFIG_PROFILER_TASK_STACK_SIZE> profilerTask("profiler", 0, os::time::ms(5000), [&] () {
+static CCMRAM_BSS os::PeriodicTask<CONFIG_PROFILER_TASK_STACK_SIZE> profilerTask("profiler", 0, os::time::ms(5000), [] () {
 #if CONFIG_ENABLE_PROFILER
     profiler.dump();
 #endif // CONFIG_ENABLE_PROFILE

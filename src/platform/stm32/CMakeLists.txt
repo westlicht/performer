@@ -108,7 +108,9 @@ function(platform_postprocess_executable executable)
     add_custom_command(TARGET ${executable} POST_BUILD COMMAND ${OBJCOPY} -Osrec ${executable} ${executable}.srec)
     add_custom_command(TARGET ${executable} POST_BUILD COMMAND ${OBJDUMP} -dhS ${executable} > ${executable}.list)
     add_custom_command(TARGET ${executable} POST_BUILD COMMAND ${SIZE} -A ${executable} > ${executable}.size)
-    add_custom_command(TARGET ${executable} POST_BUILD COMMAND ${LINKER} -Map ${executable}.map ${executable} -o ${executable}.tmp && rm ${executable}.tmp)
+    # TODO: Generate a map file when initially linking the exe.
+    # Newer linker complains about using an executable as input, so this is disabled
+    #    add_custom_command(TARGET ${executable} POST_BUILD COMMAND ${LINKER} -Map ${executable}.map ${executable} -o ${executable}.tmp && rm ${executable}.tmp)
     add_custom_command(TARGET ${executable} POST_BUILD COMMAND ${SIZE} --format=berkeley ${executable})
     add_openocd_targets(${executable})
 endfunction(platform_postprocess_executable)

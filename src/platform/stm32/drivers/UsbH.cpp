@@ -15,8 +15,8 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/stm32/timer.h>
-#include <libopencm3/stm32/otg_hs.h>
-#include <libopencm3/stm32/otg_fs.h>
+#include <libopencm3/usb/dwc/otg_hs.h>
+#include <libopencm3/usb/dwc/otg_fs.h>
 
 #define USB_PWR_EN_PORT GPIOC
 #define USB_PWR_EN_PIN GPIO9

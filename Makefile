@@ -17,6 +17,7 @@ $(DL_DIR):
 
 # Determine host OS
 UNAME := $(shell uname)
+ARCH := $(shell uname -m)
 
 # Linux
 ifeq ($(UNAME), Linux)
@@ -49,15 +50,15 @@ tools_clean: arm_sdk_clean openocd_clean
 
 .PHONY: arm_sdk_install
 
-# Source: https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads
-ARM_SDK_URL_BASE := https://developer.arm.com/-/media/Files/downloads/gnu-rm/6-2017q2/gcc-arm-none-eabi-6-2017-q2-update
+# Source: https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
+ARM_SDK_URL_BASE := https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1
 
 ifdef LINUX
-  ARM_SDK_URL := $(ARM_SDK_URL_BASE)-linux.tar.bz2
+  ARM_SDK_URL := $(ARM_SDK_URL_BASE)-$(ARCH)-arm-none-eabi.tar.xz
 endif
 
 ifdef MACOSX
-  ARM_SDK_URL := $(ARM_SDK_URL_BASE)-mac.tar.bz2
+  ARM_SDK_URL := $(ARM_SDK_URL_BASE)-darwin-$(ARCH)-arm-none-eabi.tar.xz
 endif
 
 ARM_SDK_FILE := $(notdir $(ARM_SDK_URL))
@@ -70,7 +71,7 @@ arm_sdk_install: arm_sdk_download $(ARM_SDK_INSTALL_MARKER)
 
 $(ARM_SDK_INSTALL_MARKER):
 	$(V1) mkdir -p $(ARM_SDK_DIR)
-	$(V1) tar -C $(ARM_SDK_DIR) --strip-components=1 -xjf "$(DL_DIR)/$(ARM_SDK_FILE)"
+	$(V1) tar -C $(ARM_SDK_DIR) --strip-components=1 -xaf "$(DL_DIR)/$(ARM_SDK_FILE)"
 
 .PHONY: arm_sdk_download
 arm_sdk_download: | $(DL_DIR)

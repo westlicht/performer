@@ -26,8 +26,8 @@
 
 #include <string.h>
 #include <stdint.h>
-#include <libopencm3/stm32/otg_hs.h>
-#include <libopencm3/stm32/otg_fs.h>
+#include <libopencm3/usb/dwc/otg_hs.h>
+#include <libopencm3/usb/dwc/otg_fs.h>
 
 
 

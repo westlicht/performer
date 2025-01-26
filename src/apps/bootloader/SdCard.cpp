@@ -85,7 +85,7 @@ void SdCard::powerOff() {
 }
 
 void SdCard::sendCommand(uint32_t cmd, uint32_t arg) {
-    cmd &= SDIO_CMD_CMDINDEX_MSK;
+    cmd &= SDIO_CMD_CMDINDEX_MASK;
     uint32_t waitresp = SDIO_CMD_WAITRESP_SHORT;
     if (cmd == 0) {
         waitresp = SDIO_CMD_WAITRESP_NO_0;

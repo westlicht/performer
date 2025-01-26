@@ -9,7 +9,7 @@ uint32_t System::_ticks;
 
 void System::init() {
     // Base board frequency is 168MHz
-    rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+    rcc_clock_setup_pll(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
 
     // clock frequencies:
     // ahb_frequency  = 168000000

@@ -43,7 +43,7 @@ void ShiftRegister::init() {
 
     // init spi
     rcc_periph_clock_enable(RCC_SPI1);
-    spi_reset(SR_SPI);
+    rcc_periph_reset_pulse(RST_SPI1);
     spi_init_master(SR_SPI, SPI_CR1_BAUDRATE_FPCLK_DIV_8, // 84MHz / 8 = 10.5MHz < 20MHz
                     SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
                     SPI_CR1_CPHA_CLK_TRANSITION_1,

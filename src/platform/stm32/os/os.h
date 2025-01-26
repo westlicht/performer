@@ -12,6 +12,7 @@ extern "C" {
 }
 
 #include <functional>
+#include <algorithm>
 
 #include <libopencm3/cm3/cortex.h>
 

@@ -1,6 +1,6 @@
 [submodule "src/platform/stm32/libs/libopencm3"]
 	path = src/platform/stm32/libs/libopencm3
-	url = https://github.com/westlicht/libopencm3.git
+	url = https://github.com/libopencm3/libopencm3.git
 [submodule "src/platform/sim/libs/soloud"]
 	path = src/platform/sim/libs/soloud
 	url = https://github.com/jarikomppa/soloud.git
