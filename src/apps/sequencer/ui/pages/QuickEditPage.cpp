@@ -76,6 +76,6 @@ void QuickEditPage::keyPress(KeyPressEvent &event) {
 }
 
 void QuickEditPage::encoder(EncoderEvent &event) {
-    _listModel->edit(_row, 1, event.value(), event.pressed() | globalKeyState()[Key::Shift]);
+    _listModel->edit(_row, 1, event.value(), event.pressed() || globalKeyState()[Key::Shift]);
     event.consume();
 }

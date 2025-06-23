@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -11,15 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Setup
-      run: make setup_stm32
+      run: |
+        make setup_stm32
+        echo "ARTIFACT_NAME=${GITHUB_REF_NAME}-$(git rev-parse --short HEAD)" | tr '/' '_' >> $GITHUB_ENV
     - name: Build
       run: (cd build/stm32/release && make -j)
     - name: Deploy
       run: make deploy
+    - name: Upload Artifact
+      if: "!startsWith(github.ref, 'refs/tags/')"
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+        path: build/deploy/**/*
     - name: Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
@@ -31,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Install Dependencies
@@ -44,10 +53,10 @@ jobs:
       run: (cd build/sim/release && make test)
   sim_macos:
     name: Simulator Platform (macos)
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Install Dependencies
@@ -60,17 +69,17 @@ jobs:
       run: (cd build/sim/release && make test)
   sim_wasm:
     name: Simulation Platform (WebAssembly)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Setup emsdk
       run: |
         git clone https://github.com/emscripten-core/emsdk.git
-        ./emsdk/emsdk install latest
-        ./emsdk/emsdk activate latest
+        ./emsdk/emsdk install 3.1.74
+        ./emsdk/emsdk activate 3.1.74
     - name: Setup
       run: |
         source ./emsdk/emsdk_env.sh
@@ -79,6 +88,12 @@ jobs:
       run: (cd build/sim/www && make -j)
     - name: Deploy
       run: make deploy-simulator
+    - name: Upload Artifact
+      if: "!startsWith(github.ref, 'refs/tags/')"
+      uses: actions/upload-artifact@v4
+      with:
+        name: simulator-www
+        path: build/deploy-simulator/**/*
     - name: Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: JamesIves/github-pages-deploy-action@v4.3.3
