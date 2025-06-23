@@ -17,7 +17,13 @@ add_subdirectory(libs/rtmidi)
 # platform
 
 set(platform_dependencies "" PARENT_SCOPE)
-set(platform_compiler_flags "-fPIC -Wno-unknown-warning-option -Wno-unknown-pragmas -Wno-unknown-attributes -Wno-c99-designator -Wno-vla-cxx-extension ${SDL_FLAGS}" PARENT_SCOPE)
+set(platform_compiler_flags "-fPIC -Wno-unknown-pragmas -Wno-unknown-attributes ${SDL_FLAGS}" PARENT_SCOPE)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(platform_compiler_flags "${platform_compiler_flags} -Wno-unknown-warning -Wno-c99-designator")
+endif()
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(platform_compiler_flags "${platform_compiler_flags} -Wno-unknown-warning-option -Wno-vla-cxx-extension")
+endif()
 set(platform_linker_flags "" PARENT_SCOPE)
 
 set(platform_sources
