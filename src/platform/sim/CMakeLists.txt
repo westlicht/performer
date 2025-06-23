@@ -17,7 +17,7 @@ add_subdirectory(libs/rtmidi)
 # platform
 
 set(platform_dependencies "" PARENT_SCOPE)
-set(platform_compiler_flags "-fPIC -Wno-unknown-pragmas -Wno-unknown-attributes ${SDL_FLAGS}" PARENT_SCOPE)
+set(platform_compiler_flags "-fPIC -Wno-unknown-warning-option -Wno-unknown-pragmas -Wno-unknown-attributes -Wno-c99-designator -Wno-vla-cxx-extension ${SDL_FLAGS}" PARENT_SCOPE)
 set(platform_linker_flags "" PARENT_SCOPE)
 
 set(platform_sources
