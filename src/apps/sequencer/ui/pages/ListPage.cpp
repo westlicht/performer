@@ -78,7 +78,7 @@ void ListPage::keyPress(KeyPressEvent &event) {
 
 void ListPage::encoder(EncoderEvent &event) {
     if (_edit) {
-        _listModel->edit(_selectedRow, 1, event.value(), event.pressed() | globalKeyState()[Key::Shift]);
+        _listModel->edit(_selectedRow, 1, event.value(), event.pressed() || globalKeyState()[Key::Shift]);
     } else {
         setSelectedRow(selectedRow() + event.value());
     }
