@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Setup
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Install Dependencies
@@ -44,10 +44,10 @@ jobs:
       run: (cd build/sim/release && make test)
   sim_macos:
     name: Simulator Platform (macos)
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Install Dependencies
@@ -60,10 +60,10 @@ jobs:
       run: (cd build/sim/release && make test)
   sim_wasm:
     name: Simulation Platform (WebAssembly)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Setup emsdk
