@@ -65,7 +65,14 @@ public:
 
     void skip(size_t len, uint32_t addedInVersion, uint32_t removedInVersion) {
         if (_dataVersion >= addedInVersion && _dataVersion < removedInVersion) {
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wvla-cxx-extension"
+#endif
             uint8_t dummy[len];
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
             _reader(dummy, len);
             _hash(dummy, len);
         }
